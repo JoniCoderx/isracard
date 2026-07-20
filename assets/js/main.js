@@ -49,6 +49,38 @@
     recalc();
   }
 
+  // Dashboard demo data (client-side only)
+  var txBody = document.getElementById("tx-body");
+  if (txBody) {
+    var txs = [
+      { date: "18.07", merchant: "סופרמרקט העיר", cat: "מזון", amount: -284.90 },
+      { date: "17.07", merchant: "תחנת דלק צפון", cat: "דלק", amount: -212.00 },
+      { date: "16.07", merchant: "בית קפה מרכז", cat: "מסעדות", amount: -46.50 },
+      { date: "15.07", merchant: "חנות אלקטרוניקה", cat: "קניות", amount: -1299.00 },
+      { date: "14.07", merchant: "זיכוי מועדון", cat: "זיכוי", amount: 38.20 },
+      { date: "13.07", merchant: "מנוי סטרימינג", cat: "בידור", amount: -54.90 }
+    ];
+
+    var rows = txs.map(function (t) {
+      var sign = t.amount < 0 ? "−" : "+";
+      var val = "₪" + Math.abs(t.amount).toLocaleString("he-IL", { minimumFractionDigits: 2 });
+      var color = t.amount < 0 ? "" : ' style="color:var(--accent)"';
+      return "<tr><td>" + t.date + "</td><td>" + t.merchant +
+        "</td><td><span class=\"tx-cat\">" + t.cat + "</span></td>" +
+        "<td class=\"num\"" + color + ">" + sign + val + "</td></tr>";
+    }).join("");
+    txBody.innerHTML = rows;
+
+    var spent = txs.reduce(function (s, t) { return s + (t.amount < 0 ? -t.amount : 0); }, 0);
+    var LIMIT = 50000;
+    var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+    setText("dash-balance", "₪" + spent.toLocaleString("he-IL", { minimumFractionDigits: 2 }));
+    setText("dash-limit", "₪" + (LIMIT - spent).toLocaleString("he-IL"));
+    setText("dash-points", (1240).toLocaleString("he-IL"));
+    var bar = document.getElementById("dash-bar");
+    if (bar) bar.style.width = Math.min(100, (spent / LIMIT) * 100).toFixed(1) + "%";
+  }
+
   // Login form — demo only, never submits anywhere
   var loginForm = document.getElementById("login-form");
   var loginNote = document.getElementById("login-note");

@@ -26,6 +26,7 @@
           <li><a href="#cards">כרטיסים</a></li>
           <li><a href="#benefits">הטבות</a></li>
           <li><a href="#loans">הלוואות</a></li>
+          <li><a href="#dashboard">אזור אישי</a></li>
           <li><a href="#support">שירות לקוחות</a></li>
         </ul>
       </nav>
@@ -105,7 +106,7 @@
               <li>מסגרת עד ₪50,000</li>
               <li>כניסה לטרקליני נמל תעופה</li>
             </ul>
-            <a class="btn btn-primary" href="#login">פרטים והצטרפות</a>
+            <a class="btn btn-primary" href="./card.html">פרטים והצטרפות</a>
           </article>
 
           <article class="product-card">
@@ -187,6 +188,44 @@
           <button type="submit" class="btn btn-primary btn-block">כניסה (דמו)</button>
           <p class="form-note" id="login-note" role="status"></p>
         </form>
+      </div>
+    </section>
+
+    <!-- PERSONAL AREA / DASHBOARD (demo data) -->
+    <section class="section" id="dashboard">
+      <div class="container">
+        <header class="section-head">
+          <h2>אזור אישי</h2>
+          <p>נתוני דמו בלבד — מיוצרים בצד הלקוח.</p>
+        </header>
+
+        <div class="dash-grid">
+          <div class="dash-card">
+            <span class="dash-label">יתרה לתשלום</span>
+            <strong class="dash-value" id="dash-balance">—</strong>
+            <span class="dash-sub">חיוב קרוב: 2 בחודש</span>
+          </div>
+          <div class="dash-card">
+            <span class="dash-label">מסגרת נותרת</span>
+            <strong class="dash-value" id="dash-limit">—</strong>
+            <div class="progress"><span id="dash-bar"></span></div>
+          </div>
+          <div class="dash-card">
+            <span class="dash-label">נקודות מועדון</span>
+            <strong class="dash-value" id="dash-points">—</strong>
+            <span class="dash-sub">שווי משוער ₪124</span>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <h3>עסקאות אחרונות</h3>
+          <table class="tx-table">
+            <thead>
+              <tr><th>תאריך</th><th>בית עסק</th><th>קטגוריה</th><th class="num">סכום</th></tr>
+            </thead>
+            <tbody id="tx-body"><!-- populated by main.js --></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
