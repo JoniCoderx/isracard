@@ -17,7 +17,7 @@ export function createWorld(renderer) {
 
   // --- Atmosphere: cold industrial dusk with fog for depth ---
   scene.background = new THREE.Color(0x0a1018);
-  scene.fog = new THREE.FogExp2(0x0a1220, 0.018);
+  scene.fog = new THREE.FogExp2(0x151d2c, 0.013);
 
   // --- Image-based lighting for realistic PBR reflections ---
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -47,7 +47,7 @@ export function createWorld(renderer) {
   // --- Lights ---
   const hemi = new THREE.HemisphereLight(0x9fc0ff, 0x2a2418, 0.9);
   scene.add(hemi);
-  const fill = new THREE.AmbientLight(0x4a5568, 0.35);
+  const fill = new THREE.AmbientLight(0x4a5568, 0.55);
   scene.add(fill);
 
   const moon = new THREE.DirectionalLight(0xbcd4ff, 2.1);

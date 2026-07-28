@@ -38,7 +38,7 @@ camera.rotation.order = 'YXZ';
 // ---------- Post-processing ----------
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.32, 0.55, 0.92);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.26, 0.5, 0.98);
 composer.addPass(bloom);
 composer.addPass(new SMAAPass(innerWidth * renderer.getPixelRatio(), innerHeight * renderer.getPixelRatio()));
 const outputPass = new OutputPass();
@@ -53,11 +53,15 @@ const weapon = createWeapon(camera, effects, audio);
 const enemies = createEnemyManager(world, effects, audio);
 
 // Dedicated view-light so the viewmodel reads against dark environments.
-const viewLight = new THREE.PointLight(0xd6e4fa, 2.0, 1.1, 2.0); // short range → minimal world spill
-viewLight.position.set(0.16, 0.22, -0.42);
+// View-lights are LAYER-1-ONLY: they light only the viewmodel (which enables layer 1),
+// never the world — so no more spill patches, and we can light the gun properly.
+const viewLight = new THREE.PointLight(0xd6e4fa, 5.0, 2.2, 2.0);
+viewLight.position.set(0.05, 0.22, -0.55); // in front & slightly above, hits camera-facing top
+viewLight.layers.set(1);
 camera.add(viewLight);
-const viewRim = new THREE.PointLight(0x8aa0d0, 1.4, 1.1, 2.0);
-viewRim.position.set(-0.12, 0.05, -0.48); // grazes the camera-facing side
+const viewRim = new THREE.PointLight(0x9ab0dc, 3.5, 2.2, 2.0);
+viewRim.position.set(-0.18, -0.05, -0.5); // lower-left, grazes the camera-facing side
+viewRim.layers.set(1);
 camera.add(viewRim);
 scene.add(camera); // ensure camera (and its viewmodel children) are in the graph
 

@@ -3,10 +3,10 @@ import * as THREE from 'three';
 // A stylized-but-detailed original carbine built from primitives (no external assets).
 function buildCarbine() {
   const g = new THREE.Group();
-  const body = new THREE.MeshStandardMaterial({ color: 0x44474d, roughness: 0.5, metalness: 0.55, emissive: 0x3c3f46, emissiveIntensity: 0.85 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x1a1e24, roughness: 0.55, metalness: 0.6, emissive: 0x242a33, emissiveIntensity: 0.9 });
-  const rail = new THREE.MeshStandardMaterial({ color: 0x3a3f47, roughness: 0.35, metalness: 0.9 });
-  const accent = new THREE.MeshStandardMaterial({ color: 0x35e0ff, emissive: 0x0aa0c8, emissiveIntensity: 1.1, roughness: 0.3 });
+  const body = new THREE.MeshStandardMaterial({ color: 0x565b65, roughness: 0.5, metalness: 0.45, emissive: 0x646a76, emissiveIntensity: 1.15 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x24282f, roughness: 0.55, metalness: 0.55, emissive: 0x3a4049, emissiveIntensity: 1.05 });
+  const rail = new THREE.MeshStandardMaterial({ color: 0x40454e, roughness: 0.35, metalness: 0.85, emissive: 0x2a2e35, emissiveIntensity: 0.8 });
+  const accent = new THREE.MeshStandardMaterial({ color: 0x35e0ff, emissive: 0x1aa8cc, emissiveIntensity: 0.7, roughness: 0.3 });
   const grip = new THREE.MeshStandardMaterial({ color: 0x16181c, roughness: 0.85, metalness: 0.2 });
 
   function part(geo, mat, x, y, z, rx = 0, ry = 0, rz = 0) {
@@ -55,11 +55,14 @@ export function createWeapon(camera, effects, audio) {
   const rig = new THREE.Group();
   rig.add(group);
   camera.add(rig);
-  group.scale.setScalar(0.92);
-  const HIP = new THREE.Vector3(0.2, -0.205, -0.55);
-  const ADS = new THREE.Vector3(0.0, -0.095, -0.42);
+  // Viewmodel layer: gun meshes live on layers 0 (seen by camera + world lights)
+  // AND 1 (lit by the dedicated view-lights, which are layer-1-only so they never spill on the world).
+  rig.traverse((o) => { if (o.isMesh) o.layers.enable(1); });
+  group.scale.setScalar(0.74);
+  const HIP = new THREE.Vector3(0.3, -0.3, -0.8); // bottom-right, pushed back so it doesn't fill center
+  const ADS = new THREE.Vector3(0.0, -0.1, -0.5);
   group.position.copy(HIP);
-  group.rotation.set(0.02, -0.14, 0.03); // slight 3/4 angle so it reads as a rifle, not end-on
+  group.rotation.set(0.03, -0.13, 0.02); // slight 3/4 angle so it reads as a rifle, not end-on
   group.userData.baseRot = group.rotation.clone();
 
   // muzzle flash (additive sprite) + light

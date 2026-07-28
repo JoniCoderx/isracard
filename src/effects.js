@@ -67,8 +67,8 @@ export function createEffects(scene) {
       emit(point.x, point.y, point.z, {
         life: 0.4 + Math.random() * 0.4, vx: dx * spd, vy: dy * spd, vz: dz * spd,
         grav: isBlood ? -14 : -10, drag: 0.86,
-        r: isBlood ? 0.7 : 1.0, g: isBlood ? 0.05 : 0.75, b: isBlood ? 0.05 : 0.3,
-        size: isBlood ? 3.2 : 2.2,
+        r: isBlood ? 0.65 : 0.6, g: isBlood ? 0.05 : 0.42, b: isBlood ? 0.05 : 0.16,
+        size: isBlood ? 3.0 : 1.9,
       });
     }
     // smoke puff for wall
@@ -83,7 +83,7 @@ export function createEffects(scene) {
       decal(point, normal);
     }
     // light pop
-    flashAt(point, kind === 'flesh' ? 0xff3020 : 0xffc060, 11, 4);
+    flashAt(point, kind === 'flesh' ? 0xff3020 : 0xffc060, 6, 3.5);
   }
 
   // ---- Bullet-hole decals (ring pool) ----
