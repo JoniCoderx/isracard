@@ -1,0 +1,195 @@
+@import "@fontsource-variable/cormorant/index.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-serif: "Cormorant Variable", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --obsidian: #0a0a0b;
+  --ivory: #f4f0e8;
+  --champagne: #c8a96a;
+
+  color-scheme: dark;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  background: var(--obsidian);
+}
+
+body {
+  background: var(--obsidian);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+::selection {
+  background: rgba(200, 169, 106, 0.22);
+  color: var(--ivory);
+}
+
+/* Thin, restrained scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #060607;
+}
+::-webkit-scrollbar-thumb {
+  background: #26262b;
+}
+
+/* ---------- Typographic primitives ---------- */
+.font-serif {
+  font-family: var(--font-serif);
+  font-weight: 300;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--champagne);
+}
+
+.overline {
+  font-size: 0.66rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #8b8b92;
+  font-weight: 500;
+}
+
+/* ---------- Film grain / atmosphere ---------- */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 8s steps(6) infinite;
+}
+
+.vault-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* ---------- Hairline rules ---------- */
+.hairline {
+  border-color: rgba(201, 201, 206, 0.14);
+}
+.hairline-b {
+  border-bottom: 1px solid rgba(201, 201, 206, 0.12);
+}
+.hairline-t {
+  border-top: 1px solid rgba(201, 201, 206, 0.12);
+}
+
+/* ---------- Understated link CTA ---------- */
+.cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  padding-bottom: 0.55rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.cta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: rgba(244, 240, 232, 0.35);
+  transform-origin: left;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.7s;
+}
+.cta:hover::after {
+  background: var(--champagne);
+  transform: scaleX(1.02);
+}
+.cta .cta-arrow {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cta:hover .cta-arrow {
+  transform: translateX(6px);
+}
+
+.cta-ghost {
+  border: 1px solid rgba(201, 201, 206, 0.22);
+  padding: 1.05rem 2.4rem;
+  border-radius: 0;
+  transition: border-color 0.6s, background 0.6s, color 0.6s;
+}
+.cta-ghost::after {
+  display: none;
+}
+.cta-ghost:hover {
+  border-color: rgba(200, 169, 106, 0.6);
+  background: rgba(200, 169, 106, 0.04);
+}
+
+/* ---------- Masked reveal helper (SSR-safe fallback) ---------- */
+.reveal-mask {
+  clip-path: inset(0 0 100% 0);
+}
+
+/* ---------- Diamond-light cursor ---------- */
+.cursor-hide,
+.cursor-hide * {
+  cursor: none !important;
+}
+
+/* number transitions */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain::after {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}

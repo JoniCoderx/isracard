@@ -1,0 +1,13 @@
+import { chromium } from "playwright-core";
+console.log("launching...");
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+console.log("launched");
+const p = await b.newPage({ viewport:{width:1440,height:810} });
+console.log("goto showcase...");
+await p.goto("http://localhost:3000/showcase",{waitUntil:"domcontentloaded",timeout:20000});
+console.log("loaded, waiting 3s");
+await p.waitForTimeout(3000);
+await p.screenshot({ path:"shots/test-showcase.png" });
+console.log("shot done");
+await b.close();
+console.log("closed");
