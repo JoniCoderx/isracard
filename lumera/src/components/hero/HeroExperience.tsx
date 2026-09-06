@@ -14,8 +14,8 @@ const lerp = THREE.MathUtils.lerp;
 // Camera keyframes across scroll progress — approach, orbit, dive into a facet.
 type Key = { p: number; radius: number; azimuth: number; polar: number; ty: number };
 const KEYS: Key[] = [
-  { p: 0.0, radius: 7.2, azimuth: 0.0, polar: 1.35, ty: 0 },
-  { p: 0.18, radius: 4.8, azimuth: 0.4, polar: 1.4, ty: 0 },
+  { p: 0.0, radius: 5.4, azimuth: 0.0, polar: 1.35, ty: 0 },
+  { p: 0.18, radius: 4.2, azimuth: 0.4, polar: 1.4, ty: 0 },
   { p: 0.4, radius: 3.2, azimuth: 1.5, polar: 1.55, ty: 0.05 },
   { p: 0.62, radius: 1.7, azimuth: 2.5, polar: 1.5, ty: 0.1 },
   { p: 0.82, radius: 0.75, azimuth: 3.3, polar: 1.48, ty: 0.12 },
@@ -131,6 +131,7 @@ export default function HeroExperience({
           transmission: quality.tier === "ultra",
         }}
         facets={quality.tier === "ultra" ? 24 : 18}
+        showLine={quality.tier === "ultra"}
       />
       <Dust count={quality.mobile ? 48 : 90} />
       <StudioEnvironment resolution={quality.transmissionResolution} />
