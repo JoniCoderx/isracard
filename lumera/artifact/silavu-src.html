@@ -27,7 +27,21 @@
   .latin { font-family:"Cormorant",Georgia,serif; direction:ltr; unicode-bidi:isolate; }
 
   header { position:fixed; top:0; left:0; right:0; z-index:20; display:flex; align-items:center; justify-content:space-between; padding:max(18px, env(safe-area-inset-top)) var(--pad) 18px; opacity:0; transition:opacity 1.2s var(--ease); }
+  header::before { content:""; position:absolute; inset:0 0 -40px 0; background:linear-gradient(to bottom, rgba(10,10,11,.85), rgba(10,10,11,0)); pointer-events:none; z-index:-1; }
   header.show { opacity:1; }
+  .hconc { display:inline-block; color:var(--ivory-dim); text-decoration:none; font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; padding:10px 0 6px; border-bottom:1px solid rgba(244,240,232,.25); transition:color .5s,border-color .5s; }
+  .hconc:hover, .hconc:focus-visible { color:var(--champagne); border-color:var(--champagne); outline:none; }
+  html[data-lang="he"] .hconc { letter-spacing:.06em; font-size:.74rem; }
+  @media (min-width:900px) { .hconc { display:none; } }
+  /* the chamber rail — a quiet index of the five pieces, lit as you pass; a click takes you there */
+  #rail { position:fixed; right:max(14px, calc(var(--pad) * .35)); top:50%; transform:translateY(-50%); z-index:20; display:none; flex-direction:column; gap:14px; opacity:0; transition:opacity .8s var(--ease); }
+  html[dir="rtl"] #rail { right:auto; left:max(14px, calc(var(--pad) * .35)); }
+  #rail.show { opacity:1; }
+  #rail a { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--graphite); font-family:"Cormorant",Georgia,serif; font-size:.9rem; letter-spacing:.06em; transition:color .5s; }
+  #rail a i { display:block; width:14px; height:1px; background:currentColor; transition:width .5s var(--ease); }
+  #rail a.on { color:var(--ivory); } #rail a.on i { width:28px; }
+  #rail a:hover { color:var(--champagne); }
+  @media (min-width:900px) { #rail { display:flex; } }
   .mark { font-family:"Cormorant",Georgia,serif; font-weight:400; font-size:1.35rem; letter-spacing:.32em; padding-left:.32em; direction:ltr; }
   nav { display:none; gap:28px; }
   nav a { color:var(--ash); text-decoration:none; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; padding:8px 0; border-bottom:1px solid transparent; transition:color .5s,border-color .5s; }
@@ -43,7 +57,8 @@
   main { position:relative; z-index:10; }
   section { position:relative; min-height:100svh; display:flex; flex-direction:column; justify-content:center; padding:12svh var(--pad); }
   .center { align-items:center; text-align:center; }
-  .statement { font-family:var(--serif); font-weight:300; line-height:.98; font-size:clamp(2.3rem,7vw,6rem); text-wrap:balance; max-width:16ch; }
+  .statement { font-family:var(--serif); font-weight:300; line-height:.98; letter-spacing:-.01em; font-size:clamp(2.3rem,7vw,6rem); text-wrap:balance; max-width:16ch; }
+  html[data-lang="he"] .statement, html[data-lang="he"] .caption .name { line-height:1.12; letter-spacing:0; }
   .statement em { font-style:italic; color:var(--ivory-dim); }
   html[data-lang="he"] .statement em { font-style:normal; }
   .lede { color:var(--ash); font-size:clamp(.98rem,1.3vw,1.12rem); line-height:1.7; max-width:44ch; margin-top:1.6rem; }
@@ -109,7 +124,7 @@
 
   #rare .lede { text-align:center; }
   @media (min-width:900px) { #rare { align-items:flex-start; text-align:left; } #rare .lede { text-align:left; } #rare .statement { max-width:14ch; } }
-  .chamber { min-height:112svh; justify-content:flex-end; padding-bottom:max(9svh, calc(env(safe-area-inset-bottom) + 28px)); }
+  .chamber { min-height:112svh; justify-content:flex-end; padding-bottom:max(9svh, calc(env(safe-area-inset-bottom) + 28px)); touch-action:pan-y; }
   .caption { max-width:560px; }
   .caption .name { font-family:var(--serif); font-weight:300; font-size:clamp(2.2rem,8vw,4.8rem); line-height:.96; margin-top:.7rem; }
   .caption .name em { font-style:italic; color:var(--ivory-dim); }
@@ -135,7 +150,10 @@
     html[dir="rtl"] #ch-line .photo::after { background:linear-gradient(to left, var(--obsidian) 0%, rgba(10,10,11,.6) 16%, rgba(10,10,11,0) 40%), linear-gradient(to top, rgba(10,10,11,.6) 0%, rgba(10,10,11,0) 32%); }
   }
   .build { margin-top:1.2rem; display:grid; gap:14px; max-width:640px; }
-  #strip { height:clamp(64px,9vw,96px); width:100%; max-width:560px; margin:4px 0 2px; }
+  #strip { height:clamp(64px,9vw,96px); width:100%; max-width:560px; margin:4px 0 0; }
+  .sum { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:-2px 0 4px; }
+  .sum span:not(.bar) { font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--platinum); font-variant-numeric:tabular-nums; }
+  html[data-lang="he"] .sum span:not(.bar) { letter-spacing:.08em; font-size:.74rem; }
   .brow { display:flex; align-items:center; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:2px; }
   .brow::-webkit-scrollbar { display:none; }
   @media (min-width:820px) { .brow { flex-wrap:wrap; overflow:visible; } }
@@ -174,6 +192,11 @@
   .field label { position:absolute; inset-inline-start:0; top:22px; color:var(--graphite); font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; pointer-events:none; transition:top .4s var(--ease), color .4s; }
   html[data-lang="he"] .field label { letter-spacing:.08em; font-size:.74rem; }
   .field:focus-within label, .field.filled label { top:2px; color:var(--ash); }
+  .field.err { border-color:rgba(214,120,104,.8); animation:nudge .5s var(--ease); }
+  .field.err label { color:rgba(214,120,104,.9); }
+  @keyframes nudge { 0%,100%{transform:none;} 30%{transform:translateX(-4px);} 60%{transform:translateX(3px);} }
+  .wa { display:none; align-items:center; gap:10px; margin-top:1.4rem; }
+  .wa.show { display:inline-flex; }
   .chan { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   .chan .overline { min-width:64px; color:var(--graphite); }
   .send { justify-self:start; background:var(--ivory); color:var(--obsidian); border:none; cursor:pointer; padding:16px 28px; font-size:.68rem; letter-spacing:.26em; text-transform:uppercase; font-weight:500; transition:background .4s, transform .4s var(--ease); }
@@ -207,6 +230,8 @@
   .wordmark { font-family:"Cormorant",Georgia,serif; font-weight:300; color:var(--ivory); font-size:clamp(2.6rem,13vw,10rem); letter-spacing:.3em; padding-left:.3em; direction:ltr; position:relative;
     background:linear-gradient(100deg, var(--ivory) 0%, var(--ivory) 40%, #fff 50%, var(--ivory) 60%, var(--ivory) 100%) 0 0 / 300% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:sweep 5s var(--ease) 1.4s infinite; }
   @keyframes sweep { 0%{background-position:100% 0;} 45%,100%{background-position:0 0;} }
+  .lineoflight { width:min(62vw,520px); height:1px; margin-top:22px; background:linear-gradient(90deg, transparent, var(--ivory-dim) 30%, #fff 50%, var(--ivory-dim) 70%, transparent); transform:scaleX(0); animation:drawline 2.2s var(--ease) 1.5s forwards; }
+  @keyframes drawline { to { transform:scaleX(1); } }
   .subline { display:flex; gap:14px; align-items:center; margin-top:18px; flex-wrap:wrap; justify-content:center; }
   .subline span:not(.bar) { font-size:.62rem; letter-spacing:.32em; text-transform:uppercase; color:var(--platinum); }
   html[data-lang="he"] .subline span:not(.bar) { letter-spacing:.1em; font-size:.76rem; }
@@ -237,9 +262,17 @@
   </nav>
   <div class="hright">
     <div class="overline" data-en="DUBAI · TEL AVIV" data-he="דובאי · תל אביב">DUBAI · TEL AVIV</div>
+    <a class="hconc" href="#concierge" data-en="Concierge" data-he="קונסיירז׳">Concierge</a>
     <button class="lang" id="langBtn" aria-label="Switch language">עברית</button>
   </div>
 </header>
+<nav id="rail" aria-label="Chambers">
+  <a href="#ch-ring" title="Solitaire Noir"><i></i>I</a>
+  <a href="#ch-line" title="The SILAVU Line"><i></i>II</a>
+  <a href="#ch-riv" title="Rivière Lumière"><i></i>III</a>
+  <a href="#ch-star" title="The Desert Star"><i></i>IV</a>
+  <a href="#ch-sapphire" title="Sapphire of the Gulf"><i></i>V</a>
+</nav>
 
 <main>
   <!-- The film -->
@@ -252,6 +285,7 @@
           <div class="overline champ" data-en="The SILAVU Line · 18K white gold" data-he="קו SILAVU · זהב לבן 18K">The SILAVU Line · 18K white gold</div>
           <h1 class="statement" style="margin-top:1rem" data-en="One line <em>of light.</em>" data-he="קו אחד <em>של אור.</em>">One line <em>of light.</em></h1>
           <p class="lede" data-en="Scroll, and lift it from the box." data-he="גללו — והרימו אותו מהקופסה.">Scroll, and lift it from the box.</p>
+          <div class="sum" style="margin-top:1.4rem"><span>36 × 0.17 CT</span><span class="bar"></span><span>D–F · VVS</span><span class="bar"></span><span data-en="Hand-set in Dubai" data-he="משובץ ביד בדובאי">Hand-set in Dubai</span></div>
         </div>
         <div class="fc" data-i="1">
           <div class="overline champ" data-en="Thirty-six brilliants" data-he="שלושים ושישה בריליאנטים">Thirty-six brilliants</div>
@@ -277,7 +311,7 @@
   <section id="macro">
     <div class="macropin">
       <div class="macrohead">
-        <div class="overline champ reveal" data-en="The Stone · Round Brilliant · 4.02 CT" data-he="האבן · בריליאנט עגול · 4.02 קראט">The Stone · Round Brilliant · 4.02 CT</div>
+        <div class="overline champ reveal"><span data-en="The Stone · Round Brilliant · 4.02 CT" data-he="האבן · בריליאנט עגול · 4.02 קראט">The Stone · Round Brilliant · 4.02 CT</span> <span id="loupe" style="color:var(--platinum);margin-inline-start:12px;font-variant-numeric:tabular-nums">1×</span></div>
         <h2 class="statement reveal d1" style="margin-top:1rem" data-en="Closer. <em>Then closer.</em>" data-he="קרוב. <em>ואז קרוב יותר.</em>">Closer. <em>Then closer.</em></h2>
       </div>
       <div class="specs">
@@ -312,6 +346,7 @@
       <p class="desc reveal d1" data-en="Choose the stone, the weight and the metal. The line changes as you do." data-he="בחרו את האבן, המשקל והמתכת. הקו משתנה יחד איתכם.">Choose the stone, the weight and the metal. The line changes as you do.</p>
       <div class="build reveal d2" id="build">
         <div id="strip" aria-hidden="true"></div>
+        <div class="sum" id="sum" aria-live="polite"><span id="sumCt">6.00 CT</span><span class="bar"></span><span id="sumStones">36 × 0.17 CT</span><span class="bar"></span><span id="sumMetal" data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span></div>
         <div class="brow"><span class="overline" data-en="Stone" data-he="אבן">Stone</span>
           <button class="chip on" data-k="origin" data-v="lab" data-en="Lab-grown" data-he="מעבדה">Lab-grown</button>
           <button class="chip" data-k="origin" data-v="natural" data-en="Natural" data-he="טבעי">Natural</button></div>
@@ -382,9 +417,10 @@
           <div class="clock"><div class="c" id="clkDXB">--:--</div><div class="overline" data-en="Dubai" data-he="דובאי">Dubai</div></div>
           <div class="clock"><div class="c" id="clkTLV">--:--</div><div class="overline" data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</div></div>
         </div>
+        <a class="link wa" id="waLink" target="_blank" rel="noopener" href="#" data-en="WhatsApp the concierge" data-he="וואטסאפ לקונסיירז׳">WhatsApp the concierge</a>
         <p class="fine reveal d3" data-en="Replies within the hour, 9:00–21:00 Gulf time. Viewings at your residence, your hotel, or our ateliers. Discretion is absolute." data-he="מענה תוך שעה, 9:00–21:00 שעון המפרץ. צפייה בביתכם, במלון או בסטודיו שלנו. הדיסקרטיות מוחלטת.">Replies within the hour, 9:00–21:00 Gulf time. Viewings at your residence, your hotel, or our ateliers. Discretion is absolute.</p>
       </div>
-      <form id="cform" class="reveal d2" novalidate>
+      <form id="cform" class="reveal d2" novalidate data-mail="concierge@silavu.com" data-wa="">
         <div class="fields" style="display:grid;gap:22px">
           <div class="field"><input id="fName" type="text" autocomplete="name" required><label for="fName" data-en="Name" data-he="שם">Name</label></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
@@ -413,16 +449,19 @@
     <div class="final-mark reveal">SILAVU</div>
     <div class="tag reveal d1" data-en="Private by design." data-he="פרטי מעצם העיצוב.">Private by design.</div>
     <div class="footline reveal d2"><span class="overline" data-en="DUBAI · TEL AVIV" data-he="דובאי · תל אביב">DUBAI · TEL AVIV</span><span class="bar"></span><span class="overline" data-en="PRIVATE VIEWINGS BY APPOINTMENT" data-he="צפייה פרטית בתיאום מראש">PRIVATE VIEWINGS BY APPOINTMENT</span></div>
+    <div class="footline reveal d3" style="margin-top:1.4rem"><a class="link" href="#film-sec" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
+    <div class="overline reveal d3" style="margin-top:3.5rem;color:var(--graphite)">© SILAVU · <span data-en="All stones GIA or IGI certified" data-he="כל האבנים מאושרות GIA או IGI">All stones GIA or IGI certified</span></div>
   </section>
 </main>
 
-<div id="hint"><span class="overline" data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
+<div id="hint" hidden></div>
 
 <div id="intro">
   <div id="spark"></div>
   <button class="lang introlang" id="langBtn2" aria-label="Switch language">עברית</button>
   <div class="introwrap" id="introwrap">
     <div class="wordmark">SILAVU</div>
+    <div class="lineoflight" aria-hidden="true"></div>
     <div class="subline"><span data-en="High Jewellery" data-he="תכשיטי יוקרה">High Jewellery</span><span class="bar"></span><span class="champ" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span></div>
     <button class="enter" id="enterBtn"><span data-en="Enter SILAVU" data-he="היכנסו ל־SILAVU">Enter SILAVU</span>
       <svg width="10" height="24" viewBox="0 0 10 24" fill="none" aria-hidden="true"><path d="M5 0v20M1 16l4 4 4-4" stroke="currentColor" stroke-width="1"/></svg>
@@ -453,15 +492,23 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
       requestAnimationFrame(function () { introwrap.style.filter = "blur(0px)"; introwrap.style.opacity = "1"; });
     }, 1100);
   }
-  var entered = false;
+  var entered = false, rail = document.getElementById("rail");
   document.getElementById("enterBtn").addEventListener("click", function () {
     entered = true;
-    intro.classList.add("gone"); document.body.classList.remove("locked"); header.classList.add("show"); hint.classList.add("show");
+    intro.classList.add("gone"); document.body.classList.remove("locked"); header.classList.add("show"); rail.classList.add("show");
     setTimeout(function () { intro.style.display = "none"; }, 1400);
     try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") DeviceOrientationEvent.requestPermission().catch(function(){}); } catch (e) {}
   });
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("in"); }); }, { threshold: 0.12 });
   document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+
+  /* every in-page link lands the target on stage: chambers centred on the piece, the film at its start */
+  function stageTop(el) { var r = el.getBoundingClientRect(), top = scrollY + r.top; if (el.id === "film-sec") return 0; if (el.classList.contains("chamber")) return top + r.height * 0.55 - innerHeight * 0.5; return top; }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest('a[href^="#"]'); if (!a) return; var el = document.querySelector(a.getAttribute("href")); if (!el) return;
+    e.preventDefault(); window.scrollTo({ top: Math.max(0, stageTop(el)), behavior: reduce ? "auto" : "smooth" });
+  });
+  var railLinks = Array.prototype.slice.call(rail.querySelectorAll("a"));
 
   /* ── photography slots ── */
   var slots = { line: "ch-line", ring: "ch-ring", riv: "ch-riv", star: "ch-star", sapphire: "ch-sapphire" };
@@ -515,9 +562,13 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
     /* macro specs appear as the camera arrives */
     var mr = macroSec.getBoundingClientRect(), mq = c01(-mr.top / (mr.height - vh)); window.__macro = mq; window.__macroOut = c01((mr.bottom - vh * 0.35) / (vh * 0.5));
     for (var s = 0; s < specEls.length; s++) specEls[s].classList.toggle("on", mq >= +specEls[s].getAttribute("data-at"));
-    if (entered && scrollY > vh * 0.4) hint.classList.remove("show");
+    if (loupe) { var lz = Math.round(1 + 9 * ss(mq)); if (lz !== lastLoupe) { lastLoupe = lz; loupe.textContent = lz + "×"; } }
+    /* the chamber rail lights the piece on stage */
+    var bestI = -1, bestV = 0.35;
+    for (var c = 0; c < railLinks.length; c++) { var ce = document.querySelector(railLinks[c].getAttribute("href")); if (!ce) continue; var cr = ce.getBoundingClientRect(); var cv = c01(1 - Math.abs(cr.top + cr.height * .55 - vh * .5) / (vh * .85)); if (cv > bestV) { bestV = cv; bestI = c; } }
+    for (var c2 = 0; c2 < railLinks.length; c2++) railLinks[c2].classList.toggle("on", c2 === bestI);
   }
-  var macroSec = document.getElementById("macro"), specEls = Array.prototype.slice.call(document.querySelectorAll(".spec"));
+  var macroSec = document.getElementById("macro"), specEls = Array.prototype.slice.call(document.querySelectorAll(".spec")), loupe = document.getElementById("loupe"), lastLoupe = 0;
   tick();
 
   /* ── language ── */
@@ -526,27 +577,34 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
     document.documentElement.setAttribute("data-lang", lang); document.documentElement.setAttribute("dir", lang === "he" ? "rtl" : "ltr"); document.documentElement.setAttribute("lang", lang);
     document.querySelectorAll("[data-en]").forEach(function (el) { var v = el.getAttribute(lang === "he" ? "data-he" : "data-en"); if (v != null) el.innerHTML = v; });
     btns.forEach(function (b) { b.textContent = lang === "he" ? "English" : "עברית"; });
-    sizeFilm();
+    sizeFilm(); if (window.__price) window.__price();
   }
   btns.forEach(function (b) { b.addEventListener("click", function () { lang = lang === "he" ? "en" : "he"; applyLang(); }); });
 
   /* ── the builder ── */
   window.__build = { origin: "lab", ct: 6, metal: "white" };
   var estEl = document.getElementById("est");
-  var NAMES = { white: { en: "18K white", he: "זהב לבן" }, yellow: { en: "18K yellow", he: "זהב צהוב" }, rose: { en: "18K rose", he: "זהב ורוד" }, platinum: { en: "platinum", he: "פלטינה" } };
+  var NAMES = { white: { en: "18K white gold", he: "זהב לבן 18K" }, yellow: { en: "18K yellow gold", he: "זהב צהוב 18K" }, rose: { en: "18K rose gold", he: "זהב ורוד 18K" }, platinum: { en: "Platinum", he: "פלטינה" } };
+  var sumCt = document.getElementById("sumCt"), sumStones = document.getElementById("sumStones"), sumMetal = document.getElementById("sumMetal");
   function price() {
     var b = window.__build, base = b.origin === "natural" ? 16000 : 3400;
     var prem = 1 + Math.pow(b.ct / 6, 1.25) * (b.origin === "natural" ? 1.4 : 0.6);
     var stones = base * prem * 1.4 * b.ct, metal = b.metal === "platinum" ? 8200 : b.metal === "white" ? 5200 : 5600;
     var total = stones + metal + 12000 + stones * 0.05;
     estEl.textContent = "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");
+    sumCt.textContent = b.ct.toFixed(2) + " CT"; sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " CT"; sumMetal.textContent = NAMES[b.metal][lang];
   }
-  document.getElementById("build").addEventListener("click", function (e) {
+  window.__price = price;
+  var build = document.getElementById("build");
+  build.addEventListener("click", function (e) {
     var c = e.target.closest(".chip"); if (!c) return;
     var k = c.getAttribute("data-k"), v = c.getAttribute("data-v");
     document.querySelectorAll('.chip[data-k="' + k + '"]').forEach(function (x) { x.classList.remove("on"); });
-    c.classList.add("on"); window.__build[k] = k === "ct" ? Number(v) : v; price();
+    c.classList.add("on"); window.__build[k] = k === "ct" ? Number(v) : v; window.__preview = null; price();
   });
+  /* hovering a metal previews it on the strip before you commit */
+  build.addEventListener("mouseover", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = c.getAttribute("data-v"); });
+  build.addEventListener("mouseout", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = null; });
   price();
   document.getElementById("reserve").addEventListener("click", function () {
     var b = window.__build, msg = document.getElementById("fMsg");
@@ -562,16 +620,19 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
     } catch (e) {}
   }
   clocks(); setInterval(clocks, 15000);
-  var form = document.getElementById("cform"), chan = "WhatsApp";
-  form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", f); el.addEventListener("blur", f); });
+  var form = document.getElementById("cform"), chan = "WhatsApp", mail = form.getAttribute("data-mail") || "", wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, ""), waLink = document.getElementById("waLink");
+  if (wa) { waLink.href = "https://wa.me/" + wa + "?text=" + encodeURIComponent("Hello SILAVU — I would like a private viewing."); waLink.classList.add("show"); }
+  form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); el.parentElement.classList.remove("err"); }; el.addEventListener("input", f); el.addEventListener("blur", f); });
   form.addEventListener("click", function (e) { var c = e.target.closest(".chip[data-ch]"); if (!c) return; form.querySelectorAll(".chip[data-ch]").forEach(function (x) { x.classList.remove("on"); }); c.classList.add("on"); chan = c.getAttribute("data-ch"); });
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var name = document.getElementById("fName"), contact = document.getElementById("fContact");
-    if (!name.value.trim()) { name.focus(); return; } if (!contact.value.trim()) { contact.focus(); return; }
+    var name = document.getElementById("fName"), contact = document.getElementById("fContact"), bad = null;
+    [contact, name].forEach(function (el) { if (!el.value.trim()) { el.parentElement.classList.remove("err"); void el.offsetWidth; el.parentElement.classList.add("err"); bad = el; } });
+    if (bad) { bad.focus(); return; }
     var body = [name.value, document.getElementById("fCity").value, contact.value, "Reply by " + chan, "", document.getElementById("fMsg").value].join("\n");
     form.classList.add("sent");
-    try { location.href = "mailto:concierge@silavu.com?subject=" + encodeURIComponent("SILAVU · private enquiry · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {}
+    if (chan === "WhatsApp" && wa) { try { window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(body), "_blank", "noopener"); } catch (err) {} }
+    else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · private enquiry · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
   });
 })();
 </script>
@@ -651,7 +712,7 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
   var FS_SPR = "precision mediump float; uniform sampler2D uTex; uniform float uMode; uniform vec3 uMetal; uniform float uFade; varying vec2 vUv; varying vec2 vP;"
     + " void main(){"
     + "  if(uMode>=1.0){ float r=length(vP); float ring=smoothstep(1.0,0.96,r)*smoothstep(uMode-1.0-0.03,uMode-1.0,r);"
-    + "   float ang=atan(vP.y,vP.x); float brush=0.04*sin(ang*160.0+r*40.0)*sin(r*230.0); float shade=0.55+0.45*cos(ang-2.3)+brush; float spec=pow(max(0.0,cos(ang-2.3)),24.0)*0.9; float edge=smoothstep(0.0,0.06,min(1.0-r,r-(uMode-1.0)));"
+    + "   float ang=atan(vP.y,vP.x); float brush=0.04*sin(ang*160.0+r*40.0)*sin(r*230.0); float shade=0.42+0.38*cos(ang-2.3)+0.2*cos(ang+0.9)+brush; float spec=pow(max(0.0,cos(ang-2.3)),24.0)*0.9+pow(max(0.0,cos(ang+0.9)),40.0)*0.45; float edge=smoothstep(0.0,0.06,min(1.0-r,r-(uMode-1.0)));"
     + "   vec3 c=uMetal*shade+spec; c*=0.75+0.25*edge; gl_FragColor=vec4(c*ring*uFade,ring*uFade); }"
     + "  else if(uMode>-0.5){ vec4 t=texture2D(uTex,vec2(vUv.x,1.0-vUv.y)); vec3 c=t.rgb/max(t.a,1e-4); c=mix(c,c*c*(3.0-2.0*c),0.7); c=clamp(c*1.08,0.0,1.0); gl_FragColor=vec4(c*t.a,t.a)*uFade; }"
     + "  else if(uMode>-1.5){ float r=length(vP); float disc=smoothstep(1.0,0.88,r); float rim=smoothstep(0.7,0.94,r)*smoothstep(1.0,0.95,r); float ang=atan(vP.y,vP.x);"
@@ -822,8 +883,8 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
       }
     } else {
       /* pieces built from instances of the traced stone */
-      var b = window.__build, metal = METAL[b.metal] || METAL.white;
-      renderStoneTex(t*0.25, best === "line" ? -0.52 : best === "star" ? -1.15 : -0.62, [1,1,1], 0, best === "riv" ? 1.1 : 1.75, best === "star" ? 3.7 : 3.3);
+      var b = window.__build, metal = METAL[window.__preview || b.metal] || METAL.white;
+      renderStoneTex(t*0.25, best === "line" ? -0.52 : best === "star" ? -1.15 : -0.9, [1,1,1], 0, 1.75, best === "star" ? 3.7 : 3.3);
       gl.clearColor(0.02,0.02,0.024,1); gl.clear(gl.COLOR_BUFFER_BIT);
       beginSprites();
       var m = Math.min(W,H), cx2 = mobile ? W*0.5 : W*0.66, cy2 = mobile ? H*0.27 : H*0.46, spin = reduce ? 0 : t*0.12;
@@ -838,8 +899,12 @@ window.PHOTOS = { line: "", ring: "", riv: "", star: "", sapphire: "" };
           for (var j = 0; j < n; j++) sprite(sx + gap*(j+0.5), yy + sz*1.5, sz, 0, A*0.18, true, sz*0.6);  /* a short reflection */
         }
       } else if (best === "riv") {
-        var nn = mobile ? 27 : 41;
-        for (var q = 0; q < nn; q++) { var tt = q/(nn-1), xx = cx2 + (tt-0.5)*m*0.78, yy2 = cy2 - m*0.08 + (Math.cosh((tt-0.5)*3.2)-1)*m*0.075; var sz2 = m*(0.014 + 0.03*(1-Math.abs(tt-0.5)*2)); sprite(xx, yy2, sz2, tt*2.0 + spin*0.5, act.riv); }
+        /* graduated stones on a white-gold chain: links drawn between neighbours, a bezel under each stone */
+        var nn = mobile ? 27 : 41, PX = [], PY = [], PS2 = [];
+        for (var q = 0; q < nn; q++) { var tt = q/(nn-1); PX.push(cx2 + (tt-0.5)*m*0.78); PY.push(cy2 - m*0.08 + (Math.cosh((tt-0.5)*3.2)-1)*m*0.075); PS2.push(m*(0.014 + 0.03*(1-Math.abs(tt-0.5)*2))); }
+        for (var q2 = 0; q2 < nn-1; q2++) { var lx = (PX[q2]+PX[q2+1])*0.5, ly = (PY[q2]+PY[q2+1])*0.5, la = Math.atan2(PY[q2+1]-PY[q2], PX[q2+1]-PX[q2]); rect(lx, ly + PS2[q2]*0.1, (PX[q2+1]-PX[q2])*0.5, Math.max(1, m*0.003), la, METAL.white, act.riv*0.9); }
+        for (var q3 = 0; q3 < nn; q3++) { band(PX[q3], PY[q3] + PS2[q3]*0.05, PS2[q3]*0.62, PS2[q3]*0.56, 0.8, METAL.white, act.riv*0.9); sprite(PX[q3], PY[q3], PS2[q3], (q3 % 3) * 0.35, act.riv);
+          var tw4 = Math.pow(Math.max(0, Math.sin(t*1.6 + q3*1.9)), 30); if (tw4 > 0.02 && PS2[q3] > m*0.02) glint(PX[q3] + PS2[q3]*0.1, PY[q3] - PS2[q3]*0.1, PS2[q3]*1.5, act.riv*tw4*0.8, 0.25); }
       } else if (best === "star") {
         /* a halo pendant seen face-on: a platinum gallery, sixteen bezel-set brilliants, the centre stone in its own rim */
         var R = m*0.20, hs = m*0.031, A2 = act.star;
