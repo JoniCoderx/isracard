@@ -21,7 +21,7 @@ const framesDir = path.join(media, "frames");
 const frameFiles = fs.existsSync(framesDir) ? fs.readdirSync(framesDir).filter(f => /\.jpe?g$/i.test(f)).sort() : [];
 const frames = [];
 let bytes = 0;
-for (const f of frameFiles) { const d = await jpeg(path.join(framesDir, f), 840, 74); frames.push(d); bytes += d.length; }
+for (const f of frameFiles) { const d = await jpeg(path.join(framesDir, f), 1244, 72); frames.push(d); bytes += d.length; }
 frames.reverse();
 html = html.replace(/window\.FILM\s*=\s*\[[\s\S]*?\];/, "window.FILM = " + JSON.stringify(frames) + ";");
 html = html.replace("__POSTER__", frames.length ? frames[0] : "");
@@ -30,7 +30,7 @@ const KEYS = ["line", "ring", "riv", "star", "sapphire"];
 const photos = {};
 for (const k of KEYS) {
   const f = ["jpg", "jpeg", "png", "webp"].map(e => path.join(media, `${k}.${e}`)).find(p => fs.existsSync(p));
-  photos[k] = f ? await jpeg(f, 1400, 80) : "";
+  photos[k] = f ? await jpeg(f, 1400, 84) : "";
 }
 const re = /window\.PHOTOS\s*=\s*\{[\s\S]*?\};/;
 if (!re.test(html)) { console.error("PHOTOS block not found"); process.exit(1); }
