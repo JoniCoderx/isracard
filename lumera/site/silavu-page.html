@@ -456,7 +456,7 @@
     var b0 = document.querySelector('.beat[data-i="0"]'); if (b0) b0.classList.add("on");
   }
   $("enterBtn").addEventListener("click", enter);
-  setTimeout(enter, reduce ? 1200 : 4200);
+  setTimeout(enter, reduce ? 1200 : 5500);
   ["wheel", "touchmove", "keydown"].forEach(function (ev) { addEventListener(ev, enter, { passive: true, once: true }); });
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("in"); }); }, { threshold: 0.12 });
   document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });

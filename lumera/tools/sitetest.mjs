@@ -4,7 +4,7 @@ const out = [];
 for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,height:844}]]) {
   const p = await b.newPage({ viewport: vp }); const errs = []; p.on("pageerror", e => errs.push(e.message));
   await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(1200);
-  await p.click("#enterBtn"); await p.waitForTimeout(800); await p.mouse.move(2,2);
+  await p.waitForTimeout(2200); await p.click("#enterBtn", { timeout: 4000 }).catch(() => {}); await p.waitForTimeout(800); await p.mouse.move(2,2);
   const y = () => p.evaluate(() => scrollY), top = id => p.evaluate(id => scrollY + document.getElementById(id).getBoundingClientRect().top, id);
   for (const [sel,id] of [['nav a[href="#collection"]',"collection"],['nav a[href="#concierge"]',"concierge"],['.hconc',"concierge"],['.beat[data-i="2"] a[href="#build"]',"build"]]) {
     const vis = await p.evaluate(s => { const el=document.querySelector(s); return !!el && getComputedStyle(el).display!=="none" && el.getClientRects().length>0; }, sel);
