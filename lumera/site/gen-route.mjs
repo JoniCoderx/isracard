@@ -25,7 +25,8 @@ export const Route = createFileRoute("/")({
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "preload", as: "image", href: "/img/hero.jpg" },
+      { rel: "preload", as: "image", href: "/img/hero.jpg", media: "(min-width: 900px)" },
+      { rel: "preload", as: "image", href: "/img/herov.jpg", media: "(max-width: 899px)" },
     ],
   }),
   component: Index,
