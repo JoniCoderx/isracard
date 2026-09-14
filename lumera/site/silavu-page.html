@@ -90,7 +90,7 @@
   .dbeat .h { margin-top:10px; font-size:clamp(2.3rem,6.4vw,6rem); }
   .dbeat .p { margin-top:14px; }
   @media (min-width:900px) { .dvcap { right:auto; width:min(56vw,760px); } html[dir="rtl"] .dvcap { left:auto; right:var(--pad); } }
-  .dossier { position:absolute; inset:0; z-index:5; opacity:0; visibility:hidden; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:20px; padding:max(13svh,104px) var(--pad) max(5svh, calc(env(safe-area-inset-bottom) + 26px)); background:linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,.15) 100%); will-change:opacity; }
+  .dossier { position:absolute; inset:0; z-index:5; opacity:0; visibility:hidden; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:20px; padding:max(13svh,104px) var(--pad) max(5svh, calc(env(safe-area-inset-bottom) + 26px)); background:linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.3) 45%, rgba(0,0,0,.08) 100%); will-change:opacity; }
   .dossier.on { pointer-events:auto; }
   .dhead { margin-bottom:auto; }
   .dnum { display:flex; align-items:baseline; gap:12px; margin-top:6px; line-height:.9; direction:ltr; }
@@ -583,7 +583,7 @@
     var iIn = ss(seg(u, 3.9, 4.35)), drift = seg(u, 4.9, T);
     layer(dvIn, iIn * (1 - ss(seg(u, 8.05, T))));
     inImg.style.transform = "scale(" + (lerp(1.45, 1.0, ss(seg(u, 3.9, 5.0))) + 0.14 * drift).toFixed(4) + ") rotate(" + (drift * 4).toFixed(2) + "deg)";
-    inImg.style.filter = "brightness(" + (1 - 0.5 * ss(seg(u, 5.0, 5.4))).toFixed(3) + ")";
+    inImg.style.filter = "brightness(" + (1 - 0.36 * ss(seg(u, 5.0, 5.4))).toFixed(3) + ")";
     /* two captions on the way down */
     var DB = [[2.6, 3.45], [4.5, 5.1]];
     for (var j = 0; j < dbeats.length; j++) { var oo = ss(seg(u, DB[j][0], DB[j][0] + 0.2)) * (1 - ss(seg(u, DB[j][1] - 0.2, DB[j][1]))); dbeats[j].style.opacity = oo.toFixed(3); dbeats[j].style.transform = "translateY(" + ((1 - oo) * 20).toFixed(1) + "px)"; dbeats[j].classList.toggle("on", oo > 0.5); }
