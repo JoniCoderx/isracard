@@ -28,7 +28,7 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("inside").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(900);
   out.push((await p.evaluate(() => !!document.getElementById("insidevid").getAttribute("src") && document.getElementById("whereN").textContent === "02") ? "PASS":"FAIL") + ` ${tag} inside chapter loads its film`);
   // stone picker
-  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("standard").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(500);
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("dossier").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(500);
   await p.click("#dNext"); await p.click("#dNext"); out.push((await p.textContent("#dcur")) === "03" ? "PASS":"FAIL"); out[out.length-1] += ` ${tag} stone next`;
   await p.evaluate(() => document.querySelector('#dline b[data-j="20"]').click()); out.push(((await p.textContent("#dcur")) === "21" && /ct$/.test(await p.textContent("#dv0")) ? "PASS":"FAIL") + ` ${tag} stone tap`);
   // piece → concierge prefilled
@@ -56,15 +56,20 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.evaluate(() => document.getElementById("pmReq").click()); await p.waitForTimeout(600);
   out.push((await p.evaluate(() => !document.getElementById("pmodal").classList.contains("open") && /Rivi/.test(document.getElementById("fMsg").value)) ? "PASS":"FAIL") + ` ${tag} piece window → request`);
   await p.evaluate(() => document.getElementById("pickup").click()); await p.waitForTimeout(900);
-  out.push((await p.evaluate(() => document.getElementById("play").classList.contains("on") && document.getElementById("putback").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain picked up`;
+  out.push(((await p.evaluate(() => document.getElementById("play").classList.contains("on") && document.getElementById("putback").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain picked up`);
   await p.evaluate(() => document.getElementById("putback").click());
-  out.push((await p.evaluate(() => !document.getElementById("play").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain put back`;
+  out.push(((await p.evaluate(() => !document.getElementById("play").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain put back`);
   await p.evaluate(() => document.getElementById("tryonBtn").click()); await p.waitForTimeout(400);
-  out.push((await p.evaluate(() => document.getElementById("tryon").classList.contains("open") && document.getElementById("tcanvas").width > 0)) ? "PASS":"FAIL") + ` ${tag} try-on opens`;
+  out.push(((await p.evaluate(() => document.getElementById("tryon").classList.contains("open") && document.getElementById("tcanvas").width > 0)) ? "PASS":"FAIL") + ` ${tag} try-on opens`);
   await p.keyboard.press("Escape"); await p.waitForTimeout(300);
   await p.click('.chip[data-k="ct"][data-v="20"]');
   out.push((await p.evaluate(() => /0\.56/.test(document.getElementById("eachCt").textContent) && /5\.3/.test(document.getElementById("eachMm").textContent)) ? "PASS":"FAIL") + ` ${tag} carat explained (${await p.evaluate(() => document.getElementById("eachCt").textContent + " / " + document.getElementById("eachMm").textContent)})`);
   out.push((await p.evaluate(() => document.getElementById("dust").width > 0 && document.getElementById("pbar").style.width !== "") ? "PASS":"FAIL") + ` ${tag} dust + progress alive`);
+  out.push(((await p.evaluate(() => document.querySelectorAll(".h.sp .w").length > 2 && document.querySelectorAll("#hero .late.in").length >= 4)) ? "PASS":"FAIL") + ` ${tag} hero words split + revealed after enter`);
+  out.push(((await p.evaluate(() => { const m = document.querySelector(".sh .mark").getBoundingClientRect(); return Math.abs((m.left + m.right) / 2 - innerWidth / 2) < 3 && document.querySelectorAll(".sh .mark svg.gv").length === 1; })) ? "PASS":"FAIL") + ` ${tag} mark centred, gem in the wordmark`);
+  out.push(((await p.evaluate(() => document.querySelectorAll(".band .track span").length === 14)) ? "PASS":"FAIL") + ` ${tag} twinkles + band`);
+  out.push(((await p.evaluate(() => { const f = document.querySelector("#collection .fig"); const r = f.getBoundingClientRect(); return r.width <= 600.5 && r.width > 200 && Math.abs(r.height - r.width) < 2; })) ? "PASS":"FAIL") + ` ${tag} still-life figure contained 1:1`);
+  out.push(((await p.evaluate(() => { const im = document.querySelector("#hero img"); return /hero(v)?-\d+\.jpg/.test(im.currentSrc || im.src) && im.getAttribute("srcset").split(",").length >= 2; })) ? "PASS":"FAIL") + ` ${tag} hero served from srcset (${await p.evaluate(() => (document.querySelector("#hero img").currentSrc || "").split("/").pop())})`);
   out.push((errs.length===0 ? "PASS":"FAIL") + ` ${tag} no errors ${errs.join(" | ")}`);
   await p.close();
 }
