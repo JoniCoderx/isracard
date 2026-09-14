@@ -2,40 +2,53 @@ import { chromium } from "playwright-core";
 const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
 const out = [];
 for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,height:844}]]) {
-  const p = await b.newPage({ viewport: vp }); const errs = []; p.on("pageerror", e => errs.push(e.message));
+  const p = await b.newPage({ viewport: vp }); await p.emulateMedia({ reducedMotion: "reduce" }); const errs = []; p.on("pageerror", e => errs.push(e.message));
   await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(1200);
-  await p.waitForTimeout(2200); await p.click("#enterBtn", { timeout: 4000 }).catch(() => {}); await p.waitForTimeout(800); await p.mouse.move(2,2);
+  await p.waitForTimeout(1400); await p.click("#enterBtn", { timeout: 4000 }).catch(() => {}); await p.waitForTimeout(800); await p.mouse.move(2,2);
   const y = () => p.evaluate(() => scrollY), top = id => p.evaluate(id => scrollY + document.getElementById(id).getBoundingClientRect().top, id);
-  for (const [sel,id] of [['nav a[href="#collection"]',"collection"],['nav a[href="#concierge"]',"concierge"],['.hconc',"concierge"],['.beat[data-i="2"] a[href="#build"]',"build"]]) {
+  const go = async (sel) => { await p.evaluate(s => document.querySelector(s).click(), sel); await p.waitForTimeout(1400); await p.evaluate(() => window.scrollTo({top: scrollY, behavior:"instant"})); };
+  for (const [sel,id] of [['#topnav a[href="#collection"]',"collection"],['#topnav a[href="#partners"]',"partners"],['.hbook',"concierge"],['.hacts a[href="#build"]',"build"],['#end a[href="#clients"]',"clients"]]) {
     const vis = await p.evaluate(s => { const el=document.querySelector(s); return !!el && getComputedStyle(el).display!=="none" && el.getClientRects().length>0; }, sel);
     if (!vis) { out.push(`skip ${tag} ${sel}`); continue; }
-    await p.evaluate(s => document.querySelector(s).click(), sel); await p.waitForTimeout(1500);
-    out.push((Math.abs(await y() - await top(id)) < 4 ? "PASS" : "FAIL") + ` ${tag} link ${sel}`);
+    await go(sel); const d = Math.abs(await y() - await top(id));
+    out.push((d < 4 ? "PASS" : "FAIL") + ` ${tag} link ${sel} (off ${Math.round(d)})`);
   }
-  await p.evaluate(() => window.scrollTo({top:0, behavior:"instant"})); await p.waitForTimeout(300);
-  const toU = u => p.evaluate(u => window.scrollTo({top:u*innerHeight, behavior:"instant"}), u);
-  for (const [u,i] of [[0.05,0],[0.5,1],[0.95,2]]) { await toU(u); await p.waitForTimeout(500);
-    out.push((await p.evaluate(i => document.querySelectorAll(".beat.on").length===1 && document.querySelector(".beat.on").getAttribute("data-i")===String(i), i) ? "PASS" : "FAIL") + ` ${tag} beat ${i}`); }
-  await toU(3.7); await p.waitForTimeout(400);
-  out.push((await p.evaluate(() => document.querySelectorAll(".dbeat.on").length===1 && document.querySelectorAll(".beat.on").length===0 && window.__film.target >= 70 && window.__film.target <= 76) ? "PASS":"FAIL") + ` ${tag} film: one stone (frame ${await p.evaluate(() => window.__film.target)})`);
-  await toU(6.6); await p.waitForTimeout(400);
-  out.push((await p.evaluate(() => +document.getElementById("dossier").style.opacity > 0.95 && document.getElementById("dcur").textContent==="19" && document.querySelectorAll("#dline b.on").length===1 && /ct$/.test(document.getElementById("dv0").textContent)) ? "PASS":"FAIL") + ` ${tag} dive: dossier stone 19`);
-  await p.evaluate(() => document.querySelector('#dline b[data-j="5"]').click()); await p.waitForTimeout(1500);
-  out.push((await p.evaluate(() => document.getElementById("dcur").textContent==="06") ? "PASS":"FAIL") + ` ${tag} dive: tap stone 6`);
-  await p.evaluate(() => document.querySelector('.ch[data-piece], a[data-piece="Rivière Lumière"]').click()); await p.waitForTimeout(1500);
+  // menu (mobile)
+  const menuVis = await p.evaluate(() => getComputedStyle(document.getElementById("menuBtn")).display !== "none");
+  if (menuVis) { await p.click("#menuBtn"); await p.waitForTimeout(600);
+    out.push((await p.evaluate(() => document.getElementById("menu").classList.contains("open")) ? "PASS":"FAIL") + ` ${tag} menu opens`);
+    await p.evaluate(() => document.querySelector('#mlist a[href="#partners"]').click()); await p.waitForTimeout(1500);
+    out.push((await p.evaluate(() => !document.getElementById("menu").classList.contains("open")) && Math.abs(await y() - await top("partners")) < 4 ? "PASS":"FAIL") + ` ${tag} menu link closes + lands`);
+    out.push((await p.evaluate(() => document.getElementById("fab").classList.contains("show")) ? "PASS":"FAIL") + ` ${tag} floating book button shown`);
+  } else out.push(`skip ${tag} menu`);
+  // compass
+  out.push((await p.evaluate(() => document.getElementById("whereT").textContent === "For partners" && document.getElementById("whereN").textContent === "08") ? "PASS":"FAIL") + ` ${tag} compass says where you are (${await p.evaluate(() => document.getElementById("whereN").textContent + " " + document.getElementById("whereT").textContent)})`);
+  // film
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("inside").getBoundingClientRect().top + innerHeight*1.1, behavior:"instant"})); for (let i = 0; i < 30 && (await p.evaluate(() => window.__film.target)) < 30; i++) await p.waitForTimeout(250);
+  const f = await p.evaluate(() => ({ t: window.__film.target, beats: document.querySelectorAll(".fbeat.on").length, on: [...document.querySelectorAll(".fbeat.on")].map(e=>e.dataset.j).join("") }));
+  out.push((f.t > 35 && f.t < 52 && f.beats === 1 && f.on === "1" ? "PASS":"FAIL") + ` ${tag} film scrubs (frame ${f.t}, beat ${f.on})`);
+  // stone picker
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("standard").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(500);
+  await p.click("#dNext"); await p.click("#dNext"); out.push((await p.textContent("#dcur")) === "03" ? "PASS":"FAIL"); out[out.length-1] += ` ${tag} stone next`;
+  await p.evaluate(() => document.querySelector('#dline b[data-j="20"]').click()); out.push(((await p.textContent("#dcur")) === "21" && /ct$/.test(await p.textContent("#dv0")) ? "PASS":"FAIL") + ` ${tag} stone tap`);
+  // piece → concierge prefilled
+  await p.evaluate(() => document.querySelector('a[data-piece="Rivière Lumière"]').click()); await p.waitForTimeout(1500);
   out.push((/Rivière/.test(await p.inputValue("#fMsg")) ? "PASS":"FAIL") + ` ${tag} piece prefills`);
+  await p.evaluate(() => document.querySelector('a[data-partner]').click()); await p.waitForTimeout(1500);
+  out.push((/Partnership/.test(await p.inputValue("#fMsg")) && await p.evaluate(() => document.querySelector('.chip[data-who="partner"]').classList.contains("on")) ? "PASS":"FAIL") + ` ${tag} partner prefills`);
   await p.click('.chip[data-k="metal"][data-v="yellow"]'); await p.click('.chip[data-k="ct"][data-v="10"]');
   out.push(((await p.textContent("#sumMetal"))==="18K yellow gold" && (await p.textContent("#sumStones"))==="36 × 0.28 ct" ? "PASS":"FAIL") + ` ${tag} builder`);
   await p.evaluate(() => document.getElementById("reserve").click()); await p.waitForTimeout(1200);
-  out.push((/10 ct/.test(await p.inputValue("#fMsg")) ? "PASS":"FAIL") + ` ${tag} reserve prefills`);
+  out.push((/10 ct/.test(await p.inputValue("#fMsg")) && await p.evaluate(() => document.querySelector('.chip[data-who="client"]').classList.contains("on")) ? "PASS":"FAIL") + ` ${tag} reserve prefills`);
   await p.fill("#fName",""); await p.fill("#fContact",""); await p.evaluate(() => document.querySelector("#cform .btn").click()); await p.waitForTimeout(200);
   out.push((await p.evaluate(() => document.querySelector("#fName").parentElement.classList.contains("err")) ? "PASS":"FAIL") + ` ${tag} validation`);
   await p.fill("#fName","T"); await p.fill("#fContact","x@y.z"); await p.click('.chip[data-ch="Email"]'); await p.evaluate(() => document.querySelector("#cform .btn").click()); await p.waitForTimeout(300);
   out.push((await p.evaluate(() => document.getElementById("cform").classList.contains("sent")) ? "PASS":"FAIL") + ` ${tag} submit`);
   out.push((await p.evaluate(() => document.querySelectorAll("[data-socials] a").length === 15) ? "PASS":"FAIL") + ` ${tag} socials rendered`);
   await p.click("#langBtn"); await p.waitForTimeout(300);
-  out.push((await p.evaluate(() => document.documentElement.dir==="rtl" && document.getElementById("sumMetal").textContent==="זהב צהוב 18K") ? "PASS":"FAIL") + ` ${tag} hebrew`);
+  out.push((await p.evaluate(() => document.documentElement.dir==="rtl" && document.getElementById("sumMetal").textContent==="זהב צהוב 18K" && document.getElementById("whereT").textContent.length > 0 && !/[A-Za-z]/.test(document.getElementById("whereT").textContent)) ? "PASS":"FAIL") + ` ${tag} hebrew`);
   out.push((await p.evaluate(() => /^\d\d:\d\d$/.test(document.getElementById("clkDXB").textContent)) ? "PASS":"FAIL") + ` ${tag} clocks`);
+  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < 16) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
   out.push((errs.length===0 ? "PASS":"FAIL") + ` ${tag} no errors ${errs.join(" | ")}`);
   await p.close();
 }
