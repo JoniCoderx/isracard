@@ -990,7 +990,8 @@
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
   function parallax() { var vh = innerHeight; pxs.forEach(function (bg) { var r = bg.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return; var t = (r.top + r.height / 2 - vh / 2) / vh; bg.style.transform = "translate3d(0," + (t * -8).toFixed(2) + "%,0)"; }); }
   var hidden = false; document.addEventListener("visibilitychange", function () { hidden = document.hidden; });
-  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; filmTick(); parallax(); drift(); compass(); glowTick(); rulerTick(); if (!reduce && entered) drawDust(t); }
+  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; filmTick(); parallax(); drift(); compass(); glowTick(); rulerTick(); if (!reduce && entered && (desk() || (dustFc++ & 1))) drawDust(t); }
+  var dustFc = 0;
   tick(); addEventListener("scroll", compass, { passive: true });
 
   /* ── language ── */
@@ -1167,13 +1168,13 @@
     var tw = Math.pow(Math.max(0, Math.sin(t*1.9 + i*2.39)), 28);
     if (tw > 0.02) glint(x + sz*0.12, y - sz*0.10, sz*1.1, al*tw*0.9, 0.2);
   }
-  var t0 = performance.now(), lost = false;
+  var t0 = performance.now(), lost = false, fc = 0, texOnce = false;
   canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); lost = true; wrap.style.opacity = "0"; });
   function frame() {
     requestAnimationFrame(frame); if (lost) return;
     var r = wrap.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
     var t = (performance.now() - t0) / 1000, b = window.__build, metal = METAL[window.__preview || b.metal] || METAL.white;
-    renderStoneTex(reduce ? 0.4 : t * 0.25);
+    if (!texOnce || (!reduce && (fc++ % (mobile ? 4 : 2)) === 0)) { renderStoneTex(reduce ? 0.4 : t * 0.25); texOnce = true; }
     gl.viewport(0,0,W,H); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
     beginSprites();
     var n = mobile ? 5 : 7, gap = W / n, dmm = 6.5 * Math.cbrt(b.ct / 36), sz = Math.min(H * 0.34, gap * 0.44) * Math.max(0.42, dmm / 5.35), yy = H * 0.42;
