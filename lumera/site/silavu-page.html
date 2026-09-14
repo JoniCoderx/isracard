@@ -1,8 +1,8 @@
 <title>SILAVU</title>
 <style>
-  @import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Heebo:wght@300;400;500&display=swap");
-  :root { --bg:#000; --ink:#f2efe9; --ink2:#b9b6af; --ink3:#6f6d69; --line:rgba(242,239,233,.16); --ease:cubic-bezier(.16,1,.3,1); --pad:clamp(20px,5vw,96px);
-    --sans:"Inter Tight",system-ui,-apple-system,sans-serif; --serif:"Instrument Serif",Georgia,serif; color-scheme:dark; }
+  @import url("https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Heebo:wght@300;400;500&display=swap");
+  :root { --bg:#000; --ink:#f4f1eb; --ink2:#d2cfc8; --ink3:#a09d96; --line:rgba(242,239,233,.16); --ease:cubic-bezier(.16,1,.3,1); --pad:clamp(20px,5vw,96px);
+    --sans:"Jost","Inter Tight",system-ui,-apple-system,sans-serif; --serif:"Instrument Serif",Georgia,serif; color-scheme:dark; }
   html[data-lang="he"] { --sans:"Heebo","Inter Tight",system-ui,sans-serif; }
   :where(#silavu, #silavu *) { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; background:#000; }
@@ -17,16 +17,18 @@
   #grain { position:fixed; inset:-50%; z-index:2; pointer-events:none; opacity:.05; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   #vig { position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 100% at 50% 50%, transparent 60%, rgba(0,0,0,.55) 100%); }
 
-  .k { font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:400; }
+  .k { font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink2); font-weight:400; }
   html[data-lang="he"] .k { letter-spacing:.04em; font-size:.76rem; }
   .row { display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
   .row i { display:inline-block; width:1px; height:12px; background:var(--line); }
-  .h { font-weight:300; letter-spacing:-.035em; line-height:.96; font-size:clamp(2.4rem,6.4vw,6rem); text-wrap:balance; max-width:14ch; }
-  .h em { font-family:var(--serif); font-style:italic; font-weight:400; letter-spacing:-.01em; }
-  .h2 { font-weight:300; letter-spacing:-.03em; line-height:1.02; font-size:clamp(1.9rem,4.2vw,3.8rem); text-wrap:balance; max-width:18ch; }
+  .h { font-weight:300; letter-spacing:-.02em; line-height:.98; font-size:clamp(2.4rem,6.4vw,6rem); text-wrap:balance; max-width:14ch; }
+  .h em, .h2 em, .card .t em, .piece .t em { font-family:var(--serif); font-style:italic; font-weight:400; letter-spacing:-.01em; background:linear-gradient(110deg,#cfcbc2 0%,#ffffff 28%,#b9b5ac 46%,#fff8ea 62%,#cfcbc2 100%); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:metal 7s linear infinite; }
+  @keyframes metal { to { background-position:-220% 0; } }
+  html[data-lang="he"] .h em, html[data-lang="he"] .h2 em, html[data-lang="he"] .card .t em, html[data-lang="he"] .piece .t em { font-family:inherit; font-style:normal; }
+  .h2 { font-weight:300; letter-spacing:-.015em; line-height:1.04; font-size:clamp(1.9rem,4.2vw,3.8rem); text-wrap:balance; max-width:18ch; }
   .h2 em { font-family:var(--serif); font-style:italic; font-weight:400; }
   html[data-lang="he"] .h, html[data-lang="he"] .h2 { letter-spacing:0; line-height:1.1; }
-  html[data-lang="he"] .h em, html[data-lang="he"] .h2 em { font-family:inherit; font-style:normal; color:var(--ink2); }
+
   .p { color:var(--ink2); font-size:clamp(1rem,1.2vw,1.12rem); line-height:1.6; max-width:42ch; }
   .btn { position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:12px; text-decoration:none; font-size:.8rem; letter-spacing:.06em; padding:14px 22px; border:1px solid rgba(242,239,233,.28); border-radius:999px; color:var(--ink); transition:border-color .5s,background .5s,color .5s; background:none; cursor:pointer; white-space:nowrap; }
   .btn::after { content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform:skewX(-20deg); transition:left .7s var(--ease); pointer-events:none; }
@@ -81,8 +83,8 @@
   .sh nav a.cur { border-bottom-color:rgba(242,239,233,.5); }
   @media (min-width:1000px) { .sh nav { display:flex; } }
   .hr { display:flex; gap:14px; align-items:center; }
-  .lang { background:none; border:none; cursor:pointer; color:var(--ink2); font-size:.78rem; letter-spacing:.04em; padding:8px 0; transition:color .4s; }
-  .lang:hover { color:var(--ink); }
+  .lang { background:rgba(0,0,0,.35); border:1px solid rgba(244,241,235,.35); border-radius:999px; cursor:pointer; color:var(--ink); font-size:.8rem; letter-spacing:.04em; padding:9px 14px; min-height:40px; transition:border-color .4s, background .4s; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .lang:hover { border-color:var(--ink); background:rgba(244,241,235,.08); }
   .hbook { display:none; } @media (min-width:1000px) { .hbook { display:inline-flex; padding:10px 16px; font-size:.74rem; } }
   .menubtn { display:inline-flex; align-items:center; gap:10px; background:none; border:1px solid rgba(242,239,233,.28); border-radius:999px; padding:9px 14px; font-size:.76rem; letter-spacing:.06em; cursor:pointer; color:var(--ink); }
   .menubtn i { display:block; width:14px; height:1px; background:currentColor; box-shadow:0 -4px 0 currentColor, 0 4px 0 currentColor; }
@@ -139,11 +141,21 @@
 
   /* ── what we do: three cards ── */
   .cards { display:grid; gap:18px; grid-template-columns:1fr; }
+  @media (max-width:759px) { .cards, .pieces { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:14px; margin:0 calc(-1 * var(--pad)); padding:0 var(--pad) 14px; scrollbar-width:none; } .cards::-webkit-scrollbar, .pieces::-webkit-scrollbar { display:none; } .card, .piece { flex:0 0 84%; scroll-snap-align:center; } .swipe { display:flex; } }
+  .swipe { display:none; justify-content:center; gap:6px; margin-top:4px; }
+  .swipe i { width:6px; height:6px; border-radius:50%; background:rgba(244,241,235,.25); } .swipe i.on { background:#fff; }
   @media (min-width:760px) { .cards { grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; } }
   .card { position:relative; display:grid; grid-template-rows:auto 1fr; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#050505; text-decoration:none; transition:border-color .5s, transform .7s var(--ease), box-shadow .7s; }
   .card:hover { border-color:rgba(242,239,233,.45); transform:translateY(-4px); box-shadow:0 30px 60px -30px rgba(0,0,0,.9); }
   .im { position:relative; }
   .im::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(to top, rgba(0,0,0,.4), transparent 45%); }
+  .im::before { content:""; position:absolute; inset:-30% -60%; z-index:2; pointer-events:none; mix-blend-mode:screen; background:linear-gradient(105deg, transparent 42%, rgba(255,255,255,.30) 50%, transparent 58%); transform:translateX(-80%) skewX(-12deg); transition:transform 1.3s var(--ease); }
+  .card:hover .im::before, .piece:hover .im::before, .shine .im::before { transform:translateX(80%) skewX(-12deg); }
+  .glint { position:absolute; width:18px; height:18px; pointer-events:none; z-index:5; transform:translate(-50%,-50%) scale(0); animation:glint .9s var(--ease) forwards; }
+  .glint::before, .glint::after { content:""; position:absolute; left:50%; top:50%; width:100%; height:2px; background:linear-gradient(90deg, transparent, #fff, transparent); transform:translate(-50%,-50%); box-shadow:0 0 10px rgba(255,255,255,.9); }
+  .glint::after { transform:translate(-50%,-50%) rotate(90deg); }
+  @keyframes glint { 0%{transform:translate(-50%,-50%) scale(0) rotate(0deg); opacity:0} 35%{opacity:1} 100%{transform:translate(-50%,-50%) scale(1.4) rotate(45deg); opacity:0} }
+  .card, .piece, .btn, .chip { position:relative; overflow:hidden; }
   .card .im { aspect-ratio:4/3; overflow:hidden; background:#000; }
   .card .im img, .piece .im img { width:100%; height:100%; object-fit:cover; transform:scale(1.14) translateY(var(--py,0)); will-change:transform; }
   .card .bd { padding:22px 22px 24px; display:grid; gap:10px; align-content:start; }
@@ -153,7 +165,7 @@
   .card .lnk { margin-top:8px; justify-self:start; }
 
   /* ── inside one stone: the film, scrubbed ── */
-  #inside { height:220svh; padding:0; }
+  #inside { height:200svh; padding:0; }
   .pin { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; }
   #film { position:absolute; inset:0; width:100%; height:100%; display:block; visibility:hidden; }
   #film.on { visibility:visible; }
@@ -237,12 +249,59 @@
   .fact:last-child { border-bottom:1px solid var(--line); }
   .fact .num { font-family:var(--serif); font-style:italic; font-size:1.4rem; color:var(--ink2); line-height:1.2; } html[data-lang="he"] .fact .num { font-family:inherit; font-style:normal; }
   .fact .t { font-size:1.12rem; font-weight:400; }
-  .fact .d { color:var(--ink3); line-height:1.55; margin-top:4px; font-size:.95rem; max-width:48ch; }
+  .fact .d { color:var(--ink2); line-height:1.55; margin-top:4px; font-size:.95rem; max-width:48ch; }
   .sideact { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
   #partners { background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 
+  /* ── voices ── */
+  .voices { display:grid; gap:18px; grid-template-columns:1fr; max-width:1200px; margin:0 auto; }
+  @media (min-width:760px) { .voices { grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; } }
+  .voice { border:1px solid var(--line); border-radius:10px; padding:26px 24px; display:grid; gap:16px; background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)); }
+  .voice q { quotes:"“" "”"; font-family:var(--serif); font-style:italic; font-size:clamp(1.15rem,1.6vw,1.4rem); line-height:1.4; color:var(--ink); }
+  html[data-lang="he"] .voice q { font-family:inherit; font-style:normal; quotes:"״" "״"; }
+  .voice .who { display:flex; gap:12px; align-items:center; }
+  .voice .who svg { width:22px; height:22px; stroke-width:1.4; }
+  /* ── the piece window ── */
+  .modal { position:fixed; inset:0; z-index:45; background:rgba(0,0,0,.86); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); display:grid; place-items:center; padding:max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); opacity:0; pointer-events:none; transition:opacity .45s var(--ease); overflow:auto; }
+  .modal.open { opacity:1; pointer-events:auto; }
+  .mbox { width:min(1100px, 100%); max-height:100%; overflow:auto; display:grid; gap:0; border:1px solid var(--line); border-radius:12px; background:#050505; transform:translateY(16px) scale(.98); transition:transform .5s var(--ease); }
+  .modal.open .mbox { transform:none; }
+  @media (min-width:900px) { .mbox { grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); } }
+  .mbox .mim { position:relative; aspect-ratio:4/3; overflow:hidden; } @media (min-width:900px) { .mbox .mim { aspect-ratio:auto; min-height:520px; } }
+  .mbox .mim img { width:100%; height:100%; object-fit:cover; }
+  .mbox .mbd { padding:clamp(22px,3vw,40px); display:grid; gap:16px; align-content:center; }
+  .mbox .t { font-size:clamp(1.8rem,3vw,2.8rem); letter-spacing:-.02em; line-height:1.05; }
+  .mclose2 { position:absolute; top:12px; inset-inline-end:12px; z-index:3; }
+  .mspecs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; }
+  .mspecs .dc .dval { font-size:1.05rem; white-space:normal; }
+  /* ── builder extras ── */
+  .carat { display:grid; gap:14px; max-width:1100px; margin:0 auto 24px; grid-template-columns:1fr; border:1px solid var(--line); border-radius:10px; padding:20px; background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)); }
+  @media (min-width:760px) { .carat { grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,1fr)); align-items:center; gap:20px; } }
+  .carat .big { font-size:clamp(1.6rem,3vw,2.4rem); letter-spacing:-.02em; line-height:1; font-variant-numeric:tabular-nums; direction:ltr; }
+  .carat .big small { font-family:var(--serif); font-style:italic; font-size:.5em; color:var(--ink2); margin-inline-start:.15em; } html[data-lang="he"] .carat .big small { font-family:inherit; font-style:normal; }
+  .ruler { position:relative; height:26px; }
+  .ruler i { position:absolute; left:0; top:12px; height:1px; background:var(--ink); box-shadow:0 0 8px rgba(255,255,255,.5); }
+  .ruler i::before, .ruler i::after { content:""; position:absolute; top:-5px; width:1px; height:11px; background:var(--ink); } .ruler i::before { left:0; } .ruler i::after { right:0; }
+  .ruler span { position:absolute; left:0; top:-2px; font-size:.68rem; letter-spacing:.1em; color:var(--ink2); }
+  .stone1 { width:44px; height:44px; border-radius:50%; background:radial-gradient(circle at 38% 34%, #fff 0, #eef3ff 18%, #b9c4d8 40%, #f6f8ff 55%, #8a94a8 75%, #f0f2f7 100%); box-shadow:0 0 18px rgba(255,255,255,.35), inset 0 0 6px rgba(255,255,255,.8); }
+  .playbar { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:26px auto 0; max-width:1100px; }
+  #play { position:fixed; inset:0; z-index:28; pointer-events:none; touch-action:none; }
+  #play.on { pointer-events:auto; }
+  #putback { position:fixed; left:50%; transform:translateX(-50%); bottom:max(18px, env(safe-area-inset-bottom)); z-index:29; display:none; background:rgba(0,0,0,.6); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+  #putback.on { display:inline-flex; }
+  /* ── try it on ── */
+  .tbox { width:min(760px,100%); }
+  .tcv { position:relative; background:#000; border-radius:10px; overflow:hidden; touch-action:none; aspect-ratio:4/5; max-height:70svh; }
+  .tcv canvas { width:100%; height:100%; display:block; }
+  .tctl { display:grid; gap:14px; padding:18px 0 0; }
+  .tctl label { display:grid; gap:6px; }
+  .tctl input[type=range] { width:100%; accent-color:#fff; }
+  .tempty { position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:24px; }
+  .tempty .btn { margin-top:14px; }
+
   /* ── atelier chapter ── */
-  .ch { min-height:100svh; display:flex; align-items:flex-end; padding:0; overflow:hidden; }
+  .ch { min-height:78svh; display:flex; align-items:flex-end; padding:0; overflow:hidden; }
+  @media (min-width:900px) { .ch { min-height:72svh; } }
   .ch .bg { position:absolute; inset:-12% 0; z-index:0; will-change:transform; }
   .ch .bg picture { display:block; width:100%; height:100%; }
   .ch .bg img { width:100%; height:100%; object-fit:cover; }
@@ -255,7 +314,7 @@
   .step { display:grid; grid-template-columns:36px 1fr; gap:14px; border-top:1px solid var(--line); padding-top:16px; }
   .step .num { font-family:var(--serif); font-style:italic; font-size:1.4rem; color:var(--ink2); line-height:1.2; } html[data-lang="he"] .step .num { font-family:inherit; font-style:normal; }
   .step .t { font-size:1.1rem; font-weight:400; }
-  .step .d { color:var(--ink3); line-height:1.55; margin-top:4px; font-size:.95rem; max-width:40ch; }
+  .step .d { color:var(--ink2); line-height:1.55; margin-top:4px; font-size:.95rem; max-width:40ch; }
 
   /* ── concierge ── */
   #concierge { padding:0; min-height:100svh; display:grid; grid-template-columns:1fr; }
@@ -292,7 +351,7 @@
   .chan .k { min-width:90px; }
   .done { display:none; color:var(--ink2); line-height:1.6; }
   form.sent .done { display:block; } form.sent .fields, form.sent .btn { display:none; }
-  .fine { color:var(--ink3); font-size:.88rem; line-height:1.6; max-width:40ch; }
+  .fine { color:var(--ink2); font-size:.9rem; line-height:1.6; max-width:40ch; }
   .soc { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
   .soc a { display:inline-flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:50%; border:1px solid rgba(242,239,233,.16); color:var(--ink2); transition:color .4s, border-color .4s, transform .5s var(--ease); }
   .soc a:hover { color:var(--ink); border-color:rgba(242,239,233,.4); transform:translateY(-2px); }
@@ -412,6 +471,7 @@
         <div class="bd"><div class="k" data-en="III · Private stones" data-he="III · אבנים פרטיות">III · Private stones</div><div class="t" data-en="Significant <em>stones</em>" data-he="אבנים <em>משמעותיות</em>">Significant <em>stones</em></div><p class="p" data-en="Loose diamonds from two carats, and rare colour, sourced quietly, GIA or IGI certified, brought to you or your advisor. To set, to keep, or to hold." data-he="יהלומים חופשיים משני קראט, ואבני צבע נדירות, נרכשים בשקט, מאושרי GIA או IGI, מובאים אליכם או ליועץ שלכם. לשיבוץ, לשמירה, או להחזקה.">Loose diamonds from two carats, and rare colour, sourced quietly, GIA or IGI certified, brought to you or your advisor. To set, to keep, or to hold.</p><span class="lnk" data-en="Ask the concierge" data-he="פנו לקונסיירז׳">Ask the concierge</span></div>
       </a>
     </div>
+    <div class="swipe" data-for=".cards"><i class="on"></i><i></i><i></i></div>
   </section>
 
   <section id="wrist" data-n="01" class="ch center" data-title-en="On the wrist" data-title-he="על פרק היד" aria-label="On the wrist">
@@ -523,6 +583,8 @@
           <div class="acts"><a class="btn" href="#concierge" data-piece="Sapphire of the Gulf" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a></div></div>
       </div>
     </div>
+    <div class="swipe" data-for=".pieces"><i class="on"></i><i></i><i></i><i></i></div>
+    <p class="k" style="text-align:center;margin-top:18px" data-en="Tap a piece to open it" data-he="הקישו על תכשיט כדי לפתוח אותו">Tap a piece to open it</p>
   </section>
 
   <section id="build" data-n="04" data-title-en="Your line" data-title-he="הקו שלכם" aria-label="Build your line">
@@ -532,6 +594,12 @@
       <p class="p rv d2" data-en="The line below is rendered live from the real geometry of a brilliant cut. It changes as you do. Reserve it, and a concierge confirms the stones with you within the hour." data-he="הקו שלמטה מרונדר בזמן אמת מהגיאומטריה האמיתית של ליטוש בריליאנט. הוא משתנה יחד איתכם. שריינו אותו, וקונסיירז׳ יאשר איתכם את האבנים תוך שעה.">The line below is rendered live from the real geometry of a brilliant cut. It changes as you do. Reserve it, and a concierge confirms the stones with you within the hour.</p>
     </div>
     <div id="stripwrap" class="rv d2"><canvas id="stripcv" role="img" aria-label="Seven stones of your line"></canvas></div>
+    <div class="carat rv d2" id="carat">
+      <div><div class="k" data-en="Carat, explained" data-he="קראט, בפשטות">Carat, explained</div><p class="p" style="margin-top:8px;font-size:.95rem" data-en="Carat is weight, not size. The total is shared by thirty-six stones, and a stone's width grows with the cube root of its weight: double the carats and each stone is only about a quarter wider. Everything below updates as you choose." data-he="קראט הוא משקל, לא גודל. הסך הכולל מתחלק בין שלושים ושש אבנים, ורוחב האבן גדל עם השורש השלישי של משקלה: הכפילו את הקראט וכל אבן רק כרבע רחבה יותר. כל מה שלמטה מתעדכן עם הבחירה שלכם.">Carat is weight, not size. The total is shared by thirty-six stones, and a stone's width grows with the cube root of its weight: double the carats and each stone is only about a quarter wider. Everything below updates as you choose.</p></div>
+      <div><div class="big" id="eachCt">0.17<small>ct</small></div><div class="k" style="margin-top:8px" data-en="Each of the 36 stones" data-he="כל אחת מ־36 האבנים">Each of the 36 stones</div></div>
+      <div><div class="big" id="eachMm">3.6<small>mm</small></div><div class="k" style="margin-top:8px" data-en="Across, at the girdle" data-he="רוחב, בחגורה">Across, at the girdle</div><div class="ruler" style="margin-top:10px"><i id="ruler"></i><span data-en="10 mm on screen" data-he="10 מ״מ על המסך">10 mm on screen</span></div></div>
+      <div style="display:flex;gap:14px;align-items:center"><div class="stone1" id="stone1"></div><div><div class="big" id="lineLen">17<small>cm</small></div><div class="k" style="margin-top:6px" data-en="Line, clasp to clasp" data-he="אורך הקו, מסוגר לסוגר">Line, clasp to clasp</div></div></div>
+    </div>
     <div class="opts rv d3" id="opts">
       <div class="opt"><div class="k" data-en="Stone" data-he="אבן">Stone</div><div class="chips">
         <button class="chip on" data-k="origin" data-v="lab" data-en="Lab-grown" data-he="מעבדה">Lab-grown</button>
@@ -548,6 +616,11 @@
       <div><div class="k" data-en="Estimated value" data-he="שווי משוער">Estimated value</div><div class="price" id="est">AED 88,000</div><div class="row k" style="margin-top:10px"><span id="sumStones">36 × 0.17 ct</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumOrigin">Lab-grown</span></div></div>
       <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this line" data-he="שריינו את הקו הזה">Reserve this line</a>
     </div>
+    <div class="playbar rv d3">
+      <button class="btn" type="button" id="pickup" data-en="Pick it up and play" data-he="הרימו אותו ושחקו">Pick it up and play</button>
+      <button class="btn" type="button" id="tryonBtn" data-en="Try it on a photo" data-he="מדדו על תמונה">Try it on a photo</button>
+    </div>
+    <p class="k" style="text-align:center;margin-top:14px" data-en="Drag it, throw it, it falls like the real thing · the photo never leaves your device" data-he="גררו, זרקו, הוא נופל כמו האמיתי · התמונה לא עוזבת את המכשיר שלכם">Drag it, throw it, it falls like the real thing · the photo never leaves your device</p>
   </section>
 
   <section id="clients" data-n="05" data-title-en="For clients" data-title-he="ללקוחות" aria-label="For clients">
@@ -565,6 +638,18 @@
         <div class="fact"><div class="num">IV</div><div><div class="t" data-en="Delivered in person, insured" data-he="נמסר אישית, מבוטח">Delivered in person, insured</div><div class="d" data-en="Worldwide, by a member of the house, with the GIA or IGI reports and a valuation for your insurer." data-he="בכל העולם, על ידי חבר בבית, עם תעודות GIA או IGI והערכת שווי למבטח שלכם.">Worldwide, by a member of the house, with the GIA or IGI reports and a valuation for your insurer.</div></div></div>
         <div class="fact"><div class="num">V</div><div><div class="t" data-en="Cared for, for life" data-he="טיפול לכל החיים">Cared for, for life</div><div class="d" data-en="Cleaning, prong checks, resizing and re-polishing, at no charge, for as long as you own the piece." data-he="ניקוי, בדיקת שיניים, שינוי מידה וליטוש מחדש, ללא תשלום, כל עוד התכשיט שלכם.">Cleaning, prong checks, resizing and re-polishing, at no charge, for as long as you own the piece.</div></div></div>
       </div>
+    </div>
+  </section>
+
+  <section id="voices" data-n="05" data-title-en="Voices" data-title-he="קולות" aria-label="Clients say">
+    <div class="sechead">
+      <div class="k rv" data-en="Clients say" data-he="לקוחות מספרים">Clients say</div>
+      <h2 class="h2 rv d1" data-en="Said quietly, <em>to us.</em>" data-he="נאמר בשקט, <em>לנו.</em>">Said quietly, <em>to us.</em></h2>
+    </div>
+    <div class="voices">
+      <div class="voice rv"><q data-en="They brought five stones to the house and let me choose under my own lamps. Nobody has ever done that." data-he="הם הביאו חמש אבנים הביתה ונתנו לי לבחור תחת המנורות שלי. אף אחד לא עשה את זה מעולם.">They brought five stones to the house and let me choose under my own lamps. Nobody has ever done that.</q><div class="who"><svg class="brill" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.00,2.00L54.70,2.23L59.36,2.92L63.93,4.07L68.37,5.65L72.63,7.67L76.67,10.09L80.45,12.90L83.94,16.06L87.10,19.55L89.91,23.33L92.33,27.37L94.35,31.63L95.93,36.07L97.08,40.64L97.77,45.30L98.00,50.00L97.77,54.70L97.08,59.36L95.93,63.93L94.35,68.37L92.33,72.63L89.91,76.67L87.10,80.45L83.94,83.94L80.45,87.10L76.67,89.91L72.63,92.33L68.37,94.35L63.93,95.93L59.36,97.08L54.70,97.77L50.00,98.00L45.30,97.77L40.64,97.08L36.07,95.93L31.63,94.35L27.37,92.33L23.33,89.91L19.55,87.10L16.06,83.94L12.90,80.45L10.09,76.67L7.67,72.63L5.65,68.37L4.07,63.93L2.92,59.36L2.23,54.70L2.00,50.00L2.23,45.30L2.92,40.64L4.07,36.07L5.65,31.63L7.67,27.37L10.09,23.33L12.90,19.55L16.06,16.06L19.55,12.90L23.33,10.09L27.37,7.67L31.63,5.65L36.07,4.07L40.64,2.92L45.30,2.23L50.00,2.00Z" pathLength="1"/><path d="M50.00,28.00L65.56,34.44L72.00,50.00L65.56,65.56L50.00,72.00L34.44,65.56L28.00,50.00L34.44,34.44Z" pathLength="1"/><path d="M50.00,28.00L50.00,2.00" pathLength="1"/><path d="M50.00,28.00L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L83.94,16.06" pathLength="1"/><path d="M65.56,34.44L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L98.00,50.00" pathLength="1"/><path d="M72.00,50.00L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L83.94,83.94" pathLength="1"/><path d="M65.56,65.56L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L50.00,98.00" pathLength="1"/><path d="M50.00,72.00L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L16.06,83.94" pathLength="1"/><path d="M34.44,65.56L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L2.00,50.00" pathLength="1"/><path d="M28.00,50.00L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L16.06,16.06" pathLength="1"/><path d="M34.44,34.44L31.63,5.65" pathLength="1"/><path d="M50.00,28.00L31.63,5.65" pathLength="1"/></svg><span class="k" data-en="A collector · Dubai" data-he="אספן · דובאי">A collector · Dubai</span></div></div>
+      <div class="voice rv d1"><q data-en="I wear it with a watch every day. It sits flat, it does not fight, and people ask about it constantly." data-he="אני עונד אותו עם שעון כל יום. הוא יושב שטוח, לא נלחם, ואנשים שואלים עליו כל הזמן.">I wear it with a watch every day. It sits flat, it does not fight, and people ask about it constantly.</q><div class="who"><svg class="brill" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.00,2.00L54.70,2.23L59.36,2.92L63.93,4.07L68.37,5.65L72.63,7.67L76.67,10.09L80.45,12.90L83.94,16.06L87.10,19.55L89.91,23.33L92.33,27.37L94.35,31.63L95.93,36.07L97.08,40.64L97.77,45.30L98.00,50.00L97.77,54.70L97.08,59.36L95.93,63.93L94.35,68.37L92.33,72.63L89.91,76.67L87.10,80.45L83.94,83.94L80.45,87.10L76.67,89.91L72.63,92.33L68.37,94.35L63.93,95.93L59.36,97.08L54.70,97.77L50.00,98.00L45.30,97.77L40.64,97.08L36.07,95.93L31.63,94.35L27.37,92.33L23.33,89.91L19.55,87.10L16.06,83.94L12.90,80.45L10.09,76.67L7.67,72.63L5.65,68.37L4.07,63.93L2.92,59.36L2.23,54.70L2.00,50.00L2.23,45.30L2.92,40.64L4.07,36.07L5.65,31.63L7.67,27.37L10.09,23.33L12.90,19.55L16.06,16.06L19.55,12.90L23.33,10.09L27.37,7.67L31.63,5.65L36.07,4.07L40.64,2.92L45.30,2.23L50.00,2.00Z" pathLength="1"/><path d="M50.00,28.00L65.56,34.44L72.00,50.00L65.56,65.56L50.00,72.00L34.44,65.56L28.00,50.00L34.44,34.44Z" pathLength="1"/><path d="M50.00,28.00L50.00,2.00" pathLength="1"/><path d="M50.00,28.00L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L83.94,16.06" pathLength="1"/><path d="M65.56,34.44L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L98.00,50.00" pathLength="1"/><path d="M72.00,50.00L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L83.94,83.94" pathLength="1"/><path d="M65.56,65.56L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L50.00,98.00" pathLength="1"/><path d="M50.00,72.00L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L16.06,83.94" pathLength="1"/><path d="M34.44,65.56L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L2.00,50.00" pathLength="1"/><path d="M28.00,50.00L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L16.06,16.06" pathLength="1"/><path d="M34.44,34.44L31.63,5.65" pathLength="1"/><path d="M50.00,28.00L31.63,5.65" pathLength="1"/></svg><span class="k" data-en="An entrepreneur · Tel Aviv" data-he="יזם · תל אביב">An entrepreneur · Tel Aviv</span></div></div>
+      <div class="voice rv d2"><q data-en="Six weeks, one message a week, then a person at my door with the box. The reports were already in my insurer's hands." data-he="שישה שבועות, הודעה אחת בשבוע, ואז אדם בדלת שלי עם הקופסה. התעודות כבר היו אצל המבטח שלי.">Six weeks, one message a week, then a person at my door with the box. The reports were already in my insurer's hands.</q><div class="who"><svg class="brill" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.00,2.00L54.70,2.23L59.36,2.92L63.93,4.07L68.37,5.65L72.63,7.67L76.67,10.09L80.45,12.90L83.94,16.06L87.10,19.55L89.91,23.33L92.33,27.37L94.35,31.63L95.93,36.07L97.08,40.64L97.77,45.30L98.00,50.00L97.77,54.70L97.08,59.36L95.93,63.93L94.35,68.37L92.33,72.63L89.91,76.67L87.10,80.45L83.94,83.94L80.45,87.10L76.67,89.91L72.63,92.33L68.37,94.35L63.93,95.93L59.36,97.08L54.70,97.77L50.00,98.00L45.30,97.77L40.64,97.08L36.07,95.93L31.63,94.35L27.37,92.33L23.33,89.91L19.55,87.10L16.06,83.94L12.90,80.45L10.09,76.67L7.67,72.63L5.65,68.37L4.07,63.93L2.92,59.36L2.23,54.70L2.00,50.00L2.23,45.30L2.92,40.64L4.07,36.07L5.65,31.63L7.67,27.37L10.09,23.33L12.90,19.55L16.06,16.06L19.55,12.90L23.33,10.09L27.37,7.67L31.63,5.65L36.07,4.07L40.64,2.92L45.30,2.23L50.00,2.00Z" pathLength="1"/><path d="M50.00,28.00L65.56,34.44L72.00,50.00L65.56,65.56L50.00,72.00L34.44,65.56L28.00,50.00L34.44,34.44Z" pathLength="1"/><path d="M50.00,28.00L50.00,2.00" pathLength="1"/><path d="M50.00,28.00L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L83.94,16.06" pathLength="1"/><path d="M65.56,34.44L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L98.00,50.00" pathLength="1"/><path d="M72.00,50.00L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L83.94,83.94" pathLength="1"/><path d="M65.56,65.56L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L50.00,98.00" pathLength="1"/><path d="M50.00,72.00L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L16.06,83.94" pathLength="1"/><path d="M34.44,65.56L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L2.00,50.00" pathLength="1"/><path d="M28.00,50.00L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L16.06,16.06" pathLength="1"/><path d="M34.44,34.44L31.63,5.65" pathLength="1"/><path d="M50.00,28.00L31.63,5.65" pathLength="1"/></svg><span class="k" data-en="A family office · London" data-he="משרד משפחה · לונדון">A family office · London</span></div></div>
     </div>
   </section>
 
@@ -655,6 +740,42 @@
     <div class="fbot k rv"><span>© SILAVU · <span data-en="All stones GIA or IGI certified" data-he="כל האבנים מאושרות GIA או IGI">All stones GIA or IGI certified</span></span><span data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span></div>
   </section>
 </main>
+
+<canvas id="play" aria-hidden="true"></canvas>
+<button class="btn" id="putback" type="button" data-en="Put it back" data-he="החזירו אותו">Put it back</button>
+
+<div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="mbox">
+    <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
+    <div class="mim"><img id="pmImg" alt=""></div>
+    <div class="mbd">
+      <div class="k" id="pmK"></div>
+      <div class="t" id="pmT"></div>
+      <p class="p" id="pmP"></p>
+      <div class="mspecs" id="pmSpecs"></div>
+      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a><button class="btn" type="button" id="pmTry" data-en="Try it on a photo" data-he="מדדו על תמונה">Try it on a photo</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="tryon" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="mbox tbox">
+    <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
+    <div class="mbd">
+      <div class="k" data-en="Try it on · nothing is uploaded" data-he="מדידה · שום דבר לא נשלח">Try it on · nothing is uploaded</div>
+      <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas>
+        <div class="tempty" id="tempty"><div><p class="p" data-en="Choose a photo of a wrist, yours or someone you love. The Line is drawn on top, right here on your device." data-he="בחרו תמונה של פרק יד, שלכם או של מישהו שאתם אוהבים. הקו מצויר מעליה, כאן על המכשיר שלכם.">Choose a photo of a wrist, yours or someone you love. The Line is drawn on top, right here on your device.</p><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label></div></div>
+      </div>
+      <div class="tctl">
+        <label><span class="k" data-en="Size" data-he="גודל">Size</span><input type="range" id="tsize" min="0.3" max="1.6" step="0.01" value="0.8"></label>
+        <label><span class="k" data-en="Angle" data-he="זווית">Angle</span><input type="range" id="tang" min="-90" max="90" step="1" value="-20"></label>
+        <label><span class="k" data-en="Curve" data-he="קימור">Curve</span><input type="range" id="tcurve" min="0.05" max="0.6" step="0.01" value="0.28"></label>
+        <div class="row" style="gap:10px"><label class="btn"><input type="file" id="tfile2" accept="image/*" hidden><span data-en="Another photo" data-he="תמונה אחרת">Another photo</span></label><button class="btn solid" type="button" id="tsave" data-en="Save the picture" data-he="שמרו את התמונה">Save the picture</button><a class="btn" href="#concierge" id="tsend" data-en="Send it to the concierge" data-he="שלחו לקונסיירז׳">Send it to the concierge</a></div>
+        <p class="k" data-en="Drag the Line to place it · pinch or use the sliders" data-he="גררו את הקו למקום · צבטו או השתמשו במחוונים">Drag the Line to place it · pinch or use the sliders</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="intro">
   <button class="lang introlang" id="langBtn2" aria-label="Switch language">עברית</button>
@@ -831,11 +952,41 @@
   }
   setStone(0);
 
+  /* ── glints on hover, sheen on arrival ── */
+  function sparkle(el, n) { var r = el.getBoundingClientRect(); for (var i = 0; i < n; i++) { var g = document.createElement("i"); g.className = "glint"; g.style.left = (8 + Math.random() * 84) + "%"; g.style.top = (8 + Math.random() * 84) + "%"; g.style.animationDelay = (i * 90) + "ms"; g.style.width = g.style.height = (12 + Math.random() * 16) + "px"; el.appendChild(g); setTimeout(function (x) { x.remove(); }, 1400, g); } }
+  document.addEventListener("pointerenter", function (e) { var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, el.classList.contains("btn") || el.classList.contains("chip") ? 2 : 4); }, true);
+  document.addEventListener("touchstart", function (e) { var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, 3); }, { passive: true });
+  var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("shine"); setTimeout(function () { e.target.classList.remove("shine"); }, 1600); io2.unobserve(e.target); } }); }, { threshold: 0.35 });
+  document.querySelectorAll(".card, .piece").forEach(function (el) { io2.observe(el); });
+  /* swipe dots on phones */
+  document.querySelectorAll(".swipe").forEach(function (sw) { var track = document.querySelector(sw.getAttribute("data-for")); if (!track) return; var dots = sw.querySelectorAll("i"); track.addEventListener("scroll", function () { var kids = track.children, best = 0, bd = 1e9, cx = track.getBoundingClientRect().left + track.clientWidth / 2; for (var i = 0; i < dots.length && i < kids.length; i++) { var r = kids[i].getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - cx); if (d < bd) { bd = d; best = i; } } dots.forEach(function (d, i) { d.classList.toggle("on", i === best); }); }, { passive: true }); });
+
+  /* ── the piece window ── */
+  var pmodal = $("pmodal"), pmPiece = "";
+  function openModal(m) { m.classList.add("open"); m.setAttribute("aria-hidden", "false"); document.body.classList.add("locked"); }
+  function closeModals() { document.querySelectorAll(".modal.open").forEach(function (m) { m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); }); if (!menu.classList.contains("open")) document.body.classList.remove("locked"); }
+  document.querySelectorAll(".modal").forEach(function (m) { m.addEventListener("click", function (e) { if (e.target === m || e.target.closest("[data-close]")) closeModals(); }); });
+  addEventListener("keydown", function (e) { if (e.key === "Escape") closeModals(); });
+  document.querySelectorAll(".piece").forEach(function (pc) {
+    pc.addEventListener("click", function (e) {
+      if (e.target.closest("a")) return;
+      var img = pc.querySelector("img"), meta = pc.querySelector(".meta"), btn = pc.querySelector("[data-piece]");
+      pmPiece = btn ? btn.getAttribute("data-piece") : ""; $("pmImg").src = img.currentSrc || img.src; $("pmImg").alt = img.alt; $("pmK").innerHTML = pc.querySelector(".k").innerHTML; $("pmT").innerHTML = pc.querySelector(".t").innerHTML; $("pmP").innerHTML = pc.querySelector(".p").innerHTML;
+      var L = lang === "he" ? ["משקל", "איכות", "מתכת", "מחיר"] : ["Weight", "Grade", "Metal", "Price"], vals = Array.prototype.filter.call(meta.children, function (c) { return c.tagName !== "I"; });
+      $("pmSpecs").innerHTML = vals.map(function (v, i) { return '<div class="dc"><div class="dval">' + v.innerHTML + '</div><div class="k">' + (L[i] || "") + "</div></div>"; }).join("");
+      $("pmReq").setAttribute("data-piece", pmPiece); openModal(pmodal);
+    });
+  });
+  $("pmReq").addEventListener("click", function () { closeModals(); });
+  $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
+  $("tryonBtn").addEventListener("click", function () { if (window.__tryon) window.__tryon.open(); });
+  $("tsend").addEventListener("click", function () { closeModals(); prefill(lang === "he" ? "מדדתי את הקו על תמונה. אשמח לצפייה פרטית: " : "I tried the Line on a photo. I would like a private viewing: "); });
+
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
   function parallax() { var vh = innerHeight; pxs.forEach(function (bg) { var r = bg.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return; var t = (r.top + r.height / 2 - vh / 2) / vh; bg.style.transform = "translate3d(0," + (t * -8).toFixed(2) + "%,0)"; }); }
   var hidden = false; document.addEventListener("visibilitychange", function () { hidden = document.hidden; });
-  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; filmTick(); parallax(); drift(); compass(); glowTick(); if (!reduce && entered) drawDust(t); }
+  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; filmTick(); parallax(); drift(); compass(); glowTick(); rulerTick(); if (!reduce && entered) drawDust(t); }
   tick(); addEventListener("scroll", compass, { passive: true });
 
   /* ── language ── */
@@ -860,7 +1011,10 @@
     var total = stones + metal + 12000 + stones * 0.05;
     estEl.textContent = "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");
     sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = NAMES[b.metal][lang]; sumOrigin.textContent = ORIG[b.origin][lang];
+    var each = b.ct / 36, mm = 6.5 * Math.cbrt(each); $("eachCt").innerHTML = each.toFixed(2) + "<small>ct</small>"; $("eachMm").innerHTML = mm.toFixed(1) + "<small>mm</small>"; $("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";
+    var st = $("stone1"), px = Math.max(18, Math.min(64, mm * 3.78 * 2.2)); st.style.width = st.style.height = px + "px";
   }
+  function rulerTick() { var r = $("ruler"); if (window.__strip && window.__strip.pxPerMm) r.style.width = (window.__strip.pxPerMm * 10).toFixed(1) + "px"; }
   var opts = $("opts");
   opts.addEventListener("click", function (e) {
     var c = e.target.closest(".chip"); if (!c) return; var k = c.getAttribute("data-k"), v = c.getAttribute("data-v");
@@ -872,6 +1026,7 @@
   price();
   var msgEl = $("fMsg");
   function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); }
+  window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
     var b = window.__build; setWho("client");
     prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : "I would like to reserve a SILAVU Line: ") + b.ct + " ct · " + ORIG[b.origin][lang] + " · " + NAMES[b.metal][lang] + " · " + estEl.textContent);
@@ -1017,12 +1172,100 @@
     renderStoneTex(reduce ? 0.4 : t * 0.25);
     gl.viewport(0,0,W,H); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
     beginSprites();
-    var n = mobile ? 5 : 7, gap = W / n, sz = Math.min(H * 0.34, gap * 0.44) * (0.78 + 0.22 * Math.min(1, b.ct / 12)), yy = H * 0.42;
+    var n = mobile ? 5 : 7, gap = W / n, dmm = 6.5 * Math.cbrt(b.ct / 36), sz = Math.min(H * 0.34, gap * 0.44) * Math.max(0.42, dmm / 5.35), yy = H * 0.42;
+    window.__strip = { pxPerMm: (sz * 1.2 / dmm) * (wrap.clientWidth / W) };
     rect(W*0.5, yy + sz*0.42, gap*(n-1)*0.5 + sz*0.35, sz*0.16, 0, metal, 0.9);
     for (var i = 0; i < n; i++) setStone(gap*(i+0.5), yy, sz, metal, 1, i, t, ((i % 5) - 2) * 0.05);
     for (var j = 0; j < n; j++) sprite(gap*(j+0.5), yy + sz*1.5, sz, 0, 0.1, true, sz*0.6);
     gl.disable(gl.BLEND);
   }
   frame();
+})();
+</script>
+
+<script>
+/* Two things you can hold: a Line with real weight that you can drag and throw, and a Line drawn onto your own photograph. Nothing leaves the device. */
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); }, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var METAL = { white: "#e9e9ee", yellow: "#e2c26a", rose: "#e0ab90", platinum: "#dfe1e6" };
+  function metalOf() { var b = window.__silavu && window.__silavu.build(); return METAL[(b && b.metal) || "white"]; }
+  /* a stone, drawn in 2D: pavilion fire, table, a glint */
+  function gem(ctx, x, y, r, t, i, metal) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = metal; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.arc(0, 0, r * 1.18, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1;
+    for (var p = 0; p < 4; p++) { var a = p * 1.5708 + 0.785; ctx.beginPath(); ctx.arc(Math.cos(a) * r * 1.05, Math.sin(a) * r * 1.05, r * 0.2, 0, 6.283); ctx.fillStyle = "#fff"; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1; }
+    var g = ctx.createRadialGradient(-r * 0.3, -r * 0.35, 0, 0, 0, r); g.addColorStop(0, "#ffffff"); g.addColorStop(0.18, "#eef3ff"); g.addColorStop(0.42, "#b7c2d8"); g.addColorStop(0.58, "#f4f7ff"); g.addColorStop(0.8, "#8792a8"); g.addColorStop(1, "#dfe4ef");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = Math.max(0.6, r * 0.06); ctx.beginPath(); for (var k = 0; k < 8; k++) { var a2 = k * 0.785; ctx.moveTo(Math.cos(a2) * r * 0.45, Math.sin(a2) * r * 0.45); ctx.lineTo(Math.cos(a2) * r, Math.sin(a2) * r); } ctx.stroke();
+    ctx.beginPath(); for (var k2 = 0; k2 < 8; k2++) { var a3 = k2 * 0.785 + 0.39; ctx.lineTo(Math.cos(a3) * r * 0.45, Math.sin(a3) * r * 0.45); } ctx.closePath(); ctx.stroke();
+    var tw = Math.pow(Math.max(0, Math.sin(t * 2.1 + i * 2.39)), 30);
+    if (tw > 0.03) { ctx.globalAlpha = tw; ctx.strokeStyle = "#fff"; ctx.lineWidth = Math.max(1, r * 0.12); ctx.shadowColor = "#fff"; ctx.shadowBlur = r; ctx.beginPath(); ctx.moveTo(-r * 1.6, -r * 0.3); ctx.lineTo(r * 1.6, -r * 0.3); ctx.moveTo(0, -r * 1.9); ctx.lineTo(0, r * 1.3); ctx.stroke(); ctx.globalAlpha = 1; ctx.shadowBlur = 0; }
+    ctx.restore();
+  }
+
+  /* ── the chain: verlet beads, gravity, a floor at the bottom of the screen, walls ── */
+  var cv = $("play"), ctx = cv.getContext("2d"), N = 36, pts = [], on = false, W = 0, H = 0, D = 1, R = 9, seg = 0, grab = -1, px = 0, py = 0, pvx = 0, pvy = 0, lastT = 0;
+  function size() { D = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = Math.round(W * D); cv.height = Math.round(H * D); ctx.setTransform(D, 0, 0, D, 0, 0); R = Math.max(7, Math.min(12, W / 60)); seg = R * 2.3; }
+  size(); addEventListener("resize", size);
+  function spawn() {
+    var wrap = $("stripwrap"), r = wrap.getBoundingClientRect(), y0 = Math.min(H * 0.6, Math.max(60, r.top + r.height * 0.42)), x0 = W / 2 - seg * (N - 1) / 2;
+    pts = []; for (var i = 0; i < N; i++) pts.push({ x: x0 + i * seg, y: y0, ox: x0 + i * seg - 0.4, oy: y0 - 6 + Math.sin(i * 0.6) * 2 });
+    on = true; cv.classList.add("on"); $("putback").classList.add("on");
+  }
+  function putBack() { on = false; grab = -1; cv.classList.remove("on"); $("putback").classList.remove("on"); ctx.clearRect(0, 0, W, H); }
+  $("pickup").addEventListener("click", function () { if (on) putBack(); spawn(); });
+  $("putback").addEventListener("click", putBack);
+  function nearest(x, y) { var b = -1, bd = 1e9; for (var i = 0; i < N; i++) { var d = (pts[i].x - x) * (pts[i].x - x) + (pts[i].y - y) * (pts[i].y - y); if (d < bd) { bd = d; b = i; } } return bd < 60 * 60 ? b : -1; }
+  cv.addEventListener("pointerdown", function (e) { if (!on) return; var i = nearest(e.clientX, e.clientY); if (i < 0) return; grab = i; px = e.clientX; py = e.clientY; pvx = pvy = 0; cv.setPointerCapture(e.pointerId); e.preventDefault(); });
+  cv.addEventListener("pointermove", function (e) { if (grab < 0) return; pvx = e.clientX - px; pvy = e.clientY - py; px = e.clientX; py = e.clientY; }, { passive: true });
+  function release(e) { if (grab < 0) return; var p = pts[grab]; p.ox = p.x - pvx * 0.9; p.oy = p.y - pvy * 0.9; grab = -1; }
+  cv.addEventListener("pointerup", release); cv.addEventListener("pointercancel", release);
+  /* let people grab it even when it is lying under the page: the canvas is above everything while on */
+  function step(dt) {
+    var g = 1900 * dt * dt, floor = H - 22 - R, i, p;
+    for (i = 0; i < N; i++) { p = pts[i]; if (i === grab) { p.ox = p.x; p.oy = p.y; p.x = px; p.y = py; continue; } var vx = (p.x - p.ox) * 0.995, vy = (p.y - p.oy) * 0.995; p.ox = p.x; p.oy = p.y; p.x += vx; p.y += vy + g; }
+    for (var it = 0; it < 6; it++) {
+      for (i = 0; i < N - 1; i++) { var a = pts[i], b = pts[i + 1], dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 0.001, diff = (d - seg) / d * 0.5; if (i === grab) { b.x -= dx * diff * 2; b.y -= dy * diff * 2; } else if (i + 1 === grab) { a.x += dx * diff * 2; a.y += dy * diff * 2; } else { a.x += dx * diff; a.y += dy * diff; b.x -= dx * diff; b.y -= dy * diff; } }
+      for (i = 0; i < N; i++) { p = pts[i]; if (p.y > floor) { p.y = floor; p.ox = p.x + (p.x - p.ox) * 0.6; } if (p.x < R) p.x = R; if (p.x > W - R) p.x = W - R; if (p.y < R) p.y = R; }
+    }
+  }
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H); var m = metalOf();
+    ctx.strokeStyle = m; ctx.lineWidth = R * 0.55; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); for (var i = 1; i < N; i++) ctx.lineTo(pts[i].x, pts[i].y); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = R * 0.18; ctx.stroke();
+    for (i = 0; i < N; i++) gem(ctx, pts[i].x, pts[i].y, R, t, i, m);
+    ctx.fillStyle = m; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(pts[0].x - R * 1.6, pts[0].y - R * 0.6, R * 1.4, R * 1.2, R * 0.3) : ctx.rect(pts[0].x - R * 1.6, pts[0].y - R * 0.6, R * 1.4, R * 1.2); ctx.fill();
+  }
+  function loop(now) { requestAnimationFrame(loop); if (!on) return; var t = now / 1000, dt = Math.min(0.033, lastT ? now - lastT : 16) / 1000; lastT = now; step(dt); draw(t); }
+  requestAnimationFrame(loop);
+
+  /* ── try it on: your photograph, the Line drawn over it ── */
+  var tmodal = $("tryon"), tc = $("tcanvas"), tx = tc.getContext("2d"), img = null, tw = 0, th = 0, TD = 1, pos = { x: 0.5, y: 0.6 }, dragging = false, dpx = 0, dpy = 0, pinch = null;
+  function tsize() { var r = $("tcv").getBoundingClientRect(); TD = Math.min(devicePixelRatio || 1, 2); tw = Math.round(r.width); th = Math.round(r.height); tc.width = Math.round(tw * TD); tc.height = Math.round(th * TD); tx.setTransform(TD, 0, 0, TD, 0, 0); tdraw(); }
+  function load(file) { if (!file) return; var u = URL.createObjectURL(file), im = new Image(); im.onload = function () { img = im; $("tempty").style.display = "none"; tdraw(); URL.revokeObjectURL(u); }; im.src = u; }
+  $("tfile").addEventListener("change", function () { load(this.files[0]); }); $("tfile2").addEventListener("change", function () { load(this.files[0]); });
+  ["tsize", "tang", "tcurve"].forEach(function (id) { $(id).addEventListener("input", tdraw); });
+  function tdraw(t) {
+    t = t || performance.now() / 1000; tx.clearRect(0, 0, tw, th); tx.fillStyle = "#000"; tx.fillRect(0, 0, tw, th);
+    if (img) { var sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc; tx.drawImage(img, (tw - dw) / 2, (th - dh) / 2, dw, dh); }
+    var size = +$("tsize").value, ang = +$("tang").value * Math.PI / 180, curve = +$("tcurve").value, m = metalOf();
+    var cx = pos.x * tw, cy = pos.y * th, r = Math.max(3, size * tw / 60), n = 36, span = r * 2.3 * (n - 1);
+    tx.save(); tx.translate(cx, cy); tx.rotate(ang);
+    var P = []; for (var i = 0; i < n; i++) { var u = i / (n - 1) - 0.5; P.push([u * span, -Math.cos(u * Math.PI) * span * curve * 0.5 + span * curve * 0.25]); }
+    tx.strokeStyle = m; tx.lineWidth = r * 0.55; tx.lineCap = "round"; tx.beginPath(); P.forEach(function (p, i) { i ? tx.lineTo(p[0], p[1]) : tx.moveTo(p[0], p[1]); }); tx.stroke();
+    P.forEach(function (p, i) { gem(tx, p[0], p[1], r, t, i, m); });
+    tx.restore();
+  }
+  $("tcv").addEventListener("pointerdown", function (e) { if (!img) return; dragging = true; dpx = e.clientX; dpy = e.clientY; $("tcv").setPointerCapture(e.pointerId); });
+  $("tcv").addEventListener("pointermove", function (e) { if (!dragging) return; pos.x += (e.clientX - dpx) / tw; pos.y += (e.clientY - dpy) / th; dpx = e.clientX; dpy = e.clientY; tdraw(); });
+  $("tcv").addEventListener("pointerup", function () { dragging = false; }); $("tcv").addEventListener("pointercancel", function () { dragging = false; });
+  $("tcv").addEventListener("touchstart", function (e) { if (e.touches.length === 2) { pinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), s: +$("tsize").value }; dragging = false; } }, { passive: true });
+  $("tcv").addEventListener("touchmove", function (e) { if (pinch && e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); $("tsize").value = Math.max(0.3, Math.min(1.6, pinch.s * d / pinch.d)); tdraw(); } }, { passive: true });
+  $("tcv").addEventListener("touchend", function () { pinch = null; });
+  $("tsave").addEventListener("click", function () { tdraw(); tc.toBlob(function (b) { if (!b) return; var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "silavu-line.jpg"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }, "image/jpeg", 0.92); });
+  var tloop = null;
+  window.__tryon = { open: function () { tmodal.classList.add("open"); tmodal.setAttribute("aria-hidden", "false"); document.body.classList.add("locked"); setTimeout(tsize, 50); if (!tloop && !reduce) tloop = setInterval(function () { if (tmodal.classList.contains("open")) tdraw(); }, 120); } };
+  addEventListener("resize", function () { if (tmodal.classList.contains("open")) tsize(); });
 })();
 </script>

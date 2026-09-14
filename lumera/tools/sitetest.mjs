@@ -50,6 +50,21 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   out.push((await p.evaluate(() => document.documentElement.dir==="rtl" && document.getElementById("sumMetal").textContent==="זהב צהוב 18K" && document.getElementById("whereT").textContent.length > 0 && !/[A-Za-z]/.test(document.getElementById("whereT").textContent)) ? "PASS":"FAIL") + ` ${tag} hebrew`);
   out.push((await p.evaluate(() => /^\d\d:\d\d$/.test(document.getElementById("clkDXB").textContent)) ? "PASS":"FAIL") + ` ${tag} clocks`);
   out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < 22) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
+  // the piece window, the chain, the try-on, the carat numbers
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(300);
+  await p.evaluate(() => document.getElementById("p-riv").click()); await p.waitForTimeout(500);
+  out.push((await p.evaluate(() => document.getElementById("pmodal").classList.contains("open") && /Rivi/.test(document.getElementById("pmT").textContent) && document.querySelectorAll("#pmSpecs .dc").length === 4) ? "PASS":"FAIL") + ` ${tag} piece window opens`);
+  await p.evaluate(() => document.getElementById("pmReq").click()); await p.waitForTimeout(600);
+  out.push((await p.evaluate(() => !document.getElementById("pmodal").classList.contains("open") && /Rivi/.test(document.getElementById("fMsg").value)) ? "PASS":"FAIL") + ` ${tag} piece window → request`);
+  await p.evaluate(() => document.getElementById("pickup").click()); await p.waitForTimeout(900);
+  out.push((await p.evaluate(() => document.getElementById("play").classList.contains("on") && document.getElementById("putback").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain picked up`;
+  await p.evaluate(() => document.getElementById("putback").click());
+  out.push((await p.evaluate(() => !document.getElementById("play").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain put back`;
+  await p.evaluate(() => document.getElementById("tryonBtn").click()); await p.waitForTimeout(400);
+  out.push((await p.evaluate(() => document.getElementById("tryon").classList.contains("open") && document.getElementById("tcanvas").width > 0)) ? "PASS":"FAIL") + ` ${tag} try-on opens`;
+  await p.keyboard.press("Escape"); await p.waitForTimeout(300);
+  await p.click('.chip[data-k="ct"][data-v="20"]');
+  out.push((await p.evaluate(() => /0\.56/.test(document.getElementById("eachCt").textContent) && /5\.3/.test(document.getElementById("eachMm").textContent)) ? "PASS":"FAIL") + ` ${tag} carat explained (${await p.evaluate(() => document.getElementById("eachCt").textContent + " / " + document.getElementById("eachMm").textContent)})`);
   out.push((await p.evaluate(() => document.getElementById("dust").width > 0 && document.getElementById("pbar").style.width !== "") ? "PASS":"FAIL") + ` ${tag} dust + progress alive`);
   out.push((errs.length===0 ? "PASS":"FAIL") + ` ${tag} no errors ${errs.join(" | ")}`);
   await p.close();
