@@ -4,7 +4,7 @@
   :root { --bg:#000; --ink:#f2efe9; --ink2:#b9b6af; --ink3:#6f6d69; --line:rgba(242,239,233,.16); --ease:cubic-bezier(.16,1,.3,1); --pad:clamp(20px,5vw,96px);
     --sans:"Inter Tight",system-ui,-apple-system,sans-serif; --serif:"Instrument Serif",Georgia,serif; color-scheme:dark; }
   html[data-lang="he"] { --sans:"Heebo","Inter Tight",system-ui,sans-serif; }
-  #silavu, #silavu * { margin:0; padding:0; box-sizing:border-box; }
+  :where(#silavu, #silavu *) { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; background:#000; }
   html, body { overflow-x:clip; }
   body { background:var(--bg); color:var(--ink); font-family:var(--sans); font-weight:300; -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; }
@@ -90,7 +90,7 @@
   @media (min-width:1000px) { #fab { display:none; } }
 
   main.sm { position:relative; z-index:10; }
-  .sm section { position:relative; padding:14svh var(--pad); }
+  .sm section { position:relative; padding:10svh var(--pad); }
   .sechead { display:grid; gap:14px; max-width:1100px; margin-bottom:clamp(28px,5vh,56px); }
   .sechead .p { margin-top:4px; }
 
@@ -126,7 +126,7 @@
   .card .lnk { margin-top:8px; justify-self:start; }
 
   /* ── inside one stone: the film, scrubbed ── */
-  #inside { height:260svh; padding:0; }
+  #inside { height:220svh; padding:0; }
   .pin { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; }
   #film { position:absolute; inset:0; width:100%; height:100%; display:block; visibility:hidden; }
   #film.on { visibility:visible; }
@@ -143,7 +143,7 @@
   .fk { position:absolute; left:var(--pad); right:var(--pad); top:max(12svh, 96px); z-index:2; pointer-events:none; }
 
   /* ── the standard: four numbers and thirty-six records ── */
-  #standard { padding-top:10svh; }
+  #standard { padding-top:8svh; }
   .specs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 24px; max-width:1100px; }
   @media (min-width:900px) { .specs { grid-template-columns:repeat(4,minmax(0,1fr)); } }
   .spec { border-top:1px solid var(--line); padding-top:12px; }
@@ -220,7 +220,7 @@
   .ch .bg picture { display:block; width:100%; height:100%; }
   .ch .bg img { width:100%; height:100%; object-fit:cover; }
   .ch .veil { position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.4) 40%, rgba(0,0,0,.05) 70%); }
-  .ch .txt { position:relative; z-index:2; padding:14svh var(--pad) max(10svh, calc(env(safe-area-inset-bottom) + 40px)); max-width:820px; }
+  .ch .txt { position:relative; z-index:2; padding:10svh var(--pad) max(8svh, calc(env(safe-area-inset-bottom) + 40px)); max-width:820px; }
   .steps { display:grid; gap:18px; }
   .step { display:grid; grid-template-columns:36px 1fr; gap:14px; border-top:1px solid var(--line); padding-top:16px; }
   .step .num { font-family:var(--serif); font-style:italic; font-size:1.4rem; color:var(--ink2); line-height:1.2; } html[data-lang="he"] .step .num { font-family:inherit; font-style:normal; }
@@ -234,7 +234,7 @@
   .cimg img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1.6s var(--ease); }
   .cimg img.on { opacity:1; }
   .cimg::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, #000 0%, rgba(0,0,0,.2) 45%, rgba(0,0,0,.35) 100%); }
-  .cbody { padding:10svh var(--pad) 14svh; display:grid; gap:40px; }
+  .cbody { padding:8svh var(--pad) 12svh; display:grid; gap:36px; }
   @media (min-width:900px) {
     #concierge { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
     .cimg { min-height:100svh; }
@@ -269,7 +269,7 @@
   .soc svg { width:17px; height:17px; fill:currentColor; }
 
   /* ── footer ── */
-  #end { padding:14svh var(--pad) 12svh; }
+  #end { padding:10svh var(--pad) 8svh; }
   .fgrid { display:grid; gap:36px; max-width:1200px; }
   @media (min-width:900px) { .fgrid { grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr)); gap:40px; } }
   .end-mark { font-weight:300; letter-spacing:.42em; padding-inline-start:.42em; font-size:clamp(2rem,5vw,3.6rem); direction:ltr; }
@@ -383,8 +383,8 @@
   <section id="inside" data-title-en="Inside the stone" data-title-he="בתוך האבן" aria-label="Inside one stone">
     <div class="pin">
       <picture>
-        <source media="(max-width:899px)" srcset="/img/one.m.jpg">
-        <img id="fposter" src="/img/one.jpg" alt="One brilliant of the Line, seen from above in its four prongs" loading="lazy">
+        <source media="(max-width:899px)" srcset="/f/m/060.webp">
+        <img id="fposter" src="/f/d/060.webp" alt="One brilliant of the Line, seen from above in its four prongs" loading="lazy">
       </picture>
       <canvas id="film" aria-hidden="true"></canvas>
       <div class="fshade"></div>
@@ -708,7 +708,7 @@
     var vh = innerHeight, r = insideSec.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh * 2) return;
     if (r.top < vh * 1.5) loadFrames();
     var u = Math.max(0, -r.top / vh), D = r.height / vh - 1;
-    target = Math.min(NF - 1, Math.floor(seg(u, 0.12, D - 0.15) * NF)); drawFilm();
+    target = Math.min(NF - 1, Math.floor(seg(u, 0.08, D - 0.08) * NF)); drawFilm();
     fprog.style.width = (c01(u / D) * 100).toFixed(1) + "%";
     var B = [[0, 0.6], [0.85, D + 0.5]];
     for (var j = 0; j < fbeats.length; j++) { var o = (j === 0 && u < 0.05 ? 1 : ss(seg(u, B[j][0], B[j][0] + 0.2))) * (1 - ss(seg(u, B[j][1] - 0.2, B[j][1]))); fbeats[j].style.opacity = o.toFixed(3); fbeats[j].style.transform = "translateY(" + ((1 - o) * 20).toFixed(1) + "px)"; fbeats[j].classList.toggle("on", o > 0.5); }
@@ -747,7 +747,7 @@
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
   function parallax() { var vh = innerHeight; pxs.forEach(function (bg) { var r = bg.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return; var t = (r.top + r.height / 2 - vh / 2) / vh; bg.style.transform = "translate3d(0," + (t * -8).toFixed(2) + "%,0)"; }); }
   function tick() { requestAnimationFrame(tick); filmTick(); parallax(); compass(); }
-  tick();
+  tick(); addEventListener("scroll", compass, { passive: true });
 
   /* ── language ── */
   var lang = "en", btns = [$("langBtn"), $("langBtn2"), $("langBtn3")];
