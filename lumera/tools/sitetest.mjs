@@ -16,9 +16,9 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   const toU = u => p.evaluate(u => window.scrollTo({top:u*innerHeight, behavior:"instant"}), u);
   for (const [u,i] of [[0.05,0],[0.5,1],[0.95,2]]) { await toU(u); await p.waitForTimeout(500);
     out.push((await p.evaluate(i => document.querySelectorAll(".beat.on").length===1 && document.querySelector(".beat.on").getAttribute("data-i")===String(i), i) ? "PASS" : "FAIL") + ` ${tag} beat ${i}`); }
-  await toU(2.9); await p.waitForTimeout(400);
-  out.push((await p.evaluate(() => +document.getElementById("dvOne").style.opacity > 0.95 && document.querySelectorAll(".beat.on").length===0 && !!document.querySelector("#dvOne img").getAttribute("src")) ? "PASS":"FAIL") + ` ${tag} dive: one stone`);
-  await toU(6.4); await p.waitForTimeout(400);
+  await toU(3.7); await p.waitForTimeout(400);
+  out.push((await p.evaluate(() => document.querySelectorAll(".dbeat.on").length===1 && document.querySelectorAll(".beat.on").length===0 && window.__film.target >= 70 && window.__film.target <= 76) ? "PASS":"FAIL") + ` ${tag} film: one stone (frame ${await p.evaluate(() => window.__film.target)})`);
+  await toU(6.6); await p.waitForTimeout(400);
   out.push((await p.evaluate(() => +document.getElementById("dossier").style.opacity > 0.95 && document.getElementById("dcur").textContent==="19" && document.querySelectorAll("#dline b.on").length===1 && /ct$/.test(document.getElementById("dv0").textContent)) ? "PASS":"FAIL") + ` ${tag} dive: dossier stone 19`);
   await p.evaluate(() => document.querySelector('#dline b[data-j="5"]').click()); await p.waitForTimeout(1500);
   out.push((await p.evaluate(() => document.getElementById("dcur").textContent==="06") ? "PASS":"FAIL") + ` ${tag} dive: tap stone 6`);

@@ -63,9 +63,9 @@
   .sm section { position:relative; padding:14svh var(--pad); }
 
   /* ── hero: photograph revealed from darkness, scroll-driven ── */
-  #hero { height:940svh; padding:0; }
+  #hero { height:920svh; padding:0; }
   .pin { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; }
-  .hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 55%; transform:scale(1.14); will-change:transform,filter; }
+  .hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; }
   .hero-mask { position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at var(--mx,50%) var(--my,55%), rgba(0,0,0,0) 0, rgba(0,0,0,0) calc(var(--r,74%) - 30%), rgba(0,0,0,.88) var(--r,74%)); }
   .sweep { position:absolute; inset:-20%; pointer-events:none; background:linear-gradient(105deg, transparent 40%, rgba(255,255,255,.10) 50%, transparent 60%); transform:translateX(-120%); mix-blend-mode:screen; }
   .shade { position:absolute; inset:0; pointer-events:none; will-change:opacity; background:linear-gradient(to top, rgba(0,0,0,.9) 0%, rgba(0,0,0,.35) 30%, rgba(0,0,0,0) 55%), linear-gradient(to bottom, rgba(0,0,0,.5), rgba(0,0,0,0) 25%); }
@@ -83,8 +83,8 @@
   @keyframes cue { 0%{transform:scaleY(0); transform-origin:top; opacity:0} 40%{transform:scaleY(1); opacity:1; transform-origin:top} 100%{transform:scaleY(0); transform-origin:bottom; opacity:0} }
 
   /* ── the dive: into the bracelet, into one stone, inside it, then stone by stone ── */
-  .dv { position:absolute; inset:0; opacity:0; visibility:hidden; will-change:opacity; background:#000; }
-  .dv img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; will-change:transform; }
+  #film { position:absolute; inset:0; width:100%; height:100%; display:block; visibility:hidden; will-change:filter; }
+  #film.on { visibility:visible; }
   .dvcap { position:absolute; left:var(--pad); right:var(--pad); bottom:max(11svh, calc(env(safe-area-inset-bottom) + 44px)); z-index:4; pointer-events:none; }
   .dbeat { position:absolute; inset:auto 0 0 0; opacity:0; transform:translateY(20px); will-change:opacity,transform; }
   .dbeat .h { margin-top:10px; font-size:clamp(2.3rem,6.4vw,6rem); }
@@ -262,11 +262,27 @@
         <source media="(max-width:899px)" srcset="/img/herov.jpg">
         <img class="hero-img" id="heroimg" src="/img/hero.jpg" alt="The SILAVU Line, thirty-six brilliants in 18K white gold on black glass" fetchpriority="high">
       </picture>
+      <canvas id="film" aria-hidden="true"></canvas>
       <div class="hero-mask" id="heromask"></div>
       <div class="sweep" id="sweep"></div>
       <div class="shade" id="heroshade"></div>
-      <picture class="dv" id="dvOne"><source media="(max-width:899px)" data-srcset="/img/one.m.jpg"><img data-src="/img/one.jpg" alt="One brilliant of the Line, seen from above in its four prongs"></picture>
-      <picture class="dv" id="dvIn"><source media="(max-width:899px)" data-srcset="/img/in.m.jpg"><img data-src="/img/in.jpg" alt="Inside the stone: the pavilion facets seen from within"></picture>
+      <div class="cap">
+        <div class="beat" data-i="0">
+          <div class="k" data-en="The SILAVU Line · 18K white gold" data-he="קו SILAVU · זהב לבן 18K">The SILAVU Line · 18K white gold</div>
+          <h1 class="h" data-en="<span class='w'><span>One</span></span> <span class='w'><span>line</span></span> <span class='w'><span><em>of light.</em></span></span>" data-he="<span class='w'><span>קו</span></span> <span class='w'><span>אחד</span></span> <span class='w'><span><em>של אור.</em></span></span>"><span class="w"><span>One</span></span> <span class="w"><span>line</span></span> <span class="w"><span><em>of light.</em></span></span></h1>
+          <p class="p" data-en="Scroll, and let the light find it." data-he="גללו, ותנו לאור למצוא אותו.">Scroll, and let the light find it.</p>
+        </div>
+        <div class="beat" data-i="1">
+          <div class="k" data-en="Thirty-six brilliants" data-he="שלושים ושישה בריליאנטים">Thirty-six brilliants</div>
+          <h2 class="h" data-en="<span class='w'><span>Matched</span></span> <span class='w'><span>by</span></span> <span class='w'><span>hand,</span></span> <span class='w'><span><em>one to the next.</em></span></span>" data-he="<span class='w'><span>מותאמים</span></span> <span class='w'><span>ביד,</span></span> <span class='w'><span><em>אחד לשני.</em></span></span>"><span class="w"><span>Matched</span></span> <span class="w"><span>by</span></span> <span class="w"><span>hand,</span></span> <span class="w"><span><em>one to the next.</em></span></span></h2>
+          <p class="p" data-en="Each stone within a tenth of a millimetre of its neighbour, so the line never breaks." data-he="כל אבן בטווח של עשירית מילימטר משכנתה, כך שהקו לעולם אינו נשבר.">Each stone within a tenth of a millimetre of its neighbour, so the line never breaks.</p>
+        </div>
+        <div class="beat" data-i="2">
+          <div class="k" data-en="Made once, for one wrist" data-he="נעשה פעם אחת, לפרק יד אחד">Made once, for one wrist</div>
+          <h2 class="h" data-en="<span class='w'><span>Yours,</span></span> <span class='w'><span>from</span></span> <span class='w'><span>2</span></span> <span class='w'><span><em>to 20 carats.</em></span></span>" data-he="<span class='w'><span>שלכם,</span></span> <span class='w'><span>מ־2</span></span> <span class='w'><span><em>עד 20 קראט.</em></span></span>"><span class="w"><span>Yours,</span></span> <span class="w"><span>from</span></span> <span class="w"><span>2</span></span> <span class="w"><span><em>to 20 carats.</em></span></span></h2>
+          <div class="acts"><a class="btn solid" href="#build" data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</a><a class="btn" href="#concierge" data-en="Private viewing" data-he="צפייה פרטית">Private viewing</a></div>
+        </div>
+      </div>
       <div class="dvcap" aria-hidden="true">
         <div class="dbeat" data-j="0">
           <div class="k" data-en="Closer" data-he="קרוב יותר">Closer</div>
@@ -297,23 +313,6 @@
         </div>
         <div class="dline" id="dline" role="list" aria-label="The thirty-six stones"></div>
         <div class="k dhint" data-en="Scroll to move along the line · tap a stone to jump to it" data-he="גללו כדי לנוע לאורך הקו · הקישו על אבן כדי לקפוץ אליה">Scroll to move along the line · tap a stone to jump to it</div>
-      </div>
-      <div class="cap">
-        <div class="beat" data-i="0">
-          <div class="k" data-en="The SILAVU Line · 18K white gold" data-he="קו SILAVU · זהב לבן 18K">The SILAVU Line · 18K white gold</div>
-          <h1 class="h" data-en="<span class='w'><span>One</span></span> <span class='w'><span>line</span></span> <span class='w'><span><em>of light.</em></span></span>" data-he="<span class='w'><span>קו</span></span> <span class='w'><span>אחד</span></span> <span class='w'><span><em>של אור.</em></span></span>"><span class="w"><span>One</span></span> <span class="w"><span>line</span></span> <span class="w"><span><em>of light.</em></span></span></h1>
-          <p class="p" data-en="Scroll, and let the light find it." data-he="גללו, ותנו לאור למצוא אותו.">Scroll, and let the light find it.</p>
-        </div>
-        <div class="beat" data-i="1">
-          <div class="k" data-en="Thirty-six brilliants" data-he="שלושים ושישה בריליאנטים">Thirty-six brilliants</div>
-          <h2 class="h" data-en="<span class='w'><span>Matched</span></span> <span class='w'><span>by</span></span> <span class='w'><span>hand,</span></span> <span class='w'><span><em>one to the next.</em></span></span>" data-he="<span class='w'><span>מותאמים</span></span> <span class='w'><span>ביד,</span></span> <span class='w'><span><em>אחד לשני.</em></span></span>"><span class="w"><span>Matched</span></span> <span class="w"><span>by</span></span> <span class="w"><span>hand,</span></span> <span class="w"><span><em>one to the next.</em></span></span></h2>
-          <p class="p" data-en="Each stone within a tenth of a millimetre of its neighbour, so the line never breaks." data-he="כל אבן בטווח של עשירית מילימטר משכנתה, כך שהקו לעולם אינו נשבר.">Each stone within a tenth of a millimetre of its neighbour, so the line never breaks.</p>
-        </div>
-        <div class="beat" data-i="2">
-          <div class="k" data-en="Made once, for one wrist" data-he="נעשה פעם אחת, לפרק יד אחד">Made once, for one wrist</div>
-          <h2 class="h" data-en="<span class='w'><span>Yours,</span></span> <span class='w'><span>from</span></span> <span class='w'><span>2</span></span> <span class='w'><span><em>to 20 carats.</em></span></span>" data-he="<span class='w'><span>שלכם,</span></span> <span class='w'><span>מ־2</span></span> <span class='w'><span><em>עד 20 קראט.</em></span></span>"><span class="w"><span>Yours,</span></span> <span class="w"><span>from</span></span> <span class="w"><span>2</span></span> <span class="w"><span><em>to 20 carats.</em></span></span></h2>
-          <div class="acts"><a class="btn solid" href="#build" data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</a><a class="btn" href="#concierge" data-en="Private viewing" data-he="צפייה פרטית">Private viewing</a></div>
-        </div>
       </div>
       <div class="scrollcue" id="cue"><span class="k" data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
       <div class="prog" aria-hidden="true"><i id="prog"></i></div>
@@ -521,13 +520,6 @@
     intro.classList.add("gone"); document.body.classList.remove("locked"); header.classList.add("show");
     setTimeout(function () { intro.style.display = "none"; }, 1300);
     var b0 = document.querySelector('.beat[data-i="0"]'); if (b0) b0.classList.add("on");
-    setTimeout(loadDive, 900);
-  }
-  var diveLoaded = false;
-  function loadDive() {
-    if (diveLoaded) return; diveLoaded = true;
-    document.querySelectorAll(".dv [data-srcset]").forEach(function (el) { el.srcset = el.getAttribute("data-srcset"); });
-    document.querySelectorAll(".dv img[data-src]").forEach(function (el) { el.src = el.getAttribute("data-src"); });
   }
   $("enterBtn").addEventListener("click", enter);
   setTimeout(enter, reduce ? 1200 : 5500);
@@ -543,19 +535,31 @@
     window.scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
   });
 
-  /* ── hero, then the dive: the light finds the piece, we go into the bracelet, into one stone, inside it, then along the line ── */
-  var heroSec = $("hero"), heroImg = $("heroimg"), heroMask = $("heromask"), sweep = $("sweep"), cue = $("cue"), prog = $("prog"), heroShade = $("heroshade");
-  var beats = Array.prototype.slice.call(document.querySelectorAll(".beat")), dbeats = Array.prototype.slice.call(document.querySelectorAll(".dbeat"));
-  var dvOne = $("dvOne"), dvIn = $("dvIn"), oneImg = dvOne.querySelector("img"), inImg = dvIn.querySelector("img"), dossier = $("dossier");
-  var T = 8.4, ST = [5.25, 7.45]; /* the section is T viewport-heights of scroll; the 36 stones run between ST */
+  /* ── the film: one continuous shot, from the bracelet into one stone and inside it, scrubbed by the scroll ── */
+  var heroSec = $("hero"), heroImg = $("heroimg"), heroMask = $("heromask"), sweep = $("sweep"), cue = $("cue"), prog = $("prog"), heroShade = $("heroshade"), film = $("film"), fctx = film.getContext("2d");
+  var beats = Array.prototype.slice.call(document.querySelectorAll(".beat")), dbeats = Array.prototype.slice.call(document.querySelectorAll(".dbeat")), dossier = $("dossier");
+  var T = 8.2, FILM = [1.0, 5.4], ST = [5.6, 7.55]; /* T viewport-heights of scroll; the film runs between FILM, the 36 stones between ST */
+  var NF = 120, FD = desk() ? "d" : "m", frames = new Array(NF), loaded = 0, target = 0, shown = -1, fw = 0, fh = 0;
   function seg(u, a, b) { return c01((u - a) / (b - a)); }
   function layer(el, o) { el.style.opacity = o.toFixed(3); el.style.visibility = o > 0.002 ? "visible" : "hidden"; }
-  function coverPt(img, W, H, X, Y, oy) { var iw = img.naturalWidth || 16, ih = img.naturalHeight || 9, sc = Math.max(W / iw, H / ih), dw = iw * sc, dh = ih * sc; return [(W - dw) / 2 + X * dw, (H - dh) * oy + Y * dh]; }
-  /* zoom an object-fit:cover image toward the point (X,Y) of the photograph, pulling that point to the centre as z → 1 */
-  function zoomTo(img, W, H, X, Y, oy, sc, z) { var pt = coverPt(img, W, H, X, Y, oy); img.style.transformOrigin = pt[0].toFixed(1) + "px " + pt[1].toFixed(1) + "px"; img.style.transform = "translate3d(" + ((W / 2 - pt[0]) * z).toFixed(1) + "px," + ((H / 2 - pt[1]) * z).toFixed(1) + "px,0) scale(" + sc.toFixed(4) + ")"; }
+  function fsrc(i) { return "/f/" + FD + "/" + (i < 10 ? "00" : i < 100 ? "0" : "") + i + ".webp"; }
+  function sizeFilm() { var d = Math.min(devicePixelRatio || 1, desk() ? 2 : 1.6), r = film.getBoundingClientRect(); fw = Math.round(r.width * d); fh = Math.round(r.height * d); film.width = fw; film.height = fh; shown = -1; drawFilm(); }
+  function nearest(t) { for (var d = 0; d < NF; d++) { if (frames[t - d]) return t - d; if (frames[t + d]) return t + d; } return -1; }
+  function drawFilm() {
+    var i = nearest(target); if (i < 0 || i === shown || !fw) return; shown = i;
+    var im = frames[i], sc = Math.max(fw / im.naturalWidth, fh / im.naturalHeight), dw = im.naturalWidth * sc, dh = im.naturalHeight * sc;
+    fctx.drawImage(im, (fw - dw) / 2, (fh - dh) / 2, dw, dh); film.classList.add("on");
+  }
+  function loadFrames() { /* the first frame, then every eighth, then the rest; four at a time */
+    var order = [0], i; for (i = 8; i < NF; i += 8) order.push(i); for (i = 1; i < NF; i++) if (i % 8) order.push(i);
+    var k = 0; function next() { if (k >= order.length) return; var j = order[k++], im = new Image(); im.decoding = "async"; im.onload = function () { frames[j] = im; loaded++; if (Math.abs(j - target) <= 8 || shown < 0) { shown = -1; drawFilm(); } next(); }; im.onerror = next; im.src = fsrc(j); }
+    for (var c = 0; c < 4; c++) next();
+  }
+  sizeFilm(); addEventListener("resize", sizeFilm); loadFrames();
+  window.__film = { get target() { return target; }, get shown() { return shown; }, get loaded() { return loaded; } };
   var stoneCur = -1;
   function heroTick() {
-    var vh = innerHeight, W = innerWidth, r = heroSec.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
+    var vh = innerHeight, r = heroSec.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
     var u = Math.max(0, -r.top / vh), p = c01(u), e = ss(p), d = desk();
     prog.style.width = (c01(u / T) * 100).toFixed(1) + "%"; cue.style.opacity = u > 0.04 ? "0" : "1";
     /* 0 → 1: the light finds the piece */
@@ -568,27 +572,15 @@
       beats[i].style.opacity = o.toFixed(3); beats[i].style.transform = "translateY(" + ((1 - o) * 20).toFixed(1) + "px)"; beats[i].classList.toggle("on", o > 0.5);
     }
     heroShade.style.opacity = (1 - seg(u, 1.0, 1.5)).toFixed(3);
-    /* 1 → 2.3: into the bracelet, toward one stone */
-    var z = ss(seg(u, 1.0, 2.3)), sc = (1.14 - 0.12 * e) + 3.9 * z, blurH = seg(u, 1.95, 2.35) * 9;
-    zoomTo(heroImg, W, vh, d ? 0.52 : 0.50, d ? 0.56 : 0.57, 0.55, sc, z);
-    heroImg.style.filter = "brightness(" + (0.82 + 0.18 * e + 0.3 * seg(u, 1.7, 2.35)).toFixed(3) + ")" + (blurH > 0.05 ? " blur(" + blurH.toFixed(1) + "px)" : "");
-    layer(heroImg, 1 - seg(u, 2.55, 2.8));
-    if (u > 0.6) loadDive();
-    /* 2.1 → 4.2: one stone, from above, then into its table */
-    var oIn = ss(seg(u, 2.1, 2.55)), oOut = ss(seg(u, 3.95, 4.3)), oz = ss(seg(u, 3.2, 4.2)), blurO = seg(u, 3.9, 4.25) * 9;
-    layer(dvOne, oIn * (1 - oOut));
-    zoomTo(oneImg, W, vh, 0.5, 0.5, 0.5, lerp(1.6, 1.0, ss(seg(u, 2.1, 3.0))) + 2.3 * oz, oz);
-    oneImg.style.filter = "brightness(" + (1 + 0.35 * seg(u, 3.7, 4.25)).toFixed(3) + ")" + (blurO > 0.05 ? " blur(" + blurO.toFixed(1) + "px)" : "");
-    /* 3.9 → end: inside the stone */
-    var iIn = ss(seg(u, 3.9, 4.35)), drift = seg(u, 4.9, T);
-    layer(dvIn, iIn * (1 - ss(seg(u, 8.05, T))));
-    inImg.style.transform = "scale(" + (lerp(1.45, 1.0, ss(seg(u, 3.9, 5.0))) + 0.14 * drift).toFixed(4) + ") rotate(" + (drift * 4).toFixed(2) + "deg)";
-    inImg.style.filter = "brightness(" + (1 - 0.36 * ss(seg(u, 5.0, 5.4))).toFixed(3) + ")";
-    /* two captions on the way down */
-    var DB = [[2.6, 3.45], [4.5, 5.1]];
+    /* the film: scrubbed frame by frame */
+    target = Math.min(NF - 1, Math.floor(seg(u, FILM[0], FILM[1]) * NF)); drawFilm();
+    var bright = 1 - 0.38 * ss(seg(u, 5.35, 5.75)), fade = 1 - ss(seg(u, 7.85, T));
+    film.style.filter = bright < 0.995 ? "brightness(" + bright.toFixed(3) + ")" : ""; film.style.opacity = fade.toFixed(3); heroImg.style.opacity = fade.toFixed(3);
+    /* two captions on the way in */
+    var DB = [[3.35, 4.15], [4.65, 5.4]];
     for (var j = 0; j < dbeats.length; j++) { var oo = ss(seg(u, DB[j][0], DB[j][0] + 0.2)) * (1 - ss(seg(u, DB[j][1] - 0.2, DB[j][1]))); dbeats[j].style.opacity = oo.toFixed(3); dbeats[j].style.transform = "translateY(" + ((1 - oo) * 20).toFixed(1) + "px)"; dbeats[j].classList.toggle("on", oo > 0.5); }
     /* the dossier: thirty-six stones, one after the other */
-    var dO = ss(seg(u, 5.1, 5.45)) * (1 - ss(seg(u, 7.9, 8.2)));
+    var dO = ss(seg(u, 5.45, 5.8)) * (1 - ss(seg(u, 7.7, 8.0)));
     layer(dossier, dO); dossier.classList.toggle("on", dO > 0.5);
     var k = Math.min(35, Math.floor(seg(u, ST[0], ST[1]) * 36)); if (k !== stoneCur) setStone(k);
   }
