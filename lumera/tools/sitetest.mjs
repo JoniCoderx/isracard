@@ -17,17 +17,16 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   const menuVis = await p.evaluate(() => getComputedStyle(document.getElementById("menuBtn")).display !== "none");
   if (menuVis) { await p.click("#menuBtn"); await p.waitForTimeout(600);
     out.push((await p.evaluate(() => document.getElementById("menu").classList.contains("open")) ? "PASS":"FAIL") + ` ${tag} menu opens`);
-    await p.evaluate(() => document.querySelector('#mlist a[href="#partners"]').click()); await p.waitForTimeout(1500);
-    out.push((await p.evaluate(() => !document.getElementById("menu").classList.contains("open")) && Math.abs(await y() - await top("partners")) < 4 ? "PASS":"FAIL") + ` ${tag} menu link closes + lands`);
+    await p.evaluate(() => document.querySelector('#mlist a[href="#clients"]').click()); await p.waitForTimeout(1500);
+    out.push((await p.evaluate(() => !document.getElementById("menu").classList.contains("open")) && Math.abs(await y() - await top("clients")) < 4 ? "PASS":"FAIL") + ` ${tag} menu link closes + lands`);
     out.push((await p.evaluate(() => document.getElementById("fab").classList.contains("show")) ? "PASS":"FAIL") + ` ${tag} floating book button shown`);
   } else out.push(`skip ${tag} menu`);
   // compass
-  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("partners").getBoundingClientRect().top, behavior:"instant"})); for (let i = 0; i < 30 && (await p.evaluate(() => document.getElementById("whereN").textContent)) !== "06"; i++) await p.waitForTimeout(250);
-  out.push((await p.evaluate(() => document.getElementById("whereT").textContent === "For partners" && document.getElementById("whereN").textContent === "06") ? "PASS":"FAIL") + ` ${tag} compass says where you are (${await p.evaluate(() => document.getElementById("whereN").textContent + " " + document.getElementById("whereT").textContent)})`);
-  // film
-  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("inside").getBoundingClientRect().top + innerHeight*1.0, behavior:"instant"})); for (let i = 0; i < 30 && (await p.evaluate(() => window.__film.target)) < 30; i++) await p.waitForTimeout(250);
-  const f = await p.evaluate(() => ({ t: window.__film.target, beats: document.querySelectorAll(".fbeat.on").length, on: [...document.querySelectorAll(".fbeat.on")].map(e=>e.dataset.j).join("") }));
-  out.push((f.t > 45 && f.t < 60 && f.beats === 1 && f.on === "1" ? "PASS":"FAIL") + ` ${tag} film scrubs (frame ${f.t}, beat ${f.on})`);
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("partners").getBoundingClientRect().top, behavior:"instant"})); for (let i = 0; i < 30 && !/partners|שותפים/i.test(await p.evaluate(() => document.getElementById("whereT").textContent)); i++) await p.waitForTimeout(250);
+  out.push((await p.evaluate(() => document.getElementById("whereT").textContent === "For partners" && document.getElementById("whereN").textContent === "05") ? "PASS":"FAIL") + ` ${tag} compass says where you are (${await p.evaluate(() => document.getElementById("whereN").textContent + " " + document.getElementById("whereT").textContent)})`);
+  // inside: a chapter with a film that loads when near
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("inside").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(900);
+  out.push((await p.evaluate(() => !!document.getElementById("insidevid").getAttribute("src") && document.getElementById("whereN").textContent === "02") ? "PASS":"FAIL") + ` ${tag} inside chapter loads its film`);
   // stone picker
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("standard").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(500);
   await p.click("#dNext"); await p.click("#dNext"); out.push((await p.textContent("#dcur")) === "03" ? "PASS":"FAIL"); out[out.length-1] += ` ${tag} stone next`;
@@ -49,7 +48,7 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.click("#langBtn"); await p.waitForTimeout(300);
   out.push((await p.evaluate(() => document.documentElement.dir==="rtl" && document.getElementById("sumMetal").textContent==="זהב צהוב 18K" && document.getElementById("whereT").textContent.length > 0 && !/[A-Za-z]/.test(document.getElementById("whereT").textContent)) ? "PASS":"FAIL") + ` ${tag} hebrew`);
   out.push((await p.evaluate(() => /^\d\d:\d\d$/.test(document.getElementById("clkDXB").textContent)) ? "PASS":"FAIL") + ` ${tag} clocks`);
-  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < 22) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
+  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < 18) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
   // the piece window, the chain, the try-on, the carat numbers
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(300);
   await p.evaluate(() => document.getElementById("p-riv").click()); await p.waitForTimeout(500);

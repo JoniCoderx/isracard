@@ -34,7 +34,9 @@
   .btn::after { content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform:skewX(-20deg); transition:left .7s var(--ease); pointer-events:none; }
   .btn:hover::after, .btn:focus-visible::after { left:120%; }
   .btn:hover, .btn:focus-visible { border-color:var(--ink); background:rgba(242,239,233,.06); outline:none; }
-  .btn.solid { background:var(--ink); color:#000; border-color:var(--ink); }
+  .btn.solid { background:var(--ink); color:#000; border-color:var(--ink); animation:breathe 3.2s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { box-shadow:0 0 0 rgba(255,255,255,0); } 50% { box-shadow:0 0 28px rgba(255,255,255,.35); } }
+  .tilt { transition:transform .5s var(--ease), border-color .5s, box-shadow .7s; transform-style:preserve-3d; }
   .btn.solid:hover { background:#fff; }
   .lnk { text-decoration:none; font-size:.8rem; letter-spacing:.06em; color:var(--ink); display:inline-flex; align-items:center; gap:8px; border-bottom:1px solid rgba(242,239,233,.3); padding-bottom:3px; transition:border-color .4s; }
   .lnk:hover { border-color:var(--ink); }
@@ -51,7 +53,7 @@
   .in .w:nth-child(2) > span, .on .w:nth-child(2) > span { transition-delay:.06s; } .in .w:nth-child(3) > span, .on .w:nth-child(3) > span { transition-delay:.12s; } .in .w:nth-child(4) > span, .on .w:nth-child(4) > span { transition-delay:.18s; } .in .w:nth-child(5) > span, .on .w:nth-child(5) > span { transition-delay:.24s; }
 
   /* ── header, menu, and the little compass that says where you are ── */
-  header.sh { position:fixed; top:0; left:0; right:0; z-index:30; display:flex; align-items:center; justify-content:space-between; padding:max(18px, env(safe-area-inset-top)) var(--pad) 14px; opacity:0; transition:opacity 1.2s var(--ease); background:linear-gradient(to bottom, rgba(0,0,0,.75), rgba(0,0,0,0)); }
+  header.sh { position:fixed; top:0; left:0; right:0; z-index:30; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:max(18px, env(safe-area-inset-top)) var(--pad) 14px; opacity:0; transition:opacity 1.2s var(--ease); background:linear-gradient(to bottom, rgba(0,0,0,.75), rgba(0,0,0,0)); }
   header.sh.show { opacity:1; }
   .mark { font-weight:500; letter-spacing:.3em; font-size:1.02rem; direction:ltr; text-decoration:none; display:inline-flex; align-items:center; gap:12px; color:#fff; }
   .mark svg { width:26px; height:26px; flex:none; filter:drop-shadow(0 0 6px rgba(255,255,255,.45)); }
@@ -81,7 +83,10 @@
   #dust { position:fixed; inset:0; z-index:3; pointer-events:none; mix-blend-mode:screen; }
   #glow { position:fixed; left:0; top:0; width:560px; height:560px; border-radius:50%; pointer-events:none; z-index:3; mix-blend-mode:screen; background:radial-gradient(circle, rgba(255,250,240,.13), rgba(255,250,240,0) 62%); opacity:0; transition:opacity 1s; will-change:transform; }
   @media (hover:none), (max-width:999px) { #glow { display:none; } }
-  .sh nav { display:none; gap:26px; }
+  .sh nav { display:none; gap:22px; justify-self:start; }
+  .sh .mark { justify-self:center; }
+  .sh .hr { justify-self:end; }
+  @media (max-width:999px) { .sh .menubtn { justify-self:start; } .sh .hr { grid-column:3; } .sh > .menubtn { grid-column:1; } }
   .sh nav a { text-decoration:none; font-size:.78rem; letter-spacing:.04em; color:var(--ink2); transition:color .4s; padding:6px 0; border-bottom:1px solid transparent; }
   .sh nav a:hover, .sh nav a.cur { color:var(--ink); }
   .sh nav a.cur { border-bottom-color:rgba(242,239,233,.5); }
@@ -161,7 +166,7 @@
   @keyframes glint { 0%{transform:translate(-50%,-50%) scale(0) rotate(0deg); opacity:0} 35%{opacity:1} 100%{transform:translate(-50%,-50%) scale(1.4) rotate(45deg); opacity:0} }
   .card, .piece, .btn, .chip { position:relative; overflow:hidden; }
   .card .im { aspect-ratio:4/3; overflow:hidden; background:#000; }
-  .card .im img, .piece .im img { width:100%; height:100%; object-fit:cover; transform:scale(1.14) translateY(var(--py,0)); will-change:transform; }
+  .card .im img, .piece .im img { width:100%; height:100%; object-fit:cover; transform:scale(1.06) translateY(var(--py,0)); will-change:transform; }
   .card .bd { padding:22px 22px 24px; display:grid; gap:10px; align-content:start; }
   .card .t { font-size:clamp(1.35rem,1.9vw,1.7rem); letter-spacing:-.02em; line-height:1.1; }
   .card .t em { font-family:var(--serif); font-style:italic; font-weight:400; } html[data-lang="he"] .card .t em { font-family:inherit; font-style:normal; color:var(--ink2); }
@@ -169,11 +174,9 @@
   .card .lnk { margin-top:8px; justify-self:start; }
 
   /* ── inside one stone: the film, scrubbed ── */
-  #inside { height:200svh; padding:0; }
+  #inside .bg video { width:100%; height:100%; object-fit:cover; }
   .pin { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; }
-  #film { position:absolute; inset:0; width:100%; height:100%; display:block; visibility:hidden; }
-  #film.on { visibility:visible; }
-  #fposter { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
   .fshade { position:absolute; inset:0; pointer-events:none; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.25) 40%, rgba(0,0,0,0) 65%); }
   .fcap { position:absolute; left:var(--pad); right:var(--pad); bottom:max(10svh, calc(env(safe-area-inset-bottom) + 60px)); z-index:2; pointer-events:none; text-align:center; }
   .fbeat { position:absolute; inset:auto 0 0 0; opacity:0; transform:translateY(20px); will-change:opacity,transform; display:flex; flex-direction:column; align-items:center; }
@@ -255,6 +258,9 @@
   .fact .t { font-size:1.12rem; font-weight:400; }
   .fact .d { color:var(--ink2); line-height:1.55; margin-top:4px; font-size:.95rem; max-width:48ch; }
   .sideact { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
+  .boxfig { margin-top:28px; border-radius:10px; overflow:hidden; aspect-ratio:4/3; max-width:460px; border:1px solid var(--line); }
+  .boxfig img { width:100%; height:100%; object-fit:cover; }
+  .boxcap { position:absolute; left:16px; right:16px; bottom:14px; z-index:3; }
   #partners { background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 
   /* ── voices ── */
@@ -306,7 +312,7 @@
   /* ── atelier chapter ── */
   .ch { min-height:78svh; display:flex; align-items:flex-end; padding:0; overflow:hidden; }
   @media (min-width:900px) { .ch { min-height:72svh; } }
-  .ch .bg { position:absolute; inset:-12% 0; z-index:0; will-change:transform; }
+  .ch .bg { position:absolute; inset:-6% 0; z-index:0; will-change:transform; }
   .ch .bg picture { display:block; width:100%; height:100%; }
   .ch .bg img { width:100%; height:100%; object-fit:cover; }
   .ch .veil { position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.4) 40%, rgba(0,0,0,.05) 70%); }
@@ -397,19 +403,18 @@
 <div id="pbar" aria-hidden="true"></div>
 
 <header class="sh" id="header">
-  <a class="mark" href="#hero" aria-label="SILAVU"><svg class="ana" viewBox="0 0 100 100" aria-hidden="true"><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(0) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(90) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(180) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(270) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/></svg><span>SILAVU</span></a>
   <nav id="topnav">
     <a href="#what" data-en="What we do" data-he="מה אנחנו עושים">What we do</a>
-    <a href="#inside" data-en="The stones" data-he="האבנים">The stones</a>
+    <a href="#inside" data-en="The stone" data-he="האבן">The stone</a>
     <a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a>
     <a href="#build" data-en="Your line" data-he="הקו שלכם">Your line</a>
-    <a href="#clients" data-en="Clients" data-he="לקוחות">Clients</a>
-    <a href="#partners" data-en="Partners" data-he="שותפים">Partners</a>
+    <a href="#clients" data-en="Clients & partners" data-he="לקוחות ושותפים">Clients & partners</a>
   </nav>
+  <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu"><i></i><span data-en="Menu" data-he="תפריט">Menu</span></button>
+  <a class="mark" href="#hero" aria-label="SILAVU"><svg class="ana" viewBox="0 0 100 100" aria-hidden="true"><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(0) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(90) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(180) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(270) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/></svg><span>SILAVU</span></a>
   <div class="hr">
     <button class="lang" id="langBtn" aria-label="Switch language">עברית</button>
     <a class="btn hbook" href="#concierge" data-en="Book a private viewing" data-he="קבעו צפייה פרטית">Book a private viewing</a>
-    <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu"><i></i><span data-en="Menu" data-he="תפריט">Menu</span></button>
   </div>
 </header>
 
@@ -420,10 +425,8 @@
     <a href="#inside"><span class="k">02</span><span data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</span></a>
     <a href="#collection"><span class="k">03</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
     <a href="#build"><span class="k">04</span><span data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</span></a>
-    <a href="#clients"><span class="k">05</span><span data-en="For clients" data-he="ללקוחות">For clients</span></a>
-    <a href="#partners"><span class="k">06</span><span data-en="For partners" data-he="לשותפים">For partners</span></a>
-    <a href="#atelier"><span class="k">07</span><span data-en="The atelier" data-he="הסטודיו">The atelier</span></a>
-    <a href="#concierge"><span class="k">08</span><span data-en="Concierge" data-he="קונסיירז׳">Concierge</span></a>
+    <a href="#clients"><span class="k">05</span><span data-en="Clients &amp; partners" data-he="לקוחות ושותפים">Clients &amp; partners</span></a>
+    <a href="#concierge"><span class="k">06</span><span data-en="Concierge" data-he="קונסיירז׳">Concierge</span></a>
   </div>
   <div class="mfoot">
     <a class="btn solid" href="#concierge" style="justify-self:start" data-en="Book a private viewing" data-he="קבעו צפייה פרטית">Book a private viewing</a>
@@ -451,7 +454,7 @@
     </div>
     <div class="hfacts rv d4">
       <div class="row k"><span data-en="36 hand-matched brilliants" data-he="36 בריליאנטים מותאמים ביד">36 hand-matched brilliants</span><i></i><span>D–F</span><i></i><span>VVS+</span><i></i><span>GIA · IGI</span><i></i><span data-en="Made in Dubai" data-he="נעשה בדובאי">Made in Dubai</span><i></i><span data-en="2 to 20 carats" data-he="2 עד 20 קראט">2 to 20 carats</span></div>
-      <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
+      <div class="cue k"><span data-en="Scroll · what we do" data-he="גללו · מה אנחנו עושים">Scroll · what we do</span><i></i></div>
     </div>
   </section>
 
@@ -466,9 +469,9 @@
         <div class="im"><picture><source media="(max-width:899px)" srcset="/img/hero.m.jpg"><img src="/img/hero.jpg" alt="The SILAVU Line" loading="lazy"></picture></div>
         <div class="bd"><div class="k" data-en="I · The Line" data-he="I · הקו">I · The Line</div><div class="t" data-en="The SILAVU <em>Line</em>" data-he="קו <em>SILAVU</em>">The SILAVU <em>Line</em></div><p class="p" data-en="Our tennis bracelet. Thirty-six brilliants, 2 to 20 carats, in white, yellow or rose gold or platinum. Lab-grown or natural. Made for one wrist." data-he="צמיד הטניס שלנו. שלושים ושישה בריליאנטים, 2 עד 20 קראט, בזהב לבן, צהוב, ורוד או פלטינה. מעבדה או טבעי. נעשה לפרק יד אחד.">Our tennis bracelet. Thirty-six brilliants, 2 to 20 carats, in white, yellow or rose gold or platinum. Lab-grown or natural. Made for one wrist.</p><span class="lnk" data-en="Build yours" data-he="בנו את שלכם">Build yours</span></div>
       </a>
-      <a class="card rv d1" href="#atelier">
+      <a class="card rv d1" href="#concierge" data-piece="A bespoke piece">
         <div class="im"><picture><source media="(max-width:899px)" srcset="/img/atelier.m.jpg"><img src="/img/atelier.jpg" alt="The atelier" loading="lazy"></picture></div>
-        <div class="bd"><div class="k" data-en="II · Bespoke" data-he="II · בהזמנה אישית">II · Bespoke</div><div class="t" data-en="One-of-one <em>pieces</em>" data-he="תכשיטים <em>יחידים</em>">One-of-one <em>pieces</em></div><p class="p" data-en="Rings, rivières, earrings, made once from a conversation. Three to five certified stones brought to you to choose from. Four to six weeks in our Dubai atelier." data-he="טבעות, ריוויארות, עגילים, נעשים פעם אחת מתוך שיחה. שלוש עד חמש אבנים מאושרות מובאות אליכם לבחירה. ארבעה עד שישה שבועות בסטודיו שלנו בדובאי.">Rings, rivières, earrings, made once from a conversation. Three to five certified stones brought to you to choose from. Four to six weeks in our Dubai atelier.</p><span class="lnk" data-en="How it is made" data-he="איך זה נעשה">How it is made</span></div>
+        <div class="bd"><div class="k" data-en="II · Bespoke" data-he="II · בהזמנה אישית">II · Bespoke</div><div class="t" data-en="One-of-one <em>pieces</em>" data-he="תכשיטים <em>יחידים</em>">One-of-one <em>pieces</em></div><p class="p" data-en="Rings, rivières, earrings, made once from a conversation. Three to five certified stones brought to you to choose from. Four to six weeks in our Dubai atelier." data-he="טבעות, ריוויארות, עגילים, נעשים פעם אחת מתוך שיחה. שלוש עד חמש אבנים מאושרות מובאות אליכם לבחירה. ארבעה עד שישה שבועות בסטודיו שלנו בדובאי.">Rings, rivières, earrings, made once from a conversation. Three to five certified stones brought to you to choose from. Four to six weeks in our Dubai atelier.</p><span class="lnk" data-en="Start a conversation" data-he="התחילו שיחה">Start a conversation</span></div>
       </a>
       <a class="card rv d2" href="#concierge" data-piece="Private stones">
         <div class="im"><picture><source media="(max-width:899px)" srcset="/img/stone.m.jpg"><img src="/img/stone.jpg" alt="A single round brilliant held in tweezers" loading="lazy"></picture></div>
@@ -489,28 +492,14 @@
     </div>
   </section>
 
-  <section id="inside" data-n="02" data-title-en="Inside the stone" data-title-he="בתוך האבן" aria-label="Inside one stone">
-    <div class="pin">
-      <picture>
-        <source media="(max-width:899px)" srcset="/f/m/060.webp">
-        <img id="fposter" src="/f/d/060.webp" alt="One brilliant of the Line, seen from above in its four prongs" loading="lazy">
-      </picture>
-      <canvas id="film" aria-hidden="true"></canvas>
-      <div class="fshade"></div>
-      <div class="fk k" data-en="02 · Inside the stone · keep scrolling" data-he="02 · בתוך האבן · המשיכו לגלול">02 · Inside the stone · keep scrolling</div>
-      <div class="fcap">
-        <div class="fbeat" data-j="0">
-          <div class="k" data-en="One of thirty-six" data-he="אחת משלושים ושש">One of thirty-six</div>
-          <h2 class="h" data-en="Every stone, <em>alone.</em>" data-he="כל אבן, <em>לבדה.</em>">Every stone, <em>alone.</em></h2>
-          <p class="p" data-en="Bought loose. Graded before it was ours. Four prongs, and nothing between it and the light." data-he="נקנתה חופשית. דורגה לפני שהייתה שלנו. ארבע שיניים, ושום דבר בינה לבין האור.">Bought loose. Graded before it was ours. Four prongs, and nothing between it and the light.</p>
-        </div>
-        <div class="fbeat" data-j="1">
-          <div class="k" data-en="Inside" data-he="בפנים">Inside</div>
-          <h2 class="h" data-en="Cut for light <em>before weight.</em>" data-he="מלוטשת לאור <em>לפני המשקל.</em>">Cut for light <em>before weight.</em></h2>
-          <p class="p" data-en="Fifty-seven facets, each angled so the light that enters has to come back to you. We turn down nine stones in ten." data-he="חמישים ושבע פאות, כל אחת בזווית שמחזירה אליכם את האור שנכנס. אנחנו דוחים תשע אבנים מכל עשר.">Fifty-seven facets, each angled so the light that enters has to come back to you. We turn down nine stones in ten.</p>
-        </div>
-      </div>
-      <div class="fprog" aria-hidden="true"><i id="fprog"></i></div>
+  <section id="inside" data-n="02" class="ch center" data-title-en="Inside the stone" data-title-he="בתוך האבן" aria-label="Inside one stone">
+    <div class="bg"><video class="hv" id="insidevid" muted playsinline loop preload="none" poster="/img/one.jpg" aria-hidden="true"></video></div>
+    <div class="veil"></div>
+    <div class="txt">
+      <div class="k rv" data-en="02 · Inside the stone" data-he="02 · בתוך האבן">02 · Inside the stone</div>
+      <h2 class="h rv d1" style="margin-top:12px" data-en="Cut for light <em>before weight.</em>" data-he="מלוטשת לאור <em>לפני המשקל.</em>">Cut for light <em>before weight.</em></h2>
+      <p class="p rv d2" style="margin-top:16px" data-en="Every SILAVU stone is bought loose, graded by GIA or IGI, and chosen for how it returns light. We turn down nine in ten. This is the inside of one we kept." data-he="כל אבן של SILAVU נקנית חופשית, מדורגת על ידי GIA או IGI, ונבחרת לפי איך שהיא מחזירה אור. אנחנו דוחים תשע מכל עשר. זה הפנים של אחת ששמרנו.">Every SILAVU stone is bought loose, graded by GIA or IGI, and chosen for how it returns light. We turn down nine in ten. This is the inside of one we kept.</p>
+      <div class="rv d3" style="margin-top:26px"><a class="btn" href="#standard" data-en="See the standard" data-he="ראו את הסטנדרט">See the standard</a></div>
     </div>
   </section>
 
@@ -633,7 +622,8 @@
         <div class="k rv" data-en="05 · For clients" data-he="05 · ללקוחות">05 · For clients</div>
         <h2 class="h2 rv d1" style="margin-top:14px" data-en="How it works, <em>and what you get.</em>" data-he="איך זה עובד, <em>ומה אתם מקבלים.</em>">How it works, <em>and what you get.</em></h2>
         <p class="p rv d2" style="margin-top:16px" data-en="Nothing here happens in a shop. One conversation, and a person carries the rest." data-he="שום דבר כאן לא קורה בחנות. שיחה אחת, ואדם אחד נושא את כל השאר.">Nothing here happens in a shop. One conversation, and a person carries the rest.</p>
-        <div class="sideact rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="קבעו צפייה פרטית">Book a private viewing</a><a class="btn" href="#build" data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</a></div>
+        <div class="sideact rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="קבעו צפייה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Start a bespoke piece" data-he="התחילו תכשיט אישי">Start a bespoke piece</a></div>
+        <div class="im boxfig rv d3"><picture><source media="(max-width:899px)" srcset="/img/box.m.jpg"><img src="/img/box.jpg" alt="The SILAVU box, open, with a Line inside" loading="lazy"></picture><div class="k boxcap" data-en="It arrives like this: twelve coats of lacquer, the mark in the lid, the reports inside" data-he="כך זה מגיע: שתים עשרה שכבות לכה, הסימן במכסה, התעודות בפנים">It arrives like this: twelve coats of lacquer, the mark in the lid, the reports inside</div></div>
       </div>
       <div class="facts rv d2">
         <div class="fact"><div class="num">I</div><div><div class="t" data-en="Private viewing, where you are" data-he="צפייה פרטית, איפה שאתם">Private viewing, where you are</div><div class="d" data-en="At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message." data-he="בביתכם, במלון, או בחדרים שלנו בדובאי ובתל אביב. בדרך כלל תוך ארבעים ושמונה שעות מההודעה שלכם.">At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message.</div></div></div>
@@ -657,21 +647,10 @@
     </div>
   </section>
 
-  <section id="box" data-n="05" class="ch center" data-title-en="The box" data-title-he="הקופסה" aria-label="The box">
-    <div class="bg" data-px><picture><source media="(max-width:899px)" srcset="/img/box.m.jpg"><img src="/img/box.jpg" alt="The SILAVU box, open, with a Line inside" loading="lazy"></picture></div>
-    <div class="veil"></div>
-    <div class="txt">
-      <div class="k rv" data-en="It arrives like this" data-he="כך זה מגיע">It arrives like this</div>
-      <h2 class="h rv d1" style="margin-top:12px" data-en="Black lacquer. <em>One piece inside.</em>" data-he="לכה שחורה. <em>תכשיט אחד בפנים.</em>">Black lacquer. <em>One piece inside.</em></h2>
-      <p class="p rv d2" style="margin-top:16px" data-en="Hand-lacquered in twelve coats, lined in black velvet, the mark engraved in the lid. With the reports, the valuation, and a person to hand it over." data-he="לכה ביד בשתים עשרה שכבות, מרופד בקטיפה שחורה, הסימן חרוט במכסה. עם התעודות, הערכת השווי, ואדם שמוסר אותו.">Hand-lacquered in twelve coats, lined in black velvet, the mark engraved in the lid. With the reports, the valuation, and a person to hand it over.</p>
-      <div class="rv d3" style="margin-top:26px"><a class="btn" href="#concierge" data-en="Book a private viewing" data-he="קבעו צפייה פרטית">Book a private viewing</a></div>
-    </div>
-  </section>
-
-  <section id="partners" data-n="06" data-title-en="For partners" data-title-he="לשותפים" aria-label="For partners">
+  <section id="partners" data-n="05" data-title-en="For partners" data-title-he="לשותפים" aria-label="For partners">
     <div class="two">
       <div>
-        <div class="k rv" data-en="06 · For partners" data-he="06 · לשותפים">06 · For partners</div>
+        <div class="k rv" data-en="05 · For partners" data-he="05 · לשותפים">05 · For partners</div>
         <h2 class="h2 rv d1" style="margin-top:14px" data-en="Work with <em>the house.</em>" data-he="עבדו עם <em>הבית.</em>">Work with <em>the house.</em></h2>
         <p class="p rv d2" style="margin-top:16px" data-en="We make for a small number of partners who share our clients' expectations. The same stones, the same setter, the same standard." data-he="אנחנו מייצרים למספר קטן של שותפים שחולקים את הציפיות של לקוחותינו. אותן אבנים, אותו משבץ, אותו סטנדרט.">We make for a small number of partners who share our clients' expectations. The same stones, the same setter, the same standard.</p>
         <div class="sideact rv d3"><a class="btn solid" href="#concierge" data-partner="1" data-en="Partner with SILAVU" data-he="שותפות עם SILAVU">Partner with SILAVU</a></div>
@@ -685,26 +664,11 @@
     </div>
   </section>
 
-  <section id="atelier" data-n="07" class="ch" data-title-en="The atelier" data-title-he="הסטודיו" aria-label="The atelier">
-    <div class="bg" data-px><picture><source media="(max-width:899px)" srcset="/img/atelier.m.jpg"><img src="/img/atelier.jpg" alt="A setter's hands closing a prong under the bench lamp" loading="lazy"></picture></div>
-    <div class="veil"></div>
-    <div class="txt">
-      <div class="k rv" data-en="07 · The atelier" data-he="07 · הסטודיו">07 · The atelier</div>
-      <h2 class="h rv d1" style="margin-top:12px" data-en="Every piece begins <em>with a conversation.</em>" data-he="כל תכשיט מתחיל <em>בשיחה.</em>">Every piece begins <em>with a conversation.</em></h2>
-      <div class="steps rv d2" style="margin-top:28px;max-width:560px">
-        <div class="step"><div class="num">I</div><div><div class="t" data-en="The conversation" data-he="השיחה">The conversation</div><div class="d" data-en="The occasion, the wrist, the budget you would rather not say out loud. We listen first." data-he="האירוע, פרק היד, התקציב שלא הייתם אומרים בקול. קודם אנחנו מקשיבים.">The occasion, the wrist, the budget you would rather not say out loud. We listen first.</div></div></div>
-        <div class="step"><div class="num">II</div><div><div class="t" data-en="The stones" data-he="האבנים">The stones</div><div class="d" data-en="Three to five certified stones, brought to you. You choose under our light, and under yours." data-he="שלוש עד חמש אבנים מאושרות, מובאות אליכם. אתם בוחרים תחת האור שלנו, ותחת שלכם.">Three to five certified stones, brought to you. You choose under our light, and under yours.</div></div></div>
-        <div class="step"><div class="num">III</div><div><div class="t" data-en="The atelier" data-he="הסטודיו">The atelier</div><div class="d" data-en="Set by hand in Dubai, four to six weeks. Delivered in person, wherever you are." data-he="משובץ ביד בדובאי, ארבעה עד שישה שבועות. נמסר אישית, בכל מקום שתהיו.">Set by hand in Dubai, four to six weeks. Delivered in person, wherever you are.</div></div></div>
-      </div>
-      <div style="margin-top:28px"><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Start a conversation" data-he="התחילו שיחה">Start a conversation</a></div>
-    </div>
-  </section>
-
-  <section id="concierge" data-n="08" data-title-en="Concierge" data-title-he="קונסיירז׳" aria-label="Concierge">
+  <section id="concierge" data-n="06" data-title-en="Concierge" data-title-he="קונסיירז׳" aria-label="Concierge">
     <div class="cimg"><picture><source media="(max-width:899px)" srcset="/img/dubai.m.jpg"><img id="cityDXB" class="on" src="/img/dubai.jpg" alt="Dubai at night from a penthouse terrace" loading="lazy"></picture><picture><source media="(max-width:899px)" srcset="/img/telaviv.m.jpg"><img id="cityTLV" src="/img/telaviv.jpg" alt="Tel Aviv at blue hour" loading="lazy"></picture></div>
     <div class="cbody">
       <div>
-        <div class="k rv" data-en="08 · Private concierge" data-he="08 · קונסיירז׳ פרטי">08 · Private concierge</div>
+        <div class="k rv" data-en="06 · Private concierge" data-he="06 · קונסיירז׳ פרטי">06 · Private concierge</div>
         <h2 class="h2 rv d1" style="margin-top:14px" data-en="One message. <em>A person answers.</em>" data-he="הודעה אחת. <em>אדם עונה.</em>">One message. <em>A person answers.</em></h2>
         <div class="clocks rv d2" style="margin-top:26px">
           <div class="clock on" data-city="DXB"><div class="c" id="clkDXB">--:--</div><div class="k" data-en="Dubai" data-he="דובאי">Dubai</div></div>
@@ -737,7 +701,7 @@
     <div class="wm"><svg class="ana" viewBox="0 0 100 100" aria-hidden="true"><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(0) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(90) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(180) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/><path d="M60.6,24.4 A15,15 0 1 0 50,50 A15,15 0 1 1 39.4,75.6" transform="translate(50 50) rotate(270) translate(0 -13) scale(.72) translate(-50 -50)" pathLength="1"/></svg></div>
     <div class="fgrid">
       <div class="fcol"><div class="seal rv"><svg class="brill" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.00,2.00L54.70,2.23L59.36,2.92L63.93,4.07L68.37,5.65L72.63,7.67L76.67,10.09L80.45,12.90L83.94,16.06L87.10,19.55L89.91,23.33L92.33,27.37L94.35,31.63L95.93,36.07L97.08,40.64L97.77,45.30L98.00,50.00L97.77,54.70L97.08,59.36L95.93,63.93L94.35,68.37L92.33,72.63L89.91,76.67L87.10,80.45L83.94,83.94L80.45,87.10L76.67,89.91L72.63,92.33L68.37,94.35L63.93,95.93L59.36,97.08L54.70,97.77L50.00,98.00L45.30,97.77L40.64,97.08L36.07,95.93L31.63,94.35L27.37,92.33L23.33,89.91L19.55,87.10L16.06,83.94L12.90,80.45L10.09,76.67L7.67,72.63L5.65,68.37L4.07,63.93L2.92,59.36L2.23,54.70L2.00,50.00L2.23,45.30L2.92,40.64L4.07,36.07L5.65,31.63L7.67,27.37L10.09,23.33L12.90,19.55L16.06,16.06L19.55,12.90L23.33,10.09L27.37,7.67L31.63,5.65L36.07,4.07L40.64,2.92L45.30,2.23L50.00,2.00Z" pathLength="1"/><path d="M50.00,28.00L65.56,34.44L72.00,50.00L65.56,65.56L50.00,72.00L34.44,65.56L28.00,50.00L34.44,34.44Z" pathLength="1"/><path d="M50.00,28.00L50.00,2.00" pathLength="1"/><path d="M50.00,28.00L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L68.37,5.65" pathLength="1"/><path d="M65.56,34.44L83.94,16.06" pathLength="1"/><path d="M65.56,34.44L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L94.35,31.63" pathLength="1"/><path d="M72.00,50.00L98.00,50.00" pathLength="1"/><path d="M72.00,50.00L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L94.35,68.37" pathLength="1"/><path d="M65.56,65.56L83.94,83.94" pathLength="1"/><path d="M65.56,65.56L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L68.37,94.35" pathLength="1"/><path d="M50.00,72.00L50.00,98.00" pathLength="1"/><path d="M50.00,72.00L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L31.63,94.35" pathLength="1"/><path d="M34.44,65.56L16.06,83.94" pathLength="1"/><path d="M34.44,65.56L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L5.65,68.37" pathLength="1"/><path d="M28.00,50.00L2.00,50.00" pathLength="1"/><path d="M28.00,50.00L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L5.65,31.63" pathLength="1"/><path d="M34.44,34.44L16.06,16.06" pathLength="1"/><path d="M34.44,34.44L31.63,5.65" pathLength="1"/><path d="M50.00,28.00L31.63,5.65" pathLength="1"/></svg><div class="end-mark">SILAVU</div><div class="k" data-en="Dubai · Tel Aviv · MMXXVI" data-he="דובאי · תל אביב · MMXXVI">Dubai · Tel Aviv · MMXXVI</div></div><div class="k rv d1" style="margin-top:14px;text-align:center" data-en="Private high jewellery · By appointment" data-he="תכשיטי יוקרה פרטיים · בתיאום מראש">Private high jewellery · By appointment</div><div class="soc rv d2" data-socials style="margin-top:18px;justify-content:center"></div></div>
-      <div class="fcol rv d1"><div class="k" data-en="The house" data-he="הבית">The house</div><a href="#what" data-en="What we do" data-he="מה אנחנו עושים">What we do</a><a href="#inside" data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</a><a href="#standard" data-en="The standard" data-he="הסטנדרט">The standard</a><a href="#atelier" data-en="The atelier" data-he="הסטודיו">The atelier</a></div>
+      <div class="fcol rv d1"><div class="k" data-en="The house" data-he="הבית">The house</div><a href="#what" data-en="What we do" data-he="מה אנחנו עושים">What we do</a><a href="#inside" data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</a><a href="#wrist" data-en="On the wrist" data-he="על פרק היד">On the wrist</a><a href="#standard" data-en="The standard" data-he="הסטנדרט">The standard</a><a href="#voices" data-en="Clients say" data-he="לקוחות מספרים">Clients say</a></div>
       <div class="fcol rv d2"><div class="k" data-en="Pieces" data-he="תכשיטים">Pieces</div><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</a><a href="#concierge" data-piece="Private stones" data-en="Private stones" data-he="אבנים פרטיות">Private stones</a></div>
       <div class="fcol rv d3"><div class="k" data-en="People" data-he="אנשים">People</div><a href="#clients" data-en="For clients" data-he="ללקוחות">For clients</a><a href="#partners" data-en="For partners" data-he="לשותפים">For partners</a><a href="#concierge" data-en="Concierge" data-he="קונסיירז׳">Concierge</a><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
@@ -826,7 +790,6 @@
     if (entered) return; entered = true;
     intro.classList.add("gone"); document.body.classList.remove("locked"); header.classList.add("show"); where.classList.add("show");
     setTimeout(function () { intro.style.display = "none"; }, 1300);
-    setTimeout(loadFrames, 800);
     if (!reduce) { var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
   $("enterBtn").addEventListener("click", enter);
@@ -875,7 +838,7 @@
   var dust = $("dust"), dctx = dust.getContext("2d"), motes = [], dw = 0, dh = 0, sprite = document.createElement("canvas");
   (function () { sprite.width = sprite.height = 32; var c = sprite.getContext("2d"), g = c.createRadialGradient(16, 16, 0, 16, 16, 16); g.addColorStop(0, "rgba(255,252,246,1)"); g.addColorStop(0.25, "rgba(255,252,246,.55)"); g.addColorStop(1, "rgba(255,252,246,0)"); c.fillStyle = g; c.fillRect(0, 0, 32, 32); })();
   function sizeDust() { var d = Math.min(devicePixelRatio || 1, desk() ? 2 : 1.5); dw = Math.round(innerWidth * d); dh = Math.round(innerHeight * d); dust.width = dw; dust.height = dh; var n = desk() ? 110 : 55; motes = []; for (var i = 0; i < n; i++) motes.push(mote(true)); }
-  function mote(any) { var big = Math.random() < 0.12; return { x: Math.random() * dw, y: any ? Math.random() * dh : dh + 20, r: (big ? 2.2 + Math.random() * 2.2 : 0.7 + Math.random() * 1.3) * (dw / 1400 + 0.6), vy: -(0.04 + Math.random() * 0.12) * (dh / 900), vx: (Math.random() - 0.5) * 0.08, ph: Math.random() * 6.283, sp: 0.6 + Math.random() * 1.6, a: big ? 0.9 : 0.55, star: big }; }
+  function mote(any) { var big = Math.random() < 0.12; return { x: Math.random() * dw, y: any ? Math.random() * dh : dh + 20, r: (big ? 2.2 + Math.random() * 2.2 : 0.7 + Math.random() * 1.3) * (dw / 1400 + 0.6), vy: -(0.04 + Math.random() * 0.12) * (dh / 900), vx: (Math.random() - 0.5) * 0.08, ph: Math.random() * 6.283, sp: 0.6 + Math.random() * 1.6, a: big ? 1 : 0.7, star: big }; }
   var dustT = 0;
   function drawDust(t) {
     dctx.clearRect(0, 0, dw, dh); dctx.globalCompositeOperation = "lighter";
@@ -898,34 +861,10 @@
   var pimgs = Array.prototype.slice.call(document.querySelectorAll(".im img"));
   function drift() { var vh = innerHeight; for (var i = 0; i < pimgs.length; i++) { var r = pimgs[i].parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) continue; var t = (r.top + r.height / 2 - vh / 2) / vh; pimgs[i].style.setProperty("--py", (t * -5).toFixed(2) + "%"); } }
 
-  /* ── inside the stone: sixty frames of one continuous shot, scrubbed by the scroll ── */
-  var insideSec = $("inside"), film = $("film"), fctx = film.getContext("2d"), fbeats = Array.prototype.slice.call(document.querySelectorAll(".fbeat")), fprog = $("fprog");
-  var F0 = 60, NF = 60, FD = desk() ? "d" : "m", frames = new Array(NF), loaded = 0, target = 0, shown = -1, fw = 0, fh = 0, framesStarted = false;
-  function fsrc(i) { var n = F0 + i; return "/f/" + FD + "/" + (n < 10 ? "00" : n < 100 ? "0" : "") + n + ".webp"; }
-  function sizeFilm() { var d = Math.min(devicePixelRatio || 1, desk() ? 2 : 1.6), r = film.getBoundingClientRect(); fw = Math.round(r.width * d); fh = Math.round(r.height * d); film.width = fw; film.height = fh; shown = -1; drawFilm(); }
-  function nearest(t) { for (var d = 0; d < NF; d++) { if (frames[t - d]) return t - d; if (frames[t + d]) return t + d; } return -1; }
-  function drawFilm() {
-    var i = nearest(target); if (i < 0 || i === shown || !fw) return; shown = i;
-    var im = frames[i], sc = Math.max(fw / im.naturalWidth, fh / im.naturalHeight), dw = im.naturalWidth * sc, dh = im.naturalHeight * sc;
-    fctx.drawImage(im, (fw - dw) / 2, (fh - dh) / 2, dw, dh); film.classList.add("on");
-  }
-  function loadFrames() {
-    if (framesStarted) return; framesStarted = true;
-    var order = [0], i; for (i = 6; i < NF; i += 6) order.push(i); for (i = 1; i < NF; i++) if (i % 6) order.push(i);
-    var k = 0; function next() { if (k >= order.length) return; var j = order[k++], im = new Image(); im.decoding = "async"; im.onload = function () { frames[j] = im; loaded++; if (Math.abs(j - target) <= 6 || shown < 0) { shown = -1; drawFilm(); } next(); }; im.onerror = next; im.src = fsrc(j); }
-    for (var c = 0; c < 4; c++) next();
-  }
-  sizeFilm(); addEventListener("resize", sizeFilm);
-  window.__film = { get target() { return target; }, get shown() { return shown; }, get loaded() { return loaded; } };
-  function filmTick() {
-    var vh = innerHeight, r = insideSec.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh * 2) return;
-    if (r.top < vh * 1.5) loadFrames();
-    var u = Math.max(0, -r.top / vh), D = r.height / vh - 1;
-    target = Math.min(NF - 1, Math.floor(seg(u, 0.08, D - 0.08) * NF)); drawFilm();
-    fprog.style.width = (c01(u / D) * 100).toFixed(1) + "%";
-    var B = [[0, 0.6], [0.85, D + 0.5]];
-    for (var j = 0; j < fbeats.length; j++) { var o = (j === 0 && u < 0.05 ? 1 : ss(seg(u, B[j][0], B[j][0] + 0.2))) * (1 - ss(seg(u, B[j][1] - 0.2, B[j][1]))); fbeats[j].style.opacity = o.toFixed(3); fbeats[j].style.transform = "translateY(" + ((1 - o) * 20).toFixed(1) + "px)"; fbeats[j].classList.toggle("on", o > 0.5); }
-  }
+  /* ── inside the stone: the film plays when it comes into view ── */
+  var iv = $("insidevid"), ivLoaded = false;
+  function insideTick() { var r = iv.getBoundingClientRect(); var near = r.bottom > -innerHeight && r.top < innerHeight * 2; if (near && !ivLoaded) { ivLoaded = true; iv.src = desk() ? "/v/inside.mp4" : "/v/inside-v.mp4"; iv.load(); } if (!ivLoaded || reduce) return; var vis = r.bottom > 0 && r.top < innerHeight; if (vis && iv.paused) { var pr = iv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !iv.paused) iv.pause(); }
+  window.__film = { get target() { return 0; }, get shown() { return 0; }, get loaded() { return ivLoaded ? 1 : 0; } };
 
   /* ── the thirty-six: each stone's record, deterministic from its position on the line ── */
   var stoneCur = -1, dcur = $("dcur"), dname = $("dname"), dline = $("dline"), dvals = [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { return $("dv" + i); }), dots = [];
@@ -962,6 +901,8 @@
   document.addEventListener("touchstart", function (e) { var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, 3); }, { passive: true });
   var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("shine"); setTimeout(function () { e.target.classList.remove("shine"); }, 1600); io2.unobserve(e.target); } }); }, { threshold: 0.35 });
   document.querySelectorAll(".card, .piece").forEach(function (el) { io2.observe(el); });
+  /* cards lean toward the cursor */
+  if (matchMedia("(hover:hover)").matches && !reduce) document.querySelectorAll(".card, .piece, .voice").forEach(function (el) { el.classList.add("tilt"); el.addEventListener("pointermove", function (e) { var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5; el.style.transform = "perspective(900px) rotateX(" + (-y * 6).toFixed(2) + "deg) rotateY(" + (x * 8).toFixed(2) + "deg) translateY(-4px)"; }); el.addEventListener("pointerleave", function () { el.style.transform = ""; }); });
   /* swipe dots on phones */
   document.querySelectorAll(".swipe").forEach(function (sw) { var track = document.querySelector(sw.getAttribute("data-for")); if (!track) return; var dots = sw.querySelectorAll("i"); track.addEventListener("scroll", function () { var kids = track.children, best = 0, bd = 1e9, cx = track.getBoundingClientRect().left + track.clientWidth / 2; for (var i = 0; i < dots.length && i < kids.length; i++) { var r = kids[i].getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - cx); if (d < bd) { bd = d; best = i; } } dots.forEach(function (d, i) { d.classList.toggle("on", i === best); }); }, { passive: true }); });
 
@@ -988,9 +929,9 @@
 
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
-  function parallax() { var vh = innerHeight; pxs.forEach(function (bg) { var r = bg.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return; var t = (r.top + r.height / 2 - vh / 2) / vh; bg.style.transform = "translate3d(0," + (t * -8).toFixed(2) + "%,0)"; }); }
+  function parallax() { var vh = innerHeight; pxs.forEach(function (bg) { var r = bg.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return; var t = (r.top + r.height / 2 - vh / 2) / vh; bg.style.transform = "translate3d(0," + (t * -4).toFixed(2) + "%,0)"; }); }
   var hidden = false; document.addEventListener("visibilitychange", function () { hidden = document.hidden; });
-  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; filmTick(); parallax(); drift(); compass(); glowTick(); rulerTick(); if (!reduce && entered && (desk() || (dustFc++ & 1))) drawDust(t); }
+  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; insideTick(); parallax(); drift(); compass(); glowTick(); rulerTick(); if (!reduce && entered && (desk() || (dustFc++ & 1))) drawDust(t); }
   var dustFc = 0;
   tick(); addEventListener("scroll", compass, { passive: true });
 
