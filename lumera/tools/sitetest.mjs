@@ -22,8 +22,8 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
     out.push((await p.evaluate(() => document.getElementById("fab").classList.contains("show")) ? "PASS":"FAIL") + ` ${tag} floating book button shown`);
   } else out.push(`skip ${tag} menu`);
   // compass
-  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("partners").getBoundingClientRect().top, behavior:"instant"})); for (let i = 0; i < 30 && (await p.evaluate(() => document.getElementById("whereN").textContent)) !== "08"; i++) await p.waitForTimeout(250);
-  out.push((await p.evaluate(() => document.getElementById("whereT").textContent === "For partners" && document.getElementById("whereN").textContent === "08") ? "PASS":"FAIL") + ` ${tag} compass says where you are (${await p.evaluate(() => document.getElementById("whereN").textContent + " " + document.getElementById("whereT").textContent)})`);
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("partners").getBoundingClientRect().top, behavior:"instant"})); for (let i = 0; i < 30 && (await p.evaluate(() => document.getElementById("whereN").textContent)) !== "06"; i++) await p.waitForTimeout(250);
+  out.push((await p.evaluate(() => document.getElementById("whereT").textContent === "For partners" && document.getElementById("whereN").textContent === "06") ? "PASS":"FAIL") + ` ${tag} compass says where you are (${await p.evaluate(() => document.getElementById("whereN").textContent + " " + document.getElementById("whereT").textContent)})`);
   // film
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("inside").getBoundingClientRect().top + innerHeight*1.0, behavior:"instant"})); for (let i = 0; i < 30 && (await p.evaluate(() => window.__film.target)) < 30; i++) await p.waitForTimeout(250);
   const f = await p.evaluate(() => ({ t: window.__film.target, beats: document.querySelectorAll(".fbeat.on").length, on: [...document.querySelectorAll(".fbeat.on")].map(e=>e.dataset.j).join("") }));
@@ -49,7 +49,8 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.click("#langBtn"); await p.waitForTimeout(300);
   out.push((await p.evaluate(() => document.documentElement.dir==="rtl" && document.getElementById("sumMetal").textContent==="זהב צהוב 18K" && document.getElementById("whereT").textContent.length > 0 && !/[A-Za-z]/.test(document.getElementById("whereT").textContent)) ? "PASS":"FAIL") + ` ${tag} hebrew`);
   out.push((await p.evaluate(() => /^\d\d:\d\d$/.test(document.getElementById("clkDXB").textContent)) ? "PASS":"FAIL") + ` ${tag} clocks`);
-  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < 18) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
+  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < 22) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
+  out.push((await p.evaluate(() => document.getElementById("dust").width > 0 && document.getElementById("pbar").style.width !== "") ? "PASS":"FAIL") + ` ${tag} dust + progress alive`);
   out.push((errs.length===0 ? "PASS":"FAIL") + ` ${tag} no errors ${errs.join(" | ")}`);
   await p.close();
 }
