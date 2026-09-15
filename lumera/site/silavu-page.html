@@ -10,7 +10,7 @@
   body { background:var(--bg); color:var(--ink); font-family:var(--sans); font-weight:300; -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; }
   body.locked { overflow:hidden; height:100vh; }
   ::selection { background:rgba(217,201,163,.28); }
-  #silavu button, #silavu input, #silavu textarea { font:inherit; color:inherit; }
+  :where(#silavu) button, :where(#silavu) input, :where(#silavu) textarea { font:inherit; color:inherit; }
   :where(#silavu) a { color:inherit; }
   #silavu img, #silavu video { display:block; max-width:100%; }
     /* ── the mark ── */
@@ -41,16 +41,18 @@
   html[data-lang="he"] .h, html[data-lang="he"] .h2, html[data-lang="he"] .h3 { letter-spacing:0; line-height:1.12; }
   .p { color:var(--ink2); font-size:clamp(1.02rem,1.2vw,1.14rem); line-height:1.65; max-width:44ch; font-weight:400; }
   .p.lg { font-size:clamp(1.1rem,1.5vw,1.35rem); line-height:1.5; max-width:38ch; color:var(--ink); }
-  .btn { position:relative; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:12px; text-decoration:none; font-size:.74rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; padding:16px 28px; border:1px solid rgba(246,243,237,.55); border-radius:999px; color:var(--ink); transition:border-color .5s, background .5s, color .5s, transform .6s var(--ease), box-shadow .6s; cursor:pointer; background:rgba(0,0,0,.35); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); white-space:nowrap; will-change:transform; }
-  html[data-lang="he"] .btn { letter-spacing:.03em; font-size:.88rem; }
-  .btn::after { content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform:skewX(-20deg); transition:left .7s var(--ease); pointer-events:none; }
-  .btn:hover::after, .btn:focus-visible::after { left:120%; }
-  .btn:hover, .btn:focus-visible { border-color:var(--ink); background:rgba(246,243,237,.1); outline:none; }
-  .btn.solid { background:linear-gradient(180deg,#fbf8f1,#e4dfd4); color:#0a0a0a; border-color:transparent; box-shadow:0 12px 30px -14px rgba(255,255,255,.45); }
-  .btn.solid:hover { background:#fff; color:#000; }
+  .btn { position:relative; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:12px; text-decoration:none; font-size:.68rem; font-weight:500; letter-spacing:.24em; text-transform:uppercase; padding:18px 32px; border:1px solid rgba(217,201,163,.6); border-radius:2px; color:var(--ink); background:rgba(0,0,0,.25); transition:color .5s, border-color .5s, transform .6s var(--ease); cursor:pointer; white-space:nowrap; isolation:isolate; }
+  html[data-lang="he"] .btn { letter-spacing:.06em; font-size:.84rem; }
+  .btn::before { content:""; position:absolute; inset:0; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .55s var(--ease); z-index:-1; }
+  html[dir="rtl"] .btn::before { transform-origin:right; }
+  .btn:hover::before, .btn:focus-visible::before { transform:scaleX(1); }
+  .btn:hover, .btn:focus-visible { color:#121110; border-color:var(--gold); outline:none; }
+  .btn.solid { background:linear-gradient(135deg,#eadfc2,#cdb98c); color:#141210; border-color:transparent; }
+  .btn.solid::before { background:#f6efdc; }
+  .btn.solid:hover { color:#000; }
+  .btn.sm { padding:13px 20px; font-size:.64rem; letter-spacing:.2em; }
   .btn.gold { border-color:rgba(217,201,163,.7); color:var(--gold); }
-  .btn.gold:hover { background:rgba(217,201,163,.12); border-color:var(--gold); }
-  .lnk { text-decoration:none; font-size:.74rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); display:inline-flex; align-items:center; gap:10px; padding-bottom:4px; position:relative; }
+  .lnk { text-decoration:none; font-size:.68rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); display:inline-flex; align-items:center; gap:10px; padding-bottom:4px; position:relative; }
   .lnk::before { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:linear-gradient(90deg, var(--ink), transparent); transform-origin:left; transition:transform .6s var(--ease); }
   .lnk:hover::before { transform:scaleX(.5); }
   .lnk::after { content:"→"; transition:transform .5s var(--ease); }
@@ -110,10 +112,10 @@
   .sh nav a.cur::after, .sh nav a:hover::after { transform:scaleX(1); }
   @media (min-width:1000px) { .sh nav { display:flex; } }
   .hr { display:flex; gap:12px; align-items:center; justify-self:end; }
-  .lang { background:rgba(0,0,0,.35); border:1px solid rgba(244,241,235,.35); border-radius:999px; cursor:pointer; color:var(--ink); font-size:.78rem; letter-spacing:.04em; padding:9px 14px; min-height:40px; transition:border-color .4s, background .4s; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .lang { background:rgba(0,0,0,.35); border:1px solid rgba(244,241,235,.35); border-radius:2px; cursor:pointer; color:var(--ink); font-size:.78rem; letter-spacing:.04em; padding:9px 14px; min-height:40px; transition:border-color .4s, background .4s; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
   .lang:hover { border-color:var(--ink); background:rgba(244,241,235,.08); }
   .hbook { display:none; } @media (min-width:1000px) { .hbook { display:inline-flex; padding:11px 18px; font-size:.7rem; } }
-  .menubtn { display:inline-flex; align-items:center; gap:10px; background:rgba(0,0,0,.35); border:1px solid rgba(242,239,233,.28); border-radius:999px; padding:9px 14px; min-height:40px; font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; color:var(--ink); justify-self:start; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .menubtn { display:inline-flex; align-items:center; gap:10px; background:rgba(0,0,0,.35); border:1px solid rgba(242,239,233,.28); border-radius:2px; padding:9px 14px; min-height:40px; font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; color:var(--ink); justify-self:start; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
   .menubtn i { display:block; width:14px; height:1px; background:currentColor; box-shadow:0 -4px 0 currentColor, 0 4px 0 currentColor; }
   @media (min-width:1000px) { .menubtn { display:none; } }
   #menu { position:fixed; inset:0; z-index:35; background:rgba(0,0,0,.94); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); display:flex; flex-direction:column; padding:max(84px, calc(env(safe-area-inset-top) + 72px)) var(--pad) max(28px, env(safe-area-inset-bottom)); opacity:0; pointer-events:none; transition:opacity .5s var(--ease); }
@@ -248,7 +250,7 @@
   .dname { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,1.8vw,1.35rem); color:var(--ink2); max-width:34ch; line-height:1.35; }
   html[data-lang="he"] .dof, html[data-lang="he"] .dname { font-family:inherit; font-style:normal; }
   .dnav { display:flex; gap:8px; }
-  .dnav button { width:44px; height:44px; border-radius:50%; border:1px solid rgba(242,239,233,.28); background:none; cursor:pointer; color:var(--ink); font-size:1rem; transition:border-color .4s, background .4s; }
+  .dnav button { width:44px; height:44px; border-radius:2px; border:1px solid rgba(242,239,233,.28); background:none; cursor:pointer; color:var(--ink); font-size:1rem; transition:border-color .4s, background .4s; }
   .dnav button:hover { border-color:var(--ink); background:rgba(242,239,233,.06); }
   .dgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 20px; }
   @media (min-width:900px) { .dgrid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
@@ -313,9 +315,9 @@
   .opt { display:grid; grid-template-columns:110px 1fr; gap:16px; align-items:center; border-top:1px solid var(--line); padding-top:18px; }
   @media (max-width:640px) { .opt { grid-template-columns:1fr; gap:10px; } }
   .chips { display:flex; gap:8px; flex-wrap:wrap; }
-  .chip { background:none; border:1px solid rgba(242,239,233,.16); color:var(--ink2); border-radius:999px; padding:11px 16px; min-height:42px; cursor:pointer; font-size:.84rem; display:inline-flex; align-items:center; gap:8px; transition:border-color .4s, color .4s, background .4s, transform .4s var(--ease); overflow:hidden; }
+  .chip { background:none; border:1px solid rgba(242,239,233,.18); color:var(--ink2); border-radius:2px; padding:11px 16px; min-height:42px; cursor:pointer; font-size:.84rem; display:inline-flex; align-items:center; gap:8px; transition:border-color .4s, color .4s, background .4s, transform .4s var(--ease); overflow:hidden; }
   .chip:hover { border-color:rgba(242,239,233,.5); color:var(--ink); transform:translateY(-1px); }
-  .chip.on { border-color:var(--ink); color:var(--ink); background:rgba(242,239,233,.07); }
+  .chip.on { border-color:var(--gold); color:var(--ink); background:rgba(217,201,163,.1); }
   .sw { width:10px; height:10px; border-radius:50%; display:inline-block; }
   .total { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:24px; }
   .total .price { font-size:clamp(2rem,4vw,3.4rem); letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; direction:ltr; }
@@ -406,7 +408,7 @@
   form.sent .done { display:block; } form.sent .fields, form.sent .btn { display:none; }
   .fine { color:var(--ink2); font-size:.9rem; line-height:1.6; max-width:40ch; }
   .soc { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-  .soc a { display:inline-flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:50%; border:1px solid rgba(242,239,233,.16); color:var(--ink2); transition:color .4s, border-color .4s, transform .4s var(--ease); }
+  .soc a { display:inline-flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:2px; border:1px solid rgba(242,239,233,.16); color:var(--ink2); transition:color .4s, border-color .4s, transform .4s var(--ease); }
   .soc a:hover { color:var(--ink); border-color:rgba(242,239,233,.4); transform:translateY(-2px); }
   .soc svg { width:17px; height:17px; fill:currentColor; }
 
@@ -495,6 +497,65 @@
   .rprog i { position:absolute; inset:0 auto 0 0; width:0; background:var(--ink); } html[dir="rtl"] .rprog i { inset:0 0 0 auto; }
   .rcue { position:absolute; right:var(--pad); bottom:max(34px, calc(env(safe-area-inset-bottom) + 12px)); z-index:3; color:var(--ink3); display:none; transition:opacity .6s; } html[dir="rtl"] .rcue { right:auto; left:var(--pad); }
   @media (min-width:1000px) { .rprog, .rcue { display:flex; } .pin { height:340svh; } }
+  /* ── v10: the box, filmed ── */
+  #boxcv { position:absolute; inset:0; width:100%; height:100%; display:block; background:#000; }
+  .veil2 { position:absolute; inset:0; pointer-events:none; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.25) 35%, rgba(0,0,0,0) 60%), linear-gradient(to bottom, rgba(0,0,0,.55), transparent 22%); }
+  .stonebox { display:none; }
+  .beat .acts { display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; pointer-events:auto; }
+  @media (min-width:1000px) { .beat { max-width:min(36vw,500px); } }
+  @media (max-width:999px) { .beat { bottom:max(84px, calc(env(safe-area-inset-bottom) + 72px)); } .pdots { bottom:max(48px, calc(env(safe-area-inset-bottom) + 38px)); } .pin { height:300svh; } }
+  /* ── v10: the wrist, revealed ── */
+  #wrist { padding:0 !important; }
+  .wpin { position:relative; height:220svh; }
+  .wstick { position:sticky; top:0; height:100svh; overflow:hidden; display:grid; place-items:center; background:#000; }
+  .wframe { position:absolute; inset:0; overflow:hidden; will-change:clip-path, transform; clip-path:inset(30% 22% 30% 22% round 14px); }
+  .wframe picture, .wframe img { width:100%; height:100%; object-fit:cover; }
+  .wframe img { transform:scale(1.18); will-change:transform; }
+  .wframe .veil { position:absolute; inset:0; pointer-events:none; opacity:0; background:linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.45) 38%, rgba(0,0,0,.05) 70%), linear-gradient(to bottom, rgba(0,0,0,.5), transparent 25%); transition:opacity .4s; }
+  .wtxt { position:absolute; left:var(--pad); right:var(--pad); bottom:max(9svh, calc(env(safe-area-inset-bottom) + 48px)); margin:0 auto; text-align:center; display:grid; justify-items:center; gap:14px; max-width:900px; opacity:0; transform:translateY(30px); will-change:opacity, transform; }
+  .wtxt .h { max-width:16ch; text-align:center; }
+  .wtxt .p { text-align:center; }
+  @media (max-width:999px) { .wpin { height:180svh; } .wframe { clip-path:inset(34% 12% 34% 12% round 12px); } }
+  @media (prefers-reduced-motion:reduce) { .wframe { clip-path:none !important; } .wframe img { transform:none !important; } .wtxt { opacity:1 !important; transform:none !important; } .wframe .veil { opacity:1 !important; } }
+  /* ── v10: footer ── */
+  .fcol span { color:var(--ink2); font-size:.95rem; line-height:1.5; }
+  .fcol .lnk { margin-top:6px; }
+  .fbot { gap:12px 24px; }
+  .fbot a { text-decoration:none; color:var(--ink2); }
+  /* ── v10: the piece window ── */
+  .incl ul { list-style:none; display:grid; gap:6px; margin-top:8px; }
+  .incl li { color:var(--ink2); font-size:.93rem; padding-inline-start:18px; position:relative; line-height:1.5; }
+  .incl li::before { content:""; position:absolute; inset-inline-start:0; top:.62em; width:8px; height:1px; background:var(--gold); }
+  @media (max-width:899px) { .modal { padding:0; } .mbox { border-radius:0; border:0; height:100%; } .mbox .mim { aspect-ratio:4/5; max-height:52svh; } .mbox .mbd { padding:22px 20px 40px; gap:14px; } }
+  /* ── v10: try-on ── */
+  .tbox { width:min(880px,100%); display:grid; gap:0; }
+  @media (min-width:900px) { .tbox { grid-template-columns:minmax(0,1fr) 300px; } .tbox .tcv { border-radius:0; max-height:none; aspect-ratio:4/5; height:min(78svh,720px); } }
+  .tcv { border-radius:0; }
+  .tctl { padding:clamp(20px,3vw,32px); gap:16px; align-content:start; }
+  .tsteps { display:grid; gap:10px; margin-bottom:6px; }
+  .tsteps span { display:flex; gap:12px; align-items:baseline; color:var(--ink2); letter-spacing:.06em; text-transform:none; font-size:.82rem; }
+  .tsteps b { font-family:var(--serif); font-style:italic; font-weight:400; color:var(--gold); font-size:1rem; min-width:1ch; }
+  .tsteps i { font-style:normal; }
+  .tctl input[type=range] { accent-color:#d9c9a3; }
+  .tacts { display:grid; gap:8px; margin-top:8px; }
+  .tacts .btn { width:100%; }
+  .tempty { padding:28px; }
+  .tempty .p { max-width:34ch; margin:10px auto 0; text-align:center; }
+  .tempty .btn { margin-top:18px; }
+  /* ── v10: pieces ── */
+  .piece .t { font-family:var(--serif); font-style:italic; font-weight:400; font-size:clamp(1.5rem,2vw,1.8rem); letter-spacing:0; }
+  .piece .t em { font-style:italic; }
+  html[data-lang="he"] .piece .t { font-family:inherit; font-style:normal; }
+  .piece .acts .lnk.q { color:var(--gold); }
+  @media (min-width:1000px) { .piece { flex:0 0 min(26vw,380px); } }
+  #hero .hv { will-change:transform; }
+  .fcol a.gold { color:var(--gold); }
+  .wframe::after { content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 0 1px rgba(217,201,163,.35); }
+  .beat .h2 { max-width:18ch; font-size:clamp(1.9rem,3.8vw,3.4rem); }
+  #tryon .mclose2 { position:fixed; top:max(14px, env(safe-area-inset-top)); inset-inline-end:14px; }
+  .tempty { background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+  @media (max-width:899px) { .tbox .tcv { max-height:44svh; aspect-ratio:auto; height:44svh; } .tctl { padding:18px 18px 28px; } .tsteps { gap:6px; } }
+  .tsteps i { color:var(--ink2); }
 </style>
 
 <div id="silavu">
@@ -507,7 +568,7 @@
 <header class="sh" id="header">
   <nav id="topnav">
     <a href="#what" data-en="What we do" data-he="מה אנחנו עושים">What we do</a>
-    <a href="#inside" data-en="The stone" data-he="האבן">The stone</a>
+    <a href="#inside" data-en="The box" data-he="הקופסה">The box</a>
     <a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a>
     <a href="#build" data-en="Your line" data-he="הקו שלכם">Your line</a>
     <a href="#clients" data-en="Clients" data-he="לקוחות">Clients</a>
@@ -524,7 +585,7 @@
   <button class="btn mclose" id="menuClose" data-en="Close" data-he="סגירה">Close</button>
   <div class="mlist" id="mlist">
     <a href="#what"><span class="k">01</span><span data-en="What we do" data-he="מה אנחנו עושים">What we do</span></a>
-    <a href="#inside"><span class="k">02</span><span data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</span></a>
+    <a href="#inside"><span class="k">02</span><span data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</span></a>
     <a href="#collection"><span class="k">03</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
     <a href="#build"><span class="k">04</span><span data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</span></a>
     <a href="#clients"><span class="k">05</span><span data-en="Clients &amp; partners" data-he="לקוחות ושותפים">Clients &amp; partners</span></a>
@@ -560,8 +621,6 @@
     </div>
   </section>
 
-  <div class="band" aria-hidden="true"><div class="track"><span><em data-en="SILAVU" data-he="SILAVU">SILAVU</em><i class="dot"></i></span><span><em data-en="Dubai" data-he="דובאי">Dubai</em><i class="dot"></i></span><span><em data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</em><i class="dot"></i></span><span><em data-en="High jewellery" data-he="תכשיטי יוקרה">High jewellery</em><i class="dot"></i></span><span><em data-en="Made by hand" data-he="נעשה ביד">Made by hand</em><i class="dot"></i></span><span><em data-en="GIA · IGI certified" data-he="מאושר GIA · IGI">GIA · IGI certified</em><i class="dot"></i></span><span><em data-en="By appointment" data-he="בתיאום מראש">By appointment</em><i class="dot"></i></span><span><em data-en="SILAVU" data-he="SILAVU">SILAVU</em><i class="dot"></i></span><span><em data-en="Dubai" data-he="דובאי">Dubai</em><i class="dot"></i></span><span><em data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</em><i class="dot"></i></span><span><em data-en="High jewellery" data-he="תכשיטי יוקרה">High jewellery</em><i class="dot"></i></span><span><em data-en="Made by hand" data-he="נעשה ביד">Made by hand</em><i class="dot"></i></span><span><em data-en="GIA · IGI certified" data-he="מאושר GIA · IGI">GIA · IGI certified</em><i class="dot"></i></span><span><em data-en="By appointment" data-he="בתיאום מראש">By appointment</em><i class="dot"></i></span></div></div>
-
   <section id="what" data-n="01" data-title-en="What we do" data-title-he="מה אנחנו עושים" aria-label="What we do">
     <div class="wrap">
     <div class="sechead">
@@ -587,29 +646,35 @@
     </div>
   </section>
 
-  <section id="wrist" data-n="01" class="ch" data-title-en="On the wrist" data-title-he="על פרק היד" aria-label="On the wrist" data-spark>
-    <div class="bg" data-px><picture><source media="(max-width:899px)" srcset="/img/wristv-1080.jpg 1080w, /img/wristv-1440.jpg 1440w" sizes="100vw"><img src="/img/wrist-2560.jpg" srcset="/img/wrist-1600.jpg 1600w, /img/wrist-2560.jpg 2560w, /img/wrist-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture></div>
-    <div class="veil"></div>
-    <div class="txt">
-      <div class="k gold rv" data-en="Every day" data-he="כל יום">Every day</div>
-      <h2 class="h sp rv" data-en="Made to sit flat <em>beside your watch.</em>" data-he="נעשה לשבת שטוח <em>לצד השעון שלכם.</em>">Made to sit flat <em>beside your watch.</em></h2>
-      <p class="p rv d2" style="text-align:center" data-en="The Line is 3.6 millimetres high, with a hidden clasp and no sharp edges. It is made to be worn daily, next to a watch." data-he="הקו בגובה 3.6 מילימטר, עם סוגר נסתר וללא קצוות חדים. הוא נעשה ללבישה יומיומית, לצד שעון.">The Line is 3.6 millimetres high, with a hidden clasp and no sharp edges. It is made to be worn daily, next to a watch.</p>
-      <div class="rv d3" style="margin-top:10px"><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
+  <section id="wrist" data-n="01" data-title-en="On the wrist" data-title-he="על פרק היד" aria-label="On the wrist">
+    <div class="wpin" id="wpin">
+      <div class="wstick">
+        <div class="wframe" id="wframe">
+          <picture><source media="(max-width:899px)" srcset="/img/wristv-1080.jpg 1080w, /img/wristv-1440.jpg 1440w" sizes="100vw"><img id="wimg" src="/img/wrist-2560.jpg" srcset="/img/wrist-1600.jpg 1600w, /img/wrist-2560.jpg 2560w, /img/wrist-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture>
+          <div class="veil"></div>
+        </div>
+        <div class="wtxt" id="wtxt">
+          <div class="k gold" data-en="Every day" data-he="כל יום">Every day</div>
+          <h2 class="h" data-en="Made to sit flat <em>beside your watch.</em>" data-he="נעשה לשבת שטוח <em>לצד השעון שלכם.</em>">Made to sit flat <em>beside your watch.</em></h2>
+          <p class="p" data-en="The Line is 3.6 millimetres high, with a hidden clasp and no sharp edges. It is made to be worn daily, next to a watch." data-he="הקו בגובה 3.6 מילימטר, עם סוגר נסתר וללא קצוות חדים. הוא נעשה ללבישה יומיומית, לצד שעון.">The Line is 3.6 millimetres high, with a hidden clasp and no sharp edges. It is made to be worn daily, next to a watch.</p>
+          <div><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section id="inside" data-n="02" data-title-en="The stone" data-title-he="האבן" aria-label="The stone">
+  <section id="inside" data-n="02" data-title-en="The box" data-title-he="הקופסה" aria-label="The box">
     <div class="pin" id="stonepin">
       <div class="pinin">
-        <div class="stonebox"><canvas id="stonecv" aria-label="A SILAVU brilliant, turning" role="img"></canvas></div>
+        <canvas id="boxcv" aria-label="The SILAVU box opening, diamonds rising out of it" role="img"></canvas>
+        <div class="veil2"></div>
         <div class="beats" id="beats">
-          <div class="beat"><div class="k gold ol" data-en="02 · The stone" data-he="02 · האבן">02 · The stone</div><h2 class="h2" data-en="Every stone is <em>bought loose.</em>" data-he="כל אבן <em>נקנית חופשית.</em>">Every stone is <em>bought loose.</em></h2><p class="p" data-en="We never buy set stones. Each brilliant is chosen on its own, under a loupe, before it belongs to a piece." data-he="אנחנו לא קונים אבנים משובצות. כל בריליאנט נבחר בפני עצמו, תחת לופה, לפני שהוא שייך לתכשיט.">We never buy set stones. Each brilliant is chosen on its own, under a loupe, before it belongs to a piece.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="Graded" data-he="מדורגת">Graded</div><h2 class="h2" data-en="D to F colour. <em>VVS or better.</em>" data-he="צבע D עד F. <em>VVS ומעלה.</em>">D to F colour. <em>VVS or better.</em></h2><p class="p" data-en="Every stone carries a GIA or IGI report and a laser inscription of its number. Cut, polish and symmetry are all graded Excellent." data-he="לכל אבן תעודת GIA או IGI וחריטת לייזר של מספרה. ליטוש, פוליש וסימטריה כולם בדירוג מצוין.">Every stone carries a GIA or IGI report and a laser inscription of its number. Cut, polish and symmetry are all graded Excellent.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="Matched" data-he="מותאמת">Matched</div><h2 class="h2" data-en="Matched within <em>0.1 millimetre.</em>" data-he="מותאמת בטווח של <em>0.1 מילימטר.</em>">Matched within <em>0.1 millimetre.</em></h2><p class="p" data-en="The thirty-six stones of a Line are sorted so that each one sits within a tenth of a millimetre of its neighbours, in size and in colour." data-he="שלושים ושש האבנים של קו ממוינות כך שכל אחת יושבת בטווח של עשירית מילימטר משכנותיה, בגודל ובצבע.">The thirty-six stones of a Line are sorted so that each one sits within a tenth of a millimetre of its neighbours, in size and in colour.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="Inside" data-he="בפנים">Inside</div><h2 class="h2" data-en="Inside, <em>only light.</em>" data-he="בפנים, <em>רק אור.</em>">Inside, <em>only light.</em></h2><p class="p" data-en="No inclusions you can see, no fluorescence, nothing between you and the fire. This is the stone you are looking at, drawn live from its real geometry." data-he="בלי תכלילים שאפשר לראות, בלי פלואורסצנציה, שום דבר בינכם לבין האש. זו האבן שאתם מסתכלים עליה, מצוירת בזמן אמת מהגיאומטריה האמיתית שלה.">No inclusions you can see, no fluorescence, nothing between you and the fire. This is the stone you are looking at, drawn live from its real geometry.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="02 · The box" data-he="02 · הקופסה">02 · The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="זה מגיע <em>סגור.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Black lacquer, twelve coats, the mark in the lid. Inside: one piece, its reports, and a valuation for your insurer." data-he="לכה שחורה, שתים עשרה שכבות, הסימן במכסה. בפנים: תכשיט אחד, התעודות שלו, והערכת שווי למבטח שלכם.">Black lacquer, twelve coats, the mark in the lid. Inside: one piece, its reports, and a valuation for your insurer.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Thirty-six, chosen <em>one by one.</em>" data-he="שלושים ושש, נבחרות <em>אחת אחת.</em>">Thirty-six, chosen <em>one by one.</em></h2><p class="p" data-en="Every stone is bought loose, graded by GIA or IGI, D to F colour, VVS or better, and matched to its neighbours within a tenth of a millimetre." data-he="כל אבן נקנית חופשית, מדורגת על ידי GIA או IGI, צבע D עד F, ניקיון VVS ומעלה, ומותאמת לשכנותיה בטווח של עשירית מילימטר.">Every stone is bought loose, graded by GIA or IGI, D to F colour, VVS or better, and matched to its neighbours within a tenth of a millimetre.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made for <em>one wrist.</em>" data-he="נעשה <em>לפרק יד אחד.</em>">Made for <em>one wrist.</em></h2><p class="p" data-en="Set by hand in our Dubai atelier, sized to you, and delivered in person by a member of the house, anywhere." data-he="משובץ ביד בסטודיו שלנו בדובאי, במידה שלכם, ונמסר אישית על ידי חבר בבית, בכל מקום.">Set by hand in our Dubai atelier, sized to you, and delivered in person by a member of the house, anywhere.</p><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
-        <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>
         <div class="cue k pcue"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
       </div>
     </div>
@@ -672,28 +737,28 @@
         <div class="bd"><div class="k" data-en="I · Solitaire" data-he="I · סוליטר">I · Solitaire</div><div class="t"><span dir="ltr">Solitaire <em>Noir</em></span></div>
           <p class="p" data-en="One stone, set high on a knife-edge platinum band so it takes light from every angle." data-he="אבן אחת, משובצת גבוה על טבעת פלטינה דקה כתער, כדי לקלוט אור מכל זווית.">One stone, set high on a knife-edge platinum band so it takes light from every angle.</p>
           <div class="row k meta"><span>3.01 ct</span><i></i><span>D · VVS1</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price">AED 486,000</span></div>
-          <div class="acts"><a class="lnk" href="#concierge" data-piece="Solitaire Noir" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a></div></div>
+          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Solitaire Noir" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-riv">
         <div class="fig r45 rv"><div class="im"><img src="/img/riv-1200.jpg" srcset="/img/riv-800.jpg 800w, /img/riv-1200.jpg 1200w, /img/riv-1600.jpg 1600w, /img/riv-2000.jpg 2000w" sizes="(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw" alt="Rivière Lumière, forty-one graduated brilliants on black velvet" loading="lazy" decoding="async"></div><i class="sheen"></i></div>
         <div class="bd"><div class="k" data-en="II · Rivière" data-he="II · ריוויאר">II · Rivière</div><div class="t"><span dir="ltr">Rivière <em>Lumière</em></span></div>
           <p class="p" data-en="Forty-one graduated brilliants, the largest at the hollow of the throat." data-he="ארבעים ואחד בריליאנטים מדורגים, הגדול שבהם בשקע הצוואר.">Forty-one graduated brilliants, the largest at the hollow of the throat.</p>
           <div class="row k meta"><span>22.40 ct</span><i></i><span>D–E · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price">AED 940,000</span></div>
-          <div class="acts"><a class="lnk" href="#concierge" data-piece="Rivière Lumière" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a></div></div>
+          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Rivière Lumière" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-star">
         <div class="fig r45 rv"><div class="im"><img src="/img/star-1200.jpg" srcset="/img/star-800.jpg 800w, /img/star-1200.jpg 1200w, /img/star-1600.jpg 1600w, /img/star-2000.jpg 2000w" sizes="(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw" alt="The Desert Star, an eighteen carat brilliant in a radiating halo" loading="lazy" decoding="async"></div><i class="sheen"></i></div>
         <div class="bd"><div class="k" data-en="III · One of one" data-he="III · יחיד במינו">III · One of one</div><div class="t"><span dir="ltr">The Desert <em>Star</em></span></div>
           <p class="p" data-en="A rare centre stone in a radiating halo of sixteen. Made once, offered once." data-he="אבן מרכזית נדירה בהילה של שש עשרה. נעשה פעם אחת, מוצע פעם אחת.">A rare centre stone in a radiating halo of sixteen. Made once, offered once.</p>
           <div class="row k meta"><span>18.06 ct</span><i></i><span>D · IF</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price" data-en="On request" data-he="לפי בקשה">On request</span></div>
-          <div class="acts"><a class="lnk" href="#concierge" data-piece="The Desert Star" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a></div></div>
+          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Desert Star" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-sapphire">
         <div class="fig r45 rv"><div class="im"><img src="/img/sapphire-1200.jpg" srcset="/img/sapphire-800.jpg 800w, /img/sapphire-1200.jpg 1200w, /img/sapphire-1600.jpg 1600w, /img/sapphire-2000.jpg 2000w" sizes="(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw" alt="Sapphire of the Gulf, a Kashmir-blue sapphire in yellow gold" loading="lazy" decoding="async"></div><i class="sheen"></i></div>
         <div class="bd"><div class="k" data-en="IV · The only colour" data-he="IV · הצבע היחיד">IV · The only colour</div><div class="t"><span dir="ltr">Sapphire of <em>the Gulf</em></span></div>
           <p class="p" data-en="A Kashmir-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white." data-he="ספיר כחול-קשמיר בזהב צהוב, מוקף בבריליאנטים. כל השאר כאן לבן.">A Kashmir-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white.</p>
           <div class="row k meta"><span>8.42 ct</span><i></i><span data-en="Kashmir blue" data-he="כחול קשמיר">Kashmir blue</span><i></i><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span><i></i><span class="price" data-en="On request" data-he="לפי בקשה">On request</span></div>
-          <div class="acts"><a class="lnk" href="#concierge" data-piece="Sapphire of the Gulf" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a></div></div>
+          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Sapphire of the Gulf" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
     </div>
     
@@ -714,7 +779,7 @@
         <div class="k gold rv ol" data-en="04 · Your bracelet" data-he="04 · הצמיד שלכם">04 · Your bracelet</div>
         <h2 class="h2 sp rv" data-en="Design <em>your bracelet.</em>" data-he="עצבו <em>את הצמיד שלכם.</em>">Design <em>your bracelet.</em></h2>
         <p class="p rv d2" data-en="Choose the stones, the total weight, the metal and your wrist size. The bracelet below is drawn live from the real geometry of a brilliant cut, and the price updates with every choice. Reserve it, and a concierge confirms the stones with you within the hour." data-he="בחרו את האבנים, המשקל הכולל, המתכת ומידת פרק היד. הצמיד שלמטה מצויר בזמן אמת מהגיאומטריה האמיתית של ליטוש בריליאנט, והמחיר מתעדכן עם כל בחירה. שריינו אותו, וקונסיירז׳ יאשר איתכם את האבנים תוך שעה.">Choose the stones, the total weight, the metal and your wrist size. The bracelet below is drawn live from the real geometry of a brilliant cut, and the price updates with every choice. Reserve it, and a concierge confirms the stones with you within the hour.</p>
-        <div class="acts rv d3"><a class="btn solid" href="#configure" data-en="Start designing" data-he="התחילו לעצב">Start designing</a><button class="btn" type="button" id="tryonBtn" data-en="Try it on a photo" data-he="מדדו על תמונה">Try it on a photo</button></div>
+        <div class="acts rv d3"><a class="btn solid" href="#configure" data-en="Start designing" data-he="התחילו לעצב">Start designing</a><button class="btn" type="button" id="tryonBtn" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
       </div>
     </div>
     <div class="panel rv" id="configure">
@@ -744,8 +809,8 @@
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד הזה">Reserve this bracelet</a>
       </div>
       <div class="playbar">
-        <button class="btn" type="button" id="pickup" data-en="Pick it up" data-he="הרימו אותו">Pick it up</button>
-        <button class="btn" type="button" id="tryonBtn2" data-en="Try it on a photo" data-he="מדדו על תמונה">Try it on a photo</button>
+        <button class="btn" type="button" id="pickup" data-en="Pick it up and drop it" data-he="הרימו אותו ושחררו">Pick it up and drop it</button>
+        <button class="btn" type="button" id="tryonBtn2" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button>
       </div>
       <p class="k" style="text-align:center" data-en="Drag the bracelet across the page, or place it on a photo of your wrist. The photo never leaves your device." data-he="גררו את הצמיד על פני הדף, או הניחו אותו על תמונה של פרק היד שלכם. התמונה לא עוזבת את המכשיר שלכם.">Drag the bracelet across the page, or place it on a photo of your wrist. The photo never leaves your device.</p>
     </div>
@@ -839,16 +904,15 @@
   </section>
 
   <section id="end" data-n="" aria-label="Footer">
-    <div class="wm"><svg class="em" viewBox="0 0 200 200" aria-hidden="true"><path class="e1" d="M30,78 L100,180 L170,78" pathLength="1"/><path class="e2" d="M30,78 H170" pathLength="1"/><path class="e3" d="M60,78 L100,180 M140,78 L100,180" pathLength="1"/><path class="e0" d="M128,40 A26,26 0 1 0 100,78 A26,26 0 1 1 72,116" pathLength="1"/><path class="e4" d="M128,40 A26,26 0 1 0 100,78 A26,26 0 1 1 72,116" pathLength="1"/></svg></div>
     <div class="wrap">
-    <div class="fbig rv"><svg class="em seal" viewBox="0 0 200 200" aria-hidden="true"><path class="e1" d="M30,78 L100,180 L170,78" pathLength="1"/><path class="e2" d="M30,78 H170" pathLength="1"/><path class="e3" d="M60,78 L100,180 M140,78 L100,180" pathLength="1"/><path class="e0" d="M128,40 A26,26 0 1 0 100,78 A26,26 0 1 1 72,116" pathLength="1"/><path class="e4" d="M128,40 A26,26 0 1 0 100,78 A26,26 0 1 1 72,116" pathLength="1"/></svg><svg class="lg big" viewBox="-6 -6 558 112" aria-label="SILAVU" role="img"><path d="M54,16 A24,24 0 1 0 28,50 A24,24 0 1 1 2,84" pathLength="1"/><path d="M118,0 V100" pathLength="1"/><path d="M178,0 V100 H228" pathLength="1"/><path d="M286,100 L318,0 L350,100" pathLength="1"/><path d="M356,0 L388,100 L420,0" pathLength="1"/><path d="M480,0 V66 A32,32 0 0 0 544,66 V0" pathLength="1"/></svg><div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש">Private high jewellery · Dubai · Tel Aviv · By appointment</div><div class="soc" data-socials style="justify-content:center"></div></div>
+    <div class="fbig rv"><svg class="em seal" viewBox="0 0 200 200" aria-hidden="true"><path class="e1" d="M30,78 L100,180 L170,78" pathLength="1"/><path class="e2" d="M30,78 H170" pathLength="1"/><path class="e3" d="M60,78 L100,180 M140,78 L100,180" pathLength="1"/><path class="e0" d="M128,40 A26,26 0 1 0 100,78 A26,26 0 1 1 72,116" pathLength="1"/><path class="e4" d="M128,40 A26,26 0 1 0 100,78 A26,26 0 1 1 72,116" pathLength="1"/></svg><svg class="lg big" viewBox="-6 -6 558 112" aria-label="SILAVU" role="img"><path d="M54,16 A24,24 0 1 0 28,50 A24,24 0 1 1 2,84" pathLength="1"/><path d="M118,0 V100" pathLength="1"/><path d="M178,0 V100 H228" pathLength="1"/><path d="M286,100 L318,0 L350,100" pathLength="1"/><path d="M356,0 L388,100 L420,0" pathLength="1"/><path d="M480,0 V66 A32,32 0 0 0 544,66 V0" pathLength="1"/></svg><div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment only" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש בלבד">Private high jewellery · Dubai · Tel Aviv · By appointment only</div></div>
     <div class="fgrid">
-      <div class="fcol rv"><div class="k" data-en="The house" data-he="הבית">The house</div><a href="#what" data-en="What we do" data-he="מה אנחנו עושים">What we do</a><a href="#inside" data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</a><a href="#wrist" data-en="On the wrist" data-he="על פרק היד">On the wrist</a><a href="#voices" data-en="Clients say" data-he="לקוחות מספרים">Clients say</a></div>
-      <div class="fcol rv d1"><div class="k" data-en="Pieces" data-he="תכשיטים">Pieces</div><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</a><a href="#concierge" data-piece="Private stones" data-en="Private stones" data-he="אבנים פרטיות">Private stones</a></div>
-      <div class="fcol rv d2"><div class="k" data-en="People" data-he="אנשים">People</div><a href="#clients" data-en="For clients" data-he="ללקוחות">For clients</a><a href="#partners" data-en="For partners" data-he="לשותפים">For partners</a><a href="#concierge" data-en="Concierge" data-he="קונסיירז׳">Concierge</a></div>
-      <div class="fcol rv d3"><div class="k" data-en="Rooms" data-he="חדרים">Rooms</div><a href="#concierge" data-en="Dubai · by appointment" data-he="דובאי · בתיאום מראש">Dubai · by appointment</a><a href="#concierge" data-en="Tel Aviv · by appointment" data-he="תל אביב · בתיאום מראש">Tel Aviv · by appointment</a><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
+      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#what" data-en="What we make" data-he="מה אנחנו מייצרים">What we make</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a><a href="#clients" data-en="How it works" data-he="איך זה עובד">How it works</a><a href="#partners" data-en="For partners" data-he="לשותפים">For partners</a></div>
+      <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai · private rooms, by appointment" data-he="דובאי · חדרים פרטיים, בתיאום מראש">Dubai · private rooms, by appointment</span><span data-en="Tel Aviv · private rooms, by appointment" data-he="תל אביב · חדרים פרטיים, בתיאום מראש">Tel Aviv · private rooms, by appointment</span><span data-en="Or at your residence or hotel, worldwide" data-he="או בביתכם או במלון שלכם, בכל העולם">Or at your residence or hotel, worldwide</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="קבעו צפייה פרטית">Book a private viewing</a></div>
+      <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Message the concierge" data-he="כתבו לקונסיירז׳">Message the concierge</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a><span data-en="WhatsApp · number on request" data-he="וואטסאפ · מספר לפי בקשה">WhatsApp · number on request</span><span data-en="Replies within the hour, 9:00–21:00 Gulf time" data-he="מענה תוך שעה, 9:00–21:00 שעון המפרץ">Replies within the hour, 9:00–21:00 Gulf time</span></div>
+      <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
-    <div class="fbot k rv"><span>© SILAVU MMXXVI · <span data-en="All stones GIA or IGI certified" data-he="כל האבנים מאושרות GIA או IGI">All stones GIA or IGI certified</span></span><span data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span></div>
+    <div class="fbot k rv"><span>© SILAVU MMXXVI</span><span data-en="All stones GIA or IGI certified · Prices in AED, confirmed with the reports" data-he="כל האבנים מאושרות GIA או IGI · מחירים בדירהם, מאושרים עם התעודות">All stones GIA or IGI certified · Prices in AED, confirmed with the reports</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>
 </main>
@@ -865,7 +929,8 @@
       <div class="t h3" id="pmT"></div>
       <p class="p" id="pmP"></p>
       <div class="mspecs" id="pmSpecs"></div>
-      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Request a viewing" data-he="בקשו צפייה">Request a viewing</a><button class="btn" type="button" id="pmTry" data-en="Try it on a photo" data-he="מדדו על תמונה">Try it on a photo</button></div>
+      <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI report for every stone" data-he="תעודת GIA או IGI לכל אבן">GIA or IGI report for every stone</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivery in person, insured, worldwide" data-he="מסירה אישית, מבוטחת, בכל העולם">Delivery in person, insured, worldwide</li><li data-en="Care for life: cleaning, checks, resizing" data-he="טיפול לכל החיים: ניקוי, בדיקות, שינוי מידה">Care for life: cleaning, checks, resizing</li></ul></div>
+      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Request a private viewing" data-he="בקשו צפייה פרטית">Request a private viewing</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
     </div>
   </div>
 </div>
@@ -873,18 +938,15 @@
 <div class="modal" id="tryon" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="mbox tbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
-    <div class="mbd">
-      <div class="k gold" data-en="Try it on · nothing is uploaded" data-he="מדידה · שום דבר לא נשלח">Try it on · nothing is uploaded</div>
-      <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas>
-        <div class="tempty" id="tempty"><div><p class="p" data-en="Choose a photo of a wrist, yours or someone you love. The Line is drawn on top, right here on your device." data-he="בחרו תמונה של פרק יד, שלכם או של מישהו שאתם אוהבים. הקו מצויר מעליה, כאן על המכשיר שלכם.">Choose a photo of a wrist, yours or someone you love. The Line is drawn on top, right here on your device.</p><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label></div></div>
-      </div>
-      <div class="tctl">
-        <label><span class="k" data-en="Size" data-he="גודל">Size</span><input type="range" id="tsize" min="0.3" max="1.6" step="0.01" value="0.8"></label>
-        <label><span class="k" data-en="Angle" data-he="זווית">Angle</span><input type="range" id="tang" min="-90" max="90" step="1" value="-20"></label>
-        <label><span class="k" data-en="Curve" data-he="קימור">Curve</span><input type="range" id="tcurve" min="0.05" max="0.6" step="0.01" value="0.28"></label>
-        <div class="row" style="gap:10px"><label class="btn"><input type="file" id="tfile2" accept="image/*" hidden><span data-en="Another photo" data-he="תמונה אחרת">Another photo</span></label><button class="btn solid" type="button" id="tsave" data-en="Save the picture" data-he="שמרו את התמונה">Save the picture</button><a class="btn" href="#concierge" id="tsend" data-en="Send it to the concierge" data-he="שלחו לקונסיירז׳">Send it to the concierge</a></div>
-        <p class="k" data-en="Drag the Line to place it · pinch or use the sliders" data-he="גררו את הקו למקום · צבטו או השתמשו במחוונים">Drag the Line to place it · pinch or use the sliders</p>
-      </div>
+    <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas>
+      <div class="tempty" id="tempty"><div><div class="k gold" data-en="On your wrist" data-he="על פרק היד שלכם">On your wrist</div><p class="p" data-en="Choose a photo of a wrist. The bracelet is drawn on top, here on your device. Nothing is uploaded." data-he="בחרו תמונה של פרק יד. הצמיד מצויר מעליה, כאן על המכשיר שלכם. שום דבר לא נשלח.">Choose a photo of a wrist. The bracelet is drawn on top, here on your device. Nothing is uploaded.</p><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label></div></div>
+    </div>
+    <div class="tctl">
+      <div class="tsteps k"><span><b>1</b><i data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</i></span><span><b>2</b><i data-en="Drag to place, pinch to size" data-he="גררו למיקום, צבטו לגודל">Drag to place, pinch to size</i></span><span><b>3</b><i data-en="Save, or send it to the concierge" data-he="שמרו, או שלחו לקונסיירז׳">Save, or send it to the concierge</i></span></div>
+      <label><span class="k" data-en="Size" data-he="גודל">Size</span><input type="range" id="tsize" min="0.3" max="1.6" step="0.01" value="0.8"></label>
+      <label><span class="k" data-en="Angle" data-he="זווית">Angle</span><input type="range" id="tang" min="-90" max="90" step="1" value="-20"></label>
+      <label><span class="k" data-en="Curve" data-he="קימור">Curve</span><input type="range" id="tcurve" min="0.05" max="0.6" step="0.01" value="0.28"></label>
+      <div class="tacts"><label class="btn sm"><input type="file" id="tfile2" accept="image/*" hidden><span data-en="Another photo" data-he="תמונה אחרת">Another photo</span></label><button class="btn sm" type="button" id="tsave" data-en="Save the picture" data-he="שמרו את התמונה">Save the picture</button><a class="btn solid sm" href="#concierge" id="tsend" data-en="Send to the concierge" data-he="שלחו לקונסיירז׳">Send to the concierge</a></div>
     </div>
   </div>
 </div>
@@ -981,7 +1043,7 @@
   /* ── diamond dust: a few dozen specks of light drifting up through the whole page, twinkling ── */
   var dust = $("dust"), dctx = dust.getContext("2d"), motes = [], dw = 0, dh = 0, sprite = document.createElement("canvas");
   (function () { sprite.width = sprite.height = 32; var c = sprite.getContext("2d"), g = c.createRadialGradient(16, 16, 0, 16, 16, 16); g.addColorStop(0, "rgba(255,252,246,1)"); g.addColorStop(0.25, "rgba(255,252,246,.55)"); g.addColorStop(1, "rgba(255,252,246,0)"); c.fillStyle = g; c.fillRect(0, 0, 32, 32); })();
-  function sizeDust() { var d = Math.min(devicePixelRatio || 1, desk() ? (innerWidth > 1700 ? 1 : 1.5) : 1.25); dw = Math.round(innerWidth * d); dh = Math.round(innerHeight * d); dust.width = dw; dust.height = dh; var n = desk() ? 110 : 55; motes = []; for (var i = 0; i < n; i++) motes.push(mote(true)); }
+  function sizeDust() { var d = Math.min(devicePixelRatio || 1, desk() ? (innerWidth > 1700 ? 1 : 1.5) : 1.25); dw = Math.round(innerWidth * d); dh = Math.round(innerHeight * d); dust.width = dw; dust.height = dh; var n = 0; motes = []; for (var i = 0; i < n; i++) motes.push(mote(true)); }
   function mote(any) { var big = Math.random() < 0.12; return { x: Math.random() * dw, y: any ? Math.random() * dh : dh + 20, r: (big ? 2.2 + Math.random() * 2.2 : 0.7 + Math.random() * 1.3) * (dw / 1400 + 0.6), vy: -(0.04 + Math.random() * 0.12) * (dh / 900), vx: (Math.random() - 0.5) * 0.08, ph: Math.random() * 6.283, sp: 0.6 + Math.random() * 1.6, a: big ? 1 : 0.7, star: big }; }
   var dustT = 0;
   function drawDust(t) {
@@ -1041,7 +1103,7 @@
 
   /* ── glints on hover, sheen on arrival ── */
   function sparkle(el, n) { var r = el.getBoundingClientRect(); for (var i = 0; i < n; i++) { var g = document.createElement("i"); g.className = "glint"; g.style.left = (8 + Math.random() * 84) + "%"; g.style.top = (8 + Math.random() * 84) + "%"; g.style.animationDelay = (i * 90) + "ms"; g.style.width = g.style.height = (12 + Math.random() * 16) + "px"; el.appendChild(g); setTimeout(function (x) { x.remove(); }, 1400, g); } }
-  document.addEventListener("pointerenter", function (e) { var el = e.target.closest && e.target.closest(".piece, .card"); if (el && !reduce) sparkle(el, 3); }, true);
+  document.addEventListener("pointerenter", function (e) { var el = null; if (el && !reduce) sparkle(el, 3); }, true);
   document.addEventListener("touchstart", function (e) { var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, 3); }, { passive: true });
   var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("shine"); setTimeout(function () { e.target.classList.remove("shine"); }, 1600); io2.unobserve(e.target); } }); }, { threshold: 0.35 });
   document.querySelectorAll(".card, .piece").forEach(function (el) { io2.observe(el); });
@@ -1387,23 +1449,18 @@
   }
   split();
 
-  /* ── stars that live on the photographs ── */
-  function twinkle(host, n, big) {
-    for (var i = 0; i < n; i++) { var t = document.createElement("i"); t.className = "tw"; var sz = (big ? 14 : 9) + Math.random() * (big ? 16 : 8); t.style.width = t.style.height = sz + "px"; t.style.left = (6 + Math.random() * 88) + "%"; t.style.top = (6 + Math.random() * 88) + "%"; t.style.animationDelay = (-Math.random() * 6).toFixed(2) + "s"; t.style.animationDuration = (3.6 + Math.random() * 3.4).toFixed(2) + "s"; host.appendChild(t); }
+  /* ── the wrist chapter: the photograph opens out of a small frame as you scroll ── */
+  var wpin = $("wpin"), wframe = $("wframe"), wimg = $("wimg"), wtxt = $("wtxt"), wveil = wframe && wframe.querySelector(".veil"), lastW = -1, mob = matchMedia("(max-width:999px)").matches;
+  function wristTick() {
+    if (!wpin || reduce) return; var r = wpin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    var p = Math.max(0, Math.min(1, -r.top / (r.height - innerHeight))); if (Math.abs(p - lastW) < 0.002) return; lastW = p;
+    var e = p < 0.6 ? (function (t) { return 1 - Math.pow(1 - t, 3); })(p / 0.6) : 1;
+    var ix = (mob ? 12 : 22) * (1 - e), iy = (mob ? 34 : 30) * (1 - e), rd = 14 * (1 - e);
+    wframe.style.clipPath = "inset(" + iy.toFixed(2) + "% " + ix.toFixed(2) + "% " + iy.toFixed(2) + "% " + ix.toFixed(2) + "% round " + rd.toFixed(1) + "px)";
+    wimg.style.transform = "scale(" + (1.18 - 0.14 * e + p * 0.04).toFixed(4) + ") translateY(" + ((p - 0.5) * -3).toFixed(2) + "%)";
+    var t = Math.max(0, Math.min(1, (p - 0.55) / 0.3)); wtxt.style.opacity = t.toFixed(3); wtxt.style.transform = "translateY(" + ((1 - t) * 30).toFixed(1) + "px)"; wveil.style.opacity = Math.max(0, Math.min(1, (p - 0.4) / 0.3)).toFixed(3);
   }
-  if (!reduce) {
-    var hero = $("hero"); if (hero) { var ht = document.createElement("div"); ht.className = "hero-tw"; twinkle(ht, 6, true); hero.insertBefore(ht, hero.querySelector(".hshade")); }
-    var wr = document.querySelector("#wrist .veil"); if (wr) twinkle(wr, 4, true);
-  }
-
-  /* ── sparks under the cursor, over the photographs ── */
-  var lastSpk = 0, spkN = 0;
-  if (fine && !reduce) addEventListener("pointermove", function (e) {
-    if (e.pointerType !== "mouse") return; var t = performance.now(); if (t - lastSpk < 70 || spkN > 24) return;
-    var over = e.target.closest && e.target.closest("[data-spark]"); if (!over) return;
-    lastSpk = t; spkN++; var s = document.createElement("i"); s.className = "spk"; var sz = 6 + Math.random() * 10; s.style.width = s.style.height = sz + "px"; s.style.left = (e.clientX + (Math.random() - 0.5) * 24) + "px"; s.style.top = (e.clientY + (Math.random() - 0.5) * 24) + "px"; document.body.appendChild(s);
-    setTimeout(function () { s.remove(); spkN--; }, 900);
-  }, { passive: true });
+  (function loop() { requestAnimationFrame(loop); if (!document.hidden) wristTick(); })();
 
   /* ── buttons lean toward the hand ── */
   if (fine && !reduce) document.querySelectorAll(".btn").forEach(function (b) {
@@ -1428,55 +1485,44 @@
 </script>
 
 <script>
-/* Scroll-driven chapters: one large brilliant that turns and draws you in as you scroll, and a collection rail that moves sideways with the page. */
+/* Scroll-driven chapters: the box film, scrubbed frame by frame as you scroll, and the collection rail that moves sideways with the page. */
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); }, c01 = function (v) { return Math.max(0, Math.min(1, v)); };
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, mobile = matchMedia("(max-width:999px)").matches;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, mobile = matchMedia("(max-width:999px)").matches, phone = matchMedia("(max-width:899px)").matches;
   var rtl = function () { return document.documentElement.dir === "rtl"; };
 
-  /* ── the stone ── */
-  var dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i")), rprog = $("rprog"), rcue = document.querySelector(".rcue");
-  var pin = $("stonepin"), cv = $("stonecv"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue");
-  var gl = cv && cv.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: true, powerPreference: "high-performance" }), ok = false, PG, U = {}, aP, quad, lastP = -1, RES = 2;
-  function initGL() {
-    var S = window.__gemShader; if (!gl || !S) return false;
-    function sh(t, src) { var o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return o; }
-    PG = gl.createProgram(); gl.attachShader(PG, sh(gl.VERTEX_SHADER, S.VS)); gl.attachShader(PG, sh(gl.FRAGMENT_SHADER, S.FS)); gl.linkProgram(PG);
-    if (!gl.getProgramParameter(PG, gl.LINK_STATUS)) return false;
-    ["uRes", "uDist", "uRot", "uPitch", "uExpo", "uPl[0]"].forEach(function (n) { U[n] = gl.getUniformLocation(PG, n); });
-    aP = gl.getAttribLocation(PG, "p"); quad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    gl.useProgram(PG); gl.uniform4fv(U["uPl[0]"], S.planes);
-    var r = cv.getBoundingClientRect(); RES = Math.round(Math.min(mobile ? 420 : 760, r.width * Math.min(devicePixelRatio || 1, 2) * 0.8)); cv.width = cv.height = RES;
-    return true;
-  }
-  function draw(p) {
-    if (!ok) return;
-    var rot = 0.6 + p * Math.PI * 2.4, pitch = -0.55 + Math.sin(p * Math.PI) * 0.35, dist = 3.1, expo = 1.6;
-    if (p > 0.7) { var q = (p - 0.7) / 0.3; dist = 3.1 - q * q * 1.75; expo = 1.6 + q * 0.5; pitch = -0.55 + q * 0.35; }
-    gl.viewport(0, 0, RES, RES); gl.disable(gl.BLEND); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.useProgram(PG);
-    gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform2f(U.uRes, RES, RES); gl.uniform1f(U.uDist, dist); gl.uniform1f(U.uRot, rot); gl.uniform1f(U.uPitch, pitch); gl.uniform1f(U.uExpo, expo);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  /* ── the box ── */
+  var pin = $("stonepin"), cv = $("boxcv"), ctx = cv && cv.getContext("2d"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
+  var N = 96, SET = phone ? "m" : "d", frames = new Array(N), loaded = 0, requested = 0, cur = -1, W = 0, H = 0, DPR = 1, drawn = -1, started = false;
+  function src(i) { return "/f/box/" + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
+  function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
+  function loadAll() { if (started) return; started = true; load(0, function () { draw(true); }); var order = []; for (var s = 8; s >= 1; s = s >> 1) for (var i = 0; i < N; i += s) if (order.indexOf(i) < 0) order.push(i); var k = 0; (function next() { var batch = 0; while (k < order.length && batch < 6) { load(order[k++]); batch++; } if (k < order.length) setTimeout(next, 60); })(); }
+  function size() { var r = cv.getBoundingClientRect(); DPR = Math.min(devicePixelRatio || 1, 2); W = Math.round(r.width * DPR); H = Math.round(r.height * DPR); if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; } }
+  function nearest(i) { for (var d = 0; d < N; d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
+  function draw(force) {
+    if (!ctx) return; var want = Math.max(0, Math.min(N - 1, Math.round(cur * (N - 1)))), have = nearest(want); if (have < 0) return; if (!force && have === drawn) return; drawn = have;
+    var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s;
+    ctx.clearRect(0, 0, W, H); ctx.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
   }
   function beatsAt(p) {
     var n = beats.length;
-    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s = c01((d - 0.5) / 0.5), op = 1 - s * s * (3 - 2 * s); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; }
+    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s = c01((d - 0.5) / 0.5), op = 1 - s * s * (3 - 2 * s); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = op > 0.5 ? "auto" : "none"; }
     pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
-  var idle = 0;
-  function stoneTick() {
-    if (!pin) return; var r = pin.getBoundingClientRect(); if (r.bottom < -innerHeight || r.top > innerHeight * 2) return;
-    if (!ok) { ok = initGL(); if (!ok) return; }
-    var p = c01(-r.top / (r.height - innerHeight));
-    if (reduce) p = Math.max(p, 0.35);
-    var tp = p + (reduce ? 0 : Math.sin(performance.now() / 4000) * 0.004);
-    if (Math.abs(tp - lastP) > 0.0015 || (idle++ % 30 === 0 && !reduce)) { lastP = tp; draw(tp); beatsAt(p); }
+  var lastP = -1;
+  function boxTick() {
+    if (!pin || !cv) return; var r = pin.getBoundingClientRect(); if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
+    if (!started) { size(); loadAll(); }
+    var p = c01(-r.top / (r.height - innerHeight)); if (reduce) p = Math.max(p, 0.5);
+    if (p !== lastP) { lastP = p; cur = p; draw(false); beatsAt(p); }
+    else if (loaded < N) draw(false);
   }
+  addEventListener("resize", function () { if (cv) { size(); draw(true); } });
 
   /* ── the rail ── */
-  var hpin = $("hpin"), track = $("htrack"), range = 0, lastX = -1;
+  var hpin = $("hpin"), track = $("htrack"), range = 0, lastX = -1, rprog = $("rprog"), rcue = document.querySelector(".rcue");
   function railSize() { if (!hpin || mobile) { if (hpin) { hpin.style.height = ""; } return; } range = Math.max(0, track.scrollWidth - innerWidth); hpin.style.height = (innerHeight + range) + "px"; }
   function railTick() {
     if (!hpin || mobile) return; var r = hpin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
@@ -1486,8 +1532,9 @@
   railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
   setTimeout(railSize, 800); addEventListener("load", railSize);
 
-  function tick() { requestAnimationFrame(tick); if (document.hidden) return; stoneTick(); railTick(); }
+  function tick() { requestAnimationFrame(tick); if (document.hidden) return; boxTick(); railTick(); }
   tick();
-  window.__stone = { get p() { return lastP; }, get ok() { return ok; } };
+  window.__box = { get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; } };
+  window.__stone = window.__box;
 })();
 </script>
