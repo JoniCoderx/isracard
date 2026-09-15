@@ -584,6 +584,16 @@
   .money-note { color:var(--ink3); font-size:.7rem; letter-spacing:.06em; }
   .fbot { align-items:center; }
   @media (max-width:999px) { .mfilm { height:72svh; min-height:440px; } }
+  /* ── v12: the mark on the lid, the symbol revealed by light, pieces that open from where you touched them ── */
+  .boxmark { position:absolute; left:0; top:0; width:60px; height:60px; pointer-events:none; opacity:0; will-change:transform, opacity; transform-origin:50% 50%; }
+  .boxmark svg.sy.emb { width:100%; height:100%; stroke-width:7; color:rgba(255,252,246,.42); filter:drop-shadow(0 -1px 0 rgba(255,255,255,.28)) drop-shadow(0 1px 1px rgba(0,0,0,.9)); }
+  .fbig svg.sy.huge path { stroke-dasharray:1; stroke-dashoffset:1; }
+  .fbig.in svg.sy.huge path { animation:draw1 1.8s cubic-bezier(.4,0,.2,1) .1s forwards; }
+  @media (prefers-reduced-motion:reduce) { .fbig svg.sy.huge path { stroke-dashoffset:0; animation:none; } }
+  .mbox { transform-origin:var(--ox,50%) var(--oy,50%); transform:translateY(0) scale(.86); opacity:0; transition:transform .55s var(--ease), opacity .4s ease; }
+  .modal.open .mbox { transform:none; opacity:1; }
+  .modal { transition:opacity .35s ease; }
+  .tcount .tcue { transition:opacity .4s; }
 </style>
 
 <div id="silavu">
@@ -653,6 +663,7 @@
     <div class="pin" id="stonepin">
       <div class="pinin">
         <canvas id="boxcv" aria-label="The SILAVU box opening, diamonds rising out of it" role="img"></canvas>
+        <div class="boxmark" id="boxmark" aria-hidden="true"><svg class="sy emb" viewBox="0 0 100 100" aria-hidden="true"><path d="M82 26 L64 17 L18 42 L82 58 L36 83 L22 76" pathLength="1"/></svg></div>
         <div class="veil2"></div>
         <div class="beats" id="beats">
           <div class="beat"><div class="k gold ol" data-en="01 · The box" data-he="01 · הקופסה">01 · The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="זה מגיע <em>סגור.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Black lacquer, twelve coats, the mark in the lid. Inside: one piece, its reports, and a valuation for your insurer." data-he="לכה שחורה, שתים עשרה שכבות, הסימן במכסה. בפנים: תכשיט אחד, התעודות שלו, והערכת שווי למבטח שלכם.">Black lacquer, twelve coats, the mark in the lid. Inside: one piece, its reports, and a valuation for your insurer.</p></div>
@@ -1145,7 +1156,7 @@
 
   /* ── the piece window ── */
   var pmodal = $("pmodal"), pmPiece = "";
-  function openModal(m) { m.classList.add("open"); m.setAttribute("aria-hidden", "false"); document.body.classList.add("locked"); }
+  function openModal(m, from) { if (from) { var fr = from.getBoundingClientRect(); m.querySelector(".mbox").style.setProperty("--ox", ((fr.left + fr.width / 2) / innerWidth * 100).toFixed(1) + "%"); m.querySelector(".mbox").style.setProperty("--oy", ((fr.top + fr.height / 2) / innerHeight * 100).toFixed(1) + "%"); } m.classList.add("open"); m.setAttribute("aria-hidden", "false"); document.body.classList.add("locked"); }
   function closeModals() { document.querySelectorAll(".modal.open").forEach(function (m) { m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); }); if (!menu.classList.contains("open")) document.body.classList.remove("locked"); }
   document.querySelectorAll(".modal").forEach(function (m) { m.addEventListener("click", function (e) { if (e.target === m || e.target.closest("[data-close]")) closeModals(); }); });
   addEventListener("keydown", function (e) { if (e.key === "Escape") closeModals(); });
@@ -1156,7 +1167,7 @@
       pmPiece = btn ? btn.getAttribute("data-piece") : ""; $("pmImg").src = img.currentSrc || img.src; $("pmImg").alt = img.alt; $("pmK").innerHTML = pc.querySelector(".k").innerHTML; $("pmT").innerHTML = pc.querySelector(".t").innerHTML; $("pmP").innerHTML = pc.querySelector(".p").innerHTML;
       var L = lang === "he" ? ["משקל", "איכות", "מתכת", "מחיר"] : ["Weight", "Grade", "Metal", "Price"], vals = Array.prototype.filter.call(meta.children, function (c) { return c.tagName !== "I"; });
       $("pmSpecs").innerHTML = vals.map(function (v, i) { return '<div class="dc"><div class="dval">' + v.innerHTML + '</div><div class="k">' + (L[i] || "") + "</div></div>"; }).join("");
-      $("pmReq").setAttribute("data-piece", pmPiece); openModal(pmodal);
+      $("pmReq").setAttribute("data-piece", pmPiece); openModal(pmodal, pc);
     });
   });
   $("pmReq").addEventListener("click", function () { closeModals(); });
@@ -1526,7 +1537,7 @@
   var rtl = function () { return document.documentElement.dir === "rtl"; };
 
   /* ── the box ── */
-  var pin = $("stonepin"), cv = $("boxcv"), ctx = cv && cv.getContext("2d"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
+  var bm = $("boxmark"), pin = $("stonepin"), cv = $("boxcv"), ctx = cv && cv.getContext("2d"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
   var N = 96, SET = phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"), frames = new Array(N), loaded = 0, requested = 0, cur = -1, W = 0, H = 0, DPR = 1, drawn = -1, started = false;
   function src(i) { return "/f/box/" + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
   function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
@@ -1535,8 +1546,10 @@
   function nearest(i) { for (var d = 0; d < N; d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
   function draw(force) {
     if (!ctx) return; var want = Math.max(0, Math.min(N - 1, Math.round(cur * (N - 1)))), have = nearest(want); if (have < 0) return; if (!force && have === drawn) return; drawn = have;
-    var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s;
-    ctx.clearRect(0, 0, W, H); ctx.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, ox = (W - dw) / 2, oy = (H - dh) / 2;
+    ctx.clearRect(0, 0, W, H); ctx.drawImage(im, ox, oy, dw, dh);
+    if (bm) { var lid = SET === "m" ? [0.52, 0.47, 0.11] : [0.5, 0.47, 0.058], sz = dw * lid[2] / DPR, x = (ox + lid[0] * dw) / DPR - sz / 2, y = (oy + lid[1] * dh) / DPR - sz / 2, op = cur < 0.03 ? cur / 0.03 : c01(1 - (cur - 0.07) / 0.06);
+      bm.style.width = bm.style.height = sz.toFixed(1) + "px"; bm.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) perspective(" + (sz * 6).toFixed(0) + "px) rotateX(56deg)"; bm.style.opacity = (op * 0.9).toFixed(3); }
   }
   function beatsAt(p) {
     var n = beats.length;
@@ -1550,7 +1563,7 @@
     if (!started) { size(); loadAll(); }
     var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, 0.5);
     var p = reduce ? target : (lastP < 0 ? target : lastP + (target - lastP) * 0.2); if (Math.abs(target - p) < 0.0008) p = target;
-    if (p !== lastP) { lastP = p; cur = p; draw(false); beatsAt(p); }
+    if (p !== lastP) { lastP = p; cur = p; draw(p < 0.16 ? true : false); beatsAt(p); }
     else if (loaded < N) draw(false);
   }
   addEventListener("resize", function () { if (cv) { size(); draw(true); } });
@@ -1580,7 +1593,7 @@
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   function Tray(el) {
     var track = el.querySelector(".pieces, .cards"), items = Array.prototype.slice.call(track.children), n = items.length, idx = 0, x = 0, tx = 0, gap = 14, w = 0, step = 0, drag = null, vx = 0, lastT = 0, lastX = 0, raf = 0, active = false;
-    var count = document.createElement("div"); count.className = "k tcount"; count.innerHTML = '<span class="tc"></span><span class="tcue" data-en="Swipe" data-he="החליקו">Swipe →</span>'; el.after(count);
+    var count = document.createElement("div"); count.className = "k tcount"; count.innerHTML = '<span class="tc"></span><span class="tcue" data-en="Swipe →" data-he="← החליקו">Swipe →</span>'; el.after(count);
     var tc = count.querySelector(".tc"), tcue = count.querySelector(".tcue");
     function measure() { active = matchMedia("(max-width:999px)").matches; if (!active) { track.style.transform = ""; return; } w = items[0].getBoundingClientRect().width; step = w + gap; }
     function clamp(v) { var min = -(n - 1) * step, max = 0; if (v > max) return max + (v - max) * 0.25; if (v < min) return min + (v - min) * 0.25; return v; }
