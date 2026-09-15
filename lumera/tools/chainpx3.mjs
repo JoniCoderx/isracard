@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core"; import fs from "fs";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
+const p = await ctx.newPage();
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(3300); await p.tap("#enterBtn").catch(()=>{}); await p.waitForTimeout(900);
+await p.evaluate(() => { const el = document.getElementById("pickup"); window.scrollTo({ top: scrollY + el.getBoundingClientRect().top - 420, behavior: "instant" }); }); await p.waitForTimeout(600);
+await p.tap("#pickup"); await p.waitForTimeout(2500);
+const url = await p.evaluate(() => document.getElementById("play").toDataURL("image/png"));
+fs.writeFileSync("/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/v14/mob/chain-canvas.png", Buffer.from(url.split(",")[1], "base64"));
+await b.close();

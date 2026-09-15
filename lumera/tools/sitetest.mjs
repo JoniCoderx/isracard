@@ -19,7 +19,8 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
     out.push((await p.evaluate(() => document.getElementById("menu").classList.contains("open")) ? "PASS":"FAIL") + ` ${tag} menu opens`);
     await p.evaluate(() => document.querySelector('#mlist a[href="#clients"]').click()); await p.waitForTimeout(1500);
     out.push((await p.evaluate(() => !document.getElementById("menu").classList.contains("open")) && Math.abs(await y() - await top("clients")) < 4 ? "PASS":"FAIL") + ` ${tag} menu link closes + lands`);
-    out.push((await p.evaluate(() => document.getElementById("fab").classList.contains("show")) ? "PASS":"FAIL") + ` ${tag} floating book button shown`);
+    await p.waitForTimeout(700);
+    out.push((await p.evaluate(() => { const f = document.getElementById("fab"); if (f.classList.contains("show")) return true; const r = f.getBoundingClientRect(); const hasText = (el) => { for (let c = el.firstChild; c; c = c.nextSibling) if (c.nodeType === 3 && c.nodeValue.trim()) return true; return false; }; return [r.left + 5, r.left + r.width / 2, r.right - 5].some(x => [r.top + 4, r.top + r.height / 2, r.bottom - 4].some(yy => { const els = document.elementsFromPoint(x, yy).filter(e => e !== f && !f.contains(e)); return els.length > 0 && (/^(P|H1|H2|H3|H4|LI|A|BUTTON|INPUT|TEXTAREA|SELECT|LABEL|SPAN|SMALL|EM|STRONG|BLOCKQUOTE|FIGCAPTION|TD|TH|SVG|DT|DD|IMG|CANVAS|VIDEO)$/.test(els[0].tagName) || hasText(els[0]) || !!els[0].closest(".btn, .chip, .modal, form")); })); }) ? "PASS":"FAIL") + ` ${tag} floating book button shown or stepped aside for content`);
   } else out.push(`skip ${tag} menu`);
   // compass
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("partners").getBoundingClientRect().top, behavior:"instant"})); for (let i = 0; i < 30 && !/partners|שותפים/i.test(await p.evaluate(() => document.getElementById("whereT").textContent)); i++) await p.waitForTimeout(250);

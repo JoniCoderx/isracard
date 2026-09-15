@@ -1,0 +1,9 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
+const p = await ctx.newPage(); const errs = []; p.on("pageerror", e => errs.push(String(e.message).slice(0, 140))); p.on("console", m => { if (m.type()==="error") errs.push(m.text().slice(0,140)); });
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(3300); await p.tap("#enterBtn").catch(()=>{}); await p.waitForTimeout(900);
+await p.evaluate(() => { const el = document.getElementById("pickup"); window.scrollTo({ top: scrollY + el.getBoundingClientRect().top - 420, behavior: "instant" }); }); await p.waitForTimeout(600);
+await p.tap("#pickup"); await p.waitForTimeout(2500);
+const st = await p.evaluate(() => { const cv = document.getElementById("play"); const c = cv.getContext("2d"); const d = c.getImageData(0,0,cv.width,cv.height).data; let n=0; for (let i=3;i<d.length;i+=4) if (d[i]>0) n++; const r = cv.getBoundingClientRect(); const st = []; let el = cv; while (el) { const cs = getComputedStyle(el); if (cs.transform!=="none"||cs.filter!=="none"||cs.opacity!=="1"||cs.overflow!=="visible"||cs.contain!=="none") st.push([el.tagName+"#"+el.id+"."+el.className, cs.transform, cs.filter, cs.opacity, cs.overflow, cs.contain]); el = el.parentElement; } const top = document.elementFromPoint(190, 640); return { opaque: n, rect: [r.x, r.y, r.width, r.height], chain: st, atPoint: top && (top.tagName+"#"+top.id+"."+top.className), bg: getComputedStyle(cv).backgroundColor, rr: !!c.roundRect }; });
+console.log(JSON.stringify({ st, errs })); await b.close();

@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
+const p = await ctx.newPage(); const errs = []; p.on("pageerror", e => errs.push(String(e.message).slice(0, 140))); p.on("console", m => { if (m.type()==="error") errs.push(m.text().slice(0,140)); });
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(3300); await p.tap("#enterBtn").catch(()=>{}); await p.waitForTimeout(900);
+await p.evaluate(() => { const el = document.getElementById("pickup"); window.scrollTo({ top: scrollY + el.getBoundingClientRect().top - 420, behavior: "instant" }); }); await p.waitForTimeout(600);
+await p.tap("#pickup"); await p.waitForTimeout(2500);
+const st = await p.evaluate(() => { const cv = document.getElementById("play"); const cs = getComputedStyle(cv); const pts = window.__chain.pts; const ys = pts.map(q => q.y), xs = pts.map(q => q.x); return { on: window.__chain.on, cvw: cv.width, cvh: cv.height, disp: cs.display, op: cs.opacity, z: cs.zIndex, vis: cs.visibility, minY: Math.round(Math.min(...ys)), maxY: Math.round(Math.max(...ys)), minX: Math.round(Math.min(...xs)), maxX: Math.round(Math.max(...xs)), sprite: !!window.__stoneSprite, cls: cv.className }; });
+await p.screenshot({ path: "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/v14/mob/chain-dbg.png" });
+console.log(JSON.stringify({ st, errs })); await b.close();

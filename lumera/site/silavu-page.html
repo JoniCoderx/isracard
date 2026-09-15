@@ -336,10 +336,12 @@
   .total { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:24px; }
   .total .price { font-size:clamp(2rem,4vw,3.4rem); letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; direction:ltr; }
   .playbar { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
-  #play { position:fixed; inset:0; z-index:28; pointer-events:none; }
+  #play { position:fixed; inset:0; width:100%; height:100%; z-index:28; pointer-events:none; }
   body.chain-on #fab, body.chain-on #where { opacity:0; pointer-events:none; }
   #putback { position:fixed; left:50%; transform:translateX(-50%); bottom:max(18px, env(safe-area-inset-bottom)); z-index:29; display:none; background:rgba(0,0,0,.6); }
   #putback.on { display:inline-flex; }
+  body.chain-on #pickup { opacity:.28; pointer-events:none; }
+  @media (max-width:999px) { #putback { background:#000; box-shadow:0 8px 30px rgba(0,0,0,.6); } }
 
   /* ── clients / partners ── */
   .facts { display:grid; gap:0; }
@@ -614,6 +616,10 @@
     .piece:hover .fig .im img, .card:hover .fig .im img { transform:none !important; }
   }
   @media (max-width:999px) { #putback { bottom:max(22px, calc(env(safe-area-inset-bottom) + 10px)); padding:14px 22px; } }
+
+  /* ── v17: a smaller floating button on the phone ── */
+  @media (max-width:999px) { #fab { padding:11px 16px; font-size:.66rem; letter-spacing:.2em; } }
+  @media (max-width:999px) { .hcap .k { font-size:.62rem; letter-spacing:.16em; white-space:nowrap; } }
 </style>
 
 <div id="silavu">
@@ -1104,10 +1110,21 @@
     for (var i = 0; i < secs.length; i++) { var r = secs[i].getBoundingClientRect(); if (r.top <= mid) best = secs[i]; }
     setWhere(best);
     var r2 = best.getBoundingClientRect(), f = c01(-r2.top / Math.max(1, r2.height - innerHeight * 0.5)); whereBar.style.width = (f * 100).toFixed(1) + "%";
-    var cr = $("concierge").getBoundingClientRect(); fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6);
+    var cr = $("concierge").getBoundingClientRect(); fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6 && fabClear());
     pbar.style.width = (c01(scrollY / Math.max(1, document.body.scrollHeight - innerHeight)) * 100).toFixed(2) + "%";
   }
   var pbar = $("pbar");
+  /* the floating button steps aside: it hides while the page scrolls down, and never rests on top of words, buttons or fields */
+  var fabLastY = 0, fabDown = false, fabRest = 0;
+  function fabClear() {
+    if (innerWidth >= 1000) return true;
+    if (fabDown) return false;
+    var r = fab.getBoundingClientRect(), xs = [r.left + 5, r.left + r.width / 2, r.right - 5], ys = [r.top + 4, r.top + r.height / 2, r.bottom - 4], busy = /^(P|H1|H2|H3|H4|LI|A|BUTTON|INPUT|TEXTAREA|SELECT|LABEL|SPAN|SMALL|EM|STRONG|BLOCKQUOTE|FIGCAPTION|TD|TH|SVG|DT|DD|IMG|CANVAS|VIDEO)$/;
+    function hasText(el) { for (var c = el.firstChild; c; c = c.nextSibling) if (c.nodeType === 3 && c.nodeValue.trim()) return true; return false; }
+    for (var k = 0; k < xs.length; k++) for (var m = 0; m < ys.length; m++) { var els = document.elementsFromPoint(xs[k], ys[m]); for (var j = 0; j < els.length; j++) { var el = els[j]; if (el === fab || fab.contains(el)) continue; if (busy.test(el.tagName) || hasText(el) || el.closest(".btn, .chip, .modal, form")) return false; break; } }
+    return true;
+  }
+  addEventListener("scroll", function () { var y = scrollY; fabDown = y > fabLastY + 2; fabLastY = y; clearTimeout(fabRest); fabRest = setTimeout(function () { fabDown = false; compass(); }, 420); }, { passive: true });
 
   /* ── diamond dust: a few dozen specks of light drifting up through the whole page, twinkling ── */
   var dust = $("dust"), dctx = dust.getContext("2d"), motes = [], dw = 0, dh = 0, sprite = document.createElement("canvas");

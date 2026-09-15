@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
+const p = await ctx.newPage();
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(3300); await p.tap("#enterBtn").catch(()=>{}); await p.waitForTimeout(900);
+await p.evaluate(() => { const el = document.getElementById("pickup"); window.scrollTo({ top: scrollY + el.getBoundingClientRect().top - 420, behavior: "instant" }); }); await p.waitForTimeout(600);
+await p.tap("#pickup"); await p.waitForTimeout(2500);
+const st = await p.evaluate(() => { const cv = document.getElementById("play"); cv.style.pointerEvents = "auto"; const q = window.__chain.pts[5]; const el = document.elementFromPoint(q.x, q.y); const stack = document.elementsFromPoint(q.x, q.y).map(e => e.tagName + "#" + e.id + "." + String(e.className).slice(0,20) + " z=" + getComputedStyle(e).zIndex + " pos=" + getComputedStyle(e).position); cv.style.pointerEvents = ""; return { bead: [q.x|0, q.y|0], top: el && el.id, stack: stack.slice(0, 8) }; });
+await p.screenshot({ path: "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/v14/mob/chain-dbg2.png", animations: "allow" });
+console.log(JSON.stringify(st)); await b.close();
