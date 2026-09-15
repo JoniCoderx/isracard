@@ -1511,6 +1511,8 @@
   /* ── second try-on button, inside the configurator ── */
   var t2 = $("tryonBtn2"); if (t2) t2.addEventListener("click", function () { if (window.__tryon) window.__tryon.open(); });
 
+  /* ── a photograph that fails to arrive is asked for again, quietly ── */
+  document.addEventListener("error", function (e) { var im = e.target; if (!im || im.tagName !== "IMG" || !im.currentSrc) return; var n = +(im.getAttribute("data-retry") || 0); if (n >= 2) return; im.setAttribute("data-retry", n + 1); var src = im.currentSrc; setTimeout(function () { var u = src.split("?")[0] + "?r=" + (n + 1); if (im.srcset) { im.srcset = im.srcset.split(",").map(function (c) { var t = c.trim().split(/\s+/); return t[0].split("?")[0] + "?r=" + (n + 1) + (t[1] ? " " + t[1] : ""); }).join(", "); } im.src = u; }, 1500 * (n + 1)); }, true);
   window.__fx = { relang: function () { split(); } };
 })();
 </script>
