@@ -476,6 +476,25 @@
   @media (max-width:899px) { .hfacts { display:none; } }
   .sh nav { gap:20px; } .sh nav a { font-size:.7rem; }
   @media (max-width:999px) { .pin { height:320svh; } #concierge { min-height:0; } .cbody { padding-bottom:9svh; } }
+  /* ── certification ── */
+  .certs { margin-top:clamp(36px,5vw,64px); display:grid; justify-items:center; gap:22px; text-align:center; }
+  .certrow { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+  .cert { text-decoration:none; display:grid; justify-items:center; gap:8px; padding:22px 34px; min-width:240px; border:1px solid rgba(217,201,163,.4); border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); transition:border-color .5s, transform .6s var(--ease); }
+  .cert:hover { border-color:var(--gold); transform:translateY(-2px); }
+  .cert b { font-weight:400; font-size:2rem; letter-spacing:.3em; padding-inline-start:.3em; line-height:1; direction:ltr; }
+  .cert small { font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); }
+  html[data-lang="he"] .cert small { letter-spacing:.02em; text-transform:none; font-size:.8rem; }
+  /* ── scroll cues ── */
+  .pdots { position:absolute; right:var(--pad); top:50%; transform:translateY(-50%); display:grid; gap:10px; z-index:3; } html[dir="rtl"] .pdots { right:auto; left:var(--pad); }
+  .pdots i { width:6px; height:6px; border-radius:50%; background:rgba(246,243,237,.25); transition:background .4s, transform .4s var(--ease); }
+  .pdots i.on { background:var(--gold); transform:scale(1.5); }
+  @media (max-width:999px) { .pdots { top:auto; bottom:max(40px, calc(env(safe-area-inset-bottom) + 30px)); right:auto; left:50%; transform:translateX(-50%); grid-auto-flow:column; } html[dir="rtl"] .pdots { left:50%; } }
+  .pcue { position:absolute; right:var(--pad); bottom:max(34px, calc(env(safe-area-inset-bottom) + 12px)); z-index:3; color:var(--ink3); transition:opacity .6s; } html[dir="rtl"] .pcue { right:auto; left:var(--pad); }
+  @media (max-width:999px) { .pcue { display:none; } }
+  .rprog { position:absolute; left:var(--pad); right:var(--pad); bottom:max(22px, env(safe-area-inset-bottom)); height:1px; background:var(--line); z-index:3; display:none; }
+  .rprog i { position:absolute; inset:0 auto 0 0; width:0; background:var(--ink); } html[dir="rtl"] .rprog i { inset:0 0 0 auto; }
+  .rcue { position:absolute; right:var(--pad); bottom:max(34px, calc(env(safe-area-inset-bottom) + 12px)); z-index:3; color:var(--ink3); display:none; transition:opacity .6s; } html[dir="rtl"] .rcue { right:auto; left:var(--pad); }
+  @media (min-width:1000px) { .rprog, .rcue { display:flex; } .pin { height:340svh; } }
 </style>
 
 <div id="silavu">
@@ -590,7 +609,8 @@
           <div class="beat"><div class="k gold ol" data-en="Inside" data-he="בפנים">Inside</div><h2 class="h2" data-en="Inside, <em>only light.</em>" data-he="בפנים, <em>רק אור.</em>">Inside, <em>only light.</em></h2><p class="p" data-en="No inclusions you can see, no fluorescence, nothing between you and the fire. This is the stone you are looking at, drawn live from its real geometry." data-he="בלי תכלילים שאפשר לראות, בלי פלואורסצנציה, שום דבר בינכם לבין האש. זו האבן שאתם מסתכלים עליה, מצוירת בזמן אמת מהגיאומטריה האמיתית שלה.">No inclusions you can see, no fluorescence, nothing between you and the fire. This is the stone you are looking at, drawn live from its real geometry.</p></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
-        <div class="k pcue" data-en="Keep scrolling" data-he="המשיכו לגלול">Keep scrolling</div>
+        <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="cue k pcue"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
       </div>
     </div>
     <div class="wrap">
@@ -599,6 +619,14 @@
       <div class="spec rv d1"><div class="v">VVS<small>+</small></div><div class="k" data-en="Clarity, IF to VVS2" data-he="ניקיון, IF עד VVS2">Clarity, IF to VVS2</div></div>
       <div class="spec rv d2"><div class="v">3<small>× EX</small></div><div class="k" data-en="Cut · polish · symmetry" data-he="ליטוש · פוליש · סימטריה">Cut · polish · symmetry</div></div>
       <div class="spec rv d3"><div class="v">0.1<small>mm</small></div><div class="k" data-en="Tolerance between neighbours" data-he="סטייה בין שכנות">Tolerance between neighbours</div></div>
+    </div>
+    <div class="certs rv d2" id="certs">
+      <div class="k gold" data-en="Every stone is graded by" data-he="כל אבן מדורגת על ידי">Every stone is graded by</div>
+      <div class="certrow">
+        <a class="cert" href="https://www.gia.edu/report-check-landing" target="_blank" rel="noopener"><b>GIA</b><small data-en="Gemological Institute of America" data-he="המכון הגמולוגי של אמריקה">Gemological Institute of America</small></a>
+        <a class="cert" href="https://www.igi.org/verify-your-report/" target="_blank" rel="noopener"><b>IGI</b><small data-en="International Gemological Institute" data-he="המכון הגמולוגי הבינלאומי">International Gemological Institute</small></a>
+      </div>
+      <p class="p" style="max-width:56ch;text-align:center" data-en="Every report number is laser-inscribed on the stone's girdle and can be verified on the laboratory's own site. The reports travel with the piece." data-he="מספר התעודה חרוט בלייזר על חגורת האבן וניתן לאימות באתר המעבדה עצמה. התעודות נמסרות יחד עם התכשיט.">Every report number is laser-inscribed on the stone's girdle and can be verified on the laboratory's own site. The reports travel with the piece.</p>
     </div>
     <div class="dossier rv d2" id="dossier">
       <div class="dtop">
@@ -628,6 +656,8 @@
   <section id="collection" data-n="03" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">
     <div class="hpin" id="hpin">
       <div class="hstick">
+        <div class="rprog" aria-hidden="true"><i id="rprog"></i></div>
+        <div class="cue k rcue"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
         <div class="htrack" id="htrack">
           <div class="hhead">
             <div class="k gold rv ol" data-en="03 · Collection" data-he="03 · הקולקציה">03 · Collection</div>
@@ -1406,6 +1436,7 @@
   var rtl = function () { return document.documentElement.dir === "rtl"; };
 
   /* ── the stone ── */
+  var dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i")), rprog = $("rprog"), rcue = document.querySelector(".rcue");
   var pin = $("stonepin"), cv = $("stonecv"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue");
   var gl = cv && cv.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: true, powerPreference: "high-performance" }), ok = false, PG, U = {}, aP, quad, lastP = -1, RES = 2;
   function initGL() {
@@ -1432,6 +1463,7 @@
     var n = beats.length;
     for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s = c01((d - 0.5) / 0.5), op = 1 - s * s * (3 - 2 * s); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; }
     pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
+    var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
   var idle = 0;
   function stoneTick() {
@@ -1449,7 +1481,7 @@
   function railTick() {
     if (!hpin || mobile) return; var r = hpin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
     var p = c01(-r.top / Math.max(1, range)), x = p * range * (rtl() ? 1 : -1);
-    if (x !== lastX) { lastX = x; track.style.transform = "translate3d(" + x.toFixed(1) + "px,0,0)"; }
+    if (x !== lastX) { lastX = x; track.style.transform = "translate3d(" + x.toFixed(1) + "px,0,0)"; if (rprog) rprog.style.width = (p * 100).toFixed(2) + "%"; if (rcue) rcue.style.opacity = p > 0.85 ? "0" : "1"; }
   }
   railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
   setTimeout(railSize, 800); addEventListener("load", railSize);
