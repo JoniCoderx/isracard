@@ -1,109 +1,22 @@
 import { chromium } from "playwright-core";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const OUT = path.join(ROOT, "shots");
-fs.mkdirSync(OUT, { recursive: true });
-const BASE = process.env.BASE || "http://localhost:3000";
-
-const exe = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
-const browser = await chromium.launch({
-  executablePath: exe,
-  args: ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
-});
-const page = await browser.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 1 });
-const errs = [];
-page.on("pageerror", (e) => errs.push("PAGEERR " + e.message));
-page.on("console", (m) => { if (m.type() === "error") errs.push("CONSOLE " + m.text().slice(0, 160)); });
-
-const shot = (name) => page.screenshot({ path: path.join(OUT, name + ".png") });
-const wait = (ms) => page.waitForTimeout(ms);
-
-async function scrollTo(frac) {
-  await page.evaluate((f) => {
-    const h = document.body.scrollHeight - window.innerHeight;
-    const l = window.__lenis;
-    if (l) l.scrollTo(h * f, { immediate: true });
-    else window.scrollTo(0, h * f);
-  }, frac);
+const out = process.argv[2] || "/tmp/shots";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+for (const [tag, vp] of [["d",{width:1440,height:900}],["m",{width:390,height:844}]]) {
+  const p = await b.newPage({ viewport: vp, deviceScaleFactor: 1 }); await p.emulateMedia({ reducedMotion: "reduce" });
+  await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(1200); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(700);
+  const go = (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" });
+  const at = async (name, fn) => { await p.evaluate(fn); await p.waitForTimeout(900); await p.screenshot({ path: `${out}/${tag}-${name}.png` }); };
+  await p.screenshot({ path: `${out}/${tag}-hero.png` });
+  await at("what", () => window.scrollTo({ top: scrollY + document.getElementById("what").getBoundingClientRect().top - 40, behavior: "instant" }));
+  await at("stone", () => { const pin = document.getElementById("stonepin"); window.scrollTo({ top: scrollY + pin.getBoundingClientRect().top + (pin.offsetHeight - innerHeight) * 0.38, behavior: "instant" }); });
+  await at("stone2", () => { const pin = document.getElementById("stonepin"); window.scrollTo({ top: scrollY + pin.getBoundingClientRect().top + (pin.offsetHeight - innerHeight) * 0.92, behavior: "instant" }); });
+  await at("specs", () => window.scrollTo({ top: scrollY + document.getElementById("dossier").getBoundingClientRect().top - 300, behavior: "instant" }));
+  await at("coll", () => { const h = document.getElementById("hpin"); window.scrollTo({ top: scrollY + h.getBoundingClientRect().top + Math.max(0, h.offsetHeight - innerHeight) * 0.35, behavior: "instant" }); });
+  await at("build", () => window.scrollTo({ top: scrollY + document.getElementById("build").getBoundingClientRect().top - 30, behavior: "instant" }));
+  await at("conf", () => window.scrollTo({ top: scrollY + document.getElementById("configure").getBoundingClientRect().top - 60, behavior: "instant" }));
+  await at("clients", () => window.scrollTo({ top: scrollY + document.getElementById("clients").getBoundingClientRect().top + 300, behavior: "instant" }));
+  await at("partners", () => window.scrollTo({ top: scrollY + document.getElementById("partners").getBoundingClientRect().top - 30, behavior: "instant" }));
+  await at("end", () => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
+  await p.close();
 }
-
-const targets = process.argv.slice(2);
-const want = (t) => targets.length === 0 || targets.includes(t);
-
-if (want("home")) {
-  await page.goto(BASE + "/", { waitUntil: "domcontentloaded" });
-  await wait(2200);
-  await shot("01-home-intro");
-  // click Enter
-  const btn = page.getByText(/Enter SILAVU/i).first();
-  if (await btn.count()) await btn.click().catch(() => {});
-  await wait(1600);
-  await shot("02-home-entered");
-  for (const [f, n] of [[0.12, "03-home-approach"], [0.4, "04-home-orbit"], [0.62, "05-home-dive"], [0.9, "06-home-line"]]) {
-    await scrollTo(f);
-    await wait(1400);
-    await shot(n);
-  }
-  // deeper editorial sections
-  await scrollTo(0.98);
-  await wait(1000);
-  await shot("07-home-final");
-}
-
-if (want("line")) {
-  await page.goto(BASE + "/the-line", { waitUntil: "domcontentloaded" });
-  await wait(4000);
-  await shot("10-line-hero");
-  await scrollTo(0.5);
-  await wait(2500);
-  await shot("11-line-builder");
-}
-
-if (want("private")) {
-  await page.goto(BASE + "/private", { waitUntil: "domcontentloaded" });
-  await wait(1500);
-  await shot("20-private-intro");
-  await scrollTo(0.35);
-  await wait(1200);
-  await shot("21-private-journey");
-  await scrollTo(0.9);
-  await wait(1200);
-  await shot("22-private-request");
-}
-
-if (want("room")) {
-  await page.goto(BASE + "/private-room", { waitUntil: "domcontentloaded" });
-  await wait(1400);
-  await shot("30-room");
-  const svc = page.getByText("Private Viewing").first();
-  if (await svc.count()) await svc.click().catch(() => {});
-  await wait(900);
-  await shot("31-room-service");
-}
-
-if (want("misc")) {
-  await page.goto(BASE + "/the-stone", { waitUntil: "domcontentloaded" });
-  await wait(1400);
-  await shot("40-stone");
-  await scrollTo(0.4);
-  await wait(1200);
-  await shot("41-stone-mid");
-
-  await page.goto(BASE + "/showcase", { waitUntil: "domcontentloaded" });
-  await wait(1400);
-  await shot("50-showcase");
-
-  await page.goto(BASE + "/showcase/the-eternal-tennis", { waitUntil: "domcontentloaded" });
-  await wait(1400);
-  await shot("51-product");
-
-  await page.goto(BASE + "/house", { waitUntil: "domcontentloaded" });
-  await wait(1200);
-  await shot("60-house");
-}
-
-console.log("ERRORS:", errs.length ? [...new Set(errs)].slice(0, 8) : "none");
-await browser.close();
+await b.close();
