@@ -1,0 +1,35 @@
+import { chromium } from "playwright-core";
+import fs from "fs";
+const out = process.argv[2]; fs.mkdirSync(out, { recursive: true });
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true, userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" });
+const p = await ctx.newPage(); const errors = [];
+p.on("pageerror", e => errors.push(String(e.message).slice(0,140))); p.on("console", m => { if (m.type()==="error" && !/Failed to load|ERR_/.test(m.text())) errors.push(m.text().slice(0,140)); });
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" }); await p.waitForTimeout(3300);
+await p.screenshot({ path: `${out}/00-intro.png` });
+await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(1200);
+const H = await p.evaluate(() => document.body.scrollHeight); const vh = 844; let i = 1; const info = [];
+for (let y = 0; y < H; y += vh) { await p.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), y); await p.waitForTimeout(1100); await p.screenshot({ path: `${out}/${String(i).padStart(2,"0")}-y${y}.png` }); info.push({ i, y, where: await p.evaluate(() => (document.getElementById("where") || {}).textContent) }); i++; }
+console.log("screens", i - 1, "height", H);
+// interactions
+const act = async (name, fn) => { try { await fn(); await p.waitForTimeout(900); await p.screenshot({ path: `${out}/x-${name}.png` }); } catch (e) { errors.push(name + ": " + e.message.slice(0, 100)); } };
+await act("menu", async () => { await p.evaluate(() => window.scrollTo({ top: 300, behavior: "instant" })); await p.tap("#menuBtn"); });
+await act("menu-closed", async () => { await p.tap("#menuClose"); });
+await act("builder", async () => { await p.evaluate(() => window.scrollTo({ top: scrollY + document.getElementById("configure").getBoundingClientRect().top - 10, behavior: "instant" })); await p.waitForTimeout(1500); });
+await act("builder-20ct", async () => { await p.evaluate(() => { const c = [...document.querySelectorAll('.chip[data-k="ct"]')].find(x => x.textContent.trim().startsWith('20')); c && c.click(); }); await p.waitForTimeout(600); });
+const pick = await p.$("#pickup"); const pb = pick && await pick.boundingBox(); info.push({ pickup: pb });
+await act("pickup", async () => { await p.evaluate(() => { const el = document.getElementById("pickup"); window.scrollTo({ top: scrollY + el.getBoundingClientRect().top - 400, behavior: "instant" }); }); await p.waitForTimeout(600); await p.tap("#pickup"); await p.waitForTimeout(1500); });
+info.push({ chainOn: await p.evaluate(() => document.getElementById("play").classList.contains("on")), chainCss: await p.evaluate(() => { const c = document.getElementById("play"); const cs = getComputedStyle(c); return { pos: cs.position, z: cs.zIndex, pe: cs.pointerEvents, ta: cs.touchAction, opacity: cs.opacity, display: cs.display }; }) });
+await act("chain-drag", async () => { const y = await p.evaluate(() => { const r = document.getElementById("stripwrap").getBoundingClientRect(); return r.top + r.height * 0.42; }); await p.touchscreen.tap(195, y); const cdp = await ctx.newCDPSession(p); await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 195, y }] }); for (let k = 1; k <= 10; k++) { await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 195 + k * 6, y: y + k * 20 }] }); await p.waitForTimeout(30); } await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }); await p.waitForTimeout(1200); });
+info.push({ chainAfterDrag: await p.evaluate(() => ({ on: document.getElementById("play").classList.contains("on"), scrollY })) });
+await act("tryon", async () => { await p.tap("#tryonBtn2"); await p.waitForTimeout(1200); });
+await act("tryon-closed", async () => { await p.keyboard.press("Escape"); });
+await act("putback", async () => { await p.tap("#putback"); });
+await act("tray", async () => { await p.evaluate(() => { const h = document.getElementById("hpin"); window.scrollTo({ top: scrollY + h.getBoundingClientRect().top + 120, behavior: "instant" }); }); await p.waitForTimeout(1200); });
+await act("tray-swipe", async () => { const cdp = await ctx.newCDPSession(p); const y = await p.evaluate(() => document.querySelector("#p-ring").getBoundingClientRect().top + 150); await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 300, y }] }); for (let k = 1; k <= 8; k++) { await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 300 - k * 30, y }] }); await p.waitForTimeout(25); } await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }); await p.waitForTimeout(1200); });
+info.push({ tray: await p.evaluate(() => (window.__tray || []).map(t => t.index)) });
+await act("popup", async () => { await p.evaluate(() => document.querySelector("#p-riv").click()); });
+await act("popup-closed", async () => { await p.keyboard.press("Escape"); });
+fs.writeFileSync(`${out}/info.json`, JSON.stringify({ info, errors }, null, 1));
+console.log(JSON.stringify({ info, errors }));
+await b.close();
