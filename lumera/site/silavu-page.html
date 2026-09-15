@@ -1448,12 +1448,12 @@
   function nearest(x, y) { var b = -1, bd = 1e9; for (var i = 0; i < N; i++) { var d = (pts[i].x - x) * (pts[i].x - x) + (pts[i].y - y) * (pts[i].y - y); if (d < bd) { bd = d; b = i; } } return bd < 60 * 60 ? b : -1; }
   /* the canvas never blocks the page: a touch only becomes a grab when it lands on a stone */
   var grabId = null;
-  document.addEventListener("pointerdown", function (e) { if (!on || e.target.closest("#putback, .modal, #menu, .sh")) return; var i = nearest(e.clientX, e.clientY); if (i < 0) return; grab = i; grabId = e.pointerId; px = e.clientX; py = e.clientY; pvx = pvy = 0; e.preventDefault(); e.stopPropagation(); }, { capture: true, passive: false });
+  document.addEventListener("pointerdown", function (e) { if (!on || e.target.closest("button, a, input, select, textarea, label, .chip, .modal, #menu, .sh")) return; var i = nearest(e.clientX, e.clientY); if (i < 0) return; grab = i; grabId = e.pointerId; px = e.clientX; py = e.clientY; pvx = pvy = 0; e.preventDefault(); e.stopPropagation(); }, { capture: true, passive: false });
   document.addEventListener("pointermove", function (e) { if (grab < 0 || e.pointerId !== grabId) return; pvx = e.clientX - px; pvy = e.clientY - py; px = e.clientX; py = e.clientY; }, { passive: true });
   document.addEventListener("touchmove", function (e) { if (grab >= 0) e.preventDefault(); }, { passive: false });
   function release(e) { if (grab < 0 || (e && e.pointerId !== grabId)) return; var p = pts[grab]; p.ox = p.x - pvx * 0.9; p.oy = p.y - pvy * 0.9; grab = -1; grabId = null; }
   document.addEventListener("pointerup", release); document.addEventListener("pointercancel", release);
-  document.addEventListener("click", function (e) { if (on && nearest(e.clientX, e.clientY) >= 0 && !e.target.closest("#putback")) { e.preventDefault(); e.stopPropagation(); } }, true);
+  document.addEventListener("click", function (e) { if (on && nearest(e.clientX, e.clientY) >= 0 && !e.target.closest("button, a, input, label, .chip")) { e.preventDefault(); e.stopPropagation(); } }, true);
   /* let people grab it even when it is lying under the page: the canvas is above everything while on */
   function step(dt) {
     var g = 1900 * dt * dt, floor = H - 22 - R, i, p;
