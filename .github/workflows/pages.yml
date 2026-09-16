@@ -1,0 +1,53 @@
+name: SILAVU static site (GitHub Pages)
+
+on:
+  push:
+    branches: [claude/isracard-dev-environment-tzc6s5]
+    paths: ["lumera/site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Static index
+        run: node lumera/site/gen-static.mjs lumera/site/silavu-page.html dist "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+      - name: Icons, manifest, OG image
+        run: cp -v lumera/site/public/* dist/
+      - name: Photographs and the box film (served by the live site)
+        run: |
+          set -e
+          fetch() { mkdir -p "dist/$(dirname "$1")"; for i in 1 2 3 4; do curl -fsSL --retry 2 -o "dist/$1" "https://silavu-house.higgsfield.app/$1" && return 0; sleep $((i*3)); done; echo "missing: $1"; return 1; }
+          while read -r f; do [ -n "$f" ] && fetch "$f"; done < lumera/site/static-assets.txt
+          for s in d m x; do for n in $(seq -w 0 95); do fetch "f/box/$s-$n.jpg"; done; done
+          du -sh dist; find dist -type f | wc -l
+      - name: Wrist photographs
+        run: bash lumera/site/wrist-assets.sh dist/img
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
