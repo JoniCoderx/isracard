@@ -1,0 +1,524 @@
+<script>
+/* The bracelet, in the round. A real tennis bracelet built as geometry: every stone is a solid cut from its own facet planes, sitting in a four-prong head on a continuous gallery, the heads articulated to each other, the clasp hidden at the back. Turn it with your hand. */
+(function () {
+  "use strict";
+  var wrap = document.getElementById("stripwrap"), cv = document.getElementById("bcv");
+  if (!wrap || !cv) return;
+  var gl = cv.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: false, powerPreference: "high-performance" }) || cv.getContext("experimental-webgl", { antialias: true, alpha: true });
+  if (!gl) { cv.style.display = "none"; return; }
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var inst = gl.getExtension("ANGLE_instanced_arrays");
+  var D2R = Math.PI / 180;
+
+  /* ─────────────────────────── geometry ─────────────────────────── */
+  function Mesh() { this.p = []; this.n = []; }
+  Mesh.prototype.tri = function (a, b, c) {
+    var ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    var nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx, L = Math.hypot(nx, ny, nz);
+    if (L < 1e-12) return; nx /= L; ny /= L; nz /= L;
+    this.p.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    this.n.push(nx, ny, nz, nx, ny, nz, nx, ny, nz);
+  };
+  Mesh.prototype.fan = function (poly) { for (var i = 1; i < poly.length - 1; i++) this.tri(poly[0], poly[i], poly[i + 1]); };
+  Mesh.prototype.smoothTri = function (a, b, c, na, nb, nc) {
+    this.p.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    this.n.push(na[0], na[1], na[2], nb[0], nb[1], nb[2], nc[0], nc[1], nc[2]);
+  };
+  Mesh.prototype.count = function () { return this.p.length / 3; };
+
+  /* a convex solid from half-spaces n·x ≤ d: clip a large cube, plane by plane */
+  function solid(planes) {
+    var R = 40, faces = [
+      [[-R, -R, -R], [-R, -R, R], [-R, R, R], [-R, R, -R]], [[R, -R, -R], [R, R, -R], [R, R, R], [R, -R, R]],
+      [[-R, -R, -R], [R, -R, -R], [R, -R, R], [-R, -R, R]], [[-R, R, -R], [-R, R, R], [R, R, R], [R, R, -R]],
+      [[-R, -R, -R], [-R, R, -R], [R, R, -R], [R, -R, -R]], [[-R, -R, R], [R, -R, R], [R, R, R], [-R, R, R]]
+    ];
+    for (var pi = 0; pi < planes.length; pi++) {
+      var pl = planes[pi], nx = pl[0], ny = pl[1], nz = pl[2], d = pl[3];
+      if (d > 900) continue;
+      var out = [], cut = [];
+      for (var f = 0; f < faces.length; f++) {
+        var poly = faces[f], keep = [], m = poly.length, edge = [];
+        for (var i = 0; i < m; i++) {
+          var a = poly[i], b = poly[(i + 1) % m];
+          var da = a[0] * nx + a[1] * ny + a[2] * nz - d, db = b[0] * nx + b[1] * ny + b[2] * nz - d;
+          if (da <= 1e-9) keep.push(a);
+          if ((da < -1e-9 && db > 1e-9) || (da > 1e-9 && db < -1e-9)) {
+            var t = da / (da - db), q = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+            keep.push(q); edge.push(q);
+          }
+        }
+        if (keep.length > 2) out.push(keep);
+        if (edge.length === 2) cut.push(edge);
+      }
+      if (cut.length > 2) {
+        /* stitch the cut edges into the new face, then order it around its centroid */
+        var pts = [], seen = {};
+        for (i = 0; i < cut.length; i++) for (var j = 0; j < 2; j++) {
+          var q2 = cut[i][j], key = q2.map(function (v) { return Math.round(v * 1e4); }).join(",");
+          if (!seen[key]) { seen[key] = 1; pts.push(q2); }
+        }
+        if (pts.length > 2) {
+          var cx = 0, cy = 0, cz = 0;
+          for (i = 0; i < pts.length; i++) { cx += pts[i][0]; cy += pts[i][1]; cz += pts[i][2]; }
+          cx /= pts.length; cy /= pts.length; cz /= pts.length;
+          var ax = Math.abs(nx) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+          var ex = [ax[1] * nz - ax[2] * ny, ax[2] * nx - ax[0] * nz, ax[0] * ny - ax[1] * nx], eL = Math.hypot(ex[0], ex[1], ex[2]);
+          ex = [ex[0] / eL, ex[1] / eL, ex[2] / eL];
+          var ey = [ny * ex[2] - nz * ex[1], nz * ex[0] - nx * ex[2], nx * ex[1] - ny * ex[0]];
+          pts.sort(function (u, v) {
+            var ux = u[0] - cx, uy = u[1] - cy, uz = u[2] - cz, vx2 = v[0] - cx, vy2 = v[1] - cy, vz2 = v[2] - cz;
+            return Math.atan2(ux * ey[0] + uy * ey[1] + uz * ey[2], ux * ex[0] + uy * ex[1] + uz * ex[2]) -
+              Math.atan2(vx2 * ey[0] + vy2 * ey[1] + vz2 * ey[2], vx2 * ex[0] + vy2 * ex[1] + vz2 * ex[2]);
+          });
+          out.push(pts);
+        }
+      }
+      faces = out;
+      if (!faces.length) break;
+    }
+    var mesh = new Mesh();
+    for (var k = 0; k < faces.length; k++) mesh.fan(faces[k]);
+    return mesh;
+  }
+
+  /* the outline of a cut, in the girdle plane, unit half-length 1 along x */
+  function outline(cut, ratio) {
+    var p = [], i, a, n = 48;
+    if (cut === "princess" || cut === "baguette" || cut === "emerald" || cut === "cushion") {
+      var rx = 1, rz = 1 / ratio, c = cut === "emerald" ? 0.22 : cut === "cushion" ? 0.42 : 0.05;
+      var corner = [[rx - c, rz], [rx, rz - c], [rx, -(rz - c)], [rx - c, -rz], [-(rx - c), -rz], [-rx, -(rz - c)], [-rx, rz - c], [-(rx - c), rz]];
+      if (cut === "cushion") { for (i = 0; i < n; i++) { a = i * 2 * Math.PI / n; var s = Math.sign(Math.cos(a)) * Math.pow(Math.abs(Math.cos(a)), 0.62), t2 = Math.sign(Math.sin(a)) * Math.pow(Math.abs(Math.sin(a)), 0.62); p.push([rx * s, rz * t2]); } return p; }
+      return corner;
+    }
+    if (cut === "marquise") { for (i = 0; i < n; i++) { a = i * 2 * Math.PI / n; p.push([Math.cos(a), Math.sin(a) * Math.pow(Math.abs(Math.sin(a)), 0.55) / ratio]); } return p; }
+    if (cut === "pear") { for (i = 0; i < n; i++) { a = i * 2 * Math.PI / n; var x = Math.cos(a), y = Math.sin(a) * (0.55 + 0.45 * (1 - x) / 2) / ratio * 1.25; p.push([x, y]); } return p; }
+    for (i = 0; i < n; i++) { a = i * 2 * Math.PI / n; p.push([Math.cos(a), Math.sin(a) / ratio]); }
+    return p;
+  }
+  function support(pts, nx, nz) { var m = -1e9; for (var i = 0; i < pts.length; i++) { var v = pts[i][0] * nx + pts[i][1] * nz; if (v > m) m = v; } return m; }
+
+  /* the facet planes of a cut, scaled to millimetres: L along x, W along z */
+  function planesFor(cut, L, W) {
+    var ratio = L / W, pts = outline(cut, ratio), P = [], k, az, a, h, sx = L / 2;
+    var hmin = Math.min(support(pts, 0, 1), support(pts, 1, 0)) * sx, g = 0.035 * hmin;
+    var sup = function (cx, cz) { return support(pts, cx, cz) * sx; };
+    var step = cut === "emerald" || cut === "baguette";
+    if (!step) {
+      var ca = 34.5 * D2R, sa = 30.5 * D2R, pa = 40.9 * D2R, pb = 41.6 * D2R;
+      P.push([0, 1, 0, 0.44 * hmin * Math.tan(ca)]);
+      for (k = 0; k < 16; k++) { az = k * Math.PI / 8; a = k % 2 === 0 ? ca : sa; h = sup(Math.cos(az), Math.sin(az)); P.push([Math.sin(a) * Math.cos(az), Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * h]); }
+      for (k = 0; k < 16; k++) { az = k * Math.PI / 8 + Math.PI / 16; h = sup(Math.cos(az), Math.sin(az)); P.push([Math.cos(az), 0, Math.sin(az), h]); }
+      for (k = 0; k < 16; k++) { az = k * Math.PI / 8 + Math.PI / 16; a = k % 2 === 0 ? pa : pb; h = sup(Math.cos(az), Math.sin(az)); P.push([Math.sin(a) * Math.cos(az), -Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * h + Math.cos(a) * g]); }
+      P.push([0, -1, 0, hmin * Math.tan(pa) * 0.98 + g]);
+    } else {
+      var K = cut === "emerald" ? 8 : 4, crown = [[47, 0, 0], [37, 0.16, 0.14], [27, 0.30, 0.24]], pav = [[50, 0, 0], [43, 0.20, 0.22], [37, 0.40, 0.42]], j;
+      P.push([0, 1, 0, 0.30 * hmin]);
+      for (k = 0; k < K; k++) {
+        az = k * 2 * Math.PI / K; h = sup(Math.cos(az), Math.sin(az));
+        for (j = 0; j < 3; j++) { a = crown[j][0] * D2R; P.push([Math.sin(a) * Math.cos(az), Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * (h - crown[j][1] * hmin) + Math.cos(a) * crown[j][2] * hmin]); }
+        P.push([Math.cos(az), 0, Math.sin(az), h]);
+        for (j = 0; j < 3; j++) { a = pav[j][0] * D2R; P.push([Math.sin(a) * Math.cos(az), -Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * (h - pav[j][1] * hmin) + Math.cos(a) * (g + pav[j][2] * hmin)]); }
+      }
+      P.push([0, -1, 0, g + 0.60 * hmin]);
+    }
+    return P;
+  }
+
+  /* a swept tube along a path, with a radius per sample */
+  function tube(mesh, path, rad, seg, capA, capB) {
+    var i, j, frames = [], up = [0, 1, 0];
+    for (i = 0; i < path.length; i++) {
+      var pv = path[Math.max(0, i - 1)], nx2 = path[Math.min(path.length - 1, i + 1)];
+      var t = [nx2[0] - pv[0], nx2[1] - pv[1], nx2[2] - pv[2]], tl = Math.hypot(t[0], t[1], t[2]) || 1;
+      t = [t[0] / tl, t[1] / tl, t[2] / tl];
+      var ref = Math.abs(t[1]) > 0.92 ? [1, 0, 0] : up;
+      var b = [t[1] * ref[2] - t[2] * ref[1], t[2] * ref[0] - t[0] * ref[2], t[0] * ref[1] - t[1] * ref[0]], bl = Math.hypot(b[0], b[1], b[2]) || 1;
+      b = [b[0] / bl, b[1] / bl, b[2] / bl];
+      var nn = [b[1] * t[2] - b[2] * t[1], b[2] * t[0] - b[0] * t[2], b[0] * t[1] - b[1] * t[0]];
+      frames.push([b, nn]);
+    }
+    var ring = [], nrm = [];
+    for (i = 0; i < path.length; i++) {
+      var r = typeof rad === "number" ? rad : rad[i], row = [], rn = [];
+      for (j = 0; j < seg; j++) {
+        var a2 = j * 2 * Math.PI / seg, ca2 = Math.cos(a2), sa2 = Math.sin(a2), fb = frames[i][0], fn = frames[i][1];
+        var dx = fb[0] * ca2 + fn[0] * sa2, dy = fb[1] * ca2 + fn[1] * sa2, dz = fb[2] * ca2 + fn[2] * sa2;
+        row.push([path[i][0] + dx * r, path[i][1] + dy * r, path[i][2] + dz * r]); rn.push([dx, dy, dz]);
+      }
+      ring.push(row); nrm.push(rn);
+    }
+    for (i = 0; i < path.length - 1; i++) for (j = 0; j < seg; j++) {
+      var k2 = (j + 1) % seg;
+      mesh.smoothTri(ring[i][j], ring[i + 1][j], ring[i + 1][k2], nrm[i][j], nrm[i + 1][j], nrm[i + 1][k2]);
+      mesh.smoothTri(ring[i][j], ring[i + 1][k2], ring[i][k2], nrm[i][j], nrm[i + 1][k2], nrm[i][k2]);
+    }
+    if (capA) mesh.fan(ring[0].slice().reverse());
+    if (capB) mesh.fan(ring[ring.length - 1]);
+  }
+  function ball(mesh, c, r, seg) {
+    var i, j, rows = [];
+    for (i = 0; i <= seg; i++) {
+      var ph = i * Math.PI / seg, row = [];
+      for (j = 0; j <= seg; j++) { var th = j * 2 * Math.PI / seg; row.push([Math.sin(ph) * Math.cos(th), Math.cos(ph), Math.sin(ph) * Math.sin(th)]); }
+      rows.push(row);
+    }
+    for (i = 0; i < seg; i++) for (j = 0; j < seg; j++) {
+      var a = rows[i][j], b = rows[i + 1][j], c2 = rows[i + 1][j + 1], d = rows[i][j + 1];
+      var P = function (u) { return [c[0] + u[0] * r, c[1] + u[1] * r, c[2] + u[2] * r]; };
+      mesh.smoothTri(P(a), P(b), P(c2), a, b, c2); mesh.smoothTri(P(a), P(c2), P(d), a, c2, d);
+    }
+  }
+  function spline(pts, n) {
+    var out = [], i, t;
+    for (i = 0; i < n; i++) {
+      t = i / (n - 1) * (pts.length - 1);
+      var k = Math.min(pts.length - 2, Math.floor(t)), f = t - k;
+      var p0 = pts[Math.max(0, k - 1)], p1 = pts[k], p2 = pts[k + 1], p3 = pts[Math.min(pts.length - 1, k + 2)], v = [];
+      for (var d = 0; d < 3; d++) {
+        v.push(0.5 * ((2 * p1[d]) + (-p0[d] + p2[d]) * f + (2 * p0[d] - 5 * p1[d] + 4 * p2[d] - p3[d]) * f * f + (-p0[d] + 3 * p1[d] - 3 * p2[d] + p3[d]) * f * f * f));
+      }
+      out.push(v);
+    }
+    return out;
+  }
+
+  /* the head: four prongs over the girdle, a basket under it, a seat the stone sits in */
+  function headMesh(L, W, depth) {
+    var m = new Mesh(), hx = L / 2, hz = W / 2, wire = Math.max(0.085, Math.min(L, W) * 0.062), i;
+    var corners = [[hx * 0.74, hz * 0.80], [-hx * 0.74, hz * 0.80], [-hx * 0.74, -hz * 0.80], [hx * 0.74, -hz * 0.80]];
+    for (i = 0; i < 4; i++) {
+      var cx = corners[i][0], cz = corners[i][1], sx = Math.sign(cx), sz = Math.sign(cz);
+      var path = spline([
+        [cx * 0.86, -depth * 0.80, cz * 0.86],
+        [cx * 0.97, -depth * 0.34, cz * 0.97],
+        [cx * 1.02, -depth * 0.02, cz * 1.02],
+        [cx * 1.00, depth * 0.17, cz * 1.00],
+        [cx * 0.93, depth * 0.30, cz * 0.93],
+        [cx * 0.84 - sx * wire * 0.35, depth * 0.35, cz * 0.84 - sz * wire * 0.35]
+      ], 11);
+      var rad = []; for (var k = 0; k < 11; k++) rad.push(wire * (1.10 - 0.34 * k / 10));
+      tube(m, path, rad, 8, true, false);
+      ball(m, path[10], wire * 0.86, 8);
+    }
+    /* the basket: two rails along the length and two rings around it */
+    var ringPath = [], n = 26;
+    for (i = 0; i <= n; i++) {
+      var a = i * 2 * Math.PI / n, e = 0.62;
+      var x = Math.sign(Math.cos(a)) * Math.pow(Math.abs(Math.cos(a)), e) * hx * 0.88;
+      var z = Math.sign(Math.sin(a)) * Math.pow(Math.abs(Math.sin(a)), e) * hz * 0.88;
+      ringPath.push([x, -depth * 0.30, z]);
+    }
+    tube(m, ringPath, wire * 0.78, 7, false, false);
+    var ring2 = ringPath.map(function (p) { return [p[0] * 0.66, -depth * 0.70, p[2] * 0.66]; });
+    tube(m, ring2, wire * 0.70, 7, false, false);
+    for (i = 0; i < 4; i++) {
+      var c2 = corners[i];
+      tube(m, [[c2[0] * 0.86, -depth * 0.80, c2[1] * 0.86], [c2[0] * 0.92, -depth * 0.30, c2[1] * 0.92]], wire * 0.76, 7, false, false);
+    }
+    return m;
+  }
+  /* the link between two heads: a pair of fine bars with rounded ends */
+  function linkMesh(gap, W, wire) {
+    var m = new Mesh(), z = W * 0.30, i;
+    for (i = -1; i <= 1; i += 2) {
+      var p = spline([[-gap * 0.70, 0, i * z], [-gap * 0.24, gap * 0.05, i * z], [gap * 0.24, gap * 0.05, i * z], [gap * 0.70, 0, i * z]], 8);
+      tube(m, p, wire * 0.92, 7, true, true);
+    }
+    return m;
+  }
+  /* the clasp: a box tucked under the line at the back, with a seam and a tongue */
+  function scaleMesh(m, sx, sy, sz) {
+    var i, ix = 1 / sx, iy = 1 / sy, iz = 1 / sz;
+    for (i = 0; i < m.p.length; i += 3) { m.p[i] *= sx; m.p[i + 1] *= sy; m.p[i + 2] *= sz; }
+    for (i = 0; i < m.n.length; i += 3) {
+      var x = m.n[i] * ix, y = m.n[i + 1] * iy, z = m.n[i + 2] * iz, L = Math.hypot(x, y, z) || 1;
+      m.n[i] = x / L; m.n[i + 1] = y / L; m.n[i + 2] = z / L;
+    }
+    return m;
+  }
+  function claspMesh(len, W, depth) {
+    var m = new Mesh(), hx = len / 2, seam = len * 0.02, r = W * 0.5;
+    tube(m, [[-hx, 0, 0], [-hx * 0.55, 0, 0], [-seam, 0, 0]], r, 14, true, true);
+    tube(m, [[seam, 0, 0], [hx * 0.55, 0, 0], [hx, 0, 0]], r, 14, true, true);
+    scaleMesh(m, 1, depth / W * 1.25, 1);
+    var t = new Mesh();
+    tube(t, [[-hx * 0.34, 0, 0], [hx * 0.34, 0, 0]], r * 0.34, 10, true, true);
+    scaleMesh(t, 1, 1, 1);
+    for (var i = 0; i < t.p.length; i += 3) t.p[i + 1] += depth * 0.55;
+    m.p = m.p.concat(t.p); m.n = m.n.concat(t.n);
+    return m;
+  }
+
+  /* ─────────────────────────── gl ─────────────────────────── */
+  function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+  var VS = [
+    "attribute vec3 aPos; attribute vec3 aNrm;",
+    "attribute vec3 iR0; attribute vec3 iR1; attribute vec3 iR2; attribute vec3 iT;",
+    "uniform mat4 uVP; varying vec3 vN; varying vec3 vW; varying vec3 vU;",
+    "void main(){ mat3 R = mat3(iR0, iR1, iR2); vec3 w = R * aPos + iT; vW = w; vN = R * aNrm; vU = iR1;",
+    "gl_Position = uVP * vec4(w, 1.0); }"
+  ].join("\n");
+  var FS = [
+    "precision highp float;",
+    "varying vec3 vN; varying vec3 vW; varying vec3 vU;",
+    "uniform vec3 uEye; uniform vec3 uCol; uniform float uMode; uniform float uRough; uniform float uFade;",
+    "vec3 env(vec3 d){",
+    "  float y = clamp(d.y, -1.0, 1.0);",
+    "  vec3 c = mix(vec3(0.0055,0.0062,0.0078), vec3(0.028,0.031,0.038), smoothstep(-1.0, 1.0, y));",
+    "  c += vec3(0.022,0.020,0.017) * smoothstep(0.0, -0.75, y);",
+    "  float k = max(dot(d, normalize(vec3(-0.40, 0.80, 0.45))), 0.0);",
+    "  c += vec3(1.00,0.975,0.935) * pow(k, 3.4) * 1.85;",
+    "  c += vec3(1.00,0.985,0.960) * pow(k, 110.0) * 16.0;",
+    "  float s = max(dot(d, normalize(vec3(0.94, 0.16, -0.30))), 0.0);",
+    "  c += vec3(0.80,0.87,1.00) * pow(s, 40.0) * 4.6;",
+    "  float r = max(dot(d, normalize(vec3(0.06, -0.12, -0.99))), 0.0);",
+    "  c += vec3(1.00,0.84,0.62) * pow(r, 26.0) * 2.0;",
+    "  float p = max(dot(d, normalize(vec3(0.38, 0.46, 0.80))), 0.0);",
+    "  c += vec3(1.0) * pow(p, 210.0) * 22.0;",
+    "  float q = max(dot(d, normalize(vec3(-0.75, 0.22, -0.62))), 0.0);",
+    "  c += vec3(0.92,0.95,1.0) * pow(q, 170.0) * 13.0;",
+    "  c += vec3(1.00,0.99,0.97) * pow(max(dot(d, normalize(vec3( 0.62, 0.70, 0.35))), 0.0), 300.0) * 20.0;",
+    "  c += vec3(0.98,0.99,1.00) * pow(max(dot(d, normalize(vec3(-0.30, 0.66, 0.69))), 0.0), 300.0) * 17.0;",
+    "  c += vec3(1.00,0.97,0.92) * pow(max(dot(d, normalize(vec3(-0.66, 0.52, -0.54))), 0.0), 300.0) * 15.0;",
+    "  c += vec3(0.95,0.97,1.00) * pow(max(dot(d, normalize(vec3( 0.20, 0.38, -0.90))), 0.0), 300.0) * 13.0;",
+    "  c += vec3(1.00,0.95,0.88) * pow(max(dot(d, normalize(vec3( 0.88, 0.30, -0.36))), 0.0), 300.0) * 12.0;",
+    "  c += vec3(1.00,1.00,1.00) * pow(max(dot(d, normalize(vec3(-0.92, 0.18,  0.34))), 0.0), 300.0) * 11.0;",
+    "  return c;",
+    "}",
+    "float fres(float c, float f0){ return f0 + (1.0 - f0) * pow(1.0 - c, 5.0); }",
+    "vec3 exitDir(vec3 b, vec3 up, float ior){ vec3 e = refract(b, up, 1.0 / ior); return dot(e, e) < 1e-6 ? reflect(b, up) : e; }",
+    "void main(){",
+    "  vec3 N = normalize(vN); vec3 V = normalize(uEye - vW); float ndv = dot(N, V);",
+    "  vec3 col;",
+    "  if (uMode > 0.5) {",
+    "    vec3 Nf = ndv < 0.0 ? -N : N; float c = abs(ndv);",
+    "    float F = fres(c, 0.172);",
+    "    col = env(reflect(-V, Nf)) * (F * 1.25);",
+    "    vec3 up = normalize(vU);",
+    "    vec3 t1 = refract(-V, Nf, 1.0 / 2.417);",
+    "    if (dot(t1, t1) > 1e-6) {",
+    "      vec3 lat = t1 - up * dot(t1, up); lat = dot(lat, lat) > 1e-8 ? normalize(lat) : vec3(1.0, 0.0, 0.0);",
+    "      vec3 p1 = normalize(-up * 0.78 + lat * 0.62);",
+    "      vec3 b1 = reflect(t1, p1);",
+    "      vec3 lat2 = b1 - up * dot(b1, up); lat2 = dot(lat2, lat2) > 1e-8 ? normalize(lat2) : lat;",
+    "      vec3 p2 = normalize(-up * 0.78 + lat2 * 0.62);",
+    "      vec3 b2 = reflect(b1, p2);",
+    "      vec3 fire = vec3(env(exitDir(b2, up, 2.407)).r, env(exitDir(b2, up, 2.426)).g, env(exitDir(b2, up, 2.451)).b);",
+    "      vec3 thru = env(exitDir(t1, up, 2.426));",
+    "      col += (1.0 - F) * (fire * 1.55 + thru * 0.20);",
+    "    }",
+    "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.34;",
+    "    col *= 1.28;",
+    "  } else {",
+    "    vec3 Nf = ndv < 0.0 ? -N : N; float c = max(abs(ndv), 1e-4);",
+    "    vec3 R = reflect(-V, Nf);",
+    "    vec3 F = uCol + (vec3(1.0) - uCol) * pow(1.0 - c, 5.0);",
+    "    col = mix(env(R), env(Nf), uRough) * F;",
+    "    col += uCol * env(Nf) * 0.16;",
+    "  }",
+    "  col *= uFade;",
+    "  col = col / (col + vec3(0.62));",
+    "  col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));",
+    "  gl_FragColor = vec4(col, 1.0);",
+    "}"
+  ].join("\n");
+  var prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { cv.style.display = "none"; return; }
+  gl.useProgram(prog);
+  var A = { pos: gl.getAttribLocation(prog, "aPos"), nrm: gl.getAttribLocation(prog, "aNrm"), r0: gl.getAttribLocation(prog, "iR0"), r1: gl.getAttribLocation(prog, "iR1"), r2: gl.getAttribLocation(prog, "iR2"), t: gl.getAttribLocation(prog, "iT") };
+  var U = { vp: gl.getUniformLocation(prog, "uVP"), eye: gl.getUniformLocation(prog, "uEye"), col: gl.getUniformLocation(prog, "uCol"), mode: gl.getUniformLocation(prog, "uMode"), rough: gl.getUniformLocation(prog, "uRough"), fade: gl.getUniformLocation(prog, "uFade") };
+  gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
+  gl.clearColor(0, 0, 0, 0);
+
+  function Part() { this.vb = gl.createBuffer(); this.nb = gl.createBuffer(); this.ib = gl.createBuffer(); this.count = 0; this.n = 0; }
+  Part.prototype.geometry = function (mesh) {
+    this.count = mesh.count();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.p), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.nb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.n), gl.STATIC_DRAW);
+  };
+  Part.prototype.instances = function (arr) {
+    this.n = arr.length / 12; this.data = arr;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.ib); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.DYNAMIC_DRAW);
+  };
+  Part.prototype.draw = function (mode, col, rough) {
+    if (!this.count || !this.n) return;
+    gl.uniform1f(U.mode, mode); gl.uniform3fv(U.col, col); gl.uniform1f(U.rough, rough);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vb); gl.enableVertexAttribArray(A.pos); gl.vertexAttribPointer(A.pos, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.nb); gl.enableVertexAttribArray(A.nrm); gl.vertexAttribPointer(A.nrm, 3, gl.FLOAT, false, 0, 0);
+    var locs = [A.r0, A.r1, A.r2, A.t], i;
+    if (inst) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.ib);
+      for (i = 0; i < 4; i++) { gl.enableVertexAttribArray(locs[i]); gl.vertexAttribPointer(locs[i], 3, gl.FLOAT, false, 48, i * 12); inst.vertexAttribDivisorANGLE(locs[i], 1); }
+      inst.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.count, this.n);
+      for (i = 0; i < 4; i++) { inst.vertexAttribDivisorANGLE(locs[i], 0); gl.disableVertexAttribArray(locs[i]); }
+    } else {
+      for (i = 0; i < 4; i++) gl.disableVertexAttribArray(locs[i]);
+      for (var k = 0; k < this.n; k++) {
+        var o = k * 12;
+        for (i = 0; i < 4; i++) gl.vertexAttrib3f(locs[i], this.data[o + i * 3], this.data[o + i * 3 + 1], this.data[o + i * 3 + 2]);
+        gl.drawArrays(gl.TRIANGLES, 0, this.count);
+      }
+    }
+  };
+  var pStone = new Part(), pHead = new Part(), pLink = new Part(), pClasp = new Part();
+
+  /* ─────────────────────────── the bracelet ─────────────────────────── */
+  var METAL = { white: [0.93, 0.93, 0.95], yellow: [1.00, 0.79, 0.38], rose: [1.00, 0.74, 0.62], platinum: [0.90, 0.91, 0.94] };
+  var state = { n: 36, L: 3.6, W: 3.6, cut: "round", metal: "white", wrist: 17, R: 40 };
+  function build() {
+    var b = window.__build || {}, spec = window.__lineSpec || {};
+    var cut = b.cut || "round", n = Math.max(8, Math.min(120, spec.n || 36));
+    var L = spec.L || 3.6, W = spec.W || L, wrist = b.wrist || 17;
+    state.n = n; state.L = L; state.W = W; state.cut = cut; state.metal = b.metal || "white"; state.wrist = wrist;
+    /* the line is the inner circumference of the bracelet, in millimetres */
+    var C = (wrist + 1) * 10, k = 1.30;
+    var bRad = C / (Math.PI * (3 * (1 + k) - Math.sqrt((3 * k + 1) * (k + 3)))) ;
+    var aRad = bRad * k;
+    /* sample the ellipse and walk it at equal arc length */
+    var S = 2048, pts = [], len = [0], i, a;
+    for (i = 0; i <= S; i++) { a = i * 2 * Math.PI / S; pts.push([aRad * Math.cos(a), 0, bRad * Math.sin(a), a]); }
+    for (i = 1; i <= S; i++) len.push(len[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]));
+    var total = len[S], step = total / n, si = 0;
+    var frames = [];
+    for (i = 0; i < n; i++) {
+      var want = i * step; while (si < S && len[si] < want) si++;
+      var p = pts[Math.min(si, S)], ang = p[3];
+      var tx = -aRad * Math.sin(ang), tz = bRad * Math.cos(ang), tl = Math.hypot(tx, tz);
+      var ux = bRad * Math.cos(ang), uz = aRad * Math.sin(ang), ul = Math.hypot(ux, uz);
+      var T = [tx / tl, 0, tz / tl], Uo = [ux / ul, 0, uz / ul];
+      var Ax = T[1] * Uo[2] - T[2] * Uo[1], Ay = T[2] * Uo[0] - T[0] * Uo[2], Az = T[0] * Uo[1] - T[1] * Uo[0];
+      frames.push({ pos: [p[0], p[1], p[2]], T: T, U: Uo, A: [Ax, Ay, Az], ang: ang });
+    }
+    state.R = aRad;
+    /* the stone, its head, the links and the clasp, all at true millimetre size */
+    var depth = Math.max(L, W) * 0.74;
+    state.fit = aRad + Math.max(L, W) * 0.9; state.thick = depth + Math.max(L, W) * 0.9;
+    pStone.geometry(solid(planesFor(cut, L, W)));
+    pHead.geometry(headMesh(L, W, depth));
+    var gap = Math.max(0.35, step - L * 0.98);
+    var wire = Math.max(0.16, Math.min(L, W) * 0.105);
+    pLink.geometry(linkMesh(gap, W, wire * 0.8));
+    pClasp.geometry(claspMesh(step * 1.15, W * 1.02, depth * 0.48));
+    /* instances: the head sits at the girdle, the stone rides just above the basket */
+    var si2 = new Float32Array(n * 12), hi = new Float32Array(n * 12), li = new Float32Array(n * 12), ci = new Float32Array(12);
+    for (i = 0; i < n; i++) {
+      var f = frames[i], o = i * 12;
+      /* columns of the rotation: x → along the line, y → outward, z → across */
+      var c0 = f.T, c1 = f.U, c2 = f.A;
+      var lift = depth * 0.335;
+      var px = f.pos[0] + c1[0] * lift, py = f.pos[1] + c1[1] * lift, pz = f.pos[2] + c1[2] * lift;
+      si2.set([c0[0], c0[1], c0[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2], px, py, pz], o);
+      hi.set([c0[0], c0[1], c0[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2], px, py, pz], o);
+      /* the link sits between this head and the next */
+      var g = frames[(i + 1) % n], mx = (f.pos[0] + g.pos[0]) / 2, my = (f.pos[1] + g.pos[1]) / 2, mz = (f.pos[2] + g.pos[2]) / 2;
+      var lang = (f.ang + (i === n - 1 ? f.ang + (2 * Math.PI / n) : g.ang)) / 2;
+      var ltx = -aRad * Math.sin(lang), ltz = bRad * Math.cos(lang), ltl = Math.hypot(ltx, ltz);
+      var lux = bRad * Math.cos(lang), luz = aRad * Math.sin(lang), lul = Math.hypot(lux, luz);
+      var LT = [ltx / ltl, 0, ltz / ltl], LU = [lux / lul, 0, luz / lul];
+      var LA = [LT[1] * LU[2] - LT[2] * LU[1], LT[2] * LU[0] - LT[0] * LU[2], LT[0] * LU[1] - LT[1] * LU[0]];
+      var ld = -depth * 0.36;
+      li.set([LT[0], LT[1], LT[2], LU[0], LU[1], LU[2], LA[0], LA[1], LA[2], mx + LU[0] * ld, my + LU[1] * ld, mz + LU[2] * ld], o);
+    }
+    /* the clasp, hidden under the back of the line */
+    var cf = frames[Math.round(n * 0.5) % n], cd = -depth * 0.66;
+    ci.set([cf.T[0], cf.T[1], cf.T[2], cf.U[0], cf.U[1], cf.U[2], cf.A[0], cf.A[1], cf.A[2], cf.pos[0] + cf.U[0] * cd, cf.pos[1] + cf.U[1] * cd, cf.pos[2] + cf.U[2] * cd], 0);
+    pStone.instances(si2); pHead.instances(hi); pLink.instances(li); pClasp.instances(ci);
+    dirty = true;
+  }
+
+  /* ─────────────────────────── camera ─────────────────────────── */
+  var portrait = innerWidth < 760;
+  var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
+  var drag = null, dirty = true, idle = !reduce, W2 = 1, H2 = 1, DPR = 1;
+  function size() {
+    DPR = Math.min(devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
+    if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }
+    dirty = true;
+  }
+  addEventListener("resize", size);
+  function mul(a, b) { var o = new Float32Array(16), i, j, k; for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) { var s = 0; for (k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k]; o[i * 4 + j] = s; } return o; }
+  function draw() {
+    gl.viewport(0, 0, W2, H2);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    var asp = W2 / H2, fov0 = 26 * D2R, tanF = Math.tan(fov0 / 2);
+    var vHalf = state.fit * Math.abs(Math.sin(cam.ph)) + state.thick * 0.55;
+    fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * 1.01;
+    var R = state.R, dist = fitD * cam.d;
+    var cp = Math.cos(cam.ph), sp = Math.sin(cam.ph);
+    var eye = [Math.sin(cam.th) * cp * dist, sp * dist, Math.cos(cam.th) * cp * dist];
+    var f = [-eye[0], -eye[1], -eye[2]], fl = Math.hypot(f[0], f[1], f[2]); f = [f[0] / fl, f[1] / fl, f[2] / fl];
+    var up = [0, 1, 0];
+    var s2 = [f[1] * up[2] - f[2] * up[1], f[2] * up[0] - f[0] * up[2], f[0] * up[1] - f[1] * up[0]], sl = Math.hypot(s2[0], s2[1], s2[2]); s2 = [s2[0] / sl, s2[1] / sl, s2[2] / sl];
+    var u2 = [s2[1] * f[2] - s2[2] * f[1], s2[2] * f[0] - s2[0] * f[2], s2[0] * f[1] - s2[1] * f[0]];
+    var view = new Float32Array([s2[0], u2[0], -f[0], 0, s2[1], u2[1], -f[1], 0, s2[2], u2[2], -f[2], 0,
+      -(s2[0] * eye[0] + s2[1] * eye[1] + s2[2] * eye[2]), -(u2[0] * eye[0] + u2[1] * eye[1] + u2[2] * eye[2]), (f[0] * eye[0] + f[1] * eye[1] + f[2] * eye[2]), 1]);
+    var t = 1 / Math.tan(fov0 / 2), near = Math.max(1, dist - R * 3), far = dist + R * 4;
+    var proj = new Float32Array([t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (far + near) / (near - far), -1, 0, 0, 2 * far * near / (near - far), 0]);
+    gl.uniformMatrix4fv(U.vp, false, mul(proj, view));
+    gl.uniform3fv(U.eye, eye);
+    gl.uniform1f(U.fade, 1);
+    var mc = METAL[state.metal] || METAL.white;
+    pHead.draw(0, mc, 0.30); pLink.draw(0, mc, 0.26); pClasp.draw(0, mc, 0.20);
+    pStone.draw(1, [1, 1, 1], 0);
+  }
+  function tick() {
+    requestAnimationFrame(tick);
+    var r = wrap.getBoundingClientRect();
+    if (r.bottom < -80 || r.top > innerHeight + 80 || wrap.classList.contains("wrist")) return;
+    if (!drag) {
+      if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
+        cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.94; cam.vph *= 0.94;
+        cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph)); dirty = true;
+      } else if (idle) { cam.th += 0.0016; dirty = true; }
+    }
+    if (Math.abs(cam.d - cam.td) > 1e-4) { cam.d += (cam.td - cam.d) * 0.12; dirty = true; }
+    if (!dirty) return;
+    dirty = false; draw();
+  }
+
+  /* ─────────────────────────── the hand ─────────────────────────── */
+  cv.addEventListener("pointerdown", function (e) {
+    if (wrap.classList.contains("wrist")) return;
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; idle = false; cam.vth = cam.vph = 0;
+    cv.setPointerCapture(e.pointerId); cv.classList.add("holding"); wrap.classList.add("touched");
+  });
+  cv.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dx = (e.clientX - drag.x) / Math.max(200, cv.clientWidth) * 3.0, dy = (e.clientY - drag.y) / Math.max(200, cv.clientHeight) * 2.2;
+    cam.th -= dx; cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph + dy));
+    cam.vth = -dx * 0.55; cam.vph = dy * 0.55;
+    drag.x = e.clientX; drag.y = e.clientY; dirty = true;
+  });
+  function release(e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; cv.classList.remove("holding"); }
+  cv.addEventListener("pointerup", release); cv.addEventListener("pointercancel", release);
+  cv.addEventListener("wheel", function (e) {
+    if (wrap.classList.contains("wrist")) return;
+    e.preventDefault(); idle = false; cam.td = Math.max(0.52, Math.min(1.45, cam.td + e.deltaY * 0.0009));
+  }, { passive: false });
+  var pinch = null;
+  cv.addEventListener("touchstart", function (e) { if (e.touches.length === 2) { pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); idle = false; } }, { passive: true });
+  cv.addEventListener("touchmove", function (e) {
+    if (e.touches.length !== 2 || !pinch) return;
+    var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    cam.td = Math.max(0.52, Math.min(1.45, cam.td * (pinch / d))); pinch = d;
+  }, { passive: true });
+  cv.addEventListener("touchend", function () { pinch = null; });
+  document.addEventListener("click", function (e) {
+    var v = e.target.closest && e.target.closest("[data-vpos]"); if (!v) return;
+    idle = false; cam.vth = cam.vph = 0;
+    var p = v.getAttribute("data-vpos");
+    cam.th = p === "side" ? -1.57 : p === "under" ? -0.62 : -0.62;
+    cam.ph = p === "under" ? -0.88 : p === "side" ? 0.05 : (portrait ? 0.90 : 0.42);
+    v.parentNode.querySelectorAll("[data-vpos]").forEach(function (o) { o.classList.toggle("on", o === v); });
+    dirty = true;
+  });
+
+  size(); build(); requestAnimationFrame(tick);
+  addEventListener("silavu:build", build);
+  window.__bracelet = { build: build, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+})();
+</script>

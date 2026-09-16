@@ -64,10 +64,23 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   out.push((await p.evaluate(() => document.getElementById("pmodal").classList.contains("open") && /Rivi/.test(document.getElementById("pmT").textContent) && document.querySelectorAll("#pmSpecs .dc").length === 4) ? "PASS":"FAIL") + ` ${tag} piece window opens`);
   await p.evaluate(() => document.getElementById("pmReq").click()); await p.waitForTimeout(600);
   out.push((await p.evaluate(() => !document.getElementById("pmodal").classList.contains("open") && /Rivi/.test(document.getElementById("fMsg").value)) ? "PASS":"FAIL") + ` ${tag} piece window → request`);
-  await p.evaluate(() => document.getElementById("pickup").click()); await p.waitForTimeout(900);
-  out.push(((await p.evaluate(() => document.getElementById("play").classList.contains("on") && document.getElementById("putback").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain picked up`);
-  await p.evaluate(() => document.getElementById("putback").click());
-  out.push(((await p.evaluate(() => !document.getElementById("play").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain put back`);
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("stripwrap").getBoundingClientRect().top - 60, behavior:"instant"})); await p.waitForTimeout(1200);
+  out.push(((await p.evaluate(() => { const c = document.getElementById("bcv"); return c.width > 100 && c.height > 100 && typeof window.__bracelet === "object"; })) ? "PASS":"FAIL") + ` ${tag} the bracelet is built`);
+  {
+    const bb = await (await p.$("#bcv")).boundingBox();
+    if (bb && bb.y > -bb.height) {
+      const before = await p.screenshot({ clip: { x: Math.max(0, bb.x), y: Math.max(0, bb.y), width: Math.min(300, bb.width), height: Math.min(200, bb.height) } });
+      await p.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.mouse.down();
+      for (let i = 1; i <= 6; i++) { await p.mouse.move(bb.x + bb.width / 2 - i * 16, bb.y + bb.height / 2); await p.waitForTimeout(30); }
+      await p.mouse.up(); await p.waitForTimeout(700);
+      const after = await p.screenshot({ clip: { x: Math.max(0, bb.x), y: Math.max(0, bb.y), width: Math.min(300, bb.width), height: Math.min(200, bb.height) } });
+      out.push(((!before.equals(after)) ? "PASS":"FAIL") + ` ${tag} the bracelet turns under the hand`);
+    } else out.push(`skip ${tag} bracelet drag`);
+  }
+  await p.evaluate(() => document.querySelector('[data-vpos="under"]').click()); await p.waitForTimeout(600);
+  out.push(((await p.evaluate(() => document.querySelector('[data-vpos="under"]').classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} the underside`);
+  await p.evaluate(() => document.querySelector('[data-vpos="front"]').click()); await p.waitForTimeout(400);
+  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(300);
   await p.evaluate(() => document.getElementById("tryonBtn2").click()); await p.waitForTimeout(400);
   out.push(((await p.evaluate(() => document.getElementById("tryon").classList.contains("open") && document.getElementById("tcanvas").width > 0)) ? "PASS":"FAIL") + ` ${tag} try-on opens`);
   await p.keyboard.press("Escape"); await p.waitForTimeout(300);

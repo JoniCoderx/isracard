@@ -39,7 +39,7 @@
     setTimeout(function () { intro.style.display = "none"; }, 1300);
     if (!reduce) { var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
-  function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); setTimeout(contract, 230); }
+  function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); setTimeout(contract, 300); }
   /* the symbol becomes the header symbol: the same object, moved and scaled, then the header takes over */
   function contract() {
     if (contracting || entered) return; contracting = true;
@@ -51,18 +51,19 @@
     header.classList.add("premark"); header.classList.add("show");
     if (reduce || !tr.height || !fr.height) { header.classList.remove("premark"); enter(); return; }
     var s = tr.height / fr.height, dx = (tr.left + tr.width / 2) - (fr.left + fr.width / 2), dy = (tr.top + tr.height / 2) - (fr.top + fr.height / 2);
-    imark.style.transition = "transform .62s cubic-bezier(.7,0,.16,1)"; imark.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
+    imark.style.transition = "transform .58s cubic-bezier(.66,0,.16,1)"; imark.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
     intro.classList.add("lift");
-    setTimeout(function () { header.classList.remove("premark"); enter(); }, 620);
+    setTimeout(function () { header.classList.remove("premark"); enter(); }, 580);
   }
   function skip() { if (entered) return; if (!fillDone) { fillDone = true; intro.classList.add("sharp"); setTimeout(contract, 150); } else contract(); }
   if (seen) { intro.classList.add("off"); entered = false; enter(); }
   else if (reduce) { intro.classList.add("sharp"); setTimeout(contract, 400); }
   else {
     intro.classList.add("run");
-    var riser = imark.querySelector(".imRise");
+    var riser = imark.querySelector(".imRise"), left = 1550;
     riser.addEventListener("animationend", setSharp, { once: true });
-    setTimeout(setSharp, 1500);
+    try { var an = riser.getAnimations()[0]; if (an) left = Math.max(0, 1550 - (an.currentTime || 0)); } catch (e) {}
+    setTimeout(setSharp, left + 90);
   }
   setTimeout(function () { enter(); }, 6000);
   $("enterBtn").addEventListener("click", skip);
@@ -183,6 +184,7 @@
   $("pmReq").addEventListener("click", function () { closeModals(); });
   $("pmIm").addEventListener("click", function () { if (this.classList.contains("two")) this.classList.toggle("flip"); });
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
+  var vposHome = $("stripwrap"); if (vposHome) {}
   $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
   $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = (sp.n || 36) + " × " + (sp.cut || "round") + " · " + b.ct + " ct · " + NAMES[b.metal][lang] + " · " + b.wrist + " cm"; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : "I tried the Line on my wrist. I would like a private viewing. My line: ") + cfg); });
 

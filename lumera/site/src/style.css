@@ -313,7 +313,7 @@
   }
   /* ── your line ── */
   .panel { margin-top:clamp(40px,6vw,72px); border:1px solid var(--line); border-radius:22px; padding:clamp(22px,3.5vw,48px); background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.05), transparent 70%), rgba(255,255,255,.015); display:grid; gap:clamp(22px,3vw,36px); }
-  #stripwrap { position:relative; width:100%; height:clamp(200px,22vw,300px); -webkit-box-reflect:below -4px linear-gradient(transparent 60%, rgba(0,0,0,.35)); }
+  #stripwrap { position:relative; width:100%; height:clamp(200px,22vw,300px); }
   #stripwrap::before { content:""; position:absolute; inset:-40% -10%; background:radial-gradient(55% 65% at 50% 58%, rgba(255,255,255,.08), transparent 70%); pointer-events:none; }
   #stripcv { position:absolute; inset:0; width:100%; height:100%; display:block; }
   .carat { display:grid; gap:14px; grid-template-columns:1fr; border-top:1px solid var(--line); padding-top:22px; }
@@ -742,26 +742,36 @@
   #tryon.placing .tsteps span:nth-child(2) b, #tryon.seen .tsteps span:nth-child(3) b { border-color:var(--ink); background:var(--house-tint); }
   .tcv.turn { cursor:grab; }
 
-  /* ── v26: the loader. Light rises through the exact symbol, sets sharp for a moment, and the same symbol contracts into the header ── */
-  #intro { transition:opacity .45s var(--ease), background .6s var(--ease); }
+  /* ── v29: the loader. Light occupies the exact symbol from the first frame, its surface moving, and sets to ivory only at the top ── */
+  #intro { transition:opacity .42s var(--ease), background .55s var(--ease); }
   #intro.lift { background:transparent; } #intro.lift .introlang { opacity:0; pointer-events:none; }
   #intro.off { display:none; }
   .introlang { transition:opacity .3s; }
   .iw { position:relative; }
-  .iw::before { content:""; position:absolute; left:50%; top:50%; width:clamp(240px,40vw,420px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(255,226,178,.20), rgba(255,196,120,.07) 42%, transparent 70%); opacity:0; transition:opacity .8s var(--ease); pointer-events:none; }
-  #intro.run .iw::before { opacity:1; } #intro.sharp .iw::before { opacity:0; transition-duration:.45s; }
-  svg.sy.imark { height:clamp(112px,17vw,168px); color:#fff; transform-origin:50% 50%; overflow:visible; }
-  svg.sy.imark .imGhost { fill:#f6f3ed; fill-opacity:.055; }
+  .iw::before { content:""; position:absolute; left:50%; top:50%; width:clamp(260px,44vw,460px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(255,214,152,.20), rgba(255,180,96,.06) 44%, transparent 72%); opacity:0; animation:imglow 1.55s var(--ease) forwards; pointer-events:none; }
+  @keyframes imglow { 0% { opacity:0; } 35% { opacity:.5; } 100% { opacity:1; } }
+  #intro.sharp .iw::before { opacity:0; transition:opacity .42s var(--ease); animation:none; }
+  svg.sy.imark { height:clamp(116px,18vw,176px); color:#fff; transform-origin:50% 50%; overflow:visible; }
+  svg.sy.imark .imGhost { fill:#f6f3ed; fill-opacity:.05; }
   svg.sy.imark .imLit { fill:url(#imMolten); }
-  svg.sy.imark .imRise { transform:translateY(1080px); }
   svg.sy.imark .imFront { mix-blend-mode:screen; }
-  svg.sy.imark .imSolid { fill:#f6f3ed; opacity:0; transition:opacity .34s var(--ease); }
-  #intro.run svg.sy.imark .imRise { animation:imrise 1.25s cubic-bezier(.38,0,.22,1) forwards; }
-  @keyframes imrise { from { transform:translateY(1080px); } to { transform:translateY(-780px); } }
-  #intro.sharp svg.sy.imark .imRise { animation:none; transform:translateY(-780px); }
-  #intro.sharp .imSolid { opacity:1; } #intro.sharp .imFront { opacity:0; transition:opacity .28s; }
+  svg.sy.imark .imShim { mix-blend-mode:screen; opacity:.9; }
+  svg.sy.imark .imLine { mix-blend-mode:screen; opacity:.95; }
+  svg.sy.imark .imDeep { mix-blend-mode:multiply; opacity:.8; }
+  svg.sy.imark .imSolid { fill:#f6f3ed; opacity:0; }
+  svg.sy.imark .imRise { animation:imrise 1.55s cubic-bezier(.42,.04,.30,1) forwards; }
+  svg.sy.imark .imRiseB { animation:imriseB 1.55s cubic-bezier(.42,.04,.30,1) forwards; }
+  svg.sy.imark .imG1 { animation:imdrift 3.1s ease-in-out infinite alternate; }
+  svg.sy.imark .imG2 { animation:imdrift2 2.6s ease-in-out infinite alternate; }
+  @keyframes imrise { from { transform:translateY(1046px); } to { transform:translateY(-46px); } }
+  @keyframes imriseB { from { transform:translateY(1130px); } to { transform:translateY(26px); } }
+  @keyframes imdrift { from { transform:translate(-60px, 40px) scale(.9); } to { transform:translate(90px, -50px) scale(1.15); } }
+  @keyframes imdrift2 { from { transform:translate(70px, 30px) scale(1.1); } to { transform:translate(-60px, -40px) scale(.9); } }
+  #intro.sharp svg.sy.imark .imRise, #intro.sharp svg.sy.imark .imRiseB { animation:none; transform:translateY(-46px); }
+  #intro.sharp .imSolid { opacity:1; transition:opacity .30s var(--ease); }
+  #intro.sharp .imLit, #intro.sharp .imFront, #intro.sharp .imShim, #intro.sharp .imDeep { opacity:0; transition:opacity .26s var(--ease); }
   .mark svg.sy { transition:opacity .18s; } header.sh.premark .mark svg.sy { opacity:0; }
-  @media (prefers-reduced-motion:reduce) { svg.sy.imark .imLit, svg.sy.imark .imFront, .iw::before { display:none; } svg.sy.imark .imSolid { opacity:1; transition:none; } }
+  @media (prefers-reduced-motion:reduce) { svg.sy.imark .imLit, svg.sy.imark .imFront, svg.sy.imark .imShim, svg.sy.imark .imDeep, .iw::before { display:none; } svg.sy.imark .imSolid { opacity:1; transition:none; } }
 
   /* ── v25: one hover language. Light that follows the hand across the photograph, a small parallax, the detail beneath the piece, depth in the buttons, a line of light under the links. Nothing grows, nothing bounces. ── */
   .fig .lt { position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0; transition:opacity .7s var(--ease); mix-blend-mode:screen; background:radial-gradient(ellipse 58% 46% at var(--lx,50%) var(--ly,40%), rgba(255,255,255,.17), rgba(255,255,255,.05) 46%, transparent 72%); }
@@ -800,3 +810,98 @@
   .mbox .mim.two.flip img.dt { opacity:1; } .mbox .mim.two.flip .dtag { opacity:0; }
   @media (hover:hover) and (pointer:fine) { .mbox .mim.two:hover img.dt { opacity:1; } .mbox .mim.two:hover .dtag { opacity:0; } }
   @media (prefers-reduced-motion:reduce) { .fig .lt { display:none; } .lnk:hover::before, .sh nav a:hover::after { animation:none; } .btn:hover { transform:none; } .fig:hover .im img { transform:none; } }
+
+  /* ── v28: the bracelet in the round ── */
+  #bcv { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+  #bcv.holding { cursor:grabbing; }
+  #stripwrap.wrist #bcv { display:none; }
+  #stripwrap:not(.wrist) #stripcv { display:none; }
+  #stripwrap { height:clamp(300px,42vw,560px); }
+  @media (max-width:699px) { #stripwrap:not(.wrist) { height:min(50svh,400px); } }
+  .vposwrap { position:relative; z-index:4; display:flex; justify-content:center; margin-top:12px; }
+  .vposwrap.off { display:none; }
+  .vpos { display:inline-flex; gap:2px; padding:3px; border-radius:11px; background:rgba(0,0,0,.42); border:1px solid rgba(246,243,237,.12); }
+  .vp { background:none; border:0; border-radius:8px; color:var(--ink3); font:inherit; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; padding:7px 11px; min-height:0; cursor:pointer; transition:color .3s, background .3s; }
+  html[data-lang="he"] .vp { letter-spacing:.02em; text-transform:none; font-size:.7rem; }
+  .vp:hover { color:var(--ink2); } .vp.on { color:var(--ink); background:rgba(246,243,237,.10); }
+
+  /* ── v28: the bracelet in the round ── */
+  #bcv { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+  #bcv.holding { cursor:grabbing; }
+  #stripwrap.wrist #bcv { display:none; }
+  #stripwrap:not(.wrist) #stripcv { display:none; }
+  #stripwrap { height:clamp(300px,42vw,560px); }
+  @media (max-width:699px) { #stripwrap:not(.wrist) { height:min(50svh,400px); } }
+  .vposwrap { position:relative; z-index:4; display:flex; justify-content:center; margin-top:12px; }
+  .vposwrap.off { display:none; }
+  .vpos { display:inline-flex; gap:2px; padding:3px; border-radius:11px; background:rgba(0,0,0,.42); border:1px solid rgba(246,243,237,.12); }
+  .vp { background:none; border:0; border-radius:8px; color:var(--ink3); font:inherit; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; padding:7px 11px; min-height:0; cursor:pointer; transition:color .3s, background .3s; }
+  html[data-lang="he"] .vp { letter-spacing:.02em; text-transform:none; font-size:.7rem; }
+  .vp:hover { color:var(--ink2); } .vp.on { color:var(--ink); background:rgba(246,243,237,.10); }
+
+  /* ── v28: the bracelet in the round ── */
+  #bcv { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+  #bcv.holding { cursor:grabbing; }
+  #stripwrap.wrist #bcv { display:none; }
+  #stripwrap:not(.wrist) #stripcv { display:none; }
+  #stripwrap { height:clamp(300px,42vw,560px); }
+  @media (max-width:699px) { #stripwrap:not(.wrist) { height:min(50svh,400px); } }
+  .vposwrap { position:relative; z-index:4; display:flex; justify-content:center; margin-top:12px; }
+  .vposwrap.off { display:none; }
+  .vpos { display:inline-flex; gap:2px; padding:3px; border-radius:11px; background:rgba(0,0,0,.42); border:1px solid rgba(246,243,237,.12); }
+  .vp { background:none; border:0; border-radius:8px; color:var(--ink3); font:inherit; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; padding:7px 11px; min-height:0; cursor:pointer; transition:color .3s, background .3s; }
+  html[data-lang="he"] .vp { letter-spacing:.02em; text-transform:none; font-size:.7rem; }
+  .vp:hover { color:var(--ink2); } .vp.on { color:var(--ink); background:rgba(246,243,237,.10); }
+
+  /* ── v30: one button system. One height, one padding, one radius, one hover. ── */
+  .btn, .chip, .lang, .menubtn, .vtb, .vp, .dnav button {
+    --bh:46px; --br:13px;
+    box-sizing:border-box; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    height:var(--bh); min-height:var(--bh); padding:0 22px; border-radius:var(--br);
+    font-family:inherit; font-size:.68rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase;
+    background:rgba(246,243,237,.03); border:1px solid rgba(246,243,237,.22); color:var(--ink2);
+    text-decoration:none; cursor:pointer; white-space:nowrap;
+    transition:color .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  html[data-lang="he"] .btn, html[data-lang="he"] .chip, html[data-lang="he"] .lang, html[data-lang="he"] .menubtn, html[data-lang="he"] .vtb, html[data-lang="he"] .vp { letter-spacing:.02em; text-transform:none; font-size:.8rem; }
+  .btn { color:var(--ink); }
+  @media (hover:hover) and (pointer:fine) {
+    .btn:hover, .chip:hover, .lang:hover, .menubtn:hover, .vtb:hover, .vp:hover, .dnav button:hover { color:var(--ink); border-color:rgba(246,243,237,.55); background:rgba(246,243,237,.07); transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px -12px rgba(0,0,0,.9); }
+  }
+  .btn:active, .chip:active, .lang:active, .menubtn:active, .vtb:active, .vp:active { transform:translateY(1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.03); transition-duration:.08s; }
+  .btn:focus-visible, .chip:focus-visible, .lang:focus-visible, .menubtn:focus-visible, .vtb:focus-visible, .vp:focus-visible { outline:none; box-shadow:0 0 0 2px var(--house-line); }
+  .btn.solid { background:var(--ink); color:#121110; border-color:transparent; box-shadow:inset 0 1px 0 rgba(255,255,255,.55); }
+  .btn.solid:hover { background:#fff; color:#000; box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 10px 20px -12px rgba(0,0,0,.9); }
+  .btn.sm, .chip, .lang, .menubtn, .vtb, .vp, .cur .chip { --bh:38px; padding:0 15px; font-size:.63rem; letter-spacing:.16em; border-radius:11px; }
+  html[data-lang="he"] .btn.sm, html[data-lang="he"] .chip { font-size:.74rem; letter-spacing:.02em; }
+  .chip.on, .vtb.on, .vp.on { color:var(--ink); border-color:rgba(246,243,237,.6); background:var(--house-tint); }
+  .chip .sw { width:9px; height:9px; }
+  .chip .ci { width:15px; height:15px; }
+  .dnav button { width:38px; padding:0; }
+  .menubtn i { display:block; width:13px; height:1px; }
+  .hbook { display:none; } @media (min-width:1000px) { .hbook { display:inline-flex; } }
+  .vt { display:inline-flex; gap:2px; padding:3px; border-radius:14px; background:rgba(0,0,0,.42); border:1px solid rgba(246,243,237,.12); }
+  .vt .vtb, .vpos .vp { border:0; background:none; box-shadow:none; height:32px; min-height:32px; padding:0 13px; }
+  .vt .vtb.on, .vpos .vp.on { background:rgba(246,243,237,.10); }
+  .acts { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .playbar { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  /* the specification drawer */
+  .spec { border-top:1px solid var(--line); padding-top:14px; margin-top:4px; }
+  .spec > summary { list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:9px; font-size:.63rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink3); transition:color .3s; }
+  html[data-lang="he"] .spec > summary { letter-spacing:.02em; text-transform:none; font-size:.76rem; }
+  .spec > summary::-webkit-details-marker { display:none; }
+  .spec > summary::after { content:""; width:7px; height:7px; border-right:1px solid currentColor; border-bottom:1px solid currentColor; transform:rotate(45deg) translate(-2px,-2px); transition:transform .3s var(--ease); }
+  .spec[open] > summary::after { transform:rotate(225deg) translate(-1px,-1px); }
+  .spec > summary:hover { color:var(--ink2); }
+  .specbody { padding-top:12px; display:grid; gap:10px; max-width:62ch; }
+  .specbody .p { font-size:.9rem; color:var(--ink3); }
+
+  /* the system does not change who is on screen */
+  @media (min-width:1000px) { .menubtn { display:none; } }
+  @media (max-width:999px) { .sh nav { display:none; } .hbook { display:none; } }
+  #putback { display:none; }
+
+  /* the model view stands on its own, without the mirrored floor */
+  @media (max-width:699px) { #stripwrap:not(.wrist) { height:min(46svh,370px); } }
+  #stripwrap.wrist ~ .vposwrap, .vposwrap:has(~ #stripwrap.wrist) { display:none; }
