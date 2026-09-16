@@ -25,32 +25,13 @@ export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div clas
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
 export const figd = (name, detail, alt, altd, ratio, sizes, cap = "") => `<div class="fig ${ratio} rv sigp"><div class="im">${pic(name, alt, sizes)}</div><div class="im dt">${pic(detail, altd, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* the loader: the exact mark, almost invisible, filled by molten light from below. Three layers of the same path: the ghost, the lit part under a rising liquid mask, and the solid that sets when the light reaches the top. */
-export const imark = () => `<svg class="sy imark" viewBox="0 0 ${Math.ceil(MARK_W)} 1000" aria-hidden="true"><defs>
-  <linearGradient id="imMolten" gradientUnits="userSpaceOnUse" x1="0" y1="1010" x2="0" y2="-40">
-    <stop offset="0" stop-color="#e7a65a"/><stop offset=".26" stop-color="#f3cd92"/><stop offset=".58" stop-color="#f8e6c7"/><stop offset=".86" stop-color="#fbf3e4"/><stop offset="1" stop-color="#fdfaf4"/>
-  </linearGradient>
-  <linearGradient id="imFrontG" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#fffdf7" stop-opacity=".96"/><stop offset=".30" stop-color="#ffdca6" stop-opacity=".62"/><stop offset="1" stop-color="#ffab48" stop-opacity="0"/>
-  </linearGradient>
-  <linearGradient id="imDeepG" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#c47a2e" stop-opacity=".55"/><stop offset="1" stop-color="#8a4f16" stop-opacity="0"/>
-  </linearGradient>
-  <radialGradient id="imGl"><stop offset="0" stop-color="#fffdf6" stop-opacity=".85"/><stop offset="1" stop-color="#fffdf6" stop-opacity="0"/></radialGradient>
-  <mask id="imMask" maskUnits="userSpaceOnUse" x="-320" y="-1200" width="1560" height="3600"><g class="imRise"><path d="M -300 0 C -120 -30, 60 26, 250 -8 C 420 -38, 560 22, 720 -4 C 880 -28, 1010 20, 1200 -12 L 1200 2200 L -300 2200 Z" fill="#fff"/></g></mask>
-  <clipPath id="imClip"><path d="${MARK}"/></clipPath>
-</defs>
-<path class="imGhost" d="${MARK}"/>
-<path class="imLit" d="${MARK}" mask="url(#imMask)"/>
-<g clip-path="url(#imClip)">
-  <g class="imRiseB"><path class="imDeep" d="M -300 0 C -160 26, 40 -30, 230 8 C 400 40, 570 -22, 740 6 C 900 32, 1030 -18, 1200 14 L 1200 2200 L -300 2200 Z" fill="url(#imDeepG)"/></g>
-  <g mask="url(#imMask)" class="imShim">
-    <ellipse class="imG1" cx="230" cy="480" rx="330" ry="250" fill="url(#imGl)"/>
-    <ellipse class="imG2" cx="650" cy="640" rx="290" ry="200" fill="url(#imGl)"/>
-  </g>
-  <g class="imRise"><path class="imFront" d="M -300 0 C -120 -30, 60 26, 250 -8 C 420 -38, 560 22, 720 -4 C 880 -28, 1010 20, 1200 -12 L 1200 168 C 1010 200, 880 152, 720 176 C 560 202, 420 142, 250 172 C 60 206, -120 150, -300 180 Z" fill="url(#imFrontG)"/><path class="imLine" d="M -300 0 C -120 -30, 60 26, 250 -8 C 420 -38, 560 22, 720 -4 C 880 -28, 1010 20, 1200 -12 L 1200 2200 L -300 2200 Z" fill="none" stroke="#fffdf6" stroke-width="9" stroke-linejoin="round"/></g>
-</g>
-<path class="imSolid" d="${MARK}"/>
-</svg>`;
+/* the loader mark: four layers of the exact symbol, each one a CSS mask, so every moving part is a transform the compositor can carry */
+export const imark = () => {
+  const box = "0 0 " + Math.ceil(MARK_W) + " 1000";
+  const mk = "url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + box + '" preserveAspectRatio="none"><path d="' + MARK + '" fill="#fff"/></svg>') + "')";
+  const liquid = "url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 900" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf6"/><stop offset="0.035" stop-color="#fff3d9"/><stop offset="0.16" stop-color="#f7dcae"/><stop offset="0.52" stop-color="#eec388"/><stop offset="1" stop-color="#cf8f46"/></linearGradient></defs><path d="M0 30 C 24 10, 48 42, 74 24 C 100 6, 124 38, 150 21 C 172 7, 186 27, 200 17 L200 900 L0 900 Z" fill="url(#g)"/></svg>') + "')";
+  return `<div class="imk" style="--mk:${mk};--liq:${liquid}" aria-hidden="true"><i class="ib"></i><i class="iq"><i class="iqin"></i></i><i class="is"><i class="isin"></i></i><i class="if"></i></div>`;
+};
 const T = (tag, cls, en, he, extra = "") => `<${tag} class="${cls}" data-en="${en.replace(/"/g, "&quot;")}" data-he="${he.replace(/"/g, "&quot;")}"${extra}>${en}</${tag}>`;
 
 const SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
@@ -59,7 +40,7 @@ const bandItems = [["SILAVU", "SILAVU"], ["Dubai", "דובאי"], ["Tel Aviv", "
 const band = bandItems.concat(bandItems).map(([en, he]) => `<span><em data-en="${en}" data-he="${he}">${en}</em><i class="dot"></i></span>`).join("");
 
 /* the Signature Chain: the exact mark in platinum on a slender chain. The product is wired in full and gated behind its photography: it goes live only when the imagery is approved as a real studio photograph. */
-export const SIG_LIVE = false;
+export const SIG_LIVE = true;
 const SIG_PIECE = `
       <div class="piece" id="p-sigb">
         ${figd("sigb", "sigbd", "The Signature Chain, the SILAVU symbol in polished platinum on a slender chain, on black lacquer", "The clasp of the Signature Chain, engraved SILAVU", "r45", SIZES_PIECE, `<div class="cap k"><span data-en="Atelier rendering" data-he="הדמיית הסטודיו">Atelier rendering</span></div>`)}
@@ -311,7 +292,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       </div>
     </div>
     <div class="panel rv" id="configure">
-      <div id="stripwrap"><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it." data-he="גררו כדי לסובב.">Drag to turn it.</div><span class="vmark">${mark("", "b")}</span></div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="under" data-en="Underside" data-he="מלמטה">Underside</button></div></div>
+      <div id="stripwrap"><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it." data-he="גררו כדי לסובב.">Drag to turn it.</div><span class="vmark">${mark("", "b")}</span></div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="under" data-en="Underside" data-he="מלמטה">Underside</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Pick it up" data-he="הרימו אותו">Pick it up</button><button class="vp" type="button" data-toy="down" data-en="Put it back" data-he="החזירו אותו">Put it back</button></div></div>
       <div class="carat" id="carat">
         <div><details class="spec"><summary><span data-en="Specifications" data-he="מפרט">Specifications</span></summary><div class="specbody"><p class="p" style="margin-top:8px;font-size:.95rem" data-en="Carat is weight, not size. The total weight is shared by every stone on the line, and the line holds as many stones as your wrist allows. The dimensions here are representative; the final quotation follows the stones we match for you." data-he="קראט הוא משקל, לא גודל. המשקל הכולל מתחלק בין כל האבנים על הקו, והקו מחזיק כמה אבנים שפרק היד מאפשר. המידות כאן מייצגות; הצעת המחיר הסופית נקבעת לפי האבנים שנתאים לכם.">Carat is weight, not size. The total weight is shared by every stone on the line, and the line holds as many stones as your wrist allows. The dimensions here are representative; the final quotation follows the stones we match for you.</p><p class="p" data-en="Each stone is drawn from the true geometry of its cut. Dimensions are representative; the final quotation follows the stones we match for you." data-he="כל אבן מצוירת מהגיאומטריה האמיתית של הליטוש שלה. המידות מייצגות; הצעת המחיר הסופית נגזרת מהאבנים שנתאים עבורכם.">Each stone is drawn from the true geometry of its cut. Dimensions are representative; the final quotation follows the stones we match for you.</p></div></details></div>
         <div><div class="big" id="eachCt">0.17<small>ct</small></div><div class="k" style="margin-top:8px" id="eachLbl">Each of the 36 stones</div></div>

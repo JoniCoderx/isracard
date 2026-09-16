@@ -31,7 +31,7 @@
   window.__unlock = function () { var h = document.documentElement; if (!h.classList.contains("locked")) return; h.classList.remove("locked"); document.body.classList.remove("locked"); window.scrollTo({ top: __lockY, left: 0, behavior: "instant" }); };
   document.addEventListener("touchmove", function (e) { if (document.documentElement.classList.contains("locked") && !e.target.closest(".modal.open .mbox, .modal.open .tbox, #menu.open, #intro")) e.preventDefault(); }, { passive: false });
   window.__lock();
-  var entered = false, imark = intro.querySelector("svg.imark"), fillDone = false, contracting = false, seen = false;
+  var entered = false, imark = intro.querySelector(".imk"), fillDone = false, contracting = false, seen = false;
   try { seen = localStorage.getItem("silavu-seen") === "1" && !/[?&]intro=1/.test(location.search); localStorage.setItem("silavu-seen", "1"); } catch (e) {}
   function enter() {
     if (entered) return; entered = true;
@@ -60,9 +60,9 @@
   else if (reduce) { intro.classList.add("sharp"); setTimeout(contract, 400); }
   else {
     intro.classList.add("run");
-    var riser = imark.querySelector(".imRise"), left = 1550;
+    var riser = imark.querySelector(".iqin"), left = 1600;
     riser.addEventListener("animationend", setSharp, { once: true });
-    try { var an = riser.getAnimations()[0]; if (an) left = Math.max(0, 1550 - (an.currentTime || 0)); } catch (e) {}
+    try { var an = riser.getAnimations()[0]; if (an) left = Math.max(0, 1600 - (an.currentTime || 0)); } catch (e) {}
     setTimeout(setSharp, left + 90);
   }
   setTimeout(function () { enter(); }, 6000);

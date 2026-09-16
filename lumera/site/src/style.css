@@ -742,36 +742,34 @@
   #tryon.placing .tsteps span:nth-child(2) b, #tryon.seen .tsteps span:nth-child(3) b { border-color:var(--ink); background:var(--house-tint); }
   .tcv.turn { cursor:grab; }
 
-  /* ── v29: the loader. Light occupies the exact symbol from the first frame, its surface moving, and sets to ivory only at the top ── */
+  /* ── v31: the loader. The symbol is there from the first frame; light fills it; it sets; it becomes the header ── */
   #intro { transition:opacity .42s var(--ease), background .55s var(--ease); }
   #intro.lift { background:transparent; } #intro.lift .introlang { opacity:0; pointer-events:none; }
   #intro.off { display:none; }
   .introlang { transition:opacity .3s; }
   .iw { position:relative; }
-  .iw::before { content:""; position:absolute; left:50%; top:50%; width:clamp(260px,44vw,460px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(255,214,152,.20), rgba(255,180,96,.06) 44%, transparent 72%); opacity:0; animation:imglow 1.55s var(--ease) forwards; pointer-events:none; }
-  @keyframes imglow { 0% { opacity:0; } 35% { opacity:.5; } 100% { opacity:1; } }
-  #intro.sharp .iw::before { opacity:0; transition:opacity .42s var(--ease); animation:none; }
-  svg.sy.imark { height:clamp(116px,18vw,176px); color:#fff; transform-origin:50% 50%; overflow:visible; }
-  svg.sy.imark .imGhost { fill:#f6f3ed; fill-opacity:.05; }
-  svg.sy.imark .imLit { fill:url(#imMolten); }
-  svg.sy.imark .imFront { mix-blend-mode:screen; }
-  svg.sy.imark .imShim { mix-blend-mode:screen; opacity:.9; }
-  svg.sy.imark .imLine { mix-blend-mode:screen; opacity:.95; }
-  svg.sy.imark .imDeep { mix-blend-mode:multiply; opacity:.8; }
-  svg.sy.imark .imSolid { fill:#f6f3ed; opacity:0; }
-  svg.sy.imark .imRise { animation:imrise 1.55s cubic-bezier(.42,.04,.30,1) forwards; }
-  svg.sy.imark .imRiseB { animation:imriseB 1.55s cubic-bezier(.42,.04,.30,1) forwards; }
-  svg.sy.imark .imG1 { animation:imdrift 3.1s ease-in-out infinite alternate; }
-  svg.sy.imark .imG2 { animation:imdrift2 2.6s ease-in-out infinite alternate; }
-  @keyframes imrise { from { transform:translateY(1046px); } to { transform:translateY(-46px); } }
-  @keyframes imriseB { from { transform:translateY(1130px); } to { transform:translateY(26px); } }
-  @keyframes imdrift { from { transform:translate(-60px, 40px) scale(.9); } to { transform:translate(90px, -50px) scale(1.15); } }
-  @keyframes imdrift2 { from { transform:translate(70px, 30px) scale(1.1); } to { transform:translate(-60px, -40px) scale(.9); } }
-  #intro.sharp svg.sy.imark .imRise, #intro.sharp svg.sy.imark .imRiseB { animation:none; transform:translateY(-46px); }
-  #intro.sharp .imSolid { opacity:1; transition:opacity .30s var(--ease); }
-  #intro.sharp .imLit, #intro.sharp .imFront, #intro.sharp .imShim, #intro.sharp .imDeep { opacity:0; transition:opacity .26s var(--ease); }
+  .iw::before { content:""; position:absolute; left:50%; top:50%; width:clamp(250px,42vw,440px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(255,214,152,.22), rgba(255,180,96,.06) 44%, transparent 72%); opacity:0; animation:imglow 1.6s var(--ease) forwards; pointer-events:none; }
+  @keyframes imglow { 0% { opacity:0; } 30% { opacity:.45; } 100% { opacity:1; } }
+  #intro.sharp .iw::before { opacity:0; transition:opacity .45s var(--ease); animation:none; }
+  .imk { position:relative; width:clamp(104px,16.5vw,158px); aspect-ratio:872/1000; transform-origin:50% 50%; }
+  .imk > i { position:absolute; inset:0; display:block; overflow:hidden;
+    -webkit-mask-image:var(--mk); mask-image:var(--mk);
+    -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; }
+  .imk .ib { background:#f6f3ed; opacity:.13; }
+  .imk .if { background:var(--ink); opacity:0; }
+  .imk .iq .iqin, .imk .is .isin { position:absolute; display:block; }
+  .imk .iq .iqin { left:-6%; width:112%; top:0; height:300%; background-image:var(--liq); background-size:100% 100%; background-repeat:no-repeat; transform:translateY(34%); animation:imrise 1.6s cubic-bezier(.40,.03,.28,1) forwards; }
+  .imk .is { mix-blend-mode:screen; opacity:.9; }
+  .imk .is .isin { left:-20%; width:140%; top:0; height:300%; transform:translateY(34%); animation:imrise 1.6s cubic-bezier(.40,.03,.28,1) forwards;
+    background:radial-gradient(38% 12% at 26% 40%, rgba(255,253,246,.55), transparent 70%), radial-gradient(30% 9% at 70% 52%, rgba(255,248,232,.45), transparent 70%); }
+  @keyframes imrise { from { transform:translateY(34%); } to { transform:translateY(-1.5%); } }
+  #intro.sharp .imk .iq .iqin, #intro.sharp .imk .is .isin { animation:none; transform:translateY(-1.5%); }
+  #intro.sharp .imk .if { opacity:1; transition:opacity .32s var(--ease); }
+  #intro.sharp .imk .iq, #intro.sharp .imk .is { opacity:0; transition:opacity .28s var(--ease); }
+  #intro.sharp .imk .ib { opacity:0; transition:opacity .28s var(--ease); }
   .mark svg.sy { transition:opacity .18s; } header.sh.premark .mark svg.sy { opacity:0; }
-  @media (prefers-reduced-motion:reduce) { svg.sy.imark .imLit, svg.sy.imark .imFront, svg.sy.imark .imShim, svg.sy.imark .imDeep, .iw::before { display:none; } svg.sy.imark .imSolid { opacity:1; transition:none; } }
+  @media (prefers-reduced-motion:reduce) { .imk .iq, .imk .is, .iw::before { display:none; } .imk .if { opacity:1; transition:none; } .imk .ib { opacity:0; } }
 
   /* ── v25: one hover language. Light that follows the hand across the photograph, a small parallax, the detail beneath the piece, depth in the buttons, a line of light under the links. Nothing grows, nothing bounces. ── */
   .fig .lt { position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0; transition:opacity .7s var(--ease); mix-blend-mode:screen; background:radial-gradient(ellipse 58% 46% at var(--lx,50%) var(--ly,40%), rgba(255,255,255,.17), rgba(255,255,255,.05) 46%, transparent 72%); }
@@ -905,3 +903,12 @@
   /* the model view stands on its own, without the mirrored floor */
   @media (max-width:699px) { #stripwrap:not(.wrist) { height:min(46svh,370px); } }
   #stripwrap.wrist ~ .vposwrap, .vposwrap:has(~ #stripwrap.wrist) { display:none; }
+
+  /* ── v32: the bracelet in the hand ── */
+  #stripwrap.held #bcv { cursor:grabbing; }
+  .toybar { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+
+  .vsep { width:1px; align-self:stretch; margin:5px 3px; background:rgba(246,243,237,.14); display:block; }
+  .vpos [data-toy="down"] { display:none; }
+  #stripwrap.held ~ .vposwrap [data-toy="down"] { display:inline-flex; }
+  #stripwrap.held ~ .vposwrap [data-toy="up"], #stripwrap.held ~ .vposwrap [data-vpos] { display:none; }

@@ -27,4 +27,11 @@ convert "$T/v2.png" -crop 900x1125+481+714 +repage -resize 600x -quality 84 -str
 # the bench: a setter's hands and one stone, 4:5
 curl -sf -o "$T/c.png" $B/hf_20260916_094125_01ad1700-93dd-4171-bee1-87995cc6a52d.png
 for w in 800 1200 1600 2000; do convert "$T/c.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/craft-$w.jpg"; done
-ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg
+# the Signature Chain: the photographs of the piece
+curl -sf -o "$T/sigb.png" $B/hf_20260916_115749_d0cfd8ed-6e93-43e9-9149-27394a9bc153.png
+curl -sf -o "$T/sigbd.png" $B/hf_20260916_115748_31bb2a98-04e5-460e-898d-f81d37b61ed0.png
+for w in 800 1200 1600 2000; do
+  convert "$T/sigb.png"  -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/sigb-$w.jpg"
+  convert "$T/sigbd.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/sigbd-$w.jpg"
+done
+ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg

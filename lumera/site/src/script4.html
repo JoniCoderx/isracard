@@ -25,6 +25,18 @@
   }
   split();
 
+  /* ── a photograph inside a sideways tray never meets the viewport, so we load it when its chapter does ── */
+  (function () {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll("img[loading=lazy]").forEach(function (im) { im.loading = "eager"; if (!im.complete) { var s = im.currentSrc || im.src; im.src = s; } });
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: "300% 0px" });
+    document.querySelectorAll("#collection, #macro, #clients, #partners, #what, .tray").forEach(function (el) { io.observe(el); });
+  })();
+
   /* ── light follows the pointer across the photographs; the photograph leans a few pixels the other way ── */
   if (fine && !reduce) {
     var litFig = null;

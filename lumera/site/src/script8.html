@@ -265,25 +265,23 @@
     "uniform vec3 uEye; uniform vec3 uCol; uniform float uMode; uniform float uRough; uniform float uFade;",
     "vec3 env(vec3 d){",
     "  float y = clamp(d.y, -1.0, 1.0);",
-    "  vec3 c = mix(vec3(0.0055,0.0062,0.0078), vec3(0.028,0.031,0.038), smoothstep(-1.0, 1.0, y));",
-    "  c += vec3(0.022,0.020,0.017) * smoothstep(0.0, -0.75, y);",
+    "  vec3 c = mix(vec3(0.0016,0.0018,0.0024), vec3(0.012,0.013,0.017), smoothstep(-1.0, 1.0, y));",
+    "  c += vec3(0.016,0.014,0.012) * smoothstep(0.0, -0.8, y);",
     "  float k = max(dot(d, normalize(vec3(-0.40, 0.80, 0.45))), 0.0);",
-    "  c += vec3(1.00,0.975,0.935) * pow(k, 3.4) * 1.85;",
-    "  c += vec3(1.00,0.985,0.960) * pow(k, 110.0) * 16.0;",
+    "  c += vec3(1.00,0.980,0.945) * pow(k, 2.6) * 0.42;",
+    "  c += vec3(1.00,0.990,0.970) * pow(k, 260.0) * 46.0;",
     "  float s = max(dot(d, normalize(vec3(0.94, 0.16, -0.30))), 0.0);",
-    "  c += vec3(0.80,0.87,1.00) * pow(s, 40.0) * 4.6;",
+    "  c += vec3(0.80,0.87,1.00) * pow(s, 150.0) * 20.0;",
     "  float r = max(dot(d, normalize(vec3(0.06, -0.12, -0.99))), 0.0);",
-    "  c += vec3(1.00,0.84,0.62) * pow(r, 26.0) * 2.0;",
-    "  float p = max(dot(d, normalize(vec3(0.38, 0.46, 0.80))), 0.0);",
-    "  c += vec3(1.0) * pow(p, 210.0) * 22.0;",
-    "  float q = max(dot(d, normalize(vec3(-0.75, 0.22, -0.62))), 0.0);",
-    "  c += vec3(0.92,0.95,1.0) * pow(q, 170.0) * 13.0;",
-    "  c += vec3(1.00,0.99,0.97) * pow(max(dot(d, normalize(vec3( 0.62, 0.70, 0.35))), 0.0), 300.0) * 20.0;",
-    "  c += vec3(0.98,0.99,1.00) * pow(max(dot(d, normalize(vec3(-0.30, 0.66, 0.69))), 0.0), 300.0) * 17.0;",
-    "  c += vec3(1.00,0.97,0.92) * pow(max(dot(d, normalize(vec3(-0.66, 0.52, -0.54))), 0.0), 300.0) * 15.0;",
-    "  c += vec3(0.95,0.97,1.00) * pow(max(dot(d, normalize(vec3( 0.20, 0.38, -0.90))), 0.0), 300.0) * 13.0;",
-    "  c += vec3(1.00,0.95,0.88) * pow(max(dot(d, normalize(vec3( 0.88, 0.30, -0.36))), 0.0), 300.0) * 12.0;",
-    "  c += vec3(1.00,1.00,1.00) * pow(max(dot(d, normalize(vec3(-0.92, 0.18,  0.34))), 0.0), 300.0) * 11.0;",
+    "  c += vec3(1.00,0.84,0.62) * pow(r, 120.0) * 12.0;",
+    "  c += vec3(1.0) * pow(max(dot(d, normalize(vec3( 0.38, 0.46, 0.80))), 0.0), 900.0) * 90.0;",
+    "  c += vec3(0.93,0.96,1.0) * pow(max(dot(d, normalize(vec3(-0.75, 0.22, -0.62))), 0.0), 700.0) * 60.0;",
+    "  c += vec3(1.00,0.99,0.97) * pow(max(dot(d, normalize(vec3( 0.62, 0.70, 0.35))), 0.0), 1100.0) * 80.0;",
+    "  c += vec3(0.98,0.99,1.00) * pow(max(dot(d, normalize(vec3(-0.30, 0.66, 0.69))), 0.0), 1100.0) * 70.0;",
+    "  c += vec3(1.00,0.97,0.92) * pow(max(dot(d, normalize(vec3(-0.66, 0.52, -0.54))), 0.0), 1000.0) * 60.0;",
+    "  c += vec3(0.95,0.97,1.00) * pow(max(dot(d, normalize(vec3( 0.20, 0.38, -0.90))), 0.0), 1000.0) * 52.0;",
+    "  c += vec3(1.00,0.95,0.88) * pow(max(dot(d, normalize(vec3( 0.88, 0.30, -0.36))), 0.0), 1200.0) * 48.0;",
+    "  c += vec3(1.00,1.00,1.00) * pow(max(dot(d, normalize(vec3(-0.92, 0.18,  0.34))), 0.0), 1200.0) * 44.0;",
     "  return c;",
     "}",
     "float fres(float c, float f0){ return f0 + (1.0 - f0) * pow(1.0 - c, 5.0); }",
@@ -294,31 +292,32 @@
     "  if (uMode > 0.5) {",
     "    vec3 Nf = ndv < 0.0 ? -N : N; float c = abs(ndv);",
     "    float F = fres(c, 0.172);",
-    "    col = env(reflect(-V, Nf)) * (F * 1.25);",
+    "    col = env(reflect(-V, Nf)) * F * 1.15;",
     "    vec3 up = normalize(vU);",
     "    vec3 t1 = refract(-V, Nf, 1.0 / 2.417);",
     "    if (dot(t1, t1) > 1e-6) {",
     "      vec3 lat = t1 - up * dot(t1, up); lat = dot(lat, lat) > 1e-8 ? normalize(lat) : vec3(1.0, 0.0, 0.0);",
-    "      vec3 p1 = normalize(-up * 0.78 + lat * 0.62);",
+    "      vec3 p1 = normalize(-up * 0.74 + lat * 0.67);",
     "      vec3 b1 = reflect(t1, p1);",
     "      vec3 lat2 = b1 - up * dot(b1, up); lat2 = dot(lat2, lat2) > 1e-8 ? normalize(lat2) : lat;",
-    "      vec3 p2 = normalize(-up * 0.78 + lat2 * 0.62);",
+    "      vec3 p2 = normalize(-up * 0.74 + lat2 * 0.67);",
     "      vec3 b2 = reflect(b1, p2);",
-    "      vec3 fire = vec3(env(exitDir(b2, up, 2.407)).r, env(exitDir(b2, up, 2.426)).g, env(exitDir(b2, up, 2.451)).b);",
-    "      vec3 thru = env(exitDir(t1, up, 2.426));",
-    "      col += (1.0 - F) * (fire * 1.55 + thru * 0.20);",
+    "      vec3 lat3 = b2 - up * dot(b2, up); lat3 = dot(lat3, lat3) > 1e-8 ? normalize(lat3) : lat2;",
+    "      vec3 b3 = reflect(b2, normalize(-up * 0.80 + lat3 * 0.60));",
+    "      vec3 fireA = vec3(env(exitDir(b2, up, 2.402)).r, env(exitDir(b2, up, 2.426)).g, env(exitDir(b2, up, 2.465)).b);",
+    "      vec3 fireB = vec3(env(exitDir(b3, up, 2.402)).r, env(exitDir(b3, up, 2.426)).g, env(exitDir(b3, up, 2.465)).b);",
+    "      col += (1.0 - F) * (fireA * 1.15 + fireB * 0.70);",
     "    }",
-    "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.34;",
-    "    col *= 1.28;",
+    "    col += vec3(0.86, 0.91, 1.0) * pow(1.0 - c, 5.0) * 0.30;",
     "  } else {",
     "    vec3 Nf = ndv < 0.0 ? -N : N; float c = max(abs(ndv), 1e-4);",
     "    vec3 R = reflect(-V, Nf);",
     "    vec3 F = uCol + (vec3(1.0) - uCol) * pow(1.0 - c, 5.0);",
-    "    col = mix(env(R), env(Nf), uRough) * F;",
-    "    col += uCol * env(Nf) * 0.16;",
+    "    col = mix(env(R), env(Nf), uRough) * F * 2.6;",
+    "    col += uCol * env(Nf) * 0.55;",
     "  }",
     "  col *= uFade;",
-    "  col = col / (col + vec3(0.62));",
+    "  col = (col * (2.51 * col + 0.03)) / (col * (2.43 * col + 0.59) + 0.14);",
     "  col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));",
     "  gl_FragColor = vec4(col, 1.0);",
     "}"
@@ -431,6 +430,8 @@
   /* ─────────────────────────── camera ─────────────────────────── */
   var portrait = innerWidth < 760;
   var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
+  /* the toy: while it is held the bracelet has a place in the frame, a spin and a fall */
+  var toy = null;
   var drag = null, dirty = true, idle = !reduce, W2 = 1, H2 = 1, DPR = 1;
   function size() {
     DPR = Math.min(devicePixelRatio || 1, 2);
@@ -458,6 +459,14 @@
       -(s2[0] * eye[0] + s2[1] * eye[1] + s2[2] * eye[2]), -(u2[0] * eye[0] + u2[1] * eye[1] + u2[2] * eye[2]), (f[0] * eye[0] + f[1] * eye[1] + f[2] * eye[2]), 1]);
     var t = 1 / Math.tan(fov0 / 2), near = Math.max(1, dist - R * 3), far = dist + R * 4;
     var proj = new Float32Array([t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (far + near) / (near - far), -1, 0, 0, 2 * far * near / (near - far), 0]);
+    state.halfH = tanF * dist; state.halfW = state.halfH * asp;
+    if (toy) {
+      var rx = toy.rx, ry = toy.ry, cx2 = Math.cos(rx), sx2 = Math.sin(rx), cy2 = Math.cos(ry), sy2 = Math.sin(ry);
+      var RX = new Float32Array([1,0,0,0, 0,cx2,sx2,0, 0,-sx2,cx2,0, 0,0,0,1]);
+      var RY = new Float32Array([cy2,0,-sy2,0, 0,1,0,0, sy2,0,cy2,0, 0,0,0,1]);
+      var TV = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, toy.x, toy.y, 0, 1]);
+      view = mul(TV, mul(view, mul(RY, RX)));
+    }
     gl.uniformMatrix4fv(U.vp, false, mul(proj, view));
     gl.uniform3fv(U.eye, eye);
     gl.uniform1f(U.fade, 1);
@@ -476,6 +485,24 @@
       } else if (idle) { cam.th += 0.0016; dirty = true; }
     }
     if (Math.abs(cam.d - cam.td) > 1e-4) { cam.d += (cam.td - cam.d) * 0.12; dirty = true; }
+    if (toy) {
+      var R0 = state.fit;
+      var limY = Math.max(R0 * 0.1, (state.halfH || R0 * 2) - R0 * 1.06);
+      var limX = Math.max(R0 * 0.1, (state.halfW || R0 * 2) - R0 * 1.06);
+      var vmax = R0 * 0.05;
+      if (!toy.held) {
+        toy.vy -= R0 * 0.00055;
+        toy.x += toy.vx; toy.y += toy.vy; toy.rx += toy.wx; toy.ry += toy.wy;
+      }
+      if (toy.y < -limY) { toy.y = -limY; toy.vy = Math.min(Math.abs(toy.vy) * 0.56, vmax); toy.vx *= 0.88; toy.wx *= 0.82; toy.wy *= 0.90; }
+      if (toy.y > limY) { toy.y = limY; toy.vy = -Math.abs(toy.vy) * 0.45; }
+      if (toy.x > limX) { toy.x = limX; toy.vx = -Math.abs(toy.vx) * 0.66; }
+      if (toy.x < -limX) { toy.x = -limX; toy.vx = Math.abs(toy.vx) * 0.66; }
+      toy.vx = Math.max(-vmax, Math.min(vmax, toy.vx * 0.993));
+      toy.vy = Math.max(-vmax, Math.min(vmax, toy.vy));
+      toy.wx *= 0.993; toy.wy *= 0.993;
+      dirty = true;
+    }
     if (!dirty) return;
     dirty = false; draw();
   }
@@ -483,17 +510,25 @@
   /* ─────────────────────────── the hand ─────────────────────────── */
   cv.addEventListener("pointerdown", function (e) {
     if (wrap.classList.contains("wrist")) return;
-    drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; idle = false; cam.vth = cam.vph = 0;
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now() }; idle = false; cam.vth = cam.vph = 0;
+    if (toy) { toy.held = true; toy.vx = toy.vy = 0; }
     cv.setPointerCapture(e.pointerId); cv.classList.add("holding"); wrap.classList.add("touched");
   });
   cv.addEventListener("pointermove", function (e) {
     if (!drag || e.pointerId !== drag.id) return;
     var dx = (e.clientX - drag.x) / Math.max(200, cv.clientWidth) * 3.0, dy = (e.clientY - drag.y) / Math.max(200, cv.clientHeight) * 2.2;
-    cam.th -= dx; cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph + dy));
-    cam.vth = -dx * 0.55; cam.vph = dy * 0.55;
+    if (toy) {
+      var k = state.fit * 2.0 / Math.max(200, cv.clientWidth) * 3.0;
+      toy.x += dx * (state.halfW || state.fit) * 0.34; toy.y -= dy * (state.halfH || state.fit) * 0.46;
+      toy.vx = dx * (state.halfW || state.fit) * 0.055; toy.vy = -dy * (state.halfH || state.fit) * 0.075;
+      toy.wx += dy * 0.055; toy.wy += dx * 0.065;
+    } else {
+      cam.th -= dx; cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph + dy));
+      cam.vth = -dx * 0.55; cam.vph = dy * 0.55;
+    }
     drag.x = e.clientX; drag.y = e.clientY; dirty = true;
   });
-  function release(e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; cv.classList.remove("holding"); }
+  function release(e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; cv.classList.remove("holding"); if (toy) toy.held = false; }
   cv.addEventListener("pointerup", release); cv.addEventListener("pointercancel", release);
   cv.addEventListener("wheel", function (e) {
     if (wrap.classList.contains("wrist")) return;
@@ -519,6 +554,20 @@
 
   size(); build(); requestAnimationFrame(tick);
   addEventListener("silavu:build", build);
-  window.__bracelet = { build: build, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+  function pickUp() {
+    if (toy) return;
+    idle = false; cam.vth = cam.vph = 0;
+    toy = { x: 0, y: (state.halfH || state.fit * 2) * 0.42, z: 0, vx: state.fit * 0.004, vy: 0, rx: 0.45, ry: 0.35, wx: 0.012, wy: 0.018, held: false };
+    cam.td = 1.58; wrap.classList.add("held"); dirty = true;
+  }
+  function putBack() {
+    if (!toy) return;
+    toy = null; wrap.classList.remove("held"); cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true;
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("[data-toy]"); if (!t) return;
+    if (t.getAttribute("data-toy") === "up") pickUp(); else putBack();
+  });
+  window.__bracelet = { build: build, pickUp: pickUp, putBack: putBack, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
 })();
 </script>
