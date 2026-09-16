@@ -33,13 +33,6 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.evaluate(() => { const w = document.getElementById("wpin"); window.scrollTo({top: scrollY + w.getBoundingClientRect().top + (w.offsetHeight - innerHeight) * 0.85, behavior:"instant"}); }); await p.waitForTimeout(500);
   out.push(((await p.evaluate(() => { const t = document.getElementById("wtxt"); const f = document.getElementById("wframe"); return getComputedStyle(t).opacity !== "0" && f.getBoundingClientRect().height > innerHeight * 0.9; })) ? "PASS":"FAIL") + ` ${tag} wrist chapter revealed`);
   // stone picker
-  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("s36").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(900);
-  await p.evaluate(() => { document.getElementById("s36next").click(); document.getElementById("s36next").click(); }); out.push((/13$/.test(await p.textContent("#s36cur")) ? "PASS":"FAIL") + ` ${tag} stone next`);
-  const c36 = await p.evaluate(() => { const c = document.getElementById("cv36"), x = c.getContext("2d"), d = x.getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 7) if (d[i] > 40) n++; return n; }); out.push((c36 > 200 ? "PASS":"FAIL") + ` ${tag} the 36 draws (${c36})`);
-  await p.evaluate(() => document.getElementById("s36details").click()); await p.waitForTimeout(400); out.push((await p.evaluate(() => document.getElementById("sdrawer").classList.contains("open"))) ? "PASS":"FAIL"); out[out.length-1] += ` ${tag} stone drawer opens`;
-  await p.keyboard.press("Escape"); await p.waitForTimeout(300); out.push((await p.evaluate(() => !document.getElementById("sdrawer").classList.contains("open") && !document.documentElement.classList.contains("locked"))) ? "PASS":"FAIL"); out[out.length-1] += ` ${tag} stone drawer closes`;
-  await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("s36").getBoundingClientRect().top + document.getElementById("s36").offsetHeight - innerHeight, behavior:"instant"})); await p.waitForTimeout(900);
-  const e36 = await p.evaluate(() => +getComputedStyle(document.getElementById("s36end")).opacity); out.push((e36 > 0.9 ? "PASS":"FAIL") + ` ${tag} the 36 become the line (${e36})`);
   // piece → concierge prefilled
   await p.evaluate(() => document.querySelector('a[data-piece="Rivière Lumière"]').click()); await p.waitForTimeout(1500);
   out.push((/Rivière/.test(await p.inputValue("#fMsg")) ? "PASS":"FAIL") + ` ${tag} piece prefills`);

@@ -146,22 +146,6 @@ export const body = `
       </div>
     </div>
     <div class="wrap">
-    </div>
-    <div class="s36" id="s36">
-      <div class="s36pin">
-        <canvas id="cv36" aria-hidden="true"></canvas>
-        <div class="t36" id="t36">
-          <div class="k" data-en="The 36" data-he="36 היהלומים">The 36</div>
-          <div class="s36num"><span id="s36cur">STONE 11</span><span class="s36of">/ 36</span></div>
-          <div class="s36spec"><bdi>D–F</bdi><i></i><bdi>VVS+</bdi><i></i><bdi>≈ 0.17 CT</bdi></div>
-          <div class="k s36lab" data-en="GIA or IGI report with every stone" data-he="תעודת GIA או IGI לכל אבן">GIA or IGI report with every stone</div>
-          <div class="s36acts"><button class="btn" type="button" id="s36details" data-en="View stone details" data-he="פרטי האבן">View stone details</button></div>
-          <div class="s36nav"><button type="button" id="s36prev" aria-label="Previous stone">‹</button><button type="button" id="s36next" aria-label="Next stone">›</button></div>
-        </div>
-        <div class="s36end" id="s36end"><div class="hp" data-en="Thirty-six stones. <em>One line.</em>" data-he="36 יהלומים. <em>קו אחד.</em>">Thirty-six stones. <em>One line.</em></div></div>
-      </div>
-    </div>
-    <div class="wrap">
     <div class="certs rv d2" id="certs">
       ${seal("sealcert")}
       <div class="k gold" data-en="Independent grading" data-he="דירוג עצמאי">Independent grading</div>
@@ -453,27 +437,6 @@ ${SIG_LIVE ? SIG_PIECE : ""}
 
 
 
-<div class="modal sdrawer" id="sdrawer" aria-hidden="true" role="dialog" aria-label="Stone details">
-  <div class="mbox sbox">
-    <button class="mclose" type="button" data-close aria-label="Close">×</button>
-    <div class="mbd">
-      <div class="k gold" data-en="The 36 · specification of the Line" data-he="36 היהלומים · מפרט הקו">The 36 · specification of the Line</div>
-      <h3 class="h3" data-en="What every stone <em>must be.</em>" data-he="מה שכל אבן <em>חייבת להיות.</em>">What every stone <em>must be.</em></h3>
-      <div class="sgrid">
-        <div class="sc"><div class="sv">D–F</div><div class="k" data-en="Colour" data-he="צבע">Colour</div></div>
-        <div class="sc"><div class="sv">IF–VVS2</div><div class="k" data-en="Clarity" data-he="ניקיון">Clarity</div></div>
-        <div class="sc"><div class="sv">EX · EX · EX</div><div class="k" data-en="Cut · polish · symmetry" data-he="ליטוש · פוליש · סימטריה">Cut · polish · symmetry</div></div>
-        <div class="sc"><div class="sv">≈ 0.17 ct</div><div class="k" data-en="Each stone, on a 6 ct line" data-he="כל אבן, בקו של 6 קראט">Each stone, on a 6 ct line</div></div>
-        <div class="sc"><div class="sv">3.5–3.7 mm</div><div class="k" data-en="Diameter, representative" data-he="קוטר, מייצג">Diameter, representative</div></div>
-        <div class="sc"><div class="sv">≤ 0.1 mm</div><div class="k" data-en="Between neighbours" data-he="בין אבנים שכנות">Between neighbours</div></div>
-        <div class="sc"><div class="sv" data-en="None" data-he="ללא">None</div><div class="k" data-en="Fluorescence" data-he="פלואורסצנציה">Fluorescence</div></div>
-        <div class="sc"><div class="sv">GIA · IGI</div><div class="k" data-en="Report, number inscribed on the girdle" data-he="תעודה, מספר חרוט על החגורה">Report, number inscribed on the girdle</div></div>
-      </div>
-      <p class="p" data-en="When your stones are matched, each report number is written into your valuation, and you can verify every one on the laboratory's site before the piece is set." data-he="כשהאבנים שלכם מותאמות, כל מספר תעודה נרשם בהערכת השווי שלכם, ואפשר לאמת כל אחת באתר המעבדה לפני השיבוץ.">When your stones are matched, each report number is written into your valuation, and you can verify every one on the laboratory's site before the piece is set.</p>
-      <div class="acts"><a class="lnk" href="https://www.gia.edu/report-check-landing" target="_blank" rel="noopener">GIA Report Check</a><a class="lnk" href="https://www.igi.org/verify-your-report/" target="_blank" rel="noopener">IGI Verify</a></div>
-    </div>
-  </div>
-</div>
 <div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="mbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>

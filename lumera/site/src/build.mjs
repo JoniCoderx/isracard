@@ -3,7 +3,7 @@ import { body } from "./body.mjs";
 const S = new URL(".", import.meta.url).pathname;
 const css = fs.readFileSync(S + "style.css", "utf8");
 let s1 = fs.readFileSync(S + "script1.html", "utf8");
-const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S + "script2.html", "utf8"), s3 = fs.readFileSync(S + "script3.html", "utf8"), s7 = fs.readFileSync(S + "script7.html", "utf8"), s4 = fs.readFileSync(S + "script4.html", "utf8"), s5 = fs.readFileSync(S + "script5.html", "utf8"), s6 = fs.readFileSync(S + "script6.html", "utf8");
+const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S + "script2.html", "utf8"), s3 = fs.readFileSync(S + "script3.html", "utf8"), s4 = fs.readFileSync(S + "script4.html", "utf8"), s5 = fs.readFileSync(S + "script5.html", "utf8"), s6 = fs.readFileSync(S + "script6.html", "utf8");
 function rep(a, b) { if (!s1.includes(a)) { console.error("MISSING in script1:", a.slice(0, 80)); process.exit(1); } s1 = s1.replace(a, b); }
 rep(`window.__lock();`, `window.__lock(); window.__defer = window.__defer || [];`);
 rep(`document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });`, `document.querySelectorAll(".rv:not(.late)").forEach(function (el) { io.observe(el); });`);
@@ -76,6 +76,6 @@ const hs = b.indexOf('<section id="hero"'), he = b.indexOf("</section>", hs);
 b = b.slice(0, hs) + b.slice(hs, he).replace(/class="([^"]*)\brv\b([^"]*)"/g, 'class="$1rv late$2"') + b.slice(he);
 /* the three heavy canvases wait for the loader: they are stored, then run in order */
 const defer = (s) => s.replace(/^<script>\n/, "<script>\n(window.__defer = window.__defer || []).push(function () {\n").replace(/<\/script>\n?$/, "});\n</script>\n");
-const page = `<title>SILAVU</title>\n<style>\n${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${defer(s7)}\n${s4}\n${s5}\n${s6}`;
+const page = `<title>SILAVU</title>\n<style>\n${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}`;
 fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", page);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);
