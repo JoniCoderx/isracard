@@ -12,4 +12,7 @@ convert "$T/h.png" -crop 1300x731+790+488 +repage -resize 900x -quality 84 -stri
 # portrait: wrist centred at (0.51, 0.60), half-width 0.227 of the width
 convert "$T/v.png" -crop 900x1125+481+714 +repage -resize 900x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wristv-900.jpg"
 convert "$T/v.png" -crop 900x1125+481+714 +repage -resize 600x -quality 84 -strip "$OUT/wristv-600.jpg"
-ls -la "$OUT"/wrist*.jpg
+# the bench: a setter's hands and one stone, 4:5
+curl -sf -o "$T/c.png" $B/hf_20260916_094125_01ad1700-93dd-4171-bee1-87995cc6a52d.png
+for w in 800 1200 1600 2000; do convert "$T/c.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/craft-$w.jpg"; done
+ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg
