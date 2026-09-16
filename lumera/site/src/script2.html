@@ -1,0 +1,230 @@
+<script>
+/* The line, rendered live: a ray-traced stone of any cut (no libraries), set in the chosen metal, and the same line wrapped around a real wrist. */
+(function () {
+  "use strict";
+  var canvas = document.getElementById("stripcv"), wrap = document.getElementById("stripwrap");
+  var gl = canvas.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" });
+  if (!gl) { wrap.style.display = "none"; return; }
+  var mobile = matchMedia("(max-width: 820px)").matches || /Mobi|Android/i.test(navigator.userAgent);
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var NP = 64;
+  var VS = "attribute vec2 p; varying vec2 vUv; void main(){ vUv = p*0.5+0.5; gl_Position = vec4(p,0.0,1.0); }";
+  var FS_GEM = [
+    "#ifdef GL_FRAGMENT_PRECISION_HIGH", "precision highp float;", "#else", "precision mediump float;", "#endif",
+    "uniform vec2 uRes; uniform float uDist; uniform float uRot; uniform float uPitch; uniform float uExpo; uniform float uEnv;",
+    "#define NP 64", "uniform vec4 uPl[NP];",
+    "float schlick(float c,float f0){ float m=clamp(1.0-c,0.0,1.0); float m2=m*m; return f0+(1.0-f0)*m2*m2*m; }",
+    "float strip(vec3 d,vec3 c,vec3 up,float w,float len){ vec3 n=normalize(cross(c,up)); float band=exp(-pow(dot(d,n)/w,2.0)); float along=smoothstep(len-0.12,len+0.05,dot(d,normalize(c))); return band*along; }",
+    "vec3 env(vec3 d0){ float ce=cos(uEnv),se=sin(uEnv); vec3 d=vec3(d0.x*ce-d0.z*se,d0.y,d0.x*se+d0.z*ce); float up=d.y; vec3 col=mix(vec3(0.010,0.010,0.013),vec3(0.045,0.05,0.07),smoothstep(-0.6,1.0,up));",
+    " col+=vec3(1.0,0.97,0.93)*1.6*pow(max(dot(d,normalize(vec3(0.15,0.55,0.8))),0.0),5.0);",
+    " col+=vec3(0.85,0.9,1.0)*0.5*pow(max(dot(d,normalize(vec3(-0.6,0.2,-0.7))),0.0),3.0);",
+    " col+=vec3(1.0)*6.0*strip(d,vec3(-0.75,0.35,0.55),vec3(0.0,1.0,0.0),0.03,0.55);",
+    " col+=vec3(1.0)*6.0*strip(d,vec3(0.7,-0.3,0.6),vec3(0.0,1.0,0.0),0.03,0.55);",
+    " col+=vec3(1.0,0.96,0.88)*4.0*strip(d,vec3(0.0,0.9,0.35),vec3(1.0,0.0,0.0),0.034,0.5);",
+    " col+=vec3(1.0)*4.5*strip(d,vec3(0.55,0.65,-0.5),vec3(0.0,1.0,0.0),0.028,0.6);",
+    " col+=vec3(0.55,0.7,1.0)*2.2*pow(max(dot(d,normalize(vec3(-0.55,-0.5,0.65))),0.0),40.0);",
+    " col+=vec3(1.0,0.82,0.55)*1.8*pow(max(dot(d,normalize(vec3(0.6,0.55,0.55))),0.0),40.0); return col; }",
+    "bool hitGem(vec3 ro,vec3 rd,out float tN,out float tF,out vec3 nN,out vec3 nF){ tN=-1e9; tF=1e9; nN=vec3(0.0); nF=vec3(0.0);",
+    " for(int i=0;i<NP;i++){ vec3 n=uPl[i].xyz; float d=uPl[i].w; float den=dot(n,rd); float num=d-dot(n,ro);",
+    "  if(abs(den)<1e-6){ if(num<0.0) return false; continue; } float t=num/den;",
+    "  if(den<0.0){ if(t>tN){tN=t;nN=n;} } else { if(t<tF){tF=t;nF=n;} } } return tF>tN && tF>0.0; }",
+    "float exitGem(vec3 ro,vec3 rd,out vec3 nF){ float tF=1e9; nF=vec3(0.0,1.0,0.0); for(int i=0;i<NP;i++){ vec3 n=uPl[i].xyz; float den=dot(n,rd); if(den>1e-6){ float t=(uPl[i].w-dot(n,ro))/den; if(t<tF){tF=t;nF=n;} } } return tF; }",
+    "vec3 traceGem(vec3 ro,vec3 rd,float ior,out bool hit){ float tN,tF; vec3 nN,nF; hit=hitGem(ro,rd,tN,tF,nN,nF); if(!hit||tN<0.0){hit=false; return vec3(0.0);}",
+    " float f0=pow((ior-1.0)/(ior+1.0),2.0); vec3 p=ro+rd*tN; vec3 n=nN; float F=schlick(dot(-rd,n),f0); vec3 col=F*env(reflect(rd,n));",
+    " vec3 d=refract(rd,n,1.0/ior); vec3 pos=p+d*1e-4; float w=1.0-F;",
+    " for(int b=0;b<5;b++){ vec3 nE; float tE=exitGem(pos,d,nE); vec3 q=pos+d*tE;",
+    "  vec3 rOut=refract(d,-nE,ior); float Fe=1.0; if(dot(rOut,rOut)>0.25){ Fe=schlick(dot(rOut,nE),f0); col+=w*(1.0-Fe)*env(rOut); }",
+    "  w*=Fe; d=reflect(d,nE); pos=q+d*1e-4; if(w<0.004) break; }",
+    " col+=w*env(reflect(rd,n))*0.6; return col; }",
+    "mat3 rotY(float a){ float c=cos(a),s=sin(a); return mat3(c,0.0,-s,0.0,1.0,0.0,s,0.0,c); }",
+    "mat3 rotX(float a){ float c=cos(a),s=sin(a); return mat3(1.0,0.0,0.0,0.0,c,s,0.0,-s,c); }",
+    "vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0); }",
+    "void main(){ vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y; mat3 cam=rotY(uRot)*rotX(uPitch);",
+    " vec3 ro=cam*vec3(0.0,0.0,uDist); vec3 rd=cam*normalize(vec3(uv,-1.7)); bool hit;",
+    " vec3 r=traceGem(ro,rd,2.407,hit); vec3 g=traceGem(ro,rd,2.426,hit); vec3 b=traceGem(ro,rd,2.451,hit); vec3 col=vec3(r.r,g.g,b.b);",
+    " float a=hit?1.0:0.0; col=aces(col*uExpo); col=pow(col,vec3(1.0/2.2)); gl_FragColor=vec4(col*a,a); }"
+  ].join("\n");
+  var VS_SPR = "attribute vec2 p; uniform vec2 uRes; uniform vec2 uPos; uniform vec2 uScale; uniform float uAng; varying vec2 vUv; varying vec2 vP; void main(){ vUv=p*0.5+0.5; vP=p; float c=cos(uAng),s=sin(uAng); vec2 q=vec2(p.x*c-p.y*s,p.x*s+p.y*c)*uScale+uPos; gl_Position=vec4(q/uRes*2.0-1.0,0.0,1.0); gl_Position.y=-gl_Position.y; }";
+  var FS_SPR = "precision mediump float; uniform sampler2D uTex; uniform float uMode; uniform vec3 uMetal; uniform float uFade; varying vec2 vUv; varying vec2 vP;"
+    + " void main(){"
+    + "  if(uMode>=1.0){ float r=length(vP); float ring=smoothstep(1.0,0.96,r)*smoothstep(uMode-1.0-0.03,uMode-1.0,r);"
+    + "   float ang=atan(vP.y,vP.x); float brush=0.04*sin(ang*160.0+r*40.0)*sin(r*230.0); float shade=0.42+0.38*cos(ang-2.3)+0.2*cos(ang+0.9)+brush; float spec=pow(max(0.0,cos(ang-2.3)),24.0)*0.9+pow(max(0.0,cos(ang+0.9)),40.0)*0.45; float edge=smoothstep(0.0,0.06,min(1.0-r,r-(uMode-1.0)));"
+    + "   vec3 c=uMetal*shade+spec; c*=0.75+0.25*edge; gl_FragColor=vec4(c*ring*uFade,ring*uFade); }"
+    + "  else if(uMode>-0.5){ vec4 t=texture2D(uTex,vec2(vUv.x,1.0-vUv.y)); vec3 c=t.rgb/max(t.a,1e-4); c=mix(c,c*c*(3.0-2.0*c),0.7); c=clamp(c*1.08,0.0,1.0); gl_FragColor=vec4(c*t.a,t.a)*uFade; }"
+    + "  else if(uMode>-2.5){ float m=max(abs(vP.x),abs(vP.y)); float e=smoothstep(1.0,0.94,m); float top=-vP.y*0.5+0.5; vec3 c=uMetal*(0.30+0.50*top)+vec3(1.0)*0.22*pow(top,5.0)+uMetal*0.06*sin(vP.x*14.0+vP.y*3.0); float bev=smoothstep(0.80,0.97,m); c=mix(c,uMetal*(0.55+0.55*top),bev); c*=1.0-0.35*smoothstep(0.97,1.0,m); gl_FragColor=vec4(c*e*uFade,e*uFade); }"
+    + "  else if(uMode>-3.5){ float ax=abs(vP.x), ay=abs(vP.y); float st=pow(max(0.0,1.0-ax),9.0)*pow(max(0.0,1.0-ay*5.0),2.0)+pow(max(0.0,1.0-ay),9.0)*pow(max(0.0,1.0-ax*5.0),2.0); float core=exp(-(ax*ax+ay*ay)*45.0); float a=clamp(st*0.8+core,0.0,1.0)*uFade; gl_FragColor=vec4(vec3(1.0,0.98,0.95)*a,a); }"
+    + "  else if(uMode>-4.5){ float r2=dot(vP,vP); float a=exp(-r2*2.4)*(1.0-smoothstep(0.6,1.0,sqrt(r2)))*uFade; gl_FragColor=vec4(0.0,0.0,0.0,a); }"
+    + "  else if(uMode>-5.5){ float m=max(abs(vP.x),abs(vP.y)); float e=smoothstep(1.0,0.90,m); float top=-vP.y*0.5+0.5; vec3 c=uMetal*(0.22+0.34*top)+uMetal*0.05*sin(vP.x*9.0); float wall=smoothstep(0.62,0.72,abs(vP.y)); c=mix(c*0.55,c*(0.9+0.5*top),wall); c+=vec3(1.0)*0.16*pow(top,6.0)*wall; c*=1.0-0.3*smoothstep(0.96,1.0,m); gl_FragColor=vec4(c*e*uFade,e*uFade); }"
+    + "  else { vec4 t=texture2D(uTex,vec2(vUv.x,vUv.y)); gl_FragColor=vec4(t.rgb*uFade,uFade); } }";
+  function sh(t, s) { var o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(o)); return o; }
+  function prog(v, f) { var p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, v)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, f)); gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p)); return p; }
+  var PG = prog(VS, FS_GEM), PS = prog(VS_SPR, FS_SPR);
+  var quad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  var UG = {}, US = {}; ["uRes","uDist","uRot","uPitch","uExpo","uEnv","uPl[0]"].forEach(function (n) { UG[n] = gl.getUniformLocation(PG, n); });
+  ["uRes","uPos","uScale","uAng","uTex","uMode","uMetal","uFade"].forEach(function (n) { US[n] = gl.getUniformLocation(PS, n); });
+  var aG = gl.getAttribLocation(PG, "p"), aS = gl.getAttribLocation(PS, "p");
+
+  /* ── the cuts: every stone is a convex solid of planes. The outline of each cut (long axis along x, half-length 1) gives the girdle; the crown and pavilion facets lean in from it. Brilliant cuts get sixteen crown and sixteen pavilion facets; step cuts get three rows of steps. ── */
+  function outline(cut) {
+    var pts = [], i, a, n = 96;
+    function superellipse(ex, ry) { for (i = 0; i < n; i++) { a = i / n * 2 * Math.PI; var c = Math.cos(a), s = Math.sin(a); pts.push([Math.sign(c) * Math.pow(Math.abs(c), 2 / ex), Math.sign(s) * Math.pow(Math.abs(s), 2 / ex) * ry]); } }
+    if (cut === "oval") { for (i = 0; i < n; i++) { a = i / n * 2 * Math.PI; pts.push([Math.cos(a), Math.sin(a) / 1.38]); } }
+    else if (cut === "cushion") superellipse(3.4, 1);
+    else if (cut === "princess") superellipse(14, 1);
+    else if (cut === "emerald") { var h = 1 / 1.45, c2 = 0.34 * h; pts = [[1, h - c2], [1 - c2, h], [-1 + c2, h], [-1, h - c2], [-1, -h + c2], [-1 + c2, -h], [1 - c2, -h], [1, -h + c2]]; }
+    else if (cut === "baguette") { var hb = 0.5, cb = 0.04; pts = [[1, hb - cb], [1 - cb, hb], [-1 + cb, hb], [-1, hb - cb], [-1, -hb + cb], [-1 + cb, -hb], [1 - cb, -hb], [1, -hb + cb]]; }
+    else if (cut === "marquise") { var R = 1.25, cy = 0.75; for (i = 0; i <= 48; i++) { var x = -Math.cos(i / 48 * Math.PI); pts.push([x, Math.sqrt(Math.max(0, R * R - x * x)) - cy]); } for (i = 1; i < 48; i++) { var x2 = Math.cos(i / 48 * Math.PI); pts.push([x2, -(Math.sqrt(Math.max(0, R * R - x2 * x2)) - cy)]); } }
+    else if (cut === "pear") { var r = 0.667, cx = -0.333; for (i = 0; i <= 64; i++) { a = Math.PI / 3 + (4 * Math.PI / 3) * i / 64; pts.push([cx + r * Math.cos(a), r * Math.sin(a)]); } pts.push([1, 0]); }
+    else { for (i = 0; i < n; i++) { a = i / n * 2 * Math.PI; pts.push([Math.cos(a), Math.sin(a)]); } }
+    return pts;
+  }
+  function support(pts, nx, nz) { var m = -1e9; for (var i = 0; i < pts.length; i++) { var v = pts[i][0] * nx + pts[i][1] * nz; if (v > m) m = v; } return m; }
+  var D2R = Math.PI / 180;
+  function planesFor(cut) {
+    var pts = outline(cut), P = [], hmin = Math.min(support(pts, 0, 1), support(pts, 1, 0)), g = 0.03 * hmin, k, az, a, h;
+    var step = cut === "emerald" || cut === "baguette";
+    if (!step) {
+      var ca = 34.5 * D2R, sa = 30 * D2R, pa = 40.8 * D2R, pb = 41.8 * D2R;
+      P.push([0, 1, 0, 0.43 * hmin * Math.tan(ca)]);
+      for (k = 0; k < 16; k++) { az = k * Math.PI / 8; a = k % 2 === 0 ? ca : sa; h = support(pts, Math.cos(az), Math.sin(az)); P.push([Math.sin(a) * Math.cos(az), Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * h]); }
+      for (k = 0; k < 16; k++) { az = k * Math.PI / 8 + Math.PI / 16; h = support(pts, Math.cos(az), Math.sin(az)); P.push([Math.cos(az), 0, Math.sin(az), h]); }
+      for (k = 0; k < 16; k++) { az = k * Math.PI / 8 + Math.PI / 16; a = k % 2 === 0 ? pa : pb; h = support(pts, Math.cos(az), Math.sin(az)); P.push([Math.sin(a) * Math.cos(az), -Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * h + Math.cos(a) * g]); }
+      P.push([0, -1, 0, hmin * Math.tan(pa) * 0.985 + g]);
+    } else {
+      var K = cut === "emerald" ? 8 : 4, crown = [[47, 0, 0], [37, 0.16, 0.14], [27, 0.30, 0.24]], pav = [[50, 0, 0], [43, 0.20, 0.22], [37, 0.40, 0.42]], j;
+      P.push([0, 1, 0, 0.31 * hmin]);
+      for (k = 0; k < K; k++) {
+        az = k * 2 * Math.PI / K; h = support(pts, Math.cos(az), Math.sin(az));
+        for (j = 0; j < 3; j++) { a = crown[j][0] * D2R; P.push([Math.sin(a) * Math.cos(az), Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * (h - crown[j][1] * hmin) + Math.cos(a) * crown[j][2] * hmin]); }
+        P.push([Math.cos(az), 0, Math.sin(az), h]);
+        for (j = 0; j < 3; j++) { a = pav[j][0] * D2R; P.push([Math.sin(a) * Math.cos(az), -Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * (h - pav[j][1] * hmin) + Math.cos(a) * (g + pav[j][2] * hmin)]); }
+      }
+      P.push([0, -1, 0, g + 0.62 * hmin]);
+    }
+    while (P.length < NP) P.push([0, 1, 0, 1e3]);
+    var flat = new Float32Array(NP * 4); P.forEach(function (p, i) { flat.set(p, i * 4); }); return flat;
+  }
+  var curCut = "", planeCache = {};
+  function useCut(cut) { if (cut === curCut) return false; curCut = cut; if (!planeCache[cut]) planeCache[cut] = planesFor(cut); gl.useProgram(PG); gl.uniform4fv(UG["uPl[0]"], planeCache[cut]); window.__gemShader = { VS: VS, FS: FS_GEM, planes: planeCache[cut] }; return true; }
+  useCut("round");
+
+  var TEX = mobile ? 256 : 512, fbo = gl.createFramebuffer(), tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, TEX, TEX, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  var W = 2, H = 2, DPR = 1, cssW = 1, cssH = 1;
+  function resize() { var r = wrap.getBoundingClientRect(); cssW = Math.max(1, r.width); cssH = Math.max(1, r.height); DPR = Math.min(devicePixelRatio || 1, 2); W = Math.max(2, Math.round(cssW * DPR)); H = Math.max(2, Math.round(cssH * DPR)); if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; } }
+  addEventListener("resize", resize); resize();
+  var METAL = { white:[0.91,0.91,0.93], yellow:[0.91,0.78,0.42], rose:[0.9,0.7,0.6], platinum:[0.87,0.88,0.9] };
+  function renderStoneTex(rot, pitch, envA) {
+    gl.useProgram(PG); gl.bindFramebuffer(gl.FRAMEBUFFER, fbo); gl.viewport(0,0,TEX,TEX); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(aG); gl.vertexAttribPointer(aG,2,gl.FLOAT,false,0,0);
+    gl.uniform2f(UG.uRes, TEX, TEX); gl.uniform1f(UG.uDist, 3.3); gl.uniform1f(UG.uRot, rot); gl.uniform1f(UG.uPitch, pitch); gl.uniform1f(UG.uExpo, 1.75); gl.uniform1f(UG.uEnv, envA || 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.bindTexture(gl.TEXTURE_2D, tex); gl.generateMipmap(gl.TEXTURE_2D);
+  }
+  function beginSprites() {
+    gl.useProgram(PS); gl.viewport(0,0,W,H); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(aS); gl.vertexAttribPointer(aS,2,gl.FLOAT,false,0,0);
+    gl.uniform2f(US.uRes, W, H); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(US.uTex, 0);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  }
+  function draw(mode, x, y, sx, sy, ang, fade, metal) { gl.uniform1f(US.uMode, mode); gl.uniform2f(US.uPos, x, y); gl.uniform2f(US.uScale, sx, sy); gl.uniform1f(US.uAng, ang || 0); gl.uniform1f(US.uFade, fade); if (metal) gl.uniform3f(US.uMetal, metal[0], metal[1], metal[2]); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); }
+  function sprite(x, y, sx, sy, ang, fade) { draw(0, x, y, sx, sy, ang, fade); }
+  function glint(x, y, r, fade, ang) { draw(-3, x, y, r, r, ang, fade); }
+  function shadow(x, y, rx, ry, fade, ang) { draw(-4, x, y, rx, ry, ang, fade); }
+  function rect(x, y, w, h, ang, metal, fade) { draw(-2, x, y, w, h, ang, fade, metal); }
+  function channel(x, y, w, h, ang, metal, fade) { draw(-5, x, y, w, h, ang, fade, metal); }
+  function band(x, y, rx, ry, thick, metal, fade, ang) { draw(1 + thick, x, y, rx, ry, ang, fade, metal); }
+  function exportSprite() { try { var px = new Uint8Array(TEX * TEX * 4); gl.bindFramebuffer(gl.FRAMEBUFFER, fbo); gl.readPixels(0, 0, TEX, TEX, gl.RGBA, gl.UNSIGNED_BYTE, px); gl.bindFramebuffer(gl.FRAMEBUFFER, null); var c = document.createElement("canvas"); c.width = TEX; c.height = TEX; var cx = c.getContext("2d"), id = cx.createImageData(TEX, TEX), d = id.data; for (var y = 0; y < TEX; y++) { var src = (TEX - 1 - y) * TEX * 4, dst = y * TEX * 4; for (var x = 0; x < TEX * 4; x += 4) { var a = px[src + x + 3]; if (a > 0) { var k = 255 / a; d[dst + x] = Math.min(255, px[src + x] * k); d[dst + x + 1] = Math.min(255, px[src + x + 1] * k); d[dst + x + 2] = Math.min(255, px[src + x + 2] * k); } d[dst + x + 3] = a; } } cx.putImageData(id, 0, 0); window.__stoneSprite = c; window.__stoneSpriteCut = curCut; try { window.dispatchEvent(new Event("silavu:sprite")); } catch (e2) {} } catch (e) {} }
+
+  /* ── one stone of the line, set: a prong seat or a channel, then the stone, then its sparkle ── */
+  function setStone(p, sxRaw, syRaw, ang, metal, spec, t, i, alpha, fore, wob) {
+    var across = spec.orient === "across", orientOff = across ? Math.PI / 2 : 0, L = Math.max(sxRaw, syRaw) * 2, s = L / 2.1, sx = sxRaw * fore, sy = syRaw;
+    if (spec.set === "channel") { channel(p.x, p.y, sx * 1.02 + (spec.gapPx || 0) * 0.5 * fore, sy * 1.36, ang, metal, 0.96 * alpha); }
+    else {
+      band(p.x, p.y + sy * 0.05, sx * 1.22, sy * 1.14, 0.86, metal, 0.9 * alpha, ang);
+      var c = Math.cos(ang), sn = Math.sin(ang), pr = Math.max(0.6, L * 0.085);
+      for (var q = 0; q < 4; q++) { var lx = (q < 2 ? 1 : -1) * sx * 0.86, ly = (q % 2 ? 1 : -1) * sy * 0.80; band(p.x + lx * c - ly * sn, p.y + lx * sn + ly * c, pr, pr, 0.0, metal, alpha, 0); }
+    }
+    /* the texture holds the stone's own proportions; foreshortening squeezes it along the line */
+    if (across) sprite(p.x, p.y, s * (wob || 1), s * fore, ang + orientOff, alpha); else sprite(p.x, p.y, s * fore, s * (wob || 1), ang + orientOff, alpha);
+    var tw = Math.pow(Math.max(0, Math.sin(t * 1.9 + i * 2.39)), 28);
+    if (tw > 0.02) glint(p.x + sx * 0.25, p.y - sy * 0.2, L * 1.1, tw * 0.9 * alpha, 0.2);
+  }
+
+  /* ── the wrist: a photograph, and the line wrapped around it in three dimensions ── */
+  var view = "line", photo = { key: "", img: null, tex: null, w: 0, h: 0, geo: null }, phase = 0, spin = 0, dragging = false, dragId = null, lastX = 0, lastY = 0, lastT = 0, ptr = { x: 0.5, y: 0.5, on: false };
+  var GEO = { h: { src: "/img/wrist-1300.jpg", cx: 0.52, cy: 0.46, r: 0.20, rOf: "h", u: [0, 1], v: [1, 0], k: 0.24, light: [0.35, 0.2] }, v: { src: "/img/wristv-900.jpg", cx: 0.51, cy: 0.60, r: 0.227, rOf: "w", u: [1, 0.04], v: [0.04, -1], k: 0.24, light: [0.3, 0.2] } };
+  function loadPhoto() {
+    var key = cssW < 700 ? "v" : "h"; if (photo.key === key) return; photo.key = key; photo.img = null;
+    var im = new Image(); im.decoding = "async"; im.onload = function () { if (photo.key !== key) return; photo.img = im; photo.w = im.naturalWidth; photo.h = im.naturalHeight; photo.geo = GEO[key]; if (!photo.tex) photo.tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, photo.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); } catch (err) { photo.img = null; gl.bindTexture(gl.TEXTURE_2D, tex); return; } gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.bindTexture(gl.TEXTURE_2D, tex); wrap.classList.add("ready"); };
+    im.src = (window.__imgBase || "") + GEO[key].src;
+  }
+  function setView(v) { view = v; wrap.classList.toggle("wrist", v === "wrist"); wrap.querySelectorAll(".vtb").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-view") === v); b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false"); }); if (v === "wrist") { resize(); loadPhoto(); } }
+  window.__stripView = setView;
+  wrap.addEventListener("click", function (e) { var b = e.target.closest(".vtb"); if (b) setView(b.getAttribute("data-view")); });
+  wrap.addEventListener("pointerdown", function (e) { if (view !== "wrist" || e.target.closest(".vtb")) return; dragging = true; dragId = e.pointerId; lastX = e.clientX; lastY = e.clientY; lastT = performance.now(); spin = 0; try { wrap.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); });
+  wrap.addEventListener("pointermove", function (e) { var r = wrap.getBoundingClientRect(); ptr.x = (e.clientX - r.left) / Math.max(1, r.width); ptr.y = (e.clientY - r.top) / Math.max(1, r.height); ptr.on = true; if (!dragging || e.pointerId !== dragId || !photo.geo) return; var g = photo.geo, un = norm(g.u), d = ((e.clientX - lastX) * un[0] + (e.clientY - lastY) * un[1]) * DPR, rb = ringRadius(); if (rb > 0) { var dph = d / rb; phase += dph; var now = performance.now(), dt = Math.max(8, now - lastT); spin = dph / dt * 16; lastT = now; } lastX = e.clientX; lastY = e.clientY; });
+  function endDrag(e) { if (e.pointerId !== dragId) return; dragging = false; dragId = null; }
+  wrap.addEventListener("pointerup", endDrag); wrap.addEventListener("pointercancel", endDrag); wrap.addEventListener("pointerleave", function () { ptr.on = false; });
+  function norm(a) { var l = Math.hypot(a[0], a[1]) || 1; return [a[0] / l, a[1] / l]; }
+  var cover = { sc: 1, pw: 0, ph: 0, ox: 0, oy: 0 };
+  function fitPhoto() { cover.sc = Math.max(W / photo.w, H / photo.h); cover.pw = photo.w * cover.sc; cover.ph = photo.h * cover.sc; cover.ox = (W - cover.pw) / 2; cover.oy = (H - cover.ph) / 2; }
+  function ringRadius() { if (!photo.geo) return 0; fitPhoto(); var b = window.__build || { wrist: 17 }; return photo.geo.r * (photo.geo.rOf === "h" ? cover.ph : cover.pw) * (b.wrist + 1) / b.wrist; }
+
+  var t0 = performance.now(), lost = false, fc = 0, texOnce = false, envA = 0, lastSpec = null;
+  window.__renderStone = function (cut) { var was = curCut; useCut(cut || "round"); renderStoneTex(cut === "round" ? 0.4 : 0, -0.52, 0); exportSprite(); if (was && was !== curCut) { useCut(was); texOnce = false; } };
+  canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); lost = true; wrap.style.opacity = "0"; });
+  function frame() {
+    requestAnimationFrame(frame); if (lost) return;
+    var r = wrap.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    if (Math.abs(r.width - cssW) > 0.5 || Math.abs(r.height - cssH) > 0.5) resize();
+    var t = (performance.now() - t0) / 1000, b = window.__build, metal = METAL[window.__preview || b.metal] || METAL.white;
+    var spec = window.__lineSpec || { cut: "round", n: 36, alongMm: 3.6, acrossMm: 3.6, pitchMm: 4.0, orient: "along", set: "prong", L: 3.6, W: 3.6 };
+    var cutChanged = useCut(spec.cut || "round"); if (cutChanged) texOnce = false;
+    var elong = spec.cut !== "round";
+    /* the light: the pointer sweeps it across the stones on the wrist; otherwise it drifts */
+    var envTarget = view === "wrist" && ptr.on ? (ptr.x - 0.5) * 2.2 : 0.35 * Math.sin(t * 0.45); envA += (envTarget - envA) * 0.08;
+    var rot = elong ? 0.09 * Math.sin(t * 0.6) : (reduce ? 0.4 : t * 0.25), pitch = -0.52 + (elong ? 0.05 * Math.sin(t * 0.5) : 0);
+    if (!texOnce || (!reduce && (fc++ % (mobile ? 4 : 2)) === 0)) { renderStoneTex(rot, pitch, envA); if (!texOnce) { renderStoneTex(elong ? 0 : 0.4, -0.52, 0); exportSprite(); if (!reduce) renderStoneTex(rot, pitch, envA); } texOnce = true; }
+    gl.viewport(0,0,W,H); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
+    beginSprites();
+    if (view === "wrist") { loadPhoto(); drawWrist(t, b, metal, spec); return; }
+    /* a window onto the bracelet: a fixed length of chain in view, so the stones grow with the carat while the links keep their pitch, as on the real piece */
+    var pxMm = (W * 0.84) / ((mobile ? 6.5 : 15) * 5.0), pitch2 = spec.pitchMm * pxMm, sx = spec.alongMm * pxMm / 2, sy = spec.acrossMm * pxMm / 2, n = Math.max(3, Math.min(41, Math.floor(W * 0.86 / pitch2))); if (n % 2 === 0) n -= 1;
+    spec.gapPx = (spec.pitchMm - spec.alongMm) * pxMm;
+    var Rr = W * 1.35, yc = H * 0.42, half = (n - 1) / 2, thMax = Math.max(1e-4, half * pitch2 / Rr), link = (pitch2 - 0.3 * pxMm) * 0.5;
+    window.__strip = { pxPerMm: pxMm * (wrap.clientWidth / W) };
+    var P = [], i, p;
+    for (i = 0; i < n; i++) { var s = (i - half) * pitch2, th = s / Rr; P.push({ x: W / 2 + Rr * Math.sin(th), y: yc + Rr * (1 - Math.cos(th)) * 0.9, k: 1 - 0.08 * Math.abs(th) / thMax, ang: Math.atan2(0.9 * Math.sin(th), Math.cos(th)), th: th }); }
+    for (i = 0; i < n; i++) { p = P[i]; shadow(p.x, p.y + sy * 1.4 * p.k, link * 1.6 * p.k, sy * 0.9 * p.k, 0.6); }
+    if (spec.set !== "channel") for (i = 0; i < n; i++) { p = P[i]; rect(p.x, p.y, link * p.k, Math.min(link, sy * 0.9) * p.k, p.ang, metal, 0.96); }
+    for (i = 0; i < n; i++) { p = P[i]; shadow(p.x, p.y + sy * 0.06, sx * 1.7 * p.k, sy * 1.6 * p.k, 0.85, p.ang); }
+    for (i = 0; i < n; i++) { p = P[i]; setStone(p, sx * p.k, sy * p.k, p.ang, metal, spec, t, i, 1, 1, 0.94 + 0.06 * Math.cos(p.th * 2)); }
+    for (i = 0; i < n; i++) { p = P[i]; var sr = Math.max(sx, sy) * p.k / 1.05; sprite(p.x, p.y + sy * 2.6 * p.k, sr * 0.95, -sr * 0.5, p.ang + (spec.orient === "across" ? Math.PI / 2 : 0), 0.08); }
+    gl.disable(gl.BLEND);
+  }
+  function drawWrist(t, b, metal, spec) {
+    if (!photo.img || !photo.geo) { gl.disable(gl.BLEND); return; }
+    fitPhoto(); var g = photo.geo;
+    gl.bindTexture(gl.TEXTURE_2D, photo.tex); draw(-6, cover.ox + cover.pw / 2, cover.oy + cover.ph / 2, cover.pw / 2, cover.ph / 2, 0, 1); gl.bindTexture(gl.TEXTURE_2D, tex);
+    var C = [cover.ox + g.cx * cover.pw, cover.oy + g.cy * cover.ph], rb = ringRadius(), u = norm(g.u), v = norm(g.v), uAng = Math.atan2(u[1], u[0]);
+    var pxMm = rb * 2 * Math.PI / ((b.wrist + 1) * 10), pitch = spec.pitchMm * pxMm, sx = spec.alongMm * pxMm / 2, sy = spec.acrossMm * pxMm / 2, dth = pitch / rb, n = spec.n;
+    spec.gapPx = (spec.pitchMm - spec.alongMm) * pxMm;
+    if (!dragging) { phase += spin; spin *= 0.94; }
+    var stones = [], i;
+    for (i = 0; i < n; i++) { var th = phase + i * dth, s = Math.sin(th), c = Math.cos(th); if (s < -0.06) continue; var fore = Math.max(0.12, Math.abs(s)), alpha = Math.min(1, (s + 0.06) / 0.22), x = C[0] + u[0] * rb * c + v[0] * rb * s * g.k, y = C[1] + u[1] * rb * c + v[1] * rb * s * g.k; stones.push({ x: x, y: y, s: s, fore: fore, alpha: alpha, i: i, k: 0.92 + 0.08 * s }); }
+    stones.sort(function (a, b2) { return a.s - b2.s; });
+    /* the clasp: a plain box of the metal closes the ring where the stones end */
+    var gapA = 2 * Math.PI - n * dth, thc = phase + n * dth + gapA / 2 - dth / 2, sc = Math.sin(thc), cc = Math.cos(thc);
+    if (sc > -0.06) { var cxp = C[0] + u[0] * rb * cc + v[0] * rb * sc * g.k, cyp = C[1] + u[1] * rb * cc + v[1] * rb * sc * g.k, cl = Math.min(12 * pxMm, gapA * rb) * 0.5 * Math.max(0.12, Math.abs(sc)), ca = Math.min(1, (sc + 0.06) / 0.22); shadow(cxp + 2, cyp + 3, cl * 1.2, sy * 1.3, 0.35 * ca, uAng); rect(cxp, cyp, cl, sy * 0.95, uAng, metal, 0.96 * ca); }
+    var lx = g.light[0] * pxMm * 2.2, ly = g.light[1] * pxMm * 2.2, j, p;
+    for (j = 0; j < stones.length; j++) { p = stones[j]; shadow(p.x + lx * (0.6 + p.s), p.y + ly * (0.6 + p.s), sx * 1.5 * p.fore, sy * 1.7, 0.42 * p.alpha * (0.5 + 0.5 * p.s), uAng); }
+    for (j = 0; j < stones.length; j++) { p = stones[j]; shadow(p.x + lx * 0.3, p.y + ly * 0.3, sx * 1.3 * p.fore, sy * 1.2, 0.35 * p.alpha, uAng); }
+    for (j = 0; j < stones.length; j++) { p = stones[j]; var q = { x: p.x, y: p.y }, fsx = sx * p.fore * p.k, fsy = sy * p.k; if (spec.set !== "channel") { var linkW = Math.max(fsx * 0.9, pitch * 0.5 * p.fore); rect(q.x, q.y, linkW, Math.min(linkW, fsy * 0.9), uAng, metal, 0.96 * p.alpha); } setStone(q, sx * p.k, sy * p.k, uAng, metal, spec, t, p.i, p.alpha, p.fore, 1); var lightA = ptr.on ? (ptr.x - 0.5) * Math.PI : 0.6 * Math.sin(t * 0.45), sp = Math.pow(Math.max(0, Math.cos(phase + p.i * dth - Math.PI / 2 - lightA * 0.7)), 14) * p.alpha; if (sp > 0.05) glint(q.x + fsx * 0.2, q.y - fsy * 0.25, Math.max(fsx, fsy) * 2.4, sp * 0.8, 0.5); }
+    gl.disable(gl.BLEND);
+  }
+  frame();
+})();
+</script>

@@ -1,0 +1,76 @@
+<script>
+/* The finishing layer: words that rise out of a mask, photographs that unveil, stars that live on the stones, sparks under the cursor, buttons that lean toward the hand. */
+(function () {
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover:hover) and (pointer:fine)").matches;
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ── split headings into words; each word rises out of its own mask ── */
+  function splitNode(node, state) {
+    var kids = Array.prototype.slice.call(node.childNodes);
+    kids.forEach(function (n) {
+      if (n.nodeType === 3) {
+        var parts = n.textContent.split(/(\s+)/), frag = document.createDocumentFragment();
+        parts.forEach(function (p) {
+          if (!p) return;
+          if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+          var w = document.createElement("span"); w.className = "w"; var s = document.createElement("span"); s.textContent = p; s.style.transitionDelay = (state.i++ * 0.055).toFixed(3) + "s"; w.appendChild(s); frag.appendChild(w);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) { if (n.tagName === "EM") n.classList.add("sd"); splitNode(n, state); }
+    });
+  }
+  function split() {
+    document.querySelectorAll(".sp").forEach(function (el) { if (el.querySelector(".w")) return; splitNode(el, { i: 0 }); });
+  }
+  split();
+
+  /* ── light follows the pointer across the photographs; the photograph leans a few pixels the other way ── */
+  if (fine && !reduce) {
+    var litFig = null;
+    document.addEventListener("pointermove", function (e) {
+      var f = e.target && e.target.closest ? e.target.closest(".fig") : null;
+      if (litFig && litFig !== f) { litFig.style.removeProperty("--ppx"); litFig.style.removeProperty("--ppy"); }
+      litFig = f; if (!f) return;
+      var r = f.getBoundingClientRect(), x = (e.clientX - r.left) / Math.max(1, r.width), y = (e.clientY - r.top) / Math.max(1, r.height);
+      f.style.setProperty("--lx", (x * 100).toFixed(1) + "%"); f.style.setProperty("--ly", (y * 100).toFixed(1) + "%");
+      f.style.setProperty("--ppx", ((0.5 - x) * 10).toFixed(1) + "px"); f.style.setProperty("--ppy", ((0.5 - y) * 8).toFixed(1) + "px");
+    }, { passive: true });
+  }
+
+  /* ── the wrist chapter: the photograph opens out of a small frame as you scroll ── */
+  var wpin = $("wpin"), wframe = $("wframe"), wimg = $("wimg"), wtxt = $("wtxt"), wveil = wframe && wframe.querySelector(".veil"), lastW = -1, mob = matchMedia("(max-width:999px)").matches;
+  function wristTick() {
+    if (!wpin || reduce) return; var r = wpin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    var pt = Math.max(0, Math.min(1, -r.top / (r.height - innerHeight))), p = lastW < 0 ? pt : lastW + (pt - lastW) * 0.2; if (Math.abs(pt - p) < 0.0008) p = pt; if (p === lastW) return; lastW = p;
+    var e = p < 0.6 ? (function (t) { return 1 - Math.pow(1 - t, 3); })(p / 0.6) : 1;
+    var ix = (mob ? 12 : 22) * (1 - e), iy = (mob ? 34 : 30) * (1 - e), rd = 14 * (1 - e);
+    wframe.style.clipPath = "inset(" + iy.toFixed(2) + "% " + ix.toFixed(2) + "% " + iy.toFixed(2) + "% " + ix.toFixed(2) + "% round " + rd.toFixed(1) + "px)";
+    wimg.style.transform = "scale(" + (1.18 - 0.14 * e + p * 0.04).toFixed(4) + ") translateY(" + ((p - 0.5) * -3).toFixed(2) + "%)";
+    var t = Math.max(0, Math.min(1, (p - 0.55) / 0.3)); wtxt.style.opacity = t.toFixed(3); wtxt.style.transform = "translateY(" + ((1 - t) * 30).toFixed(1) + "px)"; wveil.style.opacity = Math.max(0, Math.min(1, (p - 0.4) / 0.3)).toFixed(3);
+  }
+  (function loop() { requestAnimationFrame(loop); if (!document.hidden) wristTick(); })();
+
+  /* ── buttons lean toward the hand ── */
+  if (fine && !reduce) document.querySelectorAll(".btn").forEach(function (b) {
+    b.addEventListener("pointermove", function (e) { var r = b.getBoundingClientRect(), x = (e.clientX - r.left - r.width / 2) / r.width, y = (e.clientY - r.top - r.height / 2) / r.height; b.style.transform = "translate(" + (x * 10).toFixed(1) + "px," + (y * 8).toFixed(1) + "px)"; });
+    b.addEventListener("pointerleave", function () { b.style.transform = ""; });
+  });
+
+  /* ── the header settles once you leave the film; the hero caption drifts up and away ── */
+  var header = $("header"), hcap = $("hcap"), hfacts = document.querySelector(".hfacts"), lastY = -1, heroMedia = Array.prototype.slice.call(document.querySelectorAll("#hero .hv"));
+  function onScroll() {
+    var y = scrollY; if (y === lastY) return; lastY = y;
+    header.classList.toggle("scrolled", y > 40);
+    if (!reduce && y < innerHeight) { var f = Math.min(1, y / (innerHeight * 0.7)); hcap.style.transform = "translateY(" + (y * 0.28).toFixed(1) + "px)"; hcap.style.opacity = (1 - f * f).toFixed(3); if (hfacts) hfacts.style.opacity = (1 - f * 1.4).toFixed(3); var sc = "scale(" + (1 + f * 0.12).toFixed(3) + ")"; heroMedia.forEach(function (m) { m.style.transform = sc; }); }
+  }
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  /* ── second try-on button, inside the configurator ── */
+  var t2 = $("tryonBtn2"); if (t2) t2.addEventListener("click", function () { if (window.__tryon) window.__tryon.open(); });
+
+  /* ── a photograph that fails to arrive is asked for again, quietly ── */
+  document.addEventListener("error", function (e) { var im = e.target; if (!im || im.tagName !== "IMG" || !im.currentSrc) return; var n = +(im.getAttribute("data-retry") || 0); if (n >= 2) return; im.setAttribute("data-retry", n + 1); var src = im.currentSrc; setTimeout(function () { var u = src.split("?")[0] + "?r=" + (n + 1); if (im.srcset) { im.srcset = im.srcset.split(",").map(function (c) { var t = c.trim().split(/\s+/); return t[0].split("?")[0] + "?r=" + (n + 1) + (t[1] ? " " + t[1] : ""); }).join(", "); } im.src = u; }, 1500 * (n + 1)); }, true);
+  window.__fx = { relang: function () { split(); } };
+})();
+</script>

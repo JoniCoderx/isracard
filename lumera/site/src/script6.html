@@ -1,0 +1,51 @@
+<script>
+/* The presentation tray: on phones the pieces move under your finger like jewellery across a tray. Momentum, a soft settle, no overshoot, no dots. And the currency. */
+(function () {
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function Tray(el) {
+    var track = el.querySelector(".pieces, .cards"), items = Array.prototype.slice.call(track.children), n = items.length, idx = 0, x = 0, tx = 0, gap = 14, w = 0, step = 0, c = 0, dir = 1, drag = null, vx = 0, lastT = 0, lastX = 0, raf = 0, active = false;
+    function pos(i) { return dir * (c - i * step); }
+    function at(v) { return (c - dir * v) / step; }
+    var count = document.createElement("div"); count.className = "k tcount"; count.innerHTML = '<span class="tc"></span><span class="tcue" data-en="Swipe →" data-he="← החליקו">Swipe →</span>'; el.after(count);
+    var tc = count.querySelector(".tc"), tcue = count.querySelector(".tcue");
+    function measure() { active = matchMedia("(max-width:999px)").matches; if (!active) { track.style.transform = ""; return; } w = items[0].getBoundingClientRect().width; step = w + gap; dir = document.documentElement.getAttribute("dir") === "rtl" ? -1 : 1; var pad = parseFloat(getComputedStyle(el).paddingLeft) || 0; c = el.clientWidth / 2 - w / 2 - pad; }
+    function clamp(v) { var a = pos(0), b = pos(n - 1), max = Math.max(a, b), min = Math.min(a, b); if (v > max) return max + (v - max) * 0.25; if (v < min) return min + (v - min) * 0.25; return v; }
+    function render() { track.style.transform = "translate3d(" + x.toFixed(2) + "px,0,0)"; }
+    function settle() { cancelAnimationFrame(raf); (function step2() { var d = tx - x; if (Math.abs(d) < 0.3) { x = tx; render(); return; } x += d * (reduce ? 1 : 0.16); render(); raf = requestAnimationFrame(step2); })(); }
+    function go(i) { idx = Math.max(0, Math.min(n - 1, i)); tx = pos(idx); tc.textContent = (idx + 1) + " / " + n; tcue.style.opacity = idx === n - 1 ? "0" : "1"; settle(); }
+    function down(e) { if (!active || e.pointerType === "mouse" && e.button !== 0) return; drag = { x0: e.clientX, y0: e.clientY, sx: x, lock: 0 }; vx = 0; lastX = e.clientX; lastT = performance.now(); cancelAnimationFrame(raf); }
+    function move(e) {
+      if (!drag) return; var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+      if (!drag.lock) { if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return; drag.lock = Math.abs(dx) > Math.abs(dy) ? 1 : 2; if (drag.lock === 1) { el.classList.add("dragging"); try { track.setPointerCapture(e.pointerId); } catch (err) {} } }
+      if (drag.lock !== 1) return;
+      var t = performance.now(); vx = (e.clientX - lastX) / Math.max(1, t - lastT); lastX = e.clientX; lastT = t;
+      x = clamp(drag.sx + dx); render();
+    }
+    function up() {
+      if (!drag) return; var was = drag; drag = null; el.classList.remove("dragging"); if (was.lock !== 1) return;
+      var fling = vx * 220, target = at(x + fling), i = Math.round(target);
+      if (Math.abs(vx) > 0.35) i = Math.round(at(x) + (dir * vx < 0 ? 0.5 : -0.5) * Math.min(1, Math.abs(vx)));
+      go(i);
+    }
+    track.addEventListener("pointerdown", down); addEventListener("pointermove", move, { passive: true }); addEventListener("pointerup", up); addEventListener("pointercancel", up);
+    track.addEventListener("click", function (e) { if (Math.abs(x - tx) > 4) e.preventDefault(); }, true);
+    addEventListener("resize", function () { measure(); go(idx); }); measure(); go(0);
+    return { go: go, get index() { return idx; }, get n() { return n; } };
+  }
+  var trays = Array.prototype.slice.call(document.querySelectorAll("[data-tray]")).map(Tray);
+  window.__tray = trays;
+
+  /* ── currency: prices are set in AED and shown in the currency you choose ── */
+  var RATES = { AED: 1, USD: 0.2723, EUR: 0.2510, ILS: 1.005 }, SYM = { AED: "AED ", USD: "US$ ", EUR: "€ ", ILS: "₪ " }, cur = "AED";
+  try { cur = localStorage.getItem("silavu-cur") || "AED"; if (!RATES[cur]) cur = "AED"; } catch (e) {}
+  function fmt(aed) { var v = aed * RATES[cur], r = cur === "AED" ? 500 : 100; v = Math.round(v / r) * r; return (cur === "AED" ? "" : "≈ ") + SYM[cur] + v.toLocaleString("en-US"); }
+  function money() {
+    document.querySelectorAll("[data-aed]").forEach(function (el) { var a = +el.getAttribute("data-aed"); if (a > 0) el.textContent = fmt(a); });
+    document.querySelectorAll("[data-cur] .chip").forEach(function (c) { c.classList.toggle("on", c.getAttribute("data-c") === cur); });
+  }
+  document.addEventListener("click", function (e) { var c = e.target.closest("[data-cur] .chip"); if (!c) return; cur = c.getAttribute("data-c"); try { localStorage.setItem("silavu-cur", cur); } catch (err) {} money(); });
+  money();
+  window.__money = { get cur() { return cur; }, set: function (c) { cur = c; money(); }, refresh: money, fmt: fmt };
+})();
+</script>

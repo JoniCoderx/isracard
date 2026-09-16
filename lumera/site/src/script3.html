@@ -1,0 +1,169 @@
+<script>
+/* Two things you can hold: a Line with real weight that you can drag and throw, and a Line drawn onto your own photograph. Nothing leaves the device. */
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); }, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var METAL = { white: "#e9e9ee", yellow: "#e2c26a", rose: "#e0ab90", platinum: "#dfe1e6" };
+  function metalOf() { var b = window.__silavu && window.__silavu.build(); return METAL[(b && b.metal) || "white"]; }
+  /* a set stone, drawn in 2D: a box link in the metal, a seat, four prongs, and the same ray-traced stone the builder uses */
+  function shade(hex, f) { var n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; return "rgb(" + Math.round(Math.min(255, r * f)) + "," + Math.round(Math.min(255, g * f)) + "," + Math.round(Math.min(255, b * f)) + ")"; }
+  var DEF = { cut: "round", n: 36, alongMm: 3.6, acrossMm: 3.6, pitchMm: 4.0, orient: "along", set: "prong", ratio: 1 };
+  function specNow() { return window.__lineSpec || DEF; }
+  function rrect(ctx, x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+  /* the metal around each stone is drawn once per size and metal, then stamped: a box link with a seat, or a channel; and the four prongs above the stone */
+  var seatCache = {};
+  function seatSprite(metal, aw, ah, set, kind) {
+    var key = metal + "|" + Math.round(aw * 4) + "|" + Math.round(ah * 4) + "|" + set + "|" + kind, c = seatCache[key]; if (c) return c;
+    var pad = Math.max(aw, ah) * 0.7, w = Math.ceil(aw * 2 + pad * 2), h = Math.ceil(ah * 2 + pad * 2);
+    c = document.createElement("canvas"); c.width = w * 2; c.height = h * 2; c._w = w; c._h = h;
+    var x = c.getContext("2d"); x.scale(2, 2); x.translate(w / 2, h / 2);
+    if (kind === "seat") {
+      if (set === "channel") {
+        var lg = x.createLinearGradient(0, -ah * 1.4, 0, ah * 1.4); lg.addColorStop(0, shade(metal, 1.05)); lg.addColorStop(0.5, shade(metal, 0.72)); lg.addColorStop(1, shade(metal, 0.45));
+        x.fillStyle = "rgba(0,0,0,.45)"; rrect(x, -aw * 1.12, -ah * 1.2, aw * 2.24, ah * 2.75, ah * 0.2); x.fill();
+        x.fillStyle = lg; rrect(x, -aw * 1.18, -ah * 1.36, aw * 2.36, ah * 2.72, ah * 0.18); x.fill();
+        x.strokeStyle = "rgba(255,255,255,.22)"; x.lineWidth = Math.max(0.6, ah * 0.06); rrect(x, -aw * 1.18 + 0.5, -ah * 1.36 + 0.5, aw * 2.36 - 1, ah * 2.72 - 1, ah * 0.16); x.stroke();
+        x.fillStyle = "#05060a"; rrect(x, -aw * 1.0, -ah * 0.98, aw * 2.0, ah * 1.96, ah * 0.1); x.fill();
+      } else {
+        var L = Math.max(aw, ah) * 1.32, lw = Math.max(aw * 1.32, ah * 1.0), lh = ah * 1.32, r = Math.min(aw, ah);
+        var lg2 = x.createLinearGradient(0, -lh, 0, lh); lg2.addColorStop(0, shade(metal, 1.06)); lg2.addColorStop(0.5, shade(metal, 0.82)); lg2.addColorStop(1, shade(metal, 0.5));
+        x.fillStyle = "rgba(0,0,0,.45)"; rrect(x, -lw * 0.95, -lh * 0.6, lw * 1.9, lh * 1.9, r * 0.32); x.fill();
+        x.fillStyle = lg2; rrect(x, -lw, -lh, lw * 2, lh * 2, r * 0.32); x.fill();
+        x.strokeStyle = "rgba(255,255,255,.28)"; x.lineWidth = Math.max(0.6, r * 0.06); rrect(x, -lw + 0.5, -lh + 0.5, lw * 2 - 1, lh * 2 - 1, r * 0.3); x.stroke();
+        x.strokeStyle = shade(metal, 0.55); x.lineWidth = Math.max(0.8, r * 0.16); x.beginPath(); x.ellipse(0, 0, aw * 1.02, ah * 1.02, 0, 0, 6.283); x.stroke();
+        x.fillStyle = "#05060a"; x.beginPath(); x.ellipse(0, 0, aw * 0.96, ah * 0.96, 0, 0, 6.283); x.fill();
+        void L;
+      }
+    } else {
+      var pr = Math.min(aw, ah) * 0.19;
+      for (var p = 0; p < 4; p++) { var cx = (p < 2 ? 1 : -1) * aw * 0.82, cy = (p % 2 ? 1 : -1) * ah * 0.78, pg = x.createRadialGradient(cx - pr * 0.3, cy - pr * 0.3, 0, cx, cy, pr); pg.addColorStop(0, "#ffffff"); pg.addColorStop(0.5, metal); pg.addColorStop(1, shade(metal, 0.45)); x.fillStyle = pg; x.beginPath(); x.arc(cx, cy, pr, 0, 6.283); x.fill(); }
+    }
+    seatCache[key] = c; return c;
+  }
+  function gem(ctx, x, y, aw, ah, t, i, metal, ang, phase, spec) {
+    spec = spec || specNow(); ctx.save(); ctx.translate(x, y); ctx.rotate(ang || 0);
+    if (phase === 0) { var st = seatSprite(metal, aw, ah, spec.set, "seat"); ctx.drawImage(st, -st._w / 2, -st._h / 2, st._w, st._h); }
+    if (phase !== 0 && phase !== 3) {
+      var sp = window.__stoneSprite, sd = Math.max(aw, ah) * 2, across = spec.orient === "across";
+      if (sp && window.__stoneSpriteCut === spec.cut) { if (across) ctx.rotate(Math.PI / 2); ctx.drawImage(sp, -sd / 2, -sd / 2, sd, sd); if (across) ctx.rotate(-Math.PI / 2); }
+      else { var g = ctx.createRadialGradient(-aw * 0.3, -ah * 0.35, 0, 0, 0, Math.max(aw, ah)); g.addColorStop(0, "#ffffff"); g.addColorStop(0.18, "#eef3ff"); g.addColorStop(0.42, "#b7c2d8"); g.addColorStop(0.58, "#f4f7ff"); g.addColorStop(0.8, "#8792a8"); g.addColorStop(1, "#dfe4ef"); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, 0, aw * 0.96, ah * 0.96, 0, 0, 6.283); ctx.fill(); }
+    }
+    if ((phase === 1 || phase === 3) && spec.set !== "channel") { var pr = seatSprite(metal, aw, ah, spec.set, "prongs"); ctx.drawImage(pr, -pr._w / 2, -pr._h / 2, pr._w, pr._h); }
+    if (phase === 1 || phase === 2) {
+      var r = Math.max(aw, ah), tw = r > 34 ? 0 : Math.pow(Math.max(0, Math.sin(t * 2.1 + i * 2.39)), 30);
+      if (tw > 0.03) { ctx.globalAlpha = tw; ctx.strokeStyle = "#fff"; ctx.lineWidth = Math.max(1, r * 0.12); ctx.shadowColor = "#fff"; ctx.shadowBlur = r; ctx.beginPath(); ctx.moveTo(-r * 1.6, -r * 0.3); ctx.lineTo(r * 1.6, -r * 0.3); ctx.moveTo(0, -r * 1.9); ctx.lineTo(0, r * 1.3); ctx.stroke(); ctx.globalAlpha = 1; ctx.shadowBlur = 0; }
+    }
+    ctx.restore();
+  }
+  function angAt(P, i, gx, gy) { var n = P.length, a = P[(i - 1 + n) % n], b = P[(i + 1) % n]; if (!window.__chainLoop) { a = P[Math.max(0, i - 1)]; b = P[Math.min(n - 1, i + 1)]; } return Math.atan2(gy(b) - gy(a), gx(b) - gx(a)); }
+
+  /* ── the chain: verlet beads, gravity, a floor at the bottom of the screen, walls ── */
+  var cv = $("play"), ctx = cv.getContext("2d"), N = 36, pts = [], on = false, W = 0, H = 0, D = 1, R = 9, seg = 0, AW = 9, grab = -1, px = 0, py = 0, pvx = 0, pvy = 0, lastT = 0, closed = false;
+  function size() { D = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = Math.round(W * D); cv.height = Math.round(H * D); ctx.setTransform(D, 0, 0, D, 0, 0); closed = W < 700; R = closed ? 8.5 : Math.max(7, Math.min(12, W / 60)); fitLine(); }
+  function fitLine() { var sp = specNow(), pxMm = 2 * R / sp.acrossMm; AW = sp.alongMm * pxMm / 2; seg = sp.pitchMm * pxMm; }
+  size(); addEventListener("resize", size);
+  function spawn() {
+    N = Math.max(8, Math.min(110, specNow().n || 36)); fitLine();
+    var wrap = $("stripwrap"), r = wrap.getBoundingClientRect(), y0 = Math.min(H * 0.6, Math.max(60, r.top + r.height * 0.42)), x0 = W / 2 - seg * (N - 1) / 2;
+    pts = [];
+    if (closed) { /* on a phone the Line is clasped: a loop that fits the screen, dropped like a bracelet on a table */ var rr = N * seg / (2 * Math.PI), cx = W / 2, cy = Math.min(H * 0.5, Math.max(rr + 40, y0)); for (var j = 0; j < N; j++) { var a = j / N * 2 * Math.PI; pts.push({ x: cx + Math.cos(a) * rr * 1.15, y: cy + Math.sin(a) * rr * 0.8, ox: cx + Math.cos(a) * rr * 1.15, oy: cy + Math.sin(a) * rr * 0.8 - 5 }); } }
+    else { for (var i = 0; i < N; i++) pts.push({ x: x0 + i * seg, y: y0, ox: x0 + i * seg - 0.4, oy: y0 - 6 + Math.sin(i * 0.6) * 2 }); }
+    on = true; cv.classList.add("on"); $("putback").classList.add("on"); document.body.classList.add("chain-on");
+  }
+  function putBack() { on = false; grab = -1; cv.classList.remove("on"); $("putback").classList.remove("on"); document.body.classList.remove("chain-on"); ctx.clearRect(0, 0, W, H); }
+  $("pickup").addEventListener("click", function () { if (on) putBack(); spawn(); });
+  $("putback").addEventListener("click", putBack);
+  function nearest(x, y) { var b = -1, bd = 1e9; for (var i = 0; i < N; i++) { var d = (pts[i].x - x) * (pts[i].x - x) + (pts[i].y - y) * (pts[i].y - y); if (d < bd) { bd = d; b = i; } } return bd < 56 * 56 ? b : -1; }
+  /* the canvas never blocks the page: a touch only becomes a grab when it lands on a stone. On a touch screen the browser must not start scrolling, so the touch is claimed before the pointer events. */
+  document.addEventListener("touchstart", function (e) { if (!on || e.touches.length !== 1) return; var t = e.touches[0]; if (e.target.closest("#putback, .modal, #menu, .sh")) return; if (nearest(t.clientX, t.clientY) >= 0) e.preventDefault(); }, { capture: true, passive: false });
+  var grabId = null;
+  var g0x = 0, g0y = 0, g0t = 0, gType = "", lastDrag = false;
+  document.addEventListener("pointerdown", function (e) { if (!on || e.target.closest("#putback, .modal, #menu, .sh")) return; var i = nearest(e.clientX, e.clientY); if (i < 0) return; grab = i; grabId = e.pointerId; px = e.clientX; py = e.clientY; g0x = px; g0y = py; g0t = performance.now(); gType = e.pointerType; pvx = pvy = 0; lastDrag = false; e.preventDefault(); e.stopPropagation(); }, { capture: true, passive: false });
+  document.addEventListener("pointermove", function (e) { if (grab < 0 || e.pointerId !== grabId) return; pvx = e.clientX - px; pvy = e.clientY - py; px = e.clientX; py = e.clientY; }, { passive: true });
+  document.addEventListener("touchmove", function (e) { if (grab >= 0) e.preventDefault(); }, { passive: false });
+  /* a quick tap on a stone that lies over a button is a tap on that button */
+  function release(e) { if (grab < 0 || (e && e.pointerId !== grabId)) return; var p = pts[grab]; p.ox = p.x - pvx * 0.9; p.oy = p.y - pvy * 0.9; grab = -1; grabId = null; var moved = Math.hypot(px - g0x, py - g0y) > 8 || performance.now() - g0t > 450; lastDrag = moved; if (!moved && gType !== "mouse") { var el = document.elementFromPoint(px, py); var t = el && el.closest("button, a, input, label, .chip"); if (t) setTimeout(function () { t.click(); }, 0); } }
+  document.addEventListener("pointerup", release); document.addEventListener("pointercancel", release);
+  document.addEventListener("click", function (e) { if (on && lastDrag && nearest(e.clientX, e.clientY) >= 0) { e.preventDefault(); e.stopPropagation(); lastDrag = false; } }, true);
+  /* let people grab it even when it is lying under the page: the canvas is above everything while on */
+  function step(dt) {
+    var g = 1900 * dt * dt, floor = H - (closed ? 118 : 22) - R, i, p;
+    for (i = 0; i < N; i++) { p = pts[i]; if (i === grab) { p.ox = p.x; p.oy = p.y; p.x = px; p.y = py; continue; } var vx = (p.x - p.ox) * 0.995, vy = (p.y - p.oy) * 0.995; p.ox = p.x; p.oy = p.y; p.x += vx; p.y += vy + g; }
+    for (var it = 0; it < 6; it++) {
+      /* bending stiffness: second neighbours keep their distance, so the Line curves instead of kinking */
+      for (i = 0; i < N - 2; i++) { var a2 = pts[i], b2 = pts[i + 2], dx2 = b2.x - a2.x, dy2 = b2.y - a2.y, d2 = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 0.001, want = seg * 1.96; if (d2 < want) { var df = (d2 - want) / d2 * 0.24; if (i !== grab) { a2.x += dx2 * df; a2.y += dy2 * df; } if (i + 2 !== grab) { b2.x -= dx2 * df; b2.y -= dy2 * df; } } }
+      if (closed) { var al = pts[N - 1], bl = pts[0], dxl = bl.x - al.x, dyl = bl.y - al.y, dl = Math.sqrt(dxl * dxl + dyl * dyl) || 0.001, dfl = (dl - seg) / dl * 0.5; if (N - 1 !== grab) { al.x += dxl * dfl; al.y += dyl * dfl; } if (grab !== 0) { bl.x -= dxl * dfl; bl.y -= dyl * dfl; } }
+      for (i = 0; i < N - 1; i++) { var a = pts[i], b = pts[i + 1], dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 0.001, diff = (d - seg) / d * 0.5; if (i === grab) { b.x -= dx * diff * 2; b.y -= dy * diff * 2; } else if (i + 1 === grab) { a.x += dx * diff * 2; a.y += dy * diff * 2; } else { a.x += dx * diff; a.y += dy * diff; b.x -= dx * diff; b.y -= dy * diff; } }
+      for (i = 0; i < N; i++) { p = pts[i]; if (p.y > floor) { p.y = floor; p.ox = p.x + (p.x - p.ox) * 0.6; } if (p.x < R) p.x = R; if (p.x > W - R) p.x = W - R; if (p.y < R) p.y = R; }
+    }
+  }
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H); var m = metalOf(); window.__chainLoop = closed;
+    /* the Line has weight: a soft shadow falls on the page beneath it */
+    ctx.save(); ctx.translate(4, 9); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); for (var s0 = 1; s0 < N; s0++) ctx.lineTo(pts[s0].x, pts[s0].y); if (closed) ctx.closePath(); ctx.strokeStyle = "rgba(0,0,0,.16)"; ctx.lineWidth = R * 3.6; ctx.stroke(); ctx.strokeStyle = "rgba(0,0,0,.26)"; ctx.lineWidth = R * 2.2; ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = m; ctx.lineWidth = R * 0.42; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); for (var i = 1; i < N; i++) ctx.lineTo(pts[i].x, pts[i].y); if (closed) ctx.closePath(); ctx.stroke();
+    var gx = function (p) { return p.x; }, gy = function (p) { return p.y; };
+    var sp = specNow(); if (sp.n !== N && sp.n) { N = Math.max(8, Math.min(110, sp.n)); fitLine(); spawn(); return; } fitLine();
+    for (i = 0; i < N; i++) gem(ctx, pts[i].x, pts[i].y, AW, R, t, i, m, angAt(pts, i, gx, gy), 0, sp);
+    for (i = 0; i < N; i++) gem(ctx, pts[i].x, pts[i].y, AW, R, t, i, m, angAt(pts, i, gx, gy), 1, sp);
+    /* thrown fast, the stones catch the light as streaks */
+    ctx.save(); ctx.strokeStyle = "#fff"; ctx.lineCap = "round"; for (i = 0; i < N; i++) { var q = pts[i], vx = q.x - q.ox, vy = q.y - q.oy, v = Math.hypot(vx, vy); if (v > 3.5 && i !== grab) { ctx.globalAlpha = Math.min(0.85, (v - 3.5) / 18); ctx.lineWidth = Math.max(1, R * 0.16); ctx.beginPath(); ctx.moveTo(q.x, q.y - R * 0.2); ctx.lineTo(q.x - vx * 1.6, q.y - vy * 1.6 - R * 0.2); ctx.stroke(); } } ctx.restore();
+    ctx.fillStyle = m; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(pts[0].x - R * 1.6, pts[0].y - R * 0.6, R * 1.4, R * 1.2, R * 0.3) : ctx.rect(pts[0].x - R * 1.6, pts[0].y - R * 0.6, R * 1.4, R * 1.2); ctx.fill();
+  }
+  function loop(now) { requestAnimationFrame(loop); if (!on) return; var t = now / 1000, dt = Math.min(0.033, lastT ? now - lastT : 16) / 1000; lastT = now; step(dt); draw(t); }
+  requestAnimationFrame(loop);
+
+  /* ── try it on: your photograph, the Line wrapped around the wrist. The same ring as the wrist view: a circle of stones around a cylinder, seen from above, the far half hidden behind the wrist. ── */
+  var tmodal = $("tryon"), tc = $("tcanvas"), tx = tc.getContext("2d"), img = null, tw = 0, th = 0, TD = 1, pos = { x: 0.5, y: 0.56 }, dragging = false, dpx = 0, dpy = 0, pinch = null, tmode = "place", tphase = 0, showOrig = false, tone = { b: 0.5, warm: 0 };
+  function tsize() { var r = $("tcv").getBoundingClientRect(); TD = Math.min(devicePixelRatio || 1, 2); tw = Math.round(r.width); th = Math.round(r.height); tc.width = Math.round(tw * TD); tc.height = Math.round(th * TD); tx.setTransform(TD, 0, 0, TD, 0, 0); tdraw(); }
+  function sampleTone() { try { var c = document.createElement("canvas"); c.width = 24; c.height = 24; var x = c.getContext("2d"); x.drawImage(img, 0, 0, 24, 24); var d = x.getImageData(0, 0, 24, 24).data, r = 0, g = 0, b = 0, n = 0; for (var i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; } r /= n; g /= n; b /= n; tone = { b: (0.299 * r + 0.587 * g + 0.114 * b) / 255, warm: (r - b) / 255 }; } catch (e) { tone = { b: 0.5, warm: 0 }; } }
+  function setMode(m) { tmode = m; tmodal.classList.toggle("placing", m === "place"); tmodal.classList.toggle("seen", m === "view"); $("tcv").classList.toggle("turn", m === "view"); tsum(); }
+  function load(file) {
+    if (!file) return; var u = URL.createObjectURL(file), im = new Image();
+    im.onload = function () { img = im; $("tempty").style.display = "none"; pos = { x: 0.5, y: 0.56 }; tphase = 0; sampleTone(); setMode("place"); tdraw(); URL.revokeObjectURL(u); };
+    im.onerror = function () { URL.revokeObjectURL(u); $("tempty").style.display = ""; };
+    im.src = u;
+  }
+  $("tfile").addEventListener("change", function () { load(this.files[0]); }); $("tfile2").addEventListener("change", function () { load(this.files[0]); });
+  ["tsize", "tang", "tcurve"].forEach(function (id) { $(id).addEventListener("input", tdraw); });
+  $("tdone").addEventListener("click", function () { setMode("view"); tdraw(); });
+  $("tadjust").addEventListener("click", function () { setMode("place"); tdraw(); });
+  (function () { var o = $("torig"); function on(e) { showOrig = true; tdraw(); e.preventDefault(); } function off() { if (!showOrig) return; showOrig = false; tdraw(); } o.addEventListener("pointerdown", on); o.addEventListener("pointerup", off); o.addEventListener("pointercancel", off); o.addEventListener("pointerleave", off); o.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") on(e); }); o.addEventListener("keyup", off); })();
+  function tsum() { var sp = specNow(), b = window.__build || { wrist: 17, ct: 6, metal: "white" }, he = document.documentElement.getAttribute("data-lang") === "he", names = { white: ["18K white gold", "זהב לבן 18K"], yellow: ["18K yellow gold", "זהב צהוב 18K"], rose: ["18K rose gold", "זהב ורוד 18K"], platinum: ["Platinum", "פלטינה"] }; var el = $("tsum"); if (!el) return; var each = sp.each || (b.ct / 36); el.innerHTML = [ (he ? "פרק יד " : "Wrist ") + b.wrist + " cm", (sp.n || 36) + " × " + (he ? "אבן" : "stones") + " · " + (sp.L || 3.6).toFixed(1) + " mm", (he ? "≈ " : "Est. ") + each.toFixed(2) + " ct " + (he ? "כל אחת" : "each"), (names[b.metal] || names.white)[he ? 1 : 0] ].map(function (x) { return "<div>" + x + "</div>"; }).join(""); }
+  function ringGeom() { var ang = +$("tang").value * Math.PI / 180, u = [Math.cos(ang), Math.sin(ang)], v = [-u[1], u[0]], rW = +$("tsize").value * tw, b = window.__build || { wrist: 17 }, rb = rW * (b.wrist + 1) / b.wrist, pxMm = rb * 2 * Math.PI / ((b.wrist + 1) * 10); return { u: u, v: v, C: [pos.x * tw, pos.y * th], rb: rb, pxMm: pxMm, k: +$("tcurve").value }; }
+  function tdraw(t) {
+    t = typeof t === "number" ? t : performance.now() / 1000; tx.clearRect(0, 0, tw, th); tx.fillStyle = "#000"; tx.fillRect(0, 0, tw, th);
+    if (img) { var sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc; tx.drawImage(img, (tw - dw) / 2, (th - dh) / 2, dw, dh); }
+    if (!img || showOrig) return;
+    var g = ringGeom(), sp = specNow(), m = shade(metalOf(), 0.72 + 0.5 * tone.b), n = Math.max(8, Math.min(110, sp.n || 36)), pitch = sp.pitchMm * g.pxMm, aw = sp.alongMm * g.pxMm / 2, ah = sp.acrossMm * g.pxMm / 2, dth = pitch / g.rb, uAng = Math.atan2(g.u[1], g.u[0]), u = g.u, v = g.v, C = g.C, rb = g.rb, k = g.k, i;
+    var stones = [];
+    for (i = 0; i < n; i++) { var th0 = tphase + i * dth, s = Math.sin(th0), c = Math.cos(th0); if (s < -0.06) continue; stones.push({ i: i, x: C[0] + u[0] * rb * c + v[0] * rb * s * k, y: C[1] + u[1] * rb * c + v[1] * rb * s * k, s: s, fore: Math.max(0.12, Math.abs(s)), a: Math.min(1, (s + 0.06) / 0.22) }); }
+    stones.sort(function (p, q) { return p.s - q.s; });
+    /* contact shadow and occlusion on the skin: the metal darkens the skin beneath it, more where it touches, less where it lifts away */
+    tx.save(); tx.globalCompositeOperation = "multiply"; var lx = v[0] * 2 + u[0] * 1.5, ly = v[1] * 2 + u[1] * 1.5;
+    stones.forEach(function (p) { var w = 0.55 * p.a * (0.35 + 0.65 * p.s); tx.globalAlpha = w * 0.5; tx.fillStyle = "rgb(60,40,30)"; tx.beginPath(); tx.ellipse(p.x + lx * 2.2, p.y + ly * 2.2, aw * 1.9 * p.fore, ah * 2.0, uAng, 0, 6.283); tx.fill(); tx.globalAlpha = w; tx.fillStyle = "rgb(40,26,20)"; tx.beginPath(); tx.ellipse(p.x + lx, p.y + ly, aw * 1.3 * p.fore, ah * 1.3, uAng, 0, 6.283); tx.fill(); });
+    tx.restore();
+    /* the clasp at the back, when it turns into view */
+    var gapA = 2 * Math.PI - n * dth, thc = tphase + n * dth + gapA / 2 - dth / 2, scl = Math.sin(thc), ccl = Math.cos(thc);
+    if (scl > -0.06) { var cxp = C[0] + u[0] * rb * ccl + v[0] * rb * scl * k, cyp = C[1] + u[1] * rb * ccl + v[1] * rb * scl * k, cl = Math.min(12 * g.pxMm, gapA * rb) * 0.5 * Math.max(0.12, Math.abs(scl)); tx.save(); tx.globalAlpha = Math.min(1, (scl + 0.06) / 0.22); tx.translate(cxp, cyp); tx.rotate(uAng); tx.fillStyle = m; tx.beginPath(); if (tx.roundRect) tx.roundRect(-cl, -ah * 0.95, cl * 2, ah * 1.9, ah * 0.3); else tx.rect(-cl, -ah * 0.95, cl * 2, ah * 1.9); tx.fill(); tx.restore(); }
+    /* the stones, back to front, each set in its own metal and squeezed by its angle to the eye */
+    window.__chainLoop = true;
+    stones.forEach(function (p) { tx.save(); tx.globalAlpha = p.a; tx.translate(p.x, p.y); tx.rotate(uAng); tx.scale(p.fore, 1); gem(tx, 0, 0, aw, ah, t, p.i, m, 0, 0, sp); gem(tx, 0, 0, aw, ah, t, p.i, m, 0, 1, sp); tx.restore(); });
+    /* a faint reflection of the skin's warmth on the metal, and grain to sit in the photograph */
+    tx.save(); tx.globalCompositeOperation = "soft-light"; tx.globalAlpha = 0.18 + 0.2 * Math.max(0, tone.warm); tx.fillStyle = "rgb(255,200,160)"; stones.forEach(function (p) { tx.beginPath(); tx.ellipse(p.x, p.y, aw * 1.4 * p.fore, ah * 1.4, uAng, 0, 6.283); tx.fill(); }); tx.restore();
+    tx.globalAlpha = 1;
+  }
+  $("tcv").addEventListener("pointerdown", function (e) { if (!img) return; dragging = true; dpx = e.clientX; dpy = e.clientY; $("tcv").setPointerCapture(e.pointerId); });
+  $("tcv").addEventListener("pointermove", function (e) { if (!dragging) return; var dx = e.clientX - dpx, dy = e.clientY - dpy; dpx = e.clientX; dpy = e.clientY; if (tmode === "place") { pos.x += dx / tw; pos.y += dy / th; } else { var g = ringGeom(); tphase += (dx * g.u[0] + dy * g.u[1]) / Math.max(1, g.rb); } tdraw(); });
+  $("tcv").addEventListener("pointerup", function () { dragging = false; }); $("tcv").addEventListener("pointercancel", function () { dragging = false; });
+  $("tcv").addEventListener("touchstart", function (e) { if (e.touches.length === 2) { pinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), s: +$("tsize").value }; dragging = false; } }, { passive: true });
+  $("tcv").addEventListener("touchmove", function (e) { if (pinch && e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); $("tsize").value = Math.max(0.08, Math.min(0.45, pinch.s * d / pinch.d)); tdraw(); } }, { passive: true });
+  $("tcv").addEventListener("touchend", function () { pinch = null; });
+  $("tsave").addEventListener("click", function () { tdraw(); tc.toBlob(function (b) { if (!b) return; var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "silavu-line.jpg"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }, "image/jpeg", 0.92); });
+  window.addEventListener("silavu:build", tsum);
+  var tloop = null;
+  window.__chain = { get pts() { return pts; }, get on() { return on; } }; window.__gem = gem; window.__specNow = specNow;
+  window.__tryon = { open: function () { tmodal.classList.add("open"); tmodal.setAttribute("aria-hidden", "false"); window.__lock(); setTimeout(tsize, 50); if (!tloop && !reduce) tloop = setInterval(function () { if (tmodal.classList.contains("open")) tdraw(); }, 120); } };
+  addEventListener("resize", function () { if (tmodal.classList.contains("open")) tsize(); });
+})();
+</script>

@@ -1,0 +1,55 @@
+<script>
+/* Scroll-driven chapters: the box film, scrubbed frame by frame as you scroll, and the collection rail that moves sideways with the page. */
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); }, c01 = function (v) { return Math.max(0, Math.min(1, v)); };
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, mobile = matchMedia("(max-width:999px)").matches, phone = matchMedia("(max-width:899px)").matches;
+  var rtl = function () { return document.documentElement.dir === "rtl"; };
+
+  /* ── the box ── */
+  var pin = $("stonepin"), cv = $("boxcv"), ctx = cv && cv.getContext("2d"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
+  var N = 96, SET = phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"), frames = new Array(N), loaded = 0, requested = 0, cur = -1, W = 0, H = 0, DPR = 1, drawn = -1, started = false;
+  function src(i) { return "/f/box/" + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
+  function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
+  function loadAll() { if (started) return; started = true; load(0, function () { draw(true); }); var order = []; for (var s = 8; s >= 1; s = s >> 1) for (var i = 0; i < N; i += s) if (order.indexOf(i) < 0) order.push(i); var k = 0; (function next() { var batch = 0; while (k < order.length && batch < 6) { load(order[k++]); batch++; } if (k < order.length) setTimeout(next, 60); })(); }
+  function size() { var r = cv.getBoundingClientRect(); DPR = Math.min(devicePixelRatio || 1, 2); W = Math.round(r.width * DPR); H = Math.round(r.height * DPR); if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; } }
+  function nearest(i) { for (var d = 0; d < N; d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
+  function draw(force) {
+    if (!ctx) return; var want = Math.max(0, Math.min(N - 1, Math.round(cur * (N - 1)))), have = nearest(want); if (have < 0) return; if (!force && have === drawn) return; drawn = have;
+    var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, ox = (W - dw) / 2, oy = (H - dh) / 2;
+    ctx.clearRect(0, 0, W, H); ctx.drawImage(im, ox, oy, dw, dh);
+  }
+  function beatsAt(p) {
+    var n = beats.length;
+    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s = c01((d - 0.5) / 0.5), op = 1 - s * s * (3 - 2 * s); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = op > 0.5 ? "auto" : "none"; }
+    pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
+    var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
+  }
+  var lastP = -1;
+  function boxTick() {
+    if (!pin || !cv) return; var r = pin.getBoundingClientRect(); if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
+    if (!started) { size(); loadAll(); }
+    var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, 0.5);
+    var p = reduce ? target : (lastP < 0 ? target : lastP + (target - lastP) * 0.2); if (Math.abs(target - p) < 0.0008) p = target;
+    if (p !== lastP) { lastP = p; cur = p; draw(p < 0.16 ? true : false); beatsAt(p); }
+    else if (loaded < N) draw(false);
+  }
+  addEventListener("resize", function () { if (cv) { size(); draw(true); } });
+
+  /* ── the rail ── */
+  var hpin = $("hpin"), track = $("htrack"), range = 0, lastX = -1, lastP2 = -1, rprog = $("rprog"), rcue = document.querySelector(".rcue");
+  function railSize() { if (!hpin || mobile) { if (hpin) { hpin.style.height = ""; } return; } range = Math.max(0, track.scrollWidth - innerWidth); hpin.style.height = (innerHeight + range) + "px"; var hs = hpin.querySelector(".hstick"); if (hs) hs.classList.toggle("fits", range === 0); }
+  function railTick() {
+    if (!hpin || mobile) return; var r = hpin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    var pt = c01(-r.top / Math.max(1, range)), p = reduce || lastP2 < 0 ? pt : lastP2 + (pt - lastP2) * 0.2; if (Math.abs(pt - p) < 0.0005) p = pt; lastP2 = p; var x = p * range * (rtl() ? 1 : -1);
+    if (x !== lastX) { lastX = x; track.style.transform = "translate3d(" + x.toFixed(1) + "px,0,0)"; if (rprog) rprog.style.width = (p * 100).toFixed(2) + "%"; if (rcue) rcue.style.opacity = p > 0.85 ? "0" : "1"; }
+  }
+  railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
+  setTimeout(railSize, 800); addEventListener("load", railSize);
+
+  function tick() { requestAnimationFrame(tick); if (document.hidden) return; boxTick(); railTick(); }
+  tick();
+  window.__box = { get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; } };
+  window.__stone = window.__box;
+})();
+</script>
