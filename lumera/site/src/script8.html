@@ -125,6 +125,35 @@
     return P;
   }
 
+  /* the same solid, in eight-fold symmetry: few enough planes to trace per pixel, closed enough to hold the ray */
+  function tracePlanes(cut, L, W) {
+    var ratio = L / W, pts = outline(cut, ratio), P = [], k, az, a, h, sx = L / 2;
+    var hmin = Math.min(support(pts, 0, 1), support(pts, 1, 0)) * sx, g = 0.035 * hmin;
+    var sup = function (cx, cz) { return support(pts, cx, cz) * sx; };
+    var step = cut === "emerald" || cut === "baguette", K = 8;
+    if (!step) {
+      var ca = 34.5 * D2R, pa = 40.9 * D2R;
+      P.push([0, 1, 0, 0.44 * hmin * Math.tan(ca)]);
+      for (k = 0; k < K; k++) { az = k * 2 * Math.PI / K; h = sup(Math.cos(az), Math.sin(az)); P.push([Math.sin(ca) * Math.cos(az), Math.cos(ca), Math.sin(ca) * Math.sin(az), Math.sin(ca) * h]); }
+      for (k = 0; k < K; k++) { az = k * 2 * Math.PI / K + Math.PI / K; h = sup(Math.cos(az), Math.sin(az)); P.push([Math.cos(az), 0, Math.sin(az), h]); }
+      for (k = 0; k < K; k++) { az = k * 2 * Math.PI / K + Math.PI / K; h = sup(Math.cos(az), Math.sin(az)); P.push([Math.sin(pa) * Math.cos(az), -Math.cos(pa), Math.sin(pa) * Math.sin(az), Math.sin(pa) * h + Math.cos(pa) * g]); }
+      P.push([0, -1, 0, hmin * Math.tan(pa) * 0.98 + g]);
+    } else {
+      var KK = cut === "emerald" ? 8 : 4;
+      P.push([0, 1, 0, 0.30 * hmin]);
+      for (k = 0; k < KK; k++) {
+        az = k * 2 * Math.PI / KK; h = sup(Math.cos(az), Math.sin(az));
+        a = 40 * D2R; P.push([Math.sin(a) * Math.cos(az), Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * (h - 0.16 * hmin) + Math.cos(a) * 0.14 * hmin]);
+        P.push([Math.cos(az), 0, Math.sin(az), h]);
+        a = 45 * D2R; P.push([Math.sin(a) * Math.cos(az), -Math.cos(a), Math.sin(a) * Math.sin(az), Math.sin(a) * (h - 0.2 * hmin) + Math.cos(a) * (g + 0.22 * hmin)]);
+      }
+      P.push([0, -1, 0, g + 0.60 * hmin]);
+    }
+    var flat = new Float32Array(26 * 4), n = Math.min(26, P.length);
+    for (var i = 0; i < n; i++) flat.set(P[i], i * 4);
+    return { planes: flat, n: n };
+  }
+
   /* a swept tube along a path, with a radius per sample */
   function tube(mesh, path, rad, seg, capA, capB) {
     var i, j, frames = [], up = [0, 1, 0];
@@ -255,66 +284,110 @@
   var VS = [
     "attribute vec3 aPos; attribute vec3 aNrm;",
     "attribute vec3 iR0; attribute vec3 iR1; attribute vec3 iR2; attribute vec3 iT;",
-    "uniform mat4 uVP; varying vec3 vN; varying vec3 vW; varying vec3 vU;",
-    "void main(){ mat3 R = mat3(iR0, iR1, iR2); vec3 w = R * aPos + iT; vW = w; vN = R * aNrm; vU = iR1;",
-    "gl_Position = uVP * vec4(w, 1.0); }"
+    "uniform mat4 uVP; uniform vec3 uEye;",
+    "varying vec3 vW; varying vec3 vL; varying vec3 vNl; varying vec3 vEl;",
+    "varying vec3 vR0; varying vec3 vR1; varying vec3 vR2;",
+    "void main(){",
+    "  mat3 R = mat3(iR0, iR1, iR2);",
+    "  vec3 w = R * aPos + iT;",
+    "  mat3 Rt = mat3(vec3(iR0.x, iR1.x, iR2.x), vec3(iR0.y, iR1.y, iR2.y), vec3(iR0.z, iR1.z, iR2.z));",
+    "  vW = w; vL = aPos; vNl = aNrm; vEl = Rt * (uEye - iT);",
+    "  vR0 = iR0; vR1 = iR1; vR2 = iR2;",
+    "  gl_Position = uVP * vec4(w, 1.0);",
+    "}"
   ].join("\n");
   var FS = [
     "precision highp float;",
-    "varying vec3 vN; varying vec3 vW; varying vec3 vU;",
+    "varying vec3 vW; varying vec3 vL; varying vec3 vNl; varying vec3 vEl;",
+    "varying vec3 vR0; varying vec3 vR1; varying vec3 vR2;",
     "uniform vec3 uEye; uniform vec3 uCol; uniform float uMode; uniform float uRough; uniform float uFade;",
+    "uniform vec4 uP[26]; uniform int uNP; uniform float uTrace;",
+    /* the room: a big soft tent overhead, a dark floor, and a handful of hard sources for the flashes */
     "vec3 env(vec3 d){",
     "  float y = clamp(d.y, -1.0, 1.0);",
-    "  vec3 c = mix(vec3(0.0016,0.0018,0.0024), vec3(0.012,0.013,0.017), smoothstep(-1.0, 1.0, y));",
-    "  c += vec3(0.016,0.014,0.012) * smoothstep(0.0, -0.8, y);",
+    "  vec3 c = vec3(0.012,0.013,0.016);",
+    "  c += vec3(0.86,0.89,0.96) * smoothstep(0.10, 0.95, y) * 0.62;",
+    "  c += vec3(0.22,0.24,0.30) * smoothstep(0.30, -0.15, y) * 0.16;",
+    "  c -= vec3(0.13,0.13,0.14) * smoothstep(-0.10, -0.9, y);",
     "  float k = max(dot(d, normalize(vec3(-0.40, 0.80, 0.45))), 0.0);",
-    "  c += vec3(1.00,0.980,0.945) * pow(k, 2.6) * 0.42;",
-    "  c += vec3(1.00,0.990,0.970) * pow(k, 260.0) * 46.0;",
+    "  float k2 = k * k; k2 = k2 * k2;",
+    "  c += vec3(1.00,0.985,0.955) * k2 * k * 2.10;",
+    "  float kh = k2 * k2; kh = kh * kh; kh = kh * kh;",
+    "  c += vec3(1.00,0.990,0.970) * kh * kh * 22.0;",
     "  float s = max(dot(d, normalize(vec3(0.94, 0.16, -0.30))), 0.0);",
-    "  c += vec3(0.80,0.87,1.00) * pow(s, 150.0) * 20.0;",
+    "  float s2 = s * s; s2 = s2 * s2; s2 = s2 * s2; s2 = s2 * s2;",
+    "  c += vec3(0.82,0.88,1.00) * s2 * s2 * 11.0;",
     "  float r = max(dot(d, normalize(vec3(0.06, -0.12, -0.99))), 0.0);",
-    "  c += vec3(1.00,0.84,0.62) * pow(r, 120.0) * 12.0;",
-    "  c += vec3(1.0) * pow(max(dot(d, normalize(vec3( 0.38, 0.46, 0.80))), 0.0), 900.0) * 90.0;",
-    "  c += vec3(0.93,0.96,1.0) * pow(max(dot(d, normalize(vec3(-0.75, 0.22, -0.62))), 0.0), 700.0) * 60.0;",
-    "  c += vec3(1.00,0.99,0.97) * pow(max(dot(d, normalize(vec3( 0.62, 0.70, 0.35))), 0.0), 1100.0) * 80.0;",
-    "  c += vec3(0.98,0.99,1.00) * pow(max(dot(d, normalize(vec3(-0.30, 0.66, 0.69))), 0.0), 1100.0) * 70.0;",
-    "  c += vec3(1.00,0.97,0.92) * pow(max(dot(d, normalize(vec3(-0.66, 0.52, -0.54))), 0.0), 1000.0) * 60.0;",
-    "  c += vec3(0.95,0.97,1.00) * pow(max(dot(d, normalize(vec3( 0.20, 0.38, -0.90))), 0.0), 1000.0) * 52.0;",
-    "  c += vec3(1.00,0.95,0.88) * pow(max(dot(d, normalize(vec3( 0.88, 0.30, -0.36))), 0.0), 1200.0) * 48.0;",
-    "  c += vec3(1.00,1.00,1.00) * pow(max(dot(d, normalize(vec3(-0.92, 0.18,  0.34))), 0.0), 1200.0) * 44.0;",
+    "  float r2 = r * r; r2 = r2 * r2; r2 = r2 * r2;",
+    "  c += vec3(1.00,0.86,0.66) * r2 * r2 * 7.0;",
+    "  float q = max(dot(d, normalize(vec3( 0.38, 0.46, 0.80))), 0.0);",
+    "  float q2 = q * q; q2 = q2 * q2; q2 = q2 * q2; q2 = q2 * q2;",
+    "  c += vec3(1.0) * q2 * q2 * q2 * 46.0;",
+    "  float u = max(dot(d, normalize(vec3(-0.66, 0.40, -0.64))), 0.0);",
+    "  float u2 = u * u; u2 = u2 * u2; u2 = u2 * u2; u2 = u2 * u2;",
+    "  c += vec3(0.95,0.97,1.0) * u2 * u2 * 30.0;",
     "  return c;",
     "}",
     "float fres(float c, float f0){ return f0 + (1.0 - f0) * pow(1.0 - c, 5.0); }",
-    "vec3 exitDir(vec3 b, vec3 up, float ior){ vec3 e = refract(b, up, 1.0 / ior); return dot(e, e) < 1e-6 ? reflect(b, up) : e; }",
     "void main(){",
-    "  vec3 N = normalize(vN); vec3 V = normalize(uEye - vW); float ndv = dot(N, V);",
+    "  mat3 R = mat3(vR0, vR1, vR2);",
+    "  vec3 Nl = normalize(vNl);",
+    "  vec3 Vl = normalize(vEl - vL);",
+    "  vec3 Nw = normalize(R * Nl);",
+    "  vec3 Vw = normalize(uEye - vW);",
     "  vec3 col;",
     "  if (uMode > 0.5) {",
-    "    vec3 Nf = ndv < 0.0 ? -N : N; float c = abs(ndv);",
+    "    vec3 Nf = dot(Nl, Vl) < 0.0 ? -Nl : Nl;",
+    "    float c = max(dot(Nf, Vl), 1e-4);",
     "    float F = fres(c, 0.172);",
-    "    col = env(reflect(-V, Nf)) * F * 1.15;",
-    "    vec3 up = normalize(vU);",
-    "    vec3 t1 = refract(-V, Nf, 1.0 / 2.417);",
-    "    if (dot(t1, t1) > 1e-6) {",
-    "      vec3 lat = t1 - up * dot(t1, up); lat = dot(lat, lat) > 1e-8 ? normalize(lat) : vec3(1.0, 0.0, 0.0);",
-    "      vec3 p1 = normalize(-up * 0.74 + lat * 0.67);",
-    "      vec3 b1 = reflect(t1, p1);",
+    "    col = env(reflect(-Vw, dot(Nw, Vw) < 0.0 ? -Nw : Nw)) * F;",
+    /* into the stone, and around the pavilion until it finds a way out */
+    "    vec3 d = refract(-Vl, Nf, 1.0 / 2.417);",
+    "    vec3 inside = vec3(0.0);",
+    "    if (uTrace < 0.5) {",
+    "      vec3 up = normalize(vR1);",
+    "      vec3 lat = d - up * dot(d, up); lat = dot(lat, lat) > 1e-8 ? normalize(lat) : vec3(1.0, 0.0, 0.0);",
+    "      vec3 b1 = reflect(d, normalize(-up * 0.74 + lat * 0.67));",
     "      vec3 lat2 = b1 - up * dot(b1, up); lat2 = dot(lat2, lat2) > 1e-8 ? normalize(lat2) : lat;",
-    "      vec3 p2 = normalize(-up * 0.74 + lat2 * 0.67);",
-    "      vec3 b2 = reflect(b1, p2);",
-    "      vec3 lat3 = b2 - up * dot(b2, up); lat3 = dot(lat3, lat3) > 1e-8 ? normalize(lat3) : lat2;",
-    "      vec3 b3 = reflect(b2, normalize(-up * 0.80 + lat3 * 0.60));",
-    "      vec3 fireA = vec3(env(exitDir(b2, up, 2.402)).r, env(exitDir(b2, up, 2.426)).g, env(exitDir(b2, up, 2.465)).b);",
-    "      vec3 fireB = vec3(env(exitDir(b3, up, 2.402)).r, env(exitDir(b3, up, 2.426)).g, env(exitDir(b3, up, 2.465)).b);",
-    "      col += (1.0 - F) * (fireA * 1.15 + fireB * 0.70);",
+    "      vec3 b2 = reflect(b1, normalize(-up * 0.74 + lat2 * 0.67));",
+    "      vec3 ex = refract(b2, -up, 2.426); if (dot(ex, ex) < 1e-8) ex = reflect(b2, up);",
+    "      vec3 exB = refract(b2, -up, 2.465); if (dot(exB, exB) < 1e-8) exB = ex;",
+    "      float spread = clamp(length(exB - ex) * 3.2, 0.0, 1.0);",
+    "      vec3 e = env(R * ex);",
+    "      inside = e * (vec3(1.0) + spread * vec3(0.55, -0.06, -0.42));",
+    "    } else if (dot(d, d) > 1e-8) {",
+    "      vec3 p = vL + d * 1e-3;",
+    "      float energy = 1.0;",
+    "      for (int b = 0; b < 3; b++) {",
+    "        float tmin = 1e9; vec3 hn = vec3(0.0, 1.0, 0.0); bool got = false;",
+    "        for (int i = 0; i < 26; i++) {",
+    "          if (i >= uNP) break;",
+    "          vec4 pl = uP[i];",
+    "          float nd = dot(pl.xyz, d);",
+    "          if (nd <= 1e-5) continue;",
+    "          float t = (pl.w - dot(pl.xyz, p)) / nd;",
+    "          if (t > 1e-4 && t < tmin) { tmin = t; hn = pl.xyz; got = true; }",
+    "        }",
+    "        if (!got) break;",
+    "        p += d * tmin;",
+    "        vec3 oR = refract(d, -hn, 2.402);",
+    "        vec3 oG = refract(d, -hn, 2.426);",
+    "        vec3 oB = refract(d, -hn, 2.465);",
+    "        if (dot(oG, oG) < 1e-8) { d = reflect(d, hn); energy *= 0.985; continue; }",
+    "        vec3 e = vec3(env(R * (dot(oR,oR) > 1e-8 ? oR : oG)).r, env(R * oG).g, env(R * (dot(oB,oB) > 1e-8 ? oB : oG)).b);",
+    "        inside += e * energy;",
+    "        break;",
+    "      }",
     "    }",
-    "    col += vec3(0.86, 0.91, 1.0) * pow(1.0 - c, 5.0) * 0.30;",
+    "    col += (1.0 - F) * inside;",
+    "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.20;",
     "  } else {",
-    "    vec3 Nf = ndv < 0.0 ? -N : N; float c = max(abs(ndv), 1e-4);",
-    "    vec3 R = reflect(-V, Nf);",
+    "    vec3 Nf = dot(Nw, Vw) < 0.0 ? -Nw : Nw;",
+    "    float c = max(dot(Nf, Vw), 1e-4);",
+    "    vec3 Rf = reflect(-Vw, Nf);",
     "    vec3 F = uCol + (vec3(1.0) - uCol) * pow(1.0 - c, 5.0);",
-    "    col = mix(env(R), env(Nf), uRough) * F * 2.6;",
-    "    col += uCol * env(Nf) * 0.55;",
+    "    col = mix(env(Rf), env(Nf), uRough * 0.45) * F * 0.92;",
+    "    col += uCol * env(Nf) * 0.10;",
     "  }",
     "  col *= uFade;",
     "  col = (col * (2.51 * col + 0.03)) / (col * (2.43 * col + 0.59) + 0.14);",
@@ -327,7 +400,7 @@
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { cv.style.display = "none"; return; }
   gl.useProgram(prog);
   var A = { pos: gl.getAttribLocation(prog, "aPos"), nrm: gl.getAttribLocation(prog, "aNrm"), r0: gl.getAttribLocation(prog, "iR0"), r1: gl.getAttribLocation(prog, "iR1"), r2: gl.getAttribLocation(prog, "iR2"), t: gl.getAttribLocation(prog, "iT") };
-  var U = { vp: gl.getUniformLocation(prog, "uVP"), eye: gl.getUniformLocation(prog, "uEye"), col: gl.getUniformLocation(prog, "uCol"), mode: gl.getUniformLocation(prog, "uMode"), rough: gl.getUniformLocation(prog, "uRough"), fade: gl.getUniformLocation(prog, "uFade") };
+  var U = { p: gl.getUniformLocation(prog, "uP"), np: gl.getUniformLocation(prog, "uNP"), trace: gl.getUniformLocation(prog, "uTrace"), vp: gl.getUniformLocation(prog, "uVP"), eye: gl.getUniformLocation(prog, "uEye"), col: gl.getUniformLocation(prog, "uCol"), mode: gl.getUniformLocation(prog, "uMode"), rough: gl.getUniformLocation(prog, "uRough"), fade: gl.getUniformLocation(prog, "uFade") };
   gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
   gl.clearColor(0, 0, 0, 0);
 
@@ -395,6 +468,8 @@
     var depth = Math.max(L, W) * 0.74;
     state.fit = aRad + Math.max(L, W) * 0.9; state.thick = depth + Math.max(L, W) * 0.9;
     pStone.geometry(solid(planesFor(cut, L, W)));
+    var tp = tracePlanes(cut, L, W);
+    gl.useProgram(prog); gl.uniform4fv(U.p, tp.planes); gl.uniform1i(U.np, tp.n);
     pHead.geometry(headMesh(L, W, depth));
     var gap = Math.max(0.35, step - L * 0.98);
     var wire = Math.max(0.16, Math.min(L, W) * 0.105);
@@ -432,9 +507,9 @@
   var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
   /* the toy: while it is held the bracelet has a place in the frame, a spin and a fall */
   var toy = null;
-  var drag = null, dirty = true, idle = !reduce, W2 = 1, H2 = 1, DPR = 1;
+  var drag = null, dirty = true, idle = !reduce, idleN = 0, W2 = 1, H2 = 1, DPR = 1;
   function size() {
-    DPR = Math.min(devicePixelRatio || 1, 2);
+    DPR = Math.min(devicePixelRatio || 1, 1.5);
     var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }
@@ -472,6 +547,8 @@
     gl.uniform1f(U.fade, 1);
     var mc = METAL[state.metal] || METAL.white;
     pHead.draw(0, mc, 0.30); pLink.draw(0, mc, 0.26); pClasp.draw(0, mc, 0.20);
+    var onScreen = state.L / (state.halfH || state.fit) * H2 * 0.5;
+    gl.uniform1f(U.trace, onScreen > 26 ? 1 : 0);
     pStone.draw(1, [1, 1, 1], 0);
   }
   function tick() {
@@ -482,27 +559,27 @@
     }
     if (!drag) {
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
-        cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.94; cam.vph *= 0.94;
+        cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.90; cam.vph *= 0.90;
         cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph)); dirty = true;
-      } else if (idle) { cam.th += 0.0016; dirty = true; }
+      } else if (idle) { idleN++; if (idleN > 1400) idle = false; else if (idleN % 2 === 0) { cam.th += 0.0032; dirty = true; } }
     }
     if (Math.abs(cam.d - cam.td) > 1e-4) { cam.d += (cam.td - cam.d) * 0.12; dirty = true; }
     if (toy) {
       var R0 = state.fit;
       var limY = Math.max(R0 * 0.1, (state.halfH || R0 * 2) - R0 * 1.06);
       var limX = Math.max(R0 * 0.1, (state.halfW || R0 * 2) - R0 * 1.06);
-      var vmax = R0 * 0.05;
+      var vmax = R0 * 0.016;
       if (!toy.held) {
-        toy.vy -= R0 * 0.00055;
+        toy.vy -= R0 * 0.00016;
         toy.x += toy.vx; toy.y += toy.vy; toy.rx += toy.wx; toy.ry += toy.wy;
       }
-      if (toy.y < -limY) { toy.y = -limY; toy.vy = Math.min(Math.abs(toy.vy) * 0.56, vmax); toy.vx *= 0.88; toy.wx *= 0.82; toy.wy *= 0.90; }
-      if (toy.y > limY) { toy.y = limY; toy.vy = -Math.abs(toy.vy) * 0.45; }
-      if (toy.x > limX) { toy.x = limX; toy.vx = -Math.abs(toy.vx) * 0.66; }
-      if (toy.x < -limX) { toy.x = -limX; toy.vx = Math.abs(toy.vx) * 0.66; }
-      toy.vx = Math.max(-vmax, Math.min(vmax, toy.vx * 0.993));
+      if (toy.y < -limY) { toy.y = -limY; toy.vy = Math.min(Math.abs(toy.vy) * 0.22, vmax); toy.vx *= 0.70; toy.wx *= 0.62; toy.wy *= 0.70; }
+      if (toy.y > limY) { toy.y = limY; toy.vy = -Math.abs(toy.vy) * 0.2; }
+      if (toy.x > limX) { toy.x = limX; toy.vx = -Math.abs(toy.vx) * 0.35; }
+      if (toy.x < -limX) { toy.x = -limX; toy.vx = Math.abs(toy.vx) * 0.35; }
+      toy.vx = Math.max(-vmax, Math.min(vmax, toy.vx * 0.975));
       toy.vy = Math.max(-vmax, Math.min(vmax, toy.vy));
-      toy.wx *= 0.993; toy.wy *= 0.993;
+      toy.wx *= 0.972; toy.wy *= 0.972;
       dirty = true;
     }
     if (!dirty) return;
@@ -522,11 +599,11 @@
     if (toy) {
       var k = state.fit * 2.0 / Math.max(200, cv.clientWidth) * 3.0;
       toy.x += dx * (state.halfW || state.fit) * 0.34; toy.y -= dy * (state.halfH || state.fit) * 0.46;
-      toy.vx = dx * (state.halfW || state.fit) * 0.055; toy.vy = -dy * (state.halfH || state.fit) * 0.075;
-      toy.wx += dy * 0.055; toy.wy += dx * 0.065;
+      toy.vx = dx * (state.halfW || state.fit) * 0.016; toy.vy = -dy * (state.halfH || state.fit) * 0.022;
+      toy.wx += dy * 0.016; toy.wy += dx * 0.020;
     } else {
       cam.th -= dx; cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph + dy));
-      cam.vth = -dx * 0.55; cam.vph = dy * 0.55;
+      cam.vth = -dx * 0.38; cam.vph = dy * 0.38;
     }
     drag.x = e.clientX; drag.y = e.clientY; dirty = true;
   });
@@ -570,9 +647,8 @@
       if (!drag || !toy || e.pointerId !== drag.id) return;
       var dx = (e.clientX - drag.x) / Math.max(200, cv.clientWidth) * 3.0, dy = (e.clientY - drag.y) / Math.max(200, cv.clientHeight) * 2.2;
       toy.x += dx * (state.halfW || state.fit) * 0.34; toy.y -= dy * (state.halfH || state.fit) * 0.46;
-      toy.vx = dx * (state.halfW || state.fit) * 0.055; toy.vy = -dy * (state.halfH || state.fit) * 0.075;
-      toy.wx += dy * 0.055; toy.wy += dx * 0.065;
-      drag.x = e.clientX; drag.y = e.clientY; dirty = true;
+      toy.vx = dx * (state.halfW || state.fit) * 0.016; toy.vy = -dy * (state.halfH || state.fit) * 0.022;
+      toy.wx += dy * 0.016; toy.wy += dx * 0.020;      drag.x = e.clientX; drag.y = e.clientY; dirty = true;
     });
     var up = function (e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; if (toy) toy.held = false; };
     grab.addEventListener("pointerup", up); grab.addEventListener("pointercancel", up);
@@ -592,13 +668,13 @@
     page = true; document.documentElement.classList.add("silavu-play");
     cam.td = 3.2; cam.d = 3.2;
     ensureGrab(); size();
-    toy.x = 0; toy.y = 0; toy.vx = state.fit * 0.010; toy.vy = 0;
+    toy.x = 0; toy.y = 0; toy.vx = state.fit * 0.0022; toy.vy = 0;
     dirty = true;
   }
   function pickUp() {
     if (toy) return;
     idle = false; cam.vth = cam.vph = 0;
-    toy = { x: 0, y: (state.halfH || state.fit * 2) * 0.42, z: 0, vx: state.fit * 0.004, vy: 0, rx: 0.45, ry: 0.35, wx: 0.012, wy: 0.018, held: false };
+    toy = { x: 0, y: (state.halfH || state.fit * 2) * 0.22, z: 0, vx: state.fit * 0.0009, vy: 0, rx: 0.45, ry: 0.35, wx: 0.0035, wy: 0.0052, held: false };
     cam.td = 1.58; wrap.classList.add("held"); dirty = true;
   }
   function putBack() {

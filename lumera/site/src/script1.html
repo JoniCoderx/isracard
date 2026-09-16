@@ -15,7 +15,7 @@
   ];
   var WA = ($("cform").getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
   document.querySelectorAll("[data-socials]").forEach(function (box) {
-    SOC.forEach(function (s) { var a = document.createElement("a"); var isWa = s[0] === "WhatsApp"; a.href = isWa ? (WA ? "https://wa.me/" + WA : "#concierge") : s[1]; if (!isWa || WA) { a.target = "_blank"; a.rel = "noopener"; } a.setAttribute("aria-label", s[0]); a.title = s[0];
+    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa && !WA) return; var a = document.createElement("a"); a.href = isWa ? "https://wa.me/" + WA : s[1]; if (!isWa || WA) { a.target = "_blank"; a.rel = "noopener"; } a.setAttribute("aria-label", s[0]); a.title = s[0];
       a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + s[2] + '"/></svg>'; box.appendChild(a); });
   });
 
@@ -221,7 +221,7 @@
     var each = b.ct / 36, mm = 6.5 * Math.cbrt(each); $("eachCt").innerHTML = each.toFixed(2) + "<small>ct</small>"; $("eachMm").innerHTML = mm.toFixed(1) + "<small>mm</small>"; $("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";
     var st = $("stone1"), px = Math.max(18, Math.min(64, mm * 3.78 * 2.2)); st.style.width = st.style.height = px + "px";
   }
-  function rulerTick() { var r = $("ruler"); if (window.__strip && window.__strip.pxPerMm) r.style.width = (window.__strip.pxPerMm * 10).toFixed(1) + "px"; }
+  function rulerTick() { var r = $("ruler"); if (r && window.__strip && window.__strip.pxPerMm) r.style.width = (window.__strip.pxPerMm * 10).toFixed(1) + "px"; }
   var opts = $("opts");
   opts.addEventListener("click", function (e) {
     var c = e.target.closest(".chip"); if (!c) return; var k = c.getAttribute("data-k"), v = c.getAttribute("data-v");

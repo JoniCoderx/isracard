@@ -49,8 +49,10 @@ const NEW_PRICE = `  var CUTS = {
   var CLIP = { emerald: "polygon(18% 0,82% 0,100% 18%,100% 82%,82% 100%,18% 100%,0 82%,0 18%)", baguette: "polygon(4% 0,96% 0,100% 4%,100% 96%,96% 100%,4% 100%,0 96%,0 4%)", marquise: "polygon(0 50%,12% 22%,30% 6%,50% 0,70% 6%,88% 22%,100% 50%,88% 78%,70% 94%,50% 100%,30% 94%,12% 78%)", pear: "polygon(100% 50%,78% 22%,55% 4%,35% 0,15% 8%,3% 28%,0 50%,3% 72%,15% 92%,35% 100%,55% 96%,78% 78%)" };
   /* the line holds as many stones as the wrist allows: the size of each stone follows its share of the weight, and the count follows the size */
   function lineSpec(b) {
-    var c = CUTS[b.cut] || CUTS.round, lenMm = (b.wrist + 1) * 10 - 12, gap = c.set === "channel" ? 0.25 : 0.4, each = b.ct / 36, n = 36, L = 3.6, Wd = 3.6, along, across;
-    for (var it = 0; it < 5; it++) { L = c.kL * Math.cbrt(each); Wd = L / c.ratio; along = c.orient === "across" ? Wd : L; across = c.orient === "across" ? L : Wd; n = Math.max(8, Math.min(110, Math.round(lenMm / (along + gap)))); each = b.ct / n; }
+    var c = CUTS[b.cut] || CUTS.round, lenMm = (b.wrist + 1) * 10 - 12, n = 36, each = b.ct / n, L = 3.6, Wd = 3.6, along, across, gap;
+    L = c.kL * Math.cbrt(each); Wd = L / c.ratio;
+    along = c.orient === "across" ? Wd : L; across = c.orient === "across" ? L : Wd;
+    gap = Math.max(0.16, lenMm / n - along);
     return { cut: b.cut || "round", n: n, each: each, L: L, W: Wd, alongMm: along, acrossMm: across, pitchMm: along + gap, orient: c.orient, set: c.set, ratio: c.ratio, lenMm: lenMm };
   }
   function price() {
