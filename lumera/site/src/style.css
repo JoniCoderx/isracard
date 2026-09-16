@@ -886,12 +886,13 @@
   #stripwrap.held ~ .vposwrap [data-toy="up"], #stripwrap.held ~ .vposwrap [data-vpos] { display:none; }
 
   /* ── v34: the laboratories, named ── */
-  .certs { display:grid; justify-items:center; gap:14px; padding:clamp(26px,4vw,44px) 0; }
+  .certs { display:grid; justify-items:center; gap:12px; padding:clamp(20px,3vw,34px) 0; }
   .certs .certrow { display:flex; gap:clamp(24px,5vw,64px); align-items:center; justify-content:center; flex-wrap:wrap; }
   .certs .cert { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; border:0; background:none; padding:0; min-height:0; }
   .certs .cert b { font-size:clamp(1.5rem,3.2vw,2.2rem); font-weight:400; letter-spacing:.34em; color:var(--ink2); transition:color .4s var(--ease); }
   .certs .cert:hover b { color:var(--ink); }
-  .certs .certnote { color:var(--ink3); text-align:center; max-width:46ch; }
+  .certs .certnote { color:var(--ink3); text-align:center; max-width:60ch; font-size:.82rem; letter-spacing:0; text-transform:none; line-height:1.5; }
+  html[data-lang="he"] .certs .certnote { font-size:.9rem; }
   .certs .seal, .certs svg.seal { display:none; }
 
   /* ── v34: the bracelet, carried across the page ── */
