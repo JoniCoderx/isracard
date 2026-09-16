@@ -884,3 +884,22 @@
   .vpos [data-toy="down"] { display:none; }
   #stripwrap.held ~ .vposwrap [data-toy="down"] { display:inline-flex; }
   #stripwrap.held ~ .vposwrap [data-toy="up"], #stripwrap.held ~ .vposwrap [data-vpos] { display:none; }
+
+  /* ── v34: the laboratories, named ── */
+  .certs { display:grid; justify-items:center; gap:14px; padding:clamp(26px,4vw,44px) 0; }
+  .certs .certrow { display:flex; gap:clamp(24px,5vw,64px); align-items:center; justify-content:center; flex-wrap:wrap; }
+  .certs .cert { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; border:0; background:none; padding:0; min-height:0; }
+  .certs .cert b { font-size:clamp(1.5rem,3.2vw,2.2rem); font-weight:400; letter-spacing:.34em; color:var(--ink2); transition:color .4s var(--ease); }
+  .certs .cert:hover b { color:var(--ink); }
+  .certs .certnote { color:var(--ink3); text-align:center; max-width:46ch; }
+  .certs .seal, .certs svg.seal { display:none; }
+
+  /* ── v34: the bracelet, carried across the page ── */
+  html.silavu-play #bcv { position:fixed; inset:0; width:100vw; height:100vh; z-index:26; pointer-events:none; cursor:auto; }
+  #bgrab { position:fixed; z-index:27; display:none; cursor:grab; touch-action:none; border-radius:50%; }
+  html.silavu-play #bgrab { display:block; }
+  html.silavu-play #bgrab:active { cursor:grabbing; }
+  #playbar { position:fixed; left:50%; bottom:max(18px, env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:29; display:none; }
+  html.silavu-play #playbar { display:inline-flex; }
+  html.silavu-play #fab { display:none !important; }
+  html.silavu-play #stripwrap:not(.wrist)::after { content:""; position:absolute; inset:0; background:radial-gradient(60% 60% at 50% 50%, rgba(246,243,237,.04), transparent 70%); }

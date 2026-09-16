@@ -81,6 +81,7 @@ export const body = `
   </div>
 </header>
 
+<button class="btn sm" id="playbar" type="button" data-toy="down" data-en="Put it back" data-he="החזירו אותו">Put it back</button>
 <div id="menu" aria-hidden="true">
   <button class="btn mclose" id="menuClose" data-en="Close" data-he="סגירה">Close</button>
   <div class="mbrand" aria-hidden="true">${mark("", "b")}</div>
@@ -147,13 +148,12 @@ export const body = `
     </div>
     <div class="wrap">
     <div class="certs rv d2" id="certs">
-      ${seal("sealcert")}
-      <div class="k gold" data-en="Independent grading" data-he="דירוג עצמאי">Independent grading</div>
+      <div class="k gold" data-en="Graded by" data-he="מדורג על ידי">Graded by</div>
       <div class="certrow">
-        <a class="cert" href="https://www.gia.edu/report-check-landing" target="_blank" rel="noopener"><b>GIA</b><small data-en="Gemological Institute of America" data-he="המכון הגמולוגי של אמריקה">Gemological Institute of America</small></a>
-        <a class="cert" href="https://www.igi.org/verify-your-report/" target="_blank" rel="noopener"><b>IGI</b><small data-en="International Gemological Institute" data-he="המכון הגמולוגי הבינלאומי">International Gemological Institute</small></a>
+        <a class="cert" href="https://www.gia.edu/report-check-landing" target="_blank" rel="noopener"><b>GIA</b></a>
+        <a class="cert" href="https://www.igi.org/verify-your-report/" target="_blank" rel="noopener"><b>IGI</b></a>
       </div>
-      <p class="p" style="max-width:56ch;text-align:center" data-en="Each stone comes with a report from GIA or IGI, independent laboratories. The report number is inscribed on the girdle and can be checked on the laboratory's own site. The laboratories document the stones; they do not endorse SILAVU." data-he="כל אבן מגיעה עם תעודה מ־GIA או IGI, מעבדות עצמאיות. מספר התעודה חרוט על החגורה וניתן לבדיקה באתר המעבדה עצמה. המעבדות מתעדות את האבנים; הן אינן ממליצות על SILAVU.">Each stone comes with a report from GIA or IGI, independent laboratories. The report number is inscribed on the girdle and can be checked on the laboratory's own site. The laboratories document the stones; they do not endorse SILAVU.</p>
+      <p class="k certnote" data-en="Independent laboratories. Every report is yours to check." data-he="מעבדות עצמאיות. כל תעודה ניתנת לבדיקה על ידכם.">Independent laboratories. Every report is yours to check.</p>
     </div>
     </div>
   </section>
@@ -186,16 +186,16 @@ export const body = `
     </div>
     <div class="tray" data-tray><div class="cards">
       <a class="card" href="#build">
-        ${fig("float", "The SILAVU Line caught in one beam of light", "r45", SIZES_CARD)}
+        ${fig("tennis", "A diamond tennis bracelet of round brilliants in white gold, on black lacquer", "r45", SIZES_CARD)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="I · The Line" data-he="I · הקו">I · The Line</span></div><div class="t" data-en="The Line <em>bracelet</em>" data-he="צמיד <em>הקו</em>">The Line <em>bracelet</em></div><p class="p" data-en="A tennis bracelet of hand-matched brilliants, in any cut, from 2 to 20 carats." data-he="צמיד טניס של בריליאנטים מותאמים ביד, בכל ליטוש, מ־2 ועד 20 קראט.">A tennis bracelet of hand-matched brilliants, in any cut, from 2 to 20 carats.</p><span class="lnk" data-en="Design yours" data-he="עצבו את שלכם">Design yours</span></div>
       </a>
-      <a class="card" href="#concierge" data-piece="A bespoke piece">
-        ${fig("ear", "A single diamond drop earring in platinum", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Bespoke" data-he="II · בהזמנה אישית">II · Bespoke</span></div><div class="t" data-en="Bespoke <em>pieces</em>" data-he="תכשיטים <em>בהזמנה אישית</em>">Bespoke <em>pieces</em></div><p class="p" data-en="Rings, necklaces and earrings, made once, for you." data-he="טבעות, שרשראות ועגילים, נעשים פעם אחת, עבורכם.">Rings, necklaces and earrings, made once, for you.</p><span class="lnk" data-en="Start a conversation" data-he="התחילו שיחה">Start a conversation</span></div>
+      <a class="card" href="#concierge" data-piece="The Signature Drop">
+        ${fig("earsil", "A drop earring in the shape of the SILAVU symbol, in white gold, worn", "r45", SIZES_CARD)}
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Earrings" data-he="II · עגילים">II · Earrings</span></div><div class="t" data-en="The Signature <em>Drop</em>" data-he="עגיל <em>החתימה</em>">The Signature <em>Drop</em></div><p class="p" data-en="Rings, necklaces and earrings, made once, for you." data-he="טבעות, שרשראות ועגילים, נעשים פעם אחת, עבורכם.">Rings, necklaces and earrings, made once, for you.</p><span class="lnk" data-en="Start a conversation" data-he="התחילו שיחה">Start a conversation</span></div>
       </a>
-      <a class="card" href="#concierge" data-piece="Private stones">
-        ${fig("stone", "A single round brilliant held in tweezers", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · Private stones" data-he="III · אבנים פרטיות">III · Private stones</span></div><div class="t" data-en="Loose <em>diamonds</em>" data-he="יהלומים <em>חופשיים</em>">Loose <em>diamonds</em></div><p class="p" data-en="Certified diamonds from two carats, and rare coloured stones, with their reports." data-he="יהלומים מאושרים מ־2 קראט, ואבני צבע נדירות, עם התעודות שלהן.">Certified diamonds from two carats, and rare coloured stones, with their reports.</p><span class="lnk" data-en="Ask the concierge" data-he="פנו לקונסיירז׳">Ask the concierge</span></div>
+      <a class="card" href="#collection" data-piece="The Signature Chain">
+        ${fig("sigb", "The Signature Chain, the SILAVU symbol in platinum on a slender chain", "r45", SIZES_CARD)}
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · Signature" data-he="III · חתימה">III · Signature</span></div><div class="t" data-en="The Signature <em>Chain</em>" data-he="שרשרת <em>החתימה</em>">The Signature <em>Chain</em></div><p class="p" data-en="Certified diamonds from two carats, and rare coloured stones, with their reports." data-he="יהלומים מאושרים מ־2 קראט, ואבני צבע נדירות, עם התעודות שלהן.">Certified diamonds from two carats, and rare coloured stones, with their reports.</p><span class="lnk" data-en="Ask the concierge" data-he="פנו לקונסיירז׳">Ask the concierge</span></div>
       </a>
     </div></div>
     </div>
@@ -276,7 +276,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       </div>
     </div>
     <div class="panel rv" id="configure">
-      <div id="stripwrap"><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it." data-he="גררו כדי לסובב.">Drag to turn it.</div><span class="vmark">${mark("", "b")}</span></div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="under" data-en="Underside" data-he="מלמטה">Underside</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Pick it up" data-he="הרימו אותו">Pick it up</button><button class="vp" type="button" data-toy="down" data-en="Put it back" data-he="החזירו אותו">Put it back</button></div></div>
+      <div id="stripwrap"><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it." data-he="גררו כדי לסובב.">Drag to turn it.</div><span class="vmark">${mark("", "b")}</span></div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="under" data-en="Underside" data-he="מלמטה">Underside</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Pick it up" data-he="הרימו אותו">Pick it up</button><button class="vp" type="button" data-toy="carry" data-en="Take it with you" data-he="קחו אותו איתכם">Take it with you</button><button class="vp" type="button" data-toy="down" data-en="Put it back" data-he="החזירו אותו">Put it back</button></div></div>
       <div class="carat" id="carat">
         <div><details class="spec"><summary><span data-en="Specifications" data-he="מפרט">Specifications</span></summary><div class="specbody"><p class="p" style="margin-top:8px;font-size:.95rem" data-en="Carat is weight, not size. The total weight is shared by every stone on the line, and the line holds as many stones as your wrist allows. The dimensions here are representative; the final quotation follows the stones we match for you." data-he="קראט הוא משקל, לא גודל. המשקל הכולל מתחלק בין כל האבנים על הקו, והקו מחזיק כמה אבנים שפרק היד מאפשר. המידות כאן מייצגות; הצעת המחיר הסופית נקבעת לפי האבנים שנתאים לכם.">Carat is weight, not size. The total weight is shared by every stone on the line, and the line holds as many stones as your wrist allows. The dimensions here are representative; the final quotation follows the stones we match for you.</p><p class="p" data-en="Each stone is drawn from the true geometry of its cut. Dimensions are representative; the final quotation follows the stones we match for you." data-he="כל אבן מצוירת מהגיאומטריה האמיתית של הליטוש שלה. המידות מייצגות; הצעת המחיר הסופית נגזרת מהאבנים שנתאים עבורכם.">Each stone is drawn from the true geometry of its cut. Dimensions are representative; the final quotation follows the stones we match for you.</p></div></details></div>
         <div><div class="big" id="eachCt">0.17<small>ct</small></div><div class="k" style="margin-top:8px" id="eachLbl">Each of the 36 stones</div></div>

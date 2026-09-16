@@ -435,7 +435,7 @@
   var drag = null, dirty = true, idle = !reduce, W2 = 1, H2 = 1, DPR = 1;
   function size() {
     DPR = Math.min(devicePixelRatio || 1, 2);
-    var r = cv.getBoundingClientRect();
+    var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }
     dirty = true;
@@ -476,8 +476,10 @@
   }
   function tick() {
     requestAnimationFrame(tick);
-    var r = wrap.getBoundingClientRect();
-    if (r.bottom < -80 || r.top > innerHeight + 80 || wrap.classList.contains("wrist")) return;
+    if (!page) {
+      var r = wrap.getBoundingClientRect();
+      if (r.bottom < -80 || r.top > innerHeight + 80 || wrap.classList.contains("wrist")) return;
+    }
     if (!drag) {
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
         cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.94; cam.vph *= 0.94;
@@ -504,7 +506,7 @@
       dirty = true;
     }
     if (!dirty) return;
-    dirty = false; draw();
+    dirty = false; draw(); placeGrab();
   }
 
   /* ─────────────────────────── the hand ─────────────────────────── */
@@ -531,7 +533,7 @@
   function release(e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; cv.classList.remove("holding"); if (toy) toy.held = false; }
   cv.addEventListener("pointerup", release); cv.addEventListener("pointercancel", release);
   cv.addEventListener("wheel", function (e) {
-    if (wrap.classList.contains("wrist")) return;
+    if (wrap.classList.contains("wrist") || page) return;
     e.preventDefault(); idle = false; cam.td = Math.max(0.52, Math.min(1.45, cam.td + e.deltaY * 0.0009));
   }, { passive: false });
   var pinch = null;
@@ -554,6 +556,45 @@
 
   size(); build(); requestAnimationFrame(tick);
   addEventListener("silavu:build", build);
+  var page = false, grab = null;
+  function ensureGrab() {
+    if (grab) return grab;
+    grab = document.createElement("div"); grab.id = "bgrab"; grab.setAttribute("aria-label", "The bracelet");
+    document.body.appendChild(grab);
+    grab.addEventListener("pointerdown", function (e) {
+      if (!toy) return;
+      e.preventDefault(); drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; toy.held = true; toy.vx = toy.vy = 0;
+      try { grab.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    grab.addEventListener("pointermove", function (e) {
+      if (!drag || !toy || e.pointerId !== drag.id) return;
+      var dx = (e.clientX - drag.x) / Math.max(200, cv.clientWidth) * 3.0, dy = (e.clientY - drag.y) / Math.max(200, cv.clientHeight) * 2.2;
+      toy.x += dx * (state.halfW || state.fit) * 0.34; toy.y -= dy * (state.halfH || state.fit) * 0.46;
+      toy.vx = dx * (state.halfW || state.fit) * 0.055; toy.vy = -dy * (state.halfH || state.fit) * 0.075;
+      toy.wx += dy * 0.055; toy.wy += dx * 0.065;
+      drag.x = e.clientX; drag.y = e.clientY; dirty = true;
+    });
+    var up = function (e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; if (toy) toy.held = false; };
+    grab.addEventListener("pointerup", up); grab.addEventListener("pointercancel", up);
+    return grab;
+  }
+  function placeGrab() {
+    if (!page || !toy || !grab) return;
+    var hw = state.halfW || state.fit, hh = state.halfH || state.fit;
+    var x = (0.5 + toy.x / (2 * hw)) * cv.clientWidth, y = (0.5 - toy.y / (2 * hh)) * cv.clientHeight;
+    var r = Math.max(26, Math.min(150, state.fit / hh * cv.clientHeight * 0.58));
+    grab.style.width = grab.style.height = Math.round(r * 2) + "px";
+    grab.style.left = Math.round(x - r) + "px"; grab.style.top = Math.round(y - r) + "px";
+  }
+  function carry() {
+    if (page) return;
+    if (!toy) pickUp();
+    page = true; document.documentElement.classList.add("silavu-play");
+    cam.td = 3.2; cam.d = 3.2;
+    ensureGrab(); size();
+    toy.x = 0; toy.y = 0; toy.vx = state.fit * 0.010; toy.vy = 0;
+    dirty = true;
+  }
   function pickUp() {
     if (toy) return;
     idle = false; cam.vth = cam.vph = 0;
@@ -561,13 +602,15 @@
     cam.td = 1.58; wrap.classList.add("held"); dirty = true;
   }
   function putBack() {
+    if (page) { page = false; document.documentElement.classList.remove("silavu-play"); size(); }
     if (!toy) return;
     toy = null; wrap.classList.remove("held"); cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true;
   }
   document.addEventListener("click", function (e) {
     var t = e.target.closest && e.target.closest("[data-toy]"); if (!t) return;
-    if (t.getAttribute("data-toy") === "up") pickUp(); else putBack();
+    var v = t.getAttribute("data-toy");
+    if (v === "up") pickUp(); else if (v === "carry") carry(); else putBack();
   });
-  window.__bracelet = { build: build, pickUp: pickUp, putBack: putBack, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+  window.__bracelet = { build: build, pickUp: pickUp, carry: carry, putBack: putBack, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
 })();
 </script>

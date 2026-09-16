@@ -34,4 +34,13 @@ for w in 800 1200 1600 2000; do
   convert "$T/sigb.png"  -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/sigb-$w.jpg"
   convert "$T/sigbd.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/sigbd-$w.jpg"
 done
-ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg
+# three things we make: a tennis bracelet, the Signature Drop, the Signature Chain
+curl -sf -o "$T/tennis.png" $B/hf_20260916_143909_821b4e93-29fb-4ed9-9f65-73a02a51e373.png
+curl -sf -o "$T/earsil.png" $B/hf_20260916_143909_a6c4a34a-4437-42a2-bbb6-c9bd88ee5c2c.png
+curl -sf -o "$T/earsil2.png" $B/hf_20260916_143909_8a389748-fb88-49c6-bf1a-63ebdfd610d8.png
+for w in 800 1200 1600 2000; do
+  convert "$T/tennis.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/tennis-$w.jpg"
+  convert "$T/earsil.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil-$w.jpg"
+  convert "$T/earsil2.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil2-$w.jpg"
+done
+ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg "$OUT"/tennis*.jpg "$OUT"/earsil*.jpg
