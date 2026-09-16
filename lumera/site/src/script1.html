@@ -43,7 +43,11 @@
   /* the symbol becomes the header symbol: the same object, moved and scaled, then the header takes over */
   function contract() {
     if (contracting || entered) return; contracting = true;
-    var target = header.querySelector(".mark svg.sy"), tr = target.getBoundingClientRect(), fr = imark.getBoundingClientRect();
+    try { contractIn(); } catch (e) { enter(); }
+  }
+  function contractIn() {
+    var target = header.querySelector(".mark svg.sy"), tr = target ? target.getBoundingClientRect() : null, fr = imark.getBoundingClientRect();
+    if (!tr) { enter(); return; }
     header.classList.add("premark"); header.classList.add("show");
     if (reduce || !tr.height || !fr.height) { header.classList.remove("premark"); enter(); return; }
     var s = tr.height / fr.height, dx = (tr.left + tr.width / 2) - (fr.left + fr.width / 2), dy = (tr.top + tr.height / 2) - (fr.top + fr.height / 2);
@@ -60,6 +64,7 @@
     riser.addEventListener("animationend", setSharp, { once: true });
     setTimeout(setSharp, 1500);
   }
+  setTimeout(function () { enter(); }, 6000);
   $("enterBtn").addEventListener("click", skip);
   intro.addEventListener("pointerdown", function (e) { if (!e.target.closest(".introlang")) skip(); });
   ["wheel", "touchmove", "keydown"].forEach(function (ev) { addEventListener(ev, skip, { passive: true }); });
