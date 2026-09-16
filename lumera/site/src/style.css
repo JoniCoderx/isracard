@@ -911,3 +911,15 @@
   .specrow { display:flex; gap:clamp(22px,4vw,54px); flex-wrap:wrap; align-items:center; margin-top:14px; }
   .specrow .big { font-size:clamp(1.4rem,2.4vw,2rem); }
   .carat { align-items:center; }
+
+  /* ── v37 ── the builder column may never be widened by its own contents.
+     .vpos is an inline-flex row and its min-content (FRONT / SIDE / UNDERSIDE /
+     PICK IT UP / TAKE IT WITH YOU) was ~487px, which sized the .panel grid track
+     and pushed the whole builder off the right edge of every phone. */
+  .panel { grid-template-columns:minmax(0,1fr); }
+  .panel > * { min-width:0; }
+  .vpos { flex-wrap:wrap; justify-content:center; max-width:100%; }
+  @media (max-width:520px) { .vpos .vp { padding:0 11px; } }
+  /* where the row wraps, the separator becomes the line break itself, so the
+     views sit on one line and the actions on the next, with no dangling bar. */
+  @media (max-width:699px) { .vsep { flex-basis:100%; width:auto; height:0; margin:0; background:none; align-self:auto; } }
