@@ -53,7 +53,7 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.click("#langBtn"); await p.waitForTimeout(300);
   out.push((await p.evaluate(() => document.documentElement.dir==="rtl" && document.getElementById("sumMetal").textContent==="זהב צהוב 18K" && document.getElementById("whereT").textContent.length > 0 && !/[A-Za-z]/.test(document.getElementById("whereT").textContent)) ? "PASS":"FAIL") + ` ${tag} hebrew`);
   out.push((await p.evaluate(() => /^\d\d:\d\d$/.test(document.getElementById("clkDXB").textContent)) ? "PASS":"FAIL") + ` ${tag} clocks`);
-  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < (innerWidth < 1000 ? 22 : 21)) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
+  out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < (innerWidth < 1000 ? 24 : 23)) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
   // the piece window, the chain, the try-on, the carat numbers
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(300);
   await p.evaluate(() => document.getElementById("p-riv").click()); await p.waitForTimeout(500);
@@ -87,7 +87,7 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.evaluate(() => window.__money.set("USD")); out.push(((await p.evaluate(() => /US\$/.test(document.getElementById("est").textContent) && /US\$/.test(document.querySelector("#p-ring .price").textContent) && document.querySelectorAll("[data-cur] .chip.on").length === 2)) ? "PASS":"FAIL") + ` ${tag} currency switch (${await p.evaluate(() => document.getElementById("est").textContent)})`);
   await p.evaluate(() => window.__money.set("AED"));
   if (vp.width < 1000) { await p.evaluate(() => window.__tray[1].go(2)); await p.waitForTimeout(700); out.push(((await p.evaluate(() => { const t = document.querySelector("#collection .pieces"); const m = new DOMMatrix(getComputedStyle(t).transform); return window.__tray[1].index === 2 && m.m41 < -400 && document.querySelectorAll(".swipe").length === 0; })) ? "PASS":"FAIL") + ` ${tag} tray moves to the third piece`); }
-  out.push(((await p.evaluate(() => ["hero","inside","what","collection","macro","build","wrist","clients","voices","partners","concierge","end"].join() === [...document.querySelectorAll("main > section")].map(s => s.id).join())) ? "PASS":"FAIL") + ` ${tag} journey order`);
+  out.push(((await p.evaluate(() => ["hero","house","inside","what","collection","macro","build","wrist","clients","voices","partners","concierge","end"].join() === [...document.querySelectorAll("main > section")].map(s => s.id).join())) ? "PASS":"FAIL") + ` ${tag} journey order`);
   out.push(((await p.evaluate(() => { const im = document.querySelector("#hero img"); return /hero(v)?-\d+\.jpg/.test(im.currentSrc || im.src) && im.getAttribute("srcset").split(",").length >= 2; })) ? "PASS":"FAIL") + ` ${tag} hero served from srcset (${await p.evaluate(() => (document.querySelector("#hero img").currentSrc || "").split("/").pop())})`);
   out.push((errs.length===0 ? "PASS":"FAIL") + ` ${tag} no errors ${errs.join(" | ")}`);
   await p.close();
