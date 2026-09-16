@@ -60,10 +60,10 @@
   else if (reduce) { intro.classList.add("sharp"); setTimeout(contract, 400); }
   else {
     intro.classList.add("run");
-    var riser = imark.querySelector(".iqin"), left = 1450;
-    riser.addEventListener("animationend", setSharp, { once: true });
-    try { var an = riser.getAnimations()[0]; if (an) left = Math.max(0, 1450 - (an.currentTime || 0)); } catch (e) {}
-    setTimeout(setSharp, left + 60);
+    /* the mark is already ivory; the light crosses it once, then it goes to the header */
+    var band = imark.querySelector(".isin");
+    if (band) band.addEventListener("animationend", setSharp, { once: true });
+    setTimeout(setSharp, 1620);
   }
   setTimeout(function () { enter(); }, 6000);
   $("enterBtn").addEventListener("click", skip);

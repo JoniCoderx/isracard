@@ -42,11 +42,13 @@
     var litFig = null;
     document.addEventListener("pointermove", function (e) {
       var f = e.target && e.target.closest ? e.target.closest(".fig") : null;
-      if (litFig && litFig !== f) { litFig.style.removeProperty("--ppx"); litFig.style.removeProperty("--ppy"); }
+      if (litFig && litFig !== f) { litFig.style.removeProperty("--ppx"); litFig.style.removeProperty("--ppy"); litFig.style.removeProperty("--tx"); litFig.style.removeProperty("--ty"); }
       litFig = f; if (!f) return;
       var r = f.getBoundingClientRect(), x = (e.clientX - r.left) / Math.max(1, r.width), y = (e.clientY - r.top) / Math.max(1, r.height);
       f.style.setProperty("--lx", (x * 100).toFixed(1) + "%"); f.style.setProperty("--ly", (y * 100).toFixed(1) + "%");
       f.style.setProperty("--ppx", ((0.5 - x) * 10).toFixed(1) + "px"); f.style.setProperty("--ppy", ((0.5 - y) * 8).toFixed(1) + "px");
+      /* the piece leans into the hand, the way a plate does when you tip it */
+      f.style.setProperty("--tx", ((0.5 - y) * 7.5).toFixed(2) + "deg"); f.style.setProperty("--ty", ((x - 0.5) * 9.5).toFixed(2) + "deg");
     }, { passive: true });
   }
 

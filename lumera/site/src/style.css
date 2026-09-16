@@ -964,3 +964,205 @@
     100% { transform:translateY(-1.8%); }
   }
   #intro.sharp .imk .iq .iqin, #intro.sharp .imk .is .isin { transform:translateY(-1.8%); }
+
+  /* ══ v39 ══ THE SYMBOL
+     The mark is ivory from the first frame. Nothing fills, so nothing can
+     stutter on its way to white. What happens instead is light: a prismatic
+     refraction crosses the symbol the way it crosses a brilliant, and the
+     same light answers the hand and the scroll everywhere else on the site. */
+
+  /* the loader mark: solid from frame one */
+  .imk .ib, .imk .iq { display:none !important; }
+  .imk .if { opacity:1 !important; background:var(--ink); transition:none !important; }
+  .imk { animation:imk-in .62s cubic-bezier(.22,.66,.24,1) both; will-change:transform, opacity; }
+  @keyframes imk-in { from { opacity:0; transform:scale(.88); } to { opacity:1; transform:scale(1); } }
+
+  /* the refraction: a spectrum band crossing the mark, twice, then gone */
+  .imk .is { opacity:1 !important; mix-blend-mode:screen; overflow:hidden; }
+  .imk .is .isin { position:absolute; inset:-40% -10%; width:auto; height:auto; top:-40%;
+    transform:none; animation:imk-ref 1.55s cubic-bezier(.36,.12,.2,1) .16s both;
+    background:
+      linear-gradient(74deg, transparent 38%, rgba(255,255,255,.98) 47%, rgba(214,238,255,.85) 50%, rgba(255,238,206,.85) 53%, transparent 62%),
+      linear-gradient(74deg, transparent 44%, rgba(176,226,255,.45) 50%, transparent 56%);
+    background-size:260% 100%, 260% 100%; background-repeat:no-repeat; }
+  @keyframes imk-ref {
+    0%   { background-position:170% 0, 200% 0; opacity:0; }
+    12%  { opacity:1; }
+    62%  { background-position:-70% 0, -40% 0; opacity:1; }
+    100% { background-position:-140% 0, -110% 0; opacity:0; }
+  }
+  /* a breath of light behind it, so the symbol sits in air rather than on ink */
+  .imk::before { content:""; position:absolute; inset:-55%; z-index:-1; pointer-events:none;
+    background:radial-gradient(48% 42% at 50% 50%, rgba(246,243,237,.14), transparent 72%);
+    animation:imk-halo 1.9s ease-out both; }
+  @keyframes imk-halo { 0% { opacity:0; transform:scale(.7); } 45% { opacity:1; } 100% { opacity:.55; transform:scale(1); } }
+  #intro.sharp .imk .is { opacity:0 !important; transition:opacity .2s linear; }
+  @media (prefers-reduced-motion:reduce) {
+    .imk, .imk .is .isin, .imk::before { animation:none; }
+    .imk .is { opacity:0 !important; }
+  }
+  /* the solid sits under the light, not over it */
+  .imk .if { z-index:1; }
+  .imk .is { z-index:3; }
+
+  /* v39b — a white mark cannot show light on white. The symbol is polished
+     metal: white overall, with the dimension that lets a highlight read. */
+  .imk .if { background:linear-gradient(166deg,
+      #ffffff 0%, #fbf9f4 14%, #e4ded1 30%, #ffffff 44%,
+      #d9d2c4 58%, #f7f4ed 72%, #e9e3d6 86%, #ffffff 100%); }
+  .imk .is { mix-blend-mode:normal; }
+  .imk .is .isin {
+    background:
+      linear-gradient(74deg, transparent 40%, rgba(255,255,255,.98) 48%, transparent 58%),
+      linear-gradient(74deg, transparent 43%, rgba(120,200,255,.55) 48%, rgba(255,214,160,.55) 53%, transparent 60%);
+    background-size:260% 100%, 260% 100%; background-repeat:no-repeat; }
+
+  /* v39c — the refraction is a real band that travels across the symbol, on a
+     transform the compositor carries, rather than a background offset that
+     leaves the mark before it is ever seen. */
+  .imk .is { overflow:hidden; }
+  .imk .is .isin { inset:auto; top:-52%; left:0; width:46%; height:204%;
+    background:
+      linear-gradient(90deg, transparent 0%, rgba(150,210,255,.50) 26%, rgba(255,255,255,.99) 47%,
+                             rgba(255,255,255,.99) 53%, rgba(255,206,150,.50) 74%, transparent 100%);
+    transform:rotate(17deg) translateX(-150%);
+    animation:imk-ref 1.5s cubic-bezier(.30,.05,.25,1) .18s both; }
+  @keyframes imk-ref {
+    0%   { transform:rotate(17deg) translateX(-150%); opacity:0; }
+    10%  { opacity:1; }
+    78%  { opacity:1; }
+    100% { transform:rotate(17deg) translateX(322%); opacity:0; }
+  }
+
+  /* ══ v39d ══ the symbol is alive wherever it appears.
+     At rest it breathes a slow chromatic refraction, the way a brilliant does
+     when you turn it a little in the light. Under the hand it opens up. */
+  svg.sy { transition:filter .55s var(--ease), transform .55s var(--ease); }
+  header.sh .mark .sy { animation:sy-breathe 9s ease-in-out infinite; }
+  @keyframes sy-breathe {
+    0%,100% { filter:drop-shadow(-.6px 0 0 rgba(122,198,255,.30)) drop-shadow(.6px 0 0 rgba(255,201,142,.30)) drop-shadow(0 0 3px rgba(255,255,255,.18)); }
+    50%     { filter:drop-shadow(.6px 0 0 rgba(122,198,255,.30)) drop-shadow(-.6px 0 0 rgba(255,201,142,.30)) drop-shadow(0 0 7px rgba(255,255,255,.34)); }
+  }
+  @media (hover:hover) and (pointer:fine) {
+    .mark:hover .sy, header.sh .mark:hover .sy {
+      color:var(--ink);
+      transform:scale(1.07) rotate(-2.5deg);
+      animation:sy-live 2.4s ease-in-out infinite;
+    }
+    @keyframes sy-live {
+      0%,100% { filter:drop-shadow(-1.6px 0 0 rgba(122,198,255,.8)) drop-shadow(1.6px 0 0 rgba(255,201,142,.8)) drop-shadow(0 0 10px rgba(255,255,255,.55)); }
+      50%     { filter:drop-shadow(1.6px 0 0 rgba(122,198,255,.8)) drop-shadow(-1.6px 0 0 rgba(255,201,142,.8)) drop-shadow(0 0 18px rgba(255,255,255,.8)); }
+    }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    header.sh .mark .sy, .mark:hover .sy { animation:none; }
+  }
+
+  /* ══ v39e ══ the builder on a phone.
+     It was two and a quarter screens tall: the cut ran to four rows of chips,
+     the metal to three, and every row carried desktop padding. The controls
+     are sized for a thumb rather than a cursor, the rhythm is tighter, and
+     the piece keeps the room — so the whole thing is read, not scrolled. */
+  @media (max-width:699px) {
+    .panel { gap:15px; padding:18px 14px; border-radius:16px; }
+    .opt { grid-template-columns:1fr; gap:7px; padding-top:12px; }
+    .opt .k { font-size:.58rem; letter-spacing:.18em; opacity:.62; }
+    .chips { gap:6px; justify-content:center; }
+    .chips.cuts .chip { padding-inline:10px; }
+    .chip { --bh:33px; height:33px; min-height:33px; padding:0 11px; font-size:.575rem; letter-spacing:.11em; border-radius:9px; }
+    .chip .ci { width:11px; height:11px; margin-inline-end:5px; }
+    .vposwrap { margin-top:9px; }
+    .vpos { padding:2px; border-radius:10px; }
+    .vpos .vp { height:29px; min-height:29px; padding:0 9px; font-size:.555rem; letter-spacing:.1em; }
+    .carat { padding-top:13px; gap:9px; text-align:center; }
+    .specrow { margin-top:9px; gap:16px; justify-content:center; }
+    .total { text-align:center; }
+    .total .chips, .cur .chips { justify-content:center; }
+  }
+  /* the eight cuts sit on a grid rather than wrapping ragged: two even rows */
+  @media (max-width:699px) {
+    .chips.cuts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+    .chips.cuts .chip { padding-inline:4px; font-size:.535rem; letter-spacing:.055em; width:100%; }
+    .chips.cuts .chip .ci { display:none; }
+  }
+
+  /* ══ v39f ══ the pieces lean into the hand.
+     The small parallax you liked, carried further: the photograph is a plate
+     that tips toward the cursor, with the specular sliding across it and the
+     shadow deepening on the side that lifts. */
+  @media (hover:hover) and (pointer:fine) {
+    .piece, .card { perspective:1100px; }
+    .fig { transform-style:preserve-3d; transition:transform .5s var(--ease), box-shadow .5s var(--ease); }
+    .piece:hover .fig, .card:hover .fig {
+      transform:rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg)) translateZ(6px);
+      box-shadow:0 26px 54px -26px rgba(0,0,0,.92), 0 2px 0 rgba(255,255,255,.05) inset;
+    }
+    .piece:hover .fig .im img, .card:hover .fig .im img { transform:scale(1.07) translate(var(--ppx,0px), var(--ppy,0px)); }
+    .fig .lt { background:radial-gradient(ellipse 52% 40% at var(--lx,50%) var(--ly,40%), rgba(255,255,255,.26), rgba(255,255,255,.07) 44%, transparent 70%); }
+    /* a hard edge of light that rides the lean */
+    .fig .lt::after { content:""; position:absolute; inset:0; opacity:0; transition:opacity .6s var(--ease); mix-blend-mode:screen;
+      background:linear-gradient(calc(90deg + var(--ty,0deg) * 4), transparent 42%, rgba(255,255,255,.16) 50%, transparent 58%); }
+    .piece:hover .fig .lt::after, .card:hover .fig .lt::after { opacity:1; }
+  }
+  @media (prefers-reduced-motion:reduce) { .piece:hover .fig, .card:hover .fig { transform:none; } }
+
+  /* ══ v39g ══ the laboratories are a credit line, not a monument.
+     Two names set at the size of a caption, on one line with their label,
+     where a house states a fact rather than advertises it. */
+  .certs { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:center;
+    gap:8px 16px; padding:clamp(12px,1.6vw,20px) 0; margin-top:clamp(20px,3vw,34px); }
+  .certs .k { font-size:.62rem; letter-spacing:.2em; color:var(--ink3); margin:0; }
+  .certs .certrow { gap:14px; }
+  .certs .cert b { font-size:.72rem; letter-spacing:.22em; color:var(--ink3); }
+  .certs .cert:hover b { color:var(--ink2); }
+  .certs .certnote { display:none; }
+
+  /* ══ v39h ══ the footer says its piece and stops.
+     The certification sentence is gone — it is already stated where it
+     belongs — and the whole block is tightened so the page ends rather
+     than trails off. */
+  #end { padding-block:clamp(44px,6vw,80px) clamp(24px,3vw,40px); }
+  .fbig { gap:10px; }
+  @media (max-width:699px) {
+    #end { padding-block:38px 22px; }
+    .fgrid { gap:22px; }
+    .fcol { gap:6px; }
+    .fbot { gap:10px; padding-top:18px; }
+  }
+
+  /* ══ v39i ══ the house mark on the try-on.
+     When the piece is finally sitting on the wrist, the photograph is signed:
+     the exact symbol inside a fine ring, low in the corner, the way a house
+     stamps its own work. It appears only on the finished view. */
+  .tcv::before, .tcv::after { content:""; position:absolute; pointer-events:none; z-index:4;
+    opacity:0; transform:scale(.86); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .tcv::before { right:16px; bottom:16px; width:46px; height:46px; border-radius:50%;
+    border:1px solid rgba(255,255,255,.42); background:rgba(0,0,0,.16);
+    box-shadow:0 2px 14px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.14);
+    backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+  .tcv::after { right:16px; bottom:16px; width:46px; height:46px;
+    -webkit-mask-image:var(--mk); mask-image:var(--mk);
+    -webkit-mask-size:47% 47%; mask-size:47% 47%;
+    -webkit-mask-position:center; mask-position:center;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    background:rgba(255,255,255,.92); }
+  #tryon.seen .tcv::before, #tryon.seen .tcv::after { opacity:1; transform:scale(1); }
+  #tryon.seen .tcv::after { transition-delay:.1s; }
+  @media (max-width:899px) { .tcv::before, .tcv::after { width:38px; height:38px; right:12px; bottom:12px; } }
+
+  /* ══ v39j ══ the enquiry answers you.
+     A line of light draws under the field you are in, the two clocks lift
+     under the hand, and the symbol beside them carries the same slow
+     refraction as the one in the header — so the page feels attended. */
+  .cf .field { position:relative; }
+  .cf .field::after { content:""; position:absolute; left:50%; right:50%; bottom:0; height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent); opacity:0;
+    transition:left .55s var(--ease), right .55s var(--ease), opacity .35s var(--ease); }
+  .cf .field:focus-within::after { left:0; right:0; opacity:1; }
+  .cf .field input, .cf .field textarea { transition:background .45s var(--ease); }
+  .cf .field:focus-within input, .cf .field:focus-within textarea { background:rgba(255,255,255,.03); }
+  .clocks .clock { transition:transform .5s var(--ease); }
+  .clocks .clock.on .c { text-shadow:0 0 20px rgba(217,201,163,.3); }
+  @media (hover:hover) and (pointer:fine) { .clocks .clock:hover { transform:translateY(-2px); } }
+  .cmark .sy { animation:sy-breathe 9s ease-in-out infinite; }
+  @media (prefers-reduced-motion:reduce) { .cmark .sy { animation:none; } }

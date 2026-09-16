@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { body } from "./body.mjs";
+import { body, MARK, MARK_W } from "./body.mjs";
 const S = new URL(".", import.meta.url).pathname;
 const css = fs.readFileSync(S + "style.css", "utf8");
 let s1 = fs.readFileSync(S + "script1.html", "utf8");
@@ -78,6 +78,8 @@ const hs = b.indexOf('<section id="hero"'), he = b.indexOf("</section>", hs);
 b = b.slice(0, hs) + b.slice(hs, he).replace(/class="([^"]*)\brv\b([^"]*)"/g, 'class="$1rv late$2"') + b.slice(he);
 /* the three heavy canvases wait for the loader: they are stored, then run in order */
 const defer = (s) => s.replace(/^<script>\n/, "<script>\n(window.__defer = window.__defer || []).push(function () {\n").replace(/<\/script>\n?$/, "});\n</script>\n");
-const page = `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n<style>\n${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}`;
+/* the symbol as a mask, available to anything on the page that wants to light it */
+const MKVAR = ":root{--mk:url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + Math.ceil(MARK_W) + ' 1000" preserveAspectRatio="none"><path d="' + MARK + '" fill="#fff"/></svg>') + "')}\n";
+const page = `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n<style>\n${MKVAR}${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}`;
 fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", page);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

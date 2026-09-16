@@ -430,7 +430,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Message the concierge" data-he="כתבו לקונסיירז׳">Message the concierge</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a><span data-en="Replies within the hour, 9:00–21:00 Gulf time" data-he="מענה תוך שעה, 9:00–21:00 שעון המפרץ">Replies within the hour, 9:00–21:00 Gulf time</span></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
-    <div class="fbot k rv"><span>© SILAVU MMXXVI</span><span data-en="All stones GIA or IGI certified · Prices in AED, confirmed with the reports" data-he="כל האבנים מאושרות GIA או IGI · מחירים בדירהם, מאושרים עם התעודות">All stones GIA or IGI certified · Prices in AED, confirmed with the reports</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
+    <div class="fbot k rv"><span>© SILAVU MMXXVI</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>
 </main>

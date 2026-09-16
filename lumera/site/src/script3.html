@@ -50,8 +50,24 @@
     }
     if ((phase === 1 || phase === 3) && spec.set !== "channel") { var pr = seatSprite(metal, aw, ah, spec.set, "prongs"); ctx.drawImage(pr, -pr._w / 2, -pr._h / 2, pr._w, pr._h); }
     if (phase === 1 || phase === 2) {
-      var r = Math.max(aw, ah), tw = r > 34 ? 0 : Math.pow(Math.max(0, Math.sin(t * 2.1 + i * 2.39)), 30);
-      if (tw > 0.03) { ctx.globalAlpha = tw; ctx.strokeStyle = "#fff"; ctx.lineWidth = Math.max(1, r * 0.12); ctx.shadowColor = "#fff"; ctx.shadowBlur = r; ctx.beginPath(); ctx.moveTo(-r * 1.6, -r * 0.3); ctx.lineTo(r * 1.6, -r * 0.3); ctx.moveTo(0, -r * 1.9); ctx.lineTo(0, r * 1.3); ctx.stroke(); ctx.globalAlpha = 1; ctx.shadowBlur = 0; }
+      /* fire: a slow broad flash under a fast sharp one, so the line is never
+         still, and the flash carries colour the way a brilliant disperses it */
+      var r = Math.max(aw, ah);
+      var sA = Math.pow(Math.max(0, Math.sin(t * 1.55 + i * 2.39)), 11);
+      var sB = Math.pow(Math.max(0, Math.sin(t * 3.10 + i * 1.13 + 1.7)), 24);
+      var tw = Math.min(1, sA * 0.8 + sB);
+      if (tw > 0.02) {
+        ctx.lineCap = "round";
+        ctx.globalAlpha = tw; ctx.strokeStyle = "#fff"; ctx.lineWidth = Math.max(1, r * 0.13);
+        ctx.shadowColor = "#fff"; ctx.shadowBlur = r * 1.5;
+        ctx.beginPath(); ctx.moveTo(-r * 1.85, -r * 0.3); ctx.lineTo(r * 1.85, -r * 0.3); ctx.moveTo(0, -r * 2.15); ctx.lineTo(0, r * 1.5); ctx.stroke();
+        ctx.shadowBlur = 0; ctx.globalAlpha = tw * 0.5; ctx.lineWidth = Math.max(1, r * 0.07);
+        ctx.strokeStyle = "rgba(146,205,255,.95)";
+        ctx.beginPath(); ctx.moveTo(-r * 1.45, -r * 0.48); ctx.lineTo(r * 1.45, -r * 0.48); ctx.stroke();
+        ctx.strokeStyle = "rgba(255,204,148,.95)";
+        ctx.beginPath(); ctx.moveTo(-r * 1.45, -r * 0.12); ctx.lineTo(r * 1.45, -r * 0.12); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
     }
     ctx.restore();
   }
