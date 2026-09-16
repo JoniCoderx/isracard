@@ -1689,11 +1689,15 @@
   }
   function draw(t) {
     ctx.clearRect(0, 0, W, H); var m = metalOf(); window.__chainLoop = closed;
+    /* the Line has weight: a soft shadow falls on the page beneath it */
+    ctx.save(); ctx.translate(4, 9); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); for (var s0 = 1; s0 < N; s0++) ctx.lineTo(pts[s0].x, pts[s0].y); if (closed) ctx.closePath(); ctx.strokeStyle = "rgba(0,0,0,.16)"; ctx.lineWidth = R * 3.6; ctx.stroke(); ctx.strokeStyle = "rgba(0,0,0,.26)"; ctx.lineWidth = R * 2.2; ctx.stroke(); ctx.restore();
     ctx.strokeStyle = m; ctx.lineWidth = R * 0.42; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); for (var i = 1; i < N; i++) ctx.lineTo(pts[i].x, pts[i].y); if (closed) ctx.closePath(); ctx.stroke();
     var gx = function (p) { return p.x; }, gy = function (p) { return p.y; };
     var sp = specNow(); if (sp.n !== N && sp.n) { N = Math.max(8, Math.min(110, sp.n)); fitLine(); spawn(); return; } fitLine();
     for (i = 0; i < N; i++) gem(ctx, pts[i].x, pts[i].y, AW, R, t, i, m, angAt(pts, i, gx, gy), 0, sp);
     for (i = 0; i < N; i++) gem(ctx, pts[i].x, pts[i].y, AW, R, t, i, m, angAt(pts, i, gx, gy), 1, sp);
+    /* thrown fast, the stones catch the light as streaks */
+    ctx.save(); ctx.strokeStyle = "#fff"; ctx.lineCap = "round"; for (i = 0; i < N; i++) { var q = pts[i], vx = q.x - q.ox, vy = q.y - q.oy, v = Math.hypot(vx, vy); if (v > 3.5 && i !== grab) { ctx.globalAlpha = Math.min(0.85, (v - 3.5) / 18); ctx.lineWidth = Math.max(1, R * 0.16); ctx.beginPath(); ctx.moveTo(q.x, q.y - R * 0.2); ctx.lineTo(q.x - vx * 1.6, q.y - vy * 1.6 - R * 0.2); ctx.stroke(); } } ctx.restore();
     ctx.fillStyle = m; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(pts[0].x - R * 1.6, pts[0].y - R * 0.6, R * 1.4, R * 1.2, R * 0.3) : ctx.rect(pts[0].x - R * 1.6, pts[0].y - R * 0.6, R * 1.4, R * 1.2); ctx.fill();
   }
   function loop(now) { requestAnimationFrame(loop); if (!on) return; var t = now / 1000, dt = Math.min(0.033, lastT ? now - lastT : 16) / 1000; lastT = now; step(dt); draw(t); }
