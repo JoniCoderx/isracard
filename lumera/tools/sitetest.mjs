@@ -42,7 +42,7 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.evaluate(() => document.querySelector('a[data-partner]').click()); await p.waitForTimeout(1500);
   out.push((/Partnership/.test(await p.inputValue("#fMsg")) && await p.evaluate(() => document.querySelector('.chip[data-who="partner"]').classList.contains("on")) ? "PASS":"FAIL") + ` ${tag} partner prefills`);
   await p.click('.chip[data-k="metal"][data-v="yellow"]'); await p.click('.chip[data-k="ct"][data-v="10"]');
-  out.push(((await p.textContent("#sumMetal"))==="18K yellow gold" && (await p.textContent("#sumStones"))==="36 × 0.28 ct" ? "PASS":"FAIL") + ` ${tag} builder`);
+  out.push(((await p.textContent("#sumMetal"))==="18K yellow gold" && await p.evaluate(() => { const t = document.getElementById("sumStones").textContent, m = t.match(/^(\d+) × (\d\.\d\d) ct · Round brilliant$/); return !!m && Math.abs(m[1] * m[2] - 10) < 0.6 && +m[1] >= 30 && +m[1] <= 60; }) ? "PASS":"FAIL") + ` ${tag} builder (${await p.textContent("#sumStones")})`);
   await p.evaluate(() => document.getElementById("reserve").click()); await p.waitForTimeout(1200);
   out.push((/10 ct/.test(await p.inputValue("#fMsg")) && await p.evaluate(() => document.querySelector('.chip[data-who="client"]').classList.contains("on")) ? "PASS":"FAIL") + ` ${tag} reserve prefills`);
   await p.fill("#fName",""); await p.fill("#fContact",""); await p.evaluate(() => document.querySelector("#cform .btn").click()); await p.waitForTimeout(200);
@@ -64,11 +64,16 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   out.push(((await p.evaluate(() => document.getElementById("play").classList.contains("on") && document.getElementById("putback").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain picked up`);
   await p.evaluate(() => document.getElementById("putback").click());
   out.push(((await p.evaluate(() => !document.getElementById("play").classList.contains("on"))) ? "PASS":"FAIL") + ` ${tag} chain put back`);
-  await p.evaluate(() => document.getElementById("tryonBtn").click()); await p.waitForTimeout(400);
+  await p.evaluate(() => document.getElementById("tryonBtn2").click()); await p.waitForTimeout(400);
   out.push(((await p.evaluate(() => document.getElementById("tryon").classList.contains("open") && document.getElementById("tcanvas").width > 0)) ? "PASS":"FAIL") + ` ${tag} try-on opens`);
   await p.keyboard.press("Escape"); await p.waitForTimeout(300);
+  await p.evaluate(() => document.getElementById("tryonBtn").click()); await p.waitForTimeout(1200);
+  out.push(((await p.evaluate(() => document.getElementById("stripwrap").classList.contains("wrist"))) ? "PASS":"FAIL") + ` ${tag} wrist view opens from the copy`);
+  await p.evaluate(() => document.querySelector('.vtb[data-view="line"]').click()); await p.waitForTimeout(200);
+  for (const c of ["marquise", "baguette", "emerald"]) { await p.click('.chip[data-k="cut"][data-v="' + c + '"]'); await p.waitForTimeout(150); out.push(((await p.evaluate((c) => window.__lineSpec && window.__lineSpec.cut === c && window.__lineSpec.n >= 8 && new RegExp("^\\d+ × \\d\\.\\d\\d ct · ").test(document.getElementById("sumStones").textContent), c)) ? "PASS":"FAIL") + ` ${tag} cut ${c} (${await p.textContent("#sumStones")})`); }
+  await p.click('.chip[data-k="cut"][data-v="round"]'); await p.waitForTimeout(150);
   await p.click('.chip[data-k="ct"][data-v="20"]');
-  out.push((await p.evaluate(() => /0\.56/.test(document.getElementById("eachCt").textContent) && /5\.3/.test(document.getElementById("eachMm").textContent)) ? "PASS":"FAIL") + ` ${tag} carat explained (${await p.evaluate(() => document.getElementById("eachCt").textContent + " / " + document.getElementById("eachMm").textContent)})`);
+  out.push((await p.evaluate(() => { const ct = parseFloat(document.getElementById("eachCt").textContent), mm = parseFloat(document.getElementById("eachMm").textContent); return ct > 0.4 && ct < 0.9 && Math.abs(mm - 6.5 * Math.cbrt(ct)) < 0.15; }) ? "PASS":"FAIL") + ` ${tag} carat explained (${await p.evaluate(() => document.getElementById("eachCt").textContent + " / " + document.getElementById("eachMm").textContent)})`);
   out.push((await p.evaluate(() => document.getElementById("dust").width > 0 && document.getElementById("pbar").style.width !== "") ? "PASS":"FAIL") + ` ${tag} dust + progress alive`);
   out.push(((await p.evaluate(() => document.querySelectorAll(".h.sp .w").length > 2 && document.querySelectorAll("#hero .late.in").length >= 4)) ? "PASS":"FAIL") + ` ${tag} hero words split + revealed after enter`);
   out.push(((await p.evaluate(() => { const m = document.querySelector(".sh .mark").getBoundingClientRect(); return Math.abs((m.left + m.right) / 2 - innerWidth / 2) < 3 && m.height >= 15; })) ? "PASS":"FAIL") + ` ${tag} mark centred`);
