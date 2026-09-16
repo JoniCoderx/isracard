@@ -39,7 +39,7 @@
     setTimeout(function () { intro.style.display = "none"; }, 1300);
     if (!reduce) { var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
-  function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); setTimeout(contract, 300); }
+  function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); contract(); }
   /* the symbol becomes the header symbol: the same object, moved and scaled, then the header takes over */
   function contract() {
     if (contracting || entered) return; contracting = true;
@@ -55,15 +55,15 @@
     intro.classList.add("lift");
     setTimeout(function () { header.classList.remove("premark"); enter(); }, 580);
   }
-  function skip() { if (entered) return; if (!fillDone) { fillDone = true; intro.classList.add("sharp"); setTimeout(contract, 150); } else contract(); }
+  function skip() { if (entered) return; if (!fillDone) { fillDone = true; intro.classList.add("sharp"); } contract(); }
   if (seen) { intro.classList.add("off"); entered = false; enter(); }
   else if (reduce) { intro.classList.add("sharp"); setTimeout(contract, 400); }
   else {
     intro.classList.add("run");
-    var riser = imark.querySelector(".iqin"), left = 1600;
+    var riser = imark.querySelector(".iqin"), left = 1450;
     riser.addEventListener("animationend", setSharp, { once: true });
-    try { var an = riser.getAnimations()[0]; if (an) left = Math.max(0, 1600 - (an.currentTime || 0)); } catch (e) {}
-    setTimeout(setSharp, left + 90);
+    try { var an = riser.getAnimations()[0]; if (an) left = Math.max(0, 1450 - (an.currentTime || 0)); } catch (e) {}
+    setTimeout(setSharp, left + 60);
   }
   setTimeout(function () { enter(); }, 6000);
   $("enterBtn").addEventListener("click", skip);

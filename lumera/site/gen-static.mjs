@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 const [src, outDir, base = "https://jonicoderx.github.io/isracard"] = process.argv.slice(2);
-let html = fs.readFileSync(src, "utf8").replace(/<title>[\s\S]*?<\/title>/, "");
+let html = fs.readFileSync(src, "utf8").replace(/<title>[\s\S]*?<\/title>/, "").replace(/<meta name="viewport"[^>]*>\s*/g, "");
 /* every asset path becomes relative, so the page works under a sub-path such as /isracard/ */
 html = html.replace(/(["'(=,\s])\/(img\/|f\/|v\/|icon-|favicon\.|og\.jpg|site\.webmanifest)/g, "$1$2");
 const head = `<!doctype html>

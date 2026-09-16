@@ -658,7 +658,7 @@
     if (!page || !toy || !grab) return;
     var hw = state.halfW || state.fit, hh = state.halfH || state.fit;
     var x = (0.5 + toy.x / (2 * hw)) * cv.clientWidth, y = (0.5 - toy.y / (2 * hh)) * cv.clientHeight;
-    var r = Math.max(26, Math.min(150, state.fit / hh * cv.clientHeight * 0.58));
+    var r = Math.max(26, Math.min(innerWidth < 760 ? 62 : 150, state.fit / hh * cv.clientHeight * 0.58));
     grab.style.width = grab.style.height = Math.round(r * 2) + "px";
     grab.style.left = Math.round(x - r) + "px"; grab.style.top = Math.round(y - r) + "px";
   }
@@ -666,7 +666,7 @@
     if (page) return;
     if (!toy) pickUp();
     page = true; document.documentElement.classList.add("silavu-play");
-    cam.td = 3.2; cam.d = 3.2;
+    var away = innerWidth < 760 ? 3.1 : 4.1; cam.td = away; cam.d = away;
     ensureGrab(); size();
     toy.x = 0; toy.y = 0; toy.vx = state.fit * 0.0022; toy.vy = 0;
     dirty = true;

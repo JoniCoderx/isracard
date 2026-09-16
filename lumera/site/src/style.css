@@ -923,3 +923,44 @@
   /* where the row wraps, the separator becomes the line break itself, so the
      views sit on one line and the actions on the next, with no dangling bar. */
   @media (max-width:699px) { .vsep { flex-basis:100%; width:auto; height:0; margin:0; background:none; align-self:auto; } }
+
+  /* ── v38 ── the fill sets as it rises, so nothing swaps to white at the end.
+     The gradient is ivory behind its own meniscus; the solid layer only
+     guarantees the final state and is already the same colour, so the change
+     is invisible. The rise settles rather than stopping dead, and the
+     hand-off to the header begins on the same frame the fill lands. */
+  .imk .iq .iqin, .imk .is .isin { animation-duration:1.45s; animation-timing-function:cubic-bezier(.34,.02,.16,1); }
+  @keyframes imrise { 0% { transform:translateY(34%); } 82% { transform:translateY(-3.2%); } 100% { transform:translateY(-1.8%); } }
+  .imk .ib { opacity:.16; }
+  #intro.sharp .imk .if { transition:opacity .22s linear; }
+  #intro.sharp .imk .iq, #intro.sharp .imk .is { transition:opacity .22s linear; }
+  #intro.sharp .imk .ib { transition:opacity .22s linear; }
+  /* a single specular travels across the mark as it leaves */
+  #intro.sharp .imk::after { content:""; position:absolute; inset:0; pointer-events:none;
+    -webkit-mask-image:var(--mk); mask-image:var(--mk); -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; mix-blend-mode:screen;
+    background:linear-gradient(72deg, transparent 34%, rgba(255,255,255,.85) 50%, transparent 66%);
+    background-size:300% 100%; animation:imsweep .62s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes imsweep { from { background-position:100% 0; opacity:1; } to { background-position:-40% 0; opacity:0; } }
+  @media (prefers-reduced-motion:reduce) { #intro.sharp .imk::after { display:none; } }
+
+  /* ── v38 ── carrying the piece: one way back, and the page still scrolls.
+     While it is carried the panel row is gone, so "Take it with you" can no
+     longer sit there doing nothing next to a second "Put it back". */
+  html.silavu-play .vposwrap { display:none; }
+  /* the grab disc must never eat a scroll: the browser keeps vertical panning */
+  #bgrab { touch-action:pan-y; }
+
+  /* ── v38b ── the rise was so front-loaded that the mark stood full at little
+     over half the animation and then simply waited. The pacing is carried by
+     the keyframes now, on a linear clock, so the light is still climbing at
+     the end and lands flush on the last frame. */
+  .imk .iq .iqin, .imk .is .isin { animation-timing-function:linear; }
+  @keyframes imrise {
+    0%   { transform:translateY(34%); }
+    12%  { transform:translateY(30%); }
+    72%  { transform:translateY(8%); }
+    92%  { transform:translateY(-2.6%); }
+    100% { transform:translateY(-1.8%); }
+  }
+  #intro.sharp .imk .iq .iqin, #intro.sharp .imk .is .isin { transform:translateY(-1.8%); }
