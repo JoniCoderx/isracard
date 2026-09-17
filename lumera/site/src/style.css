@@ -28,10 +28,10 @@
   svg.seal.sealcert { width:44px; height:44px; color:var(--ink); margin:0 auto 16px; }
   svg.seal.sealsm { width:44px; height:44px; color:var(--gold); flex:none; }
   .pricerow { display:flex; align-items:center; gap:14px; margin-top:6px; }
-  .engraved { display:inline-block; margin:6px 0 4px; color:rgba(246,243,237,.55); filter:drop-shadow(0 1px 0 rgba(255,255,255,.18)) drop-shadow(0 -1px 0 rgba(0,0,0,.9)); }
+  .engraved { display:inline-block; margin:6px 0 4px; color:rgba(246,243,237,.72); }
   .engraved svg.sy { height:36px; }
   .wm { display:none; }
-  #grain { position:fixed; inset:-50%; z-index:2; pointer-events:none; opacity:.03; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:200px; animation:grain 2s steps(4) infinite; }
+  #grain { position:fixed; inset:-50%; z-index:2; pointer-events:none; opacity:.022; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:200px; }
   @keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-2%,3%)} 50%{transform:translate(3%,-2%)} 75%{transform:translate(-1%,-3%)} 100%{transform:translate(2%,2%)} }
   #vig { position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 100% at 50% 50%, transparent 62%, rgba(0,0,0,.5) 100%); }
 
@@ -44,7 +44,7 @@
   .h { font-weight:300; letter-spacing:-.025em; line-height:.96; font-size:clamp(2.6rem,6.6vw,6.4rem); text-wrap:balance; }
   .h2 { font-weight:300; letter-spacing:-.02em; line-height:1.02; font-size:clamp(2rem,4.4vw,4rem); text-wrap:balance; }
   .h3 { font-weight:300; letter-spacing:-.015em; line-height:1.08; font-size:clamp(1.5rem,2.4vw,2.2rem); }
-  .h em, .h2 em, .h3 em, .t em { font-family:var(--serif); font-style:italic; font-weight:400; letter-spacing:-.01em; background:linear-gradient(110deg,#d9d4c9 0%,#ffffff 26%,#e8dcc0 44%,#fff8ea 60%,#cfcbc2 100%); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:metal 7s linear infinite; }
+  .h em, .h2 em, .h3 em, .t em { font-family:var(--serif); font-style:italic; font-weight:400; letter-spacing:-.01em; background:linear-gradient(110deg,#d9d4c9 0%,#ffffff 26%,#e8dcc0 44%,#fff8ea 60%,#cfcbc2 100%); background-size:100% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; }
   @keyframes metal { to { background-position:-220% 0; } }
   html[data-lang="he"] .h em, html[data-lang="he"] .h2 em, html[data-lang="he"] .h3 em, html[data-lang="he"] .t em { font-family:inherit; font-style:normal; }
   html[data-lang="he"] .h, html[data-lang="he"] .h2, html[data-lang="he"] .h3 { letter-spacing:0; line-height:1.12; }
@@ -92,7 +92,7 @@
   .fig:hover .sheen, .shine .sheen { transform:translateX(80%) skewX(-12deg); }
   .r45 { aspect-ratio:4/5; } .r11 { aspect-ratio:1/1; } .r169 { aspect-ratio:16/9; } .r34 { aspect-ratio:3/4; }
   /* twinkles: tiny stars that live on the photographs */
-  .tw { position:absolute; width:14px; height:14px; z-index:3; pointer-events:none; opacity:0; animation:tw 4.5s ease-in-out infinite; }
+  .tw { display:none; }
   .tw::before, .tw::after { content:""; position:absolute; left:50%; top:50%; width:100%; height:1.5px; background:linear-gradient(90deg, transparent, #fff, transparent); transform:translate(-50%,-50%); }
   .tw::after { transform:translate(-50%,-50%) rotate(90deg); }
   @keyframes tw { 0%,100% { opacity:0; transform:scale(.2) rotate(0deg); } 12% { opacity:1; transform:scale(1) rotate(20deg); } 24% { opacity:0; transform:scale(.3) rotate(45deg); } }
@@ -156,7 +156,7 @@
   html[dir="rtl"] #fab { right:auto; left:var(--pad); }
   #fab.show { opacity:1; transform:none; pointer-events:auto; }
   @media (min-width:1000px) { #fab { display:none; } }
-  #pbar { position:fixed; top:0; left:0; height:2px; width:0; background:linear-gradient(90deg, rgba(217,201,163,.3), #fff); z-index:31; pointer-events:none; box-shadow:0 0 8px rgba(255,255,255,.5); }
+  #pbar { position:fixed; top:0; left:0; height:2px; width:0; background:linear-gradient(90deg, rgba(217,201,163,.45), #f6f3ed); z-index:31; pointer-events:none; }
   html[dir="rtl"] #pbar { left:auto; right:0; }
   #dust { position:fixed; inset:0; z-index:3; pointer-events:none; }
   #glow { position:fixed; left:0; top:0; width:600px; height:600px; border-radius:50%; pointer-events:none; z-index:3; mix-blend-mode:screen; background:radial-gradient(circle, rgba(255,246,228,.12), rgba(255,246,228,0) 62%); opacity:0; transition:opacity 1s; will-change:transform; }
@@ -178,7 +178,7 @@
   .ol { display:flex; align-items:center; gap:14px; }
   .ol::before { content:""; width:15px; height:17px; flex:none; background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20886%201000%22%3E%3Cpath%20fill%3D%22%23d9c9a3%22%20d%3D%22M%20427%200%20C%20390%203%2C%20354%2015%2C%20319%2037%20C%20269%2069%2C%20234%20119%2C%20228%20171%20C%20223%20204%2C%20231%20238%2C%20248%20268%20C%20261%20289%2C%20277%20308%2C%20306%20334%20C%20321%20348%2C%20358%20378%2C%20383%20396%20C%20386%20399%2C%20396%20405%2C%20404%20412%20C%20423%20426%2C%20446%20443%2C%20466%20457%20C%20544%20515%2C%20591%20553%2C%20606%20570%20C%20622%20590%2C%20628%20613%2C%20623%20646%20C%20622%20655%2C%20622%20658%2C%20624%20659%20C%20627%20661%2C%20631%20660%2C%20636%20655%20C%20652%20639%2C%20661%20621%2C%20664%20600%20C%20668%20569%2C%20658%20537%2C%20638%20513%20C%20626%20500%2C%20615%20490%2C%20568%20453%20C%20557%20445%2C%20546%20436%2C%20543%20434%20C%20527%20421%2C%20515%20412%2C%20489%20392%20C%20483%20388%2C%20458%20369%2C%20432%20350%20C%20364%20299%2C%20355%20291%2C%20338%20276%20C%20311%20253%2C%20297%20234%2C%20290%20212%20C%20279%20177%2C%20288%20129%2C%20313%2090%20C%20324%2073%2C%20341%2056%2C%20358%2043%20C%20388%2021%2C%20427%207%2C%20453%2010%20C%20461%2011%2C%20474%2014%2C%20483%2017%20C%20548%2038%2C%20598%20104%2C%20602%20175%20C%20603%20205%2C%20597%20231%2C%20582%20255%20C%20569%20277%2C%20543%20306%2C%20504%20341%20C%20490%20354%2C%20487%20357%2C%20486%20359%20C%20485%20363%2C%20486%20366%2C%20489%20369%20C%20492%20372%2C%20506%20382%2C%20509%20384%20C%20513%20386%2C%20517%20386%2C%20522%20383%20C%20524%20381%2C%20523%20382%2C%20558%20350%20C%20612%20300%2C%20621%20291%2C%20634%20273%20C%20647%20254%2C%20656%20231%2C%20659%20206%20C%20659%20199%2C%20659%20181%2C%20659%20174%20C%20655%20139%2C%20640%20106%2C%20616%2078%20C%20580%2034%2C%20527%207%2C%20470%201%20C%20464%200%2C%20435%20-0%2C%20427%200%20M%20678%20289%20C%20667%20289%2C%20652%20292%2C%20645%20294%20C%20637%20296%2C%20631%20302%2C%20632%20307%20C%20633%20309%2C%20637%20310%2C%20645%20308%20C%20655%20306%2C%20658%20306%2C%20663%20306%20C%20699%20302%2C%20733%20311%2C%20762%20331%20C%20798%20356%2C%20825%20401%2C%20835%20452%20C%20841%20486%2C%20838%20521%2C%20826%20553%20C%20807%20601%2C%20764%20636%2C%20716%20643%20C%20706%20645%2C%20692%20645%2C%20682%20644%20C%20671%20643%2C%20667%20644%2C%20664%20647%20C%20660%20651%2C%20661%20655%2C%20666%20658%20C%20675%20661%2C%20712%20663%2C%20733%20660%20C%20767%20656%2C%20801%20641%2C%20826%20619%20C%20858%20591%2C%20879%20552%2C%20884%20511%20C%20888%20473%2C%20881%20435%2C%20864%20399%20C%20833%20336%2C%20777%20297%2C%20707%20289%20C%20702%20289%2C%20683%20288%2C%20678%20289%20M%20197%20289%20C%20151%20291%2C%20107%20309%2C%2070%20339%20C%2065%20344%2C%2052%20357%2C%2047%20362%20C%2014%20402%2C%20-4%20454%2C%201%20501%20C%207%20570%2C%2050%20627%2C%20113%20650%20C%20137%20659%2C%20161%20663%2C%20186%20661%20C%20204%20660%2C%20224%20656%2C%20238%20650%20C%20246%20647%2C%20252%20640%2C%20251%20636%20C%20250%20633%2C%20246%20633%2C%20235%20636%20C%20216%20642%2C%20204%20644%2C%20187%20644%20C%20160%20644%2C%20138%20638%2C%20116%20623%20C%2085%20602%2C%2061%20565%2C%2052%20525%20C%2047%20503%2C%2047%20473%2C%2052%20451%20C%2065%20390%2C%20103%20340%2C%20154%20318%20C%20171%20311%2C%20185%20307%2C%20205%20305%20C%20219%20304%2C%20224%20302%2C%20224%20296%20C%20225%20292%2C%20222%20290%2C%20213%20289%20C%20210%20289%2C%20202%20289%2C%20197%20289%20M%20242%20301%20C%20238%20302%2C%20236%20304%2C%20230%20309%20C%20215%20323%2C%20205%20343%2C%20203%20363%20C%20202%20369%2C%20202%20381%2C%20203%20386%20C%20206%20409%2C%20217%20430%2C%20236%20452%20C%20251%20470%2C%20282%20497%2C%20335%20538%20C%20377%20570%2C%20385%20576%2C%20442%20617%20C%20512%20668%2C%20531%20683%2C%20554%20706%20C%20577%20730%2C%20588%20747%2C%20592%20767%20C%20593%20772%2C%20593%20783%2C%20592%20789%20C%20590%20811%2C%20577%20834%2C%20553%20857%20C%20540%20871%2C%20532%20877%2C%20506%20895%20C%20484%20909%2C%20478%20914%2C%20469%20923%20C%20462%20930%2C%20457%20936%2C%20451%20945%20C%20445%20957%2C%20440%20957%2C%20433%20945%20C%20428%20937%2C%20424%20931%2C%20415%20923%20C%20407%20914%2C%20399%20908%2C%20383%20897%20C%20353%20877%2C%20338%20865%2C%20323%20848%20C%20304%20826%2C%20290%20797%2C%20286%20771%20C%20285%20761%2C%20284%20758%2C%20285%20747%20C%20285%20730%2C%20286%20720%2C%20292%20706%20C%20303%20679%2C%20324%20654%2C%20365%20619%20C%20369%20616%2C%20373%20612%2C%20375%20611%20C%20382%20605%2C%20383%20600%2C%20377%20595%20C%20375%20593%2C%20360%20581%2C%20357%20580%20C%20353%20578%2C%20349%20578%2C%20344%20580%20C%20339%20583%2C%20297%20620%2C%20279%20638%20C%20246%20669%2C%20232%20694%2C%20227%20726%20C%20221%20764%2C%20235%20812%2C%20261%20844%20C%20282%20871%2C%20308%20889%2C%20351%20909%20C%20370%20918%2C%20383%20926%2C%20393%20934%20C%20412%20949%2C%20424%20966%2C%20434%20989%20C%20438%20997%2C%20439%20999%2C%20442%201000%20C%20445%201001%2C%20447%20998%2C%20451%20989%20C%20459%20969%2C%20467%20956%2C%20480%20942%20C%20494%20928%2C%20504%20922%2C%20537%20906%20C%20560%20894%2C%20567%20890%2C%20579%20883%20C%20598%20870%2C%20615%20854%2C%20627%20838%20C%20646%20812%2C%20655%20779%2C%20651%20751%20C%20647%20726%2C%20637%20704%2C%20620%20681%20C%20618%20679%2C%20616%20677%2C%20615%20675%20C%20614%20673%2C%20599%20659%2C%20591%20651%20C%20569%20631%2C%20525%20596%2C%20480%20564%20C%20467%20554%2C%20436%20532%2C%20426%20525%20C%20376%20489%2C%20323%20447%2C%20299%20427%20C%20269%20401%2C%20255%20380%2C%20249%20355%20C%20247%20347%2C%20246%20342%2C%20246%20333%20C%20246%20324%2C%20246%20321%2C%20248%20313%20C%20249%20307%2C%20250%20304%2C%20249%20302%20C%20248%20300%2C%20245%20300%2C%20242%20301%20M%20610%20332%20C%20608%20333%2C%20605%20335%2C%20593%20346%20C%20586%20353%2C%20575%20363%2C%20569%20369%20C%20563%20375%2C%20556%20382%2C%20552%20386%20C%20543%20394%2C%20541%20397%2C%20541%20401%20C%20541%20403%2C%20542%20405%2C%20545%20408%20C%20550%20412%2C%20606%20457%2C%20608%20458%20C%20611%20459%2C%20614%20459%2C%20616%20456%20C%20618%20454%2C%20618%20456%2C%20618%20408%20C%20618%20352%2C%20618%20337%2C%20617%20335%20C%20616%20333%2C%20613%20331%2C%20610%20332%20M%20272%20517%20C%20269%20518%2C%20268%20520%2C%20267%20524%20C%20267%20528%2C%20267%20607%2C%20268%20609%20C%20270%20615%2C%20275%20615%2C%20281%20609%20C%20283%20608%2C%20289%20602%2C%20295%20596%20C%20301%20590%2C%20310%20583%2C%20315%20579%20C%20327%20567%2C%20328%20566%2C%20328%20562%20C%20328%20557%2C%20327%20556%2C%20308%20541%20C%20299%20534%2C%20289%20526%2C%20285%20523%20C%20281%20521%2C%20278%20518%2C%20277%20518%20C%20275%20517%2C%20273%20517%2C%20272%20517%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat; opacity:.95; }
   .wm { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; overflow:hidden; z-index:0; }
-  .wm svg { width:120vmin; height:120vmin; opacity:.05; stroke-width:.5; animation:wmspin 200s linear infinite; }
+  .wm svg { width:120vmin; height:120vmin; opacity:.05; stroke-width:.5; }
   @keyframes wmspin { to { transform:rotate(360deg); } }
   .sm section > .wrap { position:relative; z-index:1; }
 
@@ -197,12 +197,12 @@
   .hfacts .cue { position:absolute; right:0; top:8px; } html[dir="rtl"] .hfacts .cue { right:auto; left:0; }
   @media (max-width:899px) { .hfacts .row span:nth-child(n+5) { display:none; } .hfacts .cue { display:none; } }
   .cue { display:flex; align-items:center; gap:10px; }
-  .cue i { width:36px; height:1px; background:linear-gradient(to right, transparent, var(--ink2)); animation:cue 2.2s var(--ease) infinite; }
+  .cue i { width:36px; height:1px; background:linear-gradient(to right, transparent, var(--ink2)); }
   @keyframes cue { 0%{transform:scaleX(0); transform-origin:left; opacity:0} 40%{transform:scaleX(1); opacity:1; transform-origin:left} 100%{transform:scaleX(0); transform-origin:right; opacity:0} }
 
   /* ── marquee band ── */
   .band { position:relative; z-index:11; overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:16px 0; background:rgba(255,255,255,.02); direction:ltr; }
-  .band .track { display:flex; gap:0; width:max-content; animation:band 48s linear infinite; }
+  .band .track { display:flex; gap:0; width:max-content; }
   .band:hover .track { animation-play-state:paused; }
   .band span { display:inline-flex; align-items:center; gap:28px; padding:0 14px; font-size:.7rem; letter-spacing:.28em; text-transform:uppercase; color:var(--ink2); white-space:nowrap; }
   .band span .dot { width:4px; height:4px; border-radius:50%; background:var(--gold); display:inline-block; }
@@ -275,7 +275,7 @@
   .dline { display:flex; gap:3px; align-items:center; height:30px; cursor:pointer; direction:ltr; touch-action:pan-y; }
   .dline b { flex:1; height:6px; border-radius:3px; background:rgba(242,239,233,.2); transition:background .35s, transform .45s var(--ease), box-shadow .35s; }
   .dline b:hover { background:rgba(242,239,233,.6); }
-  .dline b.on { background:#fff; transform:scaleY(2.6); box-shadow:0 0 14px rgba(255,255,255,.7); }
+  .dline b.on { background:#fff; transform:scaleY(2.6); }
 
   /* ── collection: a rail you scroll along ── */
   .hpin { position:relative; }
@@ -321,10 +321,10 @@
   .carat .big { font-size:clamp(1.6rem,3vw,2.4rem); letter-spacing:-.02em; line-height:1; font-variant-numeric:tabular-nums; direction:ltr; }
   .carat .big small { font-family:var(--serif); font-style:italic; font-size:.5em; color:var(--gold); margin-inline-start:.15em; } html[data-lang="he"] .carat .big small { font-family:inherit; font-style:normal; }
   .ruler { position:relative; height:26px; }
-  .ruler i { position:absolute; left:0; top:12px; height:1px; background:var(--ink); box-shadow:0 0 8px rgba(255,255,255,.5); }
+  .ruler i { position:absolute; left:0; top:12px; height:1px; background:var(--ink); }
   .ruler i::before, .ruler i::after { content:""; position:absolute; top:-5px; width:1px; height:11px; background:var(--ink); } .ruler i::before { left:0; } .ruler i::after { right:0; }
   .ruler span { position:absolute; left:0; top:-2px; font-size:.66rem; letter-spacing:.1em; color:var(--ink2); }
-  .stone1 { width:44px; height:44px; border-radius:50%; background:radial-gradient(circle at 38% 34%, #fff 0, #eef3ff 18%, #b9c4d8 40%, #f6f8ff 55%, #8a94a8 75%, #f0f2f8 100%); box-shadow:0 0 18px rgba(255,255,255,.35); transition:width .6s var(--ease), height .6s var(--ease); flex:none; }
+  .stone1 { width:44px; height:44px; border-radius:50%; background:radial-gradient(circle at 38% 34%, #fff 0, #eef3ff 18%, #b9c4d8 40%, #f6f8ff 55%, #8a94a8 75%, #f0f2f8 100%); transition:width .6s var(--ease), height .6s var(--ease); flex:none; }
   .opts { display:grid; gap:20px; }
   .opt { display:grid; grid-template-columns:110px 1fr; gap:16px; align-items:center; border-top:1px solid var(--line); padding-top:18px; }
   @media (max-width:640px) { .opt { grid-template-columns:1fr; gap:10px; } }
@@ -458,7 +458,7 @@
   @media (min-width:900px) { .factsg { grid-template-columns:repeat(2,minmax(0,1fr)); } .factsg .fact:nth-last-child(2) { border-bottom:1px solid var(--line); } }
   [hidden] { display:none !important; }
   .h em.sd, .h2 em.sd, .h3 em.sd { background:none; color:inherit; animation:none; -webkit-text-fill-color:currentColor; }
-  em.sd .w > span { background:linear-gradient(110deg,#d9d4c9 0%,#ffffff 26%,#e8dcc0 44%,#fff8ea 60%,#cfcbc2 100%); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; animation:metal 7s linear infinite; }
+  em.sd .w > span { background:linear-gradient(110deg,#d9d4c9 0%,#ffffff 26%,#e8dcc0 44%,#fff8ea 60%,#cfcbc2 100%); background-size:100% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
   html[data-lang="he"] em.sd .w > span { font-family:inherit; font-style:normal; }
   .hcap .h { text-align:center; }
   .ch .txt .h { text-align:center; }
@@ -660,14 +660,11 @@
   .hsig svg.sy { height:clamp(150px,26vw,300px); color:var(--ink); }
   .hsig svg.sy path { fill:currentColor; fill-opacity:0; stroke:currentColor; stroke-width:3; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; }
   .hsig.in svg.sy path { animation:draw1 2.2s cubic-bezier(.4,0,.2,1) .1s forwards, fillin .8s var(--ease) 2.2s forwards; }
-  @keyframes sigbreath { 0%, 100% { filter:drop-shadow(0 0 0 rgba(217,201,163,0)); } 50% { filter:drop-shadow(0 0 26px rgba(217,201,163,.38)); } }
-  .hsig.in svg.sy { animation:sigbreath 7s ease-in-out 3.2s infinite; }
-  .fbig.in svg.sy.huge { animation:sigbreath 8s ease-in-out 3s infinite; }
   .chap { display:flex; align-items:center; justify-content:center; gap:18px; margin:0 auto clamp(30px,5vw,60px); max-width:560px; color:var(--gold); opacity:.85; }
   .chap i { flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(217,201,163,.55)); } .chap i:last-child { background:linear-gradient(270deg, transparent, rgba(217,201,163,.55)); }
   .chap svg.sy { height:22px; flex:none; }
-  .mark .sy { transition:color .6s, filter .6s; } .mark:hover .sy { color:var(--gold); filter:drop-shadow(0 0 6px rgba(217,201,163,.55)); }
-  @media (prefers-reduced-motion:reduce) { .hsig svg.sy path { stroke-dashoffset:0; fill-opacity:1; stroke-opacity:0; animation:none; } .hsig.in svg.sy, .fbig.in svg.sy.huge { animation:none; } }
+  .mark .sy { transition:color .6s; } .mark:hover .sy { color:var(--gold); }
+  @media (prefers-reduced-motion:reduce) { .hsig svg.sy path { stroke-dashoffset:0; fill-opacity:1; stroke-opacity:0; animation:none; } }
   @media (max-width:999px) { .hsig.in svg.sy, .fbig.in svg.sy.huge { animation:none; } .chap { max-width:82vw; } }
 
   /* ── v21: the house system ── */
@@ -1037,23 +1034,11 @@
   /* ══ v39d ══ the symbol is alive wherever it appears.
      At rest it breathes a slow chromatic refraction, the way a brilliant does
      when you turn it a little in the light. Under the hand it opens up. */
-  svg.sy { transition:filter .55s var(--ease), transform .55s var(--ease); }
-  header.sh .mark .sy { animation:sy-breathe 9s ease-in-out infinite; }
-  @keyframes sy-breathe {
-    0%,100% { filter:drop-shadow(-.6px 0 0 rgba(122,198,255,.30)) drop-shadow(.6px 0 0 rgba(255,201,142,.30)) drop-shadow(0 0 3px rgba(255,255,255,.18)); }
-    50%     { filter:drop-shadow(.6px 0 0 rgba(122,198,255,.30)) drop-shadow(-.6px 0 0 rgba(255,201,142,.30)) drop-shadow(0 0 7px rgba(255,255,255,.34)); }
-  }
-  @media (hover:hover) and (pointer:fine) {
-    .mark:hover .sy, header.sh .mark:hover .sy {
-      color:var(--ink);
-      transform:scale(1.07) rotate(-2.5deg);
-      animation:sy-live 2.4s ease-in-out infinite;
-    }
-    @keyframes sy-live {
-      0%,100% { filter:drop-shadow(-1.6px 0 0 rgba(122,198,255,.8)) drop-shadow(1.6px 0 0 rgba(255,201,142,.8)) drop-shadow(0 0 10px rgba(255,255,255,.55)); }
-      50%     { filter:drop-shadow(1.6px 0 0 rgba(122,198,255,.8)) drop-shadow(-1.6px 0 0 rgba(255,201,142,.8)) drop-shadow(0 0 18px rgba(255,255,255,.8)); }
-    }
-  }
+  /* The symbol used to breathe a chromatic refraction on an infinite loop and
+     open into a stronger one under the hand: cyan and amber drop-shadows either
+     side of every edge. That is fringing, which is what a badly printed logo
+     looks like. It is a flat ivory mark now and it does not move. */
+  svg.sy { transition:color .55s var(--ease); }
   @media (prefers-reduced-motion:reduce) {
     header.sh .mark .sy, .mark:hover .sy { animation:none; }
   }
@@ -1162,10 +1147,9 @@
   .cf .field input, .cf .field textarea { transition:background .45s var(--ease); }
   .cf .field:focus-within input, .cf .field:focus-within textarea { background:rgba(255,255,255,.03); }
   .clocks .clock { transition:transform .5s var(--ease); }
-  .clocks .clock.on .c { text-shadow:0 0 20px rgba(217,201,163,.3); }
+  .clocks .clock.on .c { color:var(--ink); }
   @media (hover:hover) and (pointer:fine) { .clocks .clock:hover { transform:translateY(-2px); } }
-  .cmark .sy { animation:sy-breathe 9s ease-in-out infinite; }
-  @media (prefers-reduced-motion:reduce) { .cmark .sy { animation:none; } }
+
 
   /* ══ v40 ══ the type.
      Urbanist for everything that is read — geometric, rounded, quiet — and
@@ -1217,8 +1201,7 @@
   .cst::before { content:""; width:5px; height:5px; border-radius:50%;
     background:rgba(246,243,237,.28); transition:background .5s, box-shadow .5s; }
   .clock.open .cst { color:var(--ink2); }
-  .clock.open .cst::before { background:#7fd6a0; box-shadow:0 0 8px rgba(127,214,160,.75); animation:cstpulse 2.6s ease-in-out infinite; }
-  @keyframes cstpulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
+  .clock.open .cst::before { background:#7fd6a0; }
   @media (prefers-reduced-motion:reduce) { .clock.open .cst::before { animation:none; } }
 
   /* ══ v41 ══ THE MARK IS NEVER INVISIBLE.
@@ -1389,10 +1372,13 @@
     -webkit-mask-image:var(--mk); mask-image:var(--mk);
     -webkit-mask-size:100% 100%; mask-size:100% 100%;
     -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    /* Light only. The band used to darken either side of itself to give the
+       metal range, which is a shadow painted on a logo however it is described.
+       It adds and never subtracts now. */
     background:linear-gradient(100deg,
-      rgba(0,0,0,.62) 0%, rgba(0,0,0,.34) 22%,
-      rgba(255,255,255,.10) 40%, rgba(255,255,255,.98) 50%, rgba(255,247,231,.62) 57%,
-      rgba(0,0,0,.30) 74%, rgba(0,0,0,.58) 100%);
+      rgba(255,255,255,0) 30%, rgba(255,255,255,.22) 42%,
+      rgba(255,255,255,.92) 50%, rgba(255,247,231,.34) 58%,
+      rgba(255,255,255,0) 70%);
     background-size:300% 100%;
     background-position:calc(var(--sw, .5) * 100%) 0;
     opacity:calc(.45 + var(--spa,0) * .55);
@@ -1401,8 +1387,7 @@
     will-change:background-position, opacity; }
   .hsig::after { height:clamp(150px,26vw,300px); }
   .fbig::after { height:clamp(96px,12vw,168px); }
-  /* the mark itself sits a little back so the light has somewhere to travel */
-  .hsig svg.sy, .fbig svg.sy.huge { color:#cfcabf; }
+  .hsig svg.sy, .fbig svg.sy.huge { color:#f2ede2; }
 
   @media (prefers-reduced-motion:reduce) {
     .hsig::after, .fbig::after { display:none; }
@@ -1555,23 +1540,28 @@
      over it. Type can hold its own against a picture that is only half veiled,
      and the pictures are the reason anyone is here. */
   #vig { display:none; }                                  /* a vignette over the whole site */
-  .hshade { background:linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.28) 34%, rgba(0,0,0,0) 62%),
-                      linear-gradient(to bottom, rgba(0,0,0,.34), transparent 24%); }
-  .ch .veil { background:linear-gradient(to top, rgba(0,0,0,.70) 0%, rgba(0,0,0,.24) 42%, rgba(0,0,0,0) 72%),
-                        linear-gradient(to bottom, rgba(0,0,0,.30), transparent 22%); }
-  .veil2 { background:linear-gradient(to top, rgba(0,0,0,.62) 0%, rgba(0,0,0,.14) 38%, rgba(0,0,0,0) 62%),
-                      linear-gradient(to bottom, rgba(0,0,0,.32), transparent 20%); }
-  .wframe .veil { background:linear-gradient(to top, rgba(0,0,0,.70) 0%, rgba(0,0,0,.26) 42%, rgba(0,0,0,0) 72%),
-                            linear-gradient(to bottom, rgba(0,0,0,.30), transparent 22%); }
-  .mveil { background:linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.12) 44%, rgba(0,0,0,0) 68%),
-                      linear-gradient(to bottom, rgba(0,0,0,.55), transparent 16%); }
-  .cimg::after { background:linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.06) 48%, rgba(0,0,0,.14) 100%); }
+  /* Halved against what each of these was. The originals ran to .94 and .92,
+     which is a photograph used as a texture behind type. At half that the
+     picture is still a picture and the type still reads, because the type was
+     never relying on the black — it was relying on being large and ivory. */
+  .hshade { background:linear-gradient(to top, rgba(0,0,0,.47) 0%, rgba(0,0,0,.25) 34%, rgba(0,0,0,0) 62%),
+                      linear-gradient(to bottom, rgba(0,0,0,.27), transparent 24%); }
+  .ch .veil { background:linear-gradient(to top, rgba(0,0,0,.47) 0%, rgba(0,0,0,.22) 42%, rgba(0,0,0,0) 70%),
+                        linear-gradient(to bottom, rgba(0,0,0,.25), transparent 22%); }
+  .veil2 { background:linear-gradient(to top, rgba(0,0,0,.42) 0%, rgba(0,0,0,.12) 38%, rgba(0,0,0,0) 62%),
+                      linear-gradient(to bottom, rgba(0,0,0,.27), transparent 20%); }
+  .wframe .veil { background:linear-gradient(to top, rgba(0,0,0,.46) 0%, rgba(0,0,0,.22) 42%, rgba(0,0,0,0) 70%),
+                            linear-gradient(to bottom, rgba(0,0,0,.25), transparent 22%); }
+  .mveil { background:linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.10) 44%, rgba(0,0,0,0) 68%),
+                      linear-gradient(to bottom, rgba(0,0,0,.50), transparent 16%); }
+  /* the cities keep a darker anchor only where the enquiry form sits over them */
+  .cimg::after { background:linear-gradient(to top, rgba(0,0,0,.80) 0%, rgba(0,0,0,.10) 46%, rgba(0,0,0,.17) 100%); }
   @media (min-width:900px) {
-    .cimg::after { background:linear-gradient(to right, rgba(0,0,0,.92) 0%, rgba(0,0,0,.04) 42%, transparent 100%); }
-    html[dir="rtl"] .cimg::after { background:linear-gradient(to left, rgba(0,0,0,.92) 0%, rgba(0,0,0,.04) 42%, transparent 100%); }
+    .cimg::after { background:linear-gradient(to right, rgba(0,0,0,.80) 0%, rgba(0,0,0,.07) 40%, transparent 100%); }
+    html[dir="rtl"] .cimg::after { background:linear-gradient(to left, rgba(0,0,0,.80) 0%, rgba(0,0,0,.07) 40%, transparent 100%); }
   }
-  header.sh::before { background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,0)); }
-  #stonecv { filter:drop-shadow(0 24px 48px rgba(0,0,0,.55)); }
+  header.sh::before { background:linear-gradient(to bottom, rgba(0,0,0,.30), rgba(0,0,0,0)); }
+  #stonecv { filter:drop-shadow(0 20px 44px rgba(0,0,0,.40)); }
 
   /* ── 2. the mark is a signature, not a light fitting ──
      No glow, no bloom, no CSS shadow anywhere near it. It is ivory, flat and
@@ -1579,7 +1569,6 @@
   .engraved { color:rgba(246,243,237,.72); filter:none; }
   .mark:hover .sy { filter:none; color:var(--gold); }
   .mark .sy { transition:color .6s; }
-  @keyframes sigbreath { 0%, 100% { opacity:1; } 50% { opacity:1; } }
   #pbar { box-shadow:none; background:linear-gradient(90deg, rgba(217,201,163,.45), #f6f3ed); }
   .ftxt .k { text-shadow:none; }
   .dline b.on { box-shadow:none; }
@@ -1621,6 +1610,10 @@
   .ivory::after { content:""; position:absolute; inset:auto 0 0 0; height:140px; pointer-events:none;
     background:linear-gradient(to top, #000, rgba(0,0,0,0)); opacity:.5; }
   .ivory > * { position:relative; z-index:1; }
+  /* ...except the ones that were positioned for a reason: the bespoke watermark
+     is absolute, and making it relative dropped it into the flow and pushed the
+     whole chapter below it. */
+  .ivory > .bwm { position:absolute; z-index:0; }
   .ivory .k { color:var(--ink2); }
   .ivory .k.gold { color:var(--gold); }
   .ivory .p, .ivory .fact .d { color:var(--ink2); }
@@ -1682,3 +1675,16 @@
      not enough to be the thing you notice. */
   .ivory::before { height:64px; opacity:.32; }
   .ivory::after { height:72px; opacity:.32; }
+
+  /* ── the third breathing moment ──
+     Three light chapters now, spaced so no two sit together and no run of
+     black goes on too long: what the house makes, bespoke, and how it works.
+     Black stays where it is doing cinematic work — the hero, the box film and
+     the Dubai film — which is what makes it read as a choice. */
+  .ivory .bwm svg.sy { color:rgba(20,19,15,1); }
+  .ivory .bwm { opacity:.04; }
+  .ivory .bsim { background:#e4ddcf; }
+  .ivory .bsim img { filter:grayscale(.18) contrast(1.03) brightness(1); }
+  .ivory .bstep:hover .bsim img, .ivory .bstep:focus-within .bsim img { filter:none; }
+  .ivory .bline { color:var(--ink2); }
+  .ivory .bsn { color:var(--gold); }

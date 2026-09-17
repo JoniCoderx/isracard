@@ -22,6 +22,9 @@ for (const [tag, w, h] of [["d",1440,900],["m390",390,844]]) {
   await shot("collection", "collection", 200);
   await shot("filmpin", "film", 700);
   await shot("house", "house");
+  await shot("bespoke", "bespoke");
+  await shot("concierge", "concierge");
+  await shot("inside", "box", 900);
   console.log(tag, "errors:", errs.length, errs.slice(0,2).join(" | "));
   await p.close();
 }

@@ -255,7 +255,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     <div class="wrap"></div>
   </section>
 
-  <section id="bespoke" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="SILAVU Bespoke">
+  <section id="bespoke" class="ivory" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="SILAVU Bespoke">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
   <div class="bwm" aria-hidden="true">${mark("", "b")}</div>
     <div class="wrap">
