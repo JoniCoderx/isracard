@@ -10,7 +10,7 @@
   :where(#silavu, #silavu *) { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; background:#000; }
   html, body { overflow-x:clip; }
-  body { background:var(--bg); color:var(--ink); font-family:var(--sans); font-weight:300; -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-weight:300; -webkit-font-smoothing:antialiased; text-rendering:geometricPrecision; }
   html.locked { overflow:hidden; } html.locked body { padding-right:var(--sbw,0px); } .modal, #menu { overscroll-behavior:contain; }
   ::selection { background:rgba(217,201,163,.28); }
   :where(#silavu) button, :where(#silavu) input, :where(#silavu) textarea { font:inherit; color:inherit; }
@@ -1504,6 +1504,36 @@
     #langBtn { padding-inline:13px; }
     .menubtn span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
   }
+
+  /* ── the Dubai film ───────────────────────────────────────────────────────
+     The same machine as the box chapter: a tall pin, a sticky screen, a strip
+     of frames drawn to a canvas. What is different is the treatment. It opens
+     out of black and closes back into it, so it reads as a cut in a film
+     rather than a section on a page, and the phone gets its own frames — a
+     3:4 window cut around the SILAVU bag, so a tall viewport never crops the
+     subject away. No video element, no controls, nothing to tap. ── */
+  #film { position:relative; padding:0 !important; background:#000; }
+  .fpin { position:relative; height:230svh; }
+  .fstick { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; display:grid; place-items:center; }
+  .fscreen { position:absolute; inset:0; }
+  #filmcv { display:block; width:100%; height:100%; }
+  /* a night grade: the corners fall away and the top carries a little weight */
+  .fgrade { position:absolute; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(130% 100% at 50% 52%, transparent 44%, rgba(0,0,0,.55) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,.5), transparent 26%, transparent 76%, rgba(0,0,0,.6)); }
+  .fveil { position:absolute; inset:0; pointer-events:none; z-index:2; background:#000; opacity:1; }
+  .ftxt { position:absolute; left:var(--pad); right:var(--pad); top:max(14svh, calc(env(safe-area-inset-top) + 92px));
+    z-index:3; text-align:center; opacity:0; pointer-events:none; will-change:opacity, transform; }
+  .ftxt .k { text-shadow:0 2px 18px rgba(0,0,0,.9); }
+  @media (max-width:899px) {
+    /* the phone gets its own frames, cut 9:16 around the bag, so full-screen
+       here crops nothing that matters and asks little of the browser */
+    .fpin { height:190svh; }
+    .ftxt { top:max(9svh, calc(env(safe-area-inset-top) + 74px)); }
+    .fgrade { background:radial-gradient(140% 110% at 50% 54%, transparent 50%, rgba(0,0,0,.5) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,.42), transparent 22%, transparent 78%, rgba(0,0,0,.58)); }
+  }
+  @media (prefers-reduced-motion:reduce) { .fveil { opacity:0; } .ftxt { opacity:1; } }
 </style>
 
 <div id="silavu">
@@ -1837,6 +1867,21 @@
   
 
   
+
+  <section id="film" data-n="" data-title-en="Dubai" data-title-he="דובאי" aria-label="Dubai at night">
+    <div class="fpin" id="filmpin">
+      <div class="fstick">
+        <div class="fscreen">
+          <canvas id="filmcv" role="img" aria-label="Three bags on wet marble above the Dubai skyline at night, the SILAVU bag at the centre"></canvas>
+          <i class="fgrade" aria-hidden="true"></i>
+        </div>
+        <i class="fveil" aria-hidden="true"></i>
+        <div class="ftxt" id="ftxt">
+          <div class="k gold" data-en="Dubai · tonight" data-he="דובאי · הערב">Dubai · tonight</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section id="concierge" data-n="06" data-title-en="Enquire" data-title-he="פנייה" aria-label="Enquire">
     <div class="cimg"><picture><img id="cityDXB" class="on" src="/img/dubai-1600.jpg" srcset="/img/dubai-1200.jpg 1200w, /img/dubai-1600.jpg 1600w, /img/dubai-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Dubai at night from a penthouse terrace" loading="lazy" decoding="async"></picture><picture><img id="cityTLV" src="/img/telaviv-1600.jpg" srcset="/img/telaviv-1200.jpg 1200w, /img/telaviv-1600.jpg 1600w, /img/telaviv-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Tel Aviv at blue hour" loading="lazy" decoding="async"></picture></div>
@@ -3532,35 +3577,131 @@
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, mobile = matchMedia("(max-width:999px)").matches, phone = matchMedia("(max-width:899px)").matches;
   var rtl = function () { return document.documentElement.dir === "rtl"; };
 
-  /* ── the box ── */
-  var pin = $("stonepin"), cv = $("boxcv"), ctx = cv && cv.getContext("2d"), beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
-  var N = 96, SET = phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"), frames = new Array(N), loaded = 0, requested = 0, cur = -1, W = 0, H = 0, DPR = 1, drawn = -1, started = false;
-  function src(i) { return "/f/box/" + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
-  function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
-  function loadAll() { if (started) return; started = true; load(0, function () { draw(true); }); var order = []; for (var s = 8; s >= 1; s = s >> 1) for (var i = 0; i < N; i += s) if (order.indexOf(i) < 0) order.push(i); var k = 0; (function next() { var batch = 0; while (k < order.length && batch < 6) { load(order[k++]); batch++; } if (k < order.length) setTimeout(next, 60); })(); }
-  function size() { var r = cv.getBoundingClientRect(); DPR = Math.min(devicePixelRatio || 1, 2); W = Math.round(r.width * DPR); H = Math.round(r.height * DPR); if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; } }
-  function nearest(i) { for (var d = 0; d < N; d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
-  function draw(force) {
-    if (!ctx) return; var want = Math.max(0, Math.min(N - 1, Math.round(cur * (N - 1)))), have = nearest(want); if (have < 0) return; if (!force && have === drawn) return; drawn = have;
-    var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, ox = (W - dw) / 2, oy = (H - dh) / 2;
-    ctx.clearRect(0, 0, W, H); ctx.drawImage(im, ox, oy, dw, dh);
+  /* ── a scrubbed film: a tall pin, a sticky screen, and a strip of frames drawn
+       to a canvas as the page moves. The box chapter has used this since the
+       beginning; the Dubai film uses the same machine, with its own frames. ── */
+  function sequence(o) {
+    var pin = $(o.pin), cv = $(o.canvas), ctx = cv && cv.getContext("2d");
+    if (!pin || !ctx) return null;
+    var SET = o.set(), N = typeof o.n === "function" ? o.n(SET) : o.n, frames = new Array(N), asked = new Array(N), loaded = 0, requested = 0, cur = -1;
+    var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
+    function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
+    function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
+    /* Fetch from where the eye is, not from the top. A fixed order fills the far
+       end of the strip while the frames either side of the playhead are still
+       missing, and that is what a scrub feels as a hold and then a catch-up.
+       Asking for the nearest missing frame first closes the gap you are looking
+       through before any other. */
+    function loadAll() {
+      if (started) return; started = true;
+      asked[0] = 1; load(0, function () { draw(true); });
+      (function next() {
+        var batch = 0;
+        while (batch < 6) {
+          var want = Math.max(0, Math.min(N - 1, Math.round(Math.max(0, cur) * (N - 1)))), pick = -1;
+          for (var d = 0; d < N; d++) {
+            if (want - d >= 0 && !asked[want - d]) { pick = want - d; break; }
+            if (want + d < N && !asked[want + d]) { pick = want + d; break; }
+          }
+          if (pick < 0) return;
+          asked[pick] = 1; load(pick); batch++;
+        }
+        setTimeout(next, 60);
+      })();
+    }
+    /* There is no point owning more canvas than the strip can fill. A frame is
+       o.src wide; asking a full-screen buffer for three times that is fill rate
+       spent on pixels the footage never had, and fill rate is the whole budget
+       of a scrub. Cap the buffer at a little over the source and let the
+       compositor do the last bit of scaling for free. */
+    function size() {
+      var r = cv.getBoundingClientRect();
+      DPR = Math.min(devicePixelRatio || 1, 2);
+      if (o.src) DPR = Math.min(DPR, Math.max(1, (o.src * 1.35) / Math.max(1, r.width)));
+      W = Math.round(r.width * DPR); H = Math.round(r.height * DPR);
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; }
+    }
+    /* While the strip is still filling, the frame we want may not be here yet.
+       Reaching far up or down the strip for a substitute is what makes a scrub
+       jump. Once something is on screen we would rather hold it than cut to a
+       frame that is nowhere near: a hold reads as a held shot, a jump reads as
+       broken. Before the first draw, anything is better than nothing. */
+    function nearest(i, max) { for (var d = 0; d <= (max || N); d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
+    function draw(force) {
+      var want = Math.max(0, Math.min(N - 1, Math.round(cur * (N - 1))));
+      var have = nearest(want, drawn < 0 ? N : 2); if (have < 0) return;
+      /* the cinematic push: a very small scale and drift on top of the camera's own move */
+      var z = o.zoom ? o.zoom(cur) : null;
+      var zk = z ? z.s : 1, zy = z ? z.y : 0;
+      if (!force && have === drawn && Math.abs(zk - lastZoom) < 0.0004) return;
+      drawn = have; lastZoom = zk;
+      var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight;
+      var sc = Math.max(W / iw, H / ih) * zk, dw = iw * sc, dh = ih * sc;
+      var ox = (W - dw) / 2, oy = (H - dh) / 2 + zy * DPR;
+      ctx.clearRect(0, 0, W, H); ctx.drawImage(im, ox, oy, dw, dh);
+    }
+    function tick() {
+      var r = pin.getBoundingClientRect();
+      /* A strip of full-screen frames is a great deal of decoded bitmap to keep
+         resident, and a phone has to hold the box chapter as well. When this one
+         is well out of the way, let it go; the frames come back from the HTTP
+         cache the moment it is approached again. */
+      if (o.release && started && r.bottom < -innerHeight * 2.5) { frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+      if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
+      if (!started) { size(); loadAll(); }
+      var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, o.still || 0.5);
+      /* The catch-up is per unit of time, not per animation frame. Written the
+         obvious way — p += (target - p) * 0.2 every frame — the scrub tracks the
+         finger at sixty frames a second and drags visibly behind it on anything
+         slower, which is where it matters most. Same 0.2 at 60fps, same feel at
+         20. */
+      var now = performance.now(), dt = lastT ? Math.min(100, now - lastT) : 16.7; lastT = now;
+      var k = 1 - Math.pow(0.8, dt / 16.667);
+      var p = reduce ? target : (lastP < 0 ? target : lastP + (target - lastP) * k); if (Math.abs(target - p) < 0.0008) p = target;
+      if (p !== lastP) { lastP = p; cur = p; draw(p < 0.16); if (o.at) o.at(p); }
+      else if (loaded < N) draw(false);
+    }
+    addEventListener("resize", function () { size(); draw(true); });
+    return { tick: tick, size: size, redraw: function () { draw(true); },
+      get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; } };
   }
+
+  /* ── the box ── */
+  var beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
   function beatsAt(p) {
     var n = beats.length;
-    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s = c01((d - 0.5) / 0.5), op = 1 - s * s * (3 - 2 * s); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = op > 0.5 ? "auto" : "none"; }
+    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s2 = c01((d - 0.5) / 0.5), op = 1 - s2 * s2 * (3 - 2 * s2); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = op > 0.5 ? "auto" : "none"; }
     pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
-  var lastP = -1;
-  function boxTick() {
-    if (!pin || !cv) return; var r = pin.getBoundingClientRect(); if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
-    if (!started) { size(); loadAll(); }
-    var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, 0.5);
-    var p = reduce ? target : (lastP < 0 ? target : lastP + (target - lastP) * 0.2); if (Math.abs(target - p) < 0.0008) p = target;
-    if (p !== lastP) { lastP = p; cur = p; draw(p < 0.16 ? true : false); beatsAt(p); }
-    else if (loaded < N) draw(false);
-  }
-  addEventListener("resize", function () { if (cv) { size(); draw(true); } });
+  var box = sequence({
+    pin: "stonepin", canvas: "boxcv", n: 96, dir: "/f/box/",
+    set: function () { return phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"); },
+    at: beatsAt
+  });
+
+  /* ── the Dubai film ── */
+  var fveil = document.querySelector("#film .fveil"), ftxt = $("ftxt");
+  var film = sequence({
+    pin: "filmpin", canvas: "filmcv", dir: "/f/film/",
+    set: function () { return phone ? "m" : "d"; },
+    src: 1174,
+    /* the phone strip is half the frames: a ten-second push-in carries perfectly
+       well at fifty, and it halves what a phone has to fetch */
+    n: function (set) { return set === "m" ? 50 : 100; },
+    still: 0.62,
+    /* it opens out of black and closes back into it, and drifts a little the whole way */
+    zoom: function (p) { return { s: 1.055 - 0.055 * p, y: (0.5 - p) * 26 }; },
+    release: true,
+    at: function (p) {
+      if (reduce) return;   /* the stylesheet holds it open and still */
+      /* closed by 0.96, not at the very end: the last of the pin is the section
+         already leaving the sticky window, and the cut should be finished before
+         the next one starts arriving */
+      if (fveil) { var inn = c01(p / 0.13), out = c01((p - 0.78) / 0.18); fveil.style.opacity = (1 - inn + out).toFixed(3); }
+      if (ftxt) { var t = c01(p / 0.10) * (1 - c01((p - 0.30) / 0.16)); ftxt.style.opacity = t.toFixed(3); ftxt.style.transform = "translateY(" + ((1 - t) * 22).toFixed(1) + "px)"; }
+    }
+  });
 
   /* ── the rail ── */
   var hpin = $("hpin"), track = $("htrack"), range = 0, lastX = -1, lastP2 = -1, rprog = $("rprog"), rcue = document.querySelector(".rcue");
@@ -3573,10 +3714,11 @@
   railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
   setTimeout(railSize, 800); addEventListener("load", railSize);
 
-  function tick() { requestAnimationFrame(tick); if (document.hidden) return; boxTick(); railTick(); }
+  function tick() { requestAnimationFrame(tick); if (document.hidden) return; if (box) box.tick(); if (film) film.tick(); railTick(); }
   tick();
-  window.__box = { get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; } };
+  window.__box = box || { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
   window.__stone = window.__box;
+  window.__film = film || { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
 })();
 </script>
 

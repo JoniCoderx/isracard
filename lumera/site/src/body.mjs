@@ -375,6 +375,21 @@ ${SIG_LIVE ? SIG_PIECE : ""}
 
   
 
+  <section id="film" data-n="" data-title-en="Dubai" data-title-he="דובאי" aria-label="Dubai at night">
+    <div class="fpin" id="filmpin">
+      <div class="fstick">
+        <div class="fscreen">
+          <canvas id="filmcv" role="img" aria-label="Three bags on wet marble above the Dubai skyline at night, the SILAVU bag at the centre"></canvas>
+          <i class="fgrade" aria-hidden="true"></i>
+        </div>
+        <i class="fveil" aria-hidden="true"></i>
+        <div class="ftxt" id="ftxt">
+          <div class="k gold" data-en="Dubai · tonight" data-he="דובאי · הערב">Dubai · tonight</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="concierge" data-n="06" data-title-en="Enquire" data-title-he="פנייה" aria-label="Enquire">
     <div class="cimg"><picture><img id="cityDXB" class="on" src="/img/dubai-1600.jpg" srcset="/img/dubai-1200.jpg 1200w, /img/dubai-1600.jpg 1600w, /img/dubai-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Dubai at night from a penthouse terrace" loading="lazy" decoding="async"></picture><picture><img id="cityTLV" src="/img/telaviv-1600.jpg" srcset="/img/telaviv-1200.jpg 1200w, /img/telaviv-1600.jpg 1600w, /img/telaviv-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Tel Aviv at blue hour" loading="lazy" decoding="async"></picture></div>
     <div class="cbody">

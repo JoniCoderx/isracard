@@ -34,10 +34,12 @@ jobs:
           while read -r f; do [ -n "$f" ] && fetch "$f"; done < lumera/site/static-assets.txt
           for s in d m x; do for n in $(seq -w 0 95); do fetch "f/box/$s-$n.jpg"; done; done
           du -sh dist; find dist -type f | wc -l
-      - name: ImageMagick for the wrist crops
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick
+      - name: ImageMagick and ffmpeg for the crops and the film
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick ffmpeg
       - name: Wrist photographs
         run: bash lumera/site/wrist-assets.sh dist/img
+      - name: The Dubai film, cut into frames
+        run: bash lumera/site/film-frames.sh lumera/site/media/silavu-film.mp4 dist/f/film
       - uses: actions/configure-pages@v5
         with:
           enablement: true
