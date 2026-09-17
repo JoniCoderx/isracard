@@ -61,9 +61,9 @@
   else {
     intro.classList.add("run");
     /* the mark is already ivory; the light crosses it once, then it goes to the header */
-    var band = imark.querySelector(".isin");
-    if (band) band.addEventListener("animationend", setSharp, { once: true });
-    setTimeout(setSharp, 1620);
+    var riser = imark.querySelector(".iqin");
+    if (riser) riser.addEventListener("animationend", setSharp, { once: true });
+    setTimeout(setSharp, 1700);
   }
   setTimeout(function () { enter(); }, 6000);
   $("enterBtn").addEventListener("click", skip);
@@ -256,7 +256,18 @@
         tag.textContent = open ? (he ? "פתוח עכשיו" : "Open now") : (he ? "נפתח ב־9:00" : "Opens 9:00");
       };
       state("clkDXB", "Asia/Dubai"); state("clkTLV", "Asia/Jerusalem");
-    } catch (e) {}
+    } catch (e) {
+      /* if the platform cannot format a zone, the clocks still show a time rather than dashes */
+      try {
+        var now = new Date(), utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        var put = function (id, off) {
+          var el = document.getElementById(id); if (!el) return;
+          var d = new Date(utc + off * 3600000);
+          el.textContent = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+        };
+        put("clkDXB", 4); put("clkTLV", 3);
+      } catch (e2) {}
+    }
   }
   clocks(); setInterval(clocks, 15000);
   var cityImgs = { DXB: $("cityDXB"), TLV: $("cityTLV") }, cityAuto = true, cityCur = "DXB";

@@ -1252,3 +1252,67 @@
      its way in reads as an empty frame rather than a paragraph. */
   img { color:transparent; font-size:0; }
   .fig .im, .card .im, .piece .im, picture { background:#0a0a0b; }
+
+  /* ══ v42 ══ two things that were drawn on top of each other.
+     The enquiry fields carry both a floating label and a placeholder, and
+     while a field is empty and unfocused they sat in exactly the same place:
+     "Phone or email" printed over "+971 · +972 · email". The placeholder now
+     waits for the cursor, so the label is alone until the label moves. */
+  .cf .field input::placeholder, .cf .field textarea::placeholder {
+    color:transparent; transition:color .3s var(--ease); }
+  .cf .field:focus-within input::placeholder, .cf .field:focus-within textarea::placeholder {
+    color:var(--ink3); }
+
+  /* the footer line is a sentence, so it wraps rather than running off the edge */
+  .fbig .k { max-width:min(92vw, 44ch); line-height:1.7; text-wrap:balance; }
+  @media (max-width:520px) { .fbig .k { font-size:.62rem; letter-spacing:.14em; } }
+
+  /* ══════════ v43 ══════════ THE LOADER, TO SPEC.
+     First frame: the official mark is already there, as an almost-black
+     engraved outline — never an empty space. Within 100ms a precious
+     material begins to rise inside that exact geometry: a lit meniscus at
+     the surface, highlights travelling inside the part already filled, and
+     the top staying dark until the material reaches it. What is filled stays
+     filled. The material is ivory behind its own surface, so the symbol
+     resolves without a flash or a swap, and that same object then moves into
+     the header. Nothing here waits on WebGL, images, fonts or 3D: it is CSS
+     on a mask, running from first paint. */
+
+  /* the engraving — present on frame one, never animated in */
+  .imk .ib { display:block !important; opacity:1 !important;
+    background:linear-gradient(180deg, #1c1c21 0%, #131317 55%, #0e0e12 100%) !important; }
+
+  /* the material — rises inside the geometry, ivory behind its own surface */
+  .imk .iq { display:block !important; opacity:1 !important; z-index:2; }
+  .imk .iq .iqin { position:absolute; left:-6%; width:112%; top:0; height:300%;
+    background-image:var(--liq); background-size:100% 100%; background-repeat:no-repeat;
+    transform:translateY(34%);
+    animation:imrise 1.5s linear .1s forwards; }
+
+  /* highlights travelling inside the filled part */
+  .imk .is { display:block !important; opacity:1 !important; z-index:3; overflow:hidden; mix-blend-mode:screen; }
+  .imk .is .isin { position:absolute; left:-6%; width:112%; top:0; height:300%;
+    background:
+      radial-gradient(42% 7% at 30% 26%, rgba(255,252,242,.55), transparent 70%),
+      radial-gradient(34% 5% at 68% 40%, rgba(255,246,226,.45), transparent 70%),
+      radial-gradient(28% 4% at 46% 58%, rgba(255,250,236,.38), transparent 70%);
+    transform:translateY(34%);
+    animation:imrise 1.5s linear .1s forwards, imshim 1.5s ease-in-out .1s forwards; }
+  @keyframes imshim {
+    0% { background-position:0 0, 0 0, 0 0; }
+    100% { background-position:8% 0, -7% 0, 5% 0; }
+  }
+
+  /* the settled symbol, already the colour the material ends at */
+  .imk .if { opacity:0 !important; background:var(--ink) !important; z-index:4;
+    transition:opacity .18s linear !important; }
+  #intro.sharp .imk .if { opacity:1 !important; }
+  #intro.sharp .imk .iq, #intro.sharp .imk .is { opacity:0 !important; transition:opacity .18s linear; }
+
+  .imk, .imk::before { animation:none !important; opacity:1 !important; transform:none !important; }
+  #intro.sharp .imk::after { display:none; }
+
+  @media (prefers-reduced-motion:reduce) {
+    .imk .iq, .imk .is { display:none !important; }
+    .imk .if { opacity:1 !important; }
+  }

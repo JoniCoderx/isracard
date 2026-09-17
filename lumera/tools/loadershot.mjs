@@ -12,8 +12,8 @@ for (const [n,w,h,mob] of [["L",1440,900,false],["Lm",390,844,true]]) {
       const q=document.querySelector(".imk .iqin"); if(!q) return "no riser";
       const anims=[...document.querySelectorAll(".imk .iqin,.imk .isin")].flatMap(e=>e.getAnimations());
       if(!anims.length) return "no anim";
-      for(let i=0;i<600;i++){ const t=anims[0].currentTime||0; if(t/1450*100>=target){ anims.forEach(a=>a.pause()); return Math.round(t/1450*100)+"%"; } await new Promise(r=>requestAnimationFrame(r)); }
-      anims.forEach(a=>a.pause()); return "timeout at "+Math.round((anims[0].currentTime||0)/1450*100)+"%";
+      for(let i=0;i<600;i++){ const t=anims[0].currentTime||0; if(t/1500*100>=target){ anims.forEach(a=>a.pause()); return Math.round(t/1500*100)+"%"; } await new Promise(r=>requestAnimationFrame(r)); }
+      anims.forEach(a=>a.pause()); return "timeout at "+Math.round((anims[0].currentTime||0)/1500*100)+"%";
     }, pct);
     const el=await p.$(".imk"); const bx=el?await el.boundingBox():null;
     if(bx&&bx.width>2) await p.screenshot({path:`${OUT}/${n}-p${pct}.png`, clip:{x:Math.max(0,bx.x-24),y:Math.max(0,bx.y-24),width:bx.width+48,height:bx.height+48}});
