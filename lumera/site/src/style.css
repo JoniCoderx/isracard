@@ -1427,20 +1427,18 @@
      B · light passes through the type, and only through the type.
      C · every heading still rises out of its mask on arrival.
      Restrained, slow, and the same everywhere. ── */
-  .h, .h2 { position:relative; }
-  .h::after, .h2::after {
-    content:""; position:absolute; inset:-.34em -.24em; z-index:2; pointer-events:none;
-    background:radial-gradient(18em 11em at var(--hx,50%) var(--hy,50%),
-      rgba(255,255,255,.40), rgba(255,247,231,.16) 34%, transparent 64%);
-    mix-blend-mode:overlay; opacity:0; transition:opacity .9s var(--ease); }
+  /* The light is carried by the glyphs themselves — a drop-shadow follows the
+     painted shape of each word, including the ones filled by background-clip.
+     An overlay rectangle cannot happen: there is no box, only letters. */
   @media (hover:hover) and (pointer:fine) {
     .h, .h2 { transition:transform 1.2s var(--ease), letter-spacing 1.2s var(--ease); }
     .h.lit, .h2.lit { transform:translate3d(var(--hdx,0px), var(--hdy,0px), 0); }
-    .h.lit::after, .h2.lit::after { opacity:1; }
-    .sp .w { transition:transform 1.05s var(--ease); }
-    .sp.lit .w { transform:translate3d(var(--wx,0px), var(--wy,0px), 0); }
+    .sp .w { transition:transform 1.05s var(--ease), filter .6s var(--ease); }
+    .sp.lit .w { transform:translate3d(var(--wx,0px), var(--wy,0px), 0);
+      filter:drop-shadow(0 0 calc(var(--wl,0) * 16px) rgba(255,248,233, calc(var(--wl,0) * .5))); }
+    .h.lit:not(.sp), .h2.lit:not(.sp) { filter:drop-shadow(0 0 calc(var(--wl,0) * 14px) rgba(255,248,233, calc(var(--wl,0) * .42))); }
+    .h:not(.sp), .h2:not(.sp) { transition:transform 1.2s var(--ease), letter-spacing 1.2s var(--ease), filter .6s var(--ease); }
   }
-  @media (prefers-reduced-motion:reduce) { .h::after, .h2::after { display:none; } }
 
   /* ── 3. bespoke: the room the house was missing ── */
   #bespoke { position:relative; overflow:hidden; }
@@ -1486,7 +1484,7 @@
   /* ── 5. three things the screenshots caught ── */
   /* the compass reads over anything it happens to cross */
   #where::before { content:""; position:absolute; inset:-26px -70px -26px -46px; z-index:-1; pointer-events:none;
-    background:radial-gradient(62% 130% at 30% 50%, rgba(0,0,0,.88), rgba(0,0,0,.6) 40%, rgba(0,0,0,.22) 66%, transparent 84%); }
+    background:radial-gradient(closest-side at 50% 50%, rgba(0,0,0,.86), rgba(0,0,0,.52) 52%, rgba(0,0,0,.2) 78%, transparent 100%); }
   #where { isolation:isolate; }
   /* a price that wraps used to leave its divider hanging on the line above */
   /* pipes between facts leave a rule hanging in mid-air the moment a line wraps.

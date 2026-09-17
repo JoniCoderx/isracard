@@ -150,15 +150,13 @@
     function clear(h) {
       if (!h) return;
       h.classList.remove("lit");
-      h.style.removeProperty("--hdx"); h.style.removeProperty("--hdy");
-      [].forEach.call(h.querySelectorAll(".w"), function (w) { w.style.removeProperty("--wx"); w.style.removeProperty("--wy"); });
+      h.style.removeProperty("--hdx"); h.style.removeProperty("--hdy"); h.style.removeProperty("--wl");
+      [].forEach.call(h.querySelectorAll(".w"), function (w) { w.style.removeProperty("--wx"); w.style.removeProperty("--wy"); w.style.removeProperty("--wl"); });
     }
     function tick() {
       raf = 0; if (!litH) return;
       var r = litH.getBoundingClientRect();
       var x = (px - r.left) / Math.max(1, r.width), y = (py - r.top) / Math.max(1, r.height);
-      litH.style.setProperty("--hx", (x * 100).toFixed(1) + "%");
-      litH.style.setProperty("--hy", (y * 100).toFixed(1) + "%");
       litH.style.setProperty("--hdx", ((x - 0.5) * 7).toFixed(2) + "px");
       litH.style.setProperty("--hdy", ((y - 0.5) * 5).toFixed(2) + "px");
       /* the words nearest the hand step aside; the far ones stay put */
@@ -167,10 +165,20 @@
         var w = words[i], b = w.getBoundingClientRect();
         var dx = (b.left + b.width / 2) - px, dy = (b.top + b.height / 2) - py;
         var d = Math.sqrt(dx * dx + dy * dy);
-        if (d > reach || d < 0.001) { w.style.setProperty("--wx", "0px"); w.style.setProperty("--wy", "0px"); continue; }
-        var k = (1 - d / reach); k = k * k * 3.2;
+        if (d > reach || d < 0.001) { w.style.setProperty("--wx", "0px"); w.style.setProperty("--wy", "0px"); w.style.setProperty("--wl", "0"); continue; }
+        var k = (1 - d / reach);
+        w.style.setProperty("--wl", (k * k).toFixed(3));   /* the light the word catches */
+        k = k * k * 3.2;
         w.style.setProperty("--wx", (dx / d * k).toFixed(2) + "px");
         w.style.setProperty("--wy", (dy / d * k * 0.7).toFixed(2) + "px");
+      }
+      /* a heading that was never split into words catches the light as a whole */
+      if (!words.length) {
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var dd = Math.sqrt((cx - px) * (cx - px) + (cy - py) * (cy - py));
+        var reach2 = Math.max(200, r.width * 0.6);
+        var kk = Math.max(0, 1 - dd / reach2);
+        litH.style.setProperty("--wl", (kk * kk).toFixed(3));
       }
     }
     document.addEventListener("pointermove", function (e) {
