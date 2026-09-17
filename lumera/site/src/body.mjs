@@ -104,7 +104,7 @@ export const body = `
 <a id="fab" class="btn" href="#concierge" data-en="Book a viewing" data-he="פגישה פרטית">Book a viewing</a>
 
 <main class="sm">
-  <section id="hero" data-n="" data-title-en="The Line" data-title-he="הקו" aria-label="The SILAVU Line" data-spark>
+  <section id="hero" data-n="" data-title-en="SILAVU" data-title-he="סילאבו" aria-label="SILAVU" data-spark>
     <picture>
       <source media="(max-width:899px)" srcset="/img/herov-1080.jpg 1080w, /img/herov-1440.jpg 1440w" sizes="100vw">
       <img class="hv" id="heroimg" src="/img/hero-2560.jpg" srcset="/img/hero-1600.jpg 1600w, /img/hero-2560.jpg 2560w, /img/hero-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line, hand-matched brilliants in 18K white gold on black glass" fetchpriority="high">
@@ -118,7 +118,7 @@ export const body = `
       <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
-      <div class="row k"><span data-en="Set by hand" data-he="משובץ ביד">Set by hand</span><i></i><span>D–F · VVS+</span><i></i><span>GIA · IGI</span><i></i><span data-en="Made in Dubai" data-he="נעשה בדובאי">Made in Dubai</span><i></i><span data-en="One at a time" data-he="אחד בכל פעם">One at a time</span></div>
+      <div class="row k"><span data-en="Set by hand" data-he="משובץ ביד">Set by hand</span><i></i><span dir="ltr">D–F · VVS+</span><i></i><span dir="ltr">GIA · IGI</span><i></i><span data-en="Made in Dubai" data-he="נעשה בדובאי">Made in Dubai</span><i></i><span data-en="One at a time" data-he="אחד בכל פעם">One at a time</span></div>
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
     </div>
   </section>
@@ -283,7 +283,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     </div>
   </section>
 
-  <section id="build" data-n="04" data-title-en="Your line" data-title-he="הקו שלכם" aria-label="Build your line">
+  <section id="build" data-n="04" data-title-en="The Line" data-title-he="הקו" aria-label="The Line">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
     <div class="wrap">
     <div class="ed flip">
@@ -363,7 +363,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
         <div class="k gold rv ol" data-en="05 · How it works" data-he="05 · איך זה עובד">05 · How it works</div>
         <h2 class="h2 sp rv" data-en="How <em>it works.</em>" data-he="איך <em>זה עובד.</em>">How <em>it works.</em></h2>
         <p class="p rv d2" data-en="One message. One person, from the first stone to your door." data-he="הודעה אחת. אדם אחד, מהאבן הראשונה ועד הדלת שלכם.">One message. One person, from the first stone to your door.</p>
-        <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Start a bespoke piece" data-he="תכשיט בהזמנה אישית">Start a bespoke piece</a></div>
+        <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
       <div class="factsg">
       <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Seen in private" data-he="נראה בפרטיות">Seen in private</div><div class="d" data-en="In Dubai, in Tel Aviv, or wherever you are." data-he="בדובאי, בתל אביב, או בכל מקום שאתם בו.">In Dubai, in Tel Aviv, or wherever you are.</div></div></div>
       <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Chosen under your own light" data-he="נבחרות תחת האור שלכם">Chosen under your own light</div><div class="d" data-en="Certified stones, brought to you to compare." data-he="אבנים מאושרות, מגיעות אליכם להשוואה.">Certified stones, brought to you to compare.</div></div></div>
@@ -447,7 +447,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <p class="p" id="pmP"></p>
       <div class="mspecs" id="pmSpecs"></div>
       <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivered in person" data-he="מסירה אישית">Delivered in person</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div>
-      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Request a private viewing" data-he="בקשו צפייה פרטית">Request a private viewing</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
+      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
     </div>
   </div>
 </div>

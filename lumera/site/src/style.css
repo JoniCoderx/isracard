@@ -1306,13 +1306,21 @@
      carries an invisible area at least 44px tall, centred on itself. The
      jewellery keeps the page, and nothing has to be aimed at. */
   @media (pointer:coarse) {
-    .btn, .chip, .vp, .vtb, .lang, .menubtn, .cert, .soc a, .fcol a, .lnk, .clock {
+    /* .lnk is not in this list: its ::after is the arrow, and giving it a tap
+       pad here replaced the glyph with an empty box — every "See the
+       collection →" lost its arrow on every touch device. It gets real padding
+       further down instead. */
+    .btn, .chip, .vp, .vtb, .lang, .menubtn, .cert, .soc a, .fcol a, .clock {
       position:relative; }
     .btn::after, .chip::after, .vp::after, .vtb::after, .lang::after, .menubtn::after,
-    .cert::after, .soc a::after, .fcol a::after, .lnk::after, .clock::after {
+    .cert::after, .soc a::after, .fcol a::after, .clock::after {
       content:""; position:absolute; left:0; right:0; top:50%;
       transform:translateY(-50%); height:max(44px, 100%);
-      border-radius:inherit; pointer-events:auto; }
+      border-radius:inherit;
+      /* inherit, never auto: a pad that forces pointer-events back on brings
+         its element back to life inside a closed overlay, where it then sits
+         over the page and takes taps meant for what is actually on screen. */
+      pointer-events:inherit; }
     /* rows sit close together, so a target may not reach over its neighbour */
     .chips .chip::after, .vpos .vp::after { height:max(40px, 100%); }
   }
@@ -1688,3 +1696,134 @@
   .ivory .bstep:hover .bsim img, .ivory .bstep:focus-within .bsim img { filter:none; }
   .ivory .bline { color:var(--ink2); }
   .ivory .bsn { color:var(--gold); }
+
+  /* ══ v49 — the phone ═══════════════════════════════════════════════════
+     Measured rather than eyeballed: what a thumb can hit, what lines up with
+     what, and whether a button looks like one. ──────────────────────────── */
+
+  /* ── 1. buttons ──
+     Stacked calls to action were twelve different widths down a 390px screen,
+     10.9px type, and their 44px tap pads reached over their neighbours — a
+     tap meant for one landed on the other. One width, one rhythm, pads that
+     cannot overlap because the gap is bigger than the overhang. */
+  @media (max-width:560px) {
+    .acts, .hacts, .bfoot, .factsg + .acts, #clients .acts, .mbox .row,
+    .hcap .hacts, .beat .acts, .copy .acts, .hhead .acts {
+      display:grid; grid-auto-flow:row; gap:12px; justify-items:stretch; }
+    .acts .btn, .hacts .btn, .bfoot .btn, .mbox .row .btn {
+      width:100%; justify-self:stretch; }
+    .btn { font-size:.76rem; letter-spacing:.18em; padding-inline:22px; }
+    .btn.sm { font-size:.7rem; }
+    .bfoot { justify-items:center; }
+    .bfoot .bline { text-align:center; }
+  }
+  @media (pointer:coarse) {
+    .btn { min-height:48px; }
+    .btn.sm { min-height:44px; }
+    /* a pad can only reach as far as the element it belongs to */
+    .btn::after, .chip::after, .vp::after, .vtb::after, .lang::after,
+    .menubtn::after, .cert::after, .soc a::after, .fcol a::after, .clock::after {
+      height:100%; }
+    .menubtn, #langBtn, .lang { min-height:44px; }
+    .sh .mark { min-height:44px; display:inline-flex; align-items:center; }
+    /* the certificates were twelve pixels tall */
+    .cert { min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
+    /* the arrow keeps its glyph; the link gets the height in padding */
+    .lnk { padding-block:13px 12px; }
+    .card .lnk, .piece .acts .lnk { margin-top:0; }
+    /* segmented controls: room between the segments for a thumb */
+    .vpos { gap:6px; padding:5px; }
+    .vt { gap:6px; }
+    .chips { gap:10px; }
+    .opts .chips .chip { min-height:44px; }
+  }
+
+  /* ── 2. straight ──
+     Four different left edges inside one section on a phone: the gutter at 20,
+     a figure caption at 38, the configurator's own labels at 35, and the facts
+     indented 78 behind their numerals. One gutter now. */
+  @media (max-width:760px) {
+    /* the caption leaves the photograph and becomes a caption */
+    .fig .cap { position:static; left:auto; right:auto; bottom:auto; margin-top:12px; padding:0; }
+    .fig { overflow:visible; }
+    .fig .im, .fig .sheen, .fig .lt { border-radius:var(--r); overflow:hidden; }
+    .fig::after { inset:0 0 auto 0; height:var(--figh, 100%); }
+    /* the panel stops keeping its own margin */
+    #configure, .panel, .opts { padding-inline:0; }
+    .opts > label, .opts .k { padding-inline:0; }
+    /* the numeral sits above its fact instead of holding a 58px column open */
+    .fact { grid-template-columns:1fr; gap:6px; }
+    .fact .num { font-size:.8rem; letter-spacing:.2em; color:var(--gold); }
+  }
+
+  /* ── 3. type that can be read at arm's length ── */
+  @media (max-width:560px) {
+    .k { font-size:.74rem; }
+    .k.gold { font-size:.74rem; }
+    html[data-lang="he"] .k { font-size:.8rem; }
+    .lnk { font-size:.72rem; }
+    .piece .acts .lnk, .card .lnk { font-size:.72rem; }
+    .vt .vtb, .vpos .vp { font-size:.64rem; }
+    html[data-lang="he"] .vt .vtb, html[data-lang="he"] .vpos .vp { font-size:.72rem; }
+    .opts .chip { font-size:.86rem; }
+    html[data-lang="he"] .opts .chip { font-size:.9rem; }
+  }
+
+  /* A menu that is only transparent is still there: its links stay tabbable,
+     a screen reader still reads them, and anything inside it that claims a tap
+     area claims it over the page. Closed means hidden. */
+  #menu:not(.open) { visibility:hidden; }
+  #menu.open { visibility:visible; }
+
+  /* ── v49b — what the measurements caught after the first pass ── */
+  @media (pointer:coarse) {
+    /* .certs .cert had min-height:0 at higher specificity, so the laboratory
+       links stayed twelve pixels tall — a real link to a real report. */
+    .certs .cert { min-height:44px; padding-inline:10px; }
+    /* 39px was close to a thumb, not the same as one */
+    .lnk { padding-block:15px 14px; }
+  }
+  @media (max-width:560px) {
+    /* the grids were full width but shrank to their content, so the buttons
+       inside them were still twelve different widths down one screen */
+    .acts, .hacts, .bfoot, .copy .acts, .hhead .acts, .beat .acts,
+    .cf, .total, .playbar .row { width:100%; justify-self:stretch; }
+    .btn:not(.sm):not(.hbook):not(.mclose):not(.mclose2):not(#fab):not(#enterBtn) {
+      width:100%; max-width:none; }
+    .total .btn, .playbar .btn, .cf .btn, .cf button[type=submit] { width:100%; justify-self:stretch; }
+    /* eight cuts in four columns meant 8.5px labels; three columns reads */
+    .chips.cuts { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .chips.cuts .chip { padding-inline:6px; font-size:.7rem; letter-spacing:.06em; min-height:44px; }
+    html[data-lang="he"] .chips.cuts .chip { font-size:.8rem; letter-spacing:0; }
+    .menubtn span, .k.tcount, .swipe { font-size:.72rem; }
+  }
+
+  @media (pointer:coarse) {
+    /* Controls that sit side by side can take their height back in an invisible
+       pad: the overhang is vertical and their neighbours are horizontal, so
+       nothing is stolen. Stacked buttons keep height:100% — that overlap was
+       the bug. The builder stays the size it looks. */
+    .vt .vtb::after, .vpos .vp::after, .cur .chip::after, .chips .chip::after {
+      height:max(44px, 100%); }
+    /* footer links were six pixels apart in a column */
+    .fcol a, .fcol span { padding-block:9px; }
+    .fcol { gap:2px; }
+  }
+
+  /* Latin grading notation inside a Hebrew line: without isolation the trailing
+     sign of "VVS+" is a neutral character, so the paragraph direction carries it
+     to the other end and the strip reads "+D–F · VVS". Every run of grading,
+     carat or metal notation is its own little left-to-right island. */
+  html[dir="rtl"] [dir="ltr"], html[dir="rtl"] .certs .cert b,
+  html[dir="rtl"] .meta span:not(i), html[dir="rtl"] .price {
+    direction:ltr; unicode-bidi:isolate; }
+
+  /* The hero eyebrow got a readable size with everything else, which made it
+     wider than a 320px screen and clipped its last word. It wraps now, and
+     tightens a little on the narrowest phones rather than running off. */
+  @media (max-width:560px) {
+    .hcap .k { white-space:normal; text-wrap:balance; max-width:100%; }
+  }
+  @media (max-width:360px) {
+    .hcap .k { font-size:.68rem; letter-spacing:.12em; }
+  }
