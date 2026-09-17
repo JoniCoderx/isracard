@@ -1224,6 +1224,38 @@
   .clock.open .cst::before { background:#7fd6a0; box-shadow:0 0 8px rgba(127,214,160,.75); animation:cstpulse 2.6s ease-in-out infinite; }
   @keyframes cstpulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
   @media (prefers-reduced-motion:reduce) { .clock.open .cst::before { animation:none; } }
+
+  /* ══ v41 ══ THE MARK IS NEVER INVISIBLE.
+     The entrance animation started at opacity 0, and while the page is still
+     being built the main thread cannot advance it — so the symbol sat empty
+     for half a second and then snapped to white. Measured: opacity 0 for
+     485ms, then 1. Nothing now gates the symbol's visibility: it is painted
+     at full strength on the first frame, and every effect is added on top. */
+  .imk { animation:none !important; opacity:1 !important; transform:none !important; }
+  .imk .if { opacity:1 !important; }
+  .imk::before { animation:none !important; opacity:.8; transform:none; }
+
+  /* ══ v41b ══ the symbol splits and smears as the page moves.
+     The idle chromatic breathe is gone from the filter so the scroll can own
+     it outright — otherwise the keyframes would overwrite the split every
+     frame and you would see nothing at all. */
+  header.sh .mark .sy { animation:none; }
+  header.sh .mark .sy { transform:rotate(var(--syr,0deg)) scale(var(--sys,1)) scaleY(var(--syy,1)) scaleX(var(--syx,1));
+    transform-origin:50% 50%; transition:transform .5s cubic-bezier(.2,.75,.28,1), filter .5s cubic-bezier(.2,.75,.28,1); }
+  @media (hover:hover) and (pointer:fine) {
+    header.sh .mark:hover .sy { transform:rotate(-2.5deg) scale(1.08); }
+  }
+  @media (prefers-reduced-motion:reduce) { header.sh .mark .sy { transition:none; filter:none !important; } }
+
+  /* ══ v41c ══ a photograph that has not arrived shows NOTHING.
+     Until an image loads — and if it never does — the browser paints its alt
+     text into the layout, so a page of photographs became a page of long
+     descriptions. Seventeen of them were rendering as prose on a phone. The
+     description stays in the markup for anyone using a screen reader; it is
+     simply never drawn. The frame beneath it is house black, so a picture on
+     its way in reads as an empty frame rather than a paragraph. */
+  img { color:transparent; font-size:0; }
+  .fig .im, .card .im, .piece .im, picture { background:#0a0a0b; }
 </style>
 
 <div id="silavu">
@@ -1701,7 +1733,7 @@
   try { seen = localStorage.getItem("silavu-seen") === "1" && !/[?&]intro=1/.test(location.search); localStorage.setItem("silavu-seen", "1"); } catch (e) {}
   function enter() {
     if (entered) return; entered = true;
-    intro.classList.add("gone"); window.__unlock(); header.classList.add("show"); where.classList.add("show"); document.querySelectorAll(".late").forEach(function (el) { el.classList.add("in"); }); requestAnimationFrame(function () { var q = window.__defer || []; window.__defer = { push: function (f) { f(); } }; q.forEach(function (f) { try { f(); } catch (err) { console.error(err); } }); });
+    intro.classList.add("gone"); window.__unlock(); header.classList.add("show"); where.classList.add("show"); document.querySelectorAll(".late").forEach(function (el) { el.classList.add("in"); }); requestAnimationFrame(function () { var q = window.__defer || []; window.__defer = { push: function (f) { f(); } }; (function step() { var f = q.shift(); if (!f) return; try { f(); } catch (err) { console.error(err); } if (q.length) requestAnimationFrame(step); })(); });
     setTimeout(function () { intro.style.display = "none"; }, 1300);
     if (!reduce) { var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
@@ -3129,11 +3161,24 @@
     var last = window.scrollY, vel = 0, raf = 0;
     function settle() {
       raf = 0; vel *= 0.88;
-      var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 46);
-      sy.style.setProperty("--syr", (m * 9 * dir).toFixed(2) + "deg");
-      sy.style.setProperty("--sys", (1 + m * 0.07).toFixed(3));
+      var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 42);
+      /* the symbol splits into its colours and smears in the direction of travel */
+      var D = (m * 7).toFixed(2), B = (m * 2.2).toFixed(2), G = (6 + m * 22).toFixed(1);
+      sy.style.filter = m < 0.015 ? "" :
+        "blur(" + B + "px)" +
+        " drop-shadow(" + (-D * dir) + "px " + (-m * 5 * dir).toFixed(2) + "px 0 rgba(112,214,255,.92))" +
+        " drop-shadow(" + (D * dir) + "px " + (m * 5 * dir).toFixed(2) + "px 0 rgba(255,150,178,.92))" +
+        " drop-shadow(0 0 " + G + "px rgba(255,255,255," + (0.22 + m * 0.5).toFixed(2) + "))";
+      sy.style.setProperty("--syr", (m * 7 * dir).toFixed(2) + "deg");
+      sy.style.setProperty("--sys", (1 + m * 0.05).toFixed(3));
+      sy.style.setProperty("--syy", (1 + m * 0.22).toFixed(3));
+      sy.style.setProperty("--syx", (1 - m * 0.07).toFixed(3));
       if (Math.abs(vel) > 0.35) raf = requestAnimationFrame(settle);
-      else { sy.style.setProperty("--syr", "0deg"); sy.style.setProperty("--sys", "1"); }
+      else {
+        sy.style.filter = "";
+        sy.style.setProperty("--syr", "0deg"); sy.style.setProperty("--sys", "1");
+        sy.style.setProperty("--syy", "1"); sy.style.setProperty("--syx", "1");
+      }
     }
     addEventListener("scroll", function () {
       var y = window.scrollY; vel = y - last; last = y;

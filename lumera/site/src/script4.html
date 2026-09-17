@@ -93,11 +93,24 @@
     var last = window.scrollY, vel = 0, raf = 0;
     function settle() {
       raf = 0; vel *= 0.88;
-      var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 46);
-      sy.style.setProperty("--syr", (m * 9 * dir).toFixed(2) + "deg");
-      sy.style.setProperty("--sys", (1 + m * 0.07).toFixed(3));
+      var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 42);
+      /* the symbol splits into its colours and smears in the direction of travel */
+      var D = (m * 7).toFixed(2), B = (m * 2.2).toFixed(2), G = (6 + m * 22).toFixed(1);
+      sy.style.filter = m < 0.015 ? "" :
+        "blur(" + B + "px)" +
+        " drop-shadow(" + (-D * dir) + "px " + (-m * 5 * dir).toFixed(2) + "px 0 rgba(112,214,255,.92))" +
+        " drop-shadow(" + (D * dir) + "px " + (m * 5 * dir).toFixed(2) + "px 0 rgba(255,150,178,.92))" +
+        " drop-shadow(0 0 " + G + "px rgba(255,255,255," + (0.22 + m * 0.5).toFixed(2) + "))";
+      sy.style.setProperty("--syr", (m * 7 * dir).toFixed(2) + "deg");
+      sy.style.setProperty("--sys", (1 + m * 0.05).toFixed(3));
+      sy.style.setProperty("--syy", (1 + m * 0.22).toFixed(3));
+      sy.style.setProperty("--syx", (1 - m * 0.07).toFixed(3));
       if (Math.abs(vel) > 0.35) raf = requestAnimationFrame(settle);
-      else { sy.style.setProperty("--syr", "0deg"); sy.style.setProperty("--sys", "1"); }
+      else {
+        sy.style.filter = "";
+        sy.style.setProperty("--syr", "0deg"); sy.style.setProperty("--sys", "1");
+        sy.style.setProperty("--syy", "1"); sy.style.setProperty("--syx", "1");
+      }
     }
     addEventListener("scroll", function () {
       var y = window.scrollY; vel = y - last; last = y;

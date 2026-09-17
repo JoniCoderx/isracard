@@ -7,7 +7,7 @@ const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S +
 function rep(a, b) { if (!s1.includes(a)) { console.error("MISSING in script1:", a.slice(0, 80)); process.exit(1); } s1 = s1.replace(a, b); }
 rep(`window.__lock();`, `window.__lock(); window.__defer = window.__defer || [];`);
 rep(`document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });`, `document.querySelectorAll(".rv:not(.late)").forEach(function (el) { io.observe(el); });`);
-rep(`header.classList.add("show"); where.classList.add("show");`, `header.classList.add("show"); where.classList.add("show"); document.querySelectorAll(".late").forEach(function (el) { el.classList.add("in"); }); requestAnimationFrame(function () { var q = window.__defer || []; window.__defer = { push: function (f) { f(); } }; q.forEach(function (f) { try { f(); } catch (err) { console.error(err); } }); });`);
+rep(`header.classList.add("show"); where.classList.add("show");`, `header.classList.add("show"); where.classList.add("show"); document.querySelectorAll(".late").forEach(function (el) { el.classList.add("in"); }); requestAnimationFrame(function () { var q = window.__defer || []; window.__defer = { push: function (f) { f(); } }; (function step() { var f = q.shift(); if (!f) return; try { f(); } catch (err) { console.error(err); } if (q.length) requestAnimationFrame(step); })(); });`);
 rep(`price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();`, `price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass(); if (window.__fx) window.__fx.relang();`);
 rep(`var alias = { standard: "inside", atelier: "partners" }`, `var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`);
 
