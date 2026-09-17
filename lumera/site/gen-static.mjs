@@ -14,25 +14,26 @@ const head = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SILAVU — High jewellery, Dubai · Tel Aviv</title>
 <meta name="description" content="A private high-jewellery house in Dubai and Tel Aviv. The SILAVU Line, bespoke pieces, private viewings by appointment.">
+<link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
 <meta name="silavu-build" content="${BUILD}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
 <meta property="og:title" content="SILAVU — Private high jewellery, Dubai · Tel Aviv">
 <meta property="og:description" content="A private high-jewellery house in Dubai and Tel Aviv. The SILAVU Line, bespoke pieces, private viewings by appointment.">
-<meta property="og:image" content="${base}/og.jpg?v=4">
+<meta property="og:image" content="${base}/og.jpg?v=5">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="${base}/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SILAVU — Private high jewellery, Dubai · Tel Aviv">
-<meta name="twitter:image" content="${base}/og.jpg?v=4">
-<link rel="icon" href="favicon.ico?v=4" sizes="48x48 32x32 16x16">
-<link rel="icon" href="icon-32.png?v=4" type="image/png" sizes="32x32">
-<link rel="icon" href="icon-16.png?v=4" type="image/png" sizes="16x16">
-<link rel="icon" href="favicon.svg?v=4" type="image/svg+xml" sizes="any">
-<link rel="apple-touch-icon" href="icon-180.png?v=4" sizes="180x180">
-<link rel="manifest" href="site.webmanifest?v=4">
+<meta name="twitter:image" content="${base}/og.jpg?v=5">
+<link rel="icon" href="favicon.ico?v=5" sizes="48x48 32x32 16x16">
+<link rel="icon" href="icon-32.png?v=5" type="image/png" sizes="32x32">
+<link rel="icon" href="icon-16.png?v=5" type="image/png" sizes="16x16">
+<link rel="icon" href="favicon.svg?v=5" type="image/svg+xml" sizes="any">
+<link rel="apple-touch-icon" href="icon-180.png?v=5" sizes="180x180">
+<link rel="manifest" href="site.webmanifest?v=5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="img/hero-2560.jpg" media="(min-width: 900px)">

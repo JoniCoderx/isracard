@@ -1321,6 +1321,23 @@
     .imk .iq, .imk .is { display:none !important; }
     .imk .if { opacity:1 !important; }
   }
+
+  /* ══ v44 ══ a thumb needs more room than the eye does.
+     The controls are deliberately small and quiet; that is the design. So the
+     target grows without the button growing: on a touch screen each control
+     carries an invisible area at least 44px tall, centred on itself. The
+     jewellery keeps the page, and nothing has to be aimed at. */
+  @media (pointer:coarse) {
+    .btn, .chip, .vp, .vtb, .lang, .menubtn, .cert, .soc a, .fcol a, .lnk, .clock {
+      position:relative; }
+    .btn::after, .chip::after, .vp::after, .vtb::after, .lang::after, .menubtn::after,
+    .cert::after, .soc a::after, .fcol a::after, .lnk::after, .clock::after {
+      content:""; position:absolute; left:0; right:0; top:50%;
+      transform:translateY(-50%); height:max(44px, 100%);
+      border-radius:inherit; pointer-events:auto; }
+    /* rows sit close together, so a target may not reach over its neighbour */
+    .chips .chip::after, .vpos .vp::after { height:max(40px, 100%); }
+  }
 </style>
 
 <div id="silavu">
