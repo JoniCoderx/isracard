@@ -13,7 +13,9 @@
 # Three tiers, WebP throughout (half the bytes of JPEG at the same quality here):
 #   x  75 frames, 2200 px wide — large and retina desktops
 #   d  75 frames, 1600 px wide — ordinary desktops
-#   m  50 frames, 1080 x 1920, the 9:16 window around the SILAVU bag, for phones
+#   m  50 frames, 888 x 1920, cut to the shape of a phone screen (9:19.5, which
+#      is what a 390x844 or 430x932 actually is) so the browser has nothing left
+#      to crop — what is cut is cut here, deliberately, around the SILAVU bag
 #
 # 300 source frames: every fourth for the desktop strips, every sixth for the phone.
 set -e
@@ -36,8 +38,8 @@ ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,4))',${FIX},scale=2200:-2:flag
   -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/x-%02d.webp" -y
 ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,4))',${FIX},scale=1600:-2:flags=lanczos" \
   -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/d-%02d.webp" -y
-ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,6))',${FIX},crop=1080:1920:900:0" \
-  -vsync 0 -start_number 0 -c:v libwebp -quality 76 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
+ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,6))',${FIX},crop=888:1920:996:0" \
+  -vsync 0 -start_number 0 -c:v libwebp -quality 78 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
 
 x=$(ls "$OUT"/x-*.webp | wc -l); d=$(ls "$OUT"/d-*.webp | wc -l); m=$(ls "$OUT"/m-*.webp | wc -l)
 echo "film frames: x=$x d=$d m=$m"

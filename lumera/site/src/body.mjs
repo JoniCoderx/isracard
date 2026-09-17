@@ -176,7 +176,7 @@ export const body = `
   </div>
   </div>
 </section>
-<section id="what" data-n="02" data-title-en="Two ways in" data-title-he="שתי דרכים" aria-label="What we do">
+<section id="what" class="ivory" data-n="02" data-title-en="Two ways in" data-title-he="שתי דרכים" aria-label="What we do">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
     <div class="wrap">
     <div class="sechead">
@@ -354,7 +354,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     </div>
   </section>
 
-  <section id="clients" data-n="05" data-title-en="How it works" data-title-he="איך זה עובד" aria-label="For clients">
+  <section id="clients" class="ivory" data-n="05" data-title-en="How it works" data-title-he="איך זה עובד" aria-label="For clients">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
     <div class="wrap">
     <div class="ed stk">

@@ -1543,3 +1543,142 @@
   }
   @media (prefers-reduced-motion:reduce) { .fveil { opacity:0; } .ftxt { opacity:1; }
     .fscreen { -webkit-mask-image:none; mask-image:none; } }
+
+  /* ══ v48 — art direction ═══════════════════════════════════════════════
+     The site had started performing luxury instead of being it: a fixed
+     vignette over everything, a black gradient on every photograph, a glow on
+     every mark, and a dozen effects competing for the same attention. This
+     pass removes. Nothing here is new. ───────────────────────────────────── */
+
+  /* ── 1. let the photography breathe ──
+     Every picture was sitting under 85–94% black so that type could be laid
+     over it. Type can hold its own against a picture that is only half veiled,
+     and the pictures are the reason anyone is here. */
+  #vig { display:none; }                                  /* a vignette over the whole site */
+  .hshade { background:linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.28) 34%, rgba(0,0,0,0) 62%),
+                      linear-gradient(to bottom, rgba(0,0,0,.34), transparent 24%); }
+  .ch .veil { background:linear-gradient(to top, rgba(0,0,0,.70) 0%, rgba(0,0,0,.24) 42%, rgba(0,0,0,0) 72%),
+                        linear-gradient(to bottom, rgba(0,0,0,.30), transparent 22%); }
+  .veil2 { background:linear-gradient(to top, rgba(0,0,0,.62) 0%, rgba(0,0,0,.14) 38%, rgba(0,0,0,0) 62%),
+                      linear-gradient(to bottom, rgba(0,0,0,.32), transparent 20%); }
+  .wframe .veil { background:linear-gradient(to top, rgba(0,0,0,.70) 0%, rgba(0,0,0,.26) 42%, rgba(0,0,0,0) 72%),
+                            linear-gradient(to bottom, rgba(0,0,0,.30), transparent 22%); }
+  .mveil { background:linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.12) 44%, rgba(0,0,0,0) 68%),
+                      linear-gradient(to bottom, rgba(0,0,0,.55), transparent 16%); }
+  .cimg::after { background:linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.06) 48%, rgba(0,0,0,.14) 100%); }
+  @media (min-width:900px) {
+    .cimg::after { background:linear-gradient(to right, rgba(0,0,0,.92) 0%, rgba(0,0,0,.04) 42%, transparent 100%); }
+    html[dir="rtl"] .cimg::after { background:linear-gradient(to left, rgba(0,0,0,.92) 0%, rgba(0,0,0,.04) 42%, transparent 100%); }
+  }
+  header.sh::before { background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,0)); }
+  #stonecv { filter:drop-shadow(0 24px 48px rgba(0,0,0,.55)); }
+
+  /* ── 2. the mark is a signature, not a light fitting ──
+     No glow, no bloom, no CSS shadow anywhere near it. It is ivory, flat and
+     razor sharp, and the only thing that ever moves across it is light. */
+  .engraved { color:rgba(246,243,237,.72); filter:none; }
+  .mark:hover .sy { filter:none; color:var(--gold); }
+  .mark .sy { transition:color .6s; }
+  @keyframes sigbreath { 0%, 100% { opacity:1; } 50% { opacity:1; } }
+  #pbar { box-shadow:none; background:linear-gradient(90deg, rgba(217,201,163,.45), #f6f3ed); }
+  .ftxt .k { text-shadow:none; }
+  .dline b.on { box-shadow:none; }
+  .ruler i { box-shadow:none; }
+  .stone1 { box-shadow:none; }
+
+  /* ── 3. effect discipline ──
+     Three interactions survive, because three is what anyone remembers: the
+     chapters that scrub with the page, the heading that answers the cursor,
+     and the light that crosses the mark. Everything below was competing with
+     those for the same attention. */
+  #dust, #glow { display:none !important; }               /* drifting motes, a cursor halo */
+  .fig .sheen, .fig .lt, .bsw { display:none !important; } /* sweeps over every photograph */
+  #grain { animation:none; opacity:.022; }                 /* film stock, not a shader */
+  /* photographs hold still under the hand; only the picture itself moves in */
+  .fig, .fig .im { transform:none !important; }
+  .tilt { transition:border-color .5s; }
+
+  /* ── 4. the heading interaction stays, and stays rare ──
+     Only the editorial headlines answer the cursor now, and they answer by
+     moving, never by lighting up. Nothing is harder to read than before. */
+  @media (hover:hover) and (pointer:fine) {
+    .h2.lit, .h2.lit:not(.sp) { transform:none; filter:none; letter-spacing:inherit; }
+    .h2.lit .w { transform:none; }
+    .h.lit:not(.sp), .sp.lit .w { filter:none; }           /* the glow is gone; the drift remains */
+  }
+
+  /* ── 5. visual rhythm ──
+     Black everywhere stops reading as a choice. Two chapters are lifted into
+     ivory — the one that says what the house makes, and the one that says how
+     it works — so the dark chapters either side of them land as dark. The
+     photographs are all shot on black lacquer, so on ivory they read as
+     objects on a page rather than as more of the background. */
+  .ivory { --ink:#14130f; --ink2:#3d3a33; --ink3:#6b675d; --gold:#8a6f3c; --line:rgba(20,19,15,.14);
+    background:linear-gradient(180deg, #f4f1e9 0%, #efeadf 48%, #e9e3d6 100%);
+    color:var(--ink); }
+  .ivory::before { content:""; position:absolute; inset:0 0 auto 0; height:120px; pointer-events:none;
+    background:linear-gradient(to bottom, #000, rgba(0,0,0,0)); opacity:.5; }
+  .ivory::after { content:""; position:absolute; inset:auto 0 0 0; height:140px; pointer-events:none;
+    background:linear-gradient(to top, #000, rgba(0,0,0,0)); opacity:.5; }
+  .ivory > * { position:relative; z-index:1; }
+  .ivory .k { color:var(--ink2); }
+  .ivory .k.gold { color:var(--gold); }
+  .ivory .p, .ivory .fact .d { color:var(--ink2); }
+  .ivory .chap i { background:linear-gradient(90deg, transparent, rgba(20,19,15,.22), transparent); }
+  .ivory .chap svg.sy { color:rgba(20,19,15,.34); }
+  .ivory svg.sy.tiny { color:var(--ink); }
+  .ivory .row i { background:var(--line); }
+  /* the metal fill in an italic is white-on-white here; on ivory it is bronze */
+  .ivory .h em, .ivory .h2 em, .ivory .h3 em, .ivory .t em {
+    background:linear-gradient(110deg,#6f5626 0%,#2a2417 26%,#8a6f3c 46%,#241f14 62%,#7d6431 100%);
+    background-size:220% 100%; -webkit-background-clip:text; background-clip:text;
+    color:transparent; -webkit-text-fill-color:transparent; }
+  .ivory em.sd .w > span {
+    background:linear-gradient(110deg,#6f5626 0%,#2a2417 26%,#8a6f3c 46%,#241f14 62%,#7d6431 100%);
+    background-size:220% 100%; -webkit-background-clip:text; background-clip:text;
+    color:transparent; -webkit-text-fill-color:transparent; }
+  .ivory .fig { background:#e4ddcf; box-shadow:0 18px 40px -26px rgba(20,19,15,.55); }
+  .ivory .fig::after { box-shadow:inset 0 0 0 1px rgba(20,19,15,.10); }
+  .ivory .lnk { color:var(--ink); }
+  .ivory .lnk::after { background:var(--ink); }
+  .ivory .btn { color:var(--ink); border-color:rgba(20,19,15,.34); background:rgba(255,255,255,.35); box-shadow:none; }
+  .ivory .btn:hover { background:rgba(255,255,255,.7); border-color:rgba(20,19,15,.5); }
+  .ivory .btn.solid { color:#f6f3ed; background:#14130f; border-color:#14130f; box-shadow:none; }
+  .ivory .btn.solid:hover { background:#000; }
+  .ivory .fact { border-color:var(--line); }
+  .ivory .fact .num { color:var(--gold); }
+  .ivory .swipe, .ivory .cue { color:var(--ink3); }
+  .ivory .swipe i, .ivory .cue i { background:var(--ink3); }
+
+  /* ── 6. the Dubai film ──
+     It had a vignette, a top gradient, a bottom gradient and a black veil over
+     the top of all of it. The footage is a night shot in a controlled studio —
+     it is already graded. What is left is a whisper at the very top so the bar
+     has something to sit on, and the dissolve it leaves on. */
+  .fgrade { background:linear-gradient(to bottom, rgba(0,0,0,.34), transparent 18%); }
+  @media (max-width:899px) {
+    .fgrade { background:linear-gradient(to bottom, rgba(0,0,0,.30), transparent 15%); }
+  }
+
+  /* the bar and the compass over an ivory chapter */
+  body.onivory header.sh::before { background:linear-gradient(to bottom, rgba(244,241,233,.85), rgba(244,241,233,0)); }
+  body.onivory header.sh.scrolled { background:rgba(244,241,233,.82); box-shadow:0 1px 0 rgba(20,19,15,.10); }
+  body.onivory header.sh, body.onivory .sh nav a, body.onivory .menubtn, body.onivory #langBtn { color:#14130f; }
+  body.onivory .sh nav a::after { background:#14130f; }
+  body.onivory .mark .sy, body.onivory .mark .lg { color:#14130f; }
+  body.onivory .btn { color:#14130f; border-color:rgba(20,19,15,.32); background:rgba(255,255,255,.4); }
+  body.onivory .btn:hover { background:rgba(255,255,255,.75); }
+  body.footivory #where { color:#3d3a33; }
+  body.footivory #where .n { color:#14130f; }
+  body.footivory #where .bar { background:rgba(20,19,15,.18); }
+  body.footivory #where .bar i { background:#14130f; }
+  body.footivory #where::before {
+    background:radial-gradient(closest-side at 50% 50%, rgba(244,241,233,.9), rgba(244,241,233,.55) 52%, rgba(244,241,233,.2) 78%, transparent 100%); }
+  body.footivory #fab { color:#f6f3ed; background:#14130f; border-color:#14130f; }
+
+  /* ── the fades, cut back ──
+     The section seams were long black ramps and the film left on a slow
+     dissolve. Both are shorter and lighter: enough to join two chapters,
+     not enough to be the thing you notice. */
+  .ivory::before { height:64px; opacity:.32; }
+  .ivory::after { height:72px; opacity:.32; }

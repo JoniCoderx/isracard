@@ -101,6 +101,13 @@
     var mid = innerHeight * 0.45, best = secs[0];
     for (var i = 0; i < secs.length; i++) { var r = secs[i].getBoundingClientRect(); if (r.top <= mid) best = secs[i]; }
     setWhere(best);
+    /* The bar and the compass are fixed over whatever is passing beneath them.
+       Two chapters are ivory, so they are told which ground they are on rather
+       than being left as dark glass over a light page. */
+    var overTop = null, ly = 64;
+    for (var q = 0; q < secs.length; q++) { var rq = secs[q].getBoundingClientRect(); if (rq.top <= ly && rq.bottom > ly) { overTop = secs[q]; break; } }
+    document.body.classList.toggle("onivory", !!overTop && overTop.classList.contains("ivory"));
+    document.body.classList.toggle("footivory", best.classList.contains("ivory"));
     var r2 = best.getBoundingClientRect(), f = c01(-r2.top / Math.max(1, r2.height - innerHeight * 0.5)); whereBar.style.width = (f * 100).toFixed(1) + "%";
     var cr = $("concierge").getBoundingClientRect(); fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6 && fabClear());
     pbar.style.width = (c01(scrollY / Math.max(1, document.body.scrollHeight - innerHeight)) * 100).toFixed(2) + "%";
@@ -137,8 +144,6 @@
 
   /* ── a soft light that follows the cursor ── */
   var glow = $("glow"), gx = -1000, gy = -1000, tgx = -1000, tgy = -1000, glowOn = false;
-  addEventListener("pointermove", function (e) { if (e.pointerType && e.pointerType !== "mouse") return; tgx = e.clientX; tgy = e.clientY; if (!glowOn) { glowOn = true; glow.style.opacity = "1"; } }, { passive: true });
-  document.addEventListener("mouseleave", function () { glowOn = false; glow.style.opacity = "0"; });
   function glowTick() { if (!glowOn) return; gx = lerp(gx, tgx, 0.1); gy = lerp(gy, tgy, 0.1); glow.style.transform = "translate(" + (gx - 280).toFixed(1) + "px," + (gy - 280).toFixed(1) + "px)"; }
 
   /* ── photographs drift a little as they pass: cheap parallax on every card image ── */
@@ -191,7 +196,11 @@
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
   function parallax() { var vh = innerHeight; pxs.forEach(function (bg) { var r = bg.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return; var t = (r.top + r.height / 2 - vh / 2) / vh; bg.style.transform = "translate3d(0," + (t * -4).toFixed(2) + "%,0)"; }); }
   var hidden = false; document.addEventListener("visibilitychange", function () { hidden = document.hidden; });
-  function tick() { requestAnimationFrame(tick); if (hidden) return; var t = performance.now() / 1000; insideTick(); parallax(); drift(); compass(); glowTick(); rulerTick(); if (!reduce && entered && (dustFc++ & 1)) drawDust(t); }
+  /* The diamond dust and the cursor halo are gone — see the art-direction pass.
+     Their code stays out of the loop rather than being hidden by a stylesheet:
+     a pointermove handler and a canvas repaint every other frame are a cost
+     whether or not anything is painted. */
+  function tick() { requestAnimationFrame(tick); if (hidden) return; insideTick(); parallax(); drift(); compass(); rulerTick(); }
   var dustFc = 0;
   tick(); addEventListener("scroll", compass, { passive: true });
 

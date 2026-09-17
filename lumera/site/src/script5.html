@@ -119,7 +119,7 @@
     /* what each strip actually holds, so the canvas never asks for more pixels
        than exist in the frame — and, now that the frames are 4K restorations,
        never settles for fewer either */
-    src: function (set) { return set === "m" ? 1080 : set === "x" ? 2200 : 1600; },
+    src: function (set) { return set === "m" ? 888 : set === "x" ? 2200 : 1600; },
     /* the phone strip is two thirds of the frames: a ten-second push-in carries
        perfectly well at fifty, and it is a third of what a phone would fetch */
     n: function (set) { return set === "m" ? 50 : 75; },
@@ -129,11 +129,13 @@
     release: true,
     at: function (p) {
       if (reduce) return;   /* the stylesheet holds it open and still */
-      /* it arrives out of black; it leaves by dissolving from the bottom up, so
-         the last of it melts into the section underneath instead of blinking off */
-      if (fveil) fveil.style.opacity = (1 - c01(p / 0.13)).toFixed(3);
+      /* It used to come up out of a full black frame, which is a title card, not
+         a cut. It arrives already lit and only the first breath is veiled, so it
+         enters from the chapter above it rather than from nowhere. It still
+         leaves by dissolving from the bottom up. */
+      if (fveil) fveil.style.opacity = (0.55 * (1 - c01(p / 0.09))).toFixed(3);
       if (fscreen) {
-        var g = c01((p - 0.70) / 0.30); g = g * g * (3 - 2 * g);     /* ease it */
+        var g = c01((p - 0.86) / 0.14); g = g * g * (3 - 2 * g);     /* short, and only at the very end */
         fscreen.style.setProperty("--fmp", (-5 - g * 295).toFixed(1) + "%");
       }
       if (ftxt) { var t = c01(p / 0.10) * (1 - c01((p - 0.30) / 0.16)); ftxt.style.opacity = t.toFixed(3); ftxt.style.transform = "translateY(" + ((1 - t) * 22).toFixed(1) + "px)"; }

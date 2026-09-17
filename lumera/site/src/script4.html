@@ -37,20 +37,9 @@
     document.querySelectorAll("#collection, #macro, #clients, #what, #bespoke, .tray").forEach(function (el) { io.observe(el); });
   })();
 
-  /* ── light follows the pointer across the photographs; the photograph leans a few pixels the other way ── */
-  if (fine && !reduce) {
-    var litFig = null;
-    document.addEventListener("pointermove", function (e) {
-      var f = e.target && e.target.closest ? e.target.closest(".fig") : null;
-      if (litFig && litFig !== f) { litFig.style.removeProperty("--ppx"); litFig.style.removeProperty("--ppy"); litFig.style.removeProperty("--tx"); litFig.style.removeProperty("--ty"); }
-      litFig = f; if (!f) return;
-      var r = f.getBoundingClientRect(), x = (e.clientX - r.left) / Math.max(1, r.width), y = (e.clientY - r.top) / Math.max(1, r.height);
-      f.style.setProperty("--lx", (x * 100).toFixed(1) + "%"); f.style.setProperty("--ly", (y * 100).toFixed(1) + "%");
-      f.style.setProperty("--ppx", ((0.5 - x) * 10).toFixed(1) + "px"); f.style.setProperty("--ppy", ((0.5 - y) * 8).toFixed(1) + "px");
-      /* the piece leans into the hand, the way a plate does when you tip it */
-      f.style.setProperty("--tx", ((0.5 - y) * 7.5).toFixed(2) + "deg"); f.style.setProperty("--ty", ((x - 0.5) * 9.5).toFixed(2) + "deg");
-    }, { passive: true });
-  }
+  /* The photographs no longer tilt, catch a moving light or lean away from the
+     cursor. A picture that moves when you point at it is an effect; a picture
+     that holds still is a photograph. */
 
   /* ── the wrist chapter: the photograph opens out of a small frame as you scroll ── */
   var wpin = $("wpin"), wframe = $("wframe"), wimg = $("wimg"), wtxt = $("wtxt"), wveil = wframe && wframe.querySelector(".veil"), lastW = -1, mob = matchMedia("(max-width:999px)").matches;
@@ -65,11 +54,8 @@
   }
   (function loop() { requestAnimationFrame(loop); if (!document.hidden) wristTick(); })();
 
-  /* ── buttons lean toward the hand ── */
-  if (fine && !reduce) document.querySelectorAll(".btn").forEach(function (b) {
-    b.addEventListener("pointermove", function (e) { var r = b.getBoundingClientRect(), x = (e.clientX - r.left - r.width / 2) / r.width, y = (e.clientY - r.top - r.height / 2) / r.height; b.style.transform = "translate(" + (x * 10).toFixed(1) + "px," + (y * 8).toFixed(1) + "px)"; });
-    b.addEventListener("pointerleave", function () { b.style.transform = ""; });
-  });
+  /* Buttons no longer lean toward the hand either — it was the fourth thing on
+     the page reacting to the cursor, and the least worth keeping. */
 
   /* ── the header settles once you leave the film; the hero caption drifts up and away ── */
   var header = $("header"), hcap = $("hcap"), hfacts = document.querySelector(".hfacts"), lastY = -1, heroMedia = Array.prototype.slice.call(document.querySelectorAll("#hero .hv"));
@@ -85,40 +71,9 @@
 
   /* ── a photograph that fails to arrive is asked for again, quietly ── */
   document.addEventListener("error", function (e) { var im = e.target; if (!im || im.tagName !== "IMG" || !im.currentSrc) return; var n = +(im.getAttribute("data-retry") || 0); if (n >= 2) return; im.setAttribute("data-retry", n + 1); var src = im.currentSrc; setTimeout(function () { var u = src.split("?")[0] + "?r=" + (n + 1); if (im.srcset) { im.srcset = im.srcset.split(",").map(function (c) { var t = c.trim().split(/\s+/); return t[0].split("?")[0] + "?r=" + (n + 1) + (t[1] ? " " + t[1] : ""); }).join(", "); } im.src = u; }, 1500 * (n + 1)); }, true);
-  /* ── the symbol answers the scroll: the faster the page moves, the more the
-       mark turns into the light, then it settles back ── */
-  (function () {
-    var sy = document.querySelector("header.sh .mark .sy");
-    if (!sy || reduce) return;
-    var last = window.scrollY, vel = 0, raf = 0;
-    function settle() {
-      raf = 0; vel *= 0.88;
-      var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 42);
-      /* the symbol takes the light harder the faster the page moves: a white
-         bloom and a breath of motion in the direction of travel. No colour is
-         split off it — a fringed mark reads as a rendering fault, not a house. */
-      var B = (m * 1.1).toFixed(2), G = (5 + m * 26).toFixed(1), T = (m * 3).toFixed(2);
-      sy.style.filter = m < 0.015 ? "" :
-        "blur(" + B + "px)" +
-        " drop-shadow(0 " + (T * dir) + "px " + (m * 6).toFixed(1) + "px rgba(0,0,0,.55))" +
-        " drop-shadow(0 0 " + G + "px rgba(255,250,240," + (0.25 + m * 0.6).toFixed(2) + "))" +
-        " brightness(" + (1 + m * 0.5).toFixed(2) + ")";
-      sy.style.setProperty("--syr", (m * 7 * dir).toFixed(2) + "deg");
-      sy.style.setProperty("--sys", (1 + m * 0.05).toFixed(3));
-      sy.style.setProperty("--syy", (1 + m * 0.22).toFixed(3));
-      sy.style.setProperty("--syx", (1 - m * 0.07).toFixed(3));
-      if (Math.abs(vel) > 0.35) raf = requestAnimationFrame(settle);
-      else {
-        sy.style.filter = "";
-        sy.style.setProperty("--syr", "0deg"); sy.style.setProperty("--sys", "1");
-        sy.style.setProperty("--syy", "1"); sy.style.setProperty("--syx", "1");
-      }
-    }
-    addEventListener("scroll", function () {
-      var y = window.scrollY; vel = y - last; last = y;
-      if (!raf) raf = requestAnimationFrame(settle);
-    }, { passive: true });
-  })();
+  /* The symbol in the bar used to bloom and blur with scroll velocity. A
+     drop-shadow is not how metal behaves, and it was a glow by another name. */
+
   /* ── the house mark comes apart as it leaves: it floats up, separates into its
        colours and drifts away, then gathers again on the way back ── */
   (function () {

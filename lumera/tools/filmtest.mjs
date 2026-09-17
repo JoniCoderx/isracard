@@ -48,7 +48,7 @@ for (const [tag, w, h] of [["1440",1440,900],["768",768,1024],["430",430,932],["
     (advanced > 30 ? "PASS" : "FAIL") + ` ${tag} the film scrubs with the page (${frames[0]} → ${frames[frames.length-1]})`,
     (backwards === 0 ? "PASS" : "FAIL") + ` ${tag} it never runs backwards (${backwards})`,
     (biggest <= Math.ceil((advanced / steps) * 2.2) ? "PASS" : "FAIL") + ` ${tag} no jumps (biggest step ${biggest} of ~${Math.round(advanced/steps)})`,
-    (veilStart > 0.75 && veilMid < 0.02 ? "PASS" : "FAIL") + ` ${tag} arrives out of black (${veilStart} → ${veilMid})`,
+    (veilStart > 0.3 && veilStart < 0.75 && veilMid < 0.02 ? "PASS" : "FAIL") + ` ${tag} enters lit, not out of a black card (${veilStart} → ${veilMid})`,
     (swStart > -10 && swMid > -10 && swEnd <= -290 ? "PASS" : "FAIL") + ` ${tag} leaves by dissolving from the bottom (mask ${swStart}% → ${swMid}% → ${swEnd}%)`,
     (shifted === 0 ? "PASS" : "FAIL") + ` ${tag} the screen never resizes mid-scroll (${geo0.cw}x${geo0.ch})`,
     (over === 0 ? "PASS" : "FAIL") + ` ${tag} no horizontal overflow`,
