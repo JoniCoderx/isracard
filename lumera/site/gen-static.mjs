@@ -36,8 +36,8 @@ const head = `<!doctype html>
 <link rel="manifest" href="site.webmanifest?v=5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="image" href="img/hero-2560.jpg" media="(min-width: 900px)">
-<link rel="preload" as="image" href="img/herov-1440.jpg" media="(max-width: 899px)">
+<link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/hero-1600.jpg" imagesrcset="img/hero-1600.jpg 1600w, img/hero-2560.jpg 2560w, img/hero-3840.jpg 3840w" imagesizes="100vw">
+<link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/herov-1080.jpg" imagesrcset="img/herov-1080.jpg 1080w, img/herov-1440.jpg 1440w" imagesizes="100vw">
 <script>window.__silavuBuild="${BUILD}";</script>
 </head>
 <body>
