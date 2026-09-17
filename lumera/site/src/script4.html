@@ -94,13 +94,15 @@
     function settle() {
       raf = 0; vel *= 0.88;
       var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 42);
-      /* the symbol splits into its colours and smears in the direction of travel */
-      var D = (m * 7).toFixed(2), B = (m * 2.2).toFixed(2), G = (6 + m * 22).toFixed(1);
+      /* the symbol takes the light harder the faster the page moves: a white
+         bloom and a breath of motion in the direction of travel. No colour is
+         split off it — a fringed mark reads as a rendering fault, not a house. */
+      var B = (m * 1.1).toFixed(2), G = (5 + m * 26).toFixed(1), T = (m * 3).toFixed(2);
       sy.style.filter = m < 0.015 ? "" :
         "blur(" + B + "px)" +
-        " drop-shadow(" + (-D * dir) + "px " + (-m * 5 * dir).toFixed(2) + "px 0 rgba(112,214,255,.92))" +
-        " drop-shadow(" + (D * dir) + "px " + (m * 5 * dir).toFixed(2) + "px 0 rgba(255,150,178,.92))" +
-        " drop-shadow(0 0 " + G + "px rgba(255,255,255," + (0.22 + m * 0.5).toFixed(2) + "))";
+        " drop-shadow(0 " + (T * dir) + "px " + (m * 6).toFixed(1) + "px rgba(0,0,0,.55))" +
+        " drop-shadow(0 0 " + G + "px rgba(255,250,240," + (0.25 + m * 0.6).toFixed(2) + "))" +
+        " brightness(" + (1 + m * 0.5).toFixed(2) + ")";
       sy.style.setProperty("--syr", (m * 7 * dir).toFixed(2) + "deg");
       sy.style.setProperty("--sys", (1 + m * 0.05).toFixed(3));
       sy.style.setProperty("--syy", (1 + m * 0.22).toFixed(3));
@@ -132,9 +134,11 @@
         var sp = (mid - half) / half;                 /* -1 above, 0 centred, +1 below */
         sp = Math.max(-1, Math.min(1, sp));
         var e = sp < 0 ? -1 : 1, a = Math.abs(sp);
-        a = a * a;                                    /* hold it together near the centre */
+        a = a * a;                                    /* hold it steady near the centre */
         m.style.setProperty("--sp", (e * a).toFixed(3));
         m.style.setProperty("--spa", a.toFixed(3));
+        /* the light travels across the metal as the mark crosses the screen */
+        m.style.setProperty("--sw", (0.5 - sp * 0.5).toFixed(3));
       }
     }
     addEventListener("scroll", function () { if (!pending) { pending = true; requestAnimationFrame(tick); } }, { passive: true });

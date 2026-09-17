@@ -1,23 +1,45 @@
 #!/bin/bash
-# The Dubai film, cut into the frames the page scrubs through — the same shape of
-# asset as the box sequence, so it uses the same scroll machinery.
+# The Dubai film, cut into the frames the page scrubs through.
 #
-#   d  100 frames, the full 1174 x 782 frame as shot, for landscape viewports
-#   m   50 frames, a 9:16 window cut around the SILAVU bag and resampled up to
-#       720 x 1280 with lanczos, so a phone gets a frame made for a phone: the
-#       bag stays the subject, the browser is not left to upscale, and the strip
-#       is half the weight because half the frames carry a ten-second push-in
-#       perfectly well.
+# The master is a Topaz 4K restoration of the original clip. It genuinely carries
+# new detail — measured against a plain lanczos enlargement of the same frame, the
+# edge energy is roughly double — which is the whole point: the original is only
+# 1174 px wide and a full-screen section was enlarging it two and a half times.
 #
-# 300 source frames: every third for d, every sixth for m. Numbered from 00.
+# One wrinkle. The upscaler has no 3:2 among its output ratios, so "auto" snapped
+# the 3:2 source to 4:3 and stretched it to get there. No padding, no crop — a
+# pure vertical stretch, which un-stretches exactly: 2880x2160 back to 2880x1920.
+#
+# Three tiers, WebP throughout (half the bytes of JPEG at the same quality here):
+#   x  75 frames, 2200 px wide — large and retina desktops
+#   d  75 frames, 1600 px wide — ordinary desktops
+#   m  50 frames, 1080 x 1920, the 9:16 window around the SILAVU bag, for phones
+#
+# 300 source frames: every fourth for the desktop strips, every sixth for the phone.
 set -e
-SRC="${1:-lumera/site/media/silavu-film.mp4}"
 OUT="${2:-dist/f/film}"
-mkdir -p "$OUT"
-ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,3))'" \
-  -vsync 0 -start_number 0 -q:v 6 "$OUT/d-%02d.jpg" -y
-ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,6))',crop=440:782:367:0,scale=720:1280:flags=lanczos" \
-  -vsync 0 -start_number 0 -q:v 5 "$OUT/m-%02d.jpg" -y
-d=$(ls "$OUT"/d-*.jpg | wc -l); m=$(ls "$OUT"/m-*.jpg | wc -l)
-echo "film frames: d=$d m=$m  $(du -sh "$OUT" | cut -f1)"
-[ "$d" = "100" ] && [ "$m" = "50" ]
+FALLBACK="${1:-lumera/site/media/silavu-film.mp4}"
+MASTER=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf/hf_20260917_114646_cd468399-6712-459e-bfaf-e71119a9d52c.mp4
+T=$(mktemp -d); mkdir -p "$OUT"
+
+# the 4K master, un-stretched back to the geometry it was shot at
+if curl -fsSL --retry 3 -o "$T/4k.mp4" "$MASTER"; then
+  SRC="$T/4k.mp4"; FIX="scale=2880:1920"
+  echo "film: 4K master"
+else
+  # the build still produces a film if the master is unreachable, just a softer one
+  SRC="$FALLBACK"; FIX="scale=2880:1920:flags=lanczos"
+  echo "film: FALLBACK to the committed master (4K fetch failed)"
+fi
+
+ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,4))',${FIX},scale=2200:-2:flags=lanczos" \
+  -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/x-%02d.webp" -y
+ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,4))',${FIX},scale=1600:-2:flags=lanczos" \
+  -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/d-%02d.webp" -y
+ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,6))',${FIX},crop=1080:1920:900:0" \
+  -vsync 0 -start_number 0 -c:v libwebp -quality 76 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
+
+x=$(ls "$OUT"/x-*.webp | wc -l); d=$(ls "$OUT"/d-*.webp | wc -l); m=$(ls "$OUT"/m-*.webp | wc -l)
+echo "film frames: x=$x d=$d m=$m"
+du -sh "$OUT"; for t in x d m; do printf "  %s: %s\n" "$t" "$(du -ch "$OUT"/$t-*.webp | tail -1 | cut -f1)"; done
+[ "$x" = "75" ] && [ "$d" = "75" ] && [ "$m" = "50" ]

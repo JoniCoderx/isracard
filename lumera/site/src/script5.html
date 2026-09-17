@@ -14,7 +14,7 @@
     if (!pin || !ctx) return null;
     var SET = o.set(), N = typeof o.n === "function" ? o.n(SET) : o.n, frames = new Array(N), asked = new Array(N), loaded = 0, requested = 0, cur = -1;
     var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
-    function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
+    function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + (o.ext || ".jpg"); }
     function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
     /* Fetch from where the eye is, not from the top. A fixed order fills the far
        end of the strip while the frames either side of the playhead are still
@@ -46,7 +46,8 @@
     function size() {
       var r = cv.getBoundingClientRect();
       DPR = Math.min(devicePixelRatio || 1, 2);
-      if (o.src) DPR = Math.min(DPR, Math.max(1, (o.src * 1.35) / Math.max(1, r.width)));
+      var sw = typeof o.src === "function" ? o.src(SET) : o.src;
+      if (sw) DPR = Math.min(DPR, Math.max(1, sw / Math.max(1, r.width)));
       W = Math.round(r.width * DPR); H = Math.round(r.height * DPR);
       if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; }
     }
@@ -110,24 +111,31 @@
   });
 
   /* ── the Dubai film ── */
-  var fveil = document.querySelector("#film .fveil"), ftxt = $("ftxt");
+  var fveil = document.querySelector("#film .fveil"), ftxt = $("ftxt"), fscreen = document.querySelector("#film .fscreen");
   var film = sequence({
-    pin: "filmpin", canvas: "filmcv", dir: "/f/film/",
-    set: function () { return phone ? "m" : "d"; },
-    src: 1174,
-    /* the phone strip is half the frames: a ten-second push-in carries perfectly
-       well at fifty, and it halves what a phone has to fetch */
-    n: function (set) { return set === "m" ? 50 : 100; },
+    pin: "filmpin", canvas: "filmcv", dir: "/f/film/", ext: ".webp",
+    /* the same tier rule the box chapter uses */
+    set: function () { return phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"); },
+    /* what each strip actually holds, so the canvas never asks for more pixels
+       than exist in the frame — and, now that the frames are 4K restorations,
+       never settles for fewer either */
+    src: function (set) { return set === "m" ? 1080 : set === "x" ? 2200 : 1600; },
+    /* the phone strip is two thirds of the frames: a ten-second push-in carries
+       perfectly well at fifty, and it is a third of what a phone would fetch */
+    n: function (set) { return set === "m" ? 50 : 75; },
     still: 0.62,
     /* it opens out of black and closes back into it, and drifts a little the whole way */
     zoom: function (p) { return { s: 1.055 - 0.055 * p, y: (0.5 - p) * 26 }; },
     release: true,
     at: function (p) {
       if (reduce) return;   /* the stylesheet holds it open and still */
-      /* closed by 0.96, not at the very end: the last of the pin is the section
-         already leaving the sticky window, and the cut should be finished before
-         the next one starts arriving */
-      if (fveil) { var inn = c01(p / 0.13), out = c01((p - 0.78) / 0.18); fveil.style.opacity = (1 - inn + out).toFixed(3); }
+      /* it arrives out of black; it leaves by dissolving from the bottom up, so
+         the last of it melts into the section underneath instead of blinking off */
+      if (fveil) fveil.style.opacity = (1 - c01(p / 0.13)).toFixed(3);
+      if (fscreen) {
+        var g = c01((p - 0.70) / 0.30); g = g * g * (3 - 2 * g);     /* ease it */
+        fscreen.style.setProperty("--fmp", (-5 - g * 295).toFixed(1) + "%");
+      }
       if (ftxt) { var t = c01(p / 0.10) * (1 - c01((p - 0.30) / 0.16)); ftxt.style.opacity = t.toFixed(3); ftxt.style.transform = "translateY(" + ((1 - t) * 22).toFixed(1) + "px)"; }
     }
   });

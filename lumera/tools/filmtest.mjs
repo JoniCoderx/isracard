@@ -25,6 +25,8 @@ for (const [tag, w, h] of [["1440",1440,900],["768",768,1024],["430",430,932],["
     await p.waitForTimeout(i === steps ? 1800 : 260);
     seen.push(await p.evaluate(() => ({ f: window.__film.frame, p: +window.__film.p.toFixed(3),
       veil: +getComputedStyle(document.querySelector("#film .fveil")).opacity,
+      /* the exit is a mask sweeping up from the bottom edge, not a black veil */
+      fm2: parseFloat(document.querySelector("#film .fscreen").style.getPropertyValue("--fmp")) || -5,
       sw: document.documentElement.scrollWidth,
       cw: Math.round(document.getElementById("filmcv").getBoundingClientRect().width),
       ch: Math.round(document.getElementById("filmcv").getBoundingClientRect().height) })));
@@ -36,8 +38,9 @@ for (const [tag, w, h] of [["1440",1440,900],["768",768,1024],["430",430,932],["
   const advanced = frames[frames.length - 1] - frames[0];
   const shifted = seen.filter(s => s.cw !== geo0.cw || s.ch !== geo0.ch).length;
   const over = seen.filter(s => s.sw > w).length;
-  const veilStart = seen[0].veil, veilMid = seen[Math.floor(steps / 2)].veil, veilEnd = seen[steps].veil;
-  const tier = await p.evaluate(() => { const im = performance.getEntriesByType("resource").map(e => e.name).filter(n => /\/f\/film\//.test(n)); return im.length ? (im[0].indexOf("/m-") > 0 ? "m" : "d") : "?"; });
+  const veilStart = seen[0].veil, veilMid = seen[Math.floor(steps / 2)].veil;
+  const swStart = seen[0].fm2, swMid = seen[Math.floor(steps / 2)].fm2, swEnd = seen[steps].fm2;
+  const tier = await p.evaluate(() => { const im = performance.getEntriesByType("resource").map(e => e.name).filter(n => /\/f\/film\//.test(n)); return im.length ? (im[0].indexOf("/m-") > 0 ? "m" : im[0].indexOf("/x-") > 0 ? "x" : "d") : "?"; });
   const nframes = await p.evaluate(() => performance.getEntriesByType("resource").filter(e => /\/f\/film\//.test(e.name)).length);
   const touch = await p.evaluate(() => getComputedStyle(document.querySelector("#film .fstick")).touchAction);
 
@@ -45,11 +48,12 @@ for (const [tag, w, h] of [["1440",1440,900],["768",768,1024],["430",430,932],["
     (advanced > 30 ? "PASS" : "FAIL") + ` ${tag} the film scrubs with the page (${frames[0]} → ${frames[frames.length-1]})`,
     (backwards === 0 ? "PASS" : "FAIL") + ` ${tag} it never runs backwards (${backwards})`,
     (biggest <= Math.ceil((advanced / steps) * 2.2) ? "PASS" : "FAIL") + ` ${tag} no jumps (biggest step ${biggest} of ~${Math.round(advanced/steps)})`,
-    (veilStart > 0.75 && veilMid < 0.02 && veilEnd > 0.4 ? "PASS" : "FAIL") + ` ${tag} out of black and back into it (${veilStart} / ${veilMid} / ${veilEnd})`,
+    (veilStart > 0.75 && veilMid < 0.02 ? "PASS" : "FAIL") + ` ${tag} arrives out of black (${veilStart} → ${veilMid})`,
+    (swStart > -10 && swMid > -10 && swEnd <= -290 ? "PASS" : "FAIL") + ` ${tag} leaves by dissolving from the bottom (mask ${swStart}% → ${swMid}% → ${swEnd}%)`,
     (shifted === 0 ? "PASS" : "FAIL") + ` ${tag} the screen never resizes mid-scroll (${geo0.cw}x${geo0.ch})`,
     (over === 0 ? "PASS" : "FAIL") + ` ${tag} no horizontal overflow`,
-    ((w <= 899 ? tier === "m" : tier === "d") ? "PASS" : "FAIL") + ` ${tag} serves the ${tier} strip`,
-    (nframes <= (w <= 899 ? 52 : 102) ? "PASS" : "FAIL") + ` ${tag} fetched ${nframes} frames`,
+    ((w <= 899 ? tier === "m" : (tier === "d" || tier === "x")) ? "PASS" : "FAIL") + ` ${tag} serves the ${tier} strip`,
+    (nframes <= (w <= 899 ? 52 : 77) ? "PASS" : "FAIL") + ` ${tag} fetched ${nframes} frames`,
     (touch !== "none" ? "PASS" : "FAIL") + ` ${tag} the section does not swallow touch scroll (${touch})`,
     (errs.length === 0 ? "PASS" : "FAIL") + ` ${tag} no errors ${errs.slice(0,1).join("")}`
   ].join("\n"));

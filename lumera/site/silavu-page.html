@@ -1382,32 +1382,36 @@
     transform:translateY(calc(var(--sp,0) * -34px)) scale(calc(1 - var(--spa,0) * 0.06));
     transition:transform .18s linear; will-change:transform; }
 
-  .hsig::before, .hsig::after, .fbig::before, .fbig::after {
-    content:""; position:absolute; left:50%; top:50%; z-index:1;
-    aspect-ratio:872/1000; pointer-events:none; mix-blend-mode:screen;
+  /* The mark is not a logotype that comes apart into colours — that reads as a
+     broken image, not as a house. It is polished metal, and metal answers light.
+     One band of light travels across it as the page moves: dark where the light
+     has passed, bright where it is, dark where it has not reached yet. Nothing
+     is split, nothing fringes, no blend mode — a single masked layer painted
+     over the mark, so it composites the same wherever it sits. */
+  .hsig::after, .fbig::after {
+    content:""; position:absolute; left:50%; top:50%; z-index:3;
+    aspect-ratio:872/1000; pointer-events:none;
     -webkit-mask-image:var(--mk); mask-image:var(--mk);
     -webkit-mask-size:100% 100%; mask-size:100% 100%;
     -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
-    opacity:calc(var(--spa,0) * .92);
-    filter:blur(calc(var(--spa,0) * 4px));
-    will-change:transform, opacity; }
-  .hsig::before, .hsig::after { height:clamp(150px,26vw,300px); }
-  .fbig::before, .fbig::after { height:clamp(96px,12vw,168px); }
-
-  .hsig::before, .fbig::before { background:rgba(138,206,214,.80);
-    transform:translate(-50%,-50%)
-      translate(calc(var(--sp,0) * -54px), calc(var(--sp,0) * -30px))
-      rotate(calc(var(--sp,0) * -8deg))
-      scale(calc(1 + var(--spa,0) * .18)); }
-  .hsig::after, .fbig::after { background:rgba(230,208,170,.80);
-    transform:translate(-50%,-50%)
-      translate(calc(var(--sp,0) * 54px), calc(var(--sp,0) * 30px))
-      rotate(calc(var(--sp,0) * 8deg))
-      scale(calc(1 + var(--spa,0) * .18)); }
+    background:linear-gradient(100deg,
+      rgba(0,0,0,.62) 0%, rgba(0,0,0,.34) 22%,
+      rgba(255,255,255,.10) 40%, rgba(255,255,255,.98) 50%, rgba(255,247,231,.62) 57%,
+      rgba(0,0,0,.30) 74%, rgba(0,0,0,.58) 100%);
+    background-size:300% 100%;
+    background-position:calc(var(--sw, .5) * 100%) 0;
+    opacity:calc(.45 + var(--spa,0) * .55);
+    transform:translate(-50%,-50%) scale(calc(1 - var(--spa,0) * 0.06));
+    transition:background-position .22s linear, opacity .3s linear;
+    will-change:background-position, opacity; }
+  .hsig::after { height:clamp(150px,26vw,300px); }
+  .fbig::after { height:clamp(96px,12vw,168px); }
+  /* the mark itself sits a little back so the light has somewhere to travel */
+  .hsig svg.sy, .fbig svg.sy.huge { color:#cfcabf; }
 
   @media (prefers-reduced-motion:reduce) {
-    .hsig::before, .hsig::after, .fbig::before, .fbig::after { display:none; }
-    .hsig svg.sy, .fbig svg.sy.huge { transform:none; }
+    .hsig::after, .fbig::after { display:none; }
+    .hsig svg.sy, .fbig svg.sy.huge { transform:none; color:var(--ink); }
   }
 
   /* ══ v47 — the refinement pass ══════════════════════════════════════════
@@ -1515,7 +1519,16 @@
   #film { position:relative; padding:0 !important; background:#000; }
   .fpin { position:relative; height:230svh; }
   .fstick { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; display:grid; place-items:center; }
-  .fscreen { position:absolute; inset:0; }
+  /* On the way out the film does not simply stop being there. It dissolves from
+     the bottom edge upward, the way a shot is taken off screen, and the mask
+     edge carries a wide feather so the dissolve is a fade and not a wipe. */
+  .fscreen { position:absolute; inset:0;
+    -webkit-mask-image:linear-gradient(to bottom, #000 0, #000 70%, rgba(0,0,0,0) 100%);
+    mask-image:linear-gradient(to bottom, #000 0, #000 70%, rgba(0,0,0,0) 100%);
+    -webkit-mask-size:100% 300%; mask-size:100% 300%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-position:0 var(--fmp, -5%); mask-position:0 var(--fmp, -5%);
+    will-change:mask-position; }
   #filmcv { display:block; width:100%; height:100%; }
   /* a night grade: the corners fall away and the top carries a little weight */
   .fgrade { position:absolute; inset:0; pointer-events:none; z-index:1;
@@ -1533,7 +1546,8 @@
     .fgrade { background:radial-gradient(140% 110% at 50% 54%, transparent 50%, rgba(0,0,0,.5) 100%),
       linear-gradient(to bottom, rgba(0,0,0,.42), transparent 22%, transparent 78%, rgba(0,0,0,.58)); }
   }
-  @media (prefers-reduced-motion:reduce) { .fveil { opacity:0; } .ftxt { opacity:1; } }
+  @media (prefers-reduced-motion:reduce) { .fveil { opacity:0; } .ftxt { opacity:1; }
+    .fscreen { -webkit-mask-image:none; mask-image:none; } }
 </style>
 
 <div id="silavu">
@@ -3469,13 +3483,15 @@
     function settle() {
       raf = 0; vel *= 0.88;
       var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 42);
-      /* the symbol splits into its colours and smears in the direction of travel */
-      var D = (m * 7).toFixed(2), B = (m * 2.2).toFixed(2), G = (6 + m * 22).toFixed(1);
+      /* the symbol takes the light harder the faster the page moves: a white
+         bloom and a breath of motion in the direction of travel. No colour is
+         split off it — a fringed mark reads as a rendering fault, not a house. */
+      var B = (m * 1.1).toFixed(2), G = (5 + m * 26).toFixed(1), T = (m * 3).toFixed(2);
       sy.style.filter = m < 0.015 ? "" :
         "blur(" + B + "px)" +
-        " drop-shadow(" + (-D * dir) + "px " + (-m * 5 * dir).toFixed(2) + "px 0 rgba(112,214,255,.92))" +
-        " drop-shadow(" + (D * dir) + "px " + (m * 5 * dir).toFixed(2) + "px 0 rgba(255,150,178,.92))" +
-        " drop-shadow(0 0 " + G + "px rgba(255,255,255," + (0.22 + m * 0.5).toFixed(2) + "))";
+        " drop-shadow(0 " + (T * dir) + "px " + (m * 6).toFixed(1) + "px rgba(0,0,0,.55))" +
+        " drop-shadow(0 0 " + G + "px rgba(255,250,240," + (0.25 + m * 0.6).toFixed(2) + "))" +
+        " brightness(" + (1 + m * 0.5).toFixed(2) + ")";
       sy.style.setProperty("--syr", (m * 7 * dir).toFixed(2) + "deg");
       sy.style.setProperty("--sys", (1 + m * 0.05).toFixed(3));
       sy.style.setProperty("--syy", (1 + m * 0.22).toFixed(3));
@@ -3507,9 +3523,11 @@
         var sp = (mid - half) / half;                 /* -1 above, 0 centred, +1 below */
         sp = Math.max(-1, Math.min(1, sp));
         var e = sp < 0 ? -1 : 1, a = Math.abs(sp);
-        a = a * a;                                    /* hold it together near the centre */
+        a = a * a;                                    /* hold it steady near the centre */
         m.style.setProperty("--sp", (e * a).toFixed(3));
         m.style.setProperty("--spa", a.toFixed(3));
+        /* the light travels across the metal as the mark crosses the screen */
+        m.style.setProperty("--sw", (0.5 - sp * 0.5).toFixed(3));
       }
     }
     addEventListener("scroll", function () { if (!pending) { pending = true; requestAnimationFrame(tick); } }, { passive: true });
@@ -3585,7 +3603,7 @@
     if (!pin || !ctx) return null;
     var SET = o.set(), N = typeof o.n === "function" ? o.n(SET) : o.n, frames = new Array(N), asked = new Array(N), loaded = 0, requested = 0, cur = -1;
     var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
-    function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + ".jpg"; }
+    function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + (o.ext || ".jpg"); }
     function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
     /* Fetch from where the eye is, not from the top. A fixed order fills the far
        end of the strip while the frames either side of the playhead are still
@@ -3617,7 +3635,8 @@
     function size() {
       var r = cv.getBoundingClientRect();
       DPR = Math.min(devicePixelRatio || 1, 2);
-      if (o.src) DPR = Math.min(DPR, Math.max(1, (o.src * 1.35) / Math.max(1, r.width)));
+      var sw = typeof o.src === "function" ? o.src(SET) : o.src;
+      if (sw) DPR = Math.min(DPR, Math.max(1, sw / Math.max(1, r.width)));
       W = Math.round(r.width * DPR); H = Math.round(r.height * DPR);
       if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; }
     }
@@ -3681,24 +3700,31 @@
   });
 
   /* ── the Dubai film ── */
-  var fveil = document.querySelector("#film .fveil"), ftxt = $("ftxt");
+  var fveil = document.querySelector("#film .fveil"), ftxt = $("ftxt"), fscreen = document.querySelector("#film .fscreen");
   var film = sequence({
-    pin: "filmpin", canvas: "filmcv", dir: "/f/film/",
-    set: function () { return phone ? "m" : "d"; },
-    src: 1174,
-    /* the phone strip is half the frames: a ten-second push-in carries perfectly
-       well at fifty, and it halves what a phone has to fetch */
-    n: function (set) { return set === "m" ? 50 : 100; },
+    pin: "filmpin", canvas: "filmcv", dir: "/f/film/", ext: ".webp",
+    /* the same tier rule the box chapter uses */
+    set: function () { return phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"); },
+    /* what each strip actually holds, so the canvas never asks for more pixels
+       than exist in the frame — and, now that the frames are 4K restorations,
+       never settles for fewer either */
+    src: function (set) { return set === "m" ? 1080 : set === "x" ? 2200 : 1600; },
+    /* the phone strip is two thirds of the frames: a ten-second push-in carries
+       perfectly well at fifty, and it is a third of what a phone would fetch */
+    n: function (set) { return set === "m" ? 50 : 75; },
     still: 0.62,
     /* it opens out of black and closes back into it, and drifts a little the whole way */
     zoom: function (p) { return { s: 1.055 - 0.055 * p, y: (0.5 - p) * 26 }; },
     release: true,
     at: function (p) {
       if (reduce) return;   /* the stylesheet holds it open and still */
-      /* closed by 0.96, not at the very end: the last of the pin is the section
-         already leaving the sticky window, and the cut should be finished before
-         the next one starts arriving */
-      if (fveil) { var inn = c01(p / 0.13), out = c01((p - 0.78) / 0.18); fveil.style.opacity = (1 - inn + out).toFixed(3); }
+      /* it arrives out of black; it leaves by dissolving from the bottom up, so
+         the last of it melts into the section underneath instead of blinking off */
+      if (fveil) fveil.style.opacity = (1 - c01(p / 0.13)).toFixed(3);
+      if (fscreen) {
+        var g = c01((p - 0.70) / 0.30); g = g * g * (3 - 2 * g);     /* ease it */
+        fscreen.style.setProperty("--fmp", (-5 - g * 295).toFixed(1) + "%");
+      }
       if (ftxt) { var t = c01(p / 0.10) * (1 - c01((p - 0.30) / 0.16)); ftxt.style.opacity = t.toFixed(3); ftxt.style.transform = "translateY(" + ((1 - t) * 22).toFixed(1) + "px)"; }
     }
   });
