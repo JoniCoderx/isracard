@@ -158,14 +158,14 @@ export const body = `
     </div>
   </section>
 
-  <section id="craft" data-n="02" data-title-en="The work" data-title-he="העבודה" aria-label="The hands behind the Line">
+  <section id="craft" data-n="02" data-title-en="The work" data-title-he="העבודה" aria-label="At the bench">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
   <div class="wrap">
   <div class="ed">
     ${fig("craft", "A setter's hands holding one round brilliant in steel tweezers over a dark bench", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="Dubai · the bench" data-he="דובאי · שולחן העבודה">Dubai · the bench</span></div>`)}
     <div class="copy">
       <div class="k gold rv ol" data-en="Set by hand in Dubai" data-he="משובץ ביד בדובאי">Set by hand in Dubai</div>
-      <h2 class="h2 sp rv" data-en="The hands <em>behind the Line.</em>" data-he="הידיים <em>שמאחורי הקו.</em>">The hands <em>behind the Line.</em></h2>
+      <h2 class="h2 sp rv" data-en="At <em>the bench.</em>" data-he="הידיים <em>שמאחורי הקו.</em>">At <em>the bench.</em></h2>
       <ul class="craftlines rv d2">
         <li data-en="Every setting finished as one line." data-he="כל שיבוץ מוגמר כקו אחד.">Every setting finished as one line.</li>
         <li data-en="Inspected stone by stone, under the loupe." data-he="נבדק אבן אחר אבן, תחת הלופה.">Inspected stone by stone, under the loupe.</li>
@@ -239,10 +239,10 @@ export const body = `
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Desert Star" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-sapphire">
-        ${fig("sapphire", "Sapphire of the Gulf, a Kashmir-blue sapphire in yellow gold", "r45", SIZES_PIECE)}
+        ${fig("sapphire", "Sapphire of the Gulf, a royal-blue sapphire in yellow gold", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="IV · The only colour" data-he="IV · הצבע היחיד">IV · The only colour</span></div><div class="t"><span dir="ltr">Sapphire of <em>the Gulf</em></span></div>
-          <p class="p" data-en="A Kashmir-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white." data-he="ספיר כחול-קשמיר בזהב צהוב, מוקף בבריליאנטים. כל השאר כאן לבן.">A Kashmir-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white.</p>
-          <div class="row k meta"><span>8.42 ct</span><i></i><span data-en="Kashmir blue" data-he="כחול קשמיר">Kashmir blue</span><i></i><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
+          <p class="p" data-en="A royal-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white." data-he="ספיר כחול-מלכותי בזהב צהוב, מוקף בבריליאנטים. כל השאר כאן לבן.">A royal-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white.</p>
+          <div class="row k meta"><span>8.42 ct</span><i></i><span data-en="Royal blue" data-he="כחול מלכותי">Royal blue</span><i></i><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Sapphire of the Gulf" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
 ${SIG_LIVE ? SIG_PIECE : ""}
@@ -346,8 +346,8 @@ ${SIG_LIVE ? SIG_PIECE : ""}
         <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Start a bespoke piece" data-he="תכשיט בהזמנה אישית">Start a bespoke piece</a></div>
       <div class="factsg">
       <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Private viewing, where you are" data-he="צפייה פרטית, איפה שאתם">Private viewing, where you are</div><div class="d" data-en="At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message." data-he="בביתכם, במלון, או בחדרים שלנו בדובאי ובתל אביב. בדרך כלל תוך ארבעים ושמונה שעות מההודעה שלכם.">At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message.</div></div></div>
-      <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Stones chosen under your light" data-he="אבנים שנבחרות תחת האור שלכם">Stones chosen under your light</div><div class="d" data-en="Three to five certified stones brought to you, to compare yourself." data-he="שלוש עד חמש אבנים מאושרות מגיעות אליכם, להשוואה בעצמכם.">Three to five certified stones brought to you, to compare yourself.</div></div></div>
-      <div class="fact rv d2"><div class="num">III</div><div><div class="t" data-en="Made by hand in Dubai" data-he="נעשה ביד בדובאי">Made by hand in Dubai</div><div class="d" data-en="Four to six weeks. Every stone inscribed with its report number." data-he="ארבעה עד שישה שבועות. כל אבן חרוטה במספר התעודה שלה.">Four to six weeks. Every stone inscribed with its report number.</div></div></div>
+      <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Stones chosen under your light" data-he="אבנים שנבחרות תחת האור שלכם">Stones chosen under your light</div><div class="d" data-en="Certified stones brought to you, to compare yourself." data-he="שלוש עד חמש אבנים מאושרות מגיעות אליכם, להשוואה בעצמכם.">Certified stones brought to you, to compare yourself.</div></div></div>
+      <div class="fact rv d2"><div class="num">III</div><div><div class="t" data-en="Made by hand in Dubai" data-he="נעשה ביד בדובאי">Made by hand in Dubai</div><div class="d" data-en="Made to order. Every stone comes with its report." data-he="ארבעה עד שישה שבועות. כל אבן חרוטה במספר התעודה שלה.">Made to order. Every stone comes with its report.</div></div></div>
       
   </section>
 
@@ -366,7 +366,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
           <div class="clock on" data-city="DXB"><div class="c" id="clkDXB">--:--</div><div class="k" data-en="Dubai" data-he="דובאי">Dubai</div></div>
           <div class="clock" data-city="TLV"><div class="c" id="clkTLV">--:--</div><div class="k" data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</div></div>
         </div>
-        <p class="fine rv d3" style="margin-top:22px" data-en="A real person replies within the hour, 9:00 to 21:00 Gulf time." data-he="אדם אמיתי עונה תוך שעה, 9:00 עד 21:00 שעון המפרץ.">A real person replies within the hour, 9:00 to 21:00 Gulf time.</p>
+        <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form. 9:00 to 21:00 Gulf time." data-he="עונה אדם, לא טופס. 9:00 עד 21:00 שעון המפרץ.">A person replies, not a form. 9:00 to 21:00 Gulf time.</p>
       </div>
       <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="">
         <div class="fields">
@@ -414,7 +414,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <div class="t h3" id="pmT"></div>
       <p class="p" id="pmP"></p>
       <div class="mspecs" id="pmSpecs"></div>
-      <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI report for every stone" data-he="תעודת GIA או IGI לכל אבן">GIA or IGI report for every stone</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivery in person, insured, worldwide" data-he="מסירה אישית, מבוטחת, בכל העולם">Delivery in person, insured, worldwide</li><li data-en="Care for life: cleaning, checks, resizing" data-he="טיפול לכל החיים: ניקוי, בדיקות, שינוי מידה">Care for life: cleaning, checks, resizing</li></ul></div>
+      <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI report for every stone" data-he="תעודת GIA או IGI לכל אבן">GIA or IGI report for every stone</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivered in person" data-he="מסירה אישית">Delivered in person</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div>
       <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Request a private viewing" data-he="בקשו צפייה פרטית">Request a private viewing</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
     </div>
   </div>
