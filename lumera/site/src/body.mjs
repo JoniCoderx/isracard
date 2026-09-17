@@ -291,7 +291,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <div class="copy">
         <div class="k gold rv ol" data-en="04 · Your bracelet" data-he="04 · הצמיד שלכם">04 · Your bracelet</div>
         <h2 class="h2 sp rv" data-en="Design <em>your bracelet.</em>" data-he="עצבו <em>את הצמיד שלכם.</em>">Design <em>your bracelet.</em></h2>
-        <p class="p rv d2" data-en="Choose the cut, the stones, the weight, the metal and your wrist." data-he="בחרו ליטוש, אבנים, משקל, מתכת ופרק יד.">Choose the cut, the stones, the weight, the metal and your wrist.</p>
+        <p class="p rv d2" data-en="Built to one wrist. Yours." data-he="נבנה לפרק יד אחד. שלכם.">Built to one wrist. Yours.</p>
         <div class="acts rv d3"><a class="btn solid" href="#configure" data-en="Start designing" data-he="התחילו לעצב">Start designing</a><button class="btn" type="button" id="tryonBtn" data-en="See it on a wrist" data-he="ראו אותו על פרק היד">See it on a wrist</button></div>
       </div>
     </div>
