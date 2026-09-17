@@ -1,0 +1,24 @@
+import { chromium } from "playwright-core";
+const OUT="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+const p = await b.newPage({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true, deviceScaleFactor:2 });
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html",{waitUntil:"load"});
+await p.waitForTimeout(3000); await p.click("#enterBtn",{timeout:4000}).catch(()=>{});
+await p.waitForTimeout(700);
+await p.evaluate(()=>{const a=document.querySelector("#langBtn,.lang");a&&a.click();});
+await p.waitForTimeout(1500);
+await p.evaluate(()=>{const m=document.getElementById("menuBtn"); m&&m.click();});
+await p.waitForTimeout(1200);
+await p.screenshot({path:OUT+"/he-menu.png"});
+console.log("menu items as rendered:");
+console.log(await p.evaluate(()=>[...document.querySelectorAll("#mlist a")].map(a=>{
+  const n=a.querySelector(".n,.num"); return "  ["+(n?n.textContent.trim():"-")+"] "+(a.textContent||"").trim().replace(/\s+/g," ").slice(0,30);
+}).join("\n")));
+await p.evaluate(()=>{const m=document.getElementById("menuBtn"); m&&m.click();});
+await p.waitForTimeout(800);
+await p.evaluate(()=>{const e=document.getElementById("build");e&&window.scrollTo({top:scrollY+e.getBoundingClientRect().top,behavior:"instant"});});
+await p.waitForTimeout(700);
+await p.evaluate(()=>{const t=[...document.querySelectorAll("#build a,#build button")].find(e=>/עיצוב|התחילו|START/i.test(e.textContent));t&&t.click();});
+await p.waitForTimeout(4000);
+await p.screenshot({path:OUT+"/he-build.png"});
+await b.close();

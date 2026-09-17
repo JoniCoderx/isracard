@@ -198,6 +198,7 @@
 
   /* ── language ── */
   var lang = "en", btns = [$("langBtn"), $("langBtn2"), $("langBtn3")];
+  try { var saved = localStorage.getItem("silavu-lang"); if (saved === "he" || saved === "en") lang = saved; } catch (e) {}
   function applyLang() {
     document.documentElement.setAttribute("data-lang", lang); document.documentElement.setAttribute("dir", lang === "he" ? "rtl" : "ltr"); document.documentElement.setAttribute("lang", lang);
     try { clocks(); } catch (e) {}
@@ -209,6 +210,7 @@
 
   /* ── your line ── */
   window.__build = { origin: "lab", ct: 6, metal: "white" };
+  if (lang === "he") setTimeout(applyLang, 0);   /* a remembered choice, applied once every definition in this script exists */
   var NAMES = { white: { en: "18K white gold", he: "זהב לבן 18K" }, yellow: { en: "18K yellow gold", he: "זהב צהוב 18K" }, rose: { en: "18K rose gold", he: "זהב ורוד 18K" }, platinum: { en: "Platinum", he: "פלטינה" } };
   var ORIG = { lab: { en: "Lab-grown", he: "מעבדה" }, natural: { en: "Natural", he: "טבעי" } };
   var estEl = $("est"), sumStones = $("sumStones"), sumMetal = $("sumMetal"), sumOrigin = $("sumOrigin");

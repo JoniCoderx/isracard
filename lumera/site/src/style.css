@@ -1333,3 +1333,25 @@
     /* rows sit close together, so a target may not reach over its neighbour */
     .chips .chip::after, .vpos .vp::after { height:max(40px, 100%); }
   }
+
+  /* ══ v45 ══ Hebrew meeting a number or a Latin name.
+     A chapter number beside a Hebrew title, a carat figure inside a Hebrew
+     sentence, a laboratory name — each is its own run and must be isolated,
+     or the bidi algorithm reorders them and "01 · The box" arrives as
+     "01הקופסה". Isolation costs nothing in English and fixes the order in
+     Hebrew. */
+  html[data-lang="he"] .n, html[data-lang="he"] .num, html[data-lang="he"] #whereN,
+  html[data-lang="he"] .price, html[data-lang="he"] .big, html[data-lang="he"] .c,
+  html[data-lang="he"] .cert b, html[data-lang="he"] .lg, html[data-lang="he"] .v,
+  html[data-lang="he"] [data-n]::before, html[data-lang="he"] .mlist .n {
+    unicode-bidi:isolate; }
+  html[data-lang="he"] .k, html[data-lang="he"] .t, html[data-lang="he"] .d,
+  html[data-lang="he"] .p, html[data-lang="he"] .fine, html[data-lang="he"] .spec .v {
+    unicode-bidi:plaintext; }
+
+  /* ══ v45b ══ the menu does not depend on a blur to be readable.
+     It was 97% black over the page and leaned on backdrop-filter for the
+     rest. Where that filter is unsupported or switched off, the page showed
+     through as a ghost behind the words. The panel is opaque now; the blur
+     stays as an enhancement for the browsers that have it. */
+  #menu { background:linear-gradient(180deg, #060606 0%, #000 60%); }
