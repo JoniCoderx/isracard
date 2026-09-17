@@ -7,7 +7,7 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   await p.waitForTimeout(2600); await p.click("#enterBtn", { timeout: 4000 }).catch(() => {}); await p.waitForTimeout(800); await p.mouse.move(2,2);
   const y = () => p.evaluate(() => scrollY), top = id => p.evaluate(id => scrollY + document.getElementById(id).getBoundingClientRect().top, id);
   const go = async (sel) => { await p.evaluate(s => document.querySelector(s).click(), sel); await p.waitForTimeout(1400); await p.evaluate(() => window.scrollTo({top: scrollY, behavior:"instant"})); };
-  for (const [sel,id] of [['#topnav a[href="#collection"]',"collection"],['.hbook',"concierge"],['.hacts a[href="#build"]',"build"],['#end a[href="#clients"]',"clients"]]) {
+  for (const [sel,id] of [['#topnav a[href="#collection"]',"collection"],['.hbook',"concierge"],['.hacts a[href="#bespoke"]',"bespoke"],['#end a[href="#clients"]',"clients"]]) {
     const vis = await p.evaluate(s => { const el=document.querySelector(s); return !!el && getComputedStyle(el).display!=="none" && el.getClientRects().length>0; }, sel);
     if (!vis) { out.push(`skip ${tag} ${sel}`); continue; }
     await go(sel); const d = Math.abs(await y() - await top(id));

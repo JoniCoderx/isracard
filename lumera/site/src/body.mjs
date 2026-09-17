@@ -45,7 +45,7 @@ const SIG_PIECE = `
       <div class="piece" id="p-sigb">
         ${figd("sigb", "sigbd", "The Signature Chain, the SILAVU symbol in polished platinum on a slender chain, on black lacquer", "The clasp of the Signature Chain, engraved SILAVU", "r45", SIZES_PIECE, `<div class="cap k"><span data-en="Atelier rendering" data-he="הדמיית הסטודיו">Atelier rendering</span></div>`)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="V · Signature" data-he="V · חתימה">V · Signature</span></div><div class="t"><span dir="ltr">The Signature <em>Chain</em></span></div>
-          <p class="p" data-en="The symbol of the house in polished platinum, on a slender chain. The clasp carries the name." data-he="סמל הבית בפלטינה מלוטשת, על שרשרת דקה. הסוגר נושא את השם.">The symbol of the house in polished platinum, on a slender chain. The clasp carries the name.</p>
+          <p class="p" data-en="The house symbol in polished platinum. The clasp carries the name." data-he="סמל הבית בפלטינה מלוטשת. הסוגר נושא את השם.">The house symbol in polished platinum. The clasp carries the name.</p>
           <div class="row k meta"><span data-en="Platinum" data-he="פלטינה" data-len="Metal" data-lhe="מתכת">Platinum</span><i></i><span data-en="Polished or pavé" data-he="מלוטש או פאווה" data-len="Finish" data-lhe="גימור">Polished or pavé</span><i></i><span data-en="Engraved clasp" data-he="סוגר חרוט" data-len="Detail" data-lhe="פרט">Engraved clasp</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה" data-len="Price" data-lhe="מחיר">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Signature Chain" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
@@ -113,12 +113,12 @@ export const body = `
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Private high jewellery · Dubai · Tel Aviv" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב">Private high jewellery · Dubai · Tel Aviv</div>
-      <h1 class="h sp rv" data-en="A diamond bracelet, made <em>for your wrist.</em>" data-he="צמיד יהלומים, שנעשה <em>לפרק היד שלכם.</em>">A diamond bracelet, made <em>for your wrist.</em></h1>
-      <p class="p rv d2" data-en="A private jewellery house in Dubai and Tel Aviv. Certified diamonds, set by hand, chosen under your own light, brought to you." data-he="בית תכשיטים פרטי בדובאי ובתל אביב. יהלומים מאושרים, משובצים ביד, נבחרים באור שלכם, מגיעים אליכם.">A private jewellery house in Dubai and Tel Aviv. Certified diamonds, set by hand, chosen under your own light, brought to you.</p>
-      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
+      <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה, שנעשים <em>לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
+      <p class="p rv d2" data-en="Designed by the House, or made only for you." data-he="בעיצוב הבית, או נעשה רק בשבילכם.">Designed by the House, or made only for you.</p>
+      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
-      <div class="row k"><span data-en="Hand-matched brilliants" data-he="בריליאנטים מותאמים ביד">Hand-matched brilliants</span><i></i><span>D–F · VVS+</span><i></i><span>GIA · IGI</span><i></i><span data-en="Made in Dubai" data-he="נעשה בדובאי">Made in Dubai</span><i></i><span data-en="2 to 20 carats" data-he="2 עד 20 קראט">2 to 20 carats</span></div>
+      <div class="row k"><span data-en="Set by hand" data-he="משובץ ביד">Set by hand</span><i></i><span>D–F · VVS+</span><i></i><span>GIA · IGI</span><i></i><span data-en="Made in Dubai" data-he="נעשה בדובאי">Made in Dubai</span><i></i><span data-en="One at a time" data-he="אחד בכל פעם">One at a time</span></div>
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
     </div>
   </section>
@@ -138,7 +138,7 @@ export const body = `
         <div class="veil2"></div>
         <div class="beats" id="beats">
           <div class="beat"><div class="k gold ol" data-en="01 · The box" data-he="01 · הקופסה">01 · The box</div><h2 class="h2" data-en="It arrives <em>closed, just for you.</em>" data-he="זה מגיע <em>סגור, רק בשבילכם.</em>">It arrives <em>closed, just for you.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט שלכם, התעודות שלו, והערכת שווי למבטח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Every stone, chosen <em>one by one.</em>" data-he="כל אבן, נבחרת <em>אחת אחת.</em>">Every stone, chosen <em>one by one.</em></h2><p class="p" data-en="Bought loose, graded by GIA or IGI, matched to their neighbours. You see them before they are set." data-he="נקנות בודדות, מדורגות על ידי GIA או IGI, מותאמות זו לזו. אתם רואים אותן לפני השיבוץ.">Bought loose, graded by GIA or IGI, matched to their neighbours. You see them before they are set.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Every stone, chosen <em>one by one.</em>" data-he="כל אבן, נבחרת <em>אחת אחת.</em>">Every stone, chosen <em>one by one.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before they are set." data-he="מדורגות על ידי GIA או IGI. אתם רואים אותן לפני השיבוץ.">Graded by GIA or IGI. You see them before they are set.</p></div>
           <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made for <em>one wrist. Yours.</em>" data-he="נעשה <em>לפרק יד אחד. שלכם.</em>">Made for <em>one wrist. Yours.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${mark("eng", "b")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
@@ -400,7 +400,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
             <button type="button" class="chip on" data-ch="Email" data-en="Email" data-he="אימייל">Email</button></div>
         </div>
         <button class="btn solid" type="submit" style="justify-self:start" data-en="Continue by email" data-he="המשיכו במייל">Continue by email</button>
-        <p class="done" data-en="Your message is ready in your mail app. If it did not open, write to concierge@silavu.com and we reply the same day." data-he="ההודעה שלכם מוכנה באפליקציית המייל. אם היא לא נפתחה, כתבו ל־concierge@silavu.com ונחזור אליכם באותו היום.">Your message is ready in your mail app. If it did not open, write to concierge@silavu.com and we reply the same day.</p>
+        <p class="done" data-en="Your message is ready in your mail app. If not, write to concierge@silavu.com." data-he="ההודעה שלכם מוכנה באפליקציית המייל. אם לא, כתבו ל־concierge@silavu.com.">Your message is ready in your mail app. If not, write to concierge@silavu.com.</p>
       </form>
       <div class="soc rv d3" data-socials></div>
     </div>
