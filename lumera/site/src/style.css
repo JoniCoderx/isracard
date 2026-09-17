@@ -1355,3 +1355,149 @@
      through as a ghost behind the words. The panel is opaque now; the blur
      stays as an enhancement for the browsers that have it. */
   #menu { background:linear-gradient(180deg, #060606 0%, #000 60%); }
+
+  /* ══════════ v46 ══════════ THE HOUSE MARK.
+     It used to draw its own outline for two and a fifth seconds and only then
+     fill — an empty wireframe sitting there, then white. That is the delay.
+     It is solid on the first frame now.
+
+     What it does instead happens while you move: the mark floats up as it
+     rises through the frame, and as it leaves it separates into its colours
+     and drifts apart, blurring as it goes, then gathers itself back together
+     on the way in. Everything here is a transform and an opacity, so the
+     compositor carries all of it. */
+  .hsig svg.sy path, .fbig svg.sy.huge path {
+    fill-opacity:1 !important; stroke-opacity:0 !important;
+    stroke-dashoffset:0 !important; animation:none !important; }
+  .hsig.in svg.sy path, .fbig.in svg.sy.huge path { animation:none !important; }
+
+  .hsig, .fbig { position:relative; }
+  .hsig svg.sy, .fbig svg.sy.huge {
+    position:relative; z-index:2;
+    transform:translateY(calc(var(--sp,0) * -34px)) scale(calc(1 - var(--spa,0) * 0.06));
+    transition:transform .18s linear; will-change:transform; }
+
+  .hsig::before, .hsig::after, .fbig::before, .fbig::after {
+    content:""; position:absolute; left:50%; top:50%; z-index:1;
+    aspect-ratio:872/1000; pointer-events:none; mix-blend-mode:screen;
+    -webkit-mask-image:var(--mk); mask-image:var(--mk);
+    -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    opacity:calc(var(--spa,0) * .92);
+    filter:blur(calc(var(--spa,0) * 4px));
+    will-change:transform, opacity; }
+  .hsig::before, .hsig::after { height:clamp(150px,26vw,300px); }
+  .fbig::before, .fbig::after { height:clamp(96px,12vw,168px); }
+
+  .hsig::before, .fbig::before { background:rgba(138,206,214,.80);
+    transform:translate(-50%,-50%)
+      translate(calc(var(--sp,0) * -54px), calc(var(--sp,0) * -30px))
+      rotate(calc(var(--sp,0) * -8deg))
+      scale(calc(1 + var(--spa,0) * .18)); }
+  .hsig::after, .fbig::after { background:rgba(230,208,170,.80);
+    transform:translate(-50%,-50%)
+      translate(calc(var(--sp,0) * 54px), calc(var(--sp,0) * 30px))
+      rotate(calc(var(--sp,0) * 8deg))
+      scale(calc(1 + var(--spa,0) * .18)); }
+
+  @media (prefers-reduced-motion:reduce) {
+    .hsig::before, .hsig::after, .fbig::before, .fbig::after { display:none; }
+    .hsig svg.sy, .fbig svg.sy.huge { transform:none; }
+  }
+
+  /* ══ v47 — the refinement pass ══════════════════════════════════════════
+     Nothing here is new furniture. It fixes type that was being clipped,
+     gives the house three interactions it reuses everywhere, and builds the
+     one room the house was missing: bespoke. ─────────────────────────────── */
+
+  /* ── 1. no letter of any headline is ever cut ──
+     Each word rises out of its own mask. The mask was tight: an italic serif
+     overhangs its advance width, and a 0.96 line-height leaves a descender
+     nowhere to go. Give the mask slack, and take the same slack back in
+     margin so nothing moves on the page. ── */
+  .w { padding:.17em .15em .27em .15em; margin:-.17em -.15em -.27em -.15em; }
+  .h { line-height:1.0; }
+  .h2 { line-height:1.06; }
+  .beat .h2, .hhead .h2, .copy .h2, .sechead .h2 { line-height:1.06; }
+  .card .t, .piece .t { line-height:1.18; padding-bottom:.08em; }
+  .t em, .h em, .h2 em, .h3 em { padding-inline-end:.06em; margin-inline-end:-.06em; }
+
+  /* ── 2. the house has three interactions, and only three ──
+     A · the type drifts under the hand, word by word.
+     B · light passes through the type, and only through the type.
+     C · every heading still rises out of its mask on arrival.
+     Restrained, slow, and the same everywhere. ── */
+  .h, .h2 { position:relative; }
+  .h::after, .h2::after {
+    content:""; position:absolute; inset:-.34em -.24em; z-index:2; pointer-events:none;
+    background:radial-gradient(18em 11em at var(--hx,50%) var(--hy,50%),
+      rgba(255,255,255,.40), rgba(255,247,231,.16) 34%, transparent 64%);
+    mix-blend-mode:overlay; opacity:0; transition:opacity .9s var(--ease); }
+  @media (hover:hover) and (pointer:fine) {
+    .h, .h2 { transition:transform 1.2s var(--ease), letter-spacing 1.2s var(--ease); }
+    .h.lit, .h2.lit { transform:translate3d(var(--hdx,0px), var(--hdy,0px), 0); }
+    .h.lit::after, .h2.lit::after { opacity:1; }
+    .sp .w { transition:transform 1.05s var(--ease); }
+    .sp.lit .w { transform:translate3d(var(--wx,0px), var(--wy,0px), 0); }
+  }
+  @media (prefers-reduced-motion:reduce) { .h::after, .h2::after { display:none; } }
+
+  /* ── 3. bespoke: the room the house was missing ── */
+  #bespoke { position:relative; overflow:hidden; }
+  .bwm { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:0; opacity:.05; }
+  .bwm svg.sy { height:min(82vh,880px); color:var(--ink); }
+  #bespoke > .wrap { position:relative; z-index:1; }
+  .bhead { text-align:center; justify-items:center; }
+  .bhead .h { max-width:17ch; margin:16px auto 0; }
+  .bjourney { list-style:none; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(10px,1.5vw,24px); margin-top:clamp(38px,6vh,70px); }
+  .bstep { position:relative; display:grid; gap:12px; min-width:0; }
+  .bsim { position:relative; aspect-ratio:3/4.3; overflow:hidden; border-radius:10px; background:#060607; }
+  .bsim img { width:100%; height:100%; object-fit:cover; transform:scale(1.07); filter:grayscale(.34) contrast(1.04) brightness(.86); transition:transform 1.5s var(--ease), filter 1.5s var(--ease); }
+  .bstep:hover .bsim img, .bstep:focus-within .bsim img { transform:scale(1); filter:grayscale(0) contrast(1.06) brightness(1); }
+  .bsw { position:absolute; inset:0; pointer-events:none; transform:translateX(-130%);
+    background:linear-gradient(100deg, transparent 38%, rgba(255,255,255,.20) 50%, transparent 62%);
+    transition:transform 1.15s var(--ease); }
+  .bstep:hover .bsw { transform:translateX(130%); }
+  .bsn { color:var(--gold); font-variant-numeric:tabular-nums; }
+  .bsl { font-size:clamp(.94rem,1.25vw,1.15rem); font-weight:300; line-height:1.3; }
+  .bfoot { margin-top:clamp(34px,5vh,60px); display:flex; align-items:center; justify-content:center; gap:clamp(18px,3vw,40px); flex-wrap:wrap; }
+  .bline { font-family:var(--serif); font-style:italic; font-size:clamp(1.25rem,2.5vw,2rem); color:var(--ink2); line-height:1.3; padding-bottom:.1em; }
+  html[data-lang="he"] .bline { font-family:inherit; font-style:normal; }
+  @media (max-width:759px) {
+    .bjourney { display:flex; grid-template-columns:none; overflow-x:auto; scroll-snap-type:x mandatory;
+      margin:34px calc(-1 * var(--pad)) 0; padding:0 var(--pad) 8px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    .bjourney::-webkit-scrollbar { display:none; }
+    .bstep { flex:0 0 56vw; scroll-snap-align:center; }
+    .bfoot { flex-direction:column; gap:22px; text-align:center; }
+  }
+
+  /* ── 4. the collection is a gallery, not a catalogue: bigger objects, more air ── */
+  .piece .t { font-size:clamp(1.45rem,2.1vw,1.95rem); }
+  .piece .bd { padding:24px 4px 0; gap:10px; }
+  .piece .p { color:var(--ink3); max-width:30ch; }
+  @media (min-width:1000px) {
+    .htrack { gap:clamp(40px,4.2vw,76px); }
+    .piece { flex:0 0 min(29vw,440px); }
+  }
+  .h.lit { letter-spacing:-.021em; }
+  .h2.lit { letter-spacing:-.016em; }
+  html[data-lang="he"] .h.lit, html[data-lang="he"] .h2.lit { letter-spacing:.004em; }
+
+  /* ── 5. three things the screenshots caught ── */
+  /* the compass reads over anything it happens to cross */
+  #where::before { content:""; position:absolute; inset:-26px -70px -26px -46px; z-index:-1; pointer-events:none;
+    background:radial-gradient(62% 130% at 30% 50%, rgba(0,0,0,.88), rgba(0,0,0,.6) 40%, rgba(0,0,0,.22) 66%, transparent 84%); }
+  #where { isolation:isolate; }
+  /* a price that wraps used to leave its divider hanging on the line above */
+  /* pipes between facts leave a rule hanging in mid-air the moment a line wraps.
+     Space says the same thing and never dangles. */
+  .piece .meta { gap:10px 26px; }
+  .piece .meta i { display:none; }
+  .piece .meta .price { flex-basis:100%; margin-top:2px; }
+  /* at 320 the wordmark and the language button met exactly; give them air */
+  @media (max-width:359px) {
+    .sh .mark .lg { font-size:.62em; letter-spacing:.28em; margin-inline-end:-.28em; }
+    .sh .mark .lk { gap:.48em; }
+    #langBtn { padding-inline:13px; }
+    .menubtn span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  }

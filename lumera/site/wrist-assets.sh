@@ -1,46 +1,38 @@
 #!/bin/bash
-# The wrist photographs for the live "on a wrist" view: two SILAVU campaign frames (bare wrist on black silk), cropped tight around the wrist.
-# Run inside the Higgsfield sandbox at build time; writes into the given public/img directory.
+# The SILAVU campaign frames that are composited or cropped at build time, rather than
+# shipped as flat files. Run inside the Higgsfield sandbox; writes into the given public/img directory.
 set -e
 OUT="${1:-app/public/img}"; mkdir -p "$OUT"; T=$(mktemp -d)
 B=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf
-curl -sf -o "$T/h.png" $B/hf_20260916_001924_f23b892d-1995-426f-99e1-5ceb48fbdee5.png
-curl -sf -o "$T/v.png" $B/hf_20260916_001924_6340a4bf-4665-4afa-ae6b-7d2cf625bb40.png
-# the house mark, in the skin: the exact official path, never redrawn, laid into the inner forearm
-INK="$(dirname "$0")/mark-ink.png"
-if [ -f "$INK" ]; then
-  # landscape: the inner forearm, following the arm's tilt
-  convert "$INK" -background none -alpha on -channel A -evaluate multiply 0.60 +channel -resize x118 -blur 0x0.7 -rotate -6 "$T/ink-h.png"
-  convert "$T/h.png" "$T/ink-h.png" -geometry +1190+840 -compose multiply -composite "$T/h2.png"
-  # portrait: the same mark, smaller and turned with the wrist
-  convert "$INK" -background none -alpha on -channel A -evaluate multiply 0.58 +channel -resize x104 -blur 0x0.7 -rotate 8 "$T/ink-v.png"
-  convert "$T/v.png" "$T/ink-v.png" -geometry +560+980 -compose multiply -composite "$T/v2.png"
-else
-  cp "$T/h.png" "$T/h2.png"; cp "$T/v.png" "$T/v2.png"
-fi
-# landscape: wrist centred at (0.52, 0.46), half-width 0.20 of the height
-convert "$T/h2.png" -crop 1300x731+790+488 +repage -resize 1300x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wrist-1300.jpg"
-convert "$T/h2.png" -crop 1300x731+790+488 +repage -resize 900x -quality 84 -strip "$OUT/wrist-900.jpg"
-# portrait: wrist centred at (0.51, 0.60), half-width 0.227 of the width
-convert "$T/v2.png" -crop 900x1125+481+714 +repage -resize 900x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wristv-900.jpg"
-convert "$T/v2.png" -crop 900x1125+481+714 +repage -resize 600x -quality 84 -strip "$OUT/wristv-600.jpg"
-# the bench: a setter's hands and one stone, 4:5
+
+# ── the wrist: a watch and the Line worn together, on bare skin, no mark on the body ──
+curl -sf -o "$T/w.png" $B/hf_20260917_094621_a0e05ebf-21bc-4613-a68e-ede32b095343.png   # 2752 x 1536
+# landscape: tightened around the watch and the bracelet
+convert "$T/w.png" -crop 2200x1238+380+180 +repage -resize 1300x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wrist-1300.jpg"
+convert "$T/w.png" -crop 2200x1238+380+180 +repage -resize 900x  -quality 84 -strip "$OUT/wrist-900.jpg"
+# portrait: the same frame, cut 4:5 so both the watch and the bracelet survive on a phone
+convert "$T/w.png" -crop 1229x1536+899+0 +repage -resize 900x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wristv-900.jpg"
+convert "$T/w.png" -crop 1229x1536+899+0 +repage -resize 600x -quality 84 -strip "$OUT/wristv-600.jpg"
+
+# ── the bench: a setter's hands and one stone, 4:5 ──
 curl -sf -o "$T/c.png" $B/hf_20260916_094125_01ad1700-93dd-4171-bee1-87995cc6a52d.png
 for w in 800 1200 1600 2000; do convert "$T/c.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/craft-$w.jpg"; done
-# the Signature Chain: the photographs of the piece
+
+# ── the Signature Chain: the piece and its detail ──
 curl -sf -o "$T/sigb.png" $B/hf_20260916_115749_d0cfd8ed-6e93-43e9-9149-27394a9bc153.png
 curl -sf -o "$T/sigbd.png" $B/hf_20260916_115748_31bb2a98-04e5-460e-898d-f81d37b61ed0.png
 for w in 800 1200 1600 2000; do
   convert "$T/sigb.png"  -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/sigb-$w.jpg"
   convert "$T/sigbd.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/sigbd-$w.jpg"
 done
-# three things we make: a tennis bracelet, the Signature Drop, the Signature Chain
-curl -sf -o "$T/tennis.png" $B/hf_20260916_143909_821b4e93-29fb-4ed9-9f65-73a02a51e373.png
-curl -sf -o "$T/earsil.png" $B/hf_20260916_143909_a6c4a34a-4437-42a2-bbb6-c9bd88ee5c2c.png
+
+# ── the two house objects: the Line itself, and the ear piece ──
+curl -sf -o "$T/tennis.png" $B/hf_20260917_094621_363c354b-7ee2-422d-98cb-fb069dd59933.png
+curl -sf -o "$T/earsil.png" $B/hf_20260917_094621_99456c45-a8df-4208-add7-e5fc3d434a74.png
 curl -sf -o "$T/earsil2.png" $B/hf_20260916_143909_8a389748-fb88-49c6-bf1a-63ebdfd610d8.png
 for w in 800 1200 1600 2000; do
-  convert "$T/tennis.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/tennis-$w.jpg"
-  convert "$T/earsil.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil-$w.jpg"
+  convert "$T/tennis.png"  -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/tennis-$w.jpg"
+  convert "$T/earsil.png"  -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil-$w.jpg"
   convert "$T/earsil2.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil2-$w.jpg"
 done
 ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg "$OUT"/tennis*.jpg "$OUT"/earsil*.jpg

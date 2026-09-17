@@ -34,7 +34,7 @@ export const imark = () => {
 };
 const T = (tag, cls, en, he, extra = "") => `<${tag} class="${cls}" data-en="${en.replace(/"/g, "&quot;")}" data-he="${he.replace(/"/g, "&quot;")}"${extra}>${en}</${tag}>`;
 
-const SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
+const SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
 const bandItems = [["SILAVU", "SILAVU"], ["Dubai", "דובאי"], ["Tel Aviv", "תל אביב"], ["High jewellery", "תכשיטי יוקרה"], ["Made by hand", "נעשה ביד"], ["GIA · IGI certified", "מאושר GIA · IGI"], ["By appointment", "בתיאום מראש"]];
 const band = bandItems.concat(bandItems).map(([en, he]) => `<span><em data-en="${en}" data-he="${he}">${en}</em><i class="dot"></i></span>`).join("");
@@ -68,10 +68,10 @@ export const body = `
 <header class="sh" id="header">
   <nav id="topnav">
     <a href="#inside" data-en="The box" data-he="הקופסה">The box</a>
-    <a href="#what" data-en="What we make" data-he="מה אנחנו מייצרים">What we make</a>
     <a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a>
-    <a href="#build" data-en="Your line" data-he="הקו שלכם">Your line</a>
-    <a href="#clients" data-en="Clients" data-he="לקוחות">Clients</a>
+    <a href="#bespoke" data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</a>
+    <a href="#build" data-en="The Line" data-he="הקו">The Line</a>
+    <a href="#clients" data-en="How it works" data-he="איך זה עובד">How it works</a>
   </nav>
   <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu"><i></i><span data-en="Menu" data-he="תפריט">Menu</span></button>
   <a class="mark" href="#hero" aria-label="SILAVU">${lockup()}</a>
@@ -87,11 +87,11 @@ export const body = `
   <div class="mbrand" aria-hidden="true">${mark("", "b")}</div>
   <div class="mlist" id="mlist">
     <a href="#inside"><span class="k">01</span><span data-en="The box" data-he="הקופסה">The box</span></a>
-    <a href="#what"><span class="k">02</span><span data-en="What we make" data-he="מה אנחנו מייצרים">What we make</span></a>
-    <a href="#collection"><span class="k">03</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
-    <a href="#build"><span class="k">04</span><span data-en="Build your line" data-he="בנו את הקו שלכם">Build your line</span></a>
-    <a href="#clients"><span class="k">05</span><span data-en="Clients &amp; partners" data-he="לקוחות ושותפים">Clients &amp; partners</span></a>
-    <a href="#concierge"><span class="k">06</span><span data-en="Concierge" data-he="קונסיירז׳">Concierge</span></a>
+    <a href="#collection"><span class="k">02</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
+    <a href="#bespoke"><span class="k">03</span><span data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</span></a>
+    <a href="#build"><span class="k">04</span><span data-en="The Line" data-he="הקו">The Line</span></a>
+    <a href="#clients"><span class="k">05</span><span data-en="How it works" data-he="איך זה עובד">How it works</span></a>
+    <a href="#concierge"><span class="k">06</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
   </div>
   <div class="mfoot">
     <a class="btn solid" href="#concierge" style="justify-self:start" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
@@ -126,8 +126,8 @@ export const body = `
   <div class="wrap hwrap">
     <div class="hsig rv">${mark("hmark")}</div>
     <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="הבית · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
-    <h2 class="h2 rv d2" data-en="A private house. <em>One line, made for one wrist.</em>" data-he="בית פרטי. <em>קו אחד, שנעשה לפרק יד אחד.</em>">A private house. <em>One line, made for one wrist.</em></h2>
-    <p class="p rv d3" data-en="Very few pieces, made by hand, for people we meet in person." data-he="מעט מאוד תכשיטים, בעבודת יד, לאנשים שאנחנו פוגשים באופן אישי.">Very few pieces, made by hand, for people we meet in person.</p>
+    <h2 class="h2 rv d2" data-en="A private house. <em>Nothing off the shelf.</em>" data-he="בית פרטי. <em>כלום לא מהמדף.</em>">A private house. <em>Nothing off the shelf.</em></h2>
+    <p class="p rv d3" data-en="Bracelets, rings, necklaces, earrings. Made by hand, one at a time." data-he="צמידים, טבעות, שרשראות, עגילים. בעבודת יד, אחד־אחד.">Bracelets, rings, necklaces, earrings. Made by hand, one at a time.</p>
   </div>
 </section>
 
@@ -176,26 +176,26 @@ export const body = `
   </div>
   </div>
 </section>
-<section id="what" data-n="02" data-title-en="What we do" data-title-he="מה אנחנו עושים" aria-label="What we do">
+<section id="what" data-n="02" data-title-en="Two ways in" data-title-he="שתי דרכים" aria-label="What we do">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
     <div class="wrap">
     <div class="sechead">
-      <div class="k gold rv ol" data-en="02 · What we make" data-he="02 · מה אנחנו מייצרים">02 · What we make</div>
-      <h2 class="h2 sp rv" data-en="Three things, <em>made by hand.</em>" data-he="שלושה דברים, <em>עשויים ביד.</em>">Three things, <em>made by hand.</em></h2>
-      <p class="p rv d2" data-en="There is no shop. Tell us what you have in mind, we bring certified stones to you, and the piece is made in Dubai." data-he="אין חנות. ספרו לנו מה יש לכם בראש, נביא אליכם אבנים מאושרות, והתכשיט ייעשה בדובאי.">There is no shop. Tell us what you have in mind, we bring certified stones to you, and the piece is made in Dubai.</p>
+      <div class="k gold rv ol" data-en="02 · Two ways in" data-he="02 · שתי דרכים">02 · Two ways in</div>
+      <h2 class="h2 sp rv" data-en="Collection, <em>or bespoke.</em>" data-he="קולקציה, <em>או בהזמנה אישית.</em>">Collection, <em>or bespoke.</em></h2>
+      <p class="p rv d2" data-en="There is no shop." data-he="אין חנות.">There is no shop.</p>
     </div>
     <div class="tray" data-tray><div class="cards">
+      <a class="card" href="#collection">
+        ${fig("riv", "A graduated diamond rivière on black lacquer", "r45", SIZES_CARD)}
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="I · Collection" data-he="I · קולקציה">I · Collection</span></div><div class="t" data-en="Designed by <em>the House</em>" data-he="בעיצוב <em>הבית</em>">Designed by <em>the House</em></div><p class="p" data-en="Bracelets, rings, necklaces, earrings. Each made once." data-he="צמידים, טבעות, שרשראות, עגילים. כל אחד נעשה פעם אחת.">Bracelets, rings, necklaces, earrings. Each made once.</p><span class="lnk" data-en="See the collection" data-he="לקולקציה">See the collection</span></div>
+      </a>
+      <a class="card" href="#bespoke">
+        ${fig("earsil", "A diamond-set ear climber in white gold on black lacquer", "r45", SIZES_CARD)}
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Bespoke" data-he="II · בהזמנה אישית">II · Bespoke</span></div><div class="t" data-en="Made only <em>for you</em>" data-he="נעשה רק <em>בשבילכם</em>">Made only <em>for you</em></div><p class="p" data-en="Begin with a stone. Or an idea." data-he="התחילו מאבן. או מרעיון.">Begin with a stone. Or an idea.</p><span class="lnk" data-en="Imagine it" data-he="דמיינו">Imagine it</span></div>
+      </a>
       <a class="card" href="#build">
         ${fig("tennis", "A diamond tennis bracelet of round brilliants in white gold, on black lacquer", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="I · The Line" data-he="I · הקו">I · The Line</span></div><div class="t" data-en="The Line <em>bracelet</em>" data-he="צמיד <em>הקו</em>">The Line <em>bracelet</em></div><p class="p" data-en="Tennis bracelets made to the wrist." data-he="צמיד טניס של בריליאנטים מותאמים ביד, בכל ליטוש, מ־2 ועד 20 קראט.">Tennis bracelets made to the wrist.</p><span class="lnk" data-en="Design yours" data-he="עצבו את שלכם">Design yours</span></div>
-      </a>
-      <a class="card" href="#concierge" data-piece="The Signature Drop">
-        ${fig("ring", "A solitaire ring in white gold on black lacquer", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Bespoke" data-he="II · עגילים">II · Bespoke</span></div><div class="t" data-en="Made <em>to order</em>" data-he="עגיל <em>החתימה</em>">Made <em>to order</em></div><p class="p" data-en="Rings, necklaces and one-off pieces." data-he="טבעות, שרשראות ועגילים, נעשים פעם אחת, עבורכם.">Rings, necklaces and one-off pieces.</p><span class="lnk" data-en="Start a conversation" data-he="התחילו שיחה">Start a conversation</span></div>
-      </a>
-      <a class="card" href="#collection" data-piece="The Signature Chain">
-        ${fig("sapphire", "A certified coloured stone beside white brilliants on black lacquer", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · Private stones" data-he="III · חתימה">III · Private stones</span></div><div class="t" data-en="Certified <em>stones</em>" data-he="שרשרת <em>החתימה</em>">Certified <em>stones</em></div><p class="p" data-en="Certified significant diamonds and coloured stones." data-he="יהלומים מאושרים מ־2 קראט, ואבני צבע נדירות, עם התעודות שלהן.">Certified significant diamonds and coloured stones.</p><span class="lnk" data-en="Ask the concierge" data-he="פנו לקונסיירז׳">Ask the concierge</span></div>
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · The Line" data-he="III · הקו">III · The Line</span></div><div class="t" data-en="The <em>signature</em>" data-he="<em>החתימה</em>">The <em>signature</em></div><p class="p" data-en="Our tennis bracelet, built to one wrist." data-he="צמיד הטניס שלנו, נבנה לפרק יד אחד.">Our tennis bracelet, built to one wrist.</p><span class="lnk" data-en="Design yours" data-he="עצבו את שלכם">Design yours</span></div>
       </a>
     </div></div>
     </div>
@@ -210,38 +210,36 @@ export const body = `
         <div class="htrack" id="htrack">
           <div class="hhead">
             <div class="k gold rv ol" data-en="03 · Collection" data-he="03 · הקולקציה">03 · Collection</div>
-            <h2 class="h2 sp rv" data-en="House pieces, <em>by private viewing.</em>" data-he="תכשיטי הבית, <em>בצפייה פרטית.</em>">House pieces, <em>by private viewing.</em></h2>
-            <p class="p rv d2" data-en="Made once. Seen in private, in Dubai or Tel Aviv." data-he="נעשה פעם אחת. נראה בפרטיות, בדובאי או בתל אביב.">Made once. Seen in private, in Dubai or Tel Aviv.</p>
+            <h2 class="h2 sp rv" data-en="Designed by <em>the House.</em>" data-he="בעיצוב <em>הבית.</em>">Designed by <em>the House.</em></h2>
+            <p class="p rv d2" data-en="Made once. Seen in private." data-he="נעשה פעם אחת. נראה בפרטיות.">Made once. Seen in private.</p>
             <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
-            <p class="est-note" data-en="The final quotation follows the stones we match. Conversions are indicative." data-he="הצעת המחיר הסופית נגזרת מהאבנים שנתאים. ההמרות הן להתרשמות.">The final quotation follows the stones we match. Conversions are indicative.</p>
-            
           </div>
           <div class="tray htr" data-tray><div class="pieces">
       <div class="piece" id="p-ring">
         ${fig("ring", "Solitaire Noir, a three carat brilliant on a knife-edge platinum band", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="I · Solitaire" data-he="I · סוליטר">I · Solitaire</span></div><div class="t"><span dir="ltr">Solitaire <em>Noir</em></span></div>
-          <p class="p" data-en="One stone, set high on a knife-edge platinum band so it takes light from every angle." data-he="אבן אחת, משובצת גבוה על טבעת פלטינה דקה כתער, כדי לקלוט אור מכל זווית.">One stone, set high on a knife-edge platinum band so it takes light from every angle.</p>
+          <p class="p" data-en="One stone, set high on a knife-edge." data-he="אבן אחת, משובצת גבוה על להב.">One stone, set high on a knife-edge.</p>
           <div class="row k meta"><span>3.01 ct</span><i></i><span>D · VVS1</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Solitaire Noir" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-riv">
         ${fig("riv", "Rivière Lumière, forty-one graduated brilliants on black velvet", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Rivière" data-he="II · ריוויאר">II · Rivière</span></div><div class="t"><span dir="ltr">Rivière <em>Lumière</em></span></div>
-          <p class="p" data-en="Forty-one graduated brilliants, the largest at the hollow of the throat." data-he="ארבעים ואחד בריליאנטים מדורגים, הגדול שבהם בשקע הצוואר.">Forty-one graduated brilliants, the largest at the hollow of the throat.</p>
+          <p class="p" data-en="Forty-one brilliants. The largest at the throat." data-he="ארבעים ואחד בריליאנטים. הגדול בשקע הצוואר.">Forty-one brilliants. The largest at the throat.</p>
           <div class="row k meta"><span>22.40 ct</span><i></i><span>D–E · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Rivière Lumière" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-star">
         ${fig("star", "The Desert Star, an eighteen carat brilliant in a radiating halo", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · One of one" data-he="III · יחיד במינו">III · One of one</span></div><div class="t"><span dir="ltr">The Desert <em>Star</em></span></div>
-          <p class="p" data-en="A rare centre stone in a radiating halo of sixteen. Made once, offered once." data-he="אבן מרכזית נדירה בהילה של שש עשרה. נעשה פעם אחת, מוצע פעם אחת.">A rare centre stone in a radiating halo of sixteen. Made once, offered once.</p>
+          <p class="p" data-en="Made once. Offered once." data-he="נעשה פעם אחת. מוצע פעם אחת.">Made once. Offered once.</p>
           <div class="row k meta"><span>18.06 ct</span><i></i><span>D · IF</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Desert Star" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-sapphire">
         ${fig("sapphire", "Sapphire of the Gulf, a royal-blue sapphire in yellow gold", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="IV · The only colour" data-he="IV · הצבע היחיד">IV · The only colour</span></div><div class="t"><span dir="ltr">Sapphire of <em>the Gulf</em></span></div>
-          <p class="p" data-en="A royal-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white." data-he="ספיר כחול-מלכותי בזהב צהוב, מוקף בבריליאנטים. כל השאר כאן לבן.">A royal-blue sapphire in yellow gold, ringed with brilliants. Everything else here is white.</p>
+          <p class="p" data-en="The only colour in the house." data-he="הצבע היחיד בבית.">The only colour in the house.</p>
           <div class="row k meta"><span>8.42 ct</span><i></i><span data-en="Royal blue" data-he="כחול מלכותי">Royal blue</span><i></i><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Sapphire of the Gulf" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
@@ -255,6 +253,28 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       </div>
     </div>
     <div class="wrap"></div>
+  </section>
+
+  <section id="bespoke" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="SILAVU Bespoke">
+  <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
+  <div class="bwm" aria-hidden="true">${mark("", "b")}</div>
+    <div class="wrap">
+    <div class="sechead bhead">
+      <div class="k gold rv ol" data-en="SILAVU Bespoke" data-he="סילאבו · בהזמנה אישית">SILAVU Bespoke</div>
+      <h2 class="h sp rv" data-en="Imagine it. <em>We make it.</em>" data-he="דמיינו אותו. <em>אנחנו נעשה אותו.</em>">Imagine it. <em>We make it.</em></h2>
+    </div>
+    <ol class="bjourney rv d2">
+      <li class="bstep"><div class="bsim">${pic("float", "A loose brilliant held in the dark, before anything is decided", SIZES_STEP)}<i class="bsw"></i></div><span class="bsn k">I</span><span class="bsl" data-en="Idea" data-he="רעיון">Idea</span></li>
+      <li class="bstep"><div class="bsim">${pic("stone", "A certified loose diamond under the loupe", SIZES_STEP)}<i class="bsw"></i></div><span class="bsn k">II</span><span class="bsl" data-en="Stone" data-he="אבן">Stone</span></li>
+      <li class="bstep"><div class="bsim">${pic("hand", "A jeweller's hand over the drawing of a piece", SIZES_STEP)}<i class="bsw"></i></div><span class="bsn k">III</span><span class="bsl" data-en="Design" data-he="עיצוב">Design</span></li>
+      <li class="bstep"><div class="bsim">${pic("craft", "A setter's hands placing one stone at the bench", SIZES_STEP)}<i class="bsw"></i></div><span class="bsn k">IV</span><span class="bsl" data-en="Setting" data-he="שיבוץ">Setting</span></li>
+      <li class="bstep"><div class="bsim">${pic("sigb", "The finished SILAVU piece on black lacquer", SIZES_STEP)}<i class="bsw"></i></div><span class="bsn k">V</span><span class="bsl" data-en="Your piece" data-he="התכשיט שלכם">Your piece</span></li>
+    </ol>
+    <div class="bfoot rv d3">
+      <p class="bline" data-en="Your piece does not exist yet." data-he="התכשיט שלכם עדיין לא קיים.">Your piece does not exist yet.</p>
+      <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-en="Begin" data-he="התחילו">Begin</a>
+    </div>
+    </div>
   </section>
 
   <section id="macro" data-n="" data-title-en="The stone" data-title-he="האבן" aria-label="Inside the stone">
@@ -334,20 +354,20 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     </div>
   </section>
 
-  <section id="clients" data-n="05" data-title-en="For clients" data-title-he="ללקוחות" aria-label="For clients">
+  <section id="clients" data-n="05" data-title-en="How it works" data-title-he="איך זה עובד" aria-label="For clients">
   <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
     <div class="wrap">
     <div class="ed stk">
       ${fig("neck", "A graduated diamond rivière at the hollow of the throat", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="Rivière · made once" data-he="ריוויאר · נעשה פעם אחת">Rivière · made once</span></div>`)}
       <div class="copy">
-        <div class="k gold rv ol" data-en="05 · For clients" data-he="05 · ללקוחות">05 · For clients</div>
+        <div class="k gold rv ol" data-en="05 · How it works" data-he="05 · איך זה עובד">05 · How it works</div>
         <h2 class="h2 sp rv" data-en="How <em>it works.</em>" data-he="איך <em>זה עובד.</em>">How <em>it works.</em></h2>
-        <p class="p rv d2" data-en="One message. From there, one person handles everything, from the first stones to your door." data-he="הודעה אחת. משם, אדם אחד מטפל בהכול, מהאבנים הראשונות ועד הדלת שלכם.">One message. From there, one person handles everything, from the first stones to your door.</p>
+        <p class="p rv d2" data-en="One message. One person, from the first stone to your door." data-he="הודעה אחת. אדם אחד, מהאבן הראשונה ועד הדלת שלכם.">One message. One person, from the first stone to your door.</p>
         <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Start a bespoke piece" data-he="תכשיט בהזמנה אישית">Start a bespoke piece</a></div>
       <div class="factsg">
-      <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Private viewing, where you are" data-he="צפייה פרטית, איפה שאתם">Private viewing, where you are</div><div class="d" data-en="At your residence, your hotel, or by arrangement in Dubai and Tel Aviv." data-he="בביתכם, במלון, או בתיאום בדובאי ובתל אביב.">At your residence, your hotel, or by arrangement in Dubai and Tel Aviv.</div></div></div>
-      <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Stones chosen under your light" data-he="אבנים שנבחרות תחת האור שלכם">Stones chosen under your light</div><div class="d" data-en="Certified stones brought to you, to compare yourself." data-he="שלוש עד חמש אבנים מאושרות מגיעות אליכם, להשוואה בעצמכם.">Certified stones brought to you, to compare yourself.</div></div></div>
-      <div class="fact rv d2"><div class="num">III</div><div><div class="t" data-en="Made by hand in Dubai" data-he="נעשה ביד בדובאי">Made by hand in Dubai</div><div class="d" data-en="Made to order. Every stone comes with its report." data-he="ארבעה עד שישה שבועות. כל אבן חרוטה במספר התעודה שלה.">Made to order. Every stone comes with its report.</div></div></div>
+      <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Seen in private" data-he="נראה בפרטיות">Seen in private</div><div class="d" data-en="In Dubai, in Tel Aviv, or wherever you are." data-he="בדובאי, בתל אביב, או בכל מקום שאתם בו.">In Dubai, in Tel Aviv, or wherever you are.</div></div></div>
+      <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Chosen under your own light" data-he="נבחרות תחת האור שלכם">Chosen under your own light</div><div class="d" data-en="Certified stones, brought to you to compare." data-he="אבנים מאושרות, מגיעות אליכם להשוואה.">Certified stones, brought to you to compare.</div></div></div>
+      <div class="fact rv d2"><div class="num">III</div><div><div class="t" data-en="Made by hand in Dubai" data-he="נעשה ביד בדובאי">Made by hand in Dubai</div><div class="d" data-en="Every stone comes with its report." data-he="כל אבן מגיעה עם התעודה שלה.">Every stone comes with its report.</div></div></div>
       
   </section>
 
@@ -355,24 +375,21 @@ ${SIG_LIVE ? SIG_PIECE : ""}
 
   
 
-  <section id="concierge" data-n="06" data-title-en="Concierge" data-title-he="קונסיירז׳" aria-label="Concierge">
+  <section id="concierge" data-n="06" data-title-en="Enquire" data-title-he="פנייה" aria-label="Enquire">
     <div class="cimg"><picture><img id="cityDXB" class="on" src="/img/dubai-1600.jpg" srcset="/img/dubai-1200.jpg 1200w, /img/dubai-1600.jpg 1600w, /img/dubai-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Dubai at night from a penthouse terrace" loading="lazy" decoding="async"></picture><picture><img id="cityTLV" src="/img/telaviv-1600.jpg" srcset="/img/telaviv-1200.jpg 1200w, /img/telaviv-1600.jpg 1600w, /img/telaviv-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Tel Aviv at blue hour" loading="lazy" decoding="async"></picture></div>
     <div class="cbody">
       <div>
         <div class="cmark rv" aria-hidden="true">${mark("", "b")}</div>
-        <div class="k gold rv ol" data-en="06 · Private concierge" data-he="06 · קונסיירז׳ פרטי">06 · Private concierge</div>
-        <h2 class="h2 sp rv" style="margin-top:14px" data-en="Talk to <em>a concierge.</em>" data-he="דברו עם <em>הקונסיירז׳.</em>">Talk to <em>a concierge.</em></h2>
+        <div class="k gold rv ol" data-en="06 · Enquire" data-he="06 · פנייה">06 · Enquire</div>
+        <h2 class="h2 sp rv" style="margin-top:14px" data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו מה <em>יש לכם בראש.</em>">Tell us what <em>you have in mind.</em></h2>
         <div class="clocks rv d2" style="margin-top:26px">
           <div class="clock on" data-city="DXB"><div class="c" id="clkDXB">--:--</div><div class="k" data-en="Dubai" data-he="דובאי">Dubai</div></div>
           <div class="clock" data-city="TLV"><div class="c" id="clkTLV">--:--</div><div class="k" data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</div></div>
         </div>
-        <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form. 9:00 to 21:00 Gulf time." data-he="עונה אדם, לא טופס. 9:00 עד 21:00 שעון המפרץ.">A person replies, not a form. 9:00 to 21:00 Gulf time.</p>
+        <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form." data-he="עונה אדם, לא טופס.">A person replies, not a form.</p>
       </div>
       <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="">
         <div class="fields">
-          <div class="chan"><span class="k" data-en="I am" data-he="אני">I am</span>
-            <button type="button" class="chip on" data-who="client" data-en="A client" data-he="לקוח/ה">A client</button>
-            <button type="button" class="chip" data-who="partner" data-en="A partner" data-he="שותף/ה">A partner</button></div>
           <div class="field"><input id="fName" type="text" autocomplete="name" required><label for="fName" data-en="Name" data-he="שם">Name</label></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
           <div class="field"><input id="fContact" type="text" autocomplete="tel" required inputmode="email" placeholder="+971 · +972 · email"><label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label></div>
@@ -393,9 +410,9 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     <div class="wrap">
     <div class="fbig rv">${mark("huge")}${logo("big")}<div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment only" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש בלבד">Private high jewellery · Dubai · Tel Aviv · By appointment only</div></div>
     <div class="fgrid">
-      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#what" data-en="What we make" data-he="מה אנחנו מייצרים">What we make</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a><a href="#clients" data-en="How it works" data-he="איך זה עובד">How it works</a><a href="#concierge" data-partner data-en="For partners" data-he="לשותפים">For partners</a></div>
-      <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="Or at your residence or hotel, worldwide" data-he="או בביתכם או במלון שלכם, בכל העולם">Or at your residence or hotel, worldwide</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
-      <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Message the concierge" data-he="כתבו לקונסיירז׳">Message the concierge</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#bespoke" data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a><a href="#clients" data-en="How it works" data-he="איך זה עובד">How it works</a></div>
+      <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
+      <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לבית">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="fbot k rv"><span>© SILAVU MMXXVI</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>

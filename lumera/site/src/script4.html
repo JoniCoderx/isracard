@@ -34,7 +34,7 @@
         io.unobserve(e.target);
       });
     }, { rootMargin: "300% 0px" });
-    document.querySelectorAll("#collection, #macro, #clients, #what, .tray").forEach(function (el) { io.observe(el); });
+    document.querySelectorAll("#collection, #macro, #clients, #what, #bespoke, .tray").forEach(function (el) { io.observe(el); });
   })();
 
   /* ── light follows the pointer across the photographs; the photograph leans a few pixels the other way ── */
@@ -116,6 +116,71 @@
       var y = window.scrollY; vel = y - last; last = y;
       if (!raf) raf = requestAnimationFrame(settle);
     }, { passive: true });
+  })();
+  /* ── the house mark comes apart as it leaves: it floats up, separates into its
+       colours and drifts away, then gathers again on the way back ── */
+  (function () {
+    var marks = [].slice.call(document.querySelectorAll(".hsig, .fbig"));
+    if (!marks.length || reduce) return;
+    var pending = false;
+    function tick() {
+      pending = false;
+      for (var i = 0; i < marks.length; i++) {
+        var m = marks[i], r = m.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > innerHeight + 200) continue;
+        var mid = r.top + r.height / 2, half = innerHeight / 2;
+        var sp = (mid - half) / half;                 /* -1 above, 0 centred, +1 below */
+        sp = Math.max(-1, Math.min(1, sp));
+        var e = sp < 0 ? -1 : 1, a = Math.abs(sp);
+        a = a * a;                                    /* hold it together near the centre */
+        m.style.setProperty("--sp", (e * a).toFixed(3));
+        m.style.setProperty("--spa", a.toFixed(3));
+      }
+    }
+    addEventListener("scroll", function () { if (!pending) { pending = true; requestAnimationFrame(tick); } }, { passive: true });
+    addEventListener("resize", function () { if (!pending) { pending = true; requestAnimationFrame(tick); } }, { passive: true });
+    tick();
+  })();
+  /* ── the house's own typography interaction: the heading leans a few pixels
+       toward the hand, the words nearest the cursor separate, and a light
+       passes through the type and nothing else. Restrained on purpose: the
+       same gesture on every heading, everywhere. ── */
+  if (fine && !reduce) (function () {
+    var litH = null, words = [], px = 0, py = 0, raf = 0;
+    function clear(h) {
+      if (!h) return;
+      h.classList.remove("lit");
+      h.style.removeProperty("--hdx"); h.style.removeProperty("--hdy");
+      [].forEach.call(h.querySelectorAll(".w"), function (w) { w.style.removeProperty("--wx"); w.style.removeProperty("--wy"); });
+    }
+    function tick() {
+      raf = 0; if (!litH) return;
+      var r = litH.getBoundingClientRect();
+      var x = (px - r.left) / Math.max(1, r.width), y = (py - r.top) / Math.max(1, r.height);
+      litH.style.setProperty("--hx", (x * 100).toFixed(1) + "%");
+      litH.style.setProperty("--hy", (y * 100).toFixed(1) + "%");
+      litH.style.setProperty("--hdx", ((x - 0.5) * 7).toFixed(2) + "px");
+      litH.style.setProperty("--hdy", ((y - 0.5) * 5).toFixed(2) + "px");
+      /* the words nearest the hand step aside; the far ones stay put */
+      var reach = Math.max(180, r.width * 0.42);
+      for (var i = 0; i < words.length; i++) {
+        var w = words[i], b = w.getBoundingClientRect();
+        var dx = (b.left + b.width / 2) - px, dy = (b.top + b.height / 2) - py;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d > reach || d < 0.001) { w.style.setProperty("--wx", "0px"); w.style.setProperty("--wy", "0px"); continue; }
+        var k = (1 - d / reach); k = k * k * 3.2;
+        w.style.setProperty("--wx", (dx / d * k).toFixed(2) + "px");
+        w.style.setProperty("--wy", (dy / d * k * 0.7).toFixed(2) + "px");
+      }
+    }
+    document.addEventListener("pointermove", function (e) {
+      var h = e.target && e.target.closest ? e.target.closest(".h, .h2") : null;
+      if (h !== litH) { clear(litH); litH = h; words = h ? [].slice.call(h.querySelectorAll(".w")) : []; if (h) h.classList.add("lit"); }
+      if (!litH) return;
+      px = e.clientX; py = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+    addEventListener("blur", function () { clear(litH); litH = null; words = []; });
   })();
   window.__fx = { relang: function () { split(); } };
 })();

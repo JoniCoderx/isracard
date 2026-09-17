@@ -84,8 +84,7 @@
     var a = e.target.closest('a[href^="#"]'); if (!a) return; var el = document.querySelector(a.getAttribute("href")); if (!el) return;
     e.preventDefault(); setMenu(false);
     var r = el.getBoundingClientRect(), top = el.id === "hero" ? 0 : scrollY + r.top;
-    if (a.hasAttribute("data-partner")) { setWho("partner"); prefill(lang === "he" ? "פניית שותפות: " : "Partnership enquiry: "); }
-    else if (a.hasAttribute("data-piece")) { setWho("client"); prefill((lang === "he" ? "אשמח לצפייה פרטית: " : "I would like a private viewing of: ") + a.getAttribute("data-piece")); }
+    if (a.hasAttribute("data-piece")) { prefill((lang === "he" ? "אשמח לצפייה פרטית: " : "I would like a private viewing of: ") + a.getAttribute("data-piece")); }
     window.scrollTo({ top: Math.max(0, top), behavior: reduce ? "instant" : "smooth" });
   });
 
@@ -238,7 +237,7 @@
   function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); }
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
-    var b = window.__build; setWho("client");
+    var b = window.__build;
     prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : "I would like to reserve a SILAVU Line: ") + b.ct + " ct · " + ORIG[b.origin][lang] + " · " + NAMES[b.metal][lang] + " · " + estEl.textContent);
   });
 
@@ -276,23 +275,21 @@
   function showCity(c) { cityCur = c; Object.keys(cityImgs).forEach(function (k) { cityImgs[k].classList.toggle("on", k === c); }); document.querySelectorAll(".clock").forEach(function (el) { el.classList.toggle("on", el.getAttribute("data-city") === c); }); }
   document.querySelectorAll(".clock").forEach(function (el) { el.addEventListener("click", function () { cityAuto = false; showCity(el.getAttribute("data-city")); }); });
   setInterval(function () { if (cityAuto) showCity(cityCur === "DXB" ? "TLV" : "DXB"); }, 7000);
-  var form = $("cform"), chan = "Email", who = "client", mail = form.getAttribute("data-mail") || "concierge@silavu.com", wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
+  var form = $("cform"), chan = "Email", mail = form.getAttribute("data-mail") || "concierge@silavu.com", wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
   (function () { var w = form.querySelector('.chip[data-ch="WhatsApp"]'); if (w && wa) { w.hidden = false; } })();
-  function setWho(w) { who = w; form.querySelectorAll(".chip[data-who]").forEach(function (x) { x.classList.toggle("on", x.getAttribute("data-who") === w); }); }
   form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); el.parentElement.classList.remove("err"); }); el.addEventListener("blur", f); });
   form.addEventListener("click", function (e) {
     var c = e.target.closest(".chip[data-ch]"); if (c) { form.querySelectorAll(".chip[data-ch]").forEach(function (x) { x.classList.remove("on"); }); c.classList.add("on"); chan = c.getAttribute("data-ch"); return; }
-    var w = e.target.closest(".chip[data-who]"); if (w) setWho(w.getAttribute("data-who"));
   });
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     var name = $("fName"), contact = $("fContact"), bad = null;
     [contact, name].forEach(function (el) { if (!el.value.trim()) { el.parentElement.classList.remove("err"); void el.offsetWidth; el.parentElement.classList.add("err"); bad = el; } });
     if (bad) { bad.focus(); return; }
-    var body = [name.value, $("fCity").value, contact.value, (who === "partner" ? "Partner" : "Client") + " · reply by " + chan, "", msgEl.value].join("\n");
+    var body = [name.value, $("fCity").value, contact.value, "Reply by " + chan, "", msgEl.value].join("\n");
     form.classList.add("sent");
     if (chan === "WhatsApp" && wa) { try { window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(body), "_blank", "noopener"); } catch (err) {} }
-    else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + (who === "partner" ? "partnership" : "private enquiry") + " · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
+    else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
   });
 })();
 </script>
