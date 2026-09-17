@@ -44,7 +44,7 @@ export const SIG_LIVE = true;
 const SIG_PIECE = `
       <div class="piece" id="p-sigb">
         ${figd("sigb", "sigbd", "The Signature Chain, the SILAVU symbol in polished platinum on a slender chain, on black lacquer", "The clasp of the Signature Chain, engraved SILAVU", "r45", SIZES_PIECE, `<div class="cap k"><span data-en="Atelier rendering" data-he="הדמיית הסטודיו">Atelier rendering</span></div>`)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="V · Signature" data-he="V · חתימה">V · Signature</span></div><div class="t"><span dir="ltr">Certified <em>stones</em></span></div>
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="V · Signature" data-he="V · חתימה">V · Signature</span></div><div class="t"><span dir="ltr">The Signature <em>Chain</em></span></div>
           <p class="p" data-en="The symbol of the house in polished platinum, on a slender chain. The clasp carries the name." data-he="סמל הבית בפלטינה מלוטשת, על שרשרת דקה. הסוגר נושא את השם.">The symbol of the house in polished platinum, on a slender chain. The clasp carries the name.</p>
           <div class="row k meta"><span data-en="Platinum" data-he="פלטינה" data-len="Metal" data-lhe="מתכת">Platinum</span><i></i><span data-en="Polished or pavé" data-he="מלוטש או פאווה" data-len="Finish" data-lhe="גימור">Polished or pavé</span><i></i><span data-en="Engraved clasp" data-he="סוגר חרוט" data-len="Detail" data-lhe="פרט">Engraved clasp</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה" data-len="Price" data-lhe="מחיר">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Signature Chain" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
@@ -307,7 +307,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
           <button class="chip" data-k="metal" data-v="platinum"><span class="sw" style="background:#dfe1e6"></span><span data-en="Platinum" data-he="פלטינה">Platinum</span></button></div></div>
       </div>
       <div class="total">
-        <div class="tot"><div class="k" data-en="Indicative estimate" data-he="הערכה ראשונית">Indicative estimate</div><div class="pricerow">${seal("sealsm")}<div class="price" id="est" data-aed="28500">AED 28,500</div></div><div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div><div class="row k" style="margin-top:10px"><span id="sumStones">36 × 0.17 ct</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumWrist">17 cm</span></div></div>
+        <div class="tot"><div class="k" data-en="Indicative estimate" data-he="הערכה ראשונית">Indicative estimate</div><div class="pricerow">${seal("sealsm")}<div class="price" id="est" data-aed="28500">AED 28,500</div></div><div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div><div class="row k" style="margin-top:10px"><span id="sumStones">—</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumWrist">17 cm</span></div></div>
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet</a>
       </div>
       <div class="playbar">
@@ -322,7 +322,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     <div class="wpin" id="wpin">
       <div class="wstick">
         <div class="wframe" id="wframe">
-          <picture><source media="(max-width:899px)" srcset="/img/wristv-1080.jpg 1080w, /img/wristv-1440.jpg 1440w" sizes="100vw"><img id="wimg" src="/img/wrist-2560.jpg" srcset="/img/wrist-1600.jpg 1600w, /img/wrist-2560.jpg 2560w, /img/wrist-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width:899px)" srcset="/img/wristv-600.jpg 600w, /img/wristv-900.jpg 900w" sizes="100vw"><img id="wimg" src="/img/wrist-1300.jpg" srcset="/img/wrist-900.jpg 900w, /img/wrist-1300.jpg 1300w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture>
           <div class="veil"></div>
         </div>
         <div class="wtxt" id="wtxt">
@@ -345,7 +345,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
         <p class="p rv d2" data-en="One message. From there, one person handles everything, from the first stones to your door." data-he="הודעה אחת. משם, אדם אחד מטפל בהכול, מהאבנים הראשונות ועד הדלת שלכם.">One message. From there, one person handles everything, from the first stones to your door.</p>
         <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Start a bespoke piece" data-he="תכשיט בהזמנה אישית">Start a bespoke piece</a></div>
       <div class="factsg">
-      <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Private viewing, where you are" data-he="צפייה פרטית, איפה שאתם">Private viewing, where you are</div><div class="d" data-en="At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message." data-he="בביתכם, במלון, או בחדרים שלנו בדובאי ובתל אביב. בדרך כלל תוך ארבעים ושמונה שעות מההודעה שלכם.">At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message.</div></div></div>
+      <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Private viewing, where you are" data-he="צפייה פרטית, איפה שאתם">Private viewing, where you are</div><div class="d" data-en="At your residence, your hotel, or by arrangement in Dubai and Tel Aviv." data-he="בביתכם, במלון, או בתיאום בדובאי ובתל אביב.">At your residence, your hotel, or by arrangement in Dubai and Tel Aviv.</div></div></div>
       <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Stones chosen under your light" data-he="אבנים שנבחרות תחת האור שלכם">Stones chosen under your light</div><div class="d" data-en="Certified stones brought to you, to compare yourself." data-he="שלוש עד חמש אבנים מאושרות מגיעות אליכם, להשוואה בעצמכם.">Certified stones brought to you, to compare yourself.</div></div></div>
       <div class="fact rv d2"><div class="num">III</div><div><div class="t" data-en="Made by hand in Dubai" data-he="נעשה ביד בדובאי">Made by hand in Dubai</div><div class="d" data-en="Made to order. Every stone comes with its report." data-he="ארבעה עד שישה שבועות. כל אבן חרוטה במספר התעודה שלה.">Made to order. Every stone comes with its report.</div></div></div>
       
@@ -414,7 +414,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <div class="t h3" id="pmT"></div>
       <p class="p" id="pmP"></p>
       <div class="mspecs" id="pmSpecs"></div>
-      <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI report for every stone" data-he="תעודת GIA או IGI לכל אבן">GIA or IGI report for every stone</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivered in person" data-he="מסירה אישית">Delivered in person</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div>
+      <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivered in person" data-he="מסירה אישית">Delivered in person</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div>
       <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Request a private viewing" data-he="בקשו צפייה פרטית">Request a private viewing</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
     </div>
   </div>

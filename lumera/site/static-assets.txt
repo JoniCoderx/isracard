@@ -50,11 +50,6 @@ img/stone-800.jpg
 img/telaviv-1200.jpg
 img/telaviv-1600.jpg
 img/telaviv-2560.jpg
-img/wrist-1600.jpg
-img/wrist-2560.jpg
-img/wrist-3840.jpg
-img/wristv-1080.jpg
-img/wristv-1440.jpg
 v/hero-loop-v.mp4
 v/hero-loop.mp4
 v/inside-v.mp4
