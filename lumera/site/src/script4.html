@@ -85,6 +85,25 @@
 
   /* ── a photograph that fails to arrive is asked for again, quietly ── */
   document.addEventListener("error", function (e) { var im = e.target; if (!im || im.tagName !== "IMG" || !im.currentSrc) return; var n = +(im.getAttribute("data-retry") || 0); if (n >= 2) return; im.setAttribute("data-retry", n + 1); var src = im.currentSrc; setTimeout(function () { var u = src.split("?")[0] + "?r=" + (n + 1); if (im.srcset) { im.srcset = im.srcset.split(",").map(function (c) { var t = c.trim().split(/\s+/); return t[0].split("?")[0] + "?r=" + (n + 1) + (t[1] ? " " + t[1] : ""); }).join(", "); } im.src = u; }, 1500 * (n + 1)); }, true);
+  /* ── the symbol answers the scroll: the faster the page moves, the more the
+       mark turns into the light, then it settles back ── */
+  (function () {
+    var sy = document.querySelector("header.sh .mark .sy");
+    if (!sy || reduce) return;
+    var last = window.scrollY, vel = 0, raf = 0;
+    function settle() {
+      raf = 0; vel *= 0.88;
+      var dir = vel < 0 ? -1 : 1, m = Math.min(1, Math.abs(vel) / 46);
+      sy.style.setProperty("--syr", (m * 9 * dir).toFixed(2) + "deg");
+      sy.style.setProperty("--sys", (1 + m * 0.07).toFixed(3));
+      if (Math.abs(vel) > 0.35) raf = requestAnimationFrame(settle);
+      else { sy.style.setProperty("--syr", "0deg"); sy.style.setProperty("--sys", "1"); }
+    }
+    addEventListener("scroll", function () {
+      var y = window.scrollY; vel = y - last; last = y;
+      if (!raf) raf = requestAnimationFrame(settle);
+    }, { passive: true });
+  })();
   window.__fx = { relang: function () { split(); } };
 })();
 </script>

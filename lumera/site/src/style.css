@@ -1,7 +1,7 @@
-  @import url("https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Heebo:wght@300;400;500&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Assistant:wght@200;300;400;500&display=swap");
   :root { --bg:#000; --ink:#f6f3ed; --ink2:#dcd9d2; --ink3:#b3b0a8; --gold:#e6e0d2; --house:#0b2327; --house-lit:#1a4a50; --house-tint:rgba(26,74,80,.22); --house-line:rgba(56,122,130,.45); --line:rgba(242,239,233,.14); --ease:cubic-bezier(.16,1,.3,1); --pad:clamp(20px,5vw,80px); --r:16px;
-    --sans:"Jost","Inter Tight",system-ui,-apple-system,sans-serif; --serif:"Instrument Serif",Georgia,serif; color-scheme:dark; }
-  html[data-lang="he"] { --sans:"Heebo","Inter Tight",system-ui,sans-serif; }
+    --sans:"Urbanist","Inter Tight",system-ui,-apple-system,sans-serif; --serif:"Cormorant Garamond",Georgia,serif; --word:"Urbanist",system-ui,sans-serif; color-scheme:dark; }
+  html[data-lang="he"] { --sans:"Assistant","Inter Tight",system-ui,sans-serif; }
   :where(#silavu, #silavu *) { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; background:#000; }
   html, body { overflow-x:clip; }
@@ -13,7 +13,7 @@
   #silavu img, #silavu video { display:block; max-width:100%; }
     /* ── the mark ── */
   svg.sy { display:block; height:1em; width:auto; fill:currentColor; stroke:none; overflow:visible; }
-  .lg { display:inline-block; font-family:Jost, "Helvetica Neue", Arial, sans-serif; font-weight:500; font-size:.72em; line-height:1; letter-spacing:.36em; margin-inline-end:-.36em; text-transform:uppercase; color:currentColor; white-space:nowrap; -webkit-font-smoothing:antialiased; font-feature-settings:"kern"; }
+  .lg { display:inline-block; font-family:var(--word); font-weight:500; font-size:.72em; line-height:1; letter-spacing:.36em; margin-inline-end:-.36em; text-transform:uppercase; color:currentColor; white-space:nowrap; -webkit-font-smoothing:antialiased; font-feature-settings:"kern"; }
   .lg.big { font-weight:300; font-size:clamp(1.9rem,5.6vw,4.4rem); letter-spacing:.32em; margin-inline-end:-.32em; }
   .lk { display:inline-flex; align-items:center; gap:.62em; direction:ltr; }
   .lk svg.sy { height:1.3em; }
@@ -123,7 +123,7 @@
   .sh nav a.cur::after, .sh nav a:hover::after { transform:scaleX(1); }
   @media (min-width:1000px) { .sh nav { display:flex; } }
   .hr { display:flex; gap:12px; align-items:center; justify-self:end; }
-  .lang { background:rgba(0,0,0,.35); border:1px solid rgba(244,241,235,.35); border-radius:2px; cursor:pointer; color:var(--ink); font-size:.66rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase; font-family:Jost, "Helvetica Neue", Arial, sans-serif; padding:9px 14px; min-height:40px; transition:border-color .4s, background .4s; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .lang { background:rgba(0,0,0,.35); border:1px solid rgba(244,241,235,.35); border-radius:2px; cursor:pointer; color:var(--ink); font-size:.66rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase; font-family:var(--word); padding:9px 14px; min-height:40px; transition:border-color .4s, background .4s; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
   .lang:hover { border-color:var(--ink); background:rgba(244,241,235,.08); }
   .hbook { display:none; } @media (min-width:1000px) { .hbook { display:inline-flex; padding:11px 18px; font-size:.7rem; } }
   .menubtn { display:inline-flex; align-items:center; gap:10px; background:rgba(0,0,0,.35); border:1px solid rgba(242,239,233,.28); border-radius:2px; padding:9px 14px; min-height:40px; font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; color:var(--ink); justify-self:start; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
@@ -1166,3 +1166,57 @@
   @media (hover:hover) and (pointer:fine) { .clocks .clock:hover { transform:translateY(-2px); } }
   .cmark .sy { animation:sy-breathe 9s ease-in-out infinite; }
   @media (prefers-reduced-motion:reduce) { .cmark .sy { animation:none; } }
+
+  /* ══ v40 ══ the type.
+     Urbanist for everything that is read — geometric, rounded, quiet — and
+     Cormorant Garamond for the italic that carries the house's voice.
+     Cormorant sets small and light beside a geometric sans, so the accents
+     are given back the size and weight they need to hold a headline. */
+  .h em, .h2 em, .h3 em, .t em { font-size:1.1em; letter-spacing:-.012em; font-weight:400; }
+  .voice q, .dof, .dname { font-size-adjust:none; }
+  .voice q { font-size:clamp(1.28rem,1.8vw,1.58rem); }
+  .dof { font-size:clamp(1.2rem,2.6vw,1.85rem); }
+  .dname { font-size:clamp(1.15rem,2vw,1.5rem); }
+  #where .n, .num { font-size:1.16rem; }
+  .spec .v small, .carat .big small { font-size:.56em; }
+  body { font-weight:300; letter-spacing:.004em; }
+  .p, p { font-weight:300; }
+
+  /* ── v40b ── the symbol turns into the light as the page moves.
+     Transform only, so it never fights the chromatic breathe on the filter. */
+  header.sh .mark .sy { transform:rotate(var(--syr,0deg)) scale(var(--sys,1));
+    transform-origin:50% 50%; transition:transform .45s cubic-bezier(.22,.7,.3,1); }
+  @media (hover:hover) and (pointer:fine) {
+    header.sh .mark:hover .sy { transform:rotate(-2.5deg) scale(1.07); }
+  }
+
+  /* ══ v40c ══ the page should not feel like a walk.
+     Sections carried padding meant for a desktop broadsheet at every width;
+     on a phone that is a screen of empty air between every chapter. The
+     rhythm is tightened so the piece arrives sooner and the page reads. */
+  .sm section { padding:clamp(60px,7vw,112px) 0; }
+  @media (max-width:759px) { .sm section { padding:clamp(40px,9vw,64px) 0; } .ch { min-height:80svh; } }
+  @media (max-width:999px) { .specs { margin-top:clamp(28px,4vw,48px); gap:16px 18px; } }
+
+  /* ══ v40d ══ the pinned chapters were three screens of scrolling each for
+     one film. They play just as fully over less distance, so the page moves
+     on instead of asking you to keep going. */
+  @media (min-width:1000px) { .pin { height:250svh; } }
+  @media (max-width:999px)  { .pin { height:215svh; } }
+  @media (max-width:699px)  { .pin { height:195svh; } }
+  .wpin { height:170svh; }
+  @media (max-width:999px) { .wpin { height:150svh; } }
+
+  /* ══ v40e ══ the concierge is a room with someone in it.
+     Each clock says whether that city is open right now, with a light that
+     is lit only while it is. */
+  .clocks .clock { position:relative; }
+  .cst { margin-top:5px; font-size:.54rem; letter-spacing:.16em; color:var(--ink3);
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+  html[data-lang="he"] .cst { letter-spacing:.02em; font-size:.68rem; }
+  .cst::before { content:""; width:5px; height:5px; border-radius:50%;
+    background:rgba(246,243,237,.28); transition:background .5s, box-shadow .5s; }
+  .clock.open .cst { color:var(--ink2); }
+  .clock.open .cst::before { background:#7fd6a0; box-shadow:0 0 8px rgba(127,214,160,.75); animation:cstpulse 2.6s ease-in-out infinite; }
+  @keyframes cstpulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
+  @media (prefers-reduced-motion:reduce) { .clock.open .cst::before { animation:none; } }

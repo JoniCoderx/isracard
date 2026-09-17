@@ -200,6 +200,7 @@
   var lang = "en", btns = [$("langBtn"), $("langBtn2"), $("langBtn3")];
   function applyLang() {
     document.documentElement.setAttribute("data-lang", lang); document.documentElement.setAttribute("dir", lang === "he" ? "rtl" : "ltr"); document.documentElement.setAttribute("lang", lang);
+    try { clocks(); } catch (e) {}
     document.querySelectorAll("[data-en]").forEach(function (el) { var v = el.getAttribute(lang === "he" ? "data-he" : "data-en"); if (v != null) el.innerHTML = v; });
     btns.forEach(function (b) { b.textContent = lang === "he" ? "English" : "Hebrew"; });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
@@ -240,7 +241,23 @@
   });
 
   /* ── concierge ── */
-  function clocks() { try { var f = function (tz) { return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date()); }; $("clkDXB").textContent = f("Asia/Dubai"); $("clkTLV").textContent = f("Asia/Jerusalem"); } catch (e) {} }
+  function clocks() {
+    try {
+      var f = function (tz) { return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date()); };
+      var he = document.documentElement.getAttribute("data-lang") === "he";
+      /* the room is open from 9 to 21 local time, and the clock says so */
+      var state = function (id, tz) {
+        var el = $(id); if (!el) return; var t = f(tz); el.textContent = t;
+        var hh = +t.slice(0, 2), open = hh >= 9 && hh < 21;
+        var row = el.closest ? el.closest(".clock") : null; if (!row) return;
+        row.classList.toggle("open", open);
+        var tag = row.querySelector(".cst");
+        if (!tag) { tag = document.createElement("div"); tag.className = "cst k"; row.appendChild(tag); }
+        tag.textContent = open ? (he ? "פתוח עכשיו" : "Open now") : (he ? "נפתח ב־9:00" : "Opens 9:00");
+      };
+      state("clkDXB", "Asia/Dubai"); state("clkTLV", "Asia/Jerusalem");
+    } catch (e) {}
+  }
   clocks(); setInterval(clocks, 15000);
   var cityImgs = { DXB: $("cityDXB"), TLV: $("cityTLV") }, cityAuto = true, cityCur = "DXB";
   function showCity(c) { cityCur = c; Object.keys(cityImgs).forEach(function (k) { cityImgs[k].classList.toggle("on", k === c); }); document.querySelectorAll(".clock").forEach(function (el) { el.classList.toggle("on", el.getAttribute("data-city") === c); }); }
