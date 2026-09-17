@@ -48,12 +48,31 @@ const NEW_PRICE = `  var CUTS = {
   var SHAPE = { round: "50%", oval: "50%", cushion: "30%", princess: "6%", emerald: "0", baguette: "0", marquise: "0", pear: "0" };
   var CLIP = { emerald: "polygon(18% 0,82% 0,100% 18%,100% 82%,82% 100%,18% 100%,0 82%,0 18%)", baguette: "polygon(4% 0,96% 0,100% 4%,100% 96%,96% 100%,4% 100%,0 96%,0 4%)", marquise: "polygon(0 50%,12% 22%,30% 6%,50% 0,70% 6%,88% 22%,100% 50%,88% 78%,70% 94%,50% 100%,30% 94%,12% 78%)", pear: "polygon(100% 50%,78% 22%,55% 4%,35% 0,15% 8%,3% 28%,0 50%,3% 72%,15% 92%,35% 100%,55% 96%,78% 78%)" };
   /* the line holds as many stones as the wrist allows: the size of each stone follows its share of the weight, and the count follows the size */
+  /* The line has to close as a real bracelet. The stone count is not chosen —
+     it falls out of the wrist, the weight and the setting pitch:
+
+        n stones, each of ct/n carats, each measuring kL·∛(ct/n) along the line,
+        separated by the metal a shared prong needs, must fill the circumference
+        left once the clasp is taken out:
+
+            kL·∛ct · n^(2/3)  +  pitch · n  =  length
+
+     That is monotonic in n, so the largest n that still fits is the answer.
+     A two carat line and a twenty carat line on the same wrist therefore carry
+     different numbers of stones — as they must. */
   function lineSpec(b) {
-    var c = CUTS[b.cut] || CUTS.round, lenMm = (b.wrist + 1) * 10 - 12, n = 36, each = b.ct / n, L = 3.6, Wd = 3.6, along, across, gap;
-    L = c.kL * Math.cbrt(each); Wd = L / c.ratio;
-    along = c.orient === "across" ? Wd : L; across = c.orient === "across" ? L : Wd;
-    gap = Math.max(0.16, lenMm / n - along);
-    return { cut: b.cut || "round", n: n, each: each, L: L, W: Wd, alongMm: along, acrossMm: across, pitchMm: along + gap, orient: c.orient, set: c.set, ratio: c.ratio, lenMm: lenMm };
+    var c = CUTS[b.cut] || CUTS.round;
+    var CLASP = 12, EASE = 10, PITCH = 0.18;           /* mm: clasp, comfort, metal between prongs */
+    var lenMm = b.wrist * 10 + EASE - CLASP;
+    var A = c.kL * Math.cbrt(b.ct); if (c.orient === "across") A = A / c.ratio;
+    var n = 8;
+    for (var k = 8; k <= 200; k++) { if (A * Math.pow(k, 2 / 3) + PITCH * k <= lenMm) n = k; else break; }
+    var each = b.ct / n;
+    var L = c.kL * Math.cbrt(each), Wd = L / c.ratio;
+    var along = c.orient === "across" ? Wd : L, across = c.orient === "across" ? L : Wd;
+    var gap = Math.max(PITCH, lenMm / n - along);
+    return { cut: b.cut || "round", n: n, each: each, L: L, W: Wd, alongMm: along, acrossMm: across,
+             pitchMm: along + gap, gapMm: gap, orient: c.orient, set: c.set, ratio: c.ratio, lenMm: lenMm };
   }
   function price() {
     var b = window.__build, c = CUTS[b.cut] || CUTS.round, spec = lineSpec(b), each = spec.each, nat = b.origin === "natural";
