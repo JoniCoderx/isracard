@@ -326,7 +326,6 @@ ${SIG_LIVE ? SIG_PIECE : ""}
           <div class="veil"></div>
         </div>
         <div class="wtxt" id="wtxt">
-          <div class="k gold" data-en="Every day" data-he="כל יום">Every day</div>
           <h2 class="h" data-en="Made to sit flat <em>beside your watch.</em>" data-he="נעשה לשבת שטוח <em>לצד השעון שלכם.</em>">Made to sit flat <em>beside your watch.</em></h2>
           <p class="p" data-en="3.6 millimetres high, a hidden clasp, no sharp edges." data-he="3.6 מילימטר גובה, סוגר נסתר, בלי פינות חדות.">3.6 millimetres high, a hidden clasp, no sharp edges.</p>
           <div><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
@@ -349,43 +348,12 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Private viewing, where you are" data-he="צפייה פרטית, איפה שאתם">Private viewing, where you are</div><div class="d" data-en="At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message." data-he="בביתכם, במלון, או בחדרים שלנו בדובאי ובתל אביב. בדרך כלל תוך ארבעים ושמונה שעות מההודעה שלכם.">At your residence, your hotel, or our rooms in Dubai and Tel Aviv. Usually within forty-eight hours of your message.</div></div></div>
       <div class="fact rv d1"><div class="num">II</div><div><div class="t" data-en="Stones chosen under your light" data-he="אבנים שנבחרות תחת האור שלכם">Stones chosen under your light</div><div class="d" data-en="Three to five certified stones brought to you, to compare yourself." data-he="שלוש עד חמש אבנים מאושרות מגיעות אליכם, להשוואה בעצמכם.">Three to five certified stones brought to you, to compare yourself.</div></div></div>
       <div class="fact rv d2"><div class="num">III</div><div><div class="t" data-en="Made by hand in Dubai" data-he="נעשה ביד בדובאי">Made by hand in Dubai</div><div class="d" data-en="Four to six weeks. Every stone inscribed with its report number." data-he="ארבעה עד שישה שבועות. כל אבן חרוטה במספר התעודה שלה.">Four to six weeks. Every stone inscribed with its report number.</div></div></div>
-      <div class="fact rv d1"><div class="num">IV</div><div><div class="t" data-en="Delivered in person, insured" data-he="נמסר אישית, מבוטח">Delivered in person, insured</div><div class="d" data-en="Worldwide, by a member of the house, with the reports and a valuation." data-he="לכל העולם, על ידי אדם מהבית, עם התעודות והערכת שווי.">Worldwide, by a member of the house, with the reports and a valuation.</div></div></div>
-      <div class="fact rv d2"><div class="num">V</div><div><div class="t" data-en="Cared for, for life" data-he="טיפול לכל החיים">Cared for, for life</div><div class="d" data-en="Cleaning, prong checks, resizing and polishing, for as long as you own it." data-he="ניקוי, בדיקת ציפורניים, התאמת מידה וליטוש, כל עוד התכשיט שלכם.">Cleaning, prong checks, resizing and polishing, for as long as you own it.</div></div></div>
-      <div class="fact rv d3"><div class="num">VI</div><div><div class="t" data-en="Discretion, absolute" data-he="דיסקרטיות מוחלטת">Discretion, absolute</div><div class="d" data-en="No shopfront, no mailing list, no photographs of clients." data-he="בלי חנות, בלי רשימת דיוור, בלי תמונות של לקוחות.">No shopfront, no mailing list, no photographs of clients.</div></div></div>
-      </div>
-      </div>
-    </div>
-    </div>
-  </section>
-
-  <section id="voices" data-n="05" data-title-en="Private" data-title-he="פרטי" aria-label="Private by design">
-    <div class="wrap">
-    <div class="private">
-      <div class="k gold rv ol" data-en="Private by design" data-he="פרטי מעצם העניין">Private by design</div>
-      <h2 class="h2 sp rv" data-en="No shopfront. <em>No mailing list.</em>" data-he="בלי חנות. <em>בלי רשימת תפוצה.</em>">No shopfront. <em>No mailing list.</em></h2>
       
-      <ul class="rv d3"><li data-en="One person, start to finish" data-he="אדם אחד, מההתחלה ועד הסוף">One person, start to finish</li><li data-en="Viewings at your address" data-he="צפיות בכתובת שלכם">Viewings at your address</li><li data-en="Nothing kept beyond what the piece needs" data-he="לא נשמר דבר מעבר למה שהתכשיט דורש">Nothing kept beyond what the piece needs</li></ul>
-    </div>
-    </div>
   </section>
 
-  <section id="partners" data-n="05" data-title-en="For partners" data-title-he="לשותפים" aria-label="For partners">
-  <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
-    <div class="wrap">
-    <div class="sechead" style="margin-bottom:0">
-      <div class="k gold rv ol" data-en="05 · For partners" data-he="05 · לשותפים">05 · For partners</div>
-      <h2 class="h2 sp rv" data-en="For jewellers, advisors <em>and hotels.</em>" data-he="לתכשיטנים, יועצים <em>ומלונות.</em>">For jewellers, advisors <em>and hotels.</em></h2>
-      <p class="p rv d2" data-en="The same stones, the same setter, one person who answers." data-he="אותן אבנים, אותו משבץ, אדם אחד שעונה.">The same stones, the same setter, one person who answers.</p>
-      <div class="rv d3"><a class="btn" href="#concierge" data-partner="1" data-en="Partner with SILAVU" data-he="שותפות עם SILAVU">Partner with SILAVU</a></div>
-    </div>
-    <div class="pgrid">
-      <div class="pcell rv"><div class="num">I</div><div class="t" data-en="Jewellers and retailers" data-he="תכשיטנים וקמעונאים">Jewellers and retailers</div><div class="d" data-en="The SILAVU Line at trade terms, with every stone's report." data-he="קו SILAVU בתנאי סחר, עם תעודה לכל אבן.">The SILAVU Line at trade terms, with every stone's report.</div></div>
-      <div class="pcell rv d1"><div class="num">II</div><div class="t" data-en="Family offices and advisors" data-he="משרדי משפחה ויועצים">Family offices and advisors</div><div class="d" data-en="Significant stones and pieces acquired for your clients, documented and insured." data-he="אבנים ותכשיטים משמעותיים נרכשים עבור הלקוחות שלכם, מתועדים ומבוטחים.">Significant stones and pieces acquired for your clients, documented and insured.</div></div>
-      <div class="pcell rv d2"><div class="num">III</div><div class="t" data-en="Hotels and private concierges" data-he="מלונות וקונסיירז׳ים פרטיים">Hotels and private concierges</div><div class="d" data-en="Private viewings for your guests, in their suite, on a day's notice." data-he="צפיות פרטיות לאורחים שלכם, בסוויטה, בהתראה של יום.">Private viewings for your guests, in their suite, on a day's notice.</div></div>
-      <div class="pcell rv d3"><div class="num">IV</div><div class="t" data-en="Designers and houses" data-he="מעצבים ובתים">Designers and houses</div><div class="d" data-en="Your designs, made in our Dubai atelier." data-he="העיצובים שלכם, נעשים בסטודיו שלנו בדובאי.">Your designs, made in our Dubai atelier.</div></div>
-    </div>
-    </div>
-  </section>
+  
+
+  
 
   <section id="concierge" data-n="06" data-title-en="Concierge" data-title-he="קונסיירז׳" aria-label="Concierge">
     <div class="cimg"><picture><img id="cityDXB" class="on" src="/img/dubai-1600.jpg" srcset="/img/dubai-1200.jpg 1200w, /img/dubai-1600.jpg 1600w, /img/dubai-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Dubai at night from a penthouse terrace" loading="lazy" decoding="async"></picture><picture><img id="cityTLV" src="/img/telaviv-1600.jpg" srcset="/img/telaviv-1200.jpg 1200w, /img/telaviv-1600.jpg 1600w, /img/telaviv-2560.jpg 2560w" sizes="(min-width:900px) 50vw, 100vw" alt="Tel Aviv at blue hour" loading="lazy" decoding="async"></picture></div>
@@ -425,7 +393,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     <div class="wrap">
     <div class="fbig rv">${mark("huge")}${logo("big")}<div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment only" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש בלבד">Private high jewellery · Dubai · Tel Aviv · By appointment only</div></div>
     <div class="fgrid">
-      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#what" data-en="What we make" data-he="מה אנחנו מייצרים">What we make</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a><a href="#clients" data-en="How it works" data-he="איך זה עובד">How it works</a><a href="#partners" data-en="For partners" data-he="לשותפים">For partners</a></div>
+      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#what" data-en="What we make" data-he="מה אנחנו מייצרים">What we make</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a><a href="#clients" data-en="How it works" data-he="איך זה עובד">How it works</a><a href="#concierge" data-partner data-en="For partners" data-he="לשותפים">For partners</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="Or at your residence or hotel, worldwide" data-he="או בביתכם או במלון שלכם, בכל העולם">Or at your residence or hotel, worldwide</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Message the concierge" data-he="כתבו לקונסיירז׳">Message the concierge</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
