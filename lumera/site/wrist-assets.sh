@@ -46,4 +46,22 @@ for w in 800 1200 1600 2000; do
   convert "$T/wear.png"   -resize ${w}x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/mono-ear-$w.jpg"
 done
 
+# ── the same three pieces again, clean on white. These are the second frame of
+#    each card: the rail alternates between the piece worn and the piece seen.
+#    High-key, so they carry a lighter quality setting without banding. ──
+curl -sf -o "$T/pneck.png"  $B/hf_20260918_001929_8d3887b4-8403-482f-b66b-685d91b45581.png
+curl -sf -o "$T/pwrist.png" $B/hf_20260918_001929_6800ec99-6515-42ad-ae7c-1a3a4b36d17a.png
+curl -sf -o "$T/pear.png"   $B/hf_20260918_001929_cc48496f-9cc5-4d64-bbbf-bf0a76d6ad18.png
+for w in 800 1200 1600 2000; do
+  convert "$T/pneck.png"  -resize ${w}x -quality 88 -strip "$OUT/mono-neck-p-$w.jpg"
+  convert "$T/pwrist.png" -resize ${w}x -quality 88 -strip "$OUT/mono-wrist-p-$w.jpg"
+  convert "$T/pear.png"   -resize ${w}x -quality 88 -strip "$OUT/mono-ear-p-$w.jpg"
+done
+
+# ── the rail's closing frame: the pendant worn low on the back ──
+curl -sf -o "$T/mback.png" $B/hf_20260918_001929_560c71c5-62fc-4a67-b2be-daff04c70e06.png
+for w in 800 1200 1600 2000; do
+  convert "$T/mback.png" -resize ${w}x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/mono-back-$w.jpg"
+done
+
 ls -la "$OUT"/wrist*.jpg "$OUT"/mono-*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg "$OUT"/tennis*.jpg "$OUT"/earsil*.jpg

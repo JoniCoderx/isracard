@@ -149,6 +149,39 @@
     }, { passive: true });
     addEventListener("blur", function () { clear(litH); litH = null; words = []; });
   })();
+  /* ── the picture that changes ───────────────────────────────────────────
+     Every monogram card holds two frames: the piece worn, and the piece shot
+     clean on white. One ticker drives all of them, staggered by position so
+     the rail reads as a rhythm rather than a blink, and it only runs while
+     the collection is actually on screen. Pointer devices get the worn frame
+     back on hover — that is handled in CSS, so nothing here fights it. */
+  (function () {
+    var figs = [].slice.call(document.querySelectorAll(".fig.sw"));
+    if (!figs.length) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var t = 0, n = 0, vis = 0;
+    /* An observer hands you only the entries that CHANGED, so the count has to
+       be carried between callbacks — reading `some(isIntersecting)` off one
+       batch turns the ticker off the moment a single card leaves the screen. */
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var was = e.target.__sv === true;
+        if (was !== e.isIntersecting) { e.target.__sv = e.isIntersecting; vis += e.isIntersecting ? 1 : -1; }
+      });
+      if (vis < 0) vis = 0;
+    }, { rootMargin: "10% 0px" });
+    figs.forEach(function (f) { io.observe(f); });
+    /* 3.4s a frame, each card a third of a beat behind the one before it */
+    function beat() {
+      if (vis > 0) { n++; figs.forEach(function (f, i) { f.classList.toggle("flip", ((n + i) % 3) === 0); }); }
+      t = setTimeout(beat, 3400);
+    }
+    t = setTimeout(beat, 2600);
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { clearTimeout(t); } else { clearTimeout(t); t = setTimeout(beat, 1200); }
+    });
+  })();
+
   window.__fx = { relang: function () { split(); } };
 })();
 </script>

@@ -1875,3 +1875,65 @@
     .panel { gap:14px; }
     .opts { gap:12px; }
   }
+
+  /* ══ v51 — the box back at full length, and pictures that change ══════════
+     Two corrections and one new mechanic.
+
+     First: the box film was shortened in v50 for the sake of the page's total
+     length. That was the wrong economy — it is the strongest thing on the
+     site and it earns its scroll. It goes back to where it was. The length
+     comes out of the wrist chapter instead, which loses nothing by moving
+     faster.
+
+     Second: every monogram piece now carries two frames — the piece worn on
+     a body, and the same piece shot clean on white. They change on their own,
+     staggered, so the rail is never still; hovering holds the worn frame. The
+     modal already reads the second frame, so it inherits the swap. ──────── */
+
+  @media (min-width:1000px) { .pin { height:250svh; } }
+  @media (max-width:999px)  { .pin { height:215svh; } }
+  @media (max-width:699px)  { .pin { height:195svh; } }
+  .wpin { height:132svh; }
+  @media (max-width:999px) { .wpin { height:118svh; } }
+
+  /* ── the swap ───────────────────────────────────────────────────────────
+     .sw marks a figure that holds two frames. The second is stacked on the
+     first and cross-fades; `.flip` is set by the ticker, hover overrides it
+     back to the worn frame so the pointer always resolves to a person. */
+  .fig.sw { --swd:1.1s; }
+  .fig.sw .im.dt { opacity:0; z-index:1; transition:opacity var(--swd) var(--ease); }
+  .fig.sw.flip .im.dt { opacity:1; }
+  @media (hover:hover) and (pointer:fine) {
+    .piece:hover .fig.sw .im.dt, .fig.sw:hover .im.dt { opacity:0; }
+  }
+  /* the tell: two marks under the frame, the filled one saying which you see.
+     Small, quiet, and only there so the change reads as deliberate. */
+  .fig.sw .swd { position:absolute; z-index:4; bottom:10px; left:50%; transform:translateX(-50%);
+    display:flex; gap:6px; pointer-events:none; opacity:.72; }
+  .fig.sw .swd i { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.34);
+    box-shadow:0 0 0 1px rgba(0,0,0,.28); transition:background .5s var(--ease); }
+  .fig.sw .swd i:first-child { background:rgba(255,255,255,.92); }
+  /* the second frame is high-key, so the dots invert over it or they vanish */
+  .fig.sw.flip .swd i { background:rgba(20,19,15,.26); box-shadow:0 0 0 1px rgba(255,255,255,.55); }
+  .fig.sw.flip .swd i:first-child { background:rgba(20,19,15,.26); }
+  .fig.sw.flip .swd i:last-child { background:rgba(20,19,15,.82); }
+  @media (hover:hover) and (pointer:fine) {
+    .piece:hover .fig.sw .swd i, .fig.sw:hover .swd i { background:rgba(255,255,255,.34); box-shadow:0 0 0 1px rgba(0,0,0,.28); }
+    .piece:hover .fig.sw .swd i:first-child, .fig.sw:hover .swd i:first-child { background:rgba(255,255,255,.92); }
+  }
+  @media (prefers-reduced-motion:reduce) { .fig.sw .im.dt { transition:none; } }
+
+  /* the clean frames sit on white; the figure's ground follows so the
+     cross-fade never flashes a black edge behind a high-key photograph */
+  .fig.sw { background:#0b0b0b; }
+  .fig.sw .im.dt { background:#f6f4ef; }
+
+  /* ── the rail's closing frame ───────────────────────────────────────────
+     Hidden in v50 when it held a still life of objects on lacquer. It holds
+     a woman photographed from behind now, so it is worth the half screen. */
+  /* on a desktop it is the last car of the horizontal rail; the rail sizes its
+     own pin from scrollWidth, so it simply makes room. Below 1000px the rail is
+     a swipe carousel and .hend sits outside it, so it becomes a plain closing
+     figure at the foot of the chapter. */
+  @media (min-width:1000px) { .hend { display:block; flex:0 0 min(58svh,560px); } .hend .fig { width:min(58svh,560px); } }
+  @media (max-width:999px) { .hend { display:block; margin-top:clamp(18px,4vw,28px); } .hend .fig { width:auto; } }

@@ -23,6 +23,9 @@ const W = [800, 1200, 1600, 2000];
 export const pic = (name, alt, sizes, lazy = true) => `<img src="/img/${name}-1200.jpg" srcset="${W.map(w => `/img/${name}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" alt="${alt}"${lazy ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`;
 export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div class="fig ${ratio} rv${extra ? " " + extra : ""}"><div class="im">${pic(name, alt, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
+// Two frames of one piece — worn, then clean on white. They change on their own
+// (see the ticker in script4) and the piece modal picks the second one up for free.
+export const figsw = (worn, clean, altw, altc, ratio, sizes) => `<div class="fig ${ratio} rv sw"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
 export const figd = (name, detail, alt, altd, ratio, sizes, cap = "") => `<div class="fig ${ratio} rv sigp"><div class="im">${pic(name, alt, sizes)}</div><div class="im dt">${pic(detail, altd, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* the loader: the exact mark, almost invisible, filled by molten light from below. Three layers of the same path: the ghost, the lit part under a rising liquid mask, and the solid that sets when the light reaches the top. */
 /* the loader mark: four layers of the exact symbol, each one a CSS mask, so every moving part is a transform the compositor can carry */
@@ -138,7 +141,7 @@ export const body = `
         <div class="veil2"></div>
         <div class="beats" id="beats">
           <div class="beat"><div class="k gold ol" data-en="01 · The box" data-he="01 · הקופסה">01 · The box</div><h2 class="h2" data-en="It arrives <em>closed, just for you.</em>" data-he="זה מגיע <em>סגור, רק בשבילכם.</em>">It arrives <em>closed, just for you.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט שלכם, התעודות שלו, והערכת שווי למבטח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Every stone, chosen <em>one by one.</em>" data-he="כל אבן, נבחרת <em>אחת אחת.</em>">Every stone, chosen <em>one by one.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before they are set." data-he="מדורגות על ידי GIA או IGI. אתם רואים אותן לפני השיבוץ.">Graded by GIA or IGI. You see them before they are set.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Every stone, chosen <em>one by one.</em>" data-he="כל אבן, נבחרת <em>אחת אחת.</em>">Every stone, chosen <em>one by one.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות על ידי GIA או IGI. אתם רואים אותן לפני שאנחנו משבצים.">Graded by GIA or IGI. You see them before we set them.</p></div>
           <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made for <em>one wrist. Yours.</em>" data-he="נעשה <em>לפרק יד אחד. שלכם.</em>">Made for <em>one wrist. Yours.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${mark("eng", "b")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
@@ -182,7 +185,7 @@ export const body = `
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Two ways in" data-he="02 · שתי דרכים">02 · Two ways in</div>
       <h2 class="h2 sp rv" data-en="Collection, <em>or bespoke.</em>" data-he="קולקציה, <em>או בהזמנה אישית.</em>">Collection, <em>or bespoke.</em></h2>
-      <p class="p rv d2" data-en="There is no shop." data-he="אין חנות.">There is no shop.</p>
+      <p class="p rv d2" data-en="Two ways in. Pick one." data-he="שתי דרכים להיכנס. בחרו אחת.">Two ways in. Pick one.</p>
     </div>
     <div class="tray" data-tray><div class="cards">
       <a class="card" href="#collection">
@@ -191,11 +194,11 @@ export const body = `
       </a>
       <a class="card" href="#bespoke">
         ${fig("earsil", "A diamond-set ear climber in white gold on black lacquer", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Bespoke" data-he="II · בהזמנה אישית">II · Bespoke</span></div><div class="t" data-en="Made only <em>for you</em>" data-he="נעשה רק <em>בשבילכם</em>">Made only <em>for you</em></div><p class="p" data-en="Begin with a stone. Or an idea." data-he="התחילו מאבן. או מרעיון.">Begin with a stone. Or an idea.</p><span class="lnk" data-en="Imagine it" data-he="דמיינו">Imagine it</span></div>
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · Bespoke" data-he="II · בהזמנה אישית">II · Bespoke</span></div><div class="t" data-en="Made only <em>for you</em>" data-he="נעשה רק <em>בשבילכם</em>">Made only <em>for you</em></div><p class="p" data-en="Bring a stone. Or just an idea." data-he="תביאו אבן. או סתם רעיון.">Bring a stone. Or just an idea.</p><span class="lnk" data-en="Imagine it" data-he="דמיינו">Imagine it</span></div>
       </a>
       <a class="card" href="#build">
         ${fig("tennis", "A diamond tennis bracelet of round brilliants in white gold, on black lacquer", "r45", SIZES_CARD)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · The Line" data-he="III · הקו">III · The Line</span></div><div class="t" data-en="The <em>signature</em>" data-he="<em>החתימה</em>">The <em>signature</em></div><p class="p" data-en="Our tennis bracelet, built to one wrist." data-he="צמיד הטניס שלנו, נבנה לפרק יד אחד.">Our tennis bracelet, built to one wrist.</p><span class="lnk" data-en="Design yours" data-he="עצבו את שלכם">Design yours</span></div>
+        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · The Line" data-he="III · הקו">III · The Line</span></div><div class="t" data-en="The <em>signature</em>" data-he="<em>החתימה</em>">The <em>signature</em></div><p class="p" data-en="Our tennis bracelet, built to your wrist." data-he="צמיד הטניס שלנו, נבנה לפרק היד שלכם.">Our tennis bracelet, built to your wrist.</p><span class="lnk" data-en="Design yours" data-he="עצבו את שלכם">Design yours</span></div>
       </a>
     </div></div>
     </div>
@@ -211,26 +214,26 @@ export const body = `
           <div class="hhead">
             <div class="k gold rv ol" data-en="03 · Collection" data-he="03 · הקולקציה">03 · Collection</div>
             <h2 class="h2 sp rv" data-en="The <em>Monogram.</em>" data-he="<em>המונוגרמה.</em>">The <em>Monogram.</em></h2>
-            <p class="p rv d2" data-en="The house mark, worn. Then two made once." data-he="סמל הבית, נלבש. ואז שניים שנעשו פעם אחת.">The house mark, worn. Then two made once.</p>
+            <p class="p rv d2" data-en="Three pieces wearing our mark. Then two we made once." data-he="שלושה תכשיטים עם הסמל שלנו. ואז שניים שעשינו פעם אחת.">Three pieces wearing our mark. Then two we made once.</p>
             <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
           </div>
           <div class="tray htr" data-tray><div class="pieces">
       <div class="piece" id="p-mneck">
-        ${fig("mono-neck", "The house monogram in pave diamonds on a fine white gold chain, worn at the throat", "r45", SIZES_PIECE)}
+        ${figsw("mono-neck", "mono-neck-p", "The house monogram in pave diamonds on a fine white gold chain, worn at the throat", "The monogram pendant on a fine chain, photographed on white", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="I · The Monogram" data-he="I · המונוגרמה">I · The Monogram</span></div><div class="t"><span dir="ltr">Monogram <em>Pendant</em></span></div>
           <p class="p" data-en="The house mark itself, in pav&eacute;, on a chain you never take off." data-he="סמל הבית עצמו, משובץ, על שרשרת שלא מורידים.">The house mark itself, in pav&eacute;, on a chain you never take off.</p>
           <div class="row k meta"><span>1.85 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Pendant" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-mwrist">
-        ${fig("mono-wrist", "A bracelet of interlaced house monogram links in pave diamonds, worn on the wrist", "r45", SIZES_PIECE)}
+        ${figsw("mono-wrist", "mono-wrist-p", "A bracelet of interlaced house monogram links in pave diamonds, worn on the wrist", "The monogram bracelet laid open, photographed on white", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · The Monogram" data-he="II · המונוגרמה">II · The Monogram</span></div><div class="t"><span dir="ltr">Monogram <em>Bracelet</em></span></div>
           <p class="p" data-en="The mark, repeated and interlaced, all the way round." data-he="הסמל, חוזר ונשזר, לאורך כל ההיקף.">The mark, repeated and interlaced, all the way round.</p>
           <div class="row k meta"><span>4.20 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Bracelet" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-mear">
-        ${fig("mono-ear", "An ear cuff shaped as the house monogram in pave diamonds, following the curve of the ear", "r45", SIZES_PIECE)}
+        ${figsw("mono-ear", "mono-ear-p", "An ear cuff shaped as the house monogram in pave diamonds, following the curve of the ear", "The monogram ear cuff, photographed on white", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · The Monogram" data-he="III · המונוגרמה">III · The Monogram</span></div><div class="t"><span dir="ltr">Monogram <em>Ear cuff</em></span></div>
           <p class="p" data-en="Follows the ear. Nothing pierces, nothing dangles." data-he="עוקב אחרי האוזן. בלי נקב, בלי תנועה.">Follows the ear. Nothing pierces, nothing dangles.</p>
           <div class="row k meta"><span>1.10 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
@@ -239,14 +242,14 @@ export const body = `
       <div class="piece" id="p-star">
         ${fig("star", "The Desert Star, an eighteen carat brilliant in a radiating halo", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="IV · One of one" data-he="IV · יחיד במינו">IV · One of one</span></div><div class="t"><span dir="ltr">The Desert <em>Star</em></span></div>
-          <p class="p" data-en="Made once. Offered once." data-he="נעשה פעם אחת. מוצע פעם אחת.">Made once. Offered once.</p>
+          <p class="p" data-en="One stone this big. When it goes, it is gone." data-he="אבן אחת בגודל כזה. כשהיא הולכת, היא הלכה.">One stone this big. When it goes, it is gone.</p>
           <div class="row k meta"><span>18.06 ct</span><i></i><span>D · IF</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Desert Star" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-sapphire">
         ${fig("sapphire", "Sapphire of the Gulf, a royal-blue sapphire in yellow gold", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="V · The only colour" data-he="V · הצבע היחיד">V · The only colour</span></div><div class="t"><span dir="ltr">Sapphire of <em>the Gulf</em></span></div>
-          <p class="p" data-en="The only colour in the house." data-he="הצבע היחיד בבית.">The only colour in the house.</p>
+          <p class="p" data-en="Everything else here is white. This is not." data-he="כל השאר כאן לבן. זה לא.">Everything else here is white. This is not.</p>
           <div class="row k meta"><span>8.42 ct</span><i></i><span data-en="Royal blue" data-he="כחול מלכותי">Royal blue</span><i></i><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Sapphire of the Gulf" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
@@ -254,7 +257,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
     </div></div>
     
           <div class="hend">
-            ${fig("flat", "The SILAVU collection laid on black lacquer", "r11", SIZES_ED, "", `<div class="cap k"><span data-en="Still life · black lacquer" data-he="טבע דומם · לכה שחורה">Still life · black lacquer</span><span>MMXXVI</span></div>`)}
+            ${fig("mono-back", "The monogram pendant worn low on the back, hair up, bare shoulders", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="Worn · the Monogram Pendant" data-he="נלבש · תליון המונוגרמה">Worn · the Monogram Pendant</span><span>MMXXVI</span></div>`)}
           </div>
         </div>
       </div>
@@ -278,7 +281,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <li class="bstep"><div class="bsim">${pic("sigb", "The finished SILAVU piece on black lacquer", SIZES_STEP)}<i class="bsw"></i></div><span class="bsn k">V</span><span class="bsl" data-en="Your piece" data-he="התכשיט שלכם">Your piece</span></li>
     </ol>
     <div class="bfoot rv d3">
-      <p class="bline" data-en="Your piece does not exist yet." data-he="התכשיט שלכם עדיין לא קיים.">Your piece does not exist yet.</p>
+      <p class="bline" data-en="Five steps, from an idea to a box in your hands." data-he="חמישה שלבים, מרעיון ועד קופסה בידיים שלכם.">Five steps, from an idea to a box in your hands.</p>
       <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-en="Begin" data-he="התחילו">Begin</a>
     </div>
     </div>
@@ -286,7 +289,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
 
   <section id="macro" data-n="" data-title-en="The stone" data-title-he="האבן" aria-label="Inside the stone">
     <div class="mfilm"><video id="insidevid" muted playsinline loop preload="none" poster="/img/one-2000.jpg" aria-hidden="true"></video><div class="mveil"></div>
-      <div class="mtxt"><div class="k gold" data-en="Inside one of the stones" data-he="בתוך אחת מהאבנים">Inside one of the stones</div><h2 class="h" data-en="This is what <em>you are choosing.</em>" data-he="זה מה <em>שאתם בוחרים.</em>">This is what <em>you are choosing.</em></h2></div>
+      <div class="mtxt"><div class="k gold" data-en="Inside one of the stones" data-he="בתוך אחת מהאבנים">Inside one of the stones</div><h2 class="h" data-en="This is what <em>you&rsquo;re choosing.</em>" data-he="זה מה <em>שאתם בוחרים.</em>">This is what <em>you&rsquo;re choosing.</em></h2></div>
     </div>
   </section>
 
@@ -369,7 +372,7 @@ ${SIG_LIVE ? SIG_PIECE : ""}
       <div class="copy">
         <div class="k gold rv ol" data-en="05 · How it works" data-he="05 · איך זה עובד">05 · How it works</div>
         <h2 class="h2 sp rv" data-en="How <em>it works.</em>" data-he="איך <em>זה עובד.</em>">How <em>it works.</em></h2>
-        <p class="p rv d2" data-en="One message. One person, from the first stone to your door." data-he="הודעה אחת. אדם אחד, מהאבן הראשונה ועד הדלת שלכם.">One message. One person, from the first stone to your door.</p>
+        <p class="p rv d2" data-en="One message. One person, all the way to your door." data-he="הודעה אחת. אדם אחד, עד הדלת שלכם.">One message. One person, all the way to your door.</p>
         <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" data-piece="A bespoke piece" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
       <div class="factsg">
       <div class="fact rv"><div class="num">I</div><div><div class="t" data-en="Seen in private" data-he="נראה בפרטיות">Seen in private</div><div class="d" data-en="In Dubai, in Tel Aviv, or wherever you are." data-he="בדובאי, בתל אביב, או בכל מקום שאתם בו.">In Dubai, in Tel Aviv, or wherever you are.</div></div></div>
