@@ -25,7 +25,7 @@ export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div clas
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
 // Two frames of one piece — worn, then clean on white. They change on their own
 // (see the ticker in script4) and the piece modal picks the second one up for free.
-export const figsw = (worn, clean, altw, altc, ratio, sizes) => `<div class="fig ${ratio} rv sw"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
+export const figsw = (worn, clean, altw, altc, ratio, sizes, mod = "") => `<div class="fig ${ratio} rv sw${mod ? " " + mod : ""}"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
 export const figd = (name, detail, alt, altd, ratio, sizes, cap = "") => `<div class="fig ${ratio} rv sigp"><div class="im">${pic(name, alt, sizes)}</div><div class="im dt">${pic(detail, altd, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* the loader: the exact mark, almost invisible, filled by molten light from below. Three layers of the same path: the ghost, the lit part under a rising liquid mask, and the solid that sets when the light reaches the top. */
 /* the loader mark: four layers of the exact symbol, each one a CSS mask, so every moving part is a transform the compositor can carry */
@@ -219,35 +219,35 @@ export const body = `
           </div>
           <div class="tray htr" data-tray><div class="pieces">
       <div class="piece" id="p-mneck">
-        ${figsw("mono-neck", "mono-neck-p", "The house monogram in pave diamonds on a fine white gold chain, worn at the throat", "The monogram pendant on a fine chain, photographed on white", "r45", SIZES_PIECE)}
+        ${figsw("mono-neck", "mono-neck-p", "The house monogram in pave diamonds on a fine white gold chain, worn at the throat", "The monogram pendant on a fine chain, photographed on white", "r45", SIZES_PIECE, "swl")}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="I · The Monogram" data-he="I · המונוגרמה">I · The Monogram</span></div><div class="t"><span dir="ltr">Monogram <em>Pendant</em></span></div>
           <p class="p" data-en="The house mark itself, in pav&eacute;, on a chain you never take off." data-he="סמל הבית עצמו, משובץ, על שרשרת שלא מורידים.">The house mark itself, in pav&eacute;, on a chain you never take off.</p>
           <div class="row k meta"><span>1.85 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Pendant" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-mwrist">
-        ${figsw("mono-wrist", "mono-wrist-p", "A bracelet of interlaced house monogram links in pave diamonds, worn on the wrist", "The monogram bracelet laid open, photographed on white", "r45", SIZES_PIECE)}
+        ${figsw("mono-wrist", "mono-wrist-p", "A bracelet of interlaced house monogram links in pave diamonds, worn on the wrist", "The monogram bracelet laid open, photographed on white", "r45", SIZES_PIECE, "swl")}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="II · The Monogram" data-he="II · המונוגרמה">II · The Monogram</span></div><div class="t"><span dir="ltr">Monogram <em>Bracelet</em></span></div>
           <p class="p" data-en="The mark, repeated and interlaced, all the way round." data-he="הסמל, חוזר ונשזר, לאורך כל ההיקף.">The mark, repeated and interlaced, all the way round.</p>
           <div class="row k meta"><span>4.20 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Bracelet" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-mear">
-        ${figsw("mono-ear", "mono-ear-p", "An ear cuff shaped as the house monogram in pave diamonds, following the curve of the ear", "The monogram ear cuff, photographed on white", "r45", SIZES_PIECE)}
+        ${figsw("mono-ear", "mono-ear-p", "An ear cuff shaped as the house monogram in pave diamonds, following the curve of the ear", "The monogram ear cuff, photographed on white", "r45", SIZES_PIECE, "swl")}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="III · The Monogram" data-he="III · המונוגרמה">III · The Monogram</span></div><div class="t"><span dir="ltr">Monogram <em>Ear cuff</em></span></div>
           <p class="p" data-en="Follows the ear. Nothing pierces, nothing dangles." data-he="עוקב אחרי האוזן. בלי נקב, בלי תנועה.">Follows the ear. Nothing pierces, nothing dangles.</p>
           <div class="row k meta"><span>1.10 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Ear cuff" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-star">
-        ${fig("star", "The Desert Star, an eighteen carat brilliant in a radiating halo", "r45", SIZES_PIECE)}
+        ${figsw("star-worn", "star", "The Desert Star worn at the throat, an eighteen carat brilliant in a radiating halo", "The Desert Star, an eighteen carat brilliant in a radiating halo, on black lacquer", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="IV · One of one" data-he="IV · יחיד במינו">IV · One of one</span></div><div class="t"><span dir="ltr">The Desert <em>Star</em></span></div>
           <p class="p" data-en="One stone this big. When it goes, it is gone." data-he="אבן אחת בגודל כזה. כשהיא הולכת, היא הלכה.">One stone this big. When it goes, it is gone.</p>
           <div class="row k meta"><span>18.06 ct</span><i></i><span>D · IF</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Desert Star" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
       <div class="piece" id="p-sapphire">
-        ${fig("sapphire", "Sapphire of the Gulf, a royal-blue sapphire in yellow gold", "r45", SIZES_PIECE)}
+        ${figsw("sapphire-worn", "sapphire", "Sapphire of the Gulf worn on a hand, a royal-blue sapphire in yellow gold", "Sapphire of the Gulf, a royal-blue sapphire in yellow gold, on black lacquer", "r45", SIZES_PIECE)}
         <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="V · The only colour" data-he="V · הצבע היחיד">V · The only colour</span></div><div class="t"><span dir="ltr">Sapphire of <em>the Gulf</em></span></div>
           <p class="p" data-en="Everything else here is white. This is not." data-he="כל השאר כאן לבן. זה לא.">Everything else here is white. This is not.</p>
           <div class="row k meta"><span>8.42 ct</span><i></i><span data-en="Royal blue" data-he="כחול מלכותי">Royal blue</span><i></i><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>

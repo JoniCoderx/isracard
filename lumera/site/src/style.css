@@ -1907,26 +1907,38 @@
     .piece:hover .fig.sw .im.dt, .fig.sw:hover .im.dt { opacity:0; }
   }
   /* the tell: two marks under the frame, the filled one saying which you see.
-     Small, quiet, and only there so the change reads as deliberate. */
+     Small, quiet, and only there so the change reads as deliberate.
+
+     The colours come through variables rather than a pile of overrides,
+     because there are three states to satisfy: the worn frame (dark, so light
+     dots), the monogram trio's clean frame (high-key, so the dots invert), and
+     hover — which pulls the worn frame back and therefore has to pull the
+     light dots back with it while .flip is still set. */
+  .fig.sw {
+    --on:rgba(255,255,255,.92); --off:rgba(255,255,255,.34); --dr:rgba(0,0,0,.28);
+    --da:var(--on); --db:var(--off);
+  }
+  .fig.sw.flip { --da:var(--off); --db:var(--on); }
+  .fig.sw.swl.flip { --on:rgba(20,19,15,.82); --off:rgba(20,19,15,.26); --dr:rgba(255,255,255,.55); }
+  @media (hover:hover) and (pointer:fine) {
+    .piece:hover .fig.sw.flip, .fig.sw.flip:hover {
+      --on:rgba(255,255,255,.92); --off:rgba(255,255,255,.34); --dr:rgba(0,0,0,.28);
+      --da:var(--on); --db:var(--off);
+    }
+  }
   .fig.sw .swd { position:absolute; z-index:4; bottom:10px; left:50%; transform:translateX(-50%);
     display:flex; gap:6px; pointer-events:none; opacity:.72; }
-  .fig.sw .swd i { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.34);
-    box-shadow:0 0 0 1px rgba(0,0,0,.28); transition:background .5s var(--ease); }
-  .fig.sw .swd i:first-child { background:rgba(255,255,255,.92); }
-  /* the second frame is high-key, so the dots invert over it or they vanish */
-  .fig.sw.flip .swd i { background:rgba(20,19,15,.26); box-shadow:0 0 0 1px rgba(255,255,255,.55); }
-  .fig.sw.flip .swd i:first-child { background:rgba(20,19,15,.26); }
-  .fig.sw.flip .swd i:last-child { background:rgba(20,19,15,.82); }
-  @media (hover:hover) and (pointer:fine) {
-    .piece:hover .fig.sw .swd i, .fig.sw:hover .swd i { background:rgba(255,255,255,.34); box-shadow:0 0 0 1px rgba(0,0,0,.28); }
-    .piece:hover .fig.sw .swd i:first-child, .fig.sw:hover .swd i:first-child { background:rgba(255,255,255,.92); }
-  }
+  .fig.sw .swd i { width:5px; height:5px; border-radius:50%; box-shadow:0 0 0 1px var(--dr);
+    transition:background .5s var(--ease), box-shadow .5s var(--ease); }
+  .fig.sw .swd i:first-child { background:var(--da); }
+  .fig.sw .swd i:last-child { background:var(--db); }
   @media (prefers-reduced-motion:reduce) { .fig.sw .im.dt { transition:none; } }
 
-  /* the clean frames sit on white; the figure's ground follows so the
-     cross-fade never flashes a black edge behind a high-key photograph */
+  /* a high-key second frame needs its own ground under it, or the cross-fade
+     shows black through the photograph's soft edges. Only .swl swaps to white;
+     the two one-of-ones swap to black lacquer and stay dark throughout. */
   .fig.sw { background:#0b0b0b; }
-  .fig.sw .im.dt { background:#f6f4ef; }
+  .fig.sw.swl .im.dt { background:#f6f4ef; }
 
   /* ── the rail's closing frame ───────────────────────────────────────────
      Hidden in v50 when it held a still life of objects on lacquer. It holds

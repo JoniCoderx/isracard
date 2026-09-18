@@ -58,6 +58,15 @@ for w in 800 1200 1600 2000; do
   convert "$T/pear.png"   -resize ${w}x -quality 88 -strip "$OUT/mono-ear-p-$w.jpg"
 done
 
+# ── the two one-of-ones, worn. The Desert Star at a throat and the Sapphire of
+#    the Gulf on a hand, so every card on the rail has a person in it. ──
+curl -sf -o "$T/wstar.png"  $B/hf_20260918_004850_0e602694-e655-4085-bb07-19c896d03f97.png
+curl -sf -o "$T/wsapph.png" $B/hf_20260918_004850_2b7884e4-7a2e-4016-9a56-811dbbb49975.png
+for w in 800 1200 1600 2000; do
+  convert "$T/wstar.png"  -resize ${w}x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/star-worn-$w.jpg"
+  convert "$T/wsapph.png" -resize ${w}x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/sapphire-worn-$w.jpg"
+done
+
 # ── the rail's closing frame: the pendant worn low on the back ──
 curl -sf -o "$T/mback.png" $B/hf_20260918_001929_560c71c5-62fc-4a67-b2be-daff04c70e06.png
 for w in 800 1200 1600 2000; do
