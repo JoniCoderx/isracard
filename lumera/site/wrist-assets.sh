@@ -35,4 +35,15 @@ for w in 800 1200 1600 2000; do
   convert "$T/earsil.png"  -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil-$w.jpg"
   convert "$T/earsil2.png" -resize ${w}x -quality 84 -sampling-factor 4:2:0 -strip "$OUT/earsil2-$w.jpg"
 done
-ls -la "$OUT"/wrist*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg "$OUT"/tennis*.jpg "$OUT"/earsil*.jpg
+# ── the monogram collection, worn: the house mark as a necklace, a bracelet and
+#    an ear piece, photographed on a body rather than on lacquer ──
+curl -sf -o "$T/wneck.png" $B/hf_20260917_235243_65979adf-98d3-4536-a98f-c91303712574.png
+curl -sf -o "$T/wwrist.png" $B/hf_20260917_235243_bd09ee75-7834-400c-a2ae-81aabff5e2e2.png
+curl -sf -o "$T/wear.png" $B/hf_20260917_235243_82c78547-f0ac-44e2-8321-9a824865f6d1.png
+for w in 800 1200 1600 2000; do
+  convert "$T/wneck.png"  -resize ${w}x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/mono-neck-$w.jpg"
+  convert "$T/wwrist.png" -resize ${w}x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/mono-wrist-$w.jpg"
+  convert "$T/wear.png"   -resize ${w}x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/mono-ear-$w.jpg"
+done
+
+ls -la "$OUT"/wrist*.jpg "$OUT"/mono-*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg "$OUT"/tennis*.jpg "$OUT"/earsil*.jpg
