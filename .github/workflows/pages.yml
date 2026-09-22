@@ -51,6 +51,26 @@ jobs:
           exit $rc
       - name: ImageMagick and ffmpeg for the crops and the film
         run: sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick ffmpeg
+      # The two portrait loops are what a phone actually downloads, and they
+      # arrived at 3.3MB and 4.8MB — eight megabytes of background motion
+      # before a single photograph. They are muted, looping and decorative, so
+      # they are re-cut here at a phone's real pixel count with the audio track
+      # dropped. The landscape masters are untouched.
+      - name: The loops, cut for a phone
+        run: |
+          set -e
+          for v in hero-loop-v inside-v; do
+            [ -f "dist/v/$v.mp4" ] || continue
+            before=$(stat -c%s "dist/v/$v.mp4")
+            ffmpeg -nostdin -v error -i "dist/v/$v.mp4" -an               -vf "scale='min(720,iw)':-2:flags=lanczos"               -c:v libx264 -preset slow -crf 31 -profile:v high -pix_fmt yuv420p               -movflags +faststart "dist/v/$v.tmp.mp4" -y
+            after=$(stat -c%s "dist/v/$v.tmp.mp4")
+            if [ "$after" -gt 0 ] && [ "$after" -lt "$before" ]; then
+              mv "dist/v/$v.tmp.mp4" "dist/v/$v.mp4"
+              echo "$v: $((before/1024))KB -> $((after/1024))KB"
+            else
+              rm -f "dist/v/$v.tmp.mp4"; echo "$v: left alone ($((before/1024))KB)"
+            fi
+          done
       - name: Wrist photographs
         run: bash lumera/site/wrist-assets.sh dist/img
       - name: Collection photography (committed originals)

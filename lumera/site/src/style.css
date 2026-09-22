@@ -2285,3 +2285,84 @@
   .piece.soon .swhen { display:flex; align-items:center; gap:7px; margin-top:2px; color:var(--gold); font-size:.55rem; }
   .piece.soon .swhen i { width:4px; height:4px; border-radius:50%; background:currentColor; flex:none; }
 
+
+  /* ══ v63 — the phone ══════════════════════════════════════════════════════
+     Measured on a 390: the product window ran 2.34 screens, the photograph
+     alone took 503px of the first one, and "Book a private viewing" sat 320px
+     below the fold — you had to scroll most of a screen past a specification
+     table to find out you could do anything at all.
+
+     The price and the two actions travel with you now, pinned to the bottom
+     of the window; the photograph is cut to fit beside them; and the
+     specification arrives folded. ─────────────────────────────────────────── */
+  .mbuy { display:grid; gap:12px; }
+  @media (max-width:899px) {
+    .mbox .mgal { padding:0; }
+    .mbox .mim { aspect-ratio:1/1; max-height:38svh; }
+    .mbox .mbd { padding:18px 20px 24px; gap:13px; }
+    .mbox .t { font-size:clamp(1.6rem,7.5vw,2.1rem); }
+    .mbox .mbd .lead { font-size:.97rem; }
+    .mbox .mbd .story { font-size:.9rem; line-height:1.58; }
+    .gthumbs { gap:7px; padding:10px 20px 0; flex-wrap:nowrap; overflow-x:auto;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    .gthumbs::-webkit-scrollbar { display:none; }
+    .gthumbs button { width:44px; height:44px; flex:none; border-radius:7px; }
+    .mkeys .mk { padding:10px 11px; gap:3px; }
+    .mkeys .kv { font-size:.9rem; }
+
+    /* the buy bar: it sits in the flow where it belongs and sticks to the
+       bottom edge until you reach it, so the price and the way to act on it
+       are never off screen */
+    .mbuy { position:sticky; bottom:0; z-index:6; gap:10px;
+      margin:2px -20px 0; padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+      background:linear-gradient(to bottom, rgba(5,5,5,.86), #050505 38%);
+      -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+      border-top:1px solid var(--line); }
+    .mbuy .mprice { border:0; padding:0; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+    .mbuy .mprice > div { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+    .mbuy .mprice .pv { font-size:1.12rem; }
+    .mbuy .mprice .pn { margin-top:0; max-width:22ch; }
+    /* one action in the bar, whole and unclipped — "Book a private viewing"
+       does not fit in half of a 350px column, and half of it is worse than
+       none. Reserving and the try-on follow it in the flow. */
+    .mbuy .mprim { width:100%; justify-content:center; text-align:center; }
+    .macts .btn { flex:1 1 100%; justify-content:center; text-align:center; }
+    .macc { margin-top:4px; }
+  }
+
+  /* ── the footer, and the length of the thing on a phone ──────────────────
+     Measured: the footer alone ran 1.23 screens and the whole page 17.2. The
+     footer was four stacked columns under a full-width mark with ninety-six
+     pixels of air above them. Two columns, a smaller mark, less air. And the
+     collection's photographs were 4:5 at full width — a screen and a quarter
+     of picture per piece before a word of it. ───────────────────────────── */
+  @media (max-width:759px) {
+    #end { padding:clamp(40px,8vw,64px) 0 26px !important; }
+    .fbig { gap:12px; margin-bottom:clamp(26px,5vw,40px); }
+    .fbig svg.sy.huge { height:clamp(52px,14vw,72px); }
+    .fbig .k { font-size:.52rem; line-height:1.7; }
+    .fgrid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px 18px; }
+    .fcol { gap:7px; }
+    .fcol a, .fcol span { font-size:.88rem; }
+    .fbot { margin-top:26px; padding-top:16px; }
+
+    /* the pieces: square on a phone, so the photograph and the name that goes
+       with it are on the same screen */
+    .pgrid .piece .fig.r11 { aspect-ratio:1/1; }
+    .pgrid { gap:26px; }
+    .pgrid .piece .bd { padding-top:12px; gap:5px; }
+    .pgrid .piece .p { font-size:.9rem; }
+    /* the pieces still to come sit two across rather than one under the other */
+    .sgrid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .piece.soon .sbd { padding:13px 13px 15px; gap:6px; }
+    .piece.soon .t { font-size:1.02rem; }
+    .piece.soon .p { font-size:.78rem; }
+    .nextup { margin-top:30px; padding-top:18px; }
+    .mfilm { height:58svh; min-height:360px; }
+  }
+
+  /* the price sits beside its action where there is room for both */
+  @media (min-width:900px) {
+    .mbuy { grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:18px; }
+    .mbuy .mprim { justify-self:end; }
+  }

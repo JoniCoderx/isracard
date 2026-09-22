@@ -314,6 +314,9 @@
       $("pmSpecs").className = "mspecs";
       $("pmSpecs").innerHTML = vals.map(function (v, i) { return '<div class="dc"><div class="dval">' + v.innerHTML + '</div><div class="k">' + (v.getAttribute("data-l" + lang) || L[i] || "") + "</div></div>"; }).join("");
     }
+    /* the specification stands open where there is room for it and folded on a
+       phone, where eleven rows is most of a screen before you have seen a price */
+    var sw = $("pmSpecWrap"); if (sw) sw.open = innerWidth >= 900;
     $("pmReq").setAttribute("data-piece", pmPiece);
     $("pmRes").setAttribute("data-piece", pmPiece);
     /* the try-on draws a tennis line on a photograph; it has nothing to say

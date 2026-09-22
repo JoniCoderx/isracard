@@ -428,13 +428,16 @@ ${markDefs()}
       <p class="p lead" id="pmP"></p>
       <div class="mkeys" id="pmKeys"></div>
       <p class="p story" id="pmStory"></p>
+      <div class="mbuy">
       <div class="mprice">
         <div><span class="pv" id="pmPrice" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span>
         <span class="k pn" data-en="Every piece is quoted to the stones it carries" data-he="כל תכשיט מתומחר לפי האבנים שבו">Every piece is quoted to the stones it carries</span></div>
       </div>
-      <div class="macts"><a class="btn solid" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" id="pmRes" data-en="Reserve this piece" data-he="שריינו את התכשיט">Reserve this piece</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
+      <a class="btn solid mprim" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
+      </div>
+      <div class="macts"><a class="btn" href="#concierge" id="pmRes" data-en="Reserve this piece" data-he="שריינו את התכשיט">Reserve this piece</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
       <div class="macc">
-        <details class="mdt" open><summary><span data-en="Specification" data-he="מפרט">Specification</span></summary><div class="mspecs" id="pmSpecs"></div></details>
+        <details class="mdt" id="pmSpecWrap"><summary><span data-en="Specification" data-he="מפרט">Specification</span></summary><div class="mspecs" id="pmSpecs"></div></details>
         <details class="mdt" id="pmStoneWrap"><summary><span data-en="The stones" data-he="האבנים">The stones</span></summary><p class="p" id="pmStones"></p></details>
         <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivered in person" data-he="מסירה אישית">Delivered in person</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
         <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and care" data-he="אספקה וטיפול">Delivery and care</span></summary><p class="p" id="pmCare"></p></details>
