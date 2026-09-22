@@ -105,8 +105,19 @@
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
   var box = sequence({
-    pin: "stonepin", canvas: "boxcv", n: 96, dir: "/f/box/",
-    set: function () { return phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"); },
+    pin: "stonepin", canvas: "boxcv", n: 96, dir: "/f/box/", ext: ".webp",
+    /* Four tiers now. The frames are cut from a 4K restoration rather than
+       fetched as 2560 JPEGs that had themselves been upscaled from something
+       smaller — which is why the box went soft on a wide screen: the canvas
+       asked for 3840 and the strip only ever had about 2560 of real detail in
+       it, at 58KB a frame. xx is for the screens that actually have the
+       pixels; everything below it is a downscale of the same master. */
+    set: function () {
+      if (phone) return "m";
+      var px = innerWidth * Math.min(devicePixelRatio || 1, 2);
+      return px >= 3200 ? "xx" : px >= 2400 ? "x" : "d";
+    },
+    src: function (set) { return set === "m" ? 1080 : set === "xx" ? 3840 : set === "x" ? 2560 : 1920; },
     at: beatsAt
   });
 

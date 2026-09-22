@@ -2,7 +2,10 @@
    agree, is anything duplicated that should not be, is the document structured
    the way a reader's software expects. */
 import fs from "fs";
-const src = fs.readFileSync("/home/user/isracard/lumera/site/src/body.mjs", "utf8");
+/* the built page, not the template: the Collection is rendered from
+   pieces.mjs now, so reading the source would audit the template literals
+   rather than the words a reader actually sees */
+const src = fs.readFileSync("/home/user/isracard/lumera/site/silavu-page.html", "utf8");
 const out = [];
 
 /* 1. every data-en must have a data-he and vice versa */

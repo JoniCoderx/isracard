@@ -6,21 +6,37 @@ export const MARK_B = "M 433.0 0.2 C 432.2 0.3, 428.3 0.6, 424.3 0.9 C 414.0 1.6
 export const MARK_BW = 874.5;
 export const MARK_XS = "M 427 0 C 390 3, 354 15, 319 37 C 269 69, 234 119, 228 171 C 223 204, 231 238, 248 268 C 261 289, 277 308, 306 334 C 321 348, 358 378, 383 396 C 386 399, 396 405, 404 412 C 423 426, 446 443, 466 457 C 544 515, 591 553, 606 570 C 622 590, 628 613, 623 646 C 622 655, 622 658, 624 659 C 627 661, 631 660, 636 655 C 652 639, 661 621, 664 600 C 668 569, 658 537, 638 513 C 626 500, 615 490, 568 453 C 557 445, 546 436, 543 434 C 527 421, 515 412, 489 392 C 483 388, 458 369, 432 350 C 364 299, 355 291, 338 276 C 311 253, 297 234, 290 212 C 279 177, 288 129, 313 90 C 324 73, 341 56, 358 43 C 388 21, 427 7, 453 10 C 461 11, 474 14, 483 17 C 548 38, 598 104, 602 175 C 603 205, 597 231, 582 255 C 569 277, 543 306, 504 341 C 490 354, 487 357, 486 359 C 485 363, 486 366, 489 369 C 492 372, 506 382, 509 384 C 513 386, 517 386, 522 383 C 524 381, 523 382, 558 350 C 612 300, 621 291, 634 273 C 647 254, 656 231, 659 206 C 659 199, 659 181, 659 174 C 655 139, 640 106, 616 78 C 580 34, 527 7, 470 1 C 464 0, 435 -0, 427 0 M 678 289 C 667 289, 652 292, 645 294 C 637 296, 631 302, 632 307 C 633 309, 637 310, 645 308 C 655 306, 658 306, 663 306 C 699 302, 733 311, 762 331 C 798 356, 825 401, 835 452 C 841 486, 838 521, 826 553 C 807 601, 764 636, 716 643 C 706 645, 692 645, 682 644 C 671 643, 667 644, 664 647 C 660 651, 661 655, 666 658 C 675 661, 712 663, 733 660 C 767 656, 801 641, 826 619 C 858 591, 879 552, 884 511 C 888 473, 881 435, 864 399 C 833 336, 777 297, 707 289 C 702 289, 683 288, 678 289 M 197 289 C 151 291, 107 309, 70 339 C 65 344, 52 357, 47 362 C 14 402, -4 454, 1 501 C 7 570, 50 627, 113 650 C 137 659, 161 663, 186 661 C 204 660, 224 656, 238 650 C 246 647, 252 640, 251 636 C 250 633, 246 633, 235 636 C 216 642, 204 644, 187 644 C 160 644, 138 638, 116 623 C 85 602, 61 565, 52 525 C 47 503, 47 473, 52 451 C 65 390, 103 340, 154 318 C 171 311, 185 307, 205 305 C 219 304, 224 302, 224 296 C 225 292, 222 290, 213 289 C 210 289, 202 289, 197 289 M 242 301 C 238 302, 236 304, 230 309 C 215 323, 205 343, 203 363 C 202 369, 202 381, 203 386 C 206 409, 217 430, 236 452 C 251 470, 282 497, 335 538 C 377 570, 385 576, 442 617 C 512 668, 531 683, 554 706 C 577 730, 588 747, 592 767 C 593 772, 593 783, 592 789 C 590 811, 577 834, 553 857 C 540 871, 532 877, 506 895 C 484 909, 478 914, 469 923 C 462 930, 457 936, 451 945 C 445 957, 440 957, 433 945 C 428 937, 424 931, 415 923 C 407 914, 399 908, 383 897 C 353 877, 338 865, 323 848 C 304 826, 290 797, 286 771 C 285 761, 284 758, 285 747 C 285 730, 286 720, 292 706 C 303 679, 324 654, 365 619 C 369 616, 373 612, 375 611 C 382 605, 383 600, 377 595 C 375 593, 360 581, 357 580 C 353 578, 349 578, 344 580 C 339 583, 297 620, 279 638 C 246 669, 232 694, 227 726 C 221 764, 235 812, 261 844 C 282 871, 308 889, 351 909 C 370 918, 383 926, 393 934 C 412 949, 424 966, 434 989 C 438 997, 439 999, 442 1000 C 445 1001, 447 998, 451 989 C 459 969, 467 956, 480 942 C 494 928, 504 922, 537 906 C 560 894, 567 890, 579 883 C 598 870, 615 854, 627 838 C 646 812, 655 779, 651 751 C 647 726, 637 704, 620 681 C 618 679, 616 677, 615 675 C 614 673, 599 659, 591 651 C 569 631, 525 596, 480 564 C 467 554, 436 532, 426 525 C 376 489, 323 447, 299 427 C 269 401, 255 380, 249 355 C 247 347, 246 342, 246 333 C 246 324, 246 321, 248 313 C 249 307, 250 304, 249 302 C 248 300, 245 300, 242 301 M 610 332 C 608 333, 605 335, 593 346 C 586 353, 575 363, 569 369 C 563 375, 556 382, 552 386 C 543 394, 541 397, 541 401 C 541 403, 542 405, 545 408 C 550 412, 606 457, 608 458 C 611 459, 614 459, 616 456 C 618 454, 618 456, 618 408 C 618 352, 618 337, 617 335 C 616 333, 613 331, 610 332 M 272 517 C 269 518, 268 520, 267 524 C 267 528, 267 607, 268 609 C 270 615, 275 615, 281 609 C 283 608, 289 602, 295 596 C 301 590, 310 583, 315 579 C 327 567, 328 566, 328 562 C 328 557, 327 556, 308 541 C 299 534, 289 526, 285 523 C 281 521, 278 518, 277 518 C 275 517, 273 517, 272 517";
 export const MARK_XSW = 885.2;
+/* The symbol, defined once.
+   ────────────────────────────────────────────────────────────────────────────
+   MARK_B is thirteen thousand characters of path data and it was appearing
+   twenty times in the page — a quarter of a megabyte of HTML that is the same
+   quarter of a megabyte twenty times over. Brotli squeezes the repetition on
+   the wire, but the browser still parses every copy and builds twenty separate
+   paths out of them.
+
+   The decorative marks reference one <symbol> now. The two that are drawn on
+   — the hero signature and the footer lockup — keep real paths, because their
+   animation is written against `svg.sy path` and a <use> puts that path inside
+   a shadow tree where the selector cannot reach it. */
+export const markDefs = () => `<svg class="symdefs" aria-hidden="true" focusable="false"><symbol id="symb" viewBox="0 0 ${Math.ceil(MARK_BW)} 1000"><path d="${MARK_B}" pathLength="1"/></symbol></svg>`;
+export const markUse = (cls) => `<svg class="sy${cls ? " " + cls : ""}" viewBox="0 0 ${Math.ceil(MARK_BW)} 1000" aria-hidden="true"><use href="#symb"/></svg>`;
+
 export const mark = (cls, cut) => { const d = cut === "b" ? MARK_B : cut === "xs" ? MARK_XS : MARK, w = cut === "b" ? MARK_BW : cut === "xs" ? MARK_XSW : MARK_W; return `<svg class="sy${cls ? " " + cls : ""}" viewBox="0 0 ${Math.ceil(w)} 1000" aria-hidden="true"><path d="${d}" pathLength="1"/></svg>`; };
 /* 02 — the wordmark: six letters drawn as one weight of line, terminals cut square; A and V cut like facets */
 export const LOGO = ["M54,16 A24,24 0 1 0 28,50 A24,24 0 1 1 2,84", "M118,0 V100", "M178,0 V100 H228", "M286,100 L318,0 L350,100", "M356,0 L388,100 L420,0", "M480,0 V66 A32,32 0 0 0 544,66 V0"];
 /* the wordmark is set in type, not drawn: Jost, capitals, wide tracking. The symbol is the distinctive element; the word supports it. */
 export const logo = (cls) => `<span class="lg${cls ? " " + cls : ""}" role="img" aria-label="SILAVU" dir="ltr">SILAVU</span>`;
 /* 03 — the lockup */
-export const lockup = (cls) => `<span class="lk${cls ? " " + cls : ""}">${mark("", "b")}${logo()}</span>`;
+export const lockup = (cls) => `<span class="lk${cls ? " " + cls : ""}">${markUse("")}${logo()}</span>`;
 /* the seal: the symbol in a thin ring, for the certificate, the valuation and the commissioned piece */
 export const seal = (cls) => `<svg class="seal${cls ? " " + cls : ""}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47"/><path class="sm" d="${MARK_B}" transform="translate(${(50 - MARK_BW * 0.06 / 2).toFixed(2)} 20) scale(.06)"/></svg>`;
 export const emblem = (cls) => mark(cls);
 export const gemUse = () => mark("sm", "b");
+import { PIECES, CATS, SOON } from "./pieces.mjs";
 export const wmk = (cls) => logo(cls);
 const W = [800, 1200, 1600, 2000];
 /* a contained photograph: 4:5, 1:1 or 16:9, in four widths */
-export const pic = (name, alt, sizes, lazy = true) => `<img src="/img/${name}-1200.jpg" srcset="${W.map(w => `/img/${name}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" alt="${alt}"${lazy ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`;
+export const pic = (name, alt, sizes, lazy = true, widths = W) => `<img src="/img/${name}-${widths[Math.min(1, widths.length - 1)]}.jpg" srcset="${widths.map(w => `/img/${name}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" alt="${alt}"${lazy ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`;
 export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div class="fig ${ratio} rv${extra ? " " + extra : ""}"><div class="im">${pic(name, alt, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
 // Two frames of one piece — worn, then clean on white. They change on their own
@@ -37,6 +53,49 @@ export const imark = () => {
 };
 const T = (tag, cls, en, he, extra = "") => `<${tag} class="${cls}" data-en="${en.replace(/"/g, "&quot;")}" data-he="${he.replace(/"/g, "&quot;")}"${extra}>${en}</${tag}>`;
 
+/* ── the Collection, rendered from pieces.mjs ────────────────────────────────
+   Cards, categories and the piece window all read the same objects, so a new
+   piece is a new object and nothing here changes. */
+const KW = [640, 900, 1254];                 /* what the bracelet was actually shot at */
+const SIZES_PC = "(min-width:1100px) 23vw, (min-width:760px) 45vw, 78vw";
+const esc = (x) => String(x).replace(/"/g, "&quot;");
+
+function pieceCard(p) {
+  const a = p.shots[0], b = p.shots[1] || p.shots[0];
+  const wide = p.id === "knot" ? KW : undefined;
+  const shots = JSON.stringify(p.shots.map(x => ({ i: x.img, a: x.alt.en, h: x.alt.he, w: wide || null })));
+  const specs = JSON.stringify(p.specs.map(r => [r[0].en, r[0].he, r[1].en, r[1].he]));
+  /* the last figure is the price, and the currency switch looks for it by name */
+  /* a carat weight and a clarity grade read the same in every language;
+     marking them as translated pairs only makes the copy audit report them
+     as untranslated, correctly */
+  const meta = p.meta.map((m, i) => m.en === m.he
+    ? `<span class="${i === p.meta.length - 1 ? "price por" : ""}" dir="ltr">${m.en}</span>`
+    : `<span class="${i === p.meta.length - 1 ? "price por" : ""}" data-en="${esc(m.en)}" data-he="${esc(m.he)}">${m.en}</span>`).join("<i></i>");
+  return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}" data-shots="${esc(shots)}" data-specs="${esc(specs)}">
+        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt.en, SIZES_PC, true, wide)}</div><div class="im dt">${pic(b.img, b.alt.en, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>
+        <div class="bd"><div class="k sig">${markUse("tiny")}<span dir="ltr">${p.ref}</span></div>
+          <div class="t">${T("span", "nm", p.name.en, p.name.he)}</div>
+          <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
+          <div class="row k meta">${meta}</div>
+          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-en="Reserve" data-he="שריון">Reserve</a></div></div>
+      </article>`;
+}
+
+function soonCard(x) {
+  return `<article class="piece soon" data-cat="${x.cat}" aria-disabled="true">
+        <div class="fig r11"><div class="sm" aria-hidden="true">${markUse("")}</div></div>
+        <div class="bd"><div class="k sig">${markUse("tiny")}<span data-en="In the workshop" data-he="בסדנה">In the workshop</span></div>
+          <div class="t">${T("span", "nm", x.name.en, x.name.he)}</div>
+          <p class="p" data-en="Photographed soon." data-he="יצולם בקרוב.">Photographed soon.</p></div>
+      </article>`;
+}
+
+const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
+  CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
+}</div>
+    <div class="pgrid">${PIECES.map(pieceCard).join("\n")}${SOON.map(soonCard).join("\n")}</div>`;
+
 const SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
 const bandItems = [["SILAVU", "SILAVU"], ["Dubai", "דובאי"], ["Tel Aviv", "תל אביב"], ["High jewellery", "תכשיטי יוקרה"], ["Made by hand", "נעשה ביד"], ["GIA · IGI certified", "מאושר GIA · IGI"], ["By appointment", "בתיאום מראש"]];
@@ -47,13 +106,14 @@ export const SIG_LIVE = true;
 const SIG_PIECE = `
       <div class="piece" id="p-sigb">
         ${figd("sigb", "sigbd", "The Signature Chain, the SILAVU symbol in polished platinum on a slender chain, on black lacquer", "The clasp of the Signature Chain, engraved SILAVU", "r45", SIZES_PIECE, `<div class="cap k"><span data-en="Atelier rendering" data-he="הדמיית הסטודיו">Atelier rendering</span></div>`)}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span data-en="V · Signature" data-he="V · חתימה">V · Signature</span></div><div class="t"><span dir="ltr">The Signature <em>Chain</em></span></div>
+        <div class="bd"><div class="k sig">${markUse("tiny")}<span data-en="V · Signature" data-he="V · חתימה">V · Signature</span></div><div class="t"><span dir="ltr">The Signature <em>Chain</em></span></div>
           <p class="p" data-en="The house symbol in polished platinum. The clasp carries the name." data-he="סמל הבית בפלטינה מלוטשת. הסוגר נושא את השם.">The house symbol in polished platinum. The clasp carries the name.</p>
           <div class="row k meta"><span data-en="Platinum" data-he="פלטינה" data-len="Metal" data-lhe="מתכת">Platinum</span><i></i><span data-en="Polished or pavé" data-he="מלוטש או פאווה" data-len="Finish" data-lhe="גימור">Polished or pavé</span><i></i><span data-en="Engraved clasp" data-he="סוגר חרוט" data-len="Detail" data-lhe="פרט">Engraved clasp</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה" data-len="Price" data-lhe="מחיר">Price on request</span></div>
           <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Signature Chain" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
       </div>
 `;
 export const body = `
+${markDefs()}
 <div id="silavu">
 <div id="intro">
   <button class="lang introlang" id="langBtn2" aria-label="English">EN</button>
@@ -86,7 +146,7 @@ export const body = `
 
 <div id="menu" aria-hidden="true">
   <button class="btn mclose" id="menuClose" data-en="Close" data-he="סגירה">Close</button>
-  <div class="mbrand" aria-hidden="true">${mark("", "b")}</div>
+  <div class="mbrand" aria-hidden="true">${markUse("")}</div>
   <div class="mlist" id="mlist">
     <a href="#inside"><span class="k">01</span><span data-en="The box" data-he="הקופסה">The box</span></a>
     <a href="#collection"><span class="k">02</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
@@ -140,7 +200,7 @@ export const body = `
         <div class="beats" id="beats">
           <div class="beat"><div class="k gold ol" data-en="01 · The box" data-he="01 · הקופסה">01 · The box</div><h2 class="h2" data-en="It arrives <em>closed, just for you.</em>" data-he="זה מגיע <em>סגור, רק בשבילכם.</em>">It arrives <em>closed, just for you.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט שלכם, התעודות שלו, והערכת שווי למבטח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
           <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Every stone, chosen <em>one by one.</em>" data-he="כל אבן, נבחרת <em>אחת אחת.</em>">Every stone, chosen <em>one by one.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות על ידי GIA או IGI. אתם רואים אותן לפני שאנחנו משבצים.">Graded by GIA or IGI. You see them before we set them.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made for <em>one wrist. Yours.</em>" data-he="נעשה <em>לפרק יד אחד. שלכם.</em>">Made for <em>one wrist. Yours.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${mark("eng", "b")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
+          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made for <em>one wrist. Yours.</em>" data-he="נעשה <em>לפרק יד אחד. שלכם.</em>">Made for <em>one wrist. Yours.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
         <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -160,7 +220,7 @@ export const body = `
   </section>
 
   <section id="craft" data-n="02" data-title-en="The work" data-title-he="העבודה" aria-label="At the bench">
-  <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
+  <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
   <div class="wrap">
   <div class="ed">
     ${fig("craft", "A setter's hands holding one round brilliant in steel tweezers over a dark bench", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="Dubai · the bench" data-he="דובאי · שולחן העבודה">Dubai · the bench</span></div>`)}
@@ -178,50 +238,21 @@ export const body = `
   </div>
 </section>
 <section id="collection" class="ivory" data-n="02" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">
-  <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
+  <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
       <h2 class="h2 sp rv" data-en="The <em>Monogram.</em>" data-he="<em>המונוגרמה.</em>">The <em>Monogram.</em></h2>
-      <p class="p rv d2" data-en="Three pieces wearing our mark. And one we made once." data-he="שלושה תכשיטים עם הסמל שלנו. ואחד שעשינו פעם אחת.">Three pieces wearing our mark. And one we made once.</p>
+      <p class="p rv d2" data-en="The house mark, made into jewellery. Bracelet first." data-he="סמל הבית, הפך לתכשיט. הצמיד ראשון.">The house mark, made into jewellery. Bracelet first.</p>
       <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or make your own" data-he="או תעשו משלכם">Or make your own</a></div>
     </div>
-    <div class="tray" data-tray><div class="pieces four">
-      <div class="piece" id="p-mneck">
-        ${figsw("mono-neck", "mono-neck-p", "The house monogram in pave diamonds on a fine white gold chain, worn at the throat", "The monogram pendant on a fine chain, photographed on white", "r45", SIZES_PIECE, "swl")}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span dir="ltr">I</span></div><div class="t"><span dir="ltr">Monogram <em>Pendant</em></span></div>
-          <p class="p" data-en="The house mark itself, in pav&eacute;, on a chain you never take off." data-he="סמל הבית עצמו, משובץ, על שרשרת שלא מורידים.">The house mark itself, in pav&eacute;, on a chain you never take off.</p>
-          <div class="row k meta"><span>1.85 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
-          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Pendant" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
-      </div>
-      <div class="piece" id="p-mwrist">
-        ${figsw("mono-wrist", "mono-wrist-p", "A bracelet of interlaced house monogram links in pave diamonds, worn on the wrist", "The monogram bracelet laid open, photographed on white", "r45", SIZES_PIECE, "swl")}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span dir="ltr">II</span></div><div class="t"><span dir="ltr">Monogram <em>Bracelet</em></span></div>
-          <p class="p" data-en="The mark, repeated and interlaced, all the way round." data-he="הסמל, חוזר ונשזר, לאורך כל ההיקף.">The mark, repeated and interlaced, all the way round.</p>
-          <div class="row k meta"><span>4.20 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
-          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Bracelet" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
-      </div>
-      <div class="piece" id="p-mear">
-        ${figsw("mono-ear", "mono-ear-p", "An ear cuff shaped as the house monogram in pave diamonds, following the curve of the ear", "The monogram ear cuff, photographed on white", "r45", SIZES_PIECE, "swl")}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span dir="ltr">III</span></div><div class="t"><span dir="ltr">Monogram <em>Ear cuff</em></span></div>
-          <p class="p" data-en="Follows the ear. Nothing pierces, nothing dangles." data-he="עוקב אחרי האוזן. בלי נקב, בלי תנועה.">Follows the ear. Nothing pierces, nothing dangles.</p>
-          <div class="row k meta"><span>1.10 ct</span><i></i><span>D–F · VVS</span><i></i><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
-          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="Monogram Ear cuff" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
-      </div>
-      <div class="piece" id="p-star">
-        ${figsw("star-worn", "star", "The Desert Star worn at the throat, an eighteen carat brilliant in a radiating halo", "The Desert Star, an eighteen carat brilliant in a radiating halo, on black lacquer", "r45", SIZES_PIECE, "")}
-        <div class="bd"><div class="k sig">${mark("tiny", "b")}<span dir="ltr">IV</span></div><div class="t"><span dir="ltr">The Desert <em>Star</em></span></div>
-          <p class="p" data-en="One stone this big. When it goes, it is gone." data-he="אבן אחת בגודל כזה. כשהיא הולכת, היא הלכה.">One stone this big. When it goes, it is gone.</p>
-          <div class="row k meta"><span>18.06 ct</span><i></i><span>D · IF</span><i></i><span data-en="Platinum" data-he="פלטינה">Platinum</span><i></i><span class="price por" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span></div>
-          <div class="acts"><span class="lnk" data-en="View the piece" data-he="ראו את התכשיט">View the piece</span><a class="lnk q" href="#concierge" data-piece="The Desert Star" data-en="Enquire" data-he="פנייה">Enquire</a></div></div>
-      </div>
-    </div></div>
+    ${COLLECTION}
     </div>
   </section>
 
   <section id="bespoke" class="ivory" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="SILAVU Bespoke">
-  <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
-  <div class="bwm" aria-hidden="true">${mark("", "b")}</div>
+  <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
+  <div class="bwm" aria-hidden="true">${markUse("")}</div>
     <div class="wrap">
     <div class="sechead bhead">
       <div class="k gold rv ol" data-en="SILAVU Bespoke" data-he="סילאבו · בהזמנה אישית">SILAVU Bespoke</div>
@@ -248,7 +279,7 @@ export const body = `
   </section>
 
   <section id="build" data-n="04" data-title-en="The Line" data-title-he="הקו" aria-label="The Line">
-  <div class="chap" aria-hidden="true"><i></i>${mark("", "b")}<i></i></div>
+  <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
     <div class="ed flip">
       ${fig("hand", "A hand resting on black silk, wearing the SILAVU Line and a solitaire", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="The Line · 6 ct · white gold" data-he="הקו · 6 קראט · זהב לבן">The Line · 6 ct · white gold</span></div>`)}
@@ -260,7 +291,7 @@ export const body = `
       </div>
     </div>
     <div class="panel rv" id="configure">
-      <div id="stripwrap"><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><span class="vmark">${mark("", "b")}</span></div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="under" data-en="Underside" data-he="מלמטה">Underside</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Inspect" data-he="בחינה">Inspect</button><button class="vp" type="button" data-toy="down" data-en="Return to stand" data-he="החזרה למעמד">Return to stand</button></div></div>
+      <div id="stripwrap"><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><span class="vmark">${markUse("")}</span></div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="under" data-en="Underside" data-he="מלמטה">Underside</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Inspect" data-he="בחינה">Inspect</button><button class="vp" type="button" data-toy="down" data-en="Return to stand" data-he="החזרה למעמד">Return to stand</button></div></div>
       <div class="carat" id="carat">
         <div><details class="spec"><summary><span data-en="Specifications" data-he="מפרט">Specifications</span></summary><div class="specbody"><p class="p" style="margin-top:8px;font-size:.95rem" data-en="Carat is weight, not size. The total is shared by every stone in the line." data-he="קראט הוא משקל, לא גודל. הסך מתחלק בין כל האבנים בקו.">Carat is weight, not size. The total is shared by every stone in the line.</p><p class="p" data-en="Each stone is drawn from the true geometry of its cut. Dimensions are representative." data-he="כל אבן מצוירת מהגיאומטריה האמיתית של הליטוש שלה. המידות מייצגות.">Each stone is drawn from the true geometry of its cut. Dimensions are representative.</p><div class="specrow"><div><div class="big" id="eachMm">3.6<small>mm</small></div><div class="k" style="margin-top:8px" data-en="Across, at the girdle" data-he="מידות, בחגורה">Across, at the girdle</div></div><div style="display:flex;gap:14px;align-items:center"><div class="stone1" id="stone1"></div><div><div class="big" id="lineLen">17<small>cm</small></div><div class="k" style="margin-top:6px" data-en="Your wrist, measured" data-he="פרק היד שלכם, במדידה">Your wrist, measured</div></div></div></div></div></details></div>
         <div><div class="big" id="eachCt">0.17<small>ct</small></div><div class="k" style="margin-top:8px" id="eachLbl">Each stone</div></div>
@@ -369,7 +400,7 @@ export const body = `
 
   <section id="end" data-n="" aria-label="Footer">
     <div class="wrap">
-    <div class="fbig rv">${mark("huge")}${logo("big")}<div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment only" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש בלבד">Private high jewellery · Dubai · Tel Aviv · By appointment only</div></div>
+    <div class="fbig rv"><span class="fmk">${mark("huge")}</span>${logo("big")}<div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment only" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש בלבד">Private high jewellery · Dubai · Tel Aviv · By appointment only</div></div>
     <div class="fgrid">
       <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#bespoke" data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
@@ -386,14 +417,14 @@ export const body = `
 <div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="mbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
-    <div class="mim" id="pmIm"><img id="pmImg" alt=""><img id="pmImg2" class="dt" alt=""><span class="k dtag" data-en="Detail" data-he="פרט">Detail</span></div>
+    <div class="mgal"><div class="mim" id="pmIm"><img id="pmImg" alt=""><img id="pmImg2" class="dt" alt=""><span class="k dtag" data-en="Detail" data-he="פרט">Detail</span><button class="gnav gprev" type="button" id="pmPrev" aria-label="Previous photograph"></button><button class="gnav gnext" type="button" id="pmNext" aria-label="Next photograph"></button></div><div class="gthumbs" id="pmThumbs" role="tablist" aria-label="Photographs"></div></div>
     <div class="mbd">
       <div class="k gold" id="pmK"></div>
       <div class="t h3" id="pmT"></div>
       <p class="p" id="pmP"></p>
       <div class="mspecs" id="pmSpecs"></div>
       <div class="incl"><div class="k gold" data-en="With every piece" data-he="עם כל תכשיט">With every piece</div><ul><li data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת הלכה השחורה">The black lacquer box</li><li data-en="Delivered in person" data-he="מסירה אישית">Delivered in person</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div>
-      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
+      <div class="row" style="gap:10px;margin-top:6px"><a class="btn solid" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#concierge" id="pmRes" data-en="Reserve this piece" data-he="שריינו את התכשיט">Reserve this piece</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
     </div>
   </div>
 </div>

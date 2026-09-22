@@ -34,8 +34,8 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   out.push(((await p.evaluate(() => { const t = document.getElementById("wtxt"); const f = document.getElementById("wframe"); return getComputedStyle(t).opacity !== "0" && f.getBoundingClientRect().height > innerHeight * 0.9; })) ? "PASS":"FAIL") + ` ${tag} wrist chapter revealed`);
   // stone picker
   // piece → concierge prefilled
-  await p.evaluate(() => document.querySelector('a[data-piece="Monogram Pendant"]').click()); await p.waitForTimeout(1500);
-  out.push((/Monogram/.test(await p.inputValue("#fMsg")) ? "PASS":"FAIL") + ` ${tag} piece prefills`);
+  await p.evaluate(() => document.querySelector('a[data-piece="The Knot"]').click()); await p.waitForTimeout(1500);
+  out.push((/Knot/.test(await p.inputValue("#fMsg")) ? "PASS":"FAIL") + ` ${tag} piece prefills`);
   await p.click('.chip[data-k="metal"][data-v="yellow"]'); await p.click('.chip[data-k="ct"][data-v="10"]');
   out.push(((await p.textContent("#sumMetal"))==="18K yellow gold" && await p.evaluate(() => { const t = document.getElementById("sumStones").textContent, m = t.match(/^(\d+) × (\d\.\d\d) ct · Round brilliant$/); return !!m && Math.abs(m[1] * m[2] - 10) < 0.6 && +m[1] >= 30 && +m[1] <= 60; }) ? "PASS":"FAIL") + ` ${tag} builder (${await p.textContent("#sumStones")})`);
   await p.evaluate(() => document.getElementById("reserve").click()); await p.waitForTimeout(1200);
@@ -53,10 +53,10 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   out.push((await p.evaluate(() => document.body.scrollHeight / innerHeight < (innerWidth < 1000 ? 28 : 28)) ? "PASS":"FAIL") + ` ${tag} page length ${await p.evaluate(() => (document.body.scrollHeight / innerHeight).toFixed(1))} screens`);
   // the piece window, the chain, the try-on, the carat numbers
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(300);
-  await p.evaluate(() => document.getElementById("p-mneck").click()); await p.waitForTimeout(500);
-  out.push((await p.evaluate(() => document.getElementById("pmodal").classList.contains("open") && /Monogram/.test(document.getElementById("pmT").textContent) && document.querySelectorAll("#pmSpecs .dc").length === 4) ? "PASS":"FAIL") + ` ${tag} piece window opens`);
+  await p.evaluate(() => document.getElementById("p-knot").click()); await p.waitForTimeout(500);
+  out.push((await p.evaluate(() => document.getElementById("pmodal").classList.contains("open") && /Knot|הקשר/.test(document.getElementById("pmT").textContent) && document.querySelectorAll("#pmSpecs .srow").length === 11) ? "PASS":"FAIL") + ` ${tag} piece window opens`);
   await p.evaluate(() => document.getElementById("pmReq").click()); await p.waitForTimeout(600);
-  out.push((await p.evaluate(() => !document.getElementById("pmodal").classList.contains("open") && /Monogram/.test(document.getElementById("fMsg").value)) ? "PASS":"FAIL") + ` ${tag} piece window → request`);
+  out.push((await p.evaluate(() => !document.getElementById("pmodal").classList.contains("open") && /Knot|הקשר/.test(document.getElementById("fMsg").value)) ? "PASS":"FAIL") + ` ${tag} piece window → request`);
   await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("stripwrap").getBoundingClientRect().top - 60, behavior:"instant"})); await p.waitForTimeout(1200);
   out.push(((await p.evaluate(() => { const c = document.getElementById("bcv"); return c.width > 100 && c.height > 100 && typeof window.__bracelet === "object"; })) ? "PASS":"FAIL") + ` ${tag} the bracelet is built`);
   {
@@ -92,19 +92,26 @@ for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,heig
   if (vp.width >= 1000) {
     await p.evaluate(() => window.scrollTo({top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior:"instant"})); await p.waitForTimeout(400);
     out.push(((await p.evaluate(() => {
-      const g = document.querySelector("#collection .pieces.four");
+      const g = document.querySelector("#collection .pgrid");
       const cols = getComputedStyle(g).gridTemplateColumns.split(" ").length;
       const ps = [...document.querySelectorAll("#collection .piece")];
       const tops = new Set(ps.map(x => Math.round(x.getBoundingClientRect().top)));
-      return ps.length === 4 && cols === 4 && tops.size === 1;
-    })) ? "PASS":"FAIL") + ` ${tag} collection is four pieces on one row (${await p.evaluate(() => document.querySelectorAll("#collection .piece").length + " cols=" + getComputedStyle(document.querySelector("#collection .pieces.four")).gridTemplateColumns)})`);
+      return ps.length === 6 && cols === 4 && tops.size === 2;
+    })) ? "PASS":"FAIL") + ` ${tag} collection is a four-up grid (${await p.evaluate(() => document.querySelectorAll("#collection .piece").length + " cols=" + getComputedStyle(document.querySelector("#collection .pgrid")).gridTemplateColumns)})`);
   }
   await p.click('.chip[data-k="wrist"][data-v="19"]'); out.push(((await p.textContent("#sumWrist")) === "19 cm" && /19/.test(await p.textContent("#lineLen")) ? "PASS":"FAIL") + ` ${tag} wrist size`);
-  out.push(((await p.evaluate(() => (document.querySelector(".sh .mark .lg") || {}).textContent === "SILAVU" && document.querySelectorAll(".sh .mark svg.sy path").length === 1 && (function () { var k = document.querySelector("#intro .imk"); if (!k) return false; var mk = k.style.getPropertyValue("--mk") || ""; var hdr = document.querySelector(".sh .mark svg.sy path"); if (!hdr || !mk) return false; var d = encodeURIComponent(document.querySelector("#end svg.sy.huge path").getAttribute("d")); return mk.length > 20000 && mk.indexOf(d.slice(0, 400)) > 0 && k.querySelectorAll("i").length >= 4; })() && document.querySelectorAll("#end svg.sy.huge").length === 1)) ? "PASS":"FAIL") + ` ${tag} symbol, lockup, intro trace, footer symbol`);
+  out.push(((await p.evaluate(() => (document.querySelector(".sh .mark .lg") || {}).textContent === "SILAVU" && document.querySelectorAll(".sh .mark svg.sy use[href=\"#symb\"]").length === 1 && document.querySelectorAll("svg.symdefs symbol#symb path").length === 1 && (function () { var k = document.querySelector("#intro .imk"); if (!k) return false; var mk = k.style.getPropertyValue("--mk") || ""; var hdr = document.querySelector("svg.symdefs symbol#symb path"); if (!hdr || !mk) return false; var d = encodeURIComponent(document.querySelector("#end svg.sy.huge path").getAttribute("d")); return mk.length > 20000 && mk.indexOf(d.slice(0, 400)) > 0 && k.querySelectorAll("i").length >= 4; })() && document.querySelectorAll("#end svg.sy.huge").length === 1)) ? "PASS":"FAIL") + ` ${tag} symbol, lockup, intro trace, footer symbol`);
   out.push(((await p.evaluate(() => { const b = document.querySelector(".hacts .btn.solid"); const c = getComputedStyle(b).color.match(/\d+/g).map(Number); return c[0] < 40 && c[1] < 40; })) ? "PASS":"FAIL") + ` ${tag} solid button has dark text`);
-  await p.evaluate(() => window.__money.set("USD")); out.push(((await p.evaluate(() => /US\$/.test(document.getElementById("est").textContent) && /Price on request|מחיר לפי בקשה/.test(document.querySelector("#p-mneck .price").textContent) && document.querySelectorAll("[data-cur] .chip.on").length >= 1)) ? "PASS":"FAIL") + ` ${tag} currency switch (${await p.evaluate(() => document.getElementById("est").textContent)})`);
+  await p.evaluate(() => window.__money.set("USD")); out.push(((await p.evaluate(() => /US\$/.test(document.getElementById("est").textContent) && /Price on request|מחיר לפי בקשה/.test(document.querySelector("#p-knot .price").textContent) && document.querySelectorAll("[data-cur] .chip.on").length >= 1)) ? "PASS":"FAIL") + ` ${tag} currency switch (${await p.evaluate(() => document.getElementById("est").textContent)})`);
   await p.evaluate(() => window.__money.set("AED"));
-  if (vp.width < 1000) { await p.evaluate(() => window.__tray[0].go(2)); await p.waitForTimeout(700); out.push(((await p.evaluate(() => { const t = document.querySelector("#collection .pieces"); const m = new DOMMatrix(getComputedStyle(t).transform); return window.__tray[0].index === 2 && m.m41 < -400 && document.querySelectorAll(".swipe").length === 0; })) ? "PASS":"FAIL") + ` ${tag} tray moves to the third piece`); }
+  /* the collection is a filtered grid now, not a swipe tray */
+  await p.evaluate(() => document.querySelector('.cats .cat[data-cat="bracelets"]').click()); await p.waitForTimeout(400);
+  out.push(((await p.evaluate(() => {
+    const shown = [...document.querySelectorAll("#collection .piece")].filter(c => !c.hidden);
+    return shown.length === 1 && shown[0].id === "p-knot";
+  })) ? "PASS":"FAIL") + ` ${tag} category filters the grid`);
+  await p.evaluate(() => document.querySelector('.cats .cat[data-cat="all"]').click()); await p.waitForTimeout(300);
+  out.push(((await p.evaluate(() => [...document.querySelectorAll("#collection .piece")].filter(c => !c.hidden).length === 6)) ? "PASS":"FAIL") + ` ${tag} all shows every piece`);
   out.push(((await p.evaluate(() => ["hero","house","inside","craft","collection","bespoke","macro","build","wrist","film","concierge","end"].join() === [...document.querySelectorAll("main > section")].map(s => s.id).join())) ? "PASS":"FAIL") + ` ${tag} journey order`);
   out.push(((await p.evaluate(() => { const im = document.querySelector("#hero img"); return /hero(v)?-\d+\.jpg/.test(im.currentSrc || im.src) && im.getAttribute("srcset").split(",").length >= 2; })) ? "PASS":"FAIL") + ` ${tag} hero served from srcset (${await p.evaluate(() => (document.querySelector("#hero img").currentSrc || "").split("/").pop())})`);
   out.push((errs.length===0 ? "PASS":"FAIL") + ` ${tag} no errors ${errs.join(" | ")}`);

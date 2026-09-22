@@ -2036,3 +2036,144 @@
   .bwm svg.sy { height:min(52vh,520px); }
   .ivory .bwm { opacity:.03; }
   @media (max-width:899px) { .bwm svg.sy { height:min(38vh,360px); } }
+
+  /* ══ v57 — the footer mark, without its double ══════════════════════════
+     The light layer is a mark-shaped mask, and it was being centred on .fbig
+     — which is the mark AND the wordmark AND the line of small caps under
+     them. So its centre sat well below the mark, and it painted a second,
+     offset, half-lit copy of the symbol across the word SILAVU. Read as a
+     dirty shadow, because that is what it was.
+
+     It hangs off a wrapper that contains nothing but the symbol now, at
+     inset:0, so the light can only ever land exactly on the mark. ─────── */
+  .fmk { position:relative; display:inline-block; line-height:0; }
+  .fbig::after { content:none; }
+  .fmk::after {
+    content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
+    -webkit-mask-image:var(--mk); mask-image:var(--mk);
+    -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    background:linear-gradient(100deg,
+      rgba(255,255,255,0) 30%, rgba(255,255,255,.22) 42%,
+      rgba(255,255,255,.92) 50%, rgba(255,247,231,.34) 58%,
+      rgba(255,255,255,0) 70%);
+    background-size:300% 100%;
+    background-position:calc(var(--sw, .5) * 100%) 0;
+    opacity:calc(.45 + var(--spa,0) * .55);
+    transition:background-position .22s linear, opacity .3s linear;
+    will-change:background-position, opacity; }
+  /* the symbol carries the svg's own bottom margin; the wrapper must not, or
+     the mask box grows past the glyph and the light drifts off it */
+  .fmk svg.sy.huge { margin-bottom:0; display:block; }
+  .fbig { gap:clamp(14px,1.6vw,22px); }
+  @media (prefers-reduced-motion:reduce) { .fmk::after { display:none; } }
+
+  /* ══ v58 — the catalogue ═════════════════════════════════════════════════
+     The Collection is a grid of square cards with a category row above it.
+     Squares because that is how the pieces are photographed and because a
+     mixed grid of ratios reads as an accident. Categories that hold nothing
+     yet still show their card, quietly, so the shape of the house is visible
+     before the photography exists and the grid does not jump when a piece
+     lands. ─────────────────────────────────────────────────────────────── */
+  .cats { display:flex; flex-wrap:wrap; gap:8px; margin:clamp(26px,3vw,40px) 0 clamp(22px,2.6vw,32px); }
+  .cats .cat {
+    appearance:none; border:1px solid var(--line); background:transparent; color:var(--ink3);
+    border-radius:999px; padding:9px 16px; min-height:40px; cursor:pointer; font:inherit;
+    letter-spacing:.14em; text-transform:uppercase; font-size:.66rem;
+    transition:color .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease); }
+  .cats .cat.on { color:var(--bg); background:var(--ink); border-color:var(--ink); }
+  @media (hover:hover) and (pointer:fine) { .cats .cat:not(.on):hover { color:var(--ink); border-color:var(--ink3); } }
+  .cats .cat:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+
+  .pgrid { display:grid; gap:clamp(16px,1.8vw,26px); grid-template-columns:repeat(2,minmax(0,1fr)); }
+  @media (min-width:760px)  { .pgrid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (min-width:1100px) { .pgrid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+  .pgrid .piece { min-width:0; }
+  .pgrid .piece .fig { aspect-ratio:1/1; }
+  .pgrid .piece[hidden] { display:none; }
+  .r11 { aspect-ratio:1/1; }
+
+  /* the bracelet is photographed on white, so its card ground is white too —
+     a black plate behind a high-key photograph shows as a rim while it loads */
+  .ivory .pgrid .fig { background:#f7f5f1; }
+  .ivory .pgrid .fig.swp .im.dt { background:#f7f5f1; }
+
+  /* the pieces that are not photographed yet */
+  .piece.soon { cursor:default; }
+  .piece.soon .fig { display:grid; place-items:center; background:rgba(20,19,15,.035); border:1px dashed rgba(20,19,15,.12); }
+  .piece.soon .fig .sm { opacity:.10; }
+  .piece.soon .fig .sm svg.sy { height:clamp(46px,6vw,78px); color:var(--ink); }
+  .piece.soon .bd { opacity:.55; }
+  .piece.soon .t { font-size:clamp(1rem,1.2vw,1.18rem); }
+
+  /* the card's own type, a size down from the old rail */
+  .pgrid .piece .t { font-size:clamp(1.02rem,1.25vw,1.24rem); }
+  .pgrid .piece .p { font-size:.86rem; }
+  .pgrid .piece .meta { font-size:.6rem; }
+  .pgrid .piece .bd { padding:14px 2px 0; gap:6px; }
+  @media (max-width:479px) { .pgrid { grid-template-columns:1fr; } }
+
+  /* ══ v59 — the piece window ══════════════════════════════════════════════
+     A product window rather than a picture with a caption: a gallery with
+     thumbnails, the full specification as a table, and a reservation beside
+     the viewing. ───────────────────────────────────────────────────────── */
+  .mgal { display:grid; gap:10px; align-content:start; }
+  .mim { position:relative; }
+  .gnav { position:absolute; top:50%; transform:translateY(-50%); z-index:4;
+    width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.18);
+    background:rgba(12,11,10,.5); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    cursor:pointer; transition:background .3s, border-color .3s, opacity .3s; opacity:.75; }
+  .gnav::before { content:""; position:absolute; inset:0; margin:auto; width:8px; height:8px;
+    border-top:1.5px solid #fff; border-right:1.5px solid #fff; }
+  .gprev { left:12px; } .gprev::before { transform:rotate(-135deg) translate(-2px,-2px); }
+  .gnext { right:12px; } .gnext::before { transform:rotate(45deg) translate(-2px,-2px); }
+  .gnav[hidden] { display:none; }
+  @media (hover:hover) and (pointer:fine) { .gnav:hover { opacity:1; background:rgba(12,11,10,.72); border-color:rgba(255,255,255,.32); } }
+  .gthumbs { display:flex; gap:8px; flex-wrap:wrap; }
+  .gthumbs[hidden] { display:none; }
+  .gthumbs button { width:54px; height:54px; padding:0; border-radius:9px; overflow:hidden; cursor:pointer;
+    border:1px solid var(--line); background:transparent; opacity:.55; transition:opacity .3s, border-color .3s; }
+  .gthumbs button img { width:100%; height:100%; object-fit:cover; display:block; }
+  .gthumbs button.on { opacity:1; border-color:var(--ink3); }
+  @media (hover:hover) and (pointer:fine) { .gthumbs button:hover { opacity:.85; } }
+
+  /* the base .mspecs is a two-up of big figures; a specification table is a
+     single column of label/value rows and has to say so, or the rows pair off
+     sideways and every label collides with the value before it */
+  .mspecs.table { display:grid; grid-template-columns:minmax(0,1fr); gap:0; }
+  .mspecs.table .srow { display:grid; grid-template-columns:minmax(0,11ch) minmax(0,1fr); gap:14px;
+    padding:9px 0; border-bottom:1px solid var(--line); align-items:baseline; }
+  .mspecs.table .srow:last-child { border-bottom:0; }
+  .mspecs.table .srow .k { color:var(--ink3); }
+  .mspecs.table .sv { font-size:.92rem; color:var(--ink); }
+  @media (min-width:520px) { .mspecs.table .srow { grid-template-columns:minmax(0,14ch) minmax(0,1fr); } }
+
+  /* the try-on is the Line's tool: it draws a tennis bracelet on a photograph.
+     It has nothing to offer a chain bracelet, so it only appears where it works. */
+  #pmTry[hidden] { display:none; }
+  #pmodal .mbd .row { flex-wrap:wrap; }
+
+  /* the gallery column fills its half: the photograph takes the room and the
+     thumbnails sit under it, rather than the pair floating in a field of black */
+  @media (min-width:900px) {
+    .mbox .mgal { align-content:stretch; grid-template-rows:minmax(0,1fr) auto; padding-bottom:14px; }
+    .mbox .mgal .mim { min-height:0; height:100%; }
+    .mbox .mgal .gthumbs { padding:0 14px; }
+  }
+
+  /* the one definition of the symbol: present, never painted */
+  .symdefs { position:absolute; width:0; height:0; overflow:hidden; }
+
+  /* ══ v60 — the compass, legible over anything ════════════════════════════
+     It is a fixed HUD in the bottom corner, so whatever is scrolling past
+     ends up behind it. Over black that was fine; over an ivory chapter it
+     landed on dark card type and the two read as one tangled line. A soft
+     plate of the chapter's own ground, blurred, separates them without
+     drawing a box. ──────────────────────────────────────────────────────── */
+  #where { border-radius:999px; padding:6px 14px 6px 10px;
+    background:color-mix(in srgb, var(--bg) 72%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+  @supports not (background: color-mix(in srgb, red 50%, transparent)) {
+    #where { background:rgba(0,0,0,.45); }
+    .ivory #where { background:rgba(244,241,233,.7); }
+  }

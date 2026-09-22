@@ -33,7 +33,7 @@ rep(`var alias = { standard: "inside", wrist: "what", voices: "clients", partner
 
 /* v12: the piece window opens from the piece */
 rep(`function openModal(m) { m.classList.add("open");`, `function openModal(m, from) { if (from) { var fr = from.getBoundingClientRect(); m.querySelector(".mbox").style.setProperty("--ox", ((fr.left + fr.width / 2) / innerWidth * 100).toFixed(1) + "%"); m.querySelector(".mbox").style.setProperty("--oy", ((fr.top + fr.height / 2) / innerHeight * 100).toFixed(1) + "%"); } m.classList.add("open");`);
-rep(`$("pmReq").setAttribute("data-piece", pmPiece); openModal(pmodal);`, `$("pmReq").setAttribute("data-piece", pmPiece); openModal(pmodal, pc);`);
+/* v12's openModal(pmodal, pc) is now written directly in the piece window */
 /* v18: the price and the numbers follow the cut and the count of stones */
 const NEW_PRICE = `  var CUTS = {
     round: { kL: 6.5, ratio: 1, orient: "along", set: "prong", price: 1, en: "Round brilliant", he: "בריליאנט עגול" },
