@@ -159,7 +159,8 @@
 
   /* ── inside the stone: the film plays when it comes into view ── */
   var iv = $("insidevid"), ivLoaded = false;
-  function insideTick() { var r = iv.getBoundingClientRect(); var near = r.bottom > -innerHeight && r.top < innerHeight * 2; if (near && !ivLoaded) { ivLoaded = true; iv.src = desk() ? "/v/inside.mp4" : "/v/inside-v.mp4"; iv.load(); } if (!ivLoaded || reduce) return; var vis = r.bottom > 0 && r.top < innerHeight; if (vis && iv.paused) { var pr = iv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !iv.paused) iv.pause(); }
+  function insideTick() { var r = iv.getBoundingClientRect(); var near = r.bottom > -innerHeight && r.top < innerHeight * 2; /* setting src starts the fetch; load() then threw that one away and started another, so the phone downloaded this film twice — 1.9MB of it, measured on the live site */
+    if (near && !ivLoaded) { ivLoaded = true; iv.preload = "auto"; iv.src = desk() ? "/v/inside.mp4" : "/v/inside-v.mp4"; } if (!ivLoaded || reduce) return; var vis = r.bottom > 0 && r.top < innerHeight; if (vis && iv.paused) { var pr = iv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !iv.paused) iv.pause(); }
   window.__film = { get target() { return 0; }, get shown() { return 0; }, get loaded() { return ivLoaded ? 1 : 0; } };
 
   /* ── the thirty-six: each stone's record, deterministic from its position on the line ── */

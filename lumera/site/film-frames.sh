@@ -38,8 +38,11 @@ ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,4))',${FIX},scale=2200:-2:flag
   -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/x-%02d.webp" -y
 ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,4))',${FIX},scale=1600:-2:flags=lanczos" \
   -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/d-%02d.webp" -y
-ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,6))',${FIX},crop=888:1920:996:0" \
-  -vsync 0 -start_number 0 -c:v libwebp -quality 78 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
+# the phone strip was 888x1920 at quality 78 and came to 2.5MB across fifty
+# frames. A 390pt screen draws it into 780 device pixels, so most of that width
+# was never seen; 820 wide at 72 is the same picture at half the bytes.
+ffmpeg -v error -i "$SRC" -vf "select='not(mod(n\,6))',${FIX},crop=888:1920:996:0,scale=820:-2:flags=lanczos" \
+  -vsync 0 -start_number 0 -c:v libwebp -quality 72 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
 
 x=$(ls "$OUT"/x-*.webp | wc -l); d=$(ls "$OUT"/d-*.webp | wc -l); m=$(ls "$OUT"/m-*.webp | wc -l)
 echo "film frames: x=$x d=$d m=$m"
