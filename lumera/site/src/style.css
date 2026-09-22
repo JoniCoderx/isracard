@@ -2366,3 +2366,20 @@
     .mbuy { grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:18px; }
     .mbuy .mprim { justify-self:end; }
   }
+
+  /* ══ v64 — a thumb has to be able to get past the bracelet ════════════════
+     #bcv is 348 by 370 on a phone — forty-four per cent of the screen, sitting
+     in the middle of the chapter — and it carried touch-action:none so it
+     could be turned with a drag. On a pointer that is right. On a phone it
+     means the page does not move when your thumb lands in the most natural
+     place to land: the middle. That is the "stuck".
+
+     pan-y gives the vertical gesture back to the browser and keeps the
+     horizontal one for the bracelet, which is the axis it turns on anyway.
+     Both renderers already handle pointercancel, so the drag ends cleanly the
+     moment the browser decides the gesture is a scroll. ─────────────────── */
+  @media (pointer:coarse) {
+    #bcv { touch-action:pan-y; }
+    #stripwrap.wrist { touch-action:pan-y; }
+    .tcv { touch-action:pan-y; }
+  }
