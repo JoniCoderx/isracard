@@ -159,7 +159,27 @@ for (const [tag, w, h] of VIEWS) {
     }
     return out.slice(0, 6);
   });
-  ok(unrevealed.length === 0, `${tag} every reveal has arrived once scrolled past`, unrevealed.join(" | "));
+  /* a reveal that has not arrived yet may simply not have been given its 1.2
+     seconds on a slow page. Put each candidate back in the middle of the
+     screen, wait it out, and only then call it stuck. */
+  let stuck = [];
+  if (unrevealed.length) {
+    stuck = await p.evaluate(async () => {
+      const out = [];
+      const wait = ms => new Promise(r => setTimeout(r, ms));
+      const cand = [...document.querySelectorAll(".rv")].filter(e => e.style.opacity === "" && +getComputedStyle(e).opacity < 0.5 && e.getBoundingClientRect().height > 2)
+        .concat([...document.querySelectorAll(".w > span")].filter(e => new DOMMatrixReadOnly(getComputedStyle(e).transform).f > 2));
+      for (const e of cand.slice(0, 12)) {
+        e.scrollIntoView({ block: "center", behavior: "instant" });
+        await wait(1700);
+        const isWord = e.parentElement && e.parentElement.classList.contains("w");
+        const bad = isWord ? new DOMMatrixReadOnly(getComputedStyle(e).transform).f > 2 : +getComputedStyle(e).opacity < 0.5;
+        if (bad) out.push((isWord ? "word:" : "rv:") + (e.textContent || e.className).trim().slice(0, 22));
+      }
+      return out;
+    });
+  }
+  ok(stuck.length === 0, `${tag} every reveal has arrived once scrolled past`, stuck.join(" | "));
   await p.evaluate(() => scrollTo({ top: 0, behavior: "instant" })); await p.waitForTimeout(300);
 
   /* ── 7. focus: everything interactive is reachable and shows a ring ── */

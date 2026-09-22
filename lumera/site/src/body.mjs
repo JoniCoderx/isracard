@@ -56,7 +56,10 @@ const T = (tag, cls, en, he, extra = "") => `<${tag} class="${cls}" data-en="${e
 /* ── the Collection, rendered from pieces.mjs ────────────────────────────────
    Cards, categories and the piece window all read the same objects, so a new
    piece is a new object and nothing here changes. */
-const SIZES_PC = "(min-width:1100px) 23vw, (min-width:760px) 45vw, 78vw";
+/* the pieces are two across on a desktop now, not four, so the frame is about
+   half the content width rather than a quarter — the old figure had the
+   browser choosing a 900px file for a slot wanting 1478 */
+const SIZES_PC = "(min-width:900px) 46vw, (min-width:480px) 92vw, 88vw";
 const esc = (x) => String(x).replace(/"/g, "&quot;");
 
 function pieceCard(p) {
@@ -338,7 +341,7 @@ ${markDefs()}
     <div class="wpin" id="wpin">
       <div class="wstick">
         <div class="wframe" id="wframe">
-          <picture><source media="(max-width:899px)" srcset="/img/wristv-600.jpg 600w, /img/wristv-900.jpg 900w, /img/wristv-1229.jpg 1229w" sizes="100vw"><img id="wimg" src="/img/wrist-1300.jpg" srcset="/img/wrist-900.jpg 900w, /img/wrist-1300.jpg 1300w, /img/wrist-1800.jpg 1800w, /img/wrist-2200.jpg 2200w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width:899px)" srcset="/img/wristv-600.jpg 600w, /img/wristv-900.jpg 900w, /img/wristv-1229.jpg 1229w" sizes="100vw"><img id="wimg" src="/img/wrist-1300.jpg" srcset="/img/wrist-900.jpg 900w, /img/wrist-1300.jpg 1300w, /img/wrist-1900.jpg 1900w, /img/wrist-2560.jpg 2560w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture>
           <div class="veil"></div>
         </div>
         <div class="wtxt" id="wtxt">
