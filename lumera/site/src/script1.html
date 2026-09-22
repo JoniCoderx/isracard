@@ -178,8 +178,36 @@
 
   /* ── the piece window ── */
   var pmodal = $("pmodal"), pmPiece = "";
-  function openModal(m) { m.classList.add("open"); m.setAttribute("aria-hidden", "false"); window.__lock(); }
-  function closeModals() { document.querySelectorAll(".modal.open").forEach(function (m) { m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); }); if (!menu.classList.contains("open")) window.__unlock(); }
+  /* a window that opens takes the keyboard with it, holds it while it is open,
+     and hands it back to whatever opened it. Without this, Tab walks off into
+     the page behind the overlay and the reader has no way back. */
+  var mReturn = null;
+  function mFocusables(m) { return Array.prototype.filter.call(m.querySelectorAll('a[href], button:not([disabled]), input:not([type="hidden"]), textarea, select, [tabindex]:not([tabindex="-1"])'), function (e) { return !e.hidden && e.offsetParent !== null; }); }
+  function openModal(m, from) {
+    mReturn = document.activeElement;
+    /* the window grows out of the card that was clicked */
+    if (from) { var fr = from.getBoundingClientRect(), bx = m.querySelector(".mbox");
+      bx.style.setProperty("--ox", ((fr.left + fr.width / 2) / innerWidth * 100).toFixed(1) + "%");
+      bx.style.setProperty("--oy", ((fr.top + fr.height / 2) / innerHeight * 100).toFixed(1) + "%"); }
+    m.classList.add("open"); m.setAttribute("aria-hidden", "false"); window.__lock();
+    var f = mFocusables(m); if (f.length) setTimeout(function () { f[0].focus(); }, 60);
+  }
+  function closeModals() {
+    var was = document.querySelector(".modal.open");
+    document.querySelectorAll(".modal.open").forEach(function (m) { m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); });
+    if (!menu.classList.contains("open")) window.__unlock();
+    if (was && mReturn && document.contains(mReturn)) { try { mReturn.focus({ preventScroll: true }); } catch (e) { mReturn.focus(); } }
+    mReturn = null;
+  }
+  addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var m = document.querySelector(".modal.open"); if (!m) return;
+    var f = mFocusables(m); if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (!m.contains(document.activeElement)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); return; }
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   document.querySelectorAll(".modal").forEach(function (m) { m.addEventListener("click", function (e) { if (e.target === m || e.target.closest("[data-close]")) closeModals(); }); });
   addEventListener("keydown", function (e) { if (e.key === "Escape") closeModals(); });
   /* ── the piece window ───────────────────────────────────────────────────
@@ -389,6 +417,13 @@
 
   /* ── your line ── */
   window.__build = { origin: "lab", ct: 6, metal: "white" };
+  /* the document says which language it is in from the first frame, even in
+     English, where paint() does not run: the attributes CSS and assistive
+     software read were otherwise only set once somebody switched away and back */
+  document.documentElement.setAttribute("data-lang", lang);
+  document.documentElement.setAttribute("lang", lang);
+  document.documentElement.setAttribute("dir", langDef(lang).rtl ? "rtl" : "ltr");
+  if (langDef(lang).rtl) document.documentElement.setAttribute("data-ns", "1");
   if (lang !== "en") setTimeout(applyLang, 0);   /* a remembered choice, applied once every definition in this script exists */
   var NAMES = { white: { en: "18K white gold", he: "זהב לבן 18K" }, yellow: { en: "18K yellow gold", he: "זהב צהוב 18K" }, rose: { en: "18K rose gold", he: "זהב ורוד 18K" }, platinum: { en: "Platinum", he: "פלטינה" } };
   var ORIG = { lab: { en: "Lab-grown", he: "מעבדה" }, natural: { en: "Natural", he: "טבעי" } };

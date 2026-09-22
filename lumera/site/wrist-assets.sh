@@ -7,10 +7,16 @@ B=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf
 
 # ── the wrist: a watch and the Line worn together, on bare skin, no mark on the body ──
 curl -sf -o "$T/w.png" $B/hf_20260917_094621_a0e05ebf-21bc-4613-a68e-ede32b095343.png   # 2752 x 1536
-# landscape: tightened around the watch and the bracelet
+# landscape: tightened around the watch and the bracelet. The frame runs the
+# full width of the screen, so on a retina desktop it is asked for close to
+# 3000 device pixels — 1300 was the widest cut and it went soft. The crop holds
+# 2200 real pixels, so that is the top of the ladder now.
+convert "$T/w.png" -crop 2200x1238+380+180 +repage -quality 88 -sampling-factor 4:2:0 -strip "$OUT/wrist-2200.jpg"
+convert "$T/w.png" -crop 2200x1238+380+180 +repage -resize 1800x -quality 87 -sampling-factor 4:2:0 -strip "$OUT/wrist-1800.jpg"
 convert "$T/w.png" -crop 2200x1238+380+180 +repage -resize 1300x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wrist-1300.jpg"
 convert "$T/w.png" -crop 2200x1238+380+180 +repage -resize 900x  -quality 84 -strip "$OUT/wrist-900.jpg"
 # portrait: the same frame, cut 4:5 so both the watch and the bracelet survive on a phone
+convert "$T/w.png" -crop 1229x1536+899+0 +repage -quality 88 -sampling-factor 4:2:0 -strip "$OUT/wristv-1229.jpg"
 convert "$T/w.png" -crop 1229x1536+899+0 +repage -resize 900x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wristv-900.jpg"
 convert "$T/w.png" -crop 1229x1536+899+0 +repage -resize 600x -quality 84 -strip "$OUT/wristv-600.jpg"
 

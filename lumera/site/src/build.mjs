@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { body, MARK, MARK_W } from "./body.mjs";
 const S = new URL(".", import.meta.url).pathname;
 const css = fs.readFileSync(S + "style.css", "utf8");
+const FONT_HREF = "https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Assistant:wght@200;300;400;500&family=Noto+Sans+Arabic:wght@200;300;400;500&display=swap";
 let s1 = fs.readFileSync(S + "script1.html", "utf8");
 const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S + "script2.html", "utf8"), s3 = fs.readFileSync(S + "script3.html", "utf8"), s4 = fs.readFileSync(S + "script4.html", "utf8"), s5 = fs.readFileSync(S + "script5.html", "utf8"), s6 = fs.readFileSync(S + "script6.html", "utf8");
 function rep(a, b) { if (!s1.includes(a)) { console.error("MISSING in script1:", a.slice(0, 80)); process.exit(1); } s1 = s1.replace(a, b); }
@@ -32,7 +33,8 @@ rep(`function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c
 rep(`var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`, `var alias = { macro: "collection", wrist: "build", voices: "clients", partners: "clients" }`);
 
 /* v12: the piece window opens from the piece */
-rep(`function openModal(m) { m.classList.add("open");`, `function openModal(m, from) { if (from) { var fr = from.getBoundingClientRect(); m.querySelector(".mbox").style.setProperty("--ox", ((fr.left + fr.width / 2) / innerWidth * 100).toFixed(1) + "%"); m.querySelector(".mbox").style.setProperty("--oy", ((fr.top + fr.height / 2) / innerHeight * 100).toFixed(1) + "%"); } m.classList.add("open");`);
+/* openModal carries its own origin logic in script1 now; it used to be patched
+   in here, which meant every edit to that function broke the build. */
 /* v12's openModal(pmodal, pc) is now written directly in the piece window */
 /* v18: the price and the numbers follow the cut and the count of stones */
 const NEW_PRICE = `  var CUTS = {
@@ -99,6 +101,15 @@ b = b.slice(0, hs) + b.slice(hs, he).replace(/class="([^"]*)\brv\b([^"]*)"/g, 'c
 const defer = (s) => s.replace(/^<script>\n/, "<script>\n(window.__defer = window.__defer || []).push(function () {\n").replace(/<\/script>\n?$/, "});\n</script>\n");
 /* the symbol as a mask, available to anything on the page that wants to light it */
 const MKVAR = ":root{--mk:url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + Math.ceil(MARK_W) + ' 1000" preserveAspectRatio="none"><path d="' + MARK + '" fill="#fff"/></svg>') + "')}\n";
-const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n<style>\n${MKVAR}${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}`;
+/* The typefaces load from a real <link>, not from an @import inside the sheet.
+   An @import is only honoured at the very top of a stylesheet, and this sheet
+   opens with the mark variable above — the import sat second and the browser
+   dropped it, so the whole house was setting in system-ui and Georgia. A link
+   also starts the fetch immediately instead of waiting for half a megabyte of
+   CSS to parse first. gen-static.mjs lifts this tag into the document head. */
+const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+  + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+  + '<link rel="stylesheet" href="' + FONT_HREF + '">';
+const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}`;
 fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", page);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

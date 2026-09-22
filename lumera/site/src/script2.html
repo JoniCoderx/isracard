@@ -4,7 +4,9 @@
   "use strict";
   var canvas = document.getElementById("stripcv"), wrap = document.getElementById("stripwrap");
   var gl = canvas.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" });
-  if (!gl) { wrap.style.display = "none"; return; }
+  /* without WebGL the frame keeps a photograph of the line rather than
+     collapsing to nothing, and the view tabs go away with the renderer */
+  if (!gl) { document.documentElement.classList.add("no3d"); return; }
   var mobile = matchMedia("(max-width: 820px)").matches || /Mobi|Android/i.test(navigator.userAgent);
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var NP = 64;

@@ -4,6 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 const [src, outDir, base = "https://jonicoderx.github.io/isracard"] = process.argv.slice(2);
 let html = fs.readFileSync(src, "utf8").replace(/<title>[\s\S]*?<\/title>/, "").replace(/<meta name="viewport"[^>]*>\s*/g, "").replace(/<meta charset=[^>]*>\s*/gi, "");
+/* the font tags belong in the head, where the browser meets them before the
+   half-megabyte of inline CSS; build.mjs writes them at the top of the page
+   so the preview works on its own, and they are lifted out of the body here */
+let fontLinks = "";
+html = html.replace(/<link rel="preconnect" href="https:\/\/fonts\.[^>]*>\s*/g, "")
+           .replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g, m => { fontLinks = m.trim(); return ""; });
 /* every asset path becomes relative, so the page works under a sub-path such as /isracard/ */
 html = html.replace(/(["'(=,\s])\/(img\/|f\/|v\/|icon-|favicon\.|og\.jpg|site\.webmanifest)/g, "$1$2");
 const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
@@ -52,6 +58,7 @@ const head = `<!doctype html>
 <link rel="manifest" href="site.webmanifest?v=6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+${fontLinks}
 <link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/hero-1600.jpg" imagesrcset="img/hero-1600.jpg 1600w, img/hero-2560.jpg 2560w, img/hero-3840.jpg 3840w" imagesizes="100vw">
 <link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/herov-1080.jpg" imagesrcset="img/herov-1080.jpg 1080w, img/herov-1440.jpg 1440w" imagesizes="100vw">
 <script type="application/ld+json">${JSON.stringify({
