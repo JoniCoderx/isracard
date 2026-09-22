@@ -167,7 +167,8 @@ for (const [tag, w, h, touch] of [["desk", 1440, 900, false], ["mob", 390, 844, 
   await p.goto(BASE, { waitUntil: "domcontentloaded", timeout: 45000 });
   await p.waitForTimeout(2600); await p.click("#enterBtn").catch(() => {}); await p.waitForTimeout(1200);
   await p.evaluate(() => { const s = document.getElementById("build"); if (s) s.scrollIntoView({ behavior: "instant" }); });
-  await p.waitForTimeout(1500);
+  await p.waitForTimeout(2500);
+  await p.waitForFunction(() => { const i = document.querySelector(".glfb img"); return !i || i.naturalWidth > 0; }, null, { timeout: 12000 }).catch(() => {});
   const fb = await p.evaluate(() => {
     const w = document.getElementById("stripwrap"), g = document.querySelector(".glfb");
     const r = w ? w.getBoundingClientRect() : { width: 0, height: 0 };

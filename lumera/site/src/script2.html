@@ -6,7 +6,21 @@
   var gl = canvas.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" });
   /* without WebGL the frame keeps a photograph of the line rather than
      collapsing to nothing, and the view tabs go away with the renderer */
-  if (!gl) { document.documentElement.classList.add("no3d"); return; }
+  if (!gl) {
+    /* The photograph carries its address in data attributes and gets it only
+       here. With a src on it, every visitor downloaded a picture almost none
+       of them will ever see — a display:none image is still fetched — and with
+       loading="lazy" on top of that it did not arrive when it was finally
+       needed. Now it costs nothing until the moment it is the whole section. */
+    var fb = document.querySelector(".glfb img");
+    if (fb && fb.getAttribute("data-src")) {
+      fb.setAttribute("srcset", fb.getAttribute("data-srcset") || "");
+      fb.setAttribute("src", fb.getAttribute("data-src"));
+      fb.setAttribute("fetchpriority", "high");
+    }
+    document.documentElement.classList.add("no3d");
+    return;
+  }
   var mobile = matchMedia("(max-width: 820px)").matches || /Mobi|Android/i.test(navigator.userAgent);
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var NP = 64;
