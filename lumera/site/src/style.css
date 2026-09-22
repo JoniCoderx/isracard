@@ -2183,8 +2183,7 @@
      into a product window was a mouse; it is a <button> now and needs the
      browser's own button styling taken off it, since .lnk was written for an
      anchor. ─────────────────────────────────────────────────────────────── */
-  button.lnk { background:none; border:0; margin:0; font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none; }
-  button.lnk.vw { padding:2px 0 4px; }
+  button.lnk { background:none; border:0; margin:0; padding:0 0 4px; font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none; }
   /* the ring the keyboard leaves behind, in the house's own light rather than
      the browser's blue */
   :where(a, button, [tabindex], summary, input, textarea):focus-visible {
@@ -2382,4 +2381,102 @@
     #bcv { touch-action:pan-y; }
     #stripwrap.wrist { touch-action:pan-y; }
     .tcv { touch-action:pan-y; }
+  }
+
+  /* ══ v65 — what a finger can actually hit, and read ═══════════════════════
+     Measured on a 390: thirty-nine controls under 44px and forty-four pieces
+     of text under 11px.
+
+     Two of those were mine. Giving "View the piece" its own padding in v61
+     overrode the touch pad every .lnk gets on a coarse pointer, so the one way
+     into a product was a twenty-pixel-tall target. And the pads on the view
+     toggles are capped to their own height further up — which is right, or a
+     pad overflows its toolbar — so those controls need the height themselves
+     rather than borrowing it. ──────────────────────────────────────────────── */
+  @media (pointer:coarse) {
+    button.lnk { padding-block:13px 12px; }
+    /* the view toggles carry their own height rather than a pad that cannot
+       reach past them: Front, Side, Underside, Inspect were 29 pixels tall */
+    .vp, .vtb { min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
+    .cats .cat { min-height:44px; }
+  }
+  @media (max-width:759px) {
+    /* ten and a half pixels of letter-spaced capitals is a squint. The scale
+       only moves where it was below eleven; nothing else changes size. */
+    .cats .cat { font-size:.72rem; letter-spacing:.14em; }
+    .btn.sm, .chip, .vp, .vtb { font-size:.71rem; letter-spacing:.13em; }
+    .lang { font-size:.72rem; letter-spacing:.16em; }
+    .menubtn span { font-size:.73rem; }
+    .mkeys .k, .mprice .pn, .mfoot, .piece.soon .k.sig, .piece.soon .swhen { font-size:.62rem; }
+    .k.sig { font-size:.62rem; }
+  }
+
+  /* ── v65b — the ones that needed a heavier hand ──────────────────────────
+     .vt .vtb and .vpos .vp are pinned to 32px by a two-class selector further
+     up, so a one-class rule could not reach them; the specification summary
+     was eleven pixels tall; and the card's small capitals were at 9.6px, which
+     is a reference number nobody can read on a phone. ───────────────────── */
+  @media (pointer:coarse) {
+    .vt .vtb, .vpos .vp { height:auto; min-height:44px; padding-block:6px; }
+    .btn, .chip, .lang, .menubtn { min-height:44px; }
+    .spec > summary { padding-block:14px; }
+    .mdt > summary { padding-block:16px; }
+    .gthumbs button { min-height:44px; }
+  }
+  @media (max-width:759px) {
+    .btn { font-size:.72rem; }
+    .piece .meta, .piece .meta span, .k.sig, .k.sig span { font-size:.68rem; letter-spacing:.11em; }
+    .mkeys .k, .mprice .pn, .mfoot { font-size:.64rem; }
+    .fcol .k, .nextup .nxh { font-size:.66rem; }
+  }
+
+  /* ── v65c — the last of them, by name ────────────────────────────────────
+     Each of these is pinned by a selector that outranks a plain class, so
+     each is answered with one of the same weight. ─────────────────────────── */
+  @media (pointer:coarse) {
+    button.lnk, a.lnk { padding-block:15px 14px; }
+    .cur .chip, .btn.sm, .chip { min-height:44px; }
+    .spec > summary, .mdt > summary { padding-block:17px; }
+    .soc a { width:44px; height:44px; }
+    /* the footer keeps its rhythm: the height goes into the link rather than
+       into the gap between links, so the column is no taller than it was */
+    .fcol { gap:0; }
+    .fcol a, .fcol span { min-height:44px; display:flex; align-items:center; }
+    .fcol .k { min-height:0; margin-bottom:2px; }
+  }
+  @media (max-width:759px) {
+    /* nothing on a phone reads below eleven pixels */
+    #fab, .btn.hbook { font-size:.72rem; }
+    .piece .meta, .piece .meta span, .piece .meta .price,
+    .k.sig, .k.sig span, .mkeys .k, .mprice .pn, .mfoot,
+    .fcol .k, .nextup .nxh, .piece.soon .swhen { font-size:.71rem; letter-spacing:.1em; }
+  }
+
+  /* ── v65d — the last few, measured not guessed ──────────────────────────── */
+  @media (pointer:coarse) {
+    button.lnk, a.lnk { padding-block:16px 15px; }
+    /* the view toggles set their own size through a two-class selector, and
+       their type came from a list that also sets --bh; both answered in kind */
+    .vt .vtb, .vpos .vp { font-size:.7rem; letter-spacing:.12em; padding:0 14px; }
+    .modal .btn, .mbox .btn, .macts .btn, .mbuy .btn { min-height:46px; }
+    .mbox .mdt > summary { min-height:46px; }
+    .gnav { width:44px; height:44px; }
+    .fbot a, .fbot span { min-height:44px; display:inline-flex; align-items:center; }
+    .fbot { margin-top:18px; }
+    /* the currency row and the cut names were the smallest type on the page */
+    .spec .specrow .k, .opts .k, .cur .k { font-size:.7rem; }
+  }
+  @media (max-width:759px) {
+    .spec > summary span, .opts .k, .cur .k, .carat .k { font-size:.7rem; letter-spacing:.1em; }
+  }
+
+  /* ── v65e ────────────────────────────────────────────────────────────────
+     The footer caption was 8.32px — I set that myself when I shortened the
+     footer, and it is smaller than anything else on the page. The currency
+     chips and the folded-section headings were just over ten. ───────────── */
+  @media (max-width:759px) {
+    .fbig .k { font-size:.7rem; letter-spacing:.14em; line-height:1.8; }
+    .cur .chip, .total .chip { font-size:.7rem; letter-spacing:.09em; }
+    .mdt > summary { font-size:.7rem; letter-spacing:.14em; }
+    .mdt > summary span { font-size:inherit; }
   }
