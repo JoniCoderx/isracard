@@ -14,7 +14,7 @@ for (const [w, h, tag] of [[1440, 900, "desk"], [390, 844, "mob"]]) {
   await p.waitForTimeout(900);
 
   const shape = await p.evaluate(() => {
-    const f = [...document.querySelectorAll(".fig.sw")];
+    const f = [...document.querySelectorAll(".fig.swp")];
     return f.map(x => ({
       ims: x.querySelectorAll(".im").length,
       dt: !!x.querySelector(".im.dt img"),
@@ -33,7 +33,7 @@ for (const [w, h, tag] of [[1440, 900, "desk"], [390, 844, "mob"]]) {
     // re-anchor: with no image files on disk the figures collapse and the page
     // keeps resettling, so hold the collection on screen between samples
     await p.evaluate(() => window.scrollTo({ top: scrollY + document.getElementById("collection").getBoundingClientRect().top, behavior: "instant" }));
-    seen.add(await p.evaluate(() => [...document.querySelectorAll(".fig.sw")].filter(f => f.classList.contains("flip")).length));
+    seen.add(await p.evaluate(() => [...document.querySelectorAll(".fig.swp")].filter(f => f.classList.contains("flip")).length));
     await p.waitForTimeout(700);
   }
   ok(!seen.has(4), `${tag} never all at once (${[...seen].sort().join(",")})`);

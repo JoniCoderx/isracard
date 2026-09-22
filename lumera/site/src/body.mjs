@@ -25,7 +25,7 @@ export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div clas
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
 // Two frames of one piece — worn, then clean on white. They change on their own
 // (see the ticker in script4) and the piece modal picks the second one up for free.
-export const figsw = (worn, clean, altw, altc, ratio, sizes, mod = "") => `<div class="fig ${ratio} rv sw${mod ? " " + mod : ""}"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
+export const figsw = (worn, clean, altw, altc, ratio, sizes, mod = "") => `<div class="fig ${ratio} rv swp${mod ? " " + mod : ""}"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
 export const figd = (name, detail, alt, altd, ratio, sizes, cap = "") => `<div class="fig ${ratio} rv sigp"><div class="im">${pic(name, alt, sizes)}</div><div class="im dt">${pic(detail, altd, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* the loader: the exact mark, almost invisible, filled by molten light from below. Three layers of the same path: the ghost, the lit part under a rising liquid mask, and the solid that sets when the light reaches the top. */
 /* the loader mark: four layers of the exact symbol, each one a CSS mask, so every moving part is a transform the compositor can carry */
@@ -56,7 +56,7 @@ const SIG_PIECE = `
 export const body = `
 <div id="silavu">
 <div id="intro">
-  <button class="lang introlang" id="langBtn2" aria-label="Switch language">Hebrew</button>
+  <button class="lang introlang" id="langBtn2" aria-label="English">EN</button>
   <div class="iw">
     ${imark()}
     <button class="btn enter" id="enterBtn" aria-label="Enter"><span data-en="Enter" data-he="כניסה">Enter</span></button>
@@ -78,7 +78,7 @@ export const body = `
   <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu"><i></i><span data-en="Menu" data-he="תפריט">Menu</span></button>
   <a class="mark" href="#hero" aria-label="SILAVU">${lockup()}</a>
   <div class="hr">
-    <button class="lang" id="langBtn" aria-label="Switch language">Hebrew</button>
+    <button class="lang" id="langBtn" aria-label="English">EN</button>
     <a class="btn hbook" href="#concierge" data-en="Book a viewing" data-he="פגישה פרטית">Book a viewing</a>
   </div>
 </header>
@@ -96,7 +96,7 @@ export const body = `
   </div>
   <div class="mfoot">
     <a class="btn solid" href="#concierge" style="justify-self:start" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
-    <div class="row"><button class="lang" id="langBtn3" aria-label="Switch language">Hebrew</button><i></i><span class="k" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span></div>
+    <div class="row"><button class="lang" id="langBtn3" aria-label="English">EN</button><i></i><span class="k" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span></div>
     <div class="soc" data-socials></div>
   </div>
 </div>

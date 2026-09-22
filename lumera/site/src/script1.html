@@ -84,7 +84,7 @@
     var a = e.target.closest('a[href^="#"]'); if (!a) return; var el = document.querySelector(a.getAttribute("href")); if (!el) return;
     e.preventDefault(); setMenu(false);
     var r = el.getBoundingClientRect(), top = el.id === "hero" ? 0 : scrollY + r.top;
-    if (a.hasAttribute("data-piece")) { prefill((lang === "he" ? "אשמח לצפייה פרטית: " : "I would like a private viewing of: ") + a.getAttribute("data-piece")); }
+    if (a.hasAttribute("data-piece")) { prefill((lang === "he" ? "אשמח לצפייה פרטית: " : T("I would like a private viewing of: ")) + a.getAttribute("data-piece")); }
     window.scrollTo({ top: Math.max(0, top), behavior: reduce ? "instant" : "smooth" });
   });
 
@@ -93,7 +93,7 @@
   var curSec = null;
   function setWhere(sec) {
     if (sec === curSec) return; curSec = sec; var i = secs.indexOf(sec);
-    var n = sec.getAttribute("data-n") || ""; whereN.textContent = n || "·"; whereT.textContent = sec.getAttribute(lang === "he" ? "data-title-he" : "data-title-en");
+    var n = sec.getAttribute("data-n") || ""; whereN.textContent = n || "·"; var te = sec.getAttribute("data-title-en"); whereT.textContent = lang === "he" ? sec.getAttribute("data-title-he") : (T(te) || te);
     var alias = { standard: "inside", atelier: "partners" }, id = alias[sec.id] || sec.id;
     navLinks.forEach(function (a) { a.classList.toggle("cur", a.getAttribute("href") === "#" + id); });
   }
@@ -180,7 +180,7 @@
       if (e.target.closest("a")) return;
       var img = pc.querySelector("img"), meta = pc.querySelector(".meta"), btn = pc.querySelector("[data-piece]");
       pmPiece = btn ? btn.getAttribute("data-piece") : ""; $("pmImg").src = img.currentSrc || img.src; $("pmImg").alt = img.alt; var dt = pc.querySelector(".im.dt img"), mim = $("pmIm"); mim.classList.remove("flip"); if (dt) { $("pmImg2").src = dt.currentSrc || dt.src; $("pmImg2").alt = dt.alt; mim.classList.add("two"); } else { mim.classList.remove("two"); $("pmImg2").removeAttribute("src"); } $("pmK").innerHTML = pc.querySelector(".k").innerHTML; $("pmT").innerHTML = pc.querySelector(".t").innerHTML; $("pmP").innerHTML = pc.querySelector(".p").innerHTML;
-      var L = lang === "he" ? ["משקל", "איכות", "מתכת", "מחיר"] : ["Weight", "Grade", "Metal", "Price"], vals = Array.prototype.filter.call(meta.children, function (c) { return c.tagName !== "I"; });
+      var L = lang === "he" ? ["משקל", "איכות", "מתכת", "מחיר"] : ["Weight", "Grade", "Metal", "Price"].map(function (w) { return T(w) || w; }), vals = Array.prototype.filter.call(meta.children, function (c) { return c.tagName !== "I"; });
       $("pmSpecs").innerHTML = vals.map(function (v, i) { return '<div class="dc"><div class="dval">' + v.innerHTML + '</div><div class="k">' + (v.getAttribute("data-l" + lang) || L[i] || "") + "</div></div>"; }).join("");
       $("pmReq").setAttribute("data-piece", pmPiece); openModal(pmodal);
     });
@@ -190,7 +190,7 @@
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
   $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
-  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = (sp.n || 36) + " × " + (sp.cut || "round") + " · " + b.ct + " ct · " + NAMES[b.metal][lang] + " · " + b.wrist + " cm"; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : "I tried the Line on my wrist. I would like a private viewing. My line: ") + cfg); });
+  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = (sp.n || 36) + " × " + (sp.cut || "round") + " · " + b.ct + " ct · " + mname(b.metal) + " · " + b.wrist + " cm"; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
 
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
@@ -204,23 +204,98 @@
   var dustFc = 0;
   tick(); addEventListener("scroll", compass, { passive: true });
 
-  /* ── language ── */
-  var lang = "en", btns = [$("langBtn"), $("langBtn2"), $("langBtn3")];
-  try { var saved = localStorage.getItem("silavu-lang"); if (saved === "he" || saved === "en") lang = saved; } catch (e) {}
-  function applyLang() {
-    document.documentElement.setAttribute("data-lang", lang); document.documentElement.setAttribute("dir", lang === "he" ? "rtl" : "ltr"); document.documentElement.setAttribute("lang", lang);
+  /* ── language ───────────────────────────────────────────────────────────
+     Five languages, and only two of them live in the page. English and
+     Hebrew are on the elements themselves as data-en / data-he; the rest are
+     JSON dictionaries keyed by the English string, fetched once when someone
+     actually picks that language. Putting five translations of every string
+     into the markup would have tripled the page for four readers in five who
+     never leave the default. */
+  var LANGS = [
+    { c: "en", label: "EN", name: "English",  rtl: false },
+    { c: "he", label: "עב", name: "עברית",    rtl: true  },
+    { c: "fr", label: "FR", name: "Français", rtl: false },
+    { c: "ar", label: "AR", name: "العربية",  rtl: true  },
+    { c: "ru", label: "RU", name: "Русский",  rtl: false }
+  ];
+  var lang = "en", dicts = {}, btns = [$("langBtn"), $("langBtn2"), $("langBtn3")].filter(Boolean);
+  function langDef(c) { for (var i = 0; i < LANGS.length; i++) if (LANGS[i].c === c) return LANGS[i]; return LANGS[0]; }
+  try { var saved = localStorage.getItem("silavu-lang"); if (saved && langDef(saved).c === saved) lang = saved; } catch (e) {}
+
+  /* the one string table the scripts themselves read, so a metal name or a
+     prefilled message follows the language too */
+  /* the compass paints once before this block has run, so both of these can
+     still be undefined on the first call — guard rather than reorder, since
+     the reorder would only move the same hazard somewhere else */
+  function T(en) { var d = typeof dicts !== "undefined" && dicts ? dicts[lang] : null; return (d && d[en]) || (lang === "he" ? null : en); }
+
+  function paint() {
+    var def = langDef(lang), d = dicts[lang];
+    document.documentElement.setAttribute("data-lang", lang);
+    document.documentElement.setAttribute("dir", def.rtl ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+    /* Hebrew and Arabic have no italic and no upper case, so the typography
+       rules that drop both hang off this rather than off one language */
+    if (def.rtl) document.documentElement.setAttribute("data-ns", "1");
+    else document.documentElement.removeAttribute("data-ns");
     try { clocks(); } catch (e) {}
-    document.querySelectorAll("[data-en]").forEach(function (el) { var v = el.getAttribute(lang === "he" ? "data-he" : "data-en"); if (v != null) el.innerHTML = v; });
-    btns.forEach(function (b) { b.textContent = lang === "he" ? "English" : "Hebrew"; });
+    document.querySelectorAll("[data-en]").forEach(function (el) {
+      var en = el.getAttribute("data-en"), v;
+      if (lang === "he") v = el.getAttribute("data-he");
+      else if (d) v = d[en] != null ? d[en] : en;
+      else v = en;
+      if (v != null) el.innerHTML = v;
+    });
+    btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
   }
-  btns.forEach(function (b) { b.addEventListener("click", function () { lang = lang === "he" ? "en" : "he"; applyLang(); }); });
+  function applyLang() {
+    if (lang === "en" || lang === "he" || dicts[lang]) { paint(); return; }
+    var want = lang;
+    fetch("lang/" + want + ".json", { cache: "force-cache" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j) dicts[want] = j; if (lang === want) paint(); })
+      .catch(function () { if (lang === want) paint(); });   /* English rather than nothing */
+  }
+  function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); }
+
+  /* one menu, moved to whichever control opened it */
+  var lmenu = document.createElement("div");
+  lmenu.id = "langmenu"; lmenu.setAttribute("role", "menu");
+  lmenu.innerHTML = LANGS.map(function (L) {
+    return '<button type="button" role="menuitem" data-lang="' + L.c + '"><span class="lc">' + L.label + '</span><span class="ln">' + L.name + '</span></button>';
+  }).join("");
+  document.body.appendChild(lmenu);
+  function closeLang() { lmenu.classList.remove("open"); btns.forEach(function (b) { b.setAttribute("aria-expanded", "false"); }); }
+  function openLang(btn) {
+    var r = btn.getBoundingClientRect();
+    lmenu.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-lang") === lang); });
+    lmenu.classList.add("open");
+    var w = lmenu.offsetWidth, h = lmenu.offsetHeight;
+    var left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), innerWidth - w - 8);
+    var top = r.bottom + 10 + h > innerHeight ? r.top - h - 10 : r.bottom + 10;
+    lmenu.style.left = left + "px"; lmenu.style.top = Math.max(8, top) + "px";
+    btn.setAttribute("aria-expanded", "true");
+  }
+  btns.forEach(function (b) {
+    b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false");
+    b.addEventListener("click", function (e) { e.stopPropagation(); lmenu.classList.contains("open") ? closeLang() : openLang(b); });
+  });
+  lmenu.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-lang]"); if (!b) return;
+    closeLang(); setLang(b.getAttribute("data-lang"));
+  });
+  document.addEventListener("click", function (e) { if (!lmenu.contains(e.target)) closeLang(); });
+  addEventListener("keydown", function (e) { if (e.key === "Escape") closeLang(); });
+  addEventListener("resize", closeLang, { passive: true });
 
   /* ── your line ── */
   window.__build = { origin: "lab", ct: 6, metal: "white" };
-  if (lang === "he") setTimeout(applyLang, 0);   /* a remembered choice, applied once every definition in this script exists */
+  if (lang !== "en") setTimeout(applyLang, 0);   /* a remembered choice, applied once every definition in this script exists */
   var NAMES = { white: { en: "18K white gold", he: "זהב לבן 18K" }, yellow: { en: "18K yellow gold", he: "זהב צהוב 18K" }, rose: { en: "18K rose gold", he: "זהב ורוד 18K" }, platinum: { en: "Platinum", he: "פלטינה" } };
   var ORIG = { lab: { en: "Lab-grown", he: "מעבדה" }, natural: { en: "Natural", he: "טבעי" } };
+  function mname(k) { return T(NAMES[k].en) || NAMES[k].he; }
+  function oname(k) { return T(ORIG[k].en) || ORIG[k].he; }
   var estEl = $("est"), sumStones = $("sumStones"), sumMetal = $("sumMetal"), sumOrigin = $("sumOrigin");
   function price() {
     var b = window.__build, each = b.ct / 36, nat = b.origin === "natural";
@@ -228,7 +303,7 @@
     var stones = perCt * b.ct, metal = b.metal === "platinum" ? 9500 : 6500, making = 9000;
     var total = stones + metal + making;
     estEl.textContent = "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");
-    sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = NAMES[b.metal][lang]; sumOrigin.textContent = ORIG[b.origin][lang];
+    sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin);
     var each = b.ct / 36, mm = 6.5 * Math.cbrt(each); $("eachCt").innerHTML = each.toFixed(2) + "<small>ct</small>"; $("eachMm").innerHTML = mm.toFixed(1) + "<small>mm</small>"; $("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";
     var st = $("stone1"), px = Math.max(18, Math.min(64, mm * 3.78 * 2.2)); st.style.width = st.style.height = px + "px";
   }
@@ -247,7 +322,7 @@
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
     var b = window.__build;
-    prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : "I would like to reserve a SILAVU Line: ") + b.ct + " ct · " + ORIG[b.origin][lang] + " · " + NAMES[b.metal][lang] + " · " + estEl.textContent);
+    prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : T("I would like to reserve a SILAVU Line: ")) + b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);
   });
 
   /* ── concierge ── */

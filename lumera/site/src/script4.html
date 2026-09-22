@@ -156,7 +156,7 @@
      the collection is actually on screen. Pointer devices get the worn frame
      back on hover — that is handled in CSS, so nothing here fights it. */
   (function () {
-    var figs = [].slice.call(document.querySelectorAll(".fig.sw"));
+    var figs = [].slice.call(document.querySelectorAll(".fig.swp"));
     if (!figs.length) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var t = 0, n = 0, vis = 0;

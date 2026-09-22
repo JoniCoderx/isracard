@@ -17,32 +17,123 @@ const head = `<!doctype html>
 <link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
 <meta name="silavu-build" content="${BUILD}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="SILAVU">
+<meta name="format-detection" content="telephone=no">
+<!-- one page, five languages, chosen in the browser: every locale is the same
+     URL, so each alternate points here and x-default is the English default -->
+<link rel="alternate" hreflang="en" href="${base}/">
+<link rel="alternate" hreflang="he" href="${base}/">
+<link rel="alternate" hreflang="fr" href="${base}/">
+<link rel="alternate" hreflang="ar" href="${base}/">
+<link rel="alternate" hreflang="ru" href="${base}/">
+<link rel="alternate" hreflang="x-default" href="${base}/">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="he_IL">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="ar_AE">
+<meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
 <meta property="og:title" content="SILAVU — Private high jewellery, Dubai · Tel Aviv">
 <meta property="og:description" content="A private high-jewellery house in Dubai and Tel Aviv. The SILAVU Line, bespoke pieces, private viewings by appointment.">
-<meta property="og:image" content="${base}/og.jpg?v=5">
+<meta property="og:image" content="${base}/og.jpg?v=6">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="${base}/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SILAVU — Private high jewellery, Dubai · Tel Aviv">
-<meta name="twitter:image" content="${base}/og.jpg?v=5">
-<link rel="icon" href="favicon.ico?v=5" sizes="48x48 32x32 16x16">
-<link rel="icon" href="icon-32.png?v=5" type="image/png" sizes="32x32">
-<link rel="icon" href="icon-16.png?v=5" type="image/png" sizes="16x16">
-<link rel="icon" href="favicon.svg?v=5" type="image/svg+xml" sizes="any">
-<link rel="apple-touch-icon" href="icon-180.png?v=5" sizes="180x180">
-<link rel="manifest" href="site.webmanifest?v=5">
+<meta name="twitter:image" content="${base}/og.jpg?v=6">
+<link rel="icon" href="favicon.ico?v=6" sizes="48x48 32x32 16x16">
+<link rel="icon" href="icon-32.png?v=6" type="image/png" sizes="32x32">
+<link rel="icon" href="icon-16.png?v=6" type="image/png" sizes="16x16">
+<link rel="icon" href="favicon.svg?v=6" type="image/svg+xml" sizes="any">
+<link rel="apple-touch-icon" href="icon-180.png?v=6" sizes="180x180">
+<link rel="manifest" href="site.webmanifest?v=6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/hero-1600.jpg" imagesrcset="img/hero-1600.jpg 1600w, img/hero-2560.jpg 2560w, img/hero-3840.jpg 3840w" imagesizes="100vw">
 <link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/herov-1080.jpg" imagesrcset="img/herov-1080.jpg 1080w, img/herov-1440.jpg 1440w" imagesizes="100vw">
+<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "JewelryStore"],
+      "@id": base + "/#house",
+      "name": "SILAVU",
+      "description": "A private high-jewellery house in Dubai and Tel Aviv. House collection, bespoke commissions and the SILAVU Line, by appointment.",
+      "url": base + "/",
+      "logo": base + "/icon-512.png",
+      "image": base + "/og.jpg",
+      "email": "concierge@silavu.com",
+      "priceRange": "$$$$",
+      "currenciesAccepted": "AED, ILS, USD, EUR",
+      "knowsLanguage": ["en", "he", "fr", "ar", "ru"],
+      "areaServed": [{ "@type": "Country", "name": "United Arab Emirates" }, { "@type": "Country", "name": "Israel" }],
+      "location": [
+        { "@type": "Place", "name": "SILAVU Dubai", "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" } },
+        { "@type": "Place", "name": "SILAVU Tel Aviv", "address": { "@type": "PostalAddress", "addressLocality": "Tel Aviv", "addressCountry": "IL" } }
+      ],
+      "makesOffer": { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Private viewing", "serviceType": "By appointment" } }
+    },
+    {
+      "@type": "WebSite",
+      "@id": base + "/#site",
+      "url": base + "/",
+      "name": "SILAVU",
+      "inLanguage": ["en", "he", "fr", "ar", "ru"],
+      "publisher": { "@id": base + "/#house" }
+    },
+    {
+      "@type": "ItemList",
+      "name": "The Monogram",
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "numberOfItems": 4,
+      "itemListElement": [
+        ["Monogram Pendant", "The house mark in pave diamonds on a fine white gold chain.", "1.85 ct, 18K white gold", base + "/img/mono-neck-1600.jpg"],
+        ["Monogram Bracelet", "The house mark repeated and interlaced around the wrist.", "4.20 ct, 18K white gold", base + "/img/mono-wrist-1600.jpg"],
+        ["Monogram Ear cuff", "The house mark following the curve of the ear.", "1.10 ct, 18K white gold", base + "/img/mono-ear-1600.jpg"],
+        ["The Desert Star", "An eighteen carat brilliant in a radiating halo. Made once.", "18.06 ct, platinum", base + "/img/star-worn-1600.jpg"]
+      ].map(function (p, i) {
+        return {
+          "@type": "ListItem", "position": i + 1,
+          "item": {
+            "@type": "Product", "name": p[0], "description": p[1], "material": p[2], "image": p[3],
+            "brand": { "@id": base + "/#house" },
+            "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "priceCurrency": "AED", "price": "0", "priceSpecification": { "@type": "PriceSpecification", "valueAddedTaxIncluded": true }, "seller": { "@id": base + "/#house" }, "description": "Price on request" }
+          }
+        };
+      })
+    }
+  ]
+})}</script>
 <script>window.__silavuBuild="${BUILD}";</script>
 </head>
 <body>
 `;
+const SRCDIR = path.dirname(path.resolve(src));
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</html>\n");
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
+/* the extra languages travel as data, fetched only when someone picks one */
+{
+  const from = path.join(SRCDIR, "lang");
+  if (fs.existsSync(from)) {
+    const to = path.join(outDir, "lang");
+    fs.mkdirSync(to, { recursive: true });
+    for (const f of fs.readdirSync(from)) if (f.endsWith(".json")) fs.copyFileSync(path.join(from, f), path.join(to, f));
+    console.log("languages:", fs.readdirSync(to).join(" "));
+  }
+}
+fs.writeFileSync(path.join(outDir, "robots.txt"),
+  "User-agent: *\nAllow: /\n\nSitemap: " + base + "/sitemap.xml\n");
+fs.writeFileSync(path.join(outDir, "sitemap.xml"),
+  '<?xml version="1.0" encoding="UTF-8"?>\n'
+  + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+  + "  <url>\n    <loc>" + base + "/</loc>\n"
+  + ["en", "he", "fr", "ar", "ru"].map(function (l) {
+      return '    <xhtml:link rel="alternate" hreflang="' + l + '" href="' + base + '/"/>\n';
+    }).join("")
+  + '    <xhtml:link rel="alternate" hreflang="x-default" href="' + base + '/"/>\n'
+  + "    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n");
 console.log("static index written:", path.join(outDir, "index.html"), ((head.length + html.length) / 1024).toFixed(0) + " KB");

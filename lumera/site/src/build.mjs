@@ -13,10 +13,10 @@ rep(`var alias = { standard: "inside", atelier: "partners" }`, `var alias = { st
 
 /* v9: wrist size, no glints on buttons, the inside film is gone */
 rep(`window.__build = { origin: "lab", ct: 6, metal: "white" };`, `window.__build = { origin: "lab", ct: 6, metal: "white", wrist: 17, cut: "round" };`);
-rep(`sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = NAMES[b.metal][lang]; sumOrigin.textContent = ORIG[b.origin][lang];`, `sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = NAMES[b.metal][lang]; sumOrigin.textContent = ORIG[b.origin][lang]; $("sumWrist").textContent = b.wrist + " cm";`);
+rep(`sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin);`, `sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";`);
 rep(`$("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";`, `$("lineLen").innerHTML = b.wrist + "<small>cm</small>";`);
 rep(`window.__build[k] = k === "ct" ? Number(v) : v;`, `window.__build[k] = (k === "ct" || k === "wrist") ? Number(v) : v;`);
-rep(`+ b.ct + " ct · " + ORIG[b.origin][lang] + " · " + NAMES[b.metal][lang] + " · " + estEl.textContent);`, `+ b.ct + " ct · " + ORIG[b.origin][lang] + " · " + NAMES[b.metal][lang] + " · " + b.wrist + " cm · " + estEl.textContent);`);
+rep(`+ b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);`, `+ b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + b.wrist + " cm · " + estEl.textContent);`);
 rep(`var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, el.classList.contains("btn") || el.classList.contains("chip") ? 2 : 4); }, true);`, `var el = e.target.closest && e.target.closest(".piece, .card"); if (el && !reduce) sparkle(el, 3); }, true);`);
 rep(`var iv = $("insidevid"), ivLoaded = false;`, `var iv = $("insidevid"), ivLoaded = true;`);
 rep(`function insideTick() { var r = iv.getBoundingClientRect();`, `function insideTick() { if (!iv) return; var r = iv.getBoundingClientRect();`);
@@ -28,7 +28,7 @@ rep(`var el = e.target.closest && e.target.closest(".piece, .card"); if (el && !
 /* v11: a shorter intro, lazy macro film, prices in any currency, a crossfade on language change, compass aliases */
 rep(`var iv = $("insidevid"), ivLoaded = true;`, `var iv = $("insidevid"), ivLoaded = false;`);
 rep(`estEl.textContent = "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");`, `estEl.setAttribute("data-aed", Math.round(total / 500) * 500); estEl.textContent = window.__money ? window.__money.fmt(Math.round(total / 500) * 500) : "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");`);
-rep(`btns.forEach(function (b) { b.addEventListener("click", function () { lang = lang === "he" ? "en" : "he"; applyLang(); }); });`, `btns.forEach(function (b) { b.addEventListener("click", function () { var h = document.documentElement; h.classList.add("langing"); setTimeout(function () { lang = lang === "he" ? "en" : "he"; try { localStorage.setItem("silavu-lang", lang); } catch (e) {} applyLang(); if (window.__money) window.__money.refresh(); requestAnimationFrame(function () { h.classList.remove("langing"); }); }, entered ? 220 : 0); }); });`);
+rep(`function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); }`, `function setLang(c) { if (c === lang) return; var h = document.documentElement; h.classList.add("langing"); setTimeout(function () { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); if (window.__money) window.__money.refresh(); requestAnimationFrame(function () { h.classList.remove("langing"); }); }, entered ? 220 : 0); }`);
 rep(`var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`, `var alias = { macro: "collection", wrist: "build", voices: "clients", partners: "clients" }`);
 
 /* v12: the piece window opens from the piece */
@@ -80,7 +80,7 @@ const NEW_PRICE = `  var CUTS = {
     var stones = perCt * b.ct, metal = b.metal === "platinum" ? 9500 : 6500, making = 9000 + (c.set === "channel" ? 1500 : 0) + spec.n * 40;
     var total = stones + metal + making;
     estEl.setAttribute("data-aed", Math.round(total / 500) * 500); estEl.textContent = window.__money ? window.__money.fmt(Math.round(total / 500) * 500) : "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");
-    sumStones.textContent = spec.n + " × " + each.toFixed(2) + " ct · " + c[lang]; sumMetal.textContent = NAMES[b.metal][lang]; sumOrigin.textContent = ORIG[b.origin][lang]; $("sumWrist").textContent = b.wrist + " cm";
+    sumStones.textContent = spec.n + " × " + each.toFixed(2) + " ct · " + c[lang === "he" ? "he" : "en"]; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";
     $("eachCt").innerHTML = each.toFixed(2) + "<small>ct</small>";
     $("eachMm").innerHTML = (c.ratio === 1 ? spec.L.toFixed(1) : spec.L.toFixed(1) + "×" + spec.W.toFixed(1)) + "<small>mm</small>";
     $("eachLbl").textContent = lang === "he" ? "כל אחת מ־" + spec.n + " האבנים" : "Each of the " + spec.n + " stones";
