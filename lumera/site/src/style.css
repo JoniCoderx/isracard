@@ -2480,3 +2480,78 @@
     .mdt > summary { font-size:.7rem; letter-spacing:.14em; }
     .mdt > summary span { font-size:inherit; }
   }
+
+  /* ══ v66 — building the bracelet with a thumb ═════════════════════════════
+     Measured at 390: the cut was eight word-pills over three rows, the metal
+     four pills 188 pixels wide over three more, and the whole panel 753px of
+     buttons. Giving every control 44px of height in v65 is right and made this
+     worse — a tall pill with a long label can only wrap.
+
+     So the pills stop being pills. The cut becomes what it actually is: eight
+     shapes, drawn, four across. The metal becomes four colours. Weight and
+     size become one row you push sideways with your thumb, the way a phone
+     expects. Nothing loses its label, nothing loses its 44 pixels, and the
+     panel goes from three rows per question to one. ───────────────────────── */
+  @media (max-width:759px) {
+    #opts .opt { gap:9px; padding-top:14px; }
+    #opts .opt .k { opacity:.7; }
+
+    /* ── the cut: the shape is the label ── */
+    #opts .chips.cuts { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:7px; justify-content:stretch; }
+    #opts .chips.cuts .chip { flex:none; width:auto; min-height:70px; height:auto; padding:9px 4px 8px;
+      flex-direction:column; gap:5px; border-radius:12px; }
+    #opts .chips.cuts .chip .ci { width:26px; height:26px; }
+    #opts .chips.cuts .chip span { font-size:.7rem; letter-spacing:0; line-height:1.05; opacity:.82; }
+    #opts .chips.cuts .chip.on span { opacity:1; }
+
+    /* ── weight and size: one row, pushed sideways ── */
+    #opts .opt:not(.mcol) .chips:not(.cuts) { flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start;
+      scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      margin-inline:-4px; padding:2px 4px 4px; }
+    #opts .opt .chips:not(.cuts)::-webkit-scrollbar { display:none; }
+    #opts .opt .chips:not(.cuts) .chip { flex:0 0 auto; scroll-snap-align:center; }
+
+    /* ── the stone: two halves of one control ── */
+    #opts .opt.sorigin .chips { display:grid; grid-template-columns:1fr 1fr; gap:6px; overflow:visible; }
+    #opts .opt.sorigin .chip { width:auto; }
+
+    /* ── the metal: four colours, two across, with their names kept ── */
+    #opts .opt.mcol .chips { display:grid; grid-template-columns:1fr 1fr; gap:7px; overflow:visible; }
+    /* "18K yellow gold" needs two lines at 320, and a chip pinned to 44px can
+       only clip it — the height becomes a floor rather than a ceiling */
+    #opts .opt.mcol .chip { width:auto; height:auto; min-height:44px; padding:8px 11px;
+      justify-content:flex-start; gap:8px; font-size:.72rem; letter-spacing:0;
+      text-align:start; line-height:1.18; white-space:normal; }
+    #opts .opt.mcol .chip .sw { width:18px; height:18px; flex:none;
+      box-shadow:0 0 0 1px rgba(255,255,255,.22), inset 0 1px 2px rgba(255,255,255,.5); }
+    #opts .opt.mcol .chip.on .sw { box-shadow:0 0 0 2px var(--gold), inset 0 1px 2px rgba(255,255,255,.6); }
+
+    /* the currency row is a four-up switch, not four loose buttons */
+    .cur .chips { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
+    .cur .chip { width:auto; padding-inline:6px; }
+  }
+
+  /* ── the bracelet stays on screen while you build it ─────────────────────
+     The canvas sits at the top of the panel and the questions run below it,
+     so on a phone every answer happened somewhere you could not see. You
+     changed the cut and nothing appeared to happen. That is the whole of "not
+     fun to build".
+
+     It sticks under the header now and the questions scroll past it, which is
+     how a configurator is supposed to feel: you tap, and the thing you are
+     making changes in front of you. ──────────────────────────────────────── */
+  @media (max-width:759px) {
+    .panel { overflow:visible; }
+    /* the height is set further up by #stripwrap:not(.wrist), which outranks a
+       bare id — so this has to speak with the same voice */
+    #stripwrap:not(.wrist) { position:sticky; top:calc(var(--hh, 64px) + 6px); z-index:8;
+      height:clamp(180px, 27svh, 250px);
+      background:linear-gradient(180deg, rgba(8,8,8,.96), rgba(8,8,8,.9));
+      border-radius:14px; box-shadow:0 18px 30px -26px #000; }
+    /* the wrist view keeps its own shape and does not need to stick */
+    #stripwrap.wrist { position:relative; top:auto; height:auto; }
+    .vposwrap { position:sticky; top:calc(var(--hh, 64px) + clamp(180px, 27svh, 250px) + 12px); z-index:8; margin-top:8px; }
+    .vposwrap .vpos { background:rgba(8,8,8,.86); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+    /* the options need somewhere to scroll past it */
+    #opts { padding-top:2px; }
+  }

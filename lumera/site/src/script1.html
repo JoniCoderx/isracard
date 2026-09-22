@@ -72,6 +72,16 @@
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("in"); }); }, { threshold: 0.12 });
   document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });
 
+  /* the header's real height, published so anything that has to sit under it
+     can say so in CSS rather than guess — the bracelet sticks to it while you
+     build, and a guessed number leaves a gap or hides a row */
+  (function () {
+    var hd = $("header");
+    function hh() { document.documentElement.style.setProperty("--hh", Math.round(hd.getBoundingClientRect().height) + "px"); }
+    hh(); addEventListener("resize", hh, { passive: true });
+    if (window.ResizeObserver) new ResizeObserver(hh).observe(hd);
+  })();
+
   /* ── menu ── */
   var menu = $("menu"), menuBtn = $("menuBtn");
   function setMenu(open) { menu.classList.toggle("open", open); menu.setAttribute("aria-hidden", open ? "false" : "true"); menuBtn.setAttribute("aria-expanded", open ? "true" : "false"); document.body.classList.toggle("locked", open); }

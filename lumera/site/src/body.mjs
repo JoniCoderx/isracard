@@ -312,14 +312,14 @@ ${markDefs()}
           <button class="chip" data-k="cut" data-v="marquise"><svg class="ci" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12C6 4.5 18 4.5 22 12C18 19.5 6 19.5 2 12z"/></svg><span data-en="Marquise" data-he="מרקיזה">Marquise</span></button>
           <button class="chip" data-k="cut" data-v="pear"><svg class="ci" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a7 7 0 0 0 11 5.7L22 12l-8-5.7A7 7 0 0 0 3 12z"/></svg><span data-en="Pear" data-he="טיפה">Pear</span></button>
           <button class="chip" data-k="cut" data-v="baguette"><svg class="ci" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="1"/></svg><span data-en="Baguette" data-he="באגט">Baguette</span></button></div></div>
-        <div class="opt"><div class="k" data-en="Stone" data-he="אבן">Stone</div><div class="chips">
+        <div class="opt sorigin"><div class="k" data-en="Stone" data-he="אבן">Stone</div><div class="chips">
           <button class="chip on" data-k="origin" data-v="lab" data-en="Lab-grown" data-he="מעבדה">Lab-grown</button>
           <button class="chip" data-k="origin" data-v="natural" data-en="Natural" data-he="טבעי">Natural</button></div></div>
         <div class="opt"><div class="k" data-en="Total weight" data-he="משקל כולל">Total weight</div><div class="chips">
           <button class="chip" data-k="ct" data-v="2">2 ct</button><button class="chip" data-k="ct" data-v="4">4 ct</button><button class="chip on" data-k="ct" data-v="6">6 ct</button><button class="chip" data-k="ct" data-v="8">8 ct</button><button class="chip" data-k="ct" data-v="10">10 ct</button><button class="chip" data-k="ct" data-v="15">15 ct</button><button class="chip" data-k="ct" data-v="20">20 ct</button></div></div>
         <div class="opt"><div class="k" data-en="Wrist size" data-he="מידת פרק היד">Wrist size</div><div class="chips">
           <button class="chip" data-k="wrist" data-v="15">15 cm</button><button class="chip" data-k="wrist" data-v="16">16 cm</button><button class="chip on" data-k="wrist" data-v="17">17 cm</button><button class="chip" data-k="wrist" data-v="18">18 cm</button><button class="chip" data-k="wrist" data-v="19">19 cm</button><button class="chip" data-k="wrist" data-v="20">20 cm</button></div></div>
-        <div class="opt"><div class="k" data-en="Metal" data-he="מתכת">Metal</div><div class="chips">
+        <div class="opt mcol"><div class="k" data-en="Metal" data-he="מתכת">Metal</div><div class="chips">
           <button class="chip on" data-k="metal" data-v="white"><span class="sw" style="background:#e9e9ee"></span><span data-en="18K white gold" data-he="זהב לבן 18K">18K white gold</span></button>
           <button class="chip" data-k="metal" data-v="yellow"><span class="sw" style="background:#e6c66a"></span><span data-en="18K yellow gold" data-he="זהב צהוב 18K">18K yellow gold</span></button>
           <button class="chip" data-k="metal" data-v="rose"><span class="sw" style="background:#e4b096"></span><span data-en="18K rose gold" data-he="זהב ורוד 18K">18K rose gold</span></button>
