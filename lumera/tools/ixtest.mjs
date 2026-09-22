@@ -35,7 +35,9 @@ for (const [tag, w, h, touch] of [["desk", 1440, 900, false], ["mob", 390, 844, 
   let opened = 0, painted = 0, navOk = 0, closedOk = 0;
   for (let i = 0; i < cards.length; i++) {
     await cards[i].scrollIntoViewIfNeeded().catch(() => {});
-    await p.waitForTimeout(150);
+    /* the reveal is a 1.2s slide; clicking into it lands the mousedown on the
+       grid and the mouseup on the button, and no click event is born at all */
+    await p.waitForTimeout(1600);
     /* the way a reader opens it: the words that say so */
     const vw = await cards[i].$("button.lnk.vw");
     if (vw) await vw.click().catch(() => {}); else await cards[i].click({ position: { x: 20, y: 20 } }).catch(() => {});

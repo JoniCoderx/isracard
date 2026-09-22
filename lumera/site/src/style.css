@@ -108,7 +108,6 @@
   .glint::before, .glint::after { content:""; position:absolute; left:50%; top:50%; width:100%; height:2px; background:linear-gradient(90deg, transparent, #fff, transparent); transform:translate(-50%,-50%); }
   .glint::after { transform:translate(-50%,-50%) rotate(90deg); }
   @keyframes glint { 0%{transform:translate(-50%,-50%) scale(0) rotate(0deg); opacity:0} 35%{opacity:1} 100%{transform:translate(-50%,-50%) scale(1.4) rotate(45deg); opacity:0} }
-  .tilt { transition:transform .6s var(--ease), border-color .5s, box-shadow .7s; transform-style:preserve-3d; }
 
   /* ── header ── */
   header.sh { position:fixed; top:0; left:0; right:0; z-index:30; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:max(16px, env(safe-area-inset-top)) var(--pad) 12px; opacity:0; transition:opacity 1.2s var(--ease), background .6s, backdrop-filter .6s; }
@@ -1585,7 +1584,6 @@
   #grain { animation:none; opacity:.022; }                 /* film stock, not a shader */
   /* photographs hold still under the hand; only the picture itself moves in */
   .fig, .fig .im { transform:none !important; }
-  .tilt { transition:border-color .5s; }
 
   /* ── 4. the heading interaction stays, and stays rare ──
      Only the editorial headlines answer the cursor now, and they answer by
@@ -2200,3 +2198,90 @@
   html.no3d #stripwrap > canvas { display:none; }
   html.no3d .vt, html.no3d .vposwrap, html.no3d .vhint { display:none; }
   html.no3d .glfb { display:block; }
+
+  /* ══ v62 — the piece window as a product page ═════════════════════════════
+     It was a picture, a name, a grid of four figures and a list. That reads
+     thin next to the object it is selling. It is a column now: what it is in
+     three figures, then why it is what it is, then the price line, then the
+     two things you can do about it, and the detail folded underneath so the
+     top of the window is never a wall of specification.
+
+     The gallery holds still while that column scrolls, the way a product page
+     behaves — before, the photograph scrolled away with the text and you lost
+     sight of the piece halfway down its own page. ─────────────────────────── */
+  .mbox { width:min(1240px, 100%); }
+  @media (min-width:900px) {
+    .mbox { grid-template-columns:minmax(0,1.04fr) minmax(0,1fr); align-items:start; max-height:min(92svh, 940px); }
+    .mbox .mgal { position:sticky; top:0; align-self:start; padding:20px 0 20px 20px; }
+    html[dir="rtl"] .mbox .mgal { padding:20px 20px 20px 0; }
+    .mbox .mim { min-height:0; aspect-ratio:4/5; border-radius:12px; overflow:hidden; }
+    .mbox .mgal .gthumbs { padding-inline-start:0; }
+    .mbox .mbd { align-content:start; gap:18px; padding:clamp(26px,2.6vw,40px); }
+  }
+  .mbox .mbd .lead { font-size:clamp(1rem,1.15vw,1.12rem); color:var(--ink2); max-width:46ch; }
+  .mbox .mbd .story { font-size:.95rem; line-height:1.62; color:var(--ink3); max-width:52ch; }
+
+  /* the three figures */
+  .mkeys { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--line);
+    border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .mkeys[hidden] { display:none; }
+  .mkeys .mk { background:#050505; padding:13px 14px; display:grid; gap:5px; align-content:start; }
+  .mkeys .kv { font-size:.98rem; line-height:1.25; color:var(--ink); }
+  .mkeys .k { font-size:.56rem; color:var(--ink3); }
+  @media (max-width:479px) { .mkeys { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+  /* the price line: the one thing a reader looks for, given its own rule */
+  .mprice { border-block:1px solid var(--line); padding:14px 0; }
+  .mprice .pv { display:block; font-family:var(--serif); font-style:italic; font-size:1.35rem; color:var(--gold); }
+  html[data-ns] .mprice .pv { font-family:inherit; font-style:normal; }
+  .mprice .pn { display:block; margin-top:5px; font-size:.56rem; color:var(--ink3); }
+
+  .macts { display:flex; flex-wrap:wrap; gap:10px; }
+  .macts .btn { flex:1 1 auto; justify-content:center; text-align:center; }
+  @media (min-width:900px) { .macts .btn { flex:0 1 auto; } }
+
+  /* the detail, folded */
+  .macc { display:grid; }
+  .mdt { border-top:1px solid var(--line); }
+  .mdt:last-of-type { border-bottom:1px solid var(--line); }
+  .mdt[hidden] { display:none; }
+  .mdt > summary { list-style:none; cursor:pointer; padding:14px 0; display:flex; align-items:center;
+    justify-content:space-between; gap:12px; font-size:.64rem; font-weight:500; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--ink2); font-family:var(--word); transition:color .35s; }
+  .mdt > summary::-webkit-details-marker { display:none; }
+  .mdt > summary::after { content:""; width:8px; height:8px; flex:none; border-right:1px solid currentColor;
+    border-bottom:1px solid currentColor; transform:rotate(45deg) translate(-2px,-2px); transition:transform .4s var(--ease); }
+  .mdt[open] > summary::after { transform:rotate(225deg) translate(-2px,-2px); }
+  .mdt[open] > summary { color:var(--ink); }
+  .mdt > :not(summary) { padding-bottom:16px; }
+  .mdt .p { font-size:.93rem; line-height:1.62; color:var(--ink2); max-width:52ch; }
+  .mdt .incl ul { margin-top:0; }
+  .mfoot { color:var(--ink3); font-size:.55rem; }
+  @media (hover:hover) and (pointer:fine) { .mdt > summary:hover { color:var(--ink); } }
+
+  /* ── the collection: two rooms, not one grid ─────────────────────────────
+     The pieces that exist and the pieces that do not were the same card at the
+     same size, so four empty frames sat beside two photographs and the whole
+     thing read as a shop with nothing in it. The pieces are larger now and
+     stand alone; what is coming is a line of small plates underneath with a
+     reference, a sentence and a season on each. ─────────────────────────── */
+  .pgrid { grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+  @media (min-width:900px) { .pgrid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:clamp(24px,3vw,46px); } }
+  .pgrid .piece .fig.r11 { aspect-ratio:4/5; }
+  @media (min-width:900px) { .pgrid .piece .t { font-size:clamp(1.5rem,2.1vw,2rem); } }
+  .pgrid .piece .p { font-size:.95rem; max-width:44ch; }
+
+  .nextup { margin-top:clamp(40px,5vw,72px); border-top:1px solid var(--line); padding-top:22px; }
+  .nextup .nxh { margin-bottom:16px; color:var(--ink3); }
+  /* each plate carries its own hairline, so the row sits on the black chapter
+     and on the ivory one without either needing a fill of its own */
+  .sgrid { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+  .piece.soon { display:block; cursor:default; border:1px solid var(--line); border-radius:12px; background:transparent; }
+  .piece.soon .sbd { padding:18px 18px 20px; display:grid; gap:8px; align-content:start; min-height:100%; }
+  .piece.soon .k.sig { color:var(--ink3); display:flex; align-items:center; gap:8px; font-size:.55rem; }
+  .piece.soon .t { font-family:var(--serif); font-style:italic; font-weight:400; font-size:1.18rem; line-height:1.2; }
+  html[data-ns] .piece.soon .t { font-family:inherit; font-style:normal; }
+  .piece.soon .p { font-size:.85rem; line-height:1.5; color:var(--ink3); }
+  .piece.soon .swhen { display:flex; align-items:center; gap:7px; margin-top:2px; color:var(--gold); font-size:.55rem; }
+  .piece.soon .swhen i { width:4px; height:4px; border-radius:50%; background:currentColor; flex:none; }
+

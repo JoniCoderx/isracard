@@ -2,6 +2,7 @@
 // Usage: node gen-static.mjs <silavu-page.html> <out dir> [public base URL for OG tags]
 import fs from "node:fs";
 import path from "node:path";
+import { PIECES } from "./src/pieces.mjs";
 const [src, outDir, base = "https://jonicoderx.github.io/isracard"] = process.argv.slice(2);
 let html = fs.readFileSync(src, "utf8").replace(/<title>[\s\S]*?<\/title>/, "").replace(/<meta name="viewport"[^>]*>\s*/g, "").replace(/<meta charset=[^>]*>\s*/gi, "");
 /* the font tags belong in the head, where the browser meets them before the
@@ -18,8 +19,9 @@ const head = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SILAVU — High jewellery, Dubai · Tel Aviv</title>
-<meta name="description" content="A private high-jewellery house in Dubai and Tel Aviv. The SILAVU Line, bespoke pieces, private viewings by appointment.">
+<title>SILAVU — Private high jewellery, Dubai &amp; Tel Aviv</title>
+<meta name="description" content="SILAVU is a private jewellery house in Dubai and Tel Aviv. Diamonds graded by GIA or IGI, set by hand, one piece at a time — the Knot bracelet, the Desert Star, and commissions made to a single wrist. Viewings by appointment.">
+<meta name="keywords" content="high jewellery Dubai, private jeweller Tel Aviv, bespoke diamond bracelet, GIA certified diamonds, tennis bracelet made to measure, SILAVU">
 <link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
 <meta name="silavu-build" content="${BUILD}">
@@ -41,15 +43,20 @@ const head = `<!doctype html>
 <meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
-<meta property="og:title" content="SILAVU — Private high jewellery, Dubai · Tel Aviv">
-<meta property="og:description" content="A private high-jewellery house in Dubai and Tel Aviv. The SILAVU Line, bespoke pieces, private viewings by appointment.">
-<meta property="og:image" content="${base}/og.jpg?v=6">
+<meta property="og:title" content="SILAVU — Private high jewellery, Dubai &amp; Tel Aviv">
+<meta property="og:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. The Knot, the Desert Star, and commissions made to a single wrist. Viewings by appointment.">
+<meta property="og:image" content="${base}/og.jpg?v=7">
+<meta property="og:image:secure_url" content="${base}/og.jpg?v=7">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
 <meta property="og:url" content="${base}/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SILAVU — Private high jewellery, Dubai · Tel Aviv">
-<meta name="twitter:image" content="${base}/og.jpg?v=6">
+<meta name="twitter:title" content="SILAVU — Private high jewellery, Dubai &amp; Tel Aviv">
+<meta name="twitter:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. Viewings by appointment.">
+<meta name="twitter:image" content="${base}/og.jpg?v=7">
+<meta name="twitter:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
 <link rel="icon" href="favicon.ico?v=6" sizes="48x48 32x32 16x16">
 <link rel="icon" href="icon-32.png?v=6" type="image/png" sizes="32x32">
 <link rel="icon" href="icon-16.png?v=6" type="image/png" sizes="16x16">
@@ -91,25 +98,60 @@ ${fontLinks}
       "inLanguage": ["en", "he", "fr", "ar", "ru"],
       "publisher": { "@id": base + "/#house" }
     },
+    /* The collection, straight out of pieces.mjs. It used to be typed in here
+       by hand and had drifted: it advertised three Monogram pieces and gave
+       every one of them a price of zero, which is both untrue and the kind of
+       thing a search engine holds against you. Now it cannot drift, and a
+       piece quoted to its stones simply carries no price. */
     {
       "@type": "ItemList",
-      "name": "The Monogram",
+      "@id": base + "/#collection",
+      "name": "The SILAVU Collection",
       "itemListOrder": "https://schema.org/ItemListOrderAscending",
-      "numberOfItems": 4,
-      "itemListElement": [
-        ["Monogram Pendant", "The house mark in pave diamonds on a fine white gold chain.", "1.85 ct, 18K white gold", base + "/img/mono-neck-1600.jpg"],
-        ["Monogram Bracelet", "The house mark repeated and interlaced around the wrist.", "4.20 ct, 18K white gold", base + "/img/mono-wrist-1600.jpg"],
-        ["Monogram Ear cuff", "The house mark following the curve of the ear.", "1.10 ct, 18K white gold", base + "/img/mono-ear-1600.jpg"],
-        ["The Desert Star", "An eighteen carat brilliant in a radiating halo. Made once.", "18.06 ct, platinum", base + "/img/star-worn-1600.jpg"]
-      ].map(function (p, i) {
+      "numberOfItems": PIECES.length,
+      "itemListElement": PIECES.map(function (p, i) {
+        const plain = s => String(s).replace(/<[^>]+>/g, "");
         return {
           "@type": "ListItem", "position": i + 1,
           "item": {
-            "@type": "Product", "name": p[0], "description": p[1], "material": p[2], "image": p[3],
+            "@type": "Product",
+            "@id": base + "/#" + p.id,
+            "name": plain(p.name.en),
+            "sku": p.ref.replace(/·/g, "-"),
+            "description": plain(p.line.en) + (p.story ? " " + plain(p.story.en) : ""),
+            "material": (p.specs.find(function (r) { return /Metal|Centre stone/.test(r[0].en); }) || [, { en: "" }])[1].en,
+            "image": p.shots.map(function (sh) { return base + "/img/" + sh.img + "-" + p.widths[p.widths.length - 1] + ".jpg"; }).slice(0, 3),
             "brand": { "@id": base + "/#house" },
-            "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "priceCurrency": "AED", "price": "0", "priceSpecification": { "@type": "PriceSpecification", "valueAddedTaxIncluded": true }, "seller": { "@id": base + "/#house" }, "description": "Price on request" }
+            "category": p.cat,
+            "additionalProperty": p.specs.map(function (r) {
+              return { "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) };
+            }),
+            "offers": {
+              "@type": "Offer",
+              "availability": "https://schema.org/InStock",
+              "itemCondition": "https://schema.org/NewCondition",
+              "availableAtOrFrom": { "@type": "Place", "name": "SILAVU Dubai" },
+              "seller": { "@id": base + "/#house" },
+              "description": "Price on request. Every piece is quoted to the stones it carries."
+            }
           }
         };
+      })
+    },
+    {
+      "@type": "FAQPage",
+      "@id": base + "/#faq",
+      "mainEntity": [
+        ["Where can I see a SILAVU piece?",
+         "In Dubai or Tel Aviv, by appointment. A viewing is private — the pieces are brought out for you, and a piece that has to travel comes with a courier and an appraiser rather than in a parcel."],
+        ["Are the diamonds certified?",
+         "Every stone above the melee sizes is graded by GIA or IGI, and the report travels with the piece. You see the stones loose, under a loupe, before anything is set."],
+        ["What does a bespoke commission involve?",
+         "You bring an idea or a reference. The house sources the stones, draws the piece, and shows you both before the setter starts. Four to six weeks is usual for a bracelet; a large single stone takes as long as it takes to find."],
+        ["Why is there no price on the site?",
+         "Because the price is the stones. Two bracelets of the same design, one at E VS and one at G SI, are not the same object. Every piece is quoted to what it carries."]
+      ].map(function (q) {
+        return { "@type": "Question", "name": q[0], "acceptedAnswer": { "@type": "Answer", "text": q[1] } };
       })
     }
   ]

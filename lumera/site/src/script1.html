@@ -172,7 +172,11 @@
   var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("shine"); setTimeout(function () { e.target.classList.remove("shine"); }, 1600); io2.unobserve(e.target); } }); }, { threshold: 0.35 });
   document.querySelectorAll(".card, .piece").forEach(function (el) { io2.observe(el); });
   /* cards lean toward the cursor */
-  if (matchMedia("(hover:hover)").matches && !reduce) document.querySelectorAll(".card, .piece, .voice").forEach(function (el) { el.classList.add("tilt"); el.addEventListener("pointermove", function (e) { var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5; el.style.transform = "perspective(900px) rotateX(" + (-y * 2.5).toFixed(2) + "deg) rotateY(" + (x * 3.5).toFixed(2) + "deg) translateY(-2px)"; }); el.addEventListener("pointerleave", function () { el.style.transform = ""; }); });
+  /* The cards used to tilt under the pointer — a perspective rotation tracking
+     the mouse. It is the house style of every generated landing page, and it
+     moves a twenty-pixel text button around while you are aiming at it: the
+     press lands on the grid, the release on the button, and no click is born.
+     The lift, the slow zoom and the sheen do the work; the gimmick is gone. */
   /* swipe dots on phones */
   document.querySelectorAll(".swipe").forEach(function (sw) { var track = document.querySelector(sw.getAttribute("data-for")); if (!track) return; var dots = sw.querySelectorAll("i"); track.addEventListener("scroll", function () { var kids = track.children, best = 0, bd = 1e9, cx = track.getBoundingClientRect().left + track.clientWidth / 2; for (var i = 0; i < dots.length && i < kids.length; i++) { var r = kids[i].getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - cx); if (d < bd) { bd = d; best = i; } } dots.forEach(function (d, i) { d.classList.toggle("on", i === best); }); }, { passive: true }); });
 
@@ -266,6 +270,32 @@
     $("pmK").innerHTML = pc.querySelector(".k").innerHTML;
     $("pmT").innerHTML = pc.querySelector(".t").innerHTML;
     $("pmP").innerHTML = pc.querySelector(".p").innerHTML;
+
+    /* the three figures that answer "what is it" before anything is unfolded */
+    var keys = pc.getAttribute("data-keys");
+    if (keys) {
+      var kr = JSON.parse(keys);
+      $("pmKeys").innerHTML = kr.map(function (r) {
+        return '<div class="mk"><div class="kv">' + (lang === "he" ? r[3] : (T(r[2]) || r[2]))
+          + '</div><div class="k">' + (lang === "he" ? r[1] : (T(r[0]) || r[0])) + "</div></div>";
+      }).join("");
+      $("pmKeys").hidden = false;
+    } else { $("pmKeys").innerHTML = ""; $("pmKeys").hidden = true; }
+
+    /* the paragraphs. Each one folds its whole section away when the piece has
+       nothing to say there, rather than opening onto an empty panel. */
+    var prose = pc.getAttribute("data-prose");
+    var pr = prose ? JSON.parse(prose) : {};
+    function say(id, wrapId, v) {
+      var el = $(id), wrap = wrapId ? $(wrapId) : null;
+      var txt = v ? (lang === "he" ? v.he : (T(v.en) || v.en)) : "";
+      if (el) el.innerHTML = txt;
+      if (wrap) wrap.hidden = !txt;
+      else if (el) el.hidden = !txt;
+    }
+    say("pmStory", null, pr.story);
+    say("pmStones", "pmStoneWrap", pr.stones);
+    say("pmCare", "pmCareWrap", pr.care);
 
     if (specs) {
       var rows = JSON.parse(specs);

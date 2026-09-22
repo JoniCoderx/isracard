@@ -52,6 +52,10 @@ for (const [tag, w, h] of VIEWS) {
   /* ── 3. fonts actually loaded, not silently fallen back ── */
   const fonts = await p.evaluate(async () => {
     await document.fonts.ready;
+    /* document.fonts.ready settles on the faces requested so far; a face the
+       page asks for a moment later is still in flight, so give it one */
+    for (let i = 0; i < 40 && [...document.fonts].filter(f => f.status === "loaded").length < 2; i++)
+      await new Promise(r => setTimeout(r, 100));
     const fam = new Set([...document.fonts].filter(f => f.status === "loaded").map(f => f.family));
     return { loaded: [...fam], count: document.fonts.size };
   });
@@ -110,6 +114,11 @@ for (const [tag, w, h] of VIEWS) {
       const cs = getComputedStyle(e);
       if (cs.overflow === "visible" || !e.textContent.trim()) return false;
       if (cs.overflowX === "auto" || cs.overflowX === "scroll") return false;
+      /* the screen-reader-only pattern: a one-pixel box with the words still in
+         it, so a label survives for assistive software after the icon takes
+         over. It is supposed to overflow. */
+      const r0 = e.getBoundingClientRect();
+      if (r0.width <= 2 || r0.height <= 2) return false;
       return e.scrollHeight > e.clientHeight + 2 || e.scrollWidth > e.clientWidth + 2; })
     .slice(0, 5).map(e => (e.className || e.tagName) + ":" + e.textContent.trim().slice(0, 24)));
   ok(clipped.length === 0, `${tag} no clipped text boxes`, clipped.join(" | "));
