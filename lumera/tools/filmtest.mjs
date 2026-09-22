@@ -13,13 +13,20 @@ for (const [tag, w, h] of [["1440",1440,900],["768",768,1024],["430",430,932],["
   await p.waitForTimeout(1000);
 
   const geo0 = await p.evaluate(() => { const c = document.getElementById("filmcv"); const r = c.getBoundingClientRect(); return { pin: document.getElementById("filmpin").offsetHeight, cw: Math.round(r.width), ch: Math.round(r.height) }; });
-  const top = await p.evaluate(() => scrollY + document.getElementById("filmpin").getBoundingClientRect().top);
 
   /* walk the whole pin in small steps, the way a thumb does */
   const seen = [];
   const steps = 26;
   for (let i = 0; i <= steps; i++) {
-    await p.evaluate(([t, ph, f, ih]) => window.scrollTo({ top: t + (ph - ih) * f, behavior:"instant" }), [top, geo0.pin, i / steps, h]);
+    /* re-measure the pin every step instead of walking off one cached offset:
+       the page settles as fonts and pictures land, and any edit above the film
+       moves it — a cached absolute top then silently scrolls to the wrong place
+       and the film reads as broken when it is fine. */
+    await p.evaluate(([f, ih]) => {
+      const el = document.getElementById("filmpin");
+      const t = scrollY + el.getBoundingClientRect().top;
+      window.scrollTo({ top: t + (el.offsetHeight - ih) * f, behavior: "instant" });
+    }, [i / steps, h]);
     /* the scrub is lerp-smoothed, so the last reading has to be taken after it
        has actually converged, or the test measures its own impatience */
     await p.waitForTimeout(i === steps ? 1800 : 260);

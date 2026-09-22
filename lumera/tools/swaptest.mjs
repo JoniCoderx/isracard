@@ -22,7 +22,7 @@ for (const [w, h, tag] of [[1440, 900, "desk"], [390, 844, "mob"]]) {
       light: x.classList.contains("swl"),
     }));
   });
-  ok(shape.length === 5, `${tag} five swapping figures (${shape.length})`);
+  ok(shape.length === 4, `${tag} four swapping figures (${shape.length})`);
   ok(shape.every(s => s.ims === 2 && s.dt), `${tag} each carries a second frame`);
   ok(shape.every(s => s.dots === 2), `${tag} each shows the two-dot tell`);
   ok(shape.filter(s => s.light).length === 3, `${tag} only the monogram trio swaps to a high-key frame (${shape.filter(s => s.light).length})`);
@@ -36,7 +36,7 @@ for (const [w, h, tag] of [[1440, 900, "desk"], [390, 844, "mob"]]) {
     seen.add(await p.evaluate(() => [...document.querySelectorAll(".fig.sw")].filter(f => f.classList.contains("flip")).length));
     await p.waitForTimeout(700);
   }
-  ok(!seen.has(5), `${tag} never all at once (${[...seen].sort().join(",")})`);
+  ok(!seen.has(4), `${tag} never all at once (${[...seen].sort().join(",")})`);
   ok(seen.size > 1 && Math.max(...seen) > 0, `${tag} the rail does change (${[...seen].sort().join(",")})`);
 
   const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);

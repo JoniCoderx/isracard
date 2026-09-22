@@ -278,13 +278,6 @@
   .dline b.on { background:#fff; transform:scaleY(2.6); }
 
   /* ── collection: a rail you scroll along ── */
-  .hpin { position:relative; }
-  .hstick { position:relative; }
-  .htrack { display:grid; gap:22px; }
-  .hhead { display:grid; gap:16px; align-content:center; justify-items:start; max-width:520px; }
-  .hhead .h2 { max-width:16ch; }
-  .hhead .hint { margin-top:6px; color:var(--ink3); }
-  .hend { display:none; }
   .piece { position:relative; display:grid; gap:0; text-decoration:none; cursor:pointer; }
   .piece .fig { aspect-ratio:4/5; }
   .piece .bd { padding:18px 4px 0; display:grid; gap:8px; }
@@ -295,21 +288,8 @@
   .piece .acts { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
   .piece .acts .lnk { font-size:.7rem; }
   @media (max-width:999px) {
-    .hpin { padding:0 var(--pad); }
-    .pieces { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:14px; margin:28px calc(-1 * var(--pad)) 0; padding:0 var(--pad) 8px; scrollbar-width:none; }
+      .pieces { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:14px; margin:28px calc(-1 * var(--pad)) 0; padding:0 var(--pad) 8px; scrollbar-width:none; }
     .pieces::-webkit-scrollbar { display:none; } .pieces > * { flex:0 0 78vw; scroll-snap-align:center; } .swipe { display:flex; }
-    .hhead .hint { display:none; }
-  }
-  @media (min-width:1000px) {
-    #collection { padding:0 !important; }
-    .hstick { position:sticky; top:0; height:100svh; overflow:hidden; display:flex; align-items:center; } .hstick.fits { justify-content:center; }
-    .htrack { display:flex; align-items:center; gap:clamp(28px,3vw,48px); padding:0 var(--pad); will-change:transform; width:max-content; }
-    .pieces { display:contents; }
-    .hhead { flex:0 0 min(30vw,440px); }
-    .piece { flex:0 0 min(23vw,340px); }
-    .hend { display:block; flex:0 0 min(60svh,600px); }
-    .hend .fig { width:min(60svh,600px); }
-    #collection .swipe { display:none; }
   }
   /* ── your line ── */
   .panel { margin-top:clamp(40px,6vw,72px); border:1px solid var(--line); border-radius:22px; padding:clamp(22px,3.5vw,48px); background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.05), transparent 70%), rgba(255,255,255,.015); display:grid; gap:clamp(22px,3vw,36px); }
@@ -504,7 +484,7 @@
   .rprog { position:absolute; left:var(--pad); right:var(--pad); bottom:max(22px, env(safe-area-inset-bottom)); height:1px; background:var(--line); z-index:3; display:none; }
   .rprog i { position:absolute; inset:0 auto 0 0; width:0; background:var(--ink); } html[dir="rtl"] .rprog i { inset:0 0 0 auto; }
   .rcue { position:absolute; right:var(--pad); bottom:max(34px, calc(env(safe-area-inset-bottom) + 12px)); z-index:3; color:var(--ink3); display:none; transition:opacity .6s; } html[dir="rtl"] .rcue { right:auto; left:var(--pad); }
-  @media (min-width:1000px) { .rprog, .rcue { display:flex; } .pin { height:340svh; } }
+  @media (min-width:1000px) { .pin { height:340svh; } }
   /* ── v10: the box, filmed ── */
   #boxcv { position:absolute; inset:0; width:100%; height:100%; display:block; background:#000; }
   .veil2 { position:absolute; inset:0; pointer-events:none; background:linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.25) 35%, rgba(0,0,0,0) 60%), linear-gradient(to bottom, rgba(0,0,0,.55), transparent 22%); }
@@ -581,7 +561,6 @@
     .tray .fig img { -webkit-user-drag:none; pointer-events:none; }
     .tray + .tcount, .tcount { display:flex; justify-content:space-between; align-items:center; margin-top:14px; color:var(--ink3); }
   }
-  @media (min-width:1000px) { .tray { overflow:visible; margin:0; padding:0; } .tray .pieces { display:contents; } .tray.htr { display:contents; } .tcount { display:none; } }
   .swipe { display:none !important; }
   /* ── v11: currency ── */
   .cur { display:flex; gap:6px; margin-top:12px; flex-wrap:wrap; }
@@ -1415,7 +1394,7 @@
   .w { padding:.17em .15em .27em .15em; margin:-.17em -.15em -.27em -.15em; }
   .h { line-height:1.0; }
   .h2 { line-height:1.06; }
-  .beat .h2, .hhead .h2, .copy .h2, .sechead .h2 { line-height:1.06; }
+  .beat .h2, .copy .h2, .sechead .h2 { line-height:1.06; }
   .card .t, .piece .t { line-height:1.18; padding-bottom:.08em; }
   .t em, .h em, .h2 em, .h3 em { padding-inline-end:.06em; margin-inline-end:-.06em; }
 
@@ -1471,7 +1450,6 @@
   .piece .bd { padding:24px 4px 0; gap:10px; }
   .piece .p { color:var(--ink3); max-width:30ch; }
   @media (min-width:1000px) {
-    .htrack { gap:clamp(40px,4.2vw,76px); }
     .piece { flex:0 0 min(29vw,440px); }
   }
   .h.lit { letter-spacing:-.021em; }
@@ -1708,7 +1686,7 @@
      cannot overlap because the gap is bigger than the overhang. */
   @media (max-width:560px) {
     .acts, .hacts, .bfoot, .factsg + .acts, #clients .acts, .mbox .row,
-    .hcap .hacts, .beat .acts, .copy .acts, .hhead .acts {
+    .hcap .hacts, .beat .acts, .copy .acts {
       display:grid; grid-auto-flow:row; gap:12px; justify-items:stretch; }
     .acts .btn, .hacts .btn, .bfoot .btn, .mbox .row .btn {
       width:100%; justify-self:stretch; }
@@ -1786,7 +1764,7 @@
   @media (max-width:560px) {
     /* the grids were full width but shrank to their content, so the buttons
        inside them were still twelve different widths down one screen */
-    .acts, .hacts, .bfoot, .copy .acts, .hhead .acts, .beat .acts,
+    .acts, .hacts, .bfoot, .copy .acts, .beat .acts,
     .cf, .total, .playbar .row { width:100%; justify-self:stretch; }
     .btn:not(.sm):not(.hbook):not(.mclose):not(.mclose2):not(#fab):not(#enterBtn) {
       width:100%; max-width:none; }
@@ -1863,9 +1841,7 @@
      the rail, a still life of the same things on lacquer added length and
      nothing else. */
   @media (min-width:1000px) {
-    .htrack { gap:clamp(30px,3.2vw,56px); }
     .piece { flex:0 0 min(26vw,400px); }
-    .hend { display:none; }
   }
   /* the configurator: the same controls, less air between them */
   .panel { gap:18px; }
@@ -1947,5 +1923,57 @@
      own pin from scrollWidth, so it simply makes room. Below 1000px the rail is
      a swipe carousel and .hend sits outside it, so it becomes a plain closing
      figure at the foot of the chapter. */
-  @media (min-width:1000px) { .hend { display:block; flex:0 0 min(58svh,560px); } .hend .fig { width:min(58svh,560px); } }
-  @media (max-width:999px) { .hend { display:block; margin-top:clamp(18px,4vw,28px); } .hend .fig { width:auto; } }
+
+  /* ══ v52 — the collection, without the rail ══════════════════════════════
+     The horizontal Collection chapter is gone. Four pieces sit in the ivory
+     chapter that used to introduce it, as a plain grid: a brand shows the
+     pieces, it does not make you scroll sideways past them. Below 1000px the
+     presentation tray already turns .pieces into a swipe carousel, so only
+     the desktop grid needs declaring. ───────────────────────────────────── */
+  @media (min-width:1000px) {
+    .tray .pieces.four { grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(16px,1.8vw,26px); }
+    .pieces.four .piece .t { font-size:clamp(1rem,1.25vw,1.24rem); }
+    .pieces.four .piece .meta { font-size:.62rem; }
+  }
+  @media (min-width:760px) and (max-width:999px) {
+    .tray .pieces.four > * { flex:0 0 min(46vw, 380px); }
+  }
+
+  /* ══ v53 — the enquiry, quieter ══════════════════════════════════════════
+     It was a split screen: half a viewport of city photograph against the
+     form. The photograph is lazy and large, so until it arrived — or when it
+     failed — that half sat solid black, which is what you kept catching. It
+     is gone. The section is one centred column now, and it is a brand's
+     contact block rather than a landing page. ──────────────────────────── */
+  #concierge { min-height:0; display:block; padding:clamp(56px,7vw,104px) 0 !important; }
+  .cbody { padding:0 var(--pad); max-width:620px; margin:0 auto; gap:clamp(24px,3vw,34px); }
+  @media (min-width:900px) { .cbody { padding:0 var(--pad); align-content:start; } }
+  /* the two house hours, side by side and both lit — they no longer switch a
+     photograph, so neither of them is "selected" any more */
+  .clocks { gap:clamp(22px,3vw,32px); }
+  .clock { cursor:default; }
+  .clock .c { font-size:clamp(1.3rem,2vw,1.7rem); color:#fff; }
+  #concierge .h2 { max-width:14ch; }
+
+  /* the tray's swipe affordance and counter belong to the phone carousel; the
+     rule that hid them on a desktop lived in the rail block that just went */
+  @media (min-width:1000px) {
+    .tray { overflow:visible; margin:0; padding:0; }
+    #collection .swipe, #collection .tcount, .pieces.four ~ .tcount { display:none; }
+    .tray + .tcount { display:none; }
+  }
+  /* calmer: the heading asks a question, it does not announce one */
+  #concierge .h2 { font-size:clamp(1.9rem,3.4vw,3rem); }
+  #concierge .cf { gap:clamp(18px,2.2vw,26px); }
+  #concierge .fields { gap:clamp(12px,1.6vw,18px); }
+
+  /* ══ v54 — the mark in the header, given its room ════════════════════════
+     22px of lockup on a 49-inch screen is a footnote. The symbol leads and
+     the word follows it, so the symbol grows more than the word does. Scoped
+     to header.sh: the footer lockup and the chapter marks are set elsewhere
+     and are sized for where they sit. ──────────────────────────────────── */
+  header.sh .mark { font-size:clamp(23px, 1.55vw, 34px); }
+  header.sh .mark .lk { gap:.56em; }
+  header.sh .mark .lk svg.sy { height:1.46em; }
+  header.sh .mark .lg { font-size:.66em; letter-spacing:.3em; margin-inline-end:-.3em; }
+  @media (max-width:999px) { header.sh .mark { font-size:22px; } header.sh .mark .lk svg.sy { height:1.38em; } }

@@ -280,10 +280,6 @@
     }
   }
   clocks(); setInterval(clocks, 15000);
-  var cityImgs = { DXB: $("cityDXB"), TLV: $("cityTLV") }, cityAuto = true, cityCur = "DXB";
-  function showCity(c) { cityCur = c; Object.keys(cityImgs).forEach(function (k) { cityImgs[k].classList.toggle("on", k === c); }); document.querySelectorAll(".clock").forEach(function (el) { el.classList.toggle("on", el.getAttribute("data-city") === c); }); }
-  document.querySelectorAll(".clock").forEach(function (el) { el.addEventListener("click", function () { cityAuto = false; showCity(el.getAttribute("data-city")); }); });
-  setInterval(function () { if (cityAuto) showCity(cityCur === "DXB" ? "TLV" : "DXB"); }, 7000);
   var form = $("cform"), chan = "Email", mail = form.getAttribute("data-mail") || "concierge@silavu.com", wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
   (function () { var w = form.querySelector('.chip[data-ch="WhatsApp"]'); if (w && wa) { w.hidden = false; } })();
   form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); el.parentElement.classList.remove("err"); }); el.addEventListener("blur", f); });
