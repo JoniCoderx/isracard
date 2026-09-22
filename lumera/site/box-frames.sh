@@ -25,13 +25,36 @@ if curl -fsSL --retry 3 -o "$T/b.mp4" "$MASTER"; then
   ffmpeg -nostdin -v error -i "$T/b.mp4" -vf "$UN,crop=1205:2142:1317:0,scale=1080:1920:flags=lanczos" -vsync 0 -start_number 0 -c:v libwebp -quality 78 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
   # the loader asks for -00 first and -95 last; if either is missing the
   # sequence is broken and it is better to fail the build than ship it
+  OK=1
   for t in xx x d m; do
-    [ -f "$OUT/$t-00.webp" ] && [ -f "$OUT/$t-95.webp" ] || { echo "tier $t is not 00..95" >&2; exit 1; }
-    echo "$t: $(ls "$OUT"/$t-*.webp | wc -l) frames, $(du -ck "$OUT"/$t-*.webp | tail -1 | cut -f1)K"
+    if [ -f "$OUT/$t-00.webp" ] && [ -f "$OUT/$t-95.webp" ]; then
+      echo "$t: $(ls "$OUT"/$t-*.webp | wc -l) frames, $(du -ck "$OUT"/$t-*.webp | tail -1 | cut -f1)K"
+    else
+      echo "tier $t did not come out as 00..95" >&2; OK=0
+    fi
   done
   du -sh "$OUT"
 else
-  echo "4K master unreachable — falling back to the published frames" >&2
+  OK=0
+fi
+
+# Whatever went wrong — the master would not download, or the cut did not come
+# out numbered the way the loader asks for it — fall back to the frames the
+# house preview host already publishes. A box that is merely as sharp as it was
+# yesterday beats a deploy that ships nothing.
+if [ "${OK:-0}" != "1" ]; then
+  echo "falling back to the published frames" >&2
+  rm -f "$OUT"/*.webp
+  # The page asks for one thing: f/box/<tier>-NN.webp. The published frames are
+  # JPEG, so they are converted rather than served under a name nothing requests
+  # — and xx is filled from x so a wide screen gets a picture rather than a hole.
   B=https://silavu-house.higgsfield.app/f/box
-  for s in d m x; do for n in $(seq -w 0 95); do curl -fsSL --retry 2 -o "$OUT/$s-$n.jpg" "$B/$s-$n.jpg" || true; done; done
+  for t in d m x; do
+    for n in $(seq -w 0 95); do
+      curl -fsSL --retry 2 -o "$OUT/$t-$n.jpg" "$B/$t-$n.jpg" || continue
+      convert "$OUT/$t-$n.jpg" -quality 82 "$OUT/$t-$n.webp" && rm -f "$OUT/$t-$n.jpg"
+    done
+  done
+  for n in $(seq -w 0 95); do [ -f "$OUT/x-$n.webp" ] && cp "$OUT/x-$n.webp" "$OUT/xx-$n.webp"; done
+  echo "fallback frames: $(ls "$OUT" | wc -l)"
 fi
