@@ -259,7 +259,7 @@ ${markDefs()}
   <div class="bwm" aria-hidden="true">${markUse("")}</div>
     <div class="wrap">
     <div class="sechead bhead">
-      <div class="k gold rv ol" data-en="SILAVU Bespoke" data-he="סילאבו · בהזמנה אישית">SILAVU Bespoke</div>
+      <div class="k gold rv ol" data-en="03 · Bespoke" data-he="03 · בהזמנה אישית">03 · Bespoke</div>
       <h2 class="h sp rv" data-en="The piece that <em>does not exist yet.</em>" data-he="התכשיט <em>שעוד לא קיים.</em>">The piece that <em>does not exist yet.</em></h2>
     </div>
     <ol class="bjourney rv d2">
