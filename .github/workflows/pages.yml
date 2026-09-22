@@ -27,12 +27,28 @@ jobs:
         run: node lumera/site/gen-static.mjs lumera/site/silavu-page.html dist "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
       - name: Icons, manifest, OG image
         run: cp -v lumera/site/public/* dist/
-      - name: Photographs and the box film (served by the live site)
+      # Fifty-six photographs and four videos that are not in the repository.
+      # They came from one preview host, and when that host answered 503 for six
+      # minutes the whole deploy died on a single missing file — the site that
+      # was already live would have been fine. It tries the published site as a
+      # second source now: whatever shipped last time is, by definition, there.
+      - name: Photographs and the box film (from the preview host, or from what is already live)
         run: |
           set -e
-          fetch() { mkdir -p "dist/$(dirname "$1")"; for i in 1 2 3 4; do curl -fsSL --retry 2 -o "dist/$1" "https://silavu-house.higgsfield.app/$1" && return 0; sleep $((i*3)); done; echo "missing: $1"; return 1; }
-          while read -r f; do [ -n "$f" ] && fetch "$f"; done < lumera/site/static-assets.txt
+          LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          PREVIEW="https://silavu-house.higgsfield.app"
+          get() { curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors --connect-timeout 15 --max-time 180 -o "dist/$2" "$1/$2"; }
+          fetch() {
+            mkdir -p "dist/$(dirname "$1")"
+            get "$PREVIEW" "$1" && return 0
+            echo "  preview missed $1 — trying the published site"
+            get "$LIVE" "$1" && return 0
+            rm -f "dist/$1"; echo "missing: $1"; return 1
+          }
+          rc=0
+          while read -r f; do [ -n "$f" ] && { fetch "$f" || rc=1; }; done < lumera/site/static-assets.txt
           du -sh dist; find dist -type f | wc -l
+          exit $rc
       - name: ImageMagick and ffmpeg for the crops and the film
         run: sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick ffmpeg
       - name: Wrist photographs
