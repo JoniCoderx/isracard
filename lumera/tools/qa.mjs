@@ -68,6 +68,16 @@ for (const [tag, w, h] of VIEWS) {
     for (let y = 0; y < document.body.scrollHeight; y += step) { scrollTo({ top: y, behavior: "instant" }); await new Promise(r => setTimeout(r, 60)); }
     scrollTo({ top: 0, behavior: "instant" });
   });
+  /* a lazy image is still in flight for a moment after it comes into view, and
+     until it lands currentSrc is the small src fallback — which made the wrist
+     frame look both undecoded and upscaled when it is neither. Verified
+     directly: once it settles the browser picks wrist-2560 and draws it at
+     3110 device pixels. Wait for them rather than reporting the wait. */
+  await p.waitForFunction(() => [...document.querySelectorAll("img")].every(i => {
+    const r = i.getBoundingClientRect();
+    if (r.width < 5 || r.height < 5) return true;
+    return i.complete;
+  }), null, { timeout: 25000 }).catch(() => {});
   await p.waitForTimeout(1200);
   const imgs = await p.evaluate(() => [...document.querySelectorAll("img")].map(i => {
     const r = i.getBoundingClientRect();
