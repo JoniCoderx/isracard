@@ -16,8 +16,7 @@ export const CATS = [
   { id: "bracelets", en: "Bracelets",  he: "צמידים" },
   { id: "necklaces", en: "Necklaces",  he: "שרשראות" },
   { id: "earrings",  en: "Earrings",   he: "עגילים" },
-  { id: "rings",     en: "Rings",      he: "טבעות" },
-  { id: "tennis",    en: "Tennis",     he: "טניס" }
+  { id: "rings",     en: "Rings",      he: "טבעות" }
 ];
 
 const S = (en, he) => ({ en, he });
@@ -114,8 +113,9 @@ export const SOON = [
     line: S("Close to the lobe. Nothing swings, nothing catches.", "צמודים לתנוך. שום דבר לא מתנדנד, שום דבר לא נתפס.") },
   { cat: "rings",     ref: "SLV·R·001", when: S("Summer", "קיץ"),
     name: S("The Knot <em>Ring</em>", "<em>טבעת</em> הקשר"),
-    line: S("A band that ties itself, sized to the half.", "טבעת שנקשרת בעצמה, במידות של חצי.") },
-  { cat: "tennis",    ref: "SLV·T·001", when: S("Summer", "קיץ"),
-    name: S("The <em>Line</em>", "<em>הקו</em>"),
-    line: S("Thirty-six brilliants, one row, built to your wrist.", "שלושים ושישה בריליאנטים, שורה אחת, בנויה לפרק היד שלכם.") }
+    line: S("A band that ties itself, sized to the half.", "טבעת שנקשרת בעצמה, במידות של חצי.") }
 ];
+/* The Line is not in this list on purpose. It is the only piece in the house
+   you build rather than choose, and it has a chapter of its own further down
+   the page — carrying it here as well made the catalogue six long and said the
+   same thing twice. */

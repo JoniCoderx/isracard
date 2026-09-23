@@ -2555,3 +2555,119 @@
     /* the options need somewhere to scroll past it */
     #opts { padding-top:2px; }
   }
+
+  /* ══ v67 — one catalogue, five pieces, and a shorter page ═════════════════
+     The collection was two rooms: two large photographed cards, then a rule,
+     a heading and a row of small plates. Two rooms of the same thing read as
+     twice as much page as they are.
+
+     One grid now, three across, five cards of one size — the two that are
+     photographed and the three on the bench. A piece still coming carries the
+     mark on lacquer and its season where its photograph will go, so the shape
+     of the collection is legible at a glance and the row does not reflow when
+     the photography lands.
+
+     The Line is not in it: it is the one piece you build rather than choose,
+     and it has a chapter of its own. Six cards were saying the same thing
+     twice. ────────────────────────────────────────────────────────────────── */
+  .nextup, .sgrid { display:none; }
+  @media (min-width:900px) { .pgrid { grid-template-columns:repeat(3, minmax(0,1fr)); gap:clamp(18px,2.2vw,32px); } }
+  @media (min-width:480px) and (max-width:899px) { .pgrid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:20px; } }
+  @media (min-width:900px) { .pgrid .piece .fig.r11 { aspect-ratio:1/1; } .pgrid .piece .t { font-size:clamp(1.2rem,1.5vw,1.5rem); } }
+
+  /* a piece that is coming: the same frame, the mark, and when */
+  .piece.soon { border:0; background:transparent; cursor:default; }
+  .piece.soon .sfig { position:relative; display:grid; place-items:center; border-radius:var(--r,14px);
+    border:1px dashed var(--line); background:
+      radial-gradient(70% 60% at 50% 38%, rgba(255,255,255,.05), transparent 72%); }
+  .piece.soon .sfig .sm { width:clamp(34px,7vw,52px); opacity:.34; }
+  .piece.soon .sfig .sm svg { width:100%; height:auto; display:block; }
+  .piece.soon .swhen { position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+    display:inline-flex; align-items:center; gap:7px; color:var(--ink3); white-space:nowrap; }
+  .piece.soon .swhen i { width:4px; height:4px; border-radius:50%; background:var(--gold); flex:none; }
+  .piece.soon .bd { opacity:.82; }
+  .piece.soon .t { font-size:inherit; }
+
+  /* ── the catalogue on a phone: two across, not five deep ─────────────────
+     Five cards in one column is three and a half screens of collection. Two
+     across is one, and it is how every catalogue on a phone is read. The type
+     comes down with the column: the name stays the name, the sentence gets
+     two lines, and the four figures become the one that matters. ─────────── */
+  @media (max-width:479px) {
+    .pgrid { grid-template-columns:repeat(2, minmax(0,1fr)) !important; gap:14px 12px; }
+    .pgrid .piece .fig.r11 { aspect-ratio:1/1; border-radius:11px; }
+    .pgrid .piece .bd { padding-top:9px; gap:4px; }
+    .pgrid .piece .k.sig { font-size:.6rem; letter-spacing:.08em; gap:5px; }
+    .pgrid .piece .k.sig svg { height:11px; }
+    .pgrid .piece .t { font-size:1.02rem; line-height:1.15; }
+    /* no clamp: cutting a product's one sentence in half to save forty pixels
+       is not "clear and nice", it is a truncated sentence */
+    .pgrid .piece .p { font-size:.79rem; line-height:1.45; max-width:none; }
+    /* of the four figures, the price is the one a reader is looking for */
+    .pgrid .piece .meta span:not(.price) { display:none; }
+    .pgrid .piece .meta i { display:none; }
+    .pgrid .piece .meta .price { font-size:.71rem; letter-spacing:.08em; color:var(--gold); }
+    .pgrid .piece .acts { gap:0; }
+    .pgrid .piece .acts .lnk.q { display:none; }
+    /* a narrow column is not a reason to drop below the floors: eleven pixels
+       of type and forty-four of target, in half the width */
+    .pgrid .piece button.lnk.vw { font-size:.71rem; letter-spacing:.07em; padding-block:16px 15px; }
+    .piece.soon .swhen { bottom:9px; font-size:.71rem; letter-spacing:.08em; }
+    .piece.soon .sfig .sm { width:34px; }
+  }
+
+  /* ══ v68 — depth ═════════════════════════════════════════════════════════
+     Fifteen screens is still a long walk. Nothing here changes what a chapter
+     says, only how much air it stands in: the vertical rhythm comes down a
+     notch on a phone, the two scrub chapters hold for slightly less of it, and
+     the full-bleed frames stop at a sensible height instead of a whole screen.
+
+     The box is untouched — you asked for it to stay strong in the scroll and
+     it is exactly as it was. ─────────────────────────────────────────────── */
+  @media (max-width:759px) {
+    .sm section { padding:clamp(30px,5.6vw,44px) 0; }
+    .wrap > .k.gold.ol, .wrap > .k.gold.rv.ol { margin-bottom:10px; }
+    .h2, .h3 { margin-bottom:8px; }
+    /* the Dubai film scrubs over a little less of the page */
+    .wpin { height:104svh; }
+    /* a full-bleed photograph is a frame, not a chapter */
+    #wrist .fig, #wrist figure, #wrist picture { max-height:74svh; }
+    #wrist .fig img { object-fit:cover; }
+    /* the bespoke steps and the macro chapter carry a lot of air for what
+       they hold */
+    #bespoke .tsteps { gap:10px; }
+    #macro .wrap { padding-block:0; }
+  }
+  @media (min-width:900px) {
+    /* the same on a desktop, gently: the page reads seventeen screens deep */
+    .wpin { height:120svh; }
+  }
+
+  /* ── v69 — the builder's own fat ─────────────────────────────────────────
+     Measured: the block that introduces the configurator is 721 pixels on a
+     phone — most of a screen of heading and two buttons above a photograph —
+     before the configurator itself begins. And the view controls wrapped onto
+     two rows the moment I gave every control 44 pixels, so a row of five
+     became 112 pixels of toolbar over a 228-pixel bracelet.
+
+     The photograph comes down to a band, the two buttons sit on one line, and
+     the controls scroll sideways like the rest of the panel. ─────────────── */
+  @media (max-width:759px) {
+    #build .ed { gap:16px; }
+    #build .ed .fig { max-height:34svh; }
+    #build .ed .fig .im, #build .ed .fig .im img { height:100%; object-fit:cover; }
+    #build .ed .acts { gap:8px; }
+    #build .ed .acts .btn { flex:1 1 calc(50% - 4px); justify-content:center; padding-inline:10px; }
+
+    /* one row, pushed sideways — a toolbar is not a paragraph */
+    .vposwrap { margin-top:6px; }
+    .vposwrap .vpos { max-width:100%; overflow-x:auto; flex-wrap:nowrap;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    .vposwrap .vpos::-webkit-scrollbar { display:none; }
+    .vposwrap .vpos .vp { flex:0 0 auto; }
+    .vposwrap .vsep { flex:0 0 auto; }
+
+    /* the estimate block */
+    .total { gap:12px; }
+    .total .cur { margin-top:6px; }
+  }

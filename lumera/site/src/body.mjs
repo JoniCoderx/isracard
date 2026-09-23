@@ -88,11 +88,12 @@ function pieceCard(p) {
 
 function soonCard(x) {
   return `<article class="piece soon" data-cat="${x.cat}" aria-disabled="true">
-        <div class="sbd">
+        <div class="fig r11 sfig"><div class="sm" aria-hidden="true">${markUse("")}</div>
+          <div class="k swhen"><i></i><span data-en="${esc(x.when.en)}" data-he="${esc(x.when.he)}">${x.when.en}</span></div></div>
+        <div class="bd">
           <div class="k sig">${markUse("tiny")}<span dir="ltr">${x.ref}</span></div>
           <div class="t">${T("span", "nm", x.name.en, x.name.he)}</div>
           <p class="p" data-en="${esc(x.line.en)}" data-he="${esc(x.line.he)}">${x.line.en}</p>
-          <div class="k swhen"><i></i><span data-en="${esc(x.when.en)}" data-he="${esc(x.when.he)}">${x.when.en}</span></div>
         </div>
       </article>`;
 }
@@ -100,11 +101,7 @@ function soonCard(x) {
 const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
-    <div class="pgrid">${PIECES.map(pieceCard).join("\n")}</div>
-    <div class="nextup">
-      <div class="k gold nxh"><span data-en="Next out of the workshop" data-he="הבאים מהסדנה">Next out of the workshop</span></div>
-      <div class="sgrid">${SOON.map(soonCard).join("\n")}</div>
-    </div>`;
+    <div class="pgrid">${PIECES.map(pieceCard).join("\n")}${SOON.map(soonCard).join("\n")}</div>`;
 
 const SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
