@@ -212,6 +212,206 @@
     return out;
   }
 
+
+  /* ─────────────────────────── the hand ───────────────────────────
+     Modelled, not photographed. A stock photograph of somebody else's wrist
+     is the one thing on a jewellery site that always looks borrowed, and it
+     cannot answer the only question a reader actually has: what does it look
+     like on MINE. So the hand is built here, from the same primitives as the
+     bracelet and at the same millimetre scale — a 17cm wrist really is 17cm
+     around it — in two builds and six skins, and it turns in your fingers.
+
+     Nothing is scanned or traced. It is an elliptical section swept along a
+     spline for the forearm and the palm, three tapered phalanges per finger
+     with a real curl at each joint, a thumb set on the side of the palm at
+     the angle a thumb sits, and a nail on every tip. */
+
+  /* a tube with an elliptical section. A finger is wider than it is deep and
+     a wrist much more so; swept round, either one reads as a sausage. */
+  function ellipTube(mesh, path, rx, rz, seg, capA, capB) {
+    var i, j, frames = [], up = [0, 0, 1];
+    for (i = 0; i < path.length; i++) {
+      var pv = path[Math.max(0, i - 1)], nx2 = path[Math.min(path.length - 1, i + 1)];
+      var t = [nx2[0] - pv[0], nx2[1] - pv[1], nx2[2] - pv[2]], tl = Math.hypot(t[0], t[1], t[2]) || 1;
+      t = [t[0] / tl, t[1] / tl, t[2] / tl];
+      var ref = Math.abs(t[2]) > 0.92 ? [1, 0, 0] : up;
+      var b = [t[1] * ref[2] - t[2] * ref[1], t[2] * ref[0] - t[0] * ref[2], t[0] * ref[1] - t[1] * ref[0]];
+      var bl = Math.hypot(b[0], b[1], b[2]) || 1; b = [b[0] / bl, b[1] / bl, b[2] / bl];
+      var nn = [b[1] * t[2] - b[2] * t[1], b[2] * t[0] - b[0] * t[2], b[0] * t[1] - b[1] * t[0]];
+      frames.push([b, nn, t]);
+    }
+    var ring = [], nrm = [];
+    for (i = 0; i < path.length; i++) {
+      var ax = typeof rx === "number" ? rx : rx[i], az = typeof rz === "number" ? rz : rz[i];
+      var fb = frames[i][0], fn = frames[i][1], row = [], rn = [];
+      for (j = 0; j < seg; j++) {
+        var a2 = j * 2 * Math.PI / seg, ca = Math.cos(a2), sa = Math.sin(a2);
+        var px = fb[0] * ca * ax + fn[0] * sa * az, py = fb[1] * ca * ax + fn[1] * sa * az, pz = fb[2] * ca * ax + fn[2] * sa * az;
+        /* the outward normal of an ellipse is not its radius: it leans toward
+           the flatter axis, which is what keeps a knuckle from looking round */
+        var gx = ca / Math.max(1e-4, ax), gz = sa / Math.max(1e-4, az);
+        var nx3 = fb[0] * gx + fn[0] * gz, ny3 = fb[1] * gx + fn[1] * gz, nz3 = fb[2] * gx + fn[2] * gz;
+        var nl = Math.hypot(nx3, ny3, nz3) || 1;
+        row.push([path[i][0] + px, path[i][1] + py, path[i][2] + pz]);
+        rn.push([nx3 / nl, ny3 / nl, nz3 / nl]);
+      }
+      ring.push(row); nrm.push(rn);
+    }
+    for (i = 0; i < path.length - 1; i++) for (j = 0; j < seg; j++) {
+      var k2 = (j + 1) % seg;
+      mesh.smoothTri(ring[i][j], ring[i + 1][j], ring[i + 1][k2], nrm[i][j], nrm[i + 1][j], nrm[i + 1][k2]);
+      mesh.smoothTri(ring[i][j], ring[i + 1][k2], ring[i][k2], nrm[i][j], nrm[i + 1][k2], nrm[i][k2]);
+    }
+    if (capA) mesh.fan(ring[0].slice().reverse());
+    if (capB) mesh.fan(ring[ring.length - 1]);
+  }
+
+  /* two builds. Everything below is one set of proportions read through one
+     of these, so the two hands are the same hand at different measurements
+     rather than two models that have to be kept in step. */
+  var HANDS = {
+    f: { wrist: 0.94, fore: 0.96, palmW: 1.30, palmZ: 0.76, heel: 1.06,
+         len: 1.06, thick: 1.00, knuck: 0.86, nail: 1.14, thumb: 0.96, splay: 1.06 },
+    m: { wrist: 1.07, fore: 1.16, palmW: 1.38, palmZ: 0.84, heel: 1.14,
+         len: 0.98, thick: 1.30, knuck: 1.20, nail: 0.92, thumb: 1.12, splay: 0.94 }
+  };
+
+  /* index, middle, ring, little: length and thickness against the middle */
+  var FINGERS = [
+    { x: -0.66, ky: 0.96, len: 0.93, r: 0.99, out: -0.26, back: 0.07 },
+    { x: -0.22, ky: 1.00, len: 1.00, r: 1.03, out: -0.07, back: 0.00 },
+    { x:  0.22, ky: 0.975, len: 0.95, r: 0.98, out:  0.11, back: 0.02 },
+    { x:  0.63, ky: 0.885, len: 0.78, r: 0.85, out:  0.32, back: 0.10 }
+  ];
+
+  function handMesh(kind, wx0, wz0) {
+    var P = HANDS[kind] || HANDS.f;
+    var fine = !matchMedia("(pointer:coarse)").matches;
+    var SP = fine ? 44 : 30, SF = fine ? 22 : 15, SB = fine ? 16 : 11, SN = fine ? 14 : 10;
+    var skin = new Mesh(), nail = new Mesh();
+    var wx = wx0 * P.wrist, wz = wz0 * P.wrist;
+    var i, j;
+
+    /* ── forearm into wrist into palm, in one sweep so the wrist has no seam
+       where the bracelet will sit ── */
+    var spine = spline([
+      [0, -185, 0], [0, -128, 1], [0, -74, 1.5], [0, -34, 1], [0, 0, 0],
+      [0, 24, 1.5], [0, 52, 3], [0, 80, 3.5], [0, 100, 3], [0, 112, 2]
+    ], 46);
+    var kx = [], kz = [];
+    for (i = 0; i < spine.length; i++) {
+      var y = spine[i][1], rxv, rzv;
+      if (y < 0) {
+        /* the forearm swells toward the elbow and pinches at the wrist bone */
+        var u = Math.min(1, -y / 185);
+        rxv = wx * (1 + u * u * 0.72 * P.fore);
+        rzv = wz * (1 + u * u * 0.64 * P.fore);
+      } else {
+        /* the heel of the palm, then the spread to the knuckles */
+        var v = y / 112;
+        var spread = 1 + Math.pow(v, 0.72) * (P.palmW - 1);
+        var flat = 1 - Math.pow(v, 0.85) * (1 - P.palmZ);
+        rxv = wx * spread * (v < 0.25 ? 1 + (0.25 - v) * 0.5 * (P.heel - 1) / 0.25 : 1);
+        rzv = wz * flat;
+        if (v > 0.88) { var t2 = (v - 0.88) / 0.12; rxv *= 1 - t2 * 0.10; rzv *= 1 - t2 * 0.12; }
+      }
+      kx.push(rxv); kz.push(rzv);
+    }
+    ellipTube(skin, spine, kx, kz, SP, true, false);
+
+    var KW = wx * P.palmW;            /* half the width across the knuckles */
+    var knuckY = 104, knuckZ = 2;
+    var unit = wx0 * 2.55 * P.len;    /* the middle finger, at true scale */
+
+    /* ── the four fingers ── */
+    for (i = 0; i < FINGERS.length; i++) {
+      var F = FINGERS[i];
+      var bx = F.x * KW, len = unit * F.len;
+      var rad = wx * 0.335 * F.r * P.thick;
+      /* three phalanges, each shorter than the last, each bent a little
+         further toward the palm — a straight finger reads as a glove */
+      var segs = [0.42, 0.33, 0.25], curl = [0.10, 0.30, 0.46], pts = [], rads = [];
+      var baseY = knuckY * F.ky;
+      var px = bx, py = baseY, pz = knuckZ, ang = -0.06 + F.back;
+      var splayX = F.out * 0.55 * P.splay;
+      /* two points buried in the palm: the sweep starts inside the flesh, so
+         the finger grows out of the hand instead of being stuck onto it */
+      pts.push([bx * 0.74, baseY - 44, knuckZ * 0.3]); rads.push(rad * 1.42 * P.knuck);
+      pts.push([bx * 0.90, baseY - 20, knuckZ * 0.7]); rads.push(rad * 1.20 * P.knuck);
+      for (j = 0; j < 3; j++) {
+        var L2 = len * segs[j], steps = 5;
+        for (var s = 1; s <= steps; s++) {
+          var f2 = s / steps, aa = ang + curl[j] * f2;
+          var dx = splayX * (L2 / len) * f2;
+          px += dx; py += Math.cos(aa) * L2 / steps; pz -= Math.sin(aa) * L2 / steps;
+          pts.push([px, py, pz]);
+          var along = (j + f2) / 3;
+          rads.push(rad * (1 - along * 0.34) * (j === 0 ? 1 : 0.97));
+        }
+        ang += curl[j];
+        /* the knuckle itself: a little wider than the bone above and below */
+        if (j < 2) { rads[rads.length - 1] *= 1 + 0.10 * P.knuck; }
+      }
+      var fp = spline(pts, 26), fr = [];
+      for (j = 0; j < fp.length; j++) fr.push(rads[Math.min(rads.length - 1, Math.round(j / (fp.length - 1) * (rads.length - 1)))]);
+      var frz = fr.map(function (r) { return r * 0.90; });
+      ellipTube(skin, fp, fr, frz, SF, false, false);
+      /* the tip, rounded off */
+      var tip = fp[fp.length - 1], tr = fr[fr.length - 1];
+      ball(skin, tip, tr * 0.96, SB);
+      /* the nail: a shallow cap on the back of the last phalange */
+      var b4 = fp[fp.length - 5], t4 = fp[fp.length - 2];
+      var ny = [t4[0] - b4[0], t4[1] - b4[1], t4[2] - b4[2]], nl2 = Math.hypot(ny[0], ny[1], ny[2]) || 1;
+      ny = [ny[0] / nl2, ny[1] / nl2, ny[2] / nl2];
+      /* the nail bed sits on the back of the bone and follows its curve, set
+         a hair proud of the skin so the edge catches the light */
+      var back = fp[fp.length - 8] || fp[0];
+      var nailPts = [], nr = [], nz2 = [];
+      for (j = 0; j <= 8; j++) {
+        var q = j / 8;
+        var bx2 = back[0] + (t4[0] - back[0]) * q;
+        var by2 = back[1] + (t4[1] - back[1]) * q;
+        var bz2 = back[2] + (t4[2] - back[2]) * q;
+        nailPts.push([bx2, by2, bz2 + tr * 0.74]);
+        nr.push(Math.sin(Math.PI * (0.30 + q * 0.58)) * tr * 0.66 * P.nail);
+        nz2.push(tr * 0.13);
+      }
+      ellipTube(nail, nailPts, nr, nz2, SN, true, true);
+    }
+
+    /* ── the thumb: off the side of the palm, low, and turned out of plane ── */
+    var tb = unit * 0.78 * P.thumb, trad = wx * 0.34 * P.thick;
+    var tpts = [], tr2 = [];
+    var ox = -KW * 0.52, oy = 24, oz = -wz * 0.16;
+    var dirs = [[-0.60, 0.52, -0.60], [-0.44, 0.74, -0.51], [-0.26, 0.90, -0.34]];
+    var cx3 = ox, cy3 = oy, cz3 = oz;
+    tpts.push([ox * 0.42, oy - 30, -wz * 0.42]); tr2.push(trad * 0.86);
+    tpts.push([ox * 0.76, oy - 12, -wz * 0.26]); tr2.push(trad * 1.04);
+    for (j = 0; j < dirs.length; j++) {
+      var d3 = dirs[j], L3 = tb * (j === 0 ? 0.46 : j === 1 ? 0.33 : 0.25), st = 4;
+      var dl = Math.hypot(d3[0], d3[1], d3[2]);
+      for (var s2 = 1; s2 <= st; s2++) {
+        cx3 += d3[0] / dl * L3 / st; cy3 += d3[1] / dl * L3 / st; cz3 += d3[2] / dl * L3 / st;
+        tpts.push([cx3, cy3, cz3]);
+        tr2.push(trad * (1 - (j + s2 / st) / 3.4 * 0.30));
+      }
+    }
+    var tp2 = spline(tpts, 20), tr3 = [];
+    for (j = 0; j < tp2.length; j++) tr3.push(tr2[Math.min(tr2.length - 1, Math.round(j / (tp2.length - 1) * (tr2.length - 1)))]);
+    ellipTube(skin, tp2, tr3, tr3.map(function (r) { return r * 0.88; }), SF, false, false);
+    ball(skin, tp2[tp2.length - 1], tr3[tr3.length - 1] * 0.96, SB);
+    /* the ball of the thumb, which is most of what a palm's shape actually is */
+    /* the pad on the little-finger side. A palm's outline is two muscles and
+       a hollow between them; with neither, it is a plank. */
+    ball(skin, [KW * 0.68, 46, -wz * 0.80], wx * 0.36 * P.thick, SB + 2);
+    ball(skin, [KW * 0.58, 76, -wz * 0.70], wx * 0.29 * P.thick, SB);
+    /* the ball of the thumb, which is most of what the shape of a palm is */
+    ball(skin, [ox * 1.06, oy + 14, -wz * 0.82], wx * 0.48 * P.thick, SB + 2);
+    ball(skin, [ox * 0.62, oy - 10, -wz * 0.78], wx * 0.44 * P.thick, SB);
+
+    return { skin: skin, nail: nail };
+  }
+
   /* the head: four prongs over the girdle, a basket under it, a seat the stone sits in */
   function headMesh(L, W, depth) {
     var m = new Mesh(), hx = L / 2, hz = W / 2, wire = Math.max(0.085, Math.min(L, W) * 0.062), i;
@@ -301,6 +501,7 @@
     "varying vec3 vW; varying vec3 vL; varying vec3 vNl; varying vec3 vEl;",
     "varying vec3 vR0; varying vec3 vR1; varying vec3 vR2;",
     "uniform vec3 uEye; uniform vec3 uCol; uniform float uMode; uniform float uRough; uniform float uFade;",
+    "uniform float uBandY; uniform float uBandW; uniform vec3 uCol2;",
     "uniform vec4 uP[26]; uniform int uNP; uniform float uTrace;",
     /* the room: a big soft tent overhead, a dark floor, and a handful of hard sources for the flashes */
     "vec3 env(vec3 d){",
@@ -381,6 +582,35 @@
     "    }",
     "    col += (1.0 - F) * inside;",
     "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.20;",
+    "  } else if (uMode < -0.5) {",
+    /* skin. Not a plastic Lambert: the light wraps past the terminator the way
+       it does through something translucent, the shadow side keeps the red of
+       what is under it, and the highlight is broad and weak — a hard white
+       dot is what makes CG skin look like a mannequin. */
+    "    vec3 N = dot(Nw, Vw) < 0.0 ? -Nw : Nw;",
+    "    float g = fract(sin(dot(floor(vW * 2.6), vec3(12.9898, 78.233, 37.719))) * 43758.5453);",
+    "    float g2 = fract(sin(dot(floor(vW * 9.0), vec3(39.3468, 11.135, 83.155))) * 24634.6345);",
+    "    N = normalize(N + (g - 0.5) * 0.030 + (g2 - 0.5) * 0.016);",
+    "    vec3 Lw = normalize(vec3(-0.40, 0.80, 0.45));",
+    "    float ndl = dot(N, Lw);",
+    "    float wrap = clamp((ndl + 0.34) / 1.34, 0.0, 1.0);",
+    "    float back = clamp((0.22 - ndl) / 0.85, 0.0, 1.0) * clamp(1.0 - abs(ndl), 0.0, 1.0);",
+    "    vec3 alb = uCol * (0.96 + 0.08 * g);",
+    "    col = alb * wrap * wrap * 1.46;",
+    "    col += alb * vec3(1.00, 0.36, 0.24) * back * 0.46;",
+    "    col += alb * env(N) * 0.34;",
+    "    vec3 H = normalize(Lw + Vw);",
+    "    float c2 = max(dot(N, Vw), 1e-4);",
+    "    float grz = pow(1.0 - c2, 3.0);",
+    "    float sp = pow(max(dot(N, H), 0.0), 26.0) * (0.10 + grz * 0.34) + pow(max(dot(N, H), 0.0), 5.0) * 0.045;",
+    "    col += vec3(1.0, 0.97, 0.93) * sp;",
+    "    col += env(reflect(-Vw, N)) * fres(c2, 0.028) * 0.40;",
+    /* the bracelet lies on the wrist and takes the light off it: a band of
+       contact shadow around the plane the line sits in */
+    "    float d2 = abs(vW.y - uBandY);",
+    "    col *= mix(0.40, 1.0, smoothstep(uBandW * 0.30, uBandW * 1.8, d2));",
+    /* and the arm falls away into the dark rather than ending in mid-air */
+    "    col *= smoothstep(-205.0, -120.0, vW.y);",
     "  } else {",
     "    vec3 Nf = dot(Nw, Vw) < 0.0 ? -Nw : Nw;",
     "    float c = max(dot(Nf, Vw), 1e-4);",
@@ -400,7 +630,7 @@
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { cv.style.display = "none"; return; }
   gl.useProgram(prog);
   var A = { pos: gl.getAttribLocation(prog, "aPos"), nrm: gl.getAttribLocation(prog, "aNrm"), r0: gl.getAttribLocation(prog, "iR0"), r1: gl.getAttribLocation(prog, "iR1"), r2: gl.getAttribLocation(prog, "iR2"), t: gl.getAttribLocation(prog, "iT") };
-  var U = { p: gl.getUniformLocation(prog, "uP"), np: gl.getUniformLocation(prog, "uNP"), trace: gl.getUniformLocation(prog, "uTrace"), vp: gl.getUniformLocation(prog, "uVP"), eye: gl.getUniformLocation(prog, "uEye"), col: gl.getUniformLocation(prog, "uCol"), mode: gl.getUniformLocation(prog, "uMode"), rough: gl.getUniformLocation(prog, "uRough"), fade: gl.getUniformLocation(prog, "uFade") };
+  var U = { p: gl.getUniformLocation(prog, "uP"), np: gl.getUniformLocation(prog, "uNP"), trace: gl.getUniformLocation(prog, "uTrace"), vp: gl.getUniformLocation(prog, "uVP"), eye: gl.getUniformLocation(prog, "uEye"), col: gl.getUniformLocation(prog, "uCol"), mode: gl.getUniformLocation(prog, "uMode"), rough: gl.getUniformLocation(prog, "uRough"), fade: gl.getUniformLocation(prog, "uFade"), bandY: gl.getUniformLocation(prog, "uBandY"), bandW: gl.getUniformLocation(prog, "uBandW") };
   gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
   gl.clearColor(0, 0, 0, 0);
 
@@ -434,7 +664,7 @@
       }
     }
   };
-  var pStone = new Part(), pHead = new Part(), pLink = new Part(), pClasp = new Part();
+  var pStone = new Part(), pHead = new Part(), pLink = new Part(), pClasp = new Part(), pHand = new Part(), pNail = new Part();
 
   /* ─────────────────────────── the bracelet ─────────────────────────── */
   var METAL = { white: [0.93, 0.93, 0.95], yellow: [1.00, 0.79, 0.38], rose: [1.00, 0.74, 0.62], platinum: [0.90, 0.91, 0.94] };
@@ -502,6 +732,38 @@
     dirty = true;
   }
 
+  /* six skins, as linear albedo — the shader does its own exposure and gamma */
+  var SKINS = [
+    [0.88, 0.71, 0.63], [0.80, 0.60, 0.50], [0.67, 0.48, 0.36],
+    [0.50, 0.34, 0.245], [0.34, 0.215, 0.15], [0.205, 0.128, 0.092]
+  ];
+  var hand = { kind: "f", skin: 1, on: false, built: "" };
+  function buildHand() {
+    var key = hand.kind + ":" + state.wrist;
+    if (hand.built === key) return;
+    var wx = state.R * 0.86, wz = (state.R / 1.30) * 0.85;
+    var m = handMesh(hand.kind, wx, wz);
+    pHand.geometry(m.skin); pNail.geometry(m.nail);
+    /* nobody holds a hand to attention: eight degrees back and six of roll,
+       which is the difference between a model and a mannequin */
+    var tb2 = -0.14, rl = 0.11, cb = Math.cos(tb2), sb = Math.sin(tb2), cr = Math.cos(rl), sr = Math.sin(rl);
+    var one = new Float32Array([
+      cr, sr, 0,
+      -sr * cb, cr * cb, sb,
+      sr * sb, -cr * sb, cb,
+      0, 0, 0
+    ]);
+    pHand.instances(one); pNail.instances(new Float32Array(one));
+    hand.built = key;
+  }
+  window.__hand = function (o2) {
+    if (!o2) return { kind: hand.kind, skin: hand.skin };
+    if (o2.kind && o2.kind !== hand.kind) { hand.kind = o2.kind; hand.built = ""; buildHand(); }
+    if (typeof o2.skin === "number") hand.skin = Math.max(0, Math.min(SKINS.length - 1, o2.skin));
+    dirty = true; idle = false;
+    return { kind: hand.kind, skin: hand.skin };
+  };
+
   /* ─────────────────────────── camera ─────────────────────────── */
   var portrait = innerWidth < 760;
   var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
@@ -521,18 +783,32 @@
     gl.viewport(0, 0, W2, H2);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     var asp = W2 / H2, fov0 = 26 * D2R, tanF = Math.tan(fov0 / 2);
-    var vHalf = state.fit * Math.abs(Math.sin(cam.ph)) + state.thick * 0.55;
-    fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * 1.01;
+    /* on the hand the frame is the wrist and the first of the palm, not the
+       bracelet alone — and the eye looks at the wrist rather than the origin,
+       or the arm hangs out of the bottom of the picture */
+    /* the hand runs from the elbow at -185 to the fingertips near +300, so the
+       frame is the wrist, the palm and the fingers — the bracelet in the lower
+       third where it sits, and a hand above it rather than a column of arm */
+    /* the thumb throws the hand's mass to one side; the frame is centred on
+       the hand, not on the origin it happens to be built around */
+    var lookY = hand.on ? state.R * 2.45 : 0, lookX = hand.on ? -state.R * 0.34 : 0;
+    if (hand.on) {
+      var wantH = state.R * (asp < 1 ? 4.3 : 4.75), wantW = state.R * (asp < 1 ? 2.2 : 3.0);
+      fitD = Math.max(wantW / (tanF * asp), wantH / tanF);
+    } else {
+      var vHalf = state.fit * Math.abs(Math.sin(cam.ph)) + state.thick * 0.55;
+      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * 1.01;
+    }
     var R = state.R, dist = fitD * cam.d;
     var cp = Math.cos(cam.ph), sp = Math.sin(cam.ph);
-    var eye = [Math.sin(cam.th) * cp * dist, sp * dist, Math.cos(cam.th) * cp * dist];
-    var f = [-eye[0], -eye[1], -eye[2]], fl = Math.hypot(f[0], f[1], f[2]); f = [f[0] / fl, f[1] / fl, f[2] / fl];
+    var eye = [lookX + Math.sin(cam.th) * cp * dist, lookY + sp * dist, Math.cos(cam.th) * cp * dist];
+    var f = [lookX - eye[0], lookY - eye[1], -eye[2]], fl = Math.hypot(f[0], f[1], f[2]); f = [f[0] / fl, f[1] / fl, f[2] / fl];
     var up = [0, 1, 0];
     var s2 = [f[1] * up[2] - f[2] * up[1], f[2] * up[0] - f[0] * up[2], f[0] * up[1] - f[1] * up[0]], sl = Math.hypot(s2[0], s2[1], s2[2]); s2 = [s2[0] / sl, s2[1] / sl, s2[2] / sl];
     var u2 = [s2[1] * f[2] - s2[2] * f[1], s2[2] * f[0] - s2[0] * f[2], s2[0] * f[1] - s2[1] * f[0]];
     var view = new Float32Array([s2[0], u2[0], -f[0], 0, s2[1], u2[1], -f[1], 0, s2[2], u2[2], -f[2], 0,
       -(s2[0] * eye[0] + s2[1] * eye[1] + s2[2] * eye[2]), -(u2[0] * eye[0] + u2[1] * eye[1] + u2[2] * eye[2]), (f[0] * eye[0] + f[1] * eye[1] + f[2] * eye[2]), 1]);
-    var t = 1 / Math.tan(fov0 / 2), near = Math.max(1, dist - R * 3), far = dist + R * 4;
+    var t = 1 / Math.tan(fov0 / 2), near = Math.max(1, dist - (hand.on ? R * 10 : R * 3)), far = dist + (hand.on ? R * 12 : R * 4);
     var proj = new Float32Array([t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (far + near) / (near - far), -1, 0, 0, 2 * far * near / (near - far), 0]);
     state.halfH = tanF * dist; state.halfW = state.halfH * asp;
     if (toy) {
@@ -546,6 +822,13 @@
     gl.uniform3fv(U.eye, eye);
     gl.uniform1f(U.fade, 1);
     var mc = METAL[state.metal] || METAL.white;
+    if (hand.on) {
+      var sk = SKINS[hand.skin] || SKINS[1];
+      gl.uniform1f(U.bandY, 0); gl.uniform1f(U.bandW, state.thick * 0.9 + 2);
+      pHand.draw(-1, sk, 0);
+      /* the nail is the same skin, lifted and cooled a little */
+      pNail.draw(-1, [Math.min(1, sk[0] * 1.10 + 0.10), Math.min(1, sk[1] * 1.10 + 0.10), Math.min(1, sk[2] * 1.12 + 0.11)], 0);
+    }
     pHead.draw(0, mc, 0.30); pLink.draw(0, mc, 0.26); pClasp.draw(0, mc, 0.20);
     var onScreen = state.L / (state.halfH || state.fit) * H2 * 0.5;
     gl.uniform1f(U.trace, onScreen > 26 ? 1 : 0);
@@ -553,9 +836,11 @@
   }
   function tick() {
     requestAnimationFrame(tick);
+    var w = wrap.classList.contains("wrist");
+    if (w !== hand.on) { hand.on = w; if (w) buildHand(); dirty = true; idle = !reduce; idleN = 0; }
     if (!page) {
       var r = wrap.getBoundingClientRect();
-      if (r.bottom < -80 || r.top > innerHeight + 80 || wrap.classList.contains("wrist")) return;
+      if (r.bottom < -80 || r.top > innerHeight + 80) return;
     }
     if (!drag) {
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
@@ -588,7 +873,6 @@
 
   /* ─────────────────────────── the hand ─────────────────────────── */
   cv.addEventListener("pointerdown", function (e) {
-    if (wrap.classList.contains("wrist")) return;
     drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now() }; idle = false; cam.vth = cam.vph = 0;
     if (toy) { toy.held = true; toy.vx = toy.vy = 0; }
     cv.setPointerCapture(e.pointerId); cv.classList.add("holding"); wrap.classList.add("touched");
@@ -610,7 +894,7 @@
   function release(e) { if (!drag || (e && e.pointerId !== drag.id)) return; drag = null; cv.classList.remove("holding"); if (toy) toy.held = false; }
   cv.addEventListener("pointerup", release); cv.addEventListener("pointercancel", release);
   cv.addEventListener("wheel", function (e) {
-    if (wrap.classList.contains("wrist") || page) return;
+    if (page) return;
     e.preventDefault(); idle = false; cam.td = Math.max(0.52, Math.min(1.45, cam.td + e.deltaY * 0.0009));
   }, { passive: false });
   var pinch = null;

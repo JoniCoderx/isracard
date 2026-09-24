@@ -459,6 +459,38 @@
   addEventListener("keydown", function (e) { if (e.key === "Escape") closeLang(); });
   addEventListener("resize", closeLang, { passive: true });
 
+  /* ── whose hand, and what colour ─────────────────────────────────────
+     The bar only exists in the wrist view; the renderer owns the hand and
+     this just tells it which one. The choice is remembered, because nobody
+     wants to pick their own skin twice. */
+  (function () {
+    var bar = $("handbar"); if (!bar) return;
+    var wrapEl = $("stripwrap");
+    function sel(k, v) {
+      bar.querySelectorAll("[data-" + k + "]").forEach(function (b) {
+        b.classList.toggle("on", b.getAttribute("data-" + k) === String(v));
+        b.setAttribute("aria-pressed", b.getAttribute("data-" + k) === String(v) ? "true" : "false");
+      });
+    }
+    var want = { kind: "f", skin: 1 };
+    try { var sv = JSON.parse(localStorage.getItem("silavu-hand") || "null"); if (sv) want = sv; } catch (e) {}
+    function push() {
+      try { localStorage.setItem("silavu-hand", JSON.stringify(want)); } catch (e) {}
+      sel("hand", want.kind); sel("skin", want.skin);
+      if (window.__hand) window.__hand(want);
+    }
+    bar.addEventListener("click", function (e) {
+      var h = e.target.closest("[data-hand]"), k = e.target.closest("[data-skin]");
+      if (h) { want.kind = h.getAttribute("data-hand"); push(); }
+      else if (k) { want.skin = +k.getAttribute("data-skin"); push(); }
+    });
+    /* show it only while the wrist view is up */
+    function sync() { var on = wrapEl && wrapEl.classList.contains("wrist"); bar.hidden = !on; if (on) push(); }
+    if (wrapEl && window.MutationObserver) new MutationObserver(sync).observe(wrapEl, { attributes: true, attributeFilter: ["class"] });
+    sel("hand", want.kind); sel("skin", want.skin);
+    sync();
+  })();
+
   /* ── your line ── */
   window.__build = { origin: "lab", ct: 6, metal: "white" };
   /* the document says which language it is in from the first frame, even in
