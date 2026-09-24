@@ -93,11 +93,17 @@ for (const [tag, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, tr
   if (mob) {
     /* the stage: the only surface where a drag can only mean one thing */
     const cdp = await ctx.newCDPSession(p);
+    /* the canvas has to be on screen before a coordinate in it means anything:
+       a touch dispatched outside the viewport hits nothing and reports nothing */
+    await p.evaluate(() => document.getElementById("stripwrap").scrollIntoView({ block: "center", behavior: "instant" }));
+    await p.waitForTimeout(1200);
     const bx = await (await p.$("#bcv")).boundingBox();
-    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: bx.x + bx.width / 2, y: bx.y + bx.height / 2, id: 1 }] });
+    const tx = Math.min(Math.max(bx.x + bx.width / 2, 8), 382);
+    const ty = Math.min(Math.max(bx.y + bx.height / 2, 8), 836);
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: tx, y: ty, id: 1 }] });
     await p.waitForTimeout(60);
     await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-    await p.waitForTimeout(1400);
+    await p.waitForTimeout(1600);
     const sg = await p.evaluate(() => ({
       open: !!document.querySelector(".bstage.open"),
       ta: getComputedStyle(document.getElementById("bcv")).touchAction,
