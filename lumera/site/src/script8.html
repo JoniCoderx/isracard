@@ -1174,7 +1174,7 @@
     /* the hand is the most expensive thing this shader draws, and on a phone
        it is drawn into a box a third of a screen tall: the pixels above this
        are work nobody can see */
-    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on && !staged ? 1.2 : 1.5);
+    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on ? (staged ? 1.35 : 1.2) : 1.5);
     var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }

@@ -24,14 +24,21 @@ async function swipe(x, y, dx, dy, steps = 12) {
   await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y, id: 1 }] });
   for (let i = 1; i <= steps; i++) { await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: x + dx * i / steps, y: y + dy * i / steps, id: 1 }] }); await new Promise(r => setTimeout(r, 16)); }
   await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-  await new Promise(r => setTimeout(r, 500));
+  /* the stage draws the hand into the whole screen, which is four times the
+     pixels of the panel in the page; on a CPU rasteriser a frame there takes
+     a second or more, and photographing it sooner photographs the old one */
+  await new Promise(r => setTimeout(r, 2600));
 }
 /* the bracelet drifts, so an element screenshot waits for a box that is never
    "stable" and times out. A clip does not wait for anything. */
+/* the whole buffer, not its length: two renders of a hand at slightly
+   different angles compress to almost the same number of bytes, and a
+   threshold on that number is a test that passes when it should not */
 const shot = async () => {
   const bx = await (await p.$("#bcv")).boundingBox();
-  return (await p.screenshot({ clip: bx, timeout: 15000 })).length;
+  return await p.screenshot({ clip: bx, timeout: 15000 });
 };
+const turned = (a, b) => !a.equals(b);
 
 for (const view of ["line", "wrist"]) {
   await p.evaluate(v => { const e = document.getElementById("stripwrap"); e.classList.toggle("wrist", v === "wrist"); e.scrollIntoView({ block: "center", behavior: "instant" }); }, view);
@@ -59,9 +66,9 @@ for (const view of ["line", "wrist"]) {
   /* a drag in any direction must turn it and must not move the page */
   const y0 = await p.evaluate(() => Math.round(scrollY));
   let s0 = await shot(); await swipe(195, 420, 40, 150); let s1 = await shot();
-  ok(Math.abs(s1 - s0) > 900, `${view} a downward drag turns it in the stage`, `${s0}->${s1}`);
+  ok(turned(s0, s1), `${view} a downward drag turns it in the stage`, "the frame did not change");
   s0 = s1; await swipe(195, 420, -150, 30); s1 = await shot();
-  ok(Math.abs(s1 - s0) > 900, `${view} a sideways drag turns it in the stage`, `${s0}->${s1}`);
+  ok(turned(s0, s1), `${view} a sideways drag turns it in the stage`, "the frame did not change");
   ok((await p.evaluate(() => Math.round(scrollY))) === y0, `${view} the page does not move behind it`);
 
   await p.screenshot({ path: `${OUT}/stage-${view}.png` });

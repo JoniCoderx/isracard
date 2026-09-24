@@ -3134,3 +3134,64 @@
      nothing to say — the same rule the page uses, kept working in the stage */
   .bstage.open #stripwrap.wrist ~ .vposwrap { display:none; }
   .bstage.open #stripwrap:not(.wrist) ~ .sthint { bottom:74px; }
+
+  /* ══ v78 — what a phone actually meets ═══════════════════════════════════
+     Walked at 390, screen by screen, with stand-ins where the photographs go.
+
+     1. The enquiry carries a row of social links and so does the footer's
+        Follow column. On a desktop those sit in different halves of different
+        chapters; on a phone they land within one screen of each other, the
+        same four icons twice in two hundred pixels. The footer keeps them.
+
+     2. The builder's canvas is sticky, so every question passes underneath it
+        on the way up. It was a hard cut across whatever was half under it,
+        which reads as clipping rather than as passing behind. It fades. ──── */
+  @media (max-width:759px) {
+    #concierge .soc { display:none; }
+
+    /* no position:relative here — the sticky rule above already makes this a
+       containing block, and restating it would quietly un-stick the canvas,
+       which is the whole of why the builder works on a phone */
+    #stripwrap:not(.wrist)::after {
+      content:""; position:absolute; left:0; right:0; bottom:0; height:22px;
+      background:linear-gradient(180deg, rgba(8,8,8,0), #080808);
+      pointer-events:none; z-index:2; border-radius:0 0 14px 14px; }
+    .bstage.open #stripwrap:not(.wrist)::after { display:none; }
+  }
+  /* 3. The footer's four social links sit in a half-width column at 390, so
+        the fourth drops to a row of its own. Follow takes the full width and
+        the four sit in one line, which is what a row of four is for. */
+  @media (max-width:759px) {
+    .fgrid .fcol:has(.soc) { grid-column:1 / -1; }
+    .fgrid .soc { display:flex; gap:10px; flex-wrap:nowrap; }
+  }
+  /* 4. The canvas parked six pixels below the header, and a sliver of whatever
+        was scrolling past showed in the gap — a stray "0.12 c" trapped between
+        the floating header and an opaque panel, which reads as a mistake
+        rather than as a page moving behind. It parks flush, and the two bars
+        that hang off its height come up with it. */
+  @media (max-width:759px) {
+    #stripwrap:not(.wrist), #stripwrap.wrist { top:var(--hh, 64px); }
+    .vposwrap { top:calc(var(--hh, 64px) + clamp(180px, 27svh, 250px) + 6px); }
+    #stripwrap.wrist ~ .handbar { top:calc(var(--hh, 64px) + clamp(260px, 40svh, 360px) + 6px); }
+  }
+
+  /* ══ v79 — the hand controls in the stage, after everything that moves them
+     v78 restated where the hand controls park in the page, and did it after
+     the stage had said where they park in the stage — same weight, later
+     word, so in the stage they were placed by a top offset meant for a page
+     that is not there. They became a half-screen panel across the bottom of
+     the picture with the hand cut off behind it.
+
+     This is the last word on it: in the stage they are a bar at the foot of
+     the screen, no taller than they need to be. ─────────────────────────── */
+  .bstage.open #handbar {
+    position:absolute; left:50%; right:auto; transform:translateX(-50%);
+    top:auto; bottom:max(14px, env(safe-area-inset-bottom, 0px));
+    z-index:3; margin:0; width:auto; height:auto;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    background:rgba(8,8,8,.92); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    border-radius:16px; padding:9px 11px; box-shadow:0 20px 40px -28px #000; }
+  .bstage.open #handbar .hgrp { padding:2px; }
+  .bstage.open #handbar .hgrp.skins { gap:6px; padding:4px 6px; }
+  .bstage.open #handbar .sk { width:40px; height:40px; }
