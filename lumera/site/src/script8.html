@@ -7,6 +7,7 @@
   var gl = cv.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: false, powerPreference: "high-performance" }) || cv.getContext("experimental-webgl", { antialias: true, alpha: true });
   if (!gl) { cv.style.display = "none"; return; }
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var coarse = matchMedia("(pointer:coarse)").matches;
   var inst = gl.getExtension("ANGLE_instanced_arrays");
   var D2R = Math.PI / 180;
 
@@ -1162,9 +1163,18 @@
   var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
   /* the toy: while it is held the bracelet has a place in the frame, a spin and a fall */
   var toy = null;
+  /* Nothing about the bracelet changes while the page is moving, and the
+     chapter is sticky — so it sits on screen for the whole of it, redrawing
+     the heaviest shader on the page on every scroll frame, competing with the
+     scroll for the same thread. It holds still until the page does. */
+  var moved0 = -1e9;
+  addEventListener("scroll", function () { moved0 = performance.now(); }, { passive: true });
   var drag = null, dirty = true, idle = !reduce, idleN = 0, W2 = 1, H2 = 1, DPR = 1;
   function size() {
-    DPR = Math.min(devicePixelRatio || 1, 1.5);
+    /* the hand is the most expensive thing this shader draws, and on a phone
+       it is drawn into a box a third of a screen tall: the pixels above this
+       are work nobody can see */
+    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on && !staged ? 1.2 : 1.5);
     var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }
@@ -1249,9 +1259,10 @@
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
         cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.90; cam.vph *= 0.90;
         cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph)); dirty = true;
-      } else if (idle) {
+      } else if (idle && performance.now() - moved0 > 420) {
         /* on a screen the browser can take a gesture from, a bracelet that
-           stops for good the first time that happens is a dead object */
+           stops for good the first time that happens is a dead object — but
+           it only turns while the reader is still enough to watch it */
         idleN++;
         if (idleN > (coarse ? 5200 : 1400)) idle = false;
         else if (idleN % 2 === 0) { cam.th += staged ? 0.0016 : 0.0032; dirty = true; }
@@ -1349,7 +1360,6 @@
      fixed panel — the same canvas, the same state, no second renderer to keep
      in step — and placeholders of its measured height hold its place in the
      page so nothing jumps when it comes back. */
-  var coarse = matchMedia("(pointer:coarse)").matches;
   var staged = false, host = null, moved = [], home = null;
   function stage(on) {
     if (!!on === staged) return;
