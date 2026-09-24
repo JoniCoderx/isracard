@@ -81,6 +81,24 @@ for (const [tag, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, tr
   await import("node:fs").then(fs => fs.writeFileSync(`hand-${tag}.png`, shot));
   ok(shot.length > 12000, `${tag} the hand is actually drawn`, `${Math.round(shot.length / 1024)} KB of canvas`);
   if (mob) {
+    /* the stage: the only surface where a drag can only mean one thing */
+    const cdp = await ctx.newCDPSession(p);
+    const bx = await (await p.$("#bcv")).boundingBox();
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: bx.x + bx.width / 2, y: bx.y + bx.height / 2, id: 1 }] });
+    await p.waitForTimeout(60);
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await p.waitForTimeout(1400);
+    const sg = await p.evaluate(() => ({
+      open: !!document.querySelector(".bstage.open"),
+      ta: getComputedStyle(document.getElementById("bcv")).touchAction,
+      full: document.getElementById("bcv").getBoundingClientRect().height > 600,
+      locked: document.documentElement.classList.contains("locked")
+    }));
+    ok(sg.open && sg.full, "mob a tap opens the piece full screen", JSON.stringify(sg));
+    ok(sg.ta === "none" && sg.locked, "mob the drag is free there and the page is held", JSON.stringify(sg));
+    await p.click(".stclose").catch(() => {});
+    await p.waitForTimeout(900);
+    ok(!(await p.evaluate(() => !!document.querySelector(".bstage.open"))), "mob it closes again");
     const opts = await p.evaluate(() => { const o = document.getElementById("opts"); return o ? Math.round(o.getBoundingClientRect().height) : -1; });
     ok(opts > 0 && opts < 560, `mob the builder panel is under 560px`, String(opts));
     out.push(`      mob builder panel ${opts}px of ${h}`);
