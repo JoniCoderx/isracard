@@ -38,8 +38,11 @@ for (const [tag, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, tr
     mark: !!document.querySelector("#stripwrap .bgmk"),
     handbar: !!document.getElementById("handbar"),
     chip: (() => { const c = document.querySelector(".cat.on"); if (!c) return null; const cs = getComputedStyle(c); return cs.color + " on " + cs.backgroundColor; })(),
+    /* an <img> that carries only data-src has never been asked to load, so it
+       is complete with a natural width of zero and is not a failure — only
+       one that resolved a source and came back empty is */
     imgs: [...document.querySelectorAll("img")].filter(i => i.currentSrc && !i.complete).length,
-    blank: [...document.querySelectorAll("img")].filter(i => i.complete && i.naturalWidth === 0).length
+    blank: [...document.querySelectorAll("img")].filter(i => i.currentSrc && i.complete && i.naturalWidth === 0).length
   }));
   ok(st.fonts.length >= 2, `${tag} webfonts loaded`, st.fonts.join(", "));
   ok(bad.length === 0, `${tag} nothing 404s or fails`, bad.slice(0, 5).join(" | "));
@@ -70,17 +73,13 @@ for (const [tag, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, tr
   ok(hand.on, `${tag} the wrist view turns on`);
   ok(!!hand.api, `${tag} the hand answers`, JSON.stringify(hand.api));
   ok(hand.barVisible, `${tag} the hand controls are on screen with the hand`, "top=" + hand.barTop);
-  /* the canvas has to have something in it, not just be sized */
-  const ink = await p.evaluate(() => {
-    const cv = document.getElementById("bcv");
-    const g = cv.getContext("webgl") || cv.getContext("experimental-webgl");
-    if (!g) return "no gl";
-    const px = new Uint8Array(cv.width * cv.height * 4);
-    g.readPixels(0, 0, cv.width, cv.height, g.RGBA, g.UNSIGNED_BYTE, px);
-    let lit = 0; for (let i = 0; i < px.length; i += 4000) if (px[i] + px[i + 1] + px[i + 2] > 90) lit++;
-    return lit;
-  });
-  ok(typeof ink === "number" && ink > 20, `${tag} the hand is actually drawn`, String(ink));
+  /* The canvas has to have something in it, not just be sized. readPixels is
+     no use here — the drawing buffer is not preserved, so it reads back empty
+     however good the frame was. The screenshot is what a reader sees, and a
+     PNG of a hand is an order of magnitude larger than a PNG of nothing. */
+  const shot = await (await p.$("#bcv")).screenshot();
+  await import("node:fs").then(fs => fs.writeFileSync(`hand-${tag}.png`, shot));
+  ok(shot.length > 12000, `${tag} the hand is actually drawn`, `${Math.round(shot.length / 1024)} KB of canvas`);
   if (mob) {
     const opts = await p.evaluate(() => { const o = document.getElementById("opts"); return o ? Math.round(o.getBoundingClientRect().height) : -1; });
     ok(opts > 0 && opts < 560, `mob the builder panel is under 560px`, String(opts));
