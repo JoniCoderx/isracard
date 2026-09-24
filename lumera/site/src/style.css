@@ -3066,3 +3066,71 @@
       transform:translate(-50%, -50%); width:max(44px, 100%); height:max(44px, 100%);
       border-radius:50%; pointer-events:inherit; }
   }
+
+  /* ══ v77 — you cannot turn a thing you have to fight the page for ════════
+     On a phone the bracelet and the page share one surface, and the browser
+     decides between them on the first few pixels of a gesture. A thumb never
+     drags in a straight line, so the browser reads the arc as a scroll, takes
+     the gesture, and cancels the pointer. The bracelet does not move; the page
+     does. Touching it scrolls, every time.
+
+     touch-action cannot fix that, because the ambiguity is real: one surface
+     cannot mean two things. So the page keeps its scroll — the canvas is never
+     a trap — and turning it gets a surface of its own. Tap the bracelet, or
+     the button on it, and it opens full screen: nothing to scroll, the whole
+     screen to drag, any direction, pinch to zoom, double tap to put it back.
+
+     The stage is a plain fixed panel and the chapter moves into it, so what
+     you turn is the same canvas with the same state — not a second renderer
+     that has to be kept in step. Placeholders hold its place in the page, so
+     nothing jumps when it comes back. ──────────────────────────────────── */
+  .bstage { position:fixed; inset:0; z-index:40; display:none; background:#050505;
+    padding:max(10px, env(safe-area-inset-top, 0px)) 10px max(10px, env(safe-area-inset-bottom, 0px)); }
+  .bstage.open { display:block; }
+  .bhold { display:block; }
+
+  .bstage.open #stripwrap { position:absolute; inset:0; width:auto; height:auto; max-height:none;
+    aspect-ratio:auto; margin:0; top:0; border-radius:0; overflow:hidden; background:#050505;
+    box-shadow:none; z-index:auto; }
+  .bstage.open #stripwrap #bcv { touch-action:none; cursor:grab; }
+  .bstage.open #stripwrap.wrist { touch-action:none; }
+  .bstage.open #handbar { position:absolute; left:50%; transform:translateX(-50%);
+    bottom:max(14px, env(safe-area-inset-bottom, 0px)); z-index:3; margin:0; width:auto;
+    background:rgba(8,8,8,.92); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    border-radius:14px; padding:8px 10px; top:auto; }
+
+  /* the way in: a plain pill on the canvas, on touch only — a mouse can
+     already just drag, and does not need to be told so */
+  .stbtn, .stclose { display:none; position:absolute; z-index:4; align-items:center; justify-content:center;
+    min-height:44px; padding:0 16px; border-radius:12px; border:1px solid rgba(246,243,237,.28);
+    background:rgba(10,10,10,.78); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    color:var(--ink); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
+    font-family:inherit; }
+  html[data-ns] .stbtn, html[data-ns] .stclose { letter-spacing:.02em; text-transform:none; font-size:.8rem; }
+  @media (pointer:coarse) { .stbtn { display:inline-flex; right:12px; bottom:12px; } }
+  html[dir="rtl"] .stbtn { right:auto; left:12px; }
+  .bstage.open .stbtn { display:none; }
+  .bstage.open .stclose { display:inline-flex; right:12px; top:max(12px, env(safe-area-inset-top, 0px)); }
+  html[dir="rtl"] .bstage.open .stclose { right:auto; left:12px; }
+  .stbtn:hover, .stclose:hover { border-color:rgba(246,243,237,.55); background:rgba(20,20,20,.9); }
+  .stbtn:focus-visible, .stclose:focus-visible { outline:none; box-shadow:0 0 0 2px var(--house-line); }
+
+  .sthint { display:none; position:absolute; left:50%; transform:translateX(-50%);
+    bottom:max(12px, env(safe-area-inset-bottom, 0px)); margin:0; z-index:3; text-align:center;
+    font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink2); opacity:.62;
+    pointer-events:none; max-width:86%; }
+  html[data-ns] .sthint { letter-spacing:.02em; text-transform:none; font-size:.72rem; }
+  .bstage.open .sthint { display:block; animation:sthintout 5.5s .6s forwards; }
+  /* once the wrist view is on, the hand controls own the foot of the screen */
+  .bstage.open #stripwrap.wrist ~ .sthint, .bstage.open #stripwrap.wrist .sthint { bottom:96px; }
+  @keyframes sthintout { 0%,60% { opacity:.62; } 100% { opacity:0; } }
+  @media (prefers-reduced-motion:reduce) { .bstage.open .sthint { animation:none; } }
+  /* the view toolbar stands with the piece rather than under it */
+  .bstage.open .vposwrap { position:absolute; left:50%; transform:translateX(-50%); z-index:3;
+    top:auto; bottom:max(14px, env(safe-area-inset-bottom, 0px)); margin:0; width:auto; }
+  .bstage.open .vposwrap .vpos { background:rgba(8,8,8,.92);
+    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
+  /* in the wrist view the hand controls own that space, and the toolbar has
+     nothing to say — the same rule the page uses, kept working in the stage */
+  .bstage.open #stripwrap.wrist ~ .vposwrap { display:none; }
+  .bstage.open #stripwrap:not(.wrist) ~ .sthint { bottom:74px; }

@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+p.on("console", m => { if (m.type()==="error") console.log(m.text().slice(0,900)); });
+p.on("pageerror", e => console.log("ERR " + e));
+await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil: "load" });
+await p.waitForTimeout(3000); await p.click("#enterBtn").catch(()=>{});
+await p.waitForTimeout(2500);
+console.log(await p.evaluate(() => { const c = document.getElementById("bcv"); return "bcv display=" + getComputedStyle(c).display + " size=" + c.width + "x" + c.height; }));
+await b.close();
