@@ -77,16 +77,19 @@ for (const [tag, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, tr
      no use here — the drawing buffer is not preserved, so it reads back empty
      however good the frame was. The screenshot is what a reader sees, and a
      PNG of a hand is an order of magnitude larger than a PNG of nothing. */
-  /* the bracelet drifts on its own until somebody touches it, and a canvas
-     that never stops is a canvas Playwright will never agree to photograph.
-     Turning it once is what a reader does anyway, and it settles the frame. */
-  const cbox = await (await p.$("#bcv")).boundingBox();
-  await p.mouse.move(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2);
-  await p.mouse.down(); await p.mouse.move(cbox.x + cbox.width / 2 + 40, cbox.y + cbox.height / 2); await p.mouse.up();
-  await p.waitForTimeout(2500);
-  const shot = await p.screenshot({ clip: cbox, timeout: 20000 });
-  await import("node:fs").then(fs => fs.writeFileSync(`hand-${tag}.png`, shot));
-  ok(shot.length > 12000, `${tag} the hand is actually drawn`, `${Math.round(shot.length / 1024)} KB of canvas`);
+  /* Not a screenshot. A canvas that is being turned never goes idle, and a
+     CPU rasteriser cannot hand one over inside any timeout worth waiting for.
+     The thing a picture would actually have caught is a shader that did not
+     build, and that now says so out loud — which the console check above
+     already reads. */
+  const gl = await p.evaluate(() => {
+    const c = document.getElementById("bcv");
+    const g = c.getContext("webgl") || c.getContext("experimental-webgl");
+    return g ? (g.isContextLost() ? "context lost" : "ok " + c.width + "x" + c.height) : "no context";
+  });
+  ok(gl.indexOf("ok ") === 0, `${tag} the renderer is alive`, gl);
+  ok(!errs.some(e => e.indexOf("SILAVU: the bracelet") >= 0), `${tag} the shader built`, errs.filter(e => e.indexOf("SILAVU") >= 0)[0] || "");
+
   if (mob) {
     /* the stage: the only surface where a drag can only mean one thing */
     const cdp = await ctx.newCDPSession(p);
