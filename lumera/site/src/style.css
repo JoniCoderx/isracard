@@ -3029,3 +3029,40 @@
     #opts .chip { min-height:0; }
     #opts .chips .chip::after { height:max(44px, 100%); }
   }
+
+  /* ══ v76 — the hand controls stay with the hand ═══════════════════════════
+     The wrist view parks under the header on a phone and the questions scroll
+     past it. The Her/His switch and the six skins sit directly after it in the
+     flow, so they scrolled past it too: within one swipe of turning the view
+     on, the only controls that change the hand were off the top of the screen,
+     behind the picture of the hand.
+
+     They stick under it now, the same way the view toolbar sticks under the
+     bracelet. The canvas gives up sixty pixels to pay for it, which the
+     questions get back. ─────────────────────────────────────────────────── */
+  @media (max-width:759px) {
+    #stripwrap.wrist { height:clamp(260px, 40svh, 360px); }
+    #stripwrap.wrist ~ .handbar {
+      position:sticky; z-index:8; margin-top:0;
+      top:calc(var(--hh, 64px) + clamp(260px, 40svh, 360px) + 12px);
+      gap:7px 10px; padding:7px 9px; border-radius:12px; background:#080808;
+      box-shadow:0 16px 26px -24px #000; }
+    #stripwrap.wrist ~ .handbar .hgrp { padding:2px; }
+    /* six swatches at 44 with a five-pixel gap is 289 of the 348 a phone gives
+       this panel, so the target is the real size of the thing — no pad, no
+       overlap, nothing clever */
+    #stripwrap.wrist ~ .handbar .hgrp.skins { gap:5px; padding:4px 5px; }
+    #stripwrap.wrist ~ .handbar .sk { width:44px; height:44px; }
+  }
+  /* at 320 the row of six is wider than the panel, so the swatches come down
+     to 40 and take the last four pixels back as reach */
+  @media (max-width:359px) {
+    #stripwrap.wrist ~ .handbar .hgrp.skins { gap:3px; padding:3px 4px; }
+    #stripwrap.wrist ~ .handbar .sk { width:40px; height:40px; }
+  }
+  @media (pointer:coarse) {
+    .handbar .sk { position:relative; }
+    .handbar .sk::after { content:""; position:absolute; left:50%; top:50%;
+      transform:translate(-50%, -50%); width:max(44px, 100%); height:max(44px, 100%);
+      border-radius:50%; pointer-events:inherit; }
+  }
