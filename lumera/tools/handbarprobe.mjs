@@ -11,11 +11,11 @@ for (const w of [390, 320]) {
   const t = await p.$$(".vt .vtb"); if (t[1]) await t[1].click();
   await p.waitForTimeout(2200);
   console.log(w, await p.evaluate(() => {
-    const bar = document.getElementById("handbar"), r = bar.getBoundingClientRect();
+    const bar = document.getElementById("handbar"), r = bar.getBoundingClientRect(); const tb = document.querySelector(".stbtn"), tr = tb ? tb.getBoundingClientRect() : null; const sw = document.getElementById("stripwrap").getBoundingClientRect();
     const sk = [...bar.querySelectorAll(".sk")].map(e => { const q = e.getBoundingClientRect(); return Math.round(q.width)+"x"+Math.round(q.height); });
     const btn = [...bar.querySelectorAll("button:not(.sk)")].map(e => { const q = e.getBoundingClientRect(); return e.textContent.trim()+" "+Math.round(q.width)+"x"+Math.round(q.height); });
     const row = bar.querySelector(".hgrp.skins").getBoundingClientRect();
-    return JSON.stringify({ bar: Math.round(r.width)+"x"+Math.round(r.height)+" top="+Math.round(r.top),
+    return JSON.stringify({ turnIt: tr ? Math.round(tr.left)+","+Math.round(tr.top)+" "+Math.round(tr.width)+"x"+Math.round(tr.height)+" disp="+getComputedStyle(tb).display : "none", strip: Math.round(sw.top)+".."+Math.round(sw.bottom), bar: Math.round(r.width)+"x"+Math.round(r.height)+" top="+Math.round(r.top),
       overflows: row.width > r.width + 1, skinRow: Math.round(row.width), sk, btn });
   }));
   await p.close();
