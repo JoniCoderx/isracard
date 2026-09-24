@@ -238,7 +238,7 @@ ${markDefs()}
   </div>
   </div>
 </section>
-<section id="collection" class="ivory" data-n="02" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">
+<section id="collection" class="ivory paper" data-n="02" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
     <div class="sechead">
