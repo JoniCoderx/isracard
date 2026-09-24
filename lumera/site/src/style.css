@@ -2546,12 +2546,12 @@
        bare id — so this has to speak with the same voice */
     #stripwrap:not(.wrist) { position:sticky; top:calc(var(--hh, 64px) + 6px); z-index:8;
       height:clamp(180px, 27svh, 250px);
-      background:linear-gradient(180deg, rgba(8,8,8,.96), rgba(8,8,8,.9));
+      background:linear-gradient(180deg, #080808, #080808);
       border-radius:14px; box-shadow:0 18px 30px -26px #000; }
     /* the wrist view keeps its own shape and does not need to stick */
     #stripwrap.wrist { position:relative; top:auto; height:auto; }
     .vposwrap { position:sticky; top:calc(var(--hh, 64px) + clamp(180px, 27svh, 250px) + 12px); z-index:8; margin-top:8px; }
-    .vposwrap .vpos { background:rgba(8,8,8,.86); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+    .vposwrap .vpos { background:#080808; }
     /* the options need somewhere to scroll past it */
     #opts { padding-top:2px; }
   }
@@ -2976,3 +2976,56 @@
   .pgrid .piece .sfig .wrapln::after {
     background-image:linear-gradient(90deg, var(--gold), var(--gold)), linear-gradient(180deg, var(--gold), var(--gold));
     background-position:right bottom, left bottom; background-size:0% 1px, 1px 0%; transition-delay:.28s; }
+
+  /* ══ v75 — the builder at the size of a thumb, not the size of a button ═══
+     Measured at 390 after v66: the panel was 704px — 83% of the screen — and
+     the cut alone was 261 of it, eight tiles 111×70 over three rows. v66 was
+     right that the cut should be shapes rather than word-pills, and then made
+     each shape the size of a playing card.
+
+     A target has two sizes: the one you see and the one you can hit. They were
+     the same number here, so every 44px floor became 44px of visible furniture
+     and the answers to one question filled the screen. They are separated now:
+     the pill is 34px and the tile 48px, and each carries an invisible pad that
+     takes its reach back to 44. Nothing is harder to hit than it was. The
+     panel is 470px instead of 704, so the bracelet you are building and the
+     question you are answering are on screen at the same time — which is the
+     whole point of a configurator. ─────────────────────────────────────────── */
+  @media (max-width:759px) {
+    /* the cut: eight shapes, four across at every phone width. The label loses
+       its tracking rather than the grid losing a column — "Marquise" set plain
+       is 42px, and a quarter of 320 is 62. */
+    #opts .chips.cuts { grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; }
+    #opts .chips.cuts .chip { min-height:0; height:48px; padding:5px 2px 4px; gap:2px; border-radius:10px; }
+    /* an older phone rule hides .ci to save a row; here the drawn shape IS the
+       answer, so it comes back — a grid of eight words is what v66 replaced */
+    #opts .chips.cuts .chip .ci { display:block; width:18px; height:18px; margin:0; }
+    #opts .chips.cuts .chip span { font-size:.7rem; letter-spacing:0; line-height:1; opacity:.8; }
+    #opts .chips.cuts .chip.on span { opacity:1; }
+
+    /* every other answer: a 34px pill */
+    #opts .chip { min-height:0; height:34px; padding:0 10px; font-size:.7rem; letter-spacing:.05em; border-radius:9px; }
+    html[data-ns] #opts .chip { font-size:.76rem; letter-spacing:0; }
+    /* "18K yellow gold" still needs two lines at 320, so the metal keeps a
+       floor rather than a fixed height */
+    #opts .opt.mcol .chip { height:auto; min-height:34px; padding:5px 9px; font-size:.7rem; }
+    #opts .opt.mcol .chips { gap:6px; }
+    #opts .opt.mcol .chip .sw { width:14px; height:14px; }
+    #opts .opt.sorigin .chips { gap:6px; }
+
+    /* the questions themselves sit closer together */
+    #opts .opt { gap:6px; padding-top:10px; }
+    #opts .opt .k { font-size:.7rem; letter-spacing:.16em; }
+    #opts .opt:not(.mcol) .chips:not(.cuts) { gap:6px; padding:1px 4px 2px; }
+  }
+  /* 4 across holds at 320 now, so the old three-column fallback goes */
+  @media (max-width:399px) {
+    #opts .chips.cuts { grid-template-columns:repeat(4, minmax(0,1fr)); gap:5px; }
+    #opts .chips.cuts .chip { padding-inline:1px; }
+  }
+  @media (pointer:coarse) {
+    /* what you see is 34 and 48; what you can hit is 44. The pad overhangs
+       vertically into the gap between rows, which nothing else is using. */
+    #opts .chip { min-height:0; }
+    #opts .chips .chip::after { height:max(44px, 100%); }
+  }

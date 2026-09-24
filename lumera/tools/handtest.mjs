@@ -20,7 +20,18 @@ const r = await p.evaluate(()=>{
     if (e.closest(".modal:not(.open)")) continue;
     const cs=getComputedStyle(e); if(cs.display==="none"||cs.visibility==="hidden"||+cs.opacity<0.05) continue;
     const r=e.getBoundingClientRect(); if(r.width<1||r.height<1) continue;
-    if (r.height<44||r.width<28) small.push(`${(e.id||String(e.className).split(" ")[0]||e.tagName)} ${Math.round(r.width)}×${Math.round(r.height)} "${e.textContent.trim().slice(0,18)}"`);
+    /* A target has two sizes: the one you see and the one you can hit. The
+       site gives small controls an absolutely positioned ::after that overhangs
+       into the gap around them, so a 34px pill still answers a 44px thumb.
+       Measuring the visible box alone fails those and passes nothing better —
+       what a finger meets is the union of the two. */
+    let hit = r.height;
+    const af = getComputedStyle(e, "::after");
+    if (af && af.content !== "none" && af.position === "absolute" && af.pointerEvents !== "none") {
+      const ah = parseFloat(af.height);
+      if (ah > hit) hit = ah;
+    }
+    if (hit<44||r.width<28) small.push(`${(e.id||String(e.className).split(" ")[0]||e.tagName)} ${Math.round(r.width)}×${Math.round(r.height)} (reach ${Math.round(hit)}) "${e.textContent.trim().slice(0,18)}"`);
   }
   for (const e of document.querySelectorAll("p,li,span,div,a,button")) {
     if (!e.textContent.trim() || e.children.length) continue;
