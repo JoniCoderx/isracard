@@ -5879,7 +5879,11 @@
   cv.addEventListener("pointerup", release); cv.addEventListener("pointercancel", function (e) {
     /* the browser took the gesture for a scroll. Nothing turned, so the drift
        goes back on rather than leaving a frozen bracelet behind. */
-    release(e); if (!reduce) { idle = true; idleN = 0; }
+    release(e);
+    /* the drift comes back, but it does not get a fresh budget each time —
+       a reader who scrolls past this chapter twenty times should not leave a
+       canvas turning on their battery for the rest of the afternoon */
+    if (!reduce && idleN < 3000) { idle = true; idleN = Math.min(idleN, 2400); }
   });
   cv.addEventListener("wheel", function (e) {
     if (page) return;
