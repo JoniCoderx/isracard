@@ -2823,9 +2823,20 @@
      still sticky inside it — and the enquiry rides beside it rather than
      waiting underneath. ──────────────────────────────────────────────────── */
   @media (min-width:1000px) {
-    #film { display:grid; grid-template-columns:minmax(0,1.04fr) minmax(0,1fr);
+    #film { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);
       align-items:start; gap:0; padding-top:0 !important; }
-    #film .fpin { grid-column:1; }
+    /* the film is not a left column with a gap after it: it runs the whole
+       width and dissolves into black under the enquiry, which sits on top of
+       the part that has gone dark. That is where the room for the form comes
+       from, and there is no edge between them to see. */
+    #film .fpin { grid-area:1 / 1 / 2 / -1; }
+    #film #concierge.cwrap { z-index:2; }
+    #film .fgrade { background:
+        linear-gradient(to right, transparent 30%, rgba(0,0,0,.55) 50%, rgba(0,0,0,.93) 64%, #000 74%),
+        radial-gradient(120% 100% at 26% 52%, transparent 46%, rgba(0,0,0,.5) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,.45), transparent 24%, transparent 78%, rgba(0,0,0,.6)); }
+    /* the caption belongs over the picture, not across the form */
+    #film .ftxt { right:auto; width:46%; }
     /* the enquiry rides beside the film. It is taller than a screen, so it
        sticks from the top rather than being centred and clipped at both ends,
        and it is given a width instead of inheriting a content-sized track. */
@@ -2842,12 +2853,12 @@
        them both, rather than framed at one scroll position only */
     #film #concierge.cwrap { grid-column:2; position:sticky; top:var(--hh, 72px);
       align-self:start; height:calc(100svh - var(--hh, 72px));
-      display:grid; place-content:center; justify-items:center;
+      display:grid; place-content:center; justify-items:start;
       grid-template-columns:minmax(0,1fr); padding:0 !important; min-height:0; }
     /* it has to fit one screen beside the film, or the top of it hides under
        the header as you pass */
-    #film #concierge .cbody { width:min(500px, 86%); max-width:none; margin-inline:auto;
-      padding:0 !important; gap:clamp(10px,1vw,15px); }
+    #film #concierge .cbody { width:min(500px, 84%); max-width:none;
+      margin-inline:clamp(10px,3vw,58px) auto; padding:0 !important; gap:clamp(10px,1vw,15px); }
     #film #concierge .clocks .c { font-size:clamp(1.5rem,2vw,2.1rem); }
     #film #concierge .soc a { width:38px; height:38px; }
     #film #concierge .field { margin:0; }
@@ -2859,7 +2870,7 @@
     #film .fstick, #film .fscreen { width:100%; }
   }
   /* wider still and the film can take a little more of the room */
-  @media (min-width:1500px) { #film { grid-template-columns:minmax(0,1.18fr) minmax(0,1fr); } }
+  @media (min-width:1500px) { #film { grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); } }
 
   /* on a phone they stack, so the film holds for less of the page and the
      enquiry follows it directly rather than after a gap */
@@ -2867,3 +2878,101 @@
     #film .fpin { height:92svh; }
     #film #concierge.cwrap { padding-top:8px; }
   }
+
+  /* ══ v74 ══════════════════════════════════════════════════════════════════
+     THE SELECTED FILTER WAS BLACK ON BLACK. .cat.on paints var(--ink) behind
+     var(--bg). On a dark chapter that is light-on-black and reads; on the
+     collection's paper --ink is near-black and --bg is still #000, so the word
+     ALL was black type on a black pill. A token for what sits on the ink,
+     rather than borrowing the page's background for it. ─────────────────── */
+  :root { --onink:#05050a; }
+  .ivory, .paper { --onink:#fdfdfb; }
+  .cats .cat.on { color:var(--onink) !important; background:var(--ink); border-color:var(--ink); }
+  .cats .cat { transition:color .45s var(--ease), background .45s var(--ease), border-color .45s var(--ease), transform .45s var(--ease); }
+  .cats .cat.on { transform:none; }
+  @media (hover:hover) and (pointer:fine) { .cats .cat:not(.on):hover { transform:translateY(-1px); } }
+
+  /* ── the bracelet chapter opens on words, not a photograph. The picture was
+     a stock hand on silk saying nothing the three-dimensional bracelet below
+     it does not say better. ──────────────────────────────────────────────── */
+  .ed.solo { grid-template-columns:minmax(0,1fr) !important; text-align:center; justify-items:center; }
+  .ed.solo .copy { max-width:62ch; display:grid; justify-items:center; gap:14px; }
+  .ed.solo .copy .p { max-width:56ch; }
+  .ed.solo .acts { justify-content:center; }
+  html[dir="rtl"] .ed.solo { text-align:center; }
+
+  /* ══ the hover on a piece ═════════════════════════════════════════════════
+     A gold hairline draws itself around the photograph — top, then down the
+     side, then back along the foot — so the frame wraps the picture rather
+     than switching on. The plate floats up, the image breathes, and a slow
+     sheen crosses it. Nothing moves the tap target. ───────────────────────── */
+  .pgrid .piece .fig.r11 { position:relative; isolation:isolate; }
+  .pgrid .piece .fig.r11 .wrapln { position:absolute; inset:0; z-index:4; pointer-events:none;
+    border-radius:inherit; }
+  .pgrid .piece .fig.r11 .wrapln::before,
+  .pgrid .piece .fig.r11 .wrapln::after { content:""; position:absolute; inset:0; border-radius:inherit;
+    background-repeat:no-repeat; transition:background-size .9s var(--ease); }
+  /* top edge, then the right side */
+  .pgrid .piece .fig.r11 .wrapln::before {
+    background-image:linear-gradient(90deg, var(--gold), var(--gold)), linear-gradient(180deg, var(--gold), var(--gold));
+    background-position:left top, right top; background-size:0% 1px, 1px 0%; }
+  /* foot, then back up the left */
+  .pgrid .piece .fig.r11 .wrapln::after {
+    background-image:linear-gradient(90deg, var(--gold), var(--gold)), linear-gradient(180deg, var(--gold), var(--gold));
+    background-position:right bottom, left bottom; background-size:0% 1px, 1px 0%;
+    transition-delay:.28s; }
+  @media (hover:hover) and (pointer:fine) {
+    .pgrid .piece:hover .fig.r11 .wrapln::before { background-size:100% 1px, 1px 100%; }
+    .pgrid .piece:hover .fig.r11 .wrapln::after { background-size:100% 1px, 1px 100%; }
+    /* the float */
+    .pgrid .piece:not(.soon):hover .fig.r11 { transform:translateY(-7px) scale(1.012);
+      box-shadow:0 34px 60px -34px rgba(20,19,15,.5), 0 6px 18px -12px rgba(20,19,15,.25); }
+    .pgrid .piece:not(.soon):hover .fig.r11 .im img { transform:scale(1.07); }
+    .pgrid .piece.soon:hover .sfig { transform:translateY(-5px); }
+    .pgrid .piece.soon:hover .sfig .sm { opacity:.32; transform:scale(1.06); }
+    .pgrid .piece .sfig .sm { transition:opacity .8s var(--ease), transform .9s var(--ease); }
+    /* the sheen crosses once, slowly */
+    .pgrid .piece .fig.r11 .sheen { transition:transform 1.9s var(--ease); }
+    .pgrid .piece:hover .fig.r11 .sheen { transform:translateX(105%) skewX(-12deg); }
+  }
+  .pgrid .piece .fig.r11 { transition:transform .9s var(--ease), box-shadow .9s var(--ease), border-color .6s; }
+  .pgrid .piece .fig.r11 .im img { transition:transform 1.5s var(--ease) !important; }
+  @media (prefers-reduced-motion:reduce) {
+    .pgrid .piece .fig.r11 .wrapln::before, .pgrid .piece .fig.r11 .wrapln::after { transition:none; }
+    .pgrid .piece:not(.soon):hover .fig.r11 { transform:none; }
+  }
+
+  /* the hairline between chapters: .fig::after rings every figure with an
+     inset 1px highlight, which on a full-bleed frame is a lit line straight
+     across the page where one chapter meets the next */
+  #wrist .fig::after, #film .fig::after, .ed .fig.r45::after { box-shadow:none; }
+
+  /* the house mark behind the bracelet, faint enough to be felt rather than
+     read — the way a maker's watermark sits in paper */
+  .bgmk { position:absolute; inset:8% 12%; z-index:0; pointer-events:none;
+    -webkit-mask-image:var(--mk); mask-image:var(--mk);
+    -webkit-mask-size:contain; mask-size:contain;
+    -webkit-mask-position:center; mask-position:center;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    background:linear-gradient(160deg, rgba(246,243,237,.30), rgba(246,243,237,.12) 60%, rgba(246,243,237,.05));
+    opacity:.20; }
+  #stripwrap.wrist .bgmk { inset:6% 26%; opacity:.16; }
+  .ivory .bgmk, .paper .bgmk { background:linear-gradient(160deg, rgba(20,19,15,.22), rgba(20,19,15,.08)); opacity:.18; }
+  @media (max-width:759px) { .bgmk { inset:10% 16%; } #stripwrap.wrist .bgmk { inset:8% 20%; } }
+  /* the plates of the pieces still coming get the same hairline, so the hover
+     reads the same the whole way along the row */
+  .pgrid .piece .sfig { position:relative; }
+  @media (hover:hover) and (pointer:fine) {
+    .pgrid .piece.soon:hover .sfig .wrapln::before,
+    .pgrid .piece.soon:hover .sfig .wrapln::after { background-size:100% 1px, 1px 100%; }
+  }
+  .pgrid .piece .sfig .wrapln { position:absolute; inset:0; z-index:4; pointer-events:none; border-radius:inherit; }
+  .pgrid .piece .sfig .wrapln::before, .pgrid .piece .sfig .wrapln::after {
+    content:""; position:absolute; inset:0; border-radius:inherit; background-repeat:no-repeat;
+    transition:background-size .9s var(--ease); }
+  .pgrid .piece .sfig .wrapln::before {
+    background-image:linear-gradient(90deg, var(--gold), var(--gold)), linear-gradient(180deg, var(--gold), var(--gold));
+    background-position:left top, right top; background-size:0% 1px, 1px 0%; }
+  .pgrid .piece .sfig .wrapln::after {
+    background-image:linear-gradient(90deg, var(--gold), var(--gold)), linear-gradient(180deg, var(--gold), var(--gold));
+    background-position:right bottom, left bottom; background-size:0% 1px, 1px 0%; transition-delay:.28s; }

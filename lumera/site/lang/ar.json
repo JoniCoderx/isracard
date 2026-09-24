@@ -13,7 +13,7 @@
  "4.6 g": "4.6 غرام",
  "4–6 weeks": "4–6 أسابيع",
  "A person replies, not a form.": "يردّ عليك إنسان، لا نموذج.",
- "Two rooms, <em>and no shop window.</em>": "غرفتان، <em>وبلا واجهة عرض.</em>",
+ "SILAVU signs <em>every piece it makes.</em>": "سيلافو توقّع <em>كل قطعة تصنعها.</em>",
  "Across, at the girdle": "العرض، عند الحزام",
  "Adjust": "اضبط",
  "All": "الكل",
@@ -28,8 +28,8 @@
  "Book a private viewing": "موعد خاص",
  "Book a viewing": "احجز موعداً",
  "Bracelets": "أساور",
- "One bench, one setter, one piece on it at a time.": "طاولة واحدة، ورصّاع واحد، وقطعة واحدة عليها في كل مرة.",
- "Thirty-six stones, measured to you.": "ستٌّ وثلاثون حجرًا، على مقاسك.",
+ "Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.": "أحجار مصنّفة من GIA وIGI، تُرصّع باليد في دبي، وشهادة تحمل اسمك.",
+ "Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick.": "اختر القصّة والقيراط والمعدن ومقاس معصمك. يُبنى السوار بثلاثة أبعاد بينما تقرّر، ثم يُلبس على يدٍ تختارها.",
  "By appointment": "بموعد مسبق",
  "Call": "اتصال",
  "Carat is weight, not size. The total is shared by every stone in the line.": "القيراط وزن وليس حجماً. والمجموع يتوزّع على كل حجر في الخط.",
@@ -179,7 +179,7 @@
  "The house": "الدار",
  "The house mark itself, in pav&eacute;, on a chain you never take off.": "شعار الدار نفسه، بترصيع البافيه، على سلسلة لا تخلعها.",
  "The house mark, cast whole and polished, on a chain that never comes off.": "شعار الدار، مصبوب قطعة واحدة ومصقول، على سلسلة لا تُخلع.",
- "One bracelet, finished. A pendant, earrings, a ring and the Line behind it.": "سوار واحد، مكتمل. وخلفه قلادة وأقراط وخاتم والخط.",
+ "Five pieces carrying the house mark. Two of them you can hold this week.": "خمس قطع تحمل شعار الدار. اثنتان منها بين يديك الآن.",
  "The house · Dubai · Tel Aviv": "الدار · دبي · تل أبيب",
  "The mark, repeated and interlaced, all the way round.": "الشعار، متكرراً ومتشابكاً، حول المعصم كله.",
  "The photograph is drawn on here, on your device. It is not uploaded.": "تُعالَج الصورة هنا، على جهازك. ولا تُرفع إلى أي مكان.",
@@ -224,5 +224,7 @@
  "Eighteen carats is where a diamond stops being a stone and starts being a decision. This one came out of the rough at D colour and internally flawless, which is roughly one stone in several thousand at this weight, and the house bought it before it had a design. The halo is tapered baguettes, cut to fall away from the centre so nothing competes with it. There is one. There will not be another.": "عند ثمانية عشر قيراطًا يكفّ الألماس عن كونه حجرًا ويصير قرارًا. خرجت هذه من الخام بلون D ونقاء داخلي تام، أي نحو حجر واحد من عدة آلاف عند هذا الوزن، واشترتها الدار قبل أن يكون لها تصميم. الهالة من باغيتات متناقصة، مقطوعة لتنحدر بعيدًا عن المركز كي لا ينافسه شيء. هناك واحدة. ولن تكون أخرى.",
  "One 18.06 ct round brilliant, D colour, internally flawless, with its GIA report. Forty-two tapered baguettes around it, F–G VS, matched for length within a tenth of a millimetre.": "ألماسة مستديرة واحدة بوزن 18.06 قيراط، لون D، نقيّة داخليًا، بتقرير GIA خاص بها. وحولها اثنتان وأربعون باغيت متناقصة، F–G VS، متطابقة في الطول بدقة عُشر المليمتر.",
  "It exists. A private viewing in Dubai or Tel Aviv, and it travels to you with a courier and an appraiser, not in a parcel.": "هي موجودة. عرض خاص في دبي أو تل أبيب، وتصلك مع مرافق ومثمّن، لا داخل طرد.",
- "D · Internally flawless": "D · نقيّ داخليًا"
+ "D · Internally flawless": "D · نقيّ داخليًا",
+ "Her hand": "يد امرأة",
+ "His hand": "يد رجل"
 }

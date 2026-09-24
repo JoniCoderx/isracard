@@ -41,7 +41,7 @@ export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div clas
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
 // Two frames of one piece — worn, then clean on white. They change on their own
 // (see the ticker in script4) and the piece modal picks the second one up for free.
-export const figsw = (worn, clean, altw, altc, ratio, sizes, mod = "") => `<div class="fig ${ratio} rv swp${mod ? " " + mod : ""}"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
+export const figsw = (worn, clean, altw, altc, ratio, sizes, mod = "") => `<div class="fig ${ratio} rv swp${mod ? " " + mod : ""}"><div class="im">${pic(worn, altw, sizes)}</div><div class="im dt">${pic(clean, altc, sizes)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>`;
 export const figd = (name, detail, alt, altd, ratio, sizes, cap = "") => `<div class="fig ${ratio} rv sigp"><div class="im">${pic(name, alt, sizes)}</div><div class="im dt">${pic(detail, altd, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* the loader: the exact mark, almost invisible, filled by molten light from below. Three layers of the same path: the ghost, the lit part under a rising liquid mask, and the solid that sets when the light reaches the top. */
 /* the loader mark: four layers of the exact symbol, each one a CSS mask, so every moving part is a transform the compositor can carry */
@@ -77,7 +77,7 @@ function pieceCard(p) {
   const keys = JSON.stringify((p.key || []).map(r => [r[0].en, r[0].he, r[1].en, r[1].he]));
   const prose = JSON.stringify({ story: p.story || null, stones: p.stones || null, care: p.care || null });
   return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}" data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
-        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt.en, SIZES_PC, true, wide)}</div><div class="im dt">${pic(b.img, b.alt.en, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>
+        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt.en, SIZES_PC, true, wide)}</div><div class="im dt">${pic(b.img, b.alt.en, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>
         <div class="bd"><div class="k sig">${markUse("tiny")}<span dir="ltr">${p.ref}</span></div>
           <div class="t">${T("span", "nm", p.name.en, p.name.he)}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
@@ -88,7 +88,7 @@ function pieceCard(p) {
 
 function soonCard(x) {
   return `<article class="piece soon" data-cat="${x.cat}" aria-disabled="true">
-        <div class="fig r11 sfig"><div class="sm" aria-hidden="true">${markUse("")}</div>
+        <div class="fig r11 sfig"><i class="wrapln" aria-hidden="true"></i><div class="sm" aria-hidden="true">${markUse("")}</div>
           <div class="k swhen"><i></i><span data-en="${esc(x.when.en)}" data-he="${esc(x.when.he)}">${x.when.en}</span></div></div>
         <div class="bd">
           <div class="k sig">${markUse("tiny")}<span dir="ltr">${x.ref}</span></div>
@@ -188,8 +188,8 @@ ${markDefs()}
   <div class="wrap hwrap">
     <div class="hsig rv">${mark("hmark")}</div>
     <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="הבית · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
-    <h2 class="h2 rv d2" data-en="Two rooms, <em>and no shop window.</em>" data-he="שני חדרים, <em>ואין חלון ראווה.</em>">Two rooms, <em>and no shop window.</em></h2>
-    <p class="p rv d3" data-en="One bench, one setter, one piece on it at a time." data-he="שולחן אחד, משבץ אחד, תכשיט אחד עליו בכל רגע.">One bench, one setter, one piece on it at a time.</p>
+    <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="סילאבו חותמת <em>על כל תכשיט שיוצא ממנה.</em>">SILAVU signs <em>every piece it makes.</em></h2>
+    <p class="p rv d3" data-en="Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name." data-he="אבנים מדורגות GIA ו-IGI, משובצות ביד בדובאי, ותעודה שנושאת את שמכם.">Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.</p>
   </div>
 </section>
 
@@ -244,7 +244,7 @@ ${markDefs()}
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
       <h2 class="h2 sp rv" data-en="The <em>Knot.</em>" data-he="<em>הקשר.</em>">The <em>Knot.</em></h2>
-      <p class="p rv d2" data-en="One bracelet, finished. A pendant, earrings, a ring and the Line behind it." data-he="צמיד אחד, מוכן. תליון, עגילים, טבעת והקו אחריו.">One bracelet, finished. A pendant, earrings, a ring and the Line behind it.</p>
+      <p class="p rv d2" data-en="Five pieces carrying the house mark. Two of them you can hold this week." data-he="חמישה תכשיטים שנושאים את סמל הבית. שניים מהם כבר כאן.">Five pieces carrying the house mark. Two of them you can hold this week.</p>
       <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or start from nothing" data-he="או להתחיל מאפס">Or start from nothing</a></div>
     </div>
     ${COLLECTION}
@@ -282,17 +282,16 @@ ${markDefs()}
   <section id="build" data-n="04" data-title-en="The Line" data-title-he="הקו" aria-label="The Line">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
-    <div class="ed flip">
-      ${fig("hand", "A hand resting on black silk, wearing the SILAVU Line and a solitaire", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="The Line · 6 ct · white gold" data-he="הקו · 6 קראט · זהב לבן">The Line · 6 ct · white gold</span></div>`)}
+    <div class="ed solo">
       <div class="copy">
         <div class="k gold rv ol" data-en="04 · Your bracelet" data-he="04 · הצמיד שלכם">04 · Your bracelet</div>
         <h2 class="h2 sp rv" data-en="Design <em>your bracelet.</em>" data-he="עצבו <em>את הצמיד שלכם.</em>">Design <em>your bracelet.</em></h2>
-        <p class="p rv d2" data-en="Thirty-six stones, measured to you." data-he="שלושים ושישה אבנים, במידה שלכם.">Thirty-six stones, measured to you.</p>
+        <p class="p rv d2" data-en="Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick." data-he="בחרו את הליטוש, הקראטים, המתכת ומידת פרק היד. הצמיד נבנה בתלת־ממד תוך כדי, ואז נענד על יד שתבחרו.">Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick.</p>
         <div class="acts rv d3"><a class="btn solid" href="#configure" data-en="Start designing" data-he="התחילו לעצב">Start designing</a><button class="btn" type="button" id="tryonBtn" data-en="See it on a wrist" data-he="ראו אותו על פרק היד">See it on a wrist</button></div>
       </div>
     </div>
     <div class="panel rv" id="configure">
-      <div id="stripwrap"><div class="glfb"><img data-src="/img/tennis-1200.jpg" data-srcset="/img/tennis-800.jpg 800w, /img/tennis-1200.jpg 1200w, /img/tennis-1600.jpg 1600w" sizes="(min-width:900px) 52vw, 92vw" alt="The SILAVU Line, thirty-six brilliants in a single row of white gold" decoding="async"></div><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><span class="vmark">${markUse("")}</span></div><div class="handbar" id="handbar" hidden>
+      <div id="stripwrap"><i class="bgmk" aria-hidden="true"></i><div class="glfb"><img data-src="/img/tennis-1200.jpg" data-srcset="/img/tennis-800.jpg 800w, /img/tennis-1200.jpg 1200w, /img/tennis-1600.jpg 1600w" sizes="(min-width:900px) 52vw, 92vw" alt="The SILAVU Line, thirty-six brilliants in a single row of white gold" decoding="async"></div><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><span class="vmark">${markUse("")}</span></div><div class="handbar" id="handbar" hidden>
       <div class="hgrp" role="group" aria-label="Whose hand">
         <button class="vp on" type="button" data-hand="f" data-en="Her hand" data-he="יד של אישה">Her hand</button>
         <button class="vp" type="button" data-hand="m" data-en="His hand" data-he="יד של גבר">His hand</button>

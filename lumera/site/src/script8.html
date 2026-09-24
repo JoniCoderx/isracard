@@ -228,7 +228,7 @@
 
   /* a tube with an elliptical section. A finger is wider than it is deep and
      a wrist much more so; swept round, either one reads as a sausage. */
-  function ellipTube(mesh, path, rx, rz, seg, capA, capB) {
+  function ellipTube(mesh, path, rx, rz, seg, capA, capB, disp) {
     var i, j, frames = [], up = [0, 0, 1];
     for (i = 0; i < path.length; i++) {
       var pv = path[Math.max(0, i - 1)], nx2 = path[Math.min(path.length - 1, i + 1)];
@@ -246,10 +246,14 @@
       var fb = frames[i][0], fn = frames[i][1], row = [], rn = [];
       for (j = 0; j < seg; j++) {
         var a2 = j * 2 * Math.PI / seg, ca = Math.cos(a2), sa = Math.sin(a2);
-        var px = fb[0] * ca * ax + fn[0] * sa * az, py = fb[1] * ca * ax + fn[1] * sa * az, pz = fb[2] * ca * ax + fn[2] * sa * az;
+        /* the displacement rides on top of the ellipse: tendons, knuckles and
+           the hollow of a palm are all "a little more or less, here" */
+        var dd = disp ? disp(i / (path.length - 1), a2, path[i]) : 0;
+        var axd = ax + dd, azd = az + dd;
+        var px = fb[0] * ca * axd + fn[0] * sa * azd, py = fb[1] * ca * axd + fn[1] * sa * azd, pz = fb[2] * ca * axd + fn[2] * sa * azd;
         /* the outward normal of an ellipse is not its radius: it leans toward
            the flatter axis, which is what keeps a knuckle from looking round */
-        var gx = ca / Math.max(1e-4, ax), gz = sa / Math.max(1e-4, az);
+        var gx = ca / Math.max(1e-4, axd), gz = sa / Math.max(1e-4, azd);
         var nx3 = fb[0] * gx + fn[0] * gz, ny3 = fb[1] * gx + fn[1] * gz, nz3 = fb[2] * gx + fn[2] * gz;
         var nl = Math.hypot(nx3, ny3, nz3) || 1;
         row.push([path[i][0] + px, path[i][1] + py, path[i][2] + pz]);
@@ -273,7 +277,7 @@
     f: { wrist: 0.94, fore: 0.96, palmW: 1.30, palmZ: 0.76, heel: 1.06,
          len: 1.06, thick: 1.00, knuck: 0.86, nail: 1.14, thumb: 0.96, splay: 1.06 },
     m: { wrist: 1.07, fore: 1.16, palmW: 1.38, palmZ: 0.84, heel: 1.14,
-         len: 0.98, thick: 1.30, knuck: 1.20, nail: 0.92, thumb: 1.12, splay: 0.94 }
+         len: 0.98, thick: 1.16, knuck: 1.14, nail: 0.92, thumb: 1.06, splay: 0.94 }
   };
 
   /* index, middle, ring, little: length and thickness against the middle */
@@ -317,7 +321,48 @@
       }
       kx.push(rxv); kz.push(rzv);
     }
-    ellipTube(skin, spine, kx, kz, SP, true, false);
+    var KWp = wx * P.palmW;
+    var TEND = [-0.66, -0.22, 0.22, 0.63];
+    ellipTube(skin, spine, kx, kz, SP, true, false, function (t, a, pt) {
+      var y = pt[1], d = 0;
+      var back = Math.sin(a);            /* +1 is the back of the hand */
+      var front = -back;                 /* +1 is the palm */
+      var xu = Math.cos(a);              /* -1 thumb side .. +1 little side */
+      if (y > 10 && y < 118) {
+        /* the tendons: strongest just behind the knuckles, gone by the wrist */
+        var run = Math.min(1, (y - 10) / 62) * Math.min(1, (120 - y) / 26);
+        if (back > 0.12 && run > 0) {
+          var t2 = 0;
+          for (var q = 0; q < 4; q++) {
+            var dx = (xu - TEND[q]) / 0.20;
+            t2 += Math.exp(-dx * dx);
+          }
+          d += t2 * run * back * wx * 0.082 * P.thick;
+        }
+        /* the knuckle row stands proud of the back */
+        var kr = Math.exp(-Math.pow((y - 100) / 15, 2));
+        if (back > 0.1 && kr > 0.01) {
+          var kb = 0;
+          for (var q2 = 0; q2 < 4; q2++) {
+            var dk = (xu - TEND[q2]) / 0.26;
+            kb += Math.exp(-dk * dk);
+          }
+          d += kb * kr * back * wx * 0.10 * P.knuck;
+        }
+        /* and the palm is hollow between the two muscles */
+        if (front > 0.2) {
+          var hollow = Math.exp(-Math.pow((y - 58) / 34, 2)) * Math.exp(-Math.pow(xu / 0.44, 2));
+          d -= hollow * front * wx * 0.14;
+        }
+      }
+      /* the wrist bone on the little-finger side, which is what tells you a
+         bracelet is sitting on a wrist and not on a tube */
+      if (y > -34 && y < 14) {
+        var wb = Math.exp(-Math.pow((y + 10) / 13, 2)) * Math.exp(-Math.pow((xu - 0.86) / 0.36, 2));
+        d += wb * wx * 0.055;
+      }
+      return d;
+    });
 
     var KW = wx * P.palmW;            /* half the width across the knuckles */
     var knuckY = 104, knuckZ = 2;
@@ -355,7 +400,17 @@
       var fp = spline(pts, 26), fr = [];
       for (j = 0; j < fp.length; j++) fr.push(rads[Math.min(rads.length - 1, Math.round(j / (fp.length - 1) * (rads.length - 1)))]);
       var frz = fr.map(function (r) { return r * 0.90; });
-      ellipTube(skin, fp, fr, frz, SF, false, false);
+      ellipTube(skin, fp, fr, frz, SF, false, false, function (t, a, pt) {
+        /* two joints along the finger, proud on the back and creased in front */
+        var back = Math.sin(a), d = 0, r0 = rad;
+        var j1 = Math.exp(-Math.pow((t - 0.40) / 0.075, 2));
+        var j2 = Math.exp(-Math.pow((t - 0.70) / 0.070, 2));
+        d += (j1 + j2) * (back > 0 ? back : back * 0.25) * r0 * 0.20 * P.knuck;
+        /* the pad under the last bone */
+        var pad = Math.exp(-Math.pow((t - 0.86) / 0.13, 2));
+        d += pad * Math.max(0, -back) * r0 * 0.17;
+        return d;
+      });
       /* the tip, rounded off */
       var tip = fp[fp.length - 1], tr = fr[fr.length - 1];
       ball(skin, tip, tr * 0.96, SB);
@@ -385,8 +440,8 @@
     var ox = -KW * 0.52, oy = 24, oz = -wz * 0.16;
     var dirs = [[-0.60, 0.52, -0.60], [-0.44, 0.74, -0.51], [-0.26, 0.90, -0.34]];
     var cx3 = ox, cy3 = oy, cz3 = oz;
-    tpts.push([ox * 0.42, oy - 30, -wz * 0.42]); tr2.push(trad * 0.86);
-    tpts.push([ox * 0.76, oy - 12, -wz * 0.26]); tr2.push(trad * 1.04);
+    tpts.push([ox * 0.40, oy - 32, -wz * 0.58]); tr2.push(trad * 0.52);
+    tpts.push([ox * 0.74, oy - 14, -wz * 0.40]); tr2.push(trad * 0.80);
     for (j = 0; j < dirs.length; j++) {
       var d3 = dirs[j], L3 = tb * (j === 0 ? 0.46 : j === 1 ? 0.33 : 0.25), st = 4;
       var dl = Math.hypot(d3[0], d3[1], d3[2]);
@@ -406,8 +461,8 @@
     ball(skin, [KW * 0.68, 46, -wz * 0.80], wx * 0.36 * P.thick, SB + 2);
     ball(skin, [KW * 0.58, 76, -wz * 0.70], wx * 0.29 * P.thick, SB);
     /* the ball of the thumb, which is most of what the shape of a palm is */
-    ball(skin, [ox * 1.06, oy + 14, -wz * 0.82], wx * 0.48 * P.thick, SB + 2);
-    ball(skin, [ox * 0.62, oy - 10, -wz * 0.78], wx * 0.44 * P.thick, SB);
+    ball(skin, [ox * 1.04, oy + 14, -wz * 0.92], wx * 0.44 * P.thick, SB + 2);
+    ball(skin, [ox * 0.60, oy - 12, -wz * 0.90], wx * 0.38 * P.thick, SB);
 
     return { skin: skin, nail: nail };
   }
