@@ -26,7 +26,12 @@ async function swipe(x, y, dx, dy, steps = 12) {
   await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   await new Promise(r => setTimeout(r, 500));
 }
-const shot = async () => (await (await p.$("#bcv")).screenshot()).length;
+/* the bracelet drifts, so an element screenshot waits for a box that is never
+   "stable" and times out. A clip does not wait for anything. */
+const shot = async () => {
+  const bx = await (await p.$("#bcv")).boundingBox();
+  return (await p.screenshot({ clip: bx, timeout: 15000 })).length;
+};
 
 for (const view of ["line", "wrist"]) {
   await p.evaluate(v => { const e = document.getElementById("stripwrap"); e.classList.toggle("wrist", v === "wrist"); e.scrollIntoView({ block: "center", behavior: "instant" }); }, view);
