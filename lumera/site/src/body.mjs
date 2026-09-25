@@ -176,7 +176,7 @@ ${markDefs()}
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Private high jewellery · Dubai · Tel Aviv" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב">Private high jewellery · Dubai · Tel Aviv</div>
       <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה, שנעשים <em>לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
-      <p class="p rv d2" data-en="Two finished pieces, and a bench for whatever you have in mind." data-he="שני תכשיטים מוכנים, ושולחן עבודה לכל מה שיש לכם בראש.">Two finished pieces, and a bench for whatever you have in mind.</p>
+      <p class="p rv d2" data-en="Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai." data-he="שני תכשיטים מוכנים ואפשר לראות אותם השבוע. כל השאר משורטט יחד אתכם ומשובץ ביד בדובאי.">Two finished pieces, and a bench for whatever you have in mind.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
@@ -189,7 +189,7 @@ ${markDefs()}
     <div class="hsig rv">${mark("hmark")}</div>
     <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="הבית · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
     <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="סילאבו חותמת <em>על כל תכשיט שיוצא ממנה.</em>">SILAVU signs <em>every piece it makes.</em></h2>
-    <p class="p rv d3" data-en="Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name." data-he="אבנים מדורגות GIA ו-IGI, משובצות ביד בדובאי, ותעודה שנושאת את שמכם.">Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.</p>
+    <p class="p rv d3" data-en="Every stone graded by GIA or IGI. Every piece set by hand in Dubai. Every certificate carries your name." data-he="כל אבן מדורגת ב־GIA או IGI. כל תכשיט משובץ ביד בדובאי. כל תעודה נושאת את שמכם.">Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.</p>
   </div>
 </section>
 
@@ -243,7 +243,7 @@ ${markDefs()}
     <div class="wrap">
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
-      <h2 class="h2 sp rv" data-en="The <em>Knot.</em>" data-he="<em>הקשר.</em>">The <em>Knot.</em></h2>
+      <h2 class="h2 sp rv" data-en="The house <em>collection.</em>" data-he="<em>הקולקציה</em> של הבית.">The house <em>collection.</em></h2>
       <p class="p rv d2" data-en="Five pieces carrying the house mark. Two of them you can hold this week." data-he="חמישה תכשיטים שנושאים את סמל הבית. שניים מהם כבר כאן.">Five pieces carrying the house mark. Two of them you can hold this week.</p>
       <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or start from nothing" data-he="או להתחיל מאפס">Or start from nothing</a></div>
     </div>

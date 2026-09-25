@@ -3,7 +3,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import { PIECES } from "./src/pieces.mjs";
-const [src, outDir, base = "https://jonicoderx.github.io/isracard"] = process.argv.slice(2);
+const [src, outDir, baseArg = "https://jonicoderx.github.io/isracard"] = process.argv.slice(2);
+/* Canonical, og:url, og:image and the sitemap have to be absolute — a share
+   scraper cannot resolve a relative image and a crawler cannot resolve a
+   relative <loc>. A wrong third argument used to sail straight through and
+   produce "/isracard//", which looks fine in a diff and is silently useless.
+   A path is repaired against the host, the host is lower-cased because that
+   is what GitHub Pages actually serves, and trailing slashes go. */
+const ORIGIN = "https://jonicoderx.github.io";
+let base = String(baseArg || "").trim().replace(/\/+$/, "");
+if (!/^https?:\/\//i.test(base)) base = ORIGIN + "/" + base.replace(/^\/+/, "");
+base = base.replace(/^(https?:\/\/)([^/]+)/i, (m, p, h) => p + h.toLowerCase()).replace(/\/+$/, "");
+/* the social profiles live in one place, the page itself, so the ones the
+   schema claims are the ones a reader can click */
+const pageSrc = fs.readFileSync(src, "utf8");
+const sameAs = [...new Set((pageSrc.match(/https:\/\/(?:www\.)?(?:instagram|tiktok|youtube|pinterest|facebook|linkedin|x)\.com\/[^"'\s\\]+/g) || []))].sort();
 let html = fs.readFileSync(src, "utf8").replace(/<title>[\s\S]*?<\/title>/, "").replace(/<meta name="viewport"[^>]*>\s*/g, "").replace(/<meta charset=[^>]*>\s*/gi, "");
 /* the font tags belong in the head, where the browser meets them before the
    half-megabyte of inline CSS; build.mjs writes them at the top of the page
@@ -21,7 +35,6 @@ const head = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SILAVU — Private high jewellery, Dubai &amp; Tel Aviv</title>
 <meta name="description" content="SILAVU is a private jewellery house in Dubai and Tel Aviv. Diamonds graded by GIA or IGI, set by hand, one piece at a time — the Knot bracelet, the Desert Star, and commissions made to a single wrist. Viewings by appointment.">
-<meta name="keywords" content="high jewellery Dubai, private jeweller Tel Aviv, bespoke diamond bracelet, GIA certified diamonds, tennis bracelet made to measure, SILAVU">
 <link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
 <meta name="silavu-build" content="${BUILD}">
@@ -30,11 +43,6 @@ const head = `<!doctype html>
 <meta name="format-detection" content="telephone=no">
 <!-- one page, five languages, chosen in the browser: every locale is the same
      URL, so each alternate points here and x-default is the English default -->
-<link rel="alternate" hreflang="en" href="${base}/">
-<link rel="alternate" hreflang="he" href="${base}/">
-<link rel="alternate" hreflang="fr" href="${base}/">
-<link rel="alternate" hreflang="ar" href="${base}/">
-<link rel="alternate" hreflang="ru" href="${base}/">
 <link rel="alternate" hreflang="x-default" href="${base}/">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="he_IL">
@@ -75,8 +83,15 @@ ${fontLinks}
       "@type": ["Organization", "JewelryStore"],
       "@id": base + "/#house",
       "name": "SILAVU",
+      "alternateName": ["Silavu", "SILAVU Jewellery", "SILAVU High Jewellery"],
+      "slogan": "High jewellery, made for one person.",
       "description": "A private high-jewellery house in Dubai and Tel Aviv. House collection, bespoke commissions and the SILAVU Line, by appointment.",
       "url": base + "/",
+      "sameAs": sameAs,
+      "address": [
+        { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
+        { "@type": "PostalAddress", "addressLocality": "Tel Aviv", "addressCountry": "IL" }
+      ],
       "logo": base + "/icon-512.png",
       "image": base + "/og.jpg",
       "email": "concierge@silavu.com",
@@ -176,13 +191,19 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 }
 fs.writeFileSync(path.join(outDir, "robots.txt"),
   "User-agent: *\nAllow: /\n\nSitemap: " + base + "/sitemap.xml\n");
+/* One page, one entry. The five language alternates that used to sit here all
+   pointed at this same URL, which claims five translated versions exist at an
+   address that has one — the language is switched inside the page. A crawler
+   either ignores that or distrusts it, and neither helps. */
 fs.writeFileSync(path.join(outDir, "sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n'
-  + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+  + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
   + "  <url>\n    <loc>" + base + "/</loc>\n"
-  + ["en", "he", "fr", "ar", "ru"].map(function (l) {
-      return '    <xhtml:link rel="alternate" hreflang="' + l + '" href="' + base + '/"/>\n';
-    }).join("")
-  + '    <xhtml:link rel="alternate" hreflang="x-default" href="' + base + '/"/>\n'
+  + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
   + "    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n");
+/* A custom domain is one file away. Drop the bought domain into
+   lumera/site/CNAME and GitHub Pages serves the site from it; everything
+   above then needs the origin passed to match, which the workflow does. */
+const cnameSrc = path.join(path.dirname(src), "CNAME");
+if (fs.existsSync(cnameSrc)) fs.copyFileSync(cnameSrc, path.join(outDir, "CNAME"));
 console.log("static index written:", path.join(outDir, "index.html"), ((head.length + html.length) / 1024).toFixed(0) + " KB");

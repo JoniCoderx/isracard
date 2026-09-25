@@ -28,7 +28,6 @@
  "Book a private viewing": "موعد خاص",
  "Book a viewing": "احجز موعداً",
  "Bracelets": "أساور",
- "Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.": "أحجار مصنّفة من GIA وIGI، تُرصّع باليد في دبي، وشهادة تحمل اسمك.",
  "Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick.": "اختر القصّة والقيراط والمعدن ومقاس معصمك. يُبنى السوار بثلاثة أبعاد بينما تقرّر، ثم يُلبس على يدٍ تختارها.",
  "By appointment": "بموعد مسبق",
  "Call": "اتصال",
@@ -54,7 +53,6 @@
  "Design": "التصميم",
  "Design <em>your bracelet.</em>": "صمّم <em>سوارك.</em>",
  "Design your bracelet": "صمّم سوارك",
- "Two finished pieces, and a bench for whatever you have in mind.": "قطعتان مكتملتان، وطاولة عمل لكل ما يدور في بالك.",
  "Detail": "تفصيل",
  "Drag to turn it on the wrist.": "اسحب لتديره على المعصم.",
  "Dubai": "دبي",
@@ -165,7 +163,6 @@
  "Tennis": "تنس",
  "The <em>Knot</em>": "<em>العقدة</em>",
  "The <em>Line</em>": "<em>الخط</em>",
- "The <em>Knot.</em>": "<em>العقدة.</em>",
  "The Desert <em>Star</em>": "<em>نجمة</em> الصحراء",
  "The Knot <em>Earrings</em>": "<em>أقراط</em> العقدة",
  "The Knot <em>Pendant</em>": "<em>تعليقة</em> العقدة",
@@ -229,5 +226,8 @@
  "His hand": "يد رجل",
  "Turn it": "أدره",
  "Done": "تم",
- "Drag to turn · pinch to zoom · double tap to reset": "اسحب للتدوير · اقرص للتكبير · انقر مرتين لإعادة الضبط"
+ "Drag to turn · pinch to zoom · double tap to reset": "اسحب للتدوير · اقرص للتكبير · انقر مرتين لإعادة الضبط",
+ "The house <em>collection.</em>": "<em>مجموعة</em> الدار.",
+ "Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.": "قطعتان جاهزتان ويمكنكم رؤيتهما هذا الأسبوع. وكل ما عداهما يُرسم معكم ويُرصَّع يدويًا في دبي.",
+ "Every stone graded by GIA or IGI. Every piece set by hand in Dubai. Every certificate carries your name.": "كل حجر مصنَّف من GIA أو IGI. كل قطعة مرصَّعة يدويًا في دبي. كل شهادة تحمل اسمكم."
 }

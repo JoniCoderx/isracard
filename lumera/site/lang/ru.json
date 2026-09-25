@@ -28,7 +28,6 @@
  "Book a private viewing": "Частный просмотр",
  "Book a viewing": "Записаться",
  "Bracelets": "Браслеты",
- "Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.": "Камни с сертификатами GIA и IGI, закреплённые вручную в Дубае, и сертификат с вашим именем.",
  "Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick.": "Выберите огранку, караты, металл и размер запястья. Браслет строится в трёх измерениях, пока вы решаете, а затем надевается на руку, которую выбираете вы.",
  "By appointment": "По записи",
  "Call": "Звонок",
@@ -54,7 +53,6 @@
  "Design": "Эскиз",
  "Design <em>your bracelet.</em>": "Соберите <em>свой браслет.</em>",
  "Design your bracelet": "Соберите свой браслет",
- "Two finished pieces, and a bench for whatever you have in mind.": "Два готовых украшения и верстак для всего, что вы задумали.",
  "Detail": "Деталь",
  "Drag to turn it on the wrist.": "Потяните, чтобы повернуть на запястье.",
  "Dubai": "Дубай",
@@ -165,7 +163,6 @@
  "Tennis": "Теннис",
  "The <em>Knot</em>": "<em>Узел</em>",
  "The <em>Line</em>": "<em>Линия</em>",
- "The <em>Knot.</em>": "<em>Узел.</em>",
  "The Desert <em>Star</em>": "<em>Звезда</em> пустыни",
  "The Knot <em>Earrings</em>": "<em>Серьги</em> Узел",
  "The Knot <em>Pendant</em>": "<em>Подвеска</em> Узел",
@@ -229,5 +226,8 @@
  "His hand": "Мужская рука",
  "Turn it": "Поверните",
  "Done": "Готово",
- "Drag to turn · pinch to zoom · double tap to reset": "Проведите, чтобы повернуть · щипок для масштаба · двойное касание для сброса"
+ "Drag to turn · pinch to zoom · double tap to reset": "Проведите, чтобы повернуть · щипок для масштаба · двойное касание для сброса",
+ "The house <em>collection.</em>": "<em>Коллекция</em> дома.",
+ "Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.": "Две вещи готовы — их можно увидеть на этой неделе. Всё остальное рисуется вместе с вами и закрепляется вручную в Дубае.",
+ "Every stone graded by GIA or IGI. Every piece set by hand in Dubai. Every certificate carries your name.": "Каждый камень с сертификатом GIA или IGI. Каждая вещь закреплена вручную в Дубае. На каждом сертификате — ваше имя."
 }
