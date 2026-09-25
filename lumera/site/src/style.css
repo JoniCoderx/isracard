@@ -3195,3 +3195,16 @@
   .bstage.open #handbar .hgrp { padding:2px; }
   .bstage.open #handbar .hgrp.skins { gap:6px; padding:4px 6px; }
   .bstage.open #handbar .sk { width:40px; height:40px; }
+
+  /* ══ v80 — five cards, one baseline ══════════════════════════════════════
+     .piece is a grid of two auto rows inside a row of the catalogue that is
+     as tall as its tallest card. The spare height was being handed to the
+     first row, so a card with a two-line description started its text
+     eighteen pixels lower than a card with three — five names on five
+     different lines, which is the first thing the eye reads as wrong.
+
+     The rows keep their own size. Every reference, every name and every
+     description now starts on the same line across the row; what differs
+     between them falls out of the bottom, which is where a difference in how
+     much there is to say belongs. ─────────────────────────────────────────── */
+  .pgrid .piece { align-content:start; }
