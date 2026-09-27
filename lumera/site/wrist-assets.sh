@@ -81,4 +81,43 @@ for w in 800 1200 1600 2000; do
   convert "$T/mback.png" -resize ${w}x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/mono-back-$w.jpg"
 done
 
+# ── the wrist the Line is worn on ────────────────────────────────────────────
+# Twelve photographs shot bare for this: a woman's arm and a man's, each in six
+# skin tones, no watch and no second bracelet to argue with the piece. The Line
+# itself is drawn live on top of them in the browser, so what is worn is the cut,
+# the carat, the metal and the wrist size the reader chose.
+#
+# Each master is 3840x2160. The wide frame is served whole; the phone gets the
+# same frame cut SQUARE around the wrist, so the bracelet lands dead centre and
+# none of the hand is lost. The crop origin is (wrist centre in px) - 1080, and
+# it is why script2's portrait table can carry cx 0.5 for both hands.
+WF=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf
+plate() {  # $1 name  $2 hash  $3 square-crop x origin
+  curl -sf -o "$T/$1.png" "$WF/$2.png"
+  # The wide plate is padded out to 2:1 with black before it is served. The
+  # masters are 16:9 and the fingertips sit 3% below the top edge; a 1.87 canvas
+  # covering a 1.78 plate crops 2.5% off the top, which takes the ends of the
+  # fingers with it. At 2:1 nothing is ever cropped vertically and the crop
+  # falls on the padding instead. It also moves cx, which the table knows.
+  convert "$T/$1.png" -background black -gravity center -extent 4320x2160 "$T/$1w.png"
+  convert "$T/$1w.png" -resize 1900x -quality 86 -sampling-factor 4:2:0 -strip "$OUT/wrist-$1-1900.jpg"
+  convert "$T/$1w.png" -resize 1300x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/wrist-$1-1300.jpg"
+  convert "$T/$1.png" -crop 2160x2160+$3+0 +repage -resize 1200x -quality 85 -sampling-factor 4:2:0 -strip "$OUT/wrist-${1}v-1200.jpg"
+  convert "$T/$1.png" -crop 2160x2160+$3+0 +repage -resize 900x  -quality 84 -sampling-factor 4:2:0 -strip "$OUT/wrist-${1}v-900.jpg"
+}
+# her hand: wrist centre x = 0.4741 * 3840 = 1821, so the square cut starts at 741
+plate f0 hf_20260927_100103_10a4aff1-b840-486c-adbc-730ce0021a8c 741
+plate f1 hf_20260927_101321_1c372ae8-9cd7-4c6d-ae7c-85539ea86b90 741
+plate f2 hf_20260927_101330_cfd8f227-55d1-4747-8a77-8783afb4ebef 741
+plate f3 hf_20260927_101337_069e83cd-cb0c-4ec4-b2ab-11efb57ddd00 741
+plate f4 hf_20260927_101344_3a27e901-00a8-4598-bdbc-e9b001d54a34 741
+plate f5 hf_20260927_101351_788ee2a6-b587-4bc0-9fe8-b7d76ef6e310 741
+# his hand: wrist centre x = 0.4849 * 3840 = 1862, so the square cut starts at 782
+plate m0 hf_20260927_101314_036cdff5-eb22-4aea-add1-791534d6b8a1 782
+plate m1 hf_20260927_101459_3c7586db-4210-44d5-9909-b1a4b8363eae 782
+plate m2 hf_20260927_101506_2be26cf0-6ef2-45cf-bedc-5f43e0e66aa1 782
+plate m3 hf_20260927_101513_d4b218cd-fd14-4fa1-936f-5f6d4bb959d8 782
+plate m4 hf_20260927_101520_5071d382-7d03-4de0-834f-1248e822abaf 782
+plate m5 hf_20260927_101528_a0ba4ec7-54e2-43e8-ad15-669de451f9cc 782
+
 ls -la "$OUT"/wrist*.jpg "$OUT"/mono-*.jpg "$OUT"/craft*.jpg "$OUT"/sigb*.jpg "$OUT"/tennis*.jpg "$OUT"/earsil*.jpg

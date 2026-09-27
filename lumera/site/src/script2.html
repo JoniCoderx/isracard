@@ -171,19 +171,54 @@
 
   /* ── the wrist: a photograph, and the line wrapped around it in three dimensions ── */
   var view = "line", photo = { key: "", img: null, tex: null, w: 0, h: 0, geo: null }, phase = 0, spin = 0, dragging = false, dragId = null, lastX = 0, lastY = 0, lastT = 0, ptr = { x: 0.5, y: 0.5, on: false };
-  var GEO = { h: { src: "/img/wrist-1300.jpg", cx: 0.52, cy: 0.46, r: 0.20, rOf: "h", u: [0, 1], v: [1, 0], k: 0.24, light: [0.35, 0.2] }, v: { src: "/img/wristv-900.jpg", cx: 0.51, cy: 0.60, r: 0.227, rOf: "w", u: [1, 0.04], v: [0.04, -1], k: 0.24, light: [0.3, 0.2] } };
-  function loadPhoto() {
-    var key = cssW < 700 ? "v" : "h"; if (photo.key === key) return; photo.key = key; photo.img = null;
-    var im = new Image(); im.decoding = "async"; im.onload = function () { if (photo.key !== key) return; photo.img = im; photo.w = im.naturalWidth; photo.h = im.naturalHeight; photo.geo = GEO[key]; if (!photo.tex) photo.tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, photo.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); } catch (err) { photo.img = null; gl.bindTexture(gl.TEXTURE_2D, tex); return; } gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.bindTexture(gl.TEXTURE_2D, tex); wrap.classList.add("ready"); };
-    im.src = (window.__imgBase || "") + GEO[key].src;
+  /* ── the wrist the Line is worn on ──────────────────────────────────────
+     Twelve photographs: a woman's arm and a man's, each in six skin tones,
+     each shot bare — no watch, no second bracelet, nothing to argue with the
+     piece. The line itself is still drawn live, so it is the cut, the carat,
+     the metal and the wrist size the reader chose, around a real arm.
+
+     Every number below was measured off the photograph rather than judged by
+     eye: the wrist is the narrowest run of arm between the knuckles and the
+     forearm, cx/cy is its centre as a fraction of the frame, r is its half
+     width, and u/v are the ring's axes — u across the wrist, v down the arm,
+     foreshortened by k. The two hands are the same shot at different
+     proportions, so the six tones of each share one geometry. */
+  var PLATE = {
+    f: { cx: 0.4771, cy: 0.6615, r: 0.1060, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] },
+    m: { cx: 0.4866, cy: 0.6950, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] }
+  };
+  /* the phone gets the same frame cut square around the arm, so the wrist
+     lands dead centre and nothing of the hand is lost */
+  var PLATEV = {
+    f: { cx: 0.5000, cy: 0.6615, r: 0.1060, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] },
+    m: { cx: 0.5000, cy: 0.6950, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] }
+  };
+  var plate = { kind: "f", skin: 1 };
+  function plateGeo(vert) { var g = (vert ? PLATEV : PLATE)[plate.kind] || PLATE.f; return g; }
+  function plateSrc(vert, wide) {
+    return "/img/wrist-" + plate.kind + plate.skin + (vert ? "v-" : "-") + wide + ".jpg";
   }
-  function setView(v) { view = v; wrap.classList.toggle("wrist", v === "wrist"); wrap.querySelectorAll(".vtb").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-view") === v); b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false"); }); /* the wrist view is the modelled hand now, drawn by the bracelet renderer.
-       This one stands down rather than fetching half a megabyte of somebody
-       else's wrist to composite a line onto. */
-    if (v === "wrist") { resize(); } }
+  function loadPhoto() {
+    var vert = cssW < 700, key = (vert ? "v" : "h") + plate.kind + plate.skin;
+    if (photo.key === key) return; photo.key = key; photo.img = null;
+    var im = new Image(); im.decoding = "async"; im.onload = function () { if (photo.key !== key) return; photo.img = im; photo.w = im.naturalWidth; photo.h = im.naturalHeight; photo.geo = plateGeo(vert); if (!photo.tex) photo.tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, photo.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); } catch (err) { photo.img = null; gl.bindTexture(gl.TEXTURE_2D, tex); return; } gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.bindTexture(gl.TEXTURE_2D, tex); wrap.classList.add("ready"); };
+    /* a phone asks for the square cut at 900, a desktop for the wide frame at
+       1900 — one plate at a time, and only once the wrist view is open */
+    im.src = (window.__imgBase || "") + plateSrc(vert, vert ? (DPR > 1.5 ? 1200 : 900) : (cssW > 900 ? 1900 : 1300));
+  }
+  function setView(v) { view = v; wrap.classList.toggle("wrist", v === "wrist"); wrap.querySelectorAll(".vtb").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-view") === v); b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false"); });
+    if (v === "wrist") { resize(); loadPhoto(); } }
   window.__stripView = setView;
+  /* whose hand, and what colour — the bar in the corner calls this */
+  window.__wristPlate = function (o) {
+    if (!o) return { kind: plate.kind, skin: plate.skin };
+    if (o.kind && o.kind !== plate.kind) plate.kind = o.kind;
+    if (typeof o.skin === "number") plate.skin = Math.max(0, Math.min(5, o.skin));
+    if (view === "wrist") loadPhoto();
+    return { kind: plate.kind, skin: plate.skin };
+  };
   wrap.addEventListener("click", function (e) { var b = e.target.closest(".vtb"); if (b) setView(b.getAttribute("data-view")); });
-  wrap.addEventListener("pointerdown", function (e) { if (true || view !== "wrist" || e.target.closest(".vtb")) return; dragging = true; dragId = e.pointerId; lastX = e.clientX; lastY = e.clientY; lastT = performance.now(); spin = 0; try { wrap.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); });
+  wrap.addEventListener("pointerdown", function (e) { if (view !== "wrist" || e.target.closest(".vtb") || e.target.closest("[data-stage]")) return; dragging = true; dragId = e.pointerId; lastX = e.clientX; lastY = e.clientY; lastT = performance.now(); spin = 0; try { wrap.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); });
   wrap.addEventListener("pointermove", function (e) { var r = wrap.getBoundingClientRect(); ptr.x = (e.clientX - r.left) / Math.max(1, r.width); ptr.y = (e.clientY - r.top) / Math.max(1, r.height); ptr.on = true; if (!dragging || e.pointerId !== dragId || !photo.geo) return; var g = photo.geo, un = norm(g.u), d = ((e.clientX - lastX) * un[0] + (e.clientY - lastY) * un[1]) * DPR, rb = ringRadius(); if (rb > 0) { var dph = d / rb; phase += dph; var now = performance.now(), dt = Math.max(8, now - lastT); spin = dph / dt * 16; lastT = now; } lastX = e.clientX; lastY = e.clientY; });
   function endDrag(e) { if (e.pointerId !== dragId) return; dragging = false; dragId = null; }
   wrap.addEventListener("pointerup", endDrag); wrap.addEventListener("pointercancel", endDrag); wrap.addEventListener("pointerleave", function () { ptr.on = false; });

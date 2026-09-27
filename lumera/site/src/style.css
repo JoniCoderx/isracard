@@ -3256,3 +3256,24 @@
   @media (min-width:1000px) {
     #film #concierge.cwrap { grid-row:1; }
   }
+
+  /* ══ v83 — the wrist is photographed again, and the Line is still live ════
+     v71 took "On a wrist" off a photograph because the line read as pasted
+     onto somebody else's arm. It was right about the picture and wrong about
+     the cause: the plate was a stock frame of a wrist already wearing a
+     watch, so a second bracelet had nothing to be but an overlay. A hand is
+     the one object every reader has looked at all their life, and a modelled
+     one does not pass, however carefully it is measured.
+
+     The arm is a photograph shot for this — bare, square to the camera, the
+     wrist clean — and the Line is still DRAWN on it, live: the cut, the
+     carat, the metal and the wrist size the reader chose, with its own
+     contact shadow, its far half hidden behind the wrist, and turnable with
+     a finger. Twelve plates, a woman's hand and a man's in six tones each,
+     so the bar in the corner still answers "whose hand". ─────────────────── */
+  #stripwrap.wrist #bcv { display:none; }
+  #stripwrap.wrist #stripcv { display:block; }
+  /* "Turn it" lifts #bcv into a full-screen stage, and #bcv is the canvas this
+     view just switched off — it would have opened on nothing. On a wrist you
+     turn the Line with a finger, around the arm, where it is. */
+  #stripwrap.wrist .stbtn, #stripwrap.wrist .sthint { display:none; }

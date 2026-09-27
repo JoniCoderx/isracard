@@ -1164,11 +1164,21 @@
     pHand.instances(one); pNail.instances(new Float32Array(one));
     hand.built = key;
   }
+  /* ── the wrist is photographed again ────────────────────────────────────
+     The modelled hand was built because a line composited onto a stock
+     photograph of somebody already wearing a watch read as exactly that. The
+     answer was not a better model: a hand is the one object every reader has
+     looked at all their life, and nothing short of a photograph passes.
+
+     So the arm is a photograph shot bare for this — no watch, no second
+     bracelet — and the Line is still drawn live on top of it, cut, carat,
+     metal and wrist size and all, by the renderer in the strip. This keeps
+     the controls: it hands whose-hand and which-tone straight across. */
   window.__hand = function (o2) {
+    if (window.__wristPlate) return window.__wristPlate(o2);
     if (!o2) return { kind: hand.kind, skin: hand.skin };
-    if (o2.kind && o2.kind !== hand.kind) { hand.kind = o2.kind; hand.built = ""; buildHand(); }
+    if (o2.kind) hand.kind = o2.kind;
     if (typeof o2.skin === "number") hand.skin = Math.max(0, Math.min(SKINS.length - 1, o2.skin));
-    dirty = true; idle = false;
     return { kind: hand.kind, skin: hand.skin };
   };
 
@@ -1263,8 +1273,9 @@
   }
   function tick() {
     requestAnimationFrame(tick);
-    var w = wrap.classList.contains("wrist");
-    if (w !== hand.on) { hand.on = w; if (w) buildHand(); dirty = true; idle = !reduce; idleN = 0; }
+    /* the hand is a photograph now and lives in the other canvas; this one
+       draws the bracelet alone, and never builds the mesh */
+    if (wrap.classList.contains("wrist")) return;
     if (!page) {
       var r = wrap.getBoundingClientRect();
       if (r.bottom < -80 || r.top > innerHeight + 80) return;
