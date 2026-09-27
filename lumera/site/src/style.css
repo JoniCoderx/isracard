@@ -3208,3 +3208,51 @@
      between them falls out of the bottom, which is where a difference in how
      much there is to say belongs. ─────────────────────────────────────────── */
   .pgrid .piece { align-content:start; }
+
+  /* ══ v81 — the film and the enquiry are one picture on a phone too ═══════
+     On a wide screen these have been one chapter since v73: the film runs the
+     full width and dissolves into black, and the enquiry sits on the half
+     that has gone dark, with no edge between them.
+
+     A phone got the two of them stacked — a screen and a fifth of bags, then
+     a screen of form underneath, with nothing to say they belong together.
+     Here the form rides up onto the dark foot of the film, the way it rides
+     into the dark half on a desktop. Same chapter, same idea, a fifth of a
+     page shorter. ─────────────────────────────────────────────────────────── */
+  @media (max-width:999px) {
+    #film { position:relative; }
+    /* A pin has to be TALLER than the sticky screen inside it or there is no
+       range to hold across. This was 92svh holding a 100svh screen — negative
+       range — so on a phone the Dubai film has never scrubbed at all. It was
+       a still frame that scrolled past, which is why that chapter read as a
+       dead screen of black. It gets seventy screens-worth of hold now, and
+       the enquiry takes the length back by riding up onto it. */
+    #film .fpin { height:170svh; }
+    #film .fgrade { background:
+        linear-gradient(to bottom, rgba(0,0,0,.34), transparent 18%, transparent 58%, rgba(0,0,0,.55)); }
+    /* the enquiry carries its own night with it, so it can sit anywhere on the
+       picture and still be read — the same idea as the desktop's dark half,
+       turned ninety degrees */
+    #film #concierge.cwrap { position:relative; z-index:2; margin-top:-92svh; padding-top:clamp(20px,6vw,34px);
+      background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.86) 14%, #000 30%); }
+    #film .ftxt { top:11%; bottom:auto; }
+  }
+
+  /* ══ v82 — the desktop film chapter had a screen of black in the middle ═══
+     The wide layout puts the film across both columns of a two-column grid
+     and the enquiry in the second column. The film was given row 1 outright;
+     the enquiry named a column but no row, so it auto-placed into row 2 and
+     sat a whole screen BELOW the film instead of beside it. The chapter read
+     as a film, then a blank black screen, then a form floating in the right
+     half of nothing — eight hundred pixels of dead scroll, and the reason
+     that section looked broken.
+
+     The rest of that block already describes the picture it wanted: the film
+     running full width and dissolving into black under the enquiry, the
+     enquiry "level with the film the entire time you are passing them both".
+     One line was missing — the row. With it, the enquiry is sticky inside the
+     film's own row and rides the whole scrub beside it, the chapter is the
+     height of the film pin alone, and a screen of black goes away. ───────── */
+  @media (min-width:1000px) {
+    #film #concierge.cwrap { grid-row:1; }
+  }
