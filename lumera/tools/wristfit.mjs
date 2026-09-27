@@ -38,20 +38,33 @@ for (const [n, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, true
     writeFileSync(`${OUT}/wristfit-${n}-${tag}.png`, buf);
     return buf;
   };
-  const seen = {};
-  for (const kind of ["f", "m"]) {
-    await p.evaluate(k => window.__hand && window.__hand({ kind: k, skin: 2 }), kind);
-    await p.waitForTimeout(1600);
-    seen[kind] = await shot(kind);
-  }
-  ok(!seen.f.equals(seen.m), `${n} her hand and his are different plates`);
+  /* Which plate the page actually ASKED FOR, not what the table says it holds.
+     A live check caught the table reporting one hand while the picture kept
+     the other — the bar was handing the remembered choice back every time a
+     plate finished loading. Pixels alone missed it; the request list did not. */
+  const asked = () => p.evaluate(() => performance.getEntriesByType("resource")
+    .filter(e => /\/img\/wrist-[fm]\d/.test(e.name)).map(e => e.name.split("/").pop()));
 
-  /* the tones have to reach the picture, not just the table */
-  await p.evaluate(() => window.__hand && window.__hand({ kind: "f", skin: 0 }));
-  await p.waitForTimeout(1500); const light = await shot("f-skin0");
-  await p.evaluate(() => window.__hand && window.__hand({ kind: "f", skin: 5 }));
-  await p.waitForTimeout(1500); const dark = await shot("f-skin5");
-  ok(!light.equals(dark), `${n} the skin tones change the plate`);
+  const seen = {};
+  for (const [kind, skin] of [["f", 2], ["m", 4]]) {
+    await p.evaluate(o => window.__hand && window.__hand(o), { kind, skin });
+    await p.waitForTimeout(1800);
+    seen[kind] = await shot(kind);
+    const state = await p.evaluate(() => window.__wristPlate());
+    const reqs = await asked();
+    ok(state.kind === kind && state.skin === skin,
+      `${n} setting ${kind}/${skin} sticks (${JSON.stringify(state)})`);
+    ok(reqs.some(f => f.startsWith(`wrist-${kind}${skin}`)),
+      `${n} the ${kind}/${skin} plate was actually fetched (${reqs.slice(-2).join(", ")})`);
+  }
+  ok(!seen.f.equals(seen.m), `${n} her hand and his are different pictures`);
+
+  /* and the bar's own buttons still drive it */
+  await p.click('#handbar [data-hand="f"]', { force: true }); await p.waitForTimeout(1400);
+  await p.click('#handbar [data-skin="5"]', { force: true }); await p.waitForTimeout(1800);
+  const viaBar = await p.evaluate(() => window.__wristPlate());
+  ok(viaBar.kind === "f" && viaBar.skin === 5, `${n} the bar's buttons set the plate (${JSON.stringify(viaBar)})`);
+  ok((await asked()).some(f => f.startsWith("wrist-f5")), `${n} the bar's choice was fetched`);
 
   /* the stage would open the canvas this view switched off */
   const stage = await p.evaluate(() => { const b = document.querySelector("#stripwrap .stbtn"); return b ? getComputedStyle(b).display : "absent"; });

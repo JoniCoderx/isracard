@@ -185,13 +185,13 @@
      proportions, so the six tones of each share one geometry. */
   var PLATE = {
     f: { cx: 0.4771, cy: 0.6615, r: 0.1060, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] },
-    m: { cx: 0.4866, cy: 0.6950, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] }
+    m: { cx: 0.4866, cy: 0.7040, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] }
   };
   /* the phone gets the same frame cut square around the arm, so the wrist
      lands dead centre and nothing of the hand is lost */
   var PLATEV = {
     f: { cx: 0.5000, cy: 0.6615, r: 0.1060, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] },
-    m: { cx: 0.5000, cy: 0.6950, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] }
+    m: { cx: 0.5000, cy: 0.7040, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] }
   };
   var plate = { kind: "f", skin: 1 };
   function plateGeo(vert) { var g = (vert ? PLATEV : PLATE)[plate.kind] || PLATE.f; return g; }
@@ -215,6 +215,7 @@
     if (o.kind && o.kind !== plate.kind) plate.kind = o.kind;
     if (typeof o.skin === "number") plate.skin = Math.max(0, Math.min(5, o.skin));
     if (view === "wrist") loadPhoto();
+    if (window.__handSync) window.__handSync(plate);
     return { kind: plate.kind, skin: plate.skin };
   };
   wrap.addEventListener("click", function (e) { var b = e.target.closest(".vtb"); if (b) setView(b.getAttribute("data-view")); });

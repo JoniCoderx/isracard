@@ -479,13 +479,28 @@
       sel("hand", want.kind); sel("skin", want.skin);
       if (window.__hand) window.__hand(want);
     }
+    /* and if anything else sets the hand, these buttons follow it rather than
+       sitting on a choice the picture no longer shows */
+    window.__handSync = function (o) { if (!o) return; if (o.kind) want.kind = o.kind; if (typeof o.skin === "number") want.skin = o.skin; try { localStorage.setItem("silavu-hand", JSON.stringify(want)); } catch (e) {} sel("hand", want.kind); sel("skin", want.skin); };
     bar.addEventListener("click", function (e) {
       var h = e.target.closest("[data-hand]"), k = e.target.closest("[data-skin]");
       if (h) { want.kind = h.getAttribute("data-hand"); push(); }
       else if (k) { want.skin = +k.getAttribute("data-skin"); push(); }
     });
-    /* show it only while the wrist view is up */
-    function sync() { var on = wrapEl && wrapEl.classList.contains("wrist"); bar.hidden = !on; if (on) push(); }
+    /* Show it only while the wrist view is up.
+       It watches the wrap's class, and the wrap gains a class of its own the
+       moment a plate finishes loading. Pushing on EVERY class change meant
+       each newly loaded plate handed the remembered preference straight back
+       to the renderer, which loaded the remembered plate again — so anything
+       that set the hand other than these buttons snapped back a second later.
+       It pushes when the view opens, which is the only time it needs to. */
+    var wasOn = null;
+    function sync() {
+      var on = !!(wrapEl && wrapEl.classList.contains("wrist"));
+      bar.hidden = !on;
+      if (on && on !== wasOn) push();
+      wasOn = on;
+    }
     if (wrapEl && window.MutationObserver) new MutationObserver(sync).observe(wrapEl, { attributes: true, attributeFilter: ["class"] });
     sel("hand", want.kind); sel("skin", want.skin);
     sync();
