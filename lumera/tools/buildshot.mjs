@@ -1,20 +1,24 @@
+/* The builder on a phone, in strips, so it can be looked at rather than
+   guessed about. Shoots #configure from its top in screen-sized slices. */
 import { chromium } from "playwright-core";
 const OUT = "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad";
-const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
-for (const [tag, vp] of [["desk",{width:1440,height:900}],["mob",{width:390,height:844}]]) {
-  const p = await b.newPage({ viewport: vp, deviceScaleFactor: 1 });
-  await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html", { waitUntil:"load" });
-  await p.waitForTimeout(3000); await p.click("#enterBtn",{timeout:4000}).catch(()=>{});
-  await p.waitForTimeout(900);
-  await p.evaluate(()=>{ const e=document.getElementById("build"); window.scrollTo({top: scrollY+e.getBoundingClientRect().top, behavior:"instant"}); });
-  await p.waitForTimeout(1500);
-  const ok = await p.evaluate(()=>{ const els=Array.from(document.querySelectorAll("#build a,#build button")); const t=els.find(e=>/START DESIGNING/i.test(e.textContent)); if(t){t.click();return true;} return false; });
-  console.log(tag+" start designing clicked: "+ok);
-  await p.waitForTimeout(9000);
-  console.log(tag+" bcv: "+await p.evaluate(()=>{const c=document.getElementById("bcv"); if(!c)return "none"; const r=c.getBoundingClientRect(); return c.width+"x"+c.height+" rect "+Math.round(r.width)+"x"+Math.round(r.height)+"@"+Math.round(r.top);}));
-  console.log(tag+" __b: "+await p.evaluate(()=>{ try { return JSON.stringify({n:window.__b&&window.__b.n, frames:window.__b&&window.__b.frames, built:window.__b&&window.__b.built}); } catch(e){ return "x"; } }));
-  await p.screenshot({ path: `${OUT}/${tag}-build2.png` });
-  const el = await p.$("#bcv"); if (el) await el.screenshot({ path: `${OUT}/${tag}-bcv.png` });
-  await p.close();
+const view = process.argv[2] || "line";
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+  args: ["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+const p = await b.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+await p.goto("http://127.0.0.1:8777/", { waitUntil: "domcontentloaded" });
+await p.waitForTimeout(2600); await p.click("#enterBtn").catch(()=>{});
+await p.waitForTimeout(900);
+await p.evaluate(async()=>{const s=Math.round(innerHeight*0.7);for(let y=0;y<document.body.scrollHeight;y+=s){scrollTo({top:y,behavior:"instant"});await new Promise(r=>setTimeout(r,120));}});
+if (view === "wrist") { await p.evaluate(()=>window.__stripView("wrist")); await p.waitForTimeout(2500); }
+const geo = await p.evaluate(()=>{const e=document.getElementById("configure");const b=e.getBoundingClientRect();return {top:Math.round(b.top+scrollY), h:Math.round(b.height)};});
+console.log("configure", JSON.stringify(geo));
+let n = 0;
+for (let y = geo.top - 70; y < geo.top + geo.h; y += 700) {
+  await p.evaluate(v=>scrollTo({top:v,behavior:"instant"}), y);
+  await p.waitForTimeout(700);
+  await p.screenshot({ path: `${OUT}/bld-${view}-${n}.png` });
+  n++;
 }
+console.log("slices", n);
 await b.close();

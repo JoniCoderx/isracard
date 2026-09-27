@@ -1224,7 +1224,13 @@
       fitD = Math.max(wantW / (tanF * asp), wantH / tanF);
     } else {
       var vHalf = state.fit * Math.abs(Math.sin(cam.ph)) + state.thick * 0.55;
-      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * 1.01;
+      /* One per cent of air is right on a desktop, where the view tabs and
+         the stage button sit in the corners of a wide frame with the piece
+         well inside them. On a phone the frame is 348 by 228 and those same
+         two controls are 213 and 90 wide: the ring ran under both of them,
+         which is what made the builder look like a pile rather than a piece.
+         A phone pulls the camera back far enough to clear its own furniture. */
+      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (coarse && !staged ? 1.26 : 1.01);
     }
     var R = state.R, dist = fitD * cam.d;
     var cp = Math.cos(cam.ph), sp = Math.sin(cam.ph);

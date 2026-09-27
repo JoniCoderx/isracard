@@ -3317,3 +3317,94 @@
      cannot reach past; here it would reach past the row of tones six pixels
      below and take taps meant for them. They lose their width, which the row
      needed, and keep their height, which a thumb needs. */
+
+  /* ══ v85 — the builder stops leaking ══════════════════════════════════════
+     On a phone the bracelet and the view bar both stick under the header and
+     the questions scroll past them. Two gaps let the questions through, and
+     a configurator you can see the answers THROUGH is the definition of
+     messy.
+
+     The gap between them. The bracelet parks at --hh and is 228 tall; the bar
+     parked at --hh + 228 + 6. Those six pixels were a band of moving chips
+     between two things that are supposed to read as one panel. The bar parks
+     flush now, and carries the ground itself rather than leaving it to the
+     pill inside it.
+
+     The gap beside them. The weight and size rows scroll sideways, and they
+     were given a four-pixel negative inline margin so a chip could sit flush
+     to the panel edge. That made each row 356 wide inside a 348 panel, so
+     three pixels of every row stood outside the picture that is meant to be
+     covering it — a sliver of chip running up the side of the bracelet. The
+     rows sit inside the panel now and keep their scroll. ─────────────────── */
+  @media (max-width:759px) {
+    .vposwrap { position:sticky; top:calc(var(--hh, 64px) + clamp(180px, 27svh, 250px));
+      margin-top:6px; background:#080808; }
+    /* The two do not leave their pins at the same moment — the bracelet sits
+       higher in the flow, so it starts moving first and a band of up to seven
+       pixels opened under it with the questions running through. The bar
+       carries its own ground upward far enough to cover every case (measured:
+       the two are never more than twenty pixels apart), in the same near-black
+       as the panel behind it, so at rest there is nothing to see. */
+    .vposwrap::before { content:""; position:absolute; left:0; right:0; bottom:100%;
+      height:22px; background:#080808; pointer-events:none; }
+    #opts .opt:not(.mcol) .chips:not(.cuts) { margin-inline:0; padding:2px 0 4px; }
+  }
+
+  /* ══ v86 — the controls come off the piece ════════════════════════════════
+     Measured in the 348x228 the builder gets on a phone: the view tabs are
+     213 wide and 52 tall in the top-left corner, and the stage button 90 by
+     44 in the bottom-right. The bracelet is drawn to fill that frame, so it
+     ran under both of them — the top-left arc behind THE LINE, the lower
+     right behind TURN IT. Two controls sitting on the jewellery is most of
+     what read as messy.
+
+     The camera pulls back on a phone (script8) and the furniture comes down
+     to meet it: the tabs lose their tracking and their padding rather than
+     their words, and the stage button becomes the size of the thing it is —
+     a way out of a small frame, not the subject of it. ──────────────────── */
+  @media (max-width:759px) {
+    #stripwrap .vt { left:8px; top:8px; }
+    #stripwrap .vtb { padding:7px 9px; font-size:.55rem; letter-spacing:.1em; }
+    html[data-ns] #stripwrap .vtb { font-size:.66rem; letter-spacing:0; }
+    #stripwrap .stbtn { right:8px; bottom:8px; padding:0 12px; font-size:.55rem;
+      letter-spacing:.1em; min-height:34px; border-radius:10px; }
+    html[data-ns] #stripwrap .stbtn { font-size:.66rem; letter-spacing:0; }
+    /* The reach stays a thumb's, the way the tone swatches do. Only the tabs
+       need to be told to position themselves — .stbtn is already absolute,
+       and saying "relative" here took it out of the corner it was placed in
+       and dropped it eight pixels off the top-left of the frame. */
+    #stripwrap .vtb { position:relative; }
+    #stripwrap .vtb::after, #stripwrap .stbtn::after { content:""; position:absolute;
+      left:50%; top:50%; transform:translate(-50%, -50%);
+      width:100%; height:max(44px, 100%); pointer-events:inherit; }
+  }
+
+  /* ══ v87 — one rhythm down the builder ════════════════════════════════════
+     Measured at 390: the specification block and the estimate block are
+     centred, and every label under them — Cut, Stone, Total weight — starts
+     at the left edge. One narrow column that changes its mind about where a
+     line begins four times on the way down is what a reader calls messy,
+     even when they cannot say why.
+
+     Everything starts at the same edge now.
+
+     The line of facts under the price was a flex row of four spans with three
+     hairline separators between them. In 348 pixels it wrapped to FIVE lines,
+     and a separator that lands at a wrap is a rule hanging off the end of a
+     sentence — you could see three of them dangling at the right margin. On
+     a phone the facts stack, one per line, and the separators go: the line
+     break is the separator. ─────────────────────────────────────────────── */
+  @media (max-width:759px) {
+    #carat, #carat > div, #configure .tot { text-align:start; }
+    #configure .tot .pricerow { justify-content:flex-start; gap:12px; }
+    #configure .tot .cur { justify-content:flex-start; }
+    #configure .tot .row { display:grid; grid-template-columns:1fr; gap:5px;
+      justify-items:start; text-align:start; }
+    #configure .tot .row i { display:none; }
+    /* Three hairlines inside forty pixels: the view bar's own underline, the
+       section rule at the top of the specification block, and the block's
+       first child carrying an identical rule eighteen pixels below it. Two
+       of the same line with nothing between them is not a separator, it is a
+       mistake you can see. The section keeps its rule; the child drops it. */
+    #carat > div:first-child > .spec { border-top:0; }
+  }
