@@ -351,11 +351,22 @@
   /* two builds. Everything below is one set of proportions read through one
      of these, so the two hands are the same hand at different measurements
      rather than two models that have to be kept in step. */
+  /* Measured, not tuned. The wrist came out of the bracelet's own ellipse and
+     was right — 52x40mm and 59x45mm, which is what a real wrist is. Everything
+     above it had been nudged by eye until it looked balanced in a frame, and
+     it was not: the hand was seven per cent narrow across the knuckles, and
+     the middle finger was ten per cent short on the woman's hand and twenty
+     four per cent short on the man's. A finger-to-palm ratio of 0.64 against
+     a real 0.80 is what the eye was calling a paddle. It cannot name the
+     number but it knows the shape.
+
+     palmL is the wrist crease to the middle knuckle, fing is that knuckle to
+     the tip, and everything else is a proportion of them. */
   var HANDS = {
-    f: { wrist: 0.94, fore: 0.95, palmW: 1.36, palmZ: 0.73, heel: 1.08,
-         len: 1.06, thick: 0.95, knuck: 0.82, nail: 1.16, thumb: 0.94, splay: 1.10, curl: 1.04 },
-    m: { wrist: 1.07, fore: 1.17, palmW: 1.37, palmZ: 0.83, heel: 1.17,
-         len: 0.98, thick: 1.18, knuck: 1.18, nail: 0.92, thumb: 1.09, splay: 1.02, curl: 0.94 }
+    f: { palmL: 95, fing: 77, wrist: 0.94, fore: 0.95, palmW: 1.456, palmZ: 0.73, heel: 1.08,
+         thick: 0.95, knuck: 0.82, nail: 1.16, thumb: 0.94, splay: 1.10, curl: 1.04 },
+    m: { palmL: 105, fing: 84, wrist: 1.07, fore: 1.17, palmW: 1.470, palmZ: 0.83, heel: 1.17,
+         thick: 1.18, knuck: 1.18, nail: 0.92, thumb: 1.09, splay: 1.02, curl: 0.94 }
   };
 
   /* index, middle, ring, little: where its knuckle sits on the arch, how long
@@ -379,13 +390,16 @@
 
     /* ── forearm into wrist into palm, in one sweep so the wrist has no seam
        where the bracelet will sit ── */
-    var TOPY = 122;
+    /* the shape below was tuned against a 101mm palm; it is the same shape at
+       whichever length this build actually has */
+    var PL = P.palmL, SC = PL / 101;
+    var TOPY = 122 * SC;
     /* the hand is not a straight continuation of the forearm: it lifts back
        off the wrist a few degrees and deviates a few more toward the little
        finger. A hand in line with its arm is the mannequin tell. */
     var spine = spline([
       [0, -185, 0], [0, -128, 1], [0, -74, 1.5], [0, -34, 1], [0, 0, 0],
-      [0.8, 24, 3], [1.9, 52, 6.5], [3.2, 80, 10.5], [4.4, 102, 14], [5.2, TOPY, 16]
+      [0.8, 24 * SC, 3], [1.9, 52 * SC, 6.5], [3.2, 80 * SC, 10.5], [4.4, 102 * SC, 14], [5.2, TOPY, 16]
     ], 50);
     var kx = [], kz = [];
     for (i = 0; i < spine.length; i++) {
@@ -404,7 +418,7 @@
         rzv = wz * flat;
         /* above the knuckles the palm is not a cut end: it narrows away
            between the roots of the fingers, so nothing reads as a shelf */
-        if (y > 100) { var t2 = (y - 100) / (TOPY - 100); t2 *= t2; rxv *= 1 - t2 * 0.30; rzv *= 1 - t2 * 0.70; }
+        if (y > 100 * SC) { var t2 = (y - 100 * SC) / (TOPY - 100 * SC); t2 *= t2; rxv *= 1 - t2 * 0.30; rzv *= 1 - t2 * 0.70; }
       }
       kx.push(rxv); kz.push(rzv);
       if (i % 4 === 0) occ.push([0, y, 0, Math.min(rxv, rzv) * 0.92]);
@@ -416,9 +430,9 @@
       var back = Math.sin(a);            /* +1 is the back of the hand */
       var front = -back;                 /* +1 is the palm */
       var xu = Math.cos(a);              /* -1 thumb side .. +1 little side */
-      if (y > 10 && y < 124) {
+      if (y > 10 && y < 124 * SC) {
         /* the tendons: strongest just behind the knuckles, gone by the wrist */
-        var run = Math.min(1, (y - 10) / 62) * Math.min(1, (126 - y) / 26);
+        var run = Math.min(1, (y - 10) / (62 * SC)) * Math.min(1, (126 * SC - y) / (26 * SC));
         if (back > 0.12 && run > 0) {
           var t2 = 0;
           for (var q = 0; q < 4; q++) {
@@ -428,7 +442,7 @@
           d += t2 * run * back * wx * 0.062 * P.thick;
         }
         /* the knuckle row stands proud of the back */
-        var kr = Math.exp(-Math.pow((y - 101) / 19, 2));
+        var kr = Math.exp(-Math.pow((y - PL) / (19 * SC), 2));
         if (back > 0.1 && kr > 0.01) {
           var kb = 0;
           for (var q2 = 0; q2 < 4; q2++) {
@@ -439,7 +453,7 @@
         }
         /* and the palm is hollow between the two muscles */
         if (front > 0.2) {
-          var hollow = Math.exp(-Math.pow((y - 58) / 34, 2)) * Math.exp(-Math.pow(xu / 0.44, 2));
+          var hollow = Math.exp(-Math.pow((y - 58 * SC) / (34 * SC), 2)) * Math.exp(-Math.pow(xu / 0.44, 2));
           d -= hollow * front * wx * 0.11;
         }
       }
@@ -447,14 +461,14 @@
          knuckles. Swelling the surface, never laid on top of it: flesh is
          part of the hand, and anything added as a separate lump eventually
          breaks through somewhere and reads as a blister. */
-      if (front > 0 && y > -8 && y < 118) {
-        var th3 = Math.exp(-Math.pow((y - 36) / 42, 2)) * Math.exp(-Math.pow((xu + 0.78) / 0.62, 2));
+      if (front > 0 && y > -8 && y < 118 * SC) {
+        var th3 = Math.exp(-Math.pow((y - 36 * SC) / (42 * SC), 2)) * Math.exp(-Math.pow((xu + 0.78) / 0.62, 2));
         d += th3 * front * wx * 0.30 * P.thick;
-        var hy3 = Math.exp(-Math.pow((y - 56) / 42, 2)) * Math.exp(-Math.pow((xu - 0.84) / 0.48, 2));
+        var hy3 = Math.exp(-Math.pow((y - 56 * SC) / (42 * SC), 2)) * Math.exp(-Math.pow((xu - 0.84) / 0.48, 2));
         d += hy3 * front * wx * 0.16 * P.thick;
         var pd3 = 0;
         for (var q5 = 0; q5 < 4; q5++) { var dp3 = (xu - TEND[q5]) / 0.24; pd3 += Math.exp(-dp3 * dp3); }
-        d += pd3 * Math.exp(-Math.pow((y - 88) / 17, 2)) * front * wx * 0.070 * P.thick;
+        d += pd3 * Math.exp(-Math.pow((y - 88 * SC) / (17 * SC), 2)) * front * wx * 0.070 * P.thick;
       }
       /* the wrist bone on the little-finger side, which is what tells you a
          bracelet is sitting on a wrist and not on a tube */
@@ -469,15 +483,15 @@
     }, TREF);
 
     var KW = wx * P.palmW;            /* half the width across the knuckles */
-    var knuckY = 101, knuckZ = 14, knuckX = 4.4;
-    var unit = wx0 * 2.36 * P.len;    /* the middle finger, at true scale */
+    var knuckY = PL, knuckZ = 14 * SC, knuckX = 4.4;
+    var unit = P.fing;                /* the middle finger, knuckle to tip */
     var paths = [], radii = [];
 
     /* ── the four fingers ── */
     for (i = 0; i < FINGERS.length; i++) {
       var F = FINGERS[i];
       var bx = F.x * KW, len = unit * F.len;
-      var rad = wx * 0.312 * F.r * P.thick;
+      var rad = unit * 0.123 * F.r * (0.94 + 0.06 * P.thick);
       /* three phalanges, each shorter than the last, each bent a little
          further toward the palm. Nobody holds four fingers at attention: the
          little finger relaxes furthest, the index least, and that difference
@@ -971,10 +985,10 @@
     "    float grz = pow(1.0 - c2, 3.0);",
     "    float oil = 0.55 + 0.45 * n2.x + knu * 0.30 - palm * 0.30;",
     "    oil = clamp(oil, 0.15, 1.15) * mix(1.0, 2.6, isN);",
-    "    float broad = pow(nh, mix(9.0, 30.0, isN)) * 0.048;",
-    "    float tight = pow(nh, mix(46.0, 170.0, isN)) * (0.070 + grz * 0.26 + isN * 0.55);",
+    "    float broad = pow(nh, mix(14.0, 30.0, isN)) * 0.022;",
+    "    float tight = pow(nh, mix(60.0, 170.0, isN)) * (0.034 + grz * 0.20 + isN * 0.55);",
     "    col += vec3(1.0, 0.965, 0.92) * (broad + tight) * oil * ao;",
-    "    col += max(env(reflect(-Vw, N)), vec3(0.0)) * fres(c2, mix(0.028, 0.066, isN)) * mix(0.34, 1.05, isN) * ao;",
+    "    col += max(env(reflect(-Vw, N)), vec3(0.0)) * fres(c2, mix(0.028, 0.066, isN)) * mix(0.16, 1.05, isN) * ao;",
     /* the bracelet lies on the wrist and takes the light off it */
     "    float d2 = abs(vW.y - uBandY);",
     /* the bracelet lies on the wrist: the light under it goes, and it goes
@@ -1194,9 +1208,9 @@
        third where it sits, and a hand above it rather than a column of arm */
     /* the thumb throws the hand's mass to one side; the frame is centred on
        the hand, not on the origin it happens to be built around */
-    var lookY = hand.on ? state.R * 1.05 : 0, lookX = hand.on ? -state.R * 0.12 : 0;
+    var lookY = hand.on ? state.R * 1.42 : 0, lookX = hand.on ? -state.R * 0.10 : 0;
     if (hand.on) {
-      var wantH = state.R * (asp < 1 ? 3.05 : 2.80), wantW = state.R * (asp < 1 ? 1.95 : 2.3);
+      var wantH = state.R * (asp < 1 ? 4.70 : 4.05), wantW = state.R * (asp < 1 ? 2.85 : 3.3);
       fitD = Math.max(wantW / (tanF * asp), wantH / tanF);
     } else {
       var vHalf = state.fit * Math.abs(Math.sin(cam.ph)) + state.thick * 0.55;
