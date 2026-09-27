@@ -3277,3 +3277,43 @@
      view just switched off — it would have opened on nothing. On a wrist you
      turn the Line with a finger, around the arm, where it is. */
   #stripwrap.wrist .stbtn, #stripwrap.wrist .sthint { display:none; }
+
+  /* ══ v84 — the phone: a whole hand, and controls that stop shouting ═══════
+     Two things, both measured on the live page at 390.
+
+     THE HAND WAS CUT OFF AT THE TOP. A phone was served its own plate, cut
+     square around the arm. Square is taller than a phone's canvas — 1:1
+     against 1.12 — so cover trimmed the top and the bottom, and what it
+     trimmed was the ends of the fingers: thirty-five pixels of hand sitting
+     on row zero. A hand cropped at the fingertips is exactly what reads as
+     "too big for the frame". The square cut is gone; a phone gets the same
+     2:1 plate the desktop does, only smaller, and 2:1 is wider than this
+     canvas at every width it is ever given, so cover can only crop black at
+     the sides. The whole hand fits, and it comes out SMALLER than the square
+     cut made it — 187px of arm across a 380px canvas rather than 210 and
+     clipped.
+
+     THE CONTROLS WERE THE LOUDEST THING ON THE SCREEN. Six saturated circles
+     at 44px, on two rows, 125px of bar under a 338px picture — a third as
+     much furniture as subject, and brighter than anything it controls. v76
+     set them at 44 because that is the floor for a target you can hit; but
+     the reach and the size of a thing are different numbers, and the reach
+     is already carried by .sk::after. The swatches come down to the size of
+     what they are — a tone — and keep every pixel of their 44px target.
+     ──────────────────────────────────────────────────────────────────────── */
+  @media (max-width:759px) {
+    #stripwrap.wrist ~ .handbar { gap:6px 8px; padding:6px 8px; }
+    #stripwrap.wrist ~ .handbar .hgrp.skins { gap:7px; padding:3px 5px; }
+    #stripwrap.wrist ~ .handbar .sk { width:28px; height:28px; }
+    #stripwrap.wrist ~ .handbar .vp { padding:5px 9px; font-size:.58rem; }
+    html[data-ns] #stripwrap.wrist ~ .handbar .vp { font-size:.68rem; }
+  }
+  @media (max-width:359px) {
+    #stripwrap.wrist ~ .handbar .hgrp.skins { gap:5px; padding:3px 4px; }
+    #stripwrap.wrist ~ .handbar .sk { width:26px; height:26px; }
+  }
+  /* Her/His keep their own 44px, and do not get a pad instead. v65 gave .vp
+     the height rather than a pseudo-pad because a pad overflows a toolbar it
+     cannot reach past; here it would reach past the row of tones six pixels
+     below and take taps meant for them. They lose their width, which the row
+     needed, and keep their height, which a thumb needs. */

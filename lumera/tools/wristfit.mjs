@@ -31,6 +31,26 @@ for (const [n, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, true
   ok(shown.strip === "block" && shown.bcv === "none", `${n} the wrist view is the photographed canvas (strip=${shown.strip} bcv=${shown.bcv})`);
   ok(!!shown.src, `${n} the plate table answers (${JSON.stringify(shown.src)})`);
 
+  /* THE HAND MUST FIT. The plate is drawn with cover, so a plate narrower
+     than the canvas is trimmed top and bottom — and what it trims is the
+     ends of the fingers. Measured, not assumed: the aspect the page is
+     actually serving against the aspect of the box it is drawn into. */
+  const fit = await p.evaluate(() => new Promise(res => {
+    const cv = document.getElementById("stripcv");
+    const b = cv.getBoundingClientRect();
+    const src = [...document.querySelectorAll("*")] && performance.getEntriesByType("resource")
+      .filter(e => /\/img\/wrist-[fm]\d/.test(e.name)).pop();
+    if (!src) return res({ err: "no plate fetched" });
+    const im = new Image();
+    im.onload = () => res({ canvas: b.width / b.height, plate: im.naturalWidth / im.naturalHeight,
+      cw: Math.round(b.width), ch: Math.round(b.height), pw: im.naturalWidth, ph: im.naturalHeight });
+    im.onerror = () => res({ err: "plate would not load" });
+    im.src = src.name;
+  }));
+  ok(!fit.err && fit.plate >= fit.canvas,
+    `${n} the plate is wider than its canvas, so nothing of the hand is trimmed ` +
+    (fit.err ? "(" + fit.err + ")" : `(plate ${fit.pw}x${fit.ph} = ${fit.plate.toFixed(2)} into ${fit.cw}x${fit.ch} = ${fit.canvas.toFixed(2)})`));
+
   const { writeFileSync } = await import("node:fs");
   const shot = async tag => {
     const r = await p.$("#stripwrap").then(e => e.boundingBox());
@@ -65,6 +85,17 @@ for (const [n, w, h, mob] of [["desk", 1440, 900, false], ["mob", 390, 844, true
   const viaBar = await p.evaluate(() => window.__wristPlate());
   ok(viaBar.kind === "f" && viaBar.skin === 5, `${n} the bar's buttons set the plate (${JSON.stringify(viaBar)})`);
   ok((await asked()).some(f => f.startsWith("wrist-f5")), `${n} the bar's choice was fetched`);
+
+  /* a gesture nobody is told about is a gesture nobody makes */
+  const hint = await p.evaluate(() => {
+    const e = document.querySelector("#stripwrap .vhint");
+    if (!e) return { there: false };
+    const c = getComputedStyle(e), b = e.getBoundingClientRect();
+    return { there: true, op: +c.opacity, pe: c.pointerEvents, text: (e.textContent || "").trim().slice(0, 40),
+      inside: b.top >= 0 && b.bottom <= innerHeight };
+  });
+  ok(hint.there && hint.op > 0.5 && hint.pe === "none",
+    `${n} the view says the Line can be turned ("${hint.text}", opacity ${hint.op}, taps pass through: ${hint.pe})`);
 
   /* the stage would open the canvas this view switched off */
   const stage = await p.evaluate(() => { const b = document.querySelector("#stripwrap .stbtn"); return b ? getComputedStyle(b).display : "absent"; });

@@ -17,8 +17,8 @@ os.makedirs(OUT, exist_ok=True)
 
 # the same numbers as script2.html
 P = {
-    "f": {"h": (0.4771, 0.6615, 0.1060), "v": (0.5000, 0.6615, 0.1060)},
-    "m": {"h": (0.4866, 0.7040, 0.1272), "v": (0.5000, 0.7040, 0.1272)},
+    "f": (0.4771, 0.6615, 0.1060),
+    "m": (0.4866, 0.7040, 0.1272),
 }
 SLOPE = -0.296                      # dx per dy, down the arm
 TINT = [(232,205,184),(220,179,148),(199,148,104),(164,113,63),(119,80,44),(77,51,29)]
@@ -47,9 +47,8 @@ def plate(W, H, g, tint):
 n = 0
 for k in ("f", "m"):
     for s in range(6):
-        for suf, W, H, key in (("-1900",1900,950,"h"), ("-1300",1300,650,"h"),
-                               ("v-1200",1200,1200,"v"), ("v-900",900,900,"v")):
-            plate(W, H, P[k][key], TINT[s]).save(
+        for suf, W, H in (("-1900",1900,950), ("-1300",1300,650), ("-1000",1000,500)):
+            plate(W, H, P[k], TINT[s]).save(
                 "%s/wrist-%s%d%s.jpg" % (OUT, k, s, suf), quality=86, optimize=True)
             n += 1
 print("wrote %d stand-in plates" % n)

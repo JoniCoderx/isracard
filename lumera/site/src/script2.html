@@ -187,24 +187,26 @@
     f: { cx: 0.4771, cy: 0.6615, r: 0.1060, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] },
     m: { cx: 0.4866, cy: 0.7040, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.35, 0.2] }
   };
-  /* the phone gets the same frame cut square around the arm, so the wrist
-     lands dead centre and nothing of the hand is lost */
-  var PLATEV = {
-    f: { cx: 0.5000, cy: 0.6615, r: 0.1060, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] },
-    m: { cx: 0.5000, cy: 0.7040, r: 0.1272, rOf: "h", u: [0.9589, 0.2836], v: [-0.2836, 0.9589], k: 0.24, light: [0.3, 0.2] }
-  };
+  /* A phone gets the SAME frame, only smaller — it does not get its own crop.
+     It used to get one cut square around the arm, and square is taller than
+     any phone's canvas: cover then trimmed the top and bottom, and what it
+     trimmed was the ends of the fingers. Measured on the live page at 390 —
+     thirty-five pixels of hand on the top row.
+
+     The wide plate is padded to 2:1, which is wider than this canvas at every
+     width it is ever given, so cover can only ever crop the black at the
+     sides. Nothing of the hand is lost at any aspect, and the arm comes out
+     smaller than the square cut made it rather than larger. One picture,
+     two sizes. */
   var plate = { kind: "f", skin: 1 };
-  function plateGeo(vert) { var g = (vert ? PLATEV : PLATE)[plate.kind] || PLATE.f; return g; }
-  function plateSrc(vert, wide) {
-    return "/img/wrist-" + plate.kind + plate.skin + (vert ? "v-" : "-") + wide + ".jpg";
-  }
+  function plateGeo() { return PLATE[plate.kind] || PLATE.f; }
+  function plateSrc(wide) { return "/img/wrist-" + plate.kind + plate.skin + "-" + wide + ".jpg"; }
   function loadPhoto() {
-    var vert = cssW < 700, key = (vert ? "v" : "h") + plate.kind + plate.skin;
+    var wide = cssW < 700 ? 1000 : (cssW > 900 ? 1900 : 1300), key = wide + plate.kind + plate.skin;
     if (photo.key === key) return; photo.key = key; photo.img = null;
-    var im = new Image(); im.decoding = "async"; im.onload = function () { if (photo.key !== key) return; photo.img = im; photo.w = im.naturalWidth; photo.h = im.naturalHeight; photo.geo = plateGeo(vert); if (!photo.tex) photo.tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, photo.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); } catch (err) { photo.img = null; gl.bindTexture(gl.TEXTURE_2D, tex); return; } gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.bindTexture(gl.TEXTURE_2D, tex); wrap.classList.add("ready"); };
-    /* a phone asks for the square cut at 900, a desktop for the wide frame at
-       1900 — one plate at a time, and only once the wrist view is open */
-    im.src = (window.__imgBase || "") + plateSrc(vert, vert ? (DPR > 1.5 ? 1200 : 900) : (cssW > 900 ? 1900 : 1300));
+    var im = new Image(); im.decoding = "async"; im.onload = function () { if (photo.key !== key) return; photo.img = im; photo.w = im.naturalWidth; photo.h = im.naturalHeight; photo.geo = plateGeo(); if (!photo.tex) photo.tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, photo.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); } catch (err) { photo.img = null; gl.bindTexture(gl.TEXTURE_2D, tex); return; } gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.bindTexture(gl.TEXTURE_2D, tex); wrap.classList.add("ready"); };
+    /* one plate at a time, and only once the wrist view is open */
+    im.src = (window.__imgBase || "") + plateSrc(wide);
   }
   function setView(v) { view = v; wrap.classList.toggle("wrist", v === "wrist"); wrap.querySelectorAll(".vtb").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-view") === v); b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false"); });
     if (v === "wrist") { resize(); loadPhoto(); } }
