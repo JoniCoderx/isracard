@@ -3408,3 +3408,25 @@
        mistake you can see. The section keeps its rule; the child drops it. */
     #carat > div:first-child > .spec { border-top:0; }
   }
+
+  /* ══ v88 — the menu: a close button, not a banner ═════════════════════════
+     .mclose asks for position:absolute so it can sit in the top corner. Sixty
+     lines further down, `.card, .piece, .btn, .chip { position:relative }`
+     says relative at exactly the same weight — and being later, it won. The
+     close button dropped into the flow of a column flex box, stretched to
+     the full 350 it was given, and became a banner across the top of the
+     menu; the house mark, which follows it, landed ON it. Measured: the
+     button 0..350 at y 100..146, the mark 20..370 at y 130..160 — sixteen
+     pixels of overlap, in every language.
+
+     It takes the id so it outranks the later word, and goes back to being a
+     control in the corner. The mark then has the top of the panel to itself.
+     ──────────────────────────────────────────────────────────────────────── */
+  #menu .mclose { position:absolute; width:auto; max-width:none; align-self:flex-end; }
+  html[dir="rtl"] #menu .mclose { align-self:flex-start; }
+  /* The chapters sat against the mark with all the spare height dumped in one
+     void above the footer — a hundred and eighty pixels of nothing in the
+     middle of the panel. The free height is shared above and below them
+     instead, so the list is centred in the room it has. On a short screen
+     there is no spare height and the auto margins collapse to nothing. */
+  #menu .mlist { margin-block:auto; }

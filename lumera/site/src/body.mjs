@@ -153,7 +153,7 @@ ${markDefs()}
     <a href="#collection"><span class="k">02</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
     <a href="#bespoke"><span class="k">03</span><span data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</span></a>
     <a href="#build"><span class="k">04</span><span data-en="The Line" data-he="הקו">The Line</span></a>
-    <a href="#concierge"><span class="k">06</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
+    <a href="#concierge"><span class="k">05</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
   </div>
   <div class="mfoot">
     <a class="btn solid" href="#concierge" style="justify-self:start" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
