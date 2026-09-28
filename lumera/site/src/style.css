@@ -3430,3 +3430,63 @@
      instead, so the list is centred in the room it has. On a short screen
      there is no spare height and the auto margins collapse to nothing. */
   #menu .mlist { margin-block:auto; }
+
+  /* ══ v89 — the collection filter is one line ══════════════════════════════
+     Five categories at 60, 115, 117, 106 and 78 pixels with four gaps is 508
+     inside the 350 a phone gives the chapter, so it broke into two rows: a
+     row of three and a row of two, left-aligned, with a ragged hole at the
+     end. A filter that wraps stops reading as one control.
+
+     It is one line that moves sideways instead, the same way the weight and
+     the wrist size do in the builder — nothing is made smaller, nothing is
+     cut, and the words stay the words. The row bleeds to the chapter's own
+     edges so a chip can sit flush against them, and the bleed is taken back
+     as padding so nothing stands outside the column. ──────────────────────── */
+  @media (max-width:759px) {
+    .cats { flex-wrap:nowrap; overflow-x:auto; scroll-snap-type:x proximity;
+      -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      margin-inline:calc(-1 * var(--pad)); padding-inline:var(--pad);
+      padding-block:2px 4px; }
+    .cats::-webkit-scrollbar { display:none; }
+    .cats .cat { flex:0 0 auto; scroll-snap-align:start; }
+  }
+
+  /* ══ v90 — the questions fold down to their answers ═══════════════════════
+     Five questions laid out flat is four hundred and ninety-five pixels of
+     buttons sitting under a two-hundred-and-twenty-eight-pixel picture of
+     the thing they are building — more than twice as much furniture as
+     subject, and the reason the builder felt endless on a phone.
+
+     Each question closes to one line carrying its own answer — Cut · Round —
+     and opens when you tap it; opening one closes the rest. The chips are
+     untouched inside, so nothing is smaller or harder to hit, there is just
+     one question on screen at a time instead of five.
+
+     The stylesheet leaves them OPEN and the script is what closes them, so a
+     reader without scripting gets exactly the builder that was there before.
+     ──────────────────────────────────────────────────────────────────────── */
+  @media (max-width:759px) {
+    /* label, then the answer pushed over to sit against the chevron. With
+       space-between the answer landed in the middle of the row, because the
+       label, the answer and the chevron are three flex items and it spread
+       all three. */
+    #opts .opt > .k { display:flex; align-items:center; justify-content:flex-start;
+      gap:12px; width:100%; cursor:pointer; user-select:none;
+      min-height:44px; margin:0; padding:0 2px;
+      border-bottom:1px solid rgba(242,239,233,.10); }
+    #opts .opt > .k .optnow { margin-inline-start:auto; }
+    #opts .opt > .k::after { content:""; flex:none; width:7px; height:7px; margin-inline-start:2px;
+      border-right:1px solid var(--ink3); border-bottom:1px solid var(--ink3);
+      transform:rotate(45deg) translateY(-2px); transition:transform .3s var(--ease); }
+    #opts .opt.open > .k::after { transform:rotate(-135deg) translateY(-2px); }
+    #opts .opt > .k .optnow { color:var(--ink); letter-spacing:.04em; text-transform:none;
+      font-size:.78rem; text-align:end; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    html[data-ns] #opts .opt > .k .optnow { letter-spacing:0; }
+    #opts .opt:not(.open) > .chips { display:none; }
+    #opts .opt.open > .chips { margin-top:10px; }
+    /* closed, a question is one row — the air that used to sit between five
+       blocks of buttons has nothing left to separate */
+    #opts { gap:0; }
+    #opts .opt { margin:0; }
+    #opts .opt.open { margin-block:6px 14px; }
+  }

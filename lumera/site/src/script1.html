@@ -538,6 +538,60 @@
     opts.querySelectorAll('.chip[data-k="' + k + '"]').forEach(function (x) { x.classList.remove("on"); }); c.classList.add("on");
     window.__build[k] = k === "ct" ? Number(v) : v; window.__preview = null; price();
   });
+  /* ── the questions fold away on a phone ───────────────────────────────────
+     Five questions laid out flat is four hundred and ninety-five pixels of
+     buttons under a two-hundred-pixel picture of what they are building. On
+     a phone each one closes down to its own answer — Cut · Round — and opens
+     when you tap it. Nothing is hidden from a reader without scripting: the
+     stylesheet leaves them open and this is what closes them, so if none of
+     this runs the builder is exactly what it was. */
+  (function () {
+    var phone = function () { return matchMedia("(max-width:759px)").matches; };
+    var groups = [].slice.call(opts.querySelectorAll(".opt"));
+    groups.forEach(function (g) {
+      var head = g.querySelector(".k"); if (!head) return;
+      var now = document.createElement("span");
+      now.className = "optnow"; head.appendChild(now);
+      head.setAttribute("role", "button"); head.setAttribute("tabindex", "0");
+    });
+    function label(g) {
+      var on = g.querySelector(".chip.on");
+      return on ? (on.textContent || "").trim() : "";
+    }
+    function paint() {
+      groups.forEach(function (g) {
+        var n = g.querySelector(".optnow"); if (n) n.textContent = label(g);
+        var head = g.querySelector(".k");
+        if (head) head.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
+      });
+    }
+    function fit() {
+      var ph = phone();
+      groups.forEach(function (g) { g.classList.toggle("open", !ph); });
+      paint();
+    }
+    function toggle(g) {
+      if (!phone()) return;
+      var was = g.classList.contains("open");
+      groups.forEach(function (x) { x.classList.remove("open"); });
+      g.classList.toggle("open", !was);
+      paint();
+    }
+    opts.addEventListener("click", function (e) {
+      var head = e.target.closest(".opt > .k");
+      if (head) { toggle(head.parentElement); return; }
+      if (e.target.closest(".chip")) { paint(); /* the answer is the label now */ }
+    });
+    opts.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var head = e.target.closest(".opt > .k"); if (!head) return;
+      e.preventDefault(); toggle(head.parentElement);
+    });
+    fit();
+    addEventListener("resize", fit, { passive: true });
+    addEventListener("silavu:build", paint);
+  })();
+
   opts.addEventListener("mouseover", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = c.getAttribute("data-v"); });
   opts.addEventListener("mouseout", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = null; });
   price();
