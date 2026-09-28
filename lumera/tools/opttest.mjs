@@ -33,7 +33,7 @@ const open = async (p, W) => {
   ok(shut.answers.every(a => a.trim().length), `phone each row carries its own answer (${shut.answers.join(" · ")})`);
   ok(shut.h < 320, `phone the questions are ${shut.h}px, not the 495 they were`);
 
-  await p.click("#opts .opt:first-child > .k");
+  await p.click("#opts .opt:first-child > .opthead");
   await p.waitForTimeout(400);
   let st = await p.evaluate(() => {
     const g = [...document.querySelectorAll("#opts .opt")];
@@ -49,14 +49,14 @@ const open = async (p, W) => {
   const after = await p.evaluate(() => (document.querySelector("#opts .opt .optnow") || {}).textContent);
   ok((after || "").trim().toLowerCase() === "pear", `phone choosing writes the answer into the row ("${after}")`);
 
-  await p.click("#opts .opt:nth-child(3) > .k");
+  await p.click("#opts .opt:nth-child(3) > .opthead");
   await p.waitForTimeout(400);
   st = await p.evaluate(() => [...document.querySelectorAll("#opts .opt")].map(x => x.classList.contains("open")));
   ok(st.filter(Boolean).length === 1 && st[2], `phone opening another closes the first`);
 
   /* the answer must still be reachable by a thumb */
   const reach = await p.evaluate(() => {
-    const k = document.querySelector("#opts .opt > .k").getBoundingClientRect();
+    const k = document.querySelector("#opts .opt > .opthead").getBoundingClientRect();
     return Math.round(k.height);
   });
   ok(reach >= 44, `phone a question row is a thumb tall (${reach}px)`);

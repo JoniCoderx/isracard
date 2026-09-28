@@ -3470,18 +3470,19 @@
        space-between the answer landed in the middle of the row, because the
        label, the answer and the chevron are three flex items and it spread
        all three. */
-    #opts .opt > .k { display:flex; align-items:center; justify-content:flex-start;
+    #opts .opt > .opthead { display:flex; align-items:center; justify-content:flex-start;
       gap:12px; width:100%; cursor:pointer; user-select:none;
       min-height:44px; margin:0; padding:0 2px;
       border-bottom:1px solid rgba(242,239,233,.10); }
-    #opts .opt > .k .optnow { margin-inline-start:auto; }
-    #opts .opt > .k::after { content:""; flex:none; width:7px; height:7px; margin-inline-start:2px;
+    #opts .opt > .opthead > .k { margin:0; }
+    #opts .opt > .opthead .optnow { margin-inline-start:auto; }
+    #opts .opt > .opthead::after { content:""; flex:none; width:7px; height:7px; margin-inline-start:2px;
       border-right:1px solid var(--ink3); border-bottom:1px solid var(--ink3);
       transform:rotate(45deg) translateY(-2px); transition:transform .3s var(--ease); }
-    #opts .opt.open > .k::after { transform:rotate(-135deg) translateY(-2px); }
-    #opts .opt > .k .optnow { color:var(--ink); letter-spacing:.04em; text-transform:none;
+    #opts .opt.open > .opthead::after { transform:rotate(-135deg) translateY(-2px); }
+    #opts .opt > .opthead .optnow { color:var(--ink); letter-spacing:.04em; text-transform:none;
       font-size:.78rem; text-align:end; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    html[data-ns] #opts .opt > .k .optnow { letter-spacing:0; }
+    html[data-ns] #opts .opt > .opthead .optnow { letter-spacing:0; }
     #opts .opt:not(.open) > .chips { display:none; }
     #opts .opt.open > .chips { margin-top:10px; }
     /* closed, a question is one row — the air that used to sit between five

@@ -3478,18 +3478,19 @@
        space-between the answer landed in the middle of the row, because the
        label, the answer and the chevron are three flex items and it spread
        all three. */
-    #opts .opt > .k { display:flex; align-items:center; justify-content:flex-start;
+    #opts .opt > .opthead { display:flex; align-items:center; justify-content:flex-start;
       gap:12px; width:100%; cursor:pointer; user-select:none;
       min-height:44px; margin:0; padding:0 2px;
       border-bottom:1px solid rgba(242,239,233,.10); }
-    #opts .opt > .k .optnow { margin-inline-start:auto; }
-    #opts .opt > .k::after { content:""; flex:none; width:7px; height:7px; margin-inline-start:2px;
+    #opts .opt > .opthead > .k { margin:0; }
+    #opts .opt > .opthead .optnow { margin-inline-start:auto; }
+    #opts .opt > .opthead::after { content:""; flex:none; width:7px; height:7px; margin-inline-start:2px;
       border-right:1px solid var(--ink3); border-bottom:1px solid var(--ink3);
       transform:rotate(45deg) translateY(-2px); transition:transform .3s var(--ease); }
-    #opts .opt.open > .k::after { transform:rotate(-135deg) translateY(-2px); }
-    #opts .opt > .k .optnow { color:var(--ink); letter-spacing:.04em; text-transform:none;
+    #opts .opt.open > .opthead::after { transform:rotate(-135deg) translateY(-2px); }
+    #opts .opt > .opthead .optnow { color:var(--ink); letter-spacing:.04em; text-transform:none;
       font-size:.78rem; text-align:end; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    html[data-ns] #opts .opt > .k .optnow { letter-spacing:0; }
+    html[data-ns] #opts .opt > .opthead .optnow { letter-spacing:0; }
     #opts .opt:not(.open) > .chips { display:none; }
     #opts .opt.open > .chips { margin-top:10px; }
     /* closed, a question is one row — the air that used to sit between five
@@ -4499,11 +4500,19 @@
   (function () {
     var phone = function () { return matchMedia("(max-width:759px)").matches; };
     var groups = [].slice.call(opts.querySelectorAll(".opt"));
+    /* The answer goes BESIDE the label, not inside it. Switching language
+       walks every [data-en] element and assigns innerHTML — .k is one of
+       them — so anything parked inside the label is wiped the moment the
+       reader picks Hebrew, and the answers vanished. The row is its own
+       element; the label keeps its text and nothing else. */
     groups.forEach(function (g) {
       var head = g.querySelector(".k"); if (!head) return;
+      var row = document.createElement("div");
+      row.className = "opthead";
+      row.setAttribute("role", "button"); row.setAttribute("tabindex", "0");
+      g.insertBefore(row, head); row.appendChild(head);
       var now = document.createElement("span");
-      now.className = "optnow"; head.appendChild(now);
-      head.setAttribute("role", "button"); head.setAttribute("tabindex", "0");
+      now.className = "optnow"; row.appendChild(now);
     });
     function label(g) {
       var on = g.querySelector(".chip.on");
@@ -4512,8 +4521,8 @@
     function paint() {
       groups.forEach(function (g) {
         var n = g.querySelector(".optnow"); if (n) n.textContent = label(g);
-        var head = g.querySelector(".k");
-        if (head) head.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
+        var row = g.querySelector(".opthead");
+        if (row) row.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
       });
     }
     function fit() {
@@ -4529,18 +4538,22 @@
       paint();
     }
     opts.addEventListener("click", function (e) {
-      var head = e.target.closest(".opt > .k");
+      var head = e.target.closest(".opt > .opthead");
       if (head) { toggle(head.parentElement); return; }
       if (e.target.closest(".chip")) { paint(); /* the answer is the label now */ }
     });
     opts.addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
-      var head = e.target.closest(".opt > .k"); if (!head) return;
+      var head = e.target.closest(".opt > .opthead"); if (!head) return;
       e.preventDefault(); toggle(head.parentElement);
     });
     fit();
     addEventListener("resize", fit, { passive: true });
     addEventListener("silavu:build", paint);
+    /* and again whenever the language lands, because every chip's own words
+       have just been rewritten under it */
+    if (window.MutationObserver) new MutationObserver(paint)
+      .observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
   })();
 
   opts.addEventListener("mouseover", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = c.getAttribute("data-v"); });

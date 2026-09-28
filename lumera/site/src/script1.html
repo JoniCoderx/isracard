@@ -548,11 +548,19 @@
   (function () {
     var phone = function () { return matchMedia("(max-width:759px)").matches; };
     var groups = [].slice.call(opts.querySelectorAll(".opt"));
+    /* The answer goes BESIDE the label, not inside it. Switching language
+       walks every [data-en] element and assigns innerHTML — .k is one of
+       them — so anything parked inside the label is wiped the moment the
+       reader picks Hebrew, and the answers vanished. The row is its own
+       element; the label keeps its text and nothing else. */
     groups.forEach(function (g) {
       var head = g.querySelector(".k"); if (!head) return;
+      var row = document.createElement("div");
+      row.className = "opthead";
+      row.setAttribute("role", "button"); row.setAttribute("tabindex", "0");
+      g.insertBefore(row, head); row.appendChild(head);
       var now = document.createElement("span");
-      now.className = "optnow"; head.appendChild(now);
-      head.setAttribute("role", "button"); head.setAttribute("tabindex", "0");
+      now.className = "optnow"; row.appendChild(now);
     });
     function label(g) {
       var on = g.querySelector(".chip.on");
@@ -561,8 +569,8 @@
     function paint() {
       groups.forEach(function (g) {
         var n = g.querySelector(".optnow"); if (n) n.textContent = label(g);
-        var head = g.querySelector(".k");
-        if (head) head.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
+        var row = g.querySelector(".opthead");
+        if (row) row.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
       });
     }
     function fit() {
@@ -578,18 +586,22 @@
       paint();
     }
     opts.addEventListener("click", function (e) {
-      var head = e.target.closest(".opt > .k");
+      var head = e.target.closest(".opt > .opthead");
       if (head) { toggle(head.parentElement); return; }
       if (e.target.closest(".chip")) { paint(); /* the answer is the label now */ }
     });
     opts.addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
-      var head = e.target.closest(".opt > .k"); if (!head) return;
+      var head = e.target.closest(".opt > .opthead"); if (!head) return;
       e.preventDefault(); toggle(head.parentElement);
     });
     fit();
     addEventListener("resize", fit, { passive: true });
     addEventListener("silavu:build", paint);
+    /* and again whenever the language lands, because every chip's own words
+       have just been rewritten under it */
+    if (window.MutationObserver) new MutationObserver(paint)
+      .observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
   })();
 
   opts.addEventListener("mouseover", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = c.getAttribute("data-v"); });
