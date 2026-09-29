@@ -10,14 +10,15 @@ OUT="${1:-dist/img}"; mkdir -p "$OUT"
 # All of it is shot at 1254 square, so 1254 is the largest honest width.
 for SRC in "$(dirname "$0")"/media/*/; do
   piece=$(basename "$SRC")
-  [ "$piece" = "clover" ] && continue      # a drawing, not photography
-  ls "$SRC"/*.webp >/dev/null 2>&1 || continue
-  for f in "$SRC"/*.webp; do
-    n=$(basename "$f" .webp); n=${n#${piece}-}; n=${n#[0-9]-}
+  # originals arrive in whatever the render wrote; they are not re-encoded here
+  ls "$SRC"/*.webp "$SRC"/*.png >/dev/null 2>&1 || continue
+  for f in "$SRC"/*.webp "$SRC"/*.png; do
+    [ -f "$f" ] || continue
+    n=$(basename "$f"); n=${n%.*}; n=${n#${piece}-}; n=${n#[0-9]-}
     for w in 640 900 1254; do
       convert "$f" -resize ${w}x${w} -quality 88 -strip "$OUT/$piece-$n-$w.jpg"
     done
   done
-  echo "$piece: $(ls "$SRC"/*.webp | wc -l) shots"
+  echo "$piece: $(ls "$SRC"/*.webp "$SRC"/*.png 2>/dev/null | wc -l) shots"
 done
-ls -la "$OUT"/knot-*.jpg "$OUT"/ring-*.jpg 2>/dev/null | head -24
+ls "$OUT"/knot-*.jpg "$OUT"/ring-*.jpg "$OUT"/necklace-*.jpg 2>/dev/null | wc -l

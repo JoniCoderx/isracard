@@ -103,6 +103,41 @@ export const PIECES = [
     ],
     reserve: true
   }  ,{
+    id: "pave", cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
+    widths: [640, 900, 1254],
+    name: S("The Knot, <em>Pavé</em>", "הקשר, <em>פאווה</em>"),
+    plain: "The Knot, Pavé",
+    line: S("The mark set rather than polished, on a chain that carries stones of its own.",
+            "הסמל משובץ ולא מלוטש, על שרשרת שנושאת אבנים משלה."),
+    shots: [
+      { img: "necklace-front",  alt: S("The Knot in pavé on a station chain, full length", "הקשר בפאווה על שרשרת תחנות, במלואה") },
+      { img: "necklace-worn",   alt: S("The Knot in pavé worn at the collarbone", "הקשר בפאווה ענוד על עצם הבריח") },
+      { img: "necklace-detail", alt: S("The pendant and the chain either side of it", "התליון והשרשרת משני צדיו") },
+      { img: "necklace-macro",  alt: S("The SILAVU mark in pavé, close", "סמל סילאבו בפאווה, מקרוב") }
+    ],
+    meta: [S("18K white gold", "זהב לבן 18K"), S("42 cm", "42 סמ"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
+    key: [
+      [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
+      [S("Length", "אורך"),  S("42 cm", "42 סמ")],
+      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")]
+    ],
+    story: S("The same mark as the bracelet and the ring, set rather than polished. The stones follow the ribbon the whole way round and the two open loops are left bare, so the knot still reads as passing through itself rather than as a shape filled in. The chain is not plain either: it carries stones of its own, set in rubover at intervals either side of the pendant, so the line to the throat is not empty.",
+             "אותו סמל כמו בצמיד ובטבעת, משובץ ולא מלוטש. האבנים עוקבות אחרי הסרט לכל אורכו ושתי הלולאות הפתוחות נשארות חשופות, כך שהקשר עדיין נקרא כעובר דרך עצמו. גם השרשרת אינה חלקה: היא נושאת אבנים משלה, במרווחים משני צדי התליון."),
+    stones: S("Brilliants across the mark and in rubover along the chain, matched for colour so the tone does not change between the pendant and the stones that lead to it. The count and the total weight travel on the certificate.",
+              "בריליאנטים על הסמל ובשיבוץ סגור לאורך השרשרת, מותאמים בצבע. הכמות והמשקל הכולל נוסעים עם התעודה."),
+    care: S("Four to six weeks from the order. Shortening the chain, cleaning and a check of every setting under the loupe are on the house for as long as you own it.",
+            "ארבעה עד שישה שבועות מההזמנה. קיצור השרשרת, ניקוי ובדיקת כל שיבוץ — על חשבון הבית."),
+    specs: [
+      [S("Reference", "מק\"ט"),  S("SLV·N·003", "SLV·N·003")],
+      [S("Metal", "מתכת"),          S("18K white gold", "זהב לבן 18K")],
+      [S("Setting", "שיבוץ"),       S("Pavé on the mark, rubover on the chain", "פאווה על הסמל, שיבוץ סגור על השרשרת")],
+      [S("Motif", "המוטיב"),        S("The SILAVU mark", "סמל סילאבו")],
+      [S("Chain", "שרשרת"),          S("Cable, with set stations", "כבל, עם תחנות משובצות")],
+      [S("Length", "אורך"),           S("42 cm", "42 סמ")],
+      [S("Made", "ייצור"),          S("Dubai, by hand", "דובאי, בעבודת יד")]
+    ],
+    reserve: true
+  }  ,{
     id: "star", cat: "necklaces", ref: "SLV·N·001",
     widths: [800, 1200, 1600, 2000],
     /* Not of the collection. Every other piece here carries the house mark and
@@ -148,16 +183,6 @@ export const PIECES = [
    shape of the collection is visible before the photography exists — and so
    the grid never reflows when a piece lands. */
 export const SOON = [
-  /* The mark set rather than polished, on a chain that carries stones of its
-     own. The pendant's geometry is the house symbol itself — the plate in
-     media/clover is drawn from the same path the site draws, so there is a
-     setter's drawing to work from and nothing was redrawn by eye. It waits
-     here for its photography rather than going in as an illustration beside
-     the shot pieces. */
-  { cat: "necklaces", ref: "SLV·N·003", when: S("Spring", "אביב"),
-    name: S("The Knot, <em>Pavé</em>", "הקשר, <em>פאווה</em>"),
-    line: S("The mark set with 205 brilliants, on a chain that carries four more.",
-            "הסמל משובץ ב־205 יהלומים, על שרשרת שנושאת עוד ארבעה.") },
   { cat: "necklaces", ref: "SLV·N·002", when: S("Spring", "אביב"),
     name: S("The Knot <em>Pendant</em>", "<em>תליון</em> הקשר"),
     line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, תלוי בעצם הבריח על שרשרת 42 ס\"מ.") },
