@@ -259,7 +259,7 @@ ${markDefs()}
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
       <h2 class="h2 sp rv" data-en="The house <em>collection.</em>" data-he="<em>הקולקציה</em> של הבית.">The house <em>collection.</em></h2>
-      <p class="p rv d2" data-en="Pieces carrying the house mark. One of them you can hold this week." data-he="תכשיטים שנושאים את סמל הבית. אחד מהם אפשר להחזיק כבר השבוע.">Pieces carrying the house mark. One of them you can hold this week.</p>
+      <p class="p rv d2" data-en="Pieces carrying the house mark. Two of them you can hold this week." data-he="תכשיטים שנושאים את סמל הבית. שניים מהם אפשר להחזיק כבר השבוע.">Pieces carrying the house mark. Two of them you can hold this week.</p>
       <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or start from nothing" data-he="או להתחיל מאפס">Or start from nothing</a></div>
     </div>
     ${COLLECTION}
