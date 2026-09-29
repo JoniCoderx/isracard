@@ -3595,3 +3595,79 @@
      does not know the time in its own two rooms is worse than a house that
      does not show a clock, so until the figure is real it is not drawn. */
   .clock.pending .c { visibility:hidden; }
+
+  /* ══ v100 — one thing to press on the first screen ════════════════════════
+     Two buttons of near-equal weight is two decisions before a reader has seen
+     anything. Booking a viewing is the one the house wants; beginning a piece
+     is a way on, not a rival, so it stops being a button and becomes a line —
+     the same quiet link idiom the catalogue already uses. */
+  .hacts { gap:clamp(16px,2.2vw,30px); align-items:center; }
+  .hacts .hsec { font-size:.71rem; letter-spacing:.17em; text-transform:uppercase;
+    color:var(--ink3); padding-block:13px; transition:color .5s var(--ease); }
+  .hacts .hsec:hover { color:var(--ink); }
+  html[data-ns] .hacts .hsec { letter-spacing:.02em; text-transform:none; font-size:.82rem; }
+  @media (max-width:560px) {
+    /* the block rule stretches every .btn in here; the quiet line is not one,
+       and must not become a second full-width slab under the first */
+    .hcap .hacts { gap:6px; justify-items:center; }
+    .hacts .hsec { justify-self:center; }
+  }
+
+  /* ══ v101 — the facts under the opening, given room ═══════════════════════
+     Five things separated by hairlines on one line is a specification strip; a
+     reader takes none of it in. Four statements, each with what it is above
+     what it says, spaced apart, is a house telling you four things. The fifth —
+     "one at a time" — said what the headline directly above it already says. */
+  .hfacts .hmeta { display:grid; grid-auto-flow:column; margin:0;
+    gap:clamp(30px,4.4vw,72px); align-items:start; }
+  .hfacts .hmeta > div { display:grid; gap:6px; justify-items:center; text-align:center; }
+  .hfacts .hmeta dt { margin:0; font-size:.56rem; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--ink3); }
+  .hfacts .hmeta dd { margin:0; font-size:.84rem; letter-spacing:.05em;
+    color:var(--ink2); font-variant-numeric:tabular-nums; }
+  html[data-ns] .hfacts .hmeta dt { letter-spacing:.03em; text-transform:none; font-size:.68rem; }
+  @media (max-width:1099px) { .hfacts .hmeta { gap:clamp(22px,3vw,40px); } }
+
+  /* ══ v102 — the phone gets a bar, not a floating button ═══════════════════
+     A pill hovering over the lower right of a page has to spend its life
+     avoiding the words underneath it, and it still reads as an app control
+     rather than as part of a house. On a phone it becomes what it always
+     wanted to be: a slim bar along the bottom edge, with its own ground and a
+     hairline above it, carrying one thing. It arrives once the opening screen
+     is behind the reader and leaves when the enquiry is in front of them. The
+     closing chapter reserves its height so the last line is never under it. */
+  @media (max-width:999px) {
+    #fab {
+      left:0; right:0; bottom:0; width:100%; max-width:none;
+      border:0; border-top:1px solid rgba(242,239,233,.14); border-radius:0;
+      background:#000; backdrop-filter:none; -webkit-backdrop-filter:none;
+      display:flex; align-items:center; justify-content:center;
+      padding:16px var(--pad) calc(16px + env(safe-area-inset-bottom, 0px));
+      font-size:.71rem; letter-spacing:.19em; color:var(--ink);
+      transform:translateY(101%);
+      transition:transform .55s var(--ease), opacity .3s; opacity:1;
+    }
+    #fab.show { transform:none; opacity:1; }
+    /* the floating pill was inset from one side and flipped to the other in
+       Hebrew; a bar has no side to be inset from, and that older rule is more
+       specific than this one, so it is answered here rather than left to win */
+    html[dir="rtl"] #fab { left:0; right:0; }
+    html[data-ns] #fab { letter-spacing:.02em; font-size:.84rem; }
+    body.chain-on #fab { transform:translateY(101%); }
+  }
+
+  /* ══ v103 — the movement gets quieter ═════════════════════════════════════
+     A line that wipes itself in behind a travelling gradient over one and a
+     tenth of a second is a flourish performing itself. A hover should say "this
+     is a link" and stop. The rule now grows from its leading edge, once, in
+     half the time, with nothing travelling along it. The glints and the arrival
+     sheen are gone from the script; what draws them is left unused rather than
+     left running. */
+  .lnk:hover::before { animation:none; transform:scaleX(1); transform-origin:left;
+    transition:transform .5s var(--ease); }
+  html[dir="rtl"] .lnk:hover::before { transform-origin:right; }
+  .lnk::before { transform:scaleX(0); transform-origin:left; transition:transform .5s var(--ease); }
+  html[dir="rtl"] .lnk::before { transform-origin:right; }
+  .sh nav a:hover::after { animation:none; }
+  .glint, .tw { display:none !important; }
+  .fig .sheen, .shine .sheen { display:none; }

@@ -163,7 +163,7 @@ ${markDefs()}
 </div>
 
 <div id="where" aria-live="polite"><span class="n" id="whereN">01</span><span class="bar"><i id="whereBar"></i></span><span class="t" id="whereT"></span></div>
-<a id="fab" class="btn" href="#concierge" data-en="Book a viewing" data-he="פגישה פרטית">Book a viewing</a>
+<a id="fab" class="btn" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
 
 <main class="sm">
   <section id="hero" data-n="" data-title-en="SILAVU" data-title-he="סילאבו" aria-label="SILAVU" data-spark>
@@ -174,13 +174,18 @@ ${markDefs()}
     <video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
-      <div class="k gold rv" data-en="Private high jewellery · Dubai · Tel Aviv" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב">Private high jewellery · Dubai · Tel Aviv</div>
+      <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
       <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה, שנעשים <em>לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
-      <p class="p rv d2" data-en="Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai." data-he="שני תכשיטים מוכנים ואפשר לראות אותם השבוע. כל השאר משורטט יחד אתכם ומשובץ ביד בדובאי.">Two finished pieces, and a bench for whatever you have in mind.</p>
-      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
+      <p class="p rv d2" data-en="Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai." data-he="שני תכשיטים מוכנים ואפשר לראות אותם השבוע. כל השאר משורטט יחד אתכם ומשובץ ביד בדובאי.">Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.</p>
+      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
-      <div class="row k"><span data-en="Set by hand" data-he="משובץ ביד">Set by hand</span><i></i><span dir="ltr">D–F · VVS+</span><i></i><span dir="ltr">GIA · IGI</span><i></i><span data-en="Made in Dubai" data-he="נעשה בדובאי">Made in Dubai</span><i></i><span data-en="One at a time" data-he="אחד בכל פעם">One at a time</span></div>
+      <dl class="hmeta">
+        <div><dt class="k" data-en="Setting" data-he="שיבוץ">Setting</dt><dd data-en="By hand" data-he="ביד">By hand</dd></div>
+        <div><dt class="k" data-en="Stones" data-he="אבנים">Stones</dt><dd dir="ltr">D–F · VVS+</dd></div>
+        <div><dt class="k" data-en="Graded" data-he="דירוג">Graded</dt><dd dir="ltr">GIA · IGI</dd></div>
+        <div><dt class="k" data-en="Made" data-he="נעשה">Made</dt><dd data-en="Dubai" data-he="בדובאי">Dubai</dd></div>
+      </dl>
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
     </div>
   </section>
@@ -201,7 +206,7 @@ ${markDefs()}
         <div class="beats" id="beats">
           <div class="beat"><div class="k gold ol" data-en="01 · The box" data-he="01 · הקופסה">01 · The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="היא מגיעה <em>סגורה.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט שלכם, התעודות שלו, והערכת שווי למבטח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
           <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Loose, <em>under a loupe.</em>" data-he="פזורות, <em>מתחת ללוּפָּה.</em>">Loose, <em>under a loupe.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות על ידי GIA או IGI. אתם רואים אותן לפני שאנחנו משבצים.">Graded by GIA or IGI. You see them before we set them.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made for <em>one wrist. Yours.</em>" data-he="נעשה <em>לפרק יד אחד. שלכם.</em>">Made for <em>one wrist. Yours.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
+          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made to <em>your measure.</em>" data-he="נעשה <em>למידה שלכם.</em>">Made to <em>your measure.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
         <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>

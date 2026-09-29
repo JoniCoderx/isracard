@@ -151,84 +151,19 @@
     document.body.classList.toggle("onivory", !!overTop && overTop.classList.contains("ivory"));
     document.body.classList.toggle("footivory", best.classList.contains("ivory"));
     var r2 = best.getBoundingClientRect(), f = c01(-r2.top / Math.max(1, r2.height - innerHeight * 0.5)); whereBar.style.width = (f * 100).toFixed(1) + "%";
-    var cr = $("concierge").getBoundingClientRect(); fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6 && fabClear());
+    /* the bar arrives once the opening screen is behind the reader, and leaves
+       when the enquiry it points at is in front of them */
+    var cr = $("concierge").getBoundingClientRect();
+    fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6);
     pbar.style.width = (c01(scrollY / Math.max(1, document.body.scrollHeight - innerHeight)) * 100).toFixed(2) + "%";
   }
   var pbar = $("pbar");
-  /* the floating button steps aside: it hides while the page scrolls down, and never rests on top of words, buttons or fields */
-  var fabLastY = 0, fabDown = false, fabRest = 0;
-  function fabClear() {
-    if (innerWidth >= 1000) return true;
-    if (fabDown) return false;
-    /* the button is asked where it WILL be, not where it is. While it is away
-       it is held twelve pixels lower by a transform, and clearance measured
-       there is clearance for a box the reader never sees: it then rises those
-       twelve pixels onto the line above. The transform is taken back out. */
-    var r0 = fab.getBoundingClientRect(), dx = 0, dy = 0;
-    try { var m = new DOMMatrixReadOnly(getComputedStyle(fab).transform); dx = m.m41; dy = m.m42; } catch (e) {}
-    var r = { left: r0.left - dx, right: r0.right - dx, top: r0.top - dy, bottom: r0.bottom - dy };
-    var over = function (b) { return Math.min(r.right, b.right) - Math.max(r.left, b.left) > 2 &&
-                                     Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top) > 2; };
-    /* v97 — the old test asked the nine points of the button's box who was
-       under them, and took the first answer. A row whose words sat one level
-       further down, or a transparent layer over them, both read as clear —
-       which is how the button came to rest on the wrist size in the builder
-       and on the valuation line in the box chapter.
-       The page is walked from the top instead, and a branch is entered only
-       while its box still touches the button, so the descent is a few dozen
-       elements. A drawn line of text that overlaps the button wins. */
-    /* Pruning a branch on its own box is what kept missing things: an open
-       <details> reports the height of its summary while its list paints below
-       it, and a readout's rows sit outside the box of the block that owns
-       them. The one box that is always honest is a text node's own parent,
-       which always contains that text's line boxes. So every text node is
-       considered and only its parent prunes it. At rest, once. */
-    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), n, seen = 0, rg = document.createRange();
-    while ((n = w.nextNode()) && seen++ < 4000) {
-      if (!n.nodeValue || !n.nodeValue.trim()) continue;
-      var pe = n.parentElement; if (!pe || pe === fab || fab.contains(pe)) continue;
-      if (!over(pe.getBoundingClientRect())) continue;
-      var cs = getComputedStyle(pe);
-      if (cs.visibility === "hidden" || parseFloat(cs.opacity) < 0.06) continue;
-      rg.selectNodeContents(n);
-      var rects = rg.getClientRects();
-      for (var i = 0; i < rects.length; i++) {
-        var t = rects[i]; if (!over(t)) continue;
-        /* words behind something opaque — the builder panel scrolls over the
-           carat readout — are not words the button is sitting on */
-        var cx = (Math.max(r.left, t.left) + Math.min(r.right, t.right)) / 2;
-        var cy = (Math.max(r.top, t.top) + Math.min(r.bottom, t.bottom)) / 2;
-        var keep = fab.style.pointerEvents; fab.style.pointerEvents = "none";
-        var top = document.elementFromPoint(cx, cy);
-        fab.style.pointerEvents = keep;
-        if (top && (top === pe || top.contains(pe) || pe.contains(top))) return false;
-      }
-    }
-    /* a control or a picture under the button counts as much as a word */
-    for (var px = r.left + 4; px < r.right; px += 24)
-      for (var py = r.top + 4; py < r.bottom; py += 14) {
-        var hit = document.elementsFromPoint(px, py);
-        for (var hj = 0; hj < hit.length && hj < 3; hj++) {
-          var he = hit[hj]; if (he === fab || fab.contains(he)) continue;
-          if (/^(BUTTON|A|INPUT|TEXTAREA|SELECT|LABEL|IMG|VIDEO)$/.test(he.tagName)) return false;
-          if (he.classList.contains("btn") || he.classList.contains("chip")) return false;
-          break;
-        }
-      }
-    return true;
-  }
-  /* the check is made again over the second after the page comes to rest: a
-     chapter's reveal is still running when the scroll stops, and a heading
-     that arrives late would otherwise arrive under a button already shown */
-  var fabAgain = [];
-  addEventListener("scroll", function () {
-    var y = scrollY; fabDown = y > fabLastY + 2; fabLastY = y;
-    clearTimeout(fabRest); fabAgain.forEach(clearTimeout); fabAgain.length = 0;
-    fabRest = setTimeout(function () {
-      fabDown = false; compass();
-      [280, 620, 1000].forEach(function (d) { fabAgain.push(setTimeout(compass, d)); });
-    }, 420);
-  }, { passive: true });
+  /* v102 — the floating pill is gone and with it the machinery that kept it
+     off the words: on a phone this is a bar along the bottom edge with its own
+     ground, and the closing chapter reserves its height. That machinery was
+     also being asked the question from inside compass(), which runs on every
+     animation frame — a walk of the page's text nodes, sixty times a second,
+     to answer something that no longer needs asking. */
 
   /* ── diamond dust: a few dozen specks of light drifting up through the whole page, twinkling ── */
   var dust = $("dust"), dctx = dust.getContext("2d"), motes = [], dw = 0, dh = 0, sprite = document.createElement("canvas");
@@ -264,12 +199,15 @@
   /* ── the thirty-six: each stone's record, deterministic from its position on the line ── */
   var stoneCur = 0; function setStone(k) { stoneCur = k; }
 
-  /* ── glints on hover, sheen on arrival ── */
-  function sparkle(el, n) { var r = el.getBoundingClientRect(); for (var i = 0; i < n; i++) { var g = document.createElement("i"); g.className = "glint"; g.style.left = (8 + Math.random() * 84) + "%"; g.style.top = (8 + Math.random() * 84) + "%"; g.style.animationDelay = (i * 90) + "ms"; g.style.width = g.style.height = (12 + Math.random() * 16) + "px"; el.appendChild(g); setTimeout(function (x) { x.remove(); }, 1400, g); } }
-  document.addEventListener("pointerenter", function (e) { var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, el.classList.contains("btn") || el.classList.contains("chip") ? 2 : 4); }, true);
-  document.addEventListener("touchstart", function (e) { var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, 3); }, { passive: true });
-  var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("shine"); setTimeout(function () { e.target.classList.remove("shine"); }, 1600); io2.unobserve(e.target); } }); }, { threshold: 0.35 });
-  document.querySelectorAll(".card, .piece").forEach(function (el) { io2.observe(el); });
+  /* v103 — the glints and the sheen are gone.
+     Two or four sprites were built into the DOM, rotated, scaled and thrown
+     away on every hover and, worse, on every touch: a tap on any card or any
+     button threw sparks. A sheen then swept across each piece as it arrived.
+     Neither is how a house behaves; both are how a landing page behaves, and
+     on a phone both were work done on the main thread for an effect nobody
+     asked for. What carries the page is what is left: the slow reveal, the
+     very small scale on a photograph, and the quiet movement on a hover. */
+
   /* cards lean toward the cursor */
   /* The cards used to tilt under the pointer — a perspective rotation tracking
      the mouse. It is the house style of every generated landing page, and it

@@ -12,19 +12,17 @@ rep(`header.classList.add("show"); where.classList.add("show");`, `header.classL
 rep(`price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();`, `price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass(); if (window.__fx) window.__fx.relang();`);
 rep(`var alias = { standard: "inside", atelier: "partners" }`, `var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`);
 
-/* v9: wrist size, no glints on buttons, the inside film is gone */
+/* v9: wrist size, the inside film is gone (the glints themselves went in v103) */
 rep(`window.__build = { origin: "lab", ct: 6, metal: "white" };`, `window.__build = { origin: "lab", ct: 6, metal: "white", wrist: 17, cut: "round" };`);
 rep(`sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin);`, `sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";`);
 rep(`$("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";`, `$("lineLen").innerHTML = b.wrist + "<small>cm</small>";`);
 rep(`window.__build[k] = k === "ct" ? Number(v) : v;`, `window.__build[k] = (k === "ct" || k === "wrist") ? Number(v) : v;`);
 rep(`+ b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);`, `+ b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + b.wrist + " cm · " + estEl.textContent);`);
-rep(`var el = e.target.closest && e.target.closest(".card, .piece, .btn, .chip, .voice"); if (el && !reduce) sparkle(el, el.classList.contains("btn") || el.classList.contains("chip") ? 2 : 4); }, true);`, `var el = e.target.closest && e.target.closest(".piece, .card"); if (el && !reduce) sparkle(el, 3); }, true);`);
 rep(`var iv = $("insidevid"), ivLoaded = false;`, `var iv = $("insidevid"), ivLoaded = true;`);
 rep(`function insideTick() { var r = iv.getBoundingClientRect();`, `function insideTick() { if (!iv) return; var r = iv.getBoundingClientRect();`);
 
-/* v10: no particles, no glints; the box replaces the stone */
+/* v10: no particles; the box replaces the stone */
 rep(`var n = desk() ? 110 : 55; motes = [];`, `var n = 0; motes = [];`);
-rep(`var el = e.target.closest && e.target.closest(".piece, .card"); if (el && !reduce) sparkle(el, 3); }, true);`, `var el = null; if (el && !reduce) sparkle(el, 3); }, true);`);
 
 /* v11: a shorter intro, lazy macro film, prices in any currency, a crossfade on language change, compass aliases */
 rep(`var iv = $("insidevid"), ivLoaded = true;`, `var iv = $("insidevid"), ivLoaded = false;`);
