@@ -42,7 +42,16 @@ for (const [tag,w,h,touch] of [["desk",1440,900,false],["mob",390,844,true]]) {
   ok(r.edSolo && !r.edHasFig, `${tag} the bracelet chapter is words, not a stock photograph`);
   ok(r.bgmk, `${tag} the house mark is behind the bracelet`);
   ok(/SILAVU signs/.test(r.house), `${tag} the house headline is about the house`, r.house.slice(0,40));
-  ok(/Five pieces/.test(r.collSub), `${tag} the collection line is rewritten`, r.collSub.slice(0,40));
+  /* pinning the sentence itself only tested that nobody had edited it. What
+     matters is that it says something, and that if it counts the pieces the
+     count is the one on screen — the catalogue has gained a piece and lost one
+     to its own block since this was written, and a stale number is the fault
+     worth catching. */
+  const WORD = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8 };
+  const claimed = (r.collSub.toLowerCase().match(/\b(one|two|three|four|five|six|seven|eight)\b(?=[^.]*\bpiece)/) || [])[1];
+  ok(r.collSub.trim().length > 20, `${tag} the collection chapter says what it holds`, r.collSub.slice(0,44));
+  ok(!claimed || WORD[claimed] === r.cards,
+     `${tag} and does not count pieces the grid does not show (says ${claimed || "no number"}, shows ${r.cards})`);
   ok(r.over<=1, `${tag} no sideways scroll`);
   ok(errs.length===0, `${tag} no script errors`, errs.slice(0,2).join(" | "));
   out.push(`      ${tag} ${r.screens} screens, ${r.sections} chapters`);

@@ -15,7 +15,19 @@
     var SET = o.set(), N = typeof o.n === "function" ? o.n(SET) : o.n, frames = new Array(N), asked = new Array(N), loaded = 0, requested = 0, cur = -1;
     var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
     function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + (o.ext || ".jpg"); }
-    function load(i, cb) { if (frames[i] || requested > N + 2) return; var im = new Image(); im.decoding = "async"; requested++; im.onload = function () { frames[i] = im; loaded++; if (cb) cb(); }; im.src = src(i); }
+    /* Letting go has to mean the ones already on their way as well. A frame
+       asked for before the strip was released still fires its onload after it,
+       and the old handler put it straight back into the array it had just been
+       cleared from — so a chapter that had all fifty in flight released none of
+       them. Each release opens a new generation and a frame from an older one
+       is dropped on arrival. */
+    var gen = 0;
+    function load(i, cb) {
+      if (frames[i] || requested > N + 2) return;
+      var im = new Image(), g = gen; im.decoding = "async"; requested++;
+      im.onload = function () { if (g !== gen) return; frames[i] = im; loaded++; if (cb) cb(); };
+      im.src = src(i);
+    }
     /* Fetch from where the eye is, not from the top. A fixed order fills the far
        end of the strip while the frames either side of the playhead are still
        missing, and that is what a scrub feels as a hold and then a catch-up.
@@ -79,7 +91,7 @@
          direction: a reader who scrolls back up above a chapter has left it
          just as surely as one who scrolled down past it. */
       var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
-      if (o.release && started && gone) { frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+      if (o.release && started && gone) { gen++; frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
       if (!started) { size(); loadAll(); }
       var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, o.still || 0.5);

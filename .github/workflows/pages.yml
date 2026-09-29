@@ -79,6 +79,8 @@ jobs:
         run: bash lumera/site/wrist-assets.sh dist/img
       - name: Collection photography (committed originals)
         run: bash lumera/site/piece-assets.sh dist/img
+      - name: The journey, six stages of one bracelet
+        run: bash lumera/site/journey-assets.sh dist/img
       - name: The Dubai film, cut into frames
         run: bash lumera/site/film-frames.sh lumera/site/media/silavu-film.mp4 dist/f/film
       - name: The box sequence, cut from the 4K restoration
