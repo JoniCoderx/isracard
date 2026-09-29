@@ -1,7 +1,5 @@
-/* The journey chapter: one stage that holds still on a wide screen while six
-   chapters pass it, six figures that move into those chapters on a phone, a
-   progress indicator that can be used with a keyboard, and no photograph
-   fetched twice. */
+/* The journey: six stages of one bracelet in one frame, under a screen, that
+   plays on its own and stops the moment anyone takes hold of it. */
 import { chromium } from "playwright-core";
 let pass = 0, fail = 0;
 const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); c ? pass++ : fail++; };
@@ -15,50 +13,46 @@ for (const [W, H, tag] of [[1440, 900, "desk"], [390, 844, "phone"]]) {
   await p.goto("http://127.0.0.1:8777/", { waitUntil: "domcontentloaded" });
   await p.waitForTimeout(2400); await p.click("#enterBtn", { timeout: 6000 }).catch(() => {});
   await p.waitForTimeout(600);
-  const top = await p.evaluate(() => Math.round(document.getElementById("jrn").getBoundingClientRect().top + scrollY));
-  for (let y = 0; y < top + 400; y += 300) { await p.evaluate(v => scrollTo({ top: v, behavior: "instant" }), y); await p.waitForTimeout(50); }
+  const sec = await p.evaluate(() => { const e = document.getElementById("bespoke").getBoundingClientRect();
+    return { top: Math.round(e.top + scrollY), h: Math.round(e.height) }; });
+  ok(sec.h <= H * 1.45, `${tag} the chapter is about one screen (${sec.h}px of ${H})`);
+
+  for (let v = 0; v < sec.top; v += 500) { await p.evaluate(t => scrollTo({ top: t, behavior: "instant" }), v); await p.waitForTimeout(40); }
+  await p.evaluate(t => scrollTo({ top: t, behavior: "instant" }), sec.top - 60);
   await p.waitForTimeout(700);
 
-  const home = await p.evaluate(() => [...document.querySelectorAll(".jshot")].map(s =>
-    s.parentElement.classList.contains("jstage") ? "stage" : s.parentElement.classList.contains("jstep") ? "step" : "?"));
-  if (tag === "desk") ok(home.every(h => h === "stage"), `${tag} all six figures live in the stage (${home.join(",")})`);
-  else ok(home.every(h => h === "step"), `${tag} each figure sits in its own chapter (${home.join(",")})`);
+  const one = () => p.evaluate(() => ({
+    shots: document.querySelectorAll(".jshot.on").length,
+    steps: document.querySelectorAll(".jstep.on").length,
+    i: [...document.querySelectorAll(".jshot")].findIndex(s => s.classList.contains("on")) }));
+  let st = await one();
+  ok(st.shots === 1 && st.steps === 1, `${tag} one photograph and one stage showing (${st.shots}, ${st.steps})`);
+  ok(await p.evaluate(() => document.querySelectorAll(".jshot").length) === 6, `${tag} all six live in the one frame`);
 
-  ok(await p.evaluate(() => document.querySelectorAll(".jstep").length) === 6, `${tag} six chapters`);
-  const dotsVisible = await p.evaluate(() => { const n = document.querySelector(".jdots"); return n && n.getBoundingClientRect().height > 0; });
-  ok(tag === "desk" ? dotsVisible : !dotsVisible, `${tag} the indicator is ${tag === "desk" ? "shown" : "left off the phone"}`);
+  /* it plays on its own */
+  const before = st.i;
+  await p.waitForTimeout(5200);
+  const after = (await one()).i;
+  ok(after !== before, `${tag} it moves on by itself (${before} → ${after})`);
 
-  if (tag === "desk") {
-    /* the stage holds still while the chapters pass it */
-    const sticky = await p.evaluate(() => getComputedStyle(document.querySelector(".jstage")).position);
-    ok(sticky === "sticky", `${tag} the stage holds still (${sticky})`);
-    const seen = new Set();
-    const total = await p.evaluate(() => document.documentElement.scrollHeight);
-    for (let y = top - 200; y < top + 3400 && y < total - H; y += 180) {
-      await p.evaluate(v => scrollTo({ top: v, behavior: "instant" }), y); await p.waitForTimeout(240);
-      const i = await p.evaluate(() => [...document.querySelectorAll(".jshot")].findIndex(s => s.classList.contains("on")));
-      if (i >= 0) seen.add(i);
-    }
-    ok(seen.size >= 5, `${tag} scrolling the chapter moves through its stages (${[...seen].sort().join(",")})`);
-    /* direct selection, and from the keyboard */
-    await p.evaluate(() => document.querySelectorAll(".jdot")[3].click());
-    await p.waitForTimeout(1100);
-    const picked = await p.evaluate(() => [...document.querySelectorAll(".jdot")].findIndex(d => d.classList.contains("on")));
-    ok(picked === 3, `${tag} a stage can be chosen directly (landed on ${picked})`);
-    await p.evaluate(() => document.querySelectorAll(".jdot")[0].focus());
-    await p.keyboard.press("ArrowRight"); await p.waitForTimeout(900);
-    const kb = await p.evaluate(() => document.activeElement.classList.contains("jdot") && [...document.querySelectorAll(".jdot")].indexOf(document.activeElement));
-    ok(kb === 1, `${tag} and with an arrow key (focus on ${kb})`);
-    /* only one photograph is shown at a time */
-    const on = await p.evaluate(() => document.querySelectorAll(".jshot.on").length);
-    ok(on === 1, `${tag} one photograph on the stage at a time (${on})`);
-  }
+  /* and stops the moment it is touched */
+  await p.evaluate(() => document.querySelectorAll(".jdot")[2].click());
+  await p.waitForTimeout(200);
+  const picked = (await one()).i;
+  ok(picked === 2, `${tag} a stage can be chosen (landed on ${picked})`);
+  await p.waitForTimeout(5200);
+  ok((await one()).i === 2, `${tag} and it stays there once chosen`);
 
-  /* nothing is fetched twice, and nothing is laid out without reserved space */
+  /* keyboard */
+  await p.evaluate(() => document.querySelectorAll(".jdot")[0].focus());
+  await p.keyboard.press("ArrowRight"); await p.waitForTimeout(300);
+  const kb = await p.evaluate(() => [...document.querySelectorAll(".jdot")].indexOf(document.activeElement));
+  ok(kb === 1 && (await one()).i === 1, `${tag} arrow keys move it (focus ${kb})`);
+
   const twice = [...got.entries()].filter(([, n]) => n > 1);
   ok(twice.length === 0, `${tag} no photograph fetched twice (${twice.length})`);
-  const ratio = await p.evaluate(() => { const n = document.querySelector(".jim"); const c = getComputedStyle(n); return c.aspectRatio; });
-  ok(/4\s*\/\s*3/.test(ratio), `${tag} the frame reserves its space before the photograph lands (${ratio})`);
+  const ratio = await p.evaluate(() => getComputedStyle(document.querySelector(".jim")).aspectRatio);
+  ok(/4\s*\/\s*3/.test(ratio), `${tag} the frame reserves its space (${ratio})`);
   ok(errs.length === 0, `${tag} no script errors (${errs[0] || ""})`);
   await p.close();
 }

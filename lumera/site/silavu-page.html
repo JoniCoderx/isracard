@@ -3752,76 +3752,65 @@
      document that has none */
   .doc.ivory::before { display:none; }
 
-  /* ══ v106 — the journey ═══════════════════════════════════════════════════
-     One bracelet, six stages, from the first line to a wrist. On a wide screen
-     the photograph is the stage and holds still while the six chapters pass it;
-     on a phone there is no stage at all — the figures are moved into the
-     chapters themselves and the page simply scrolls, which is what a phone is
-     good at. The moving is done in script (the same six figures, one home at a
-     time) rather than by shipping the photographs twice. */
+  /* ══ v106 — the journey, in one frame ════════════════════════════════════
+     Six stages of one bracelet used to be six chapters, each most of a screen,
+     and a stage that held still while a reader scrolled past all of them — the
+     better part of four screens to say one thing. It is one frame now. The six
+     photographs live in the same place and cross over into each other; the
+     number, the stage and its line change with them; six marks say where you
+     are and take you anywhere. It plays on its own and stops the moment anyone
+     touches it, and the whole chapter is under a screen. */
   .jhead { max-width:58ch; }
   .jhead .p { margin-top:16px; color:var(--ink3); max-width:40ch; }
 
-  .jrn { margin-top:clamp(40px,5vw,84px); }
-  .jstage { display:none; }
-  .jshot { margin:0; }
+  .jrn { margin-top:clamp(32px,4vw,64px); display:grid; gap:clamp(22px,3vw,44px); }
+  .jstage { display:grid; }
+  .jshot { grid-area:1 / 1; margin:0; opacity:0; transition:opacity .9s var(--ease); pointer-events:none; }
+  .jshot.on { opacity:1; pointer-events:auto; }
   .jim { position:relative; overflow:hidden; border-radius:var(--r);
     background:rgba(20,19,15,.05); aspect-ratio:4/3; }
-  .jim img { width:100%; height:100%; object-fit:cover; display:block; }
-  /* the figure carries no caption: the chapter beside it (on a wide screen) or
-     under it (on a phone) already says the same sentence, and saying it twice
-     is not restraint */
+  .jim img { width:100%; height:100%; object-fit:cover; display:block;
+    transform:scale(1.035); transition:transform 5s linear; }
+  .jshot.on .jim img { transform:none; }
 
-  .jstep { padding-block:clamp(26px,3vw,40px); }
+  .jside { display:grid; gap:clamp(18px,2.4vw,30px); align-content:center; }
+  .jsteps { display:grid; }
+  .jstep { grid-area:1 / 1; opacity:0; transition:opacity .55s var(--ease); pointer-events:none; }
+  .jstep.on { opacity:1; pointer-events:auto; }
   .jn { color:var(--gold); font-size:.68rem; letter-spacing:.24em; }
   .jt { font-family:var(--serif); font-style:italic; font-weight:400;
     font-size:clamp(1.5rem,2.6vw,2.1rem); letter-spacing:0; margin:10px 0 0; line-height:1.12; }
   html[data-ns] .jt { font-style:normal; }
   .jp { margin:12px 0 0; color:var(--ink3); max-width:34ch; }
-  .jdots { display:none; }
-  .jfoot { margin-top:clamp(44px,5vw,80px); }
 
-  /* ── the phone: the figures come into the chapters and it simply scrolls ── */
-  @media (max-width:999px) {
-    .jstep { padding-block:clamp(30px,6vw,48px); }
-    .jstep .jshot { margin-bottom:22px; }
-    .jstep + .jstep { border-top:1px solid var(--line); }
-  }
+  .jdots { display:flex; flex-wrap:wrap; gap:clamp(8px,1.2vw,16px); }
+  .jdot { appearance:none; background:none; border:0; cursor:pointer; padding:9px 2px;
+    color:var(--ink3); font-size:.63rem; letter-spacing:.18em;
+    position:relative; transition:color .45s var(--ease); }
+  .jdot::after { content:""; position:absolute; left:2px; right:2px; bottom:3px; height:1px;
+    background:currentColor; transform:scaleX(0); transform-origin:left;
+    transition:transform .5s var(--ease); }
+  .jdot.on { color:var(--ink); } .jdot.on::after { transform:scaleX(1); }
+  .jdot:hover { color:var(--ink2); }
+  .jdot:focus-visible { outline:1px solid var(--gold); outline-offset:3px; }
+  html[dir="rtl"] .jdot::after { transform-origin:right; }
 
-  /* ── the wide screen: a stage that holds still ── */
+  .jfoot { margin-top:clamp(30px,3.6vw,54px); }
+
   @media (min-width:1000px) {
-    .jrn { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
-      gap:clamp(40px,5vw,96px); align-items:start; }
-    .jsteps { grid-column:1; }
-    .jstage { grid-column:2; grid-row:1 / span 2; display:block;
-      position:sticky; top:calc(var(--hh, 72px) + clamp(28px,5vh,70px)); }
-    .jstage .jshot { position:absolute; inset:0 0 auto 0; opacity:0;
-      transition:opacity .9s var(--ease); pointer-events:none; }
-    .jstage .jshot.on { opacity:1; position:relative; pointer-events:auto; }
-    .jstage .jim img { transform:scale(1.015); transition:transform 1.6s var(--ease); }
-    .jstage .jshot.on .jim img { transform:none; }
-    /* each chapter gets most of a screen so the stage has time to change */
-    .jstep { min-height:62svh; display:flex; flex-direction:column;
-      justify-content:center; padding-block:0; opacity:.34;
-      transition:opacity .7s var(--ease); }
-    .jstep.on { opacity:1; }
-    .jdots { display:flex; grid-column:1; gap:10px; margin-top:26px; }
-    .jdot { appearance:none; background:none; border:0; cursor:pointer; padding:8px 2px;
-      color:var(--ink3); font-size:.64rem; letter-spacing:.18em;
-      position:relative; transition:color .45s var(--ease); }
-    .jdot::after { content:""; position:absolute; left:2px; right:2px; bottom:2px; height:1px;
-      background:currentColor; transform:scaleX(0); transform-origin:left;
-      transition:transform .5s var(--ease); }
-    .jdot.on { color:var(--ink); } .jdot.on::after { transform:scaleX(1); }
-    .jdot:hover { color:var(--ink2); }
-    .jdot:focus-visible { outline:1px solid var(--gold); outline-offset:3px; }
-    html[dir="rtl"] .jdot::after { transform-origin:right; }
+    .jrn { grid-template-columns:minmax(0,1.24fr) minmax(0,.76fr);
+      gap:clamp(36px,4.4vw,80px); align-items:center;
+      margin-top:clamp(26px,3vw,44px); }
+    .jstage { grid-column:1; } .jside { grid-column:2; }
+    /* the frame keeps its ratio until that would push the chapter past a
+       screen; the whole point of collapsing six chapters into one was that it
+       should be a screen */
+    .jim { max-height:min(54svh, 500px); }
+    .jhead .h { margin-bottom:0; }
   }
-
   @media (prefers-reduced-motion:reduce) {
-    .jstage .jshot { transition:none; }
-    .jstage .jim img, .jstage .jshot.on .jim img { transform:none; transition:none; }
-    .jstep { opacity:1 !important; transition:none; }
+    .jshot, .jstep { transition:none; }
+    .jim img, .jshot.on .jim img { transform:none; transition:none; }
   }
 </style>
 
@@ -4030,13 +4019,13 @@
     <div class="wrap">
     <div class="sechead jhead">
       <div class="k gold rv ol" data-en="The SILAVU journey" data-he="המסע של סילאבו">The SILAVU journey</div>
-      <h2 class="h sp rv" data-en="Imagined. Crafted. <em>Yours.</em>" data-he="נהגה. נוצר. <em>שלכם.</em>">Imagined. Crafted. <em>Yours.</em></h2>
+      <h2 class="h2 sp rv" data-en="Imagined. Crafted. <em>Yours.</em>" data-he="נהגה. נוצר. <em>שלכם.</em>">Imagined. Crafted. <em>Yours.</em></h2>
       <p class="p rv d2" data-en="From the first line to the final detail." data-he="מהקו הראשון ועד לפרט האחרון.">From the first line to the final detail.</p>
     </div>
 
     <div class="jrn rv d2" id="jrn">
-      <div class="jstage" aria-hidden="true">
-        <figure class="jshot" data-i="01" aria-hidden="false">
+      <div class="jstage">
+        <figure class="jshot on" data-i="01" aria-hidden="false">
           <div class="jim"><img src="/img/jn1-1200.jpg" srcset="/img/jn1-800.jpg 800w, /img/jn1-1200.jpg 1200w, /img/jn1-1600.jpg 1600w, /img/jn1-2000.jpg 2000w" sizes="(min-width:1000px) 56vw, 92vw" alt="A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold" fetchpriority="high"></div>
         </figure>
         <figure class="jshot" data-i="02" aria-hidden="true">
@@ -4055,39 +4044,41 @@
           <div class="jim"><img src="/img/jn6-1200.jpg" srcset="/img/jn6-800.jpg 800w, /img/jn6-1200.jpg 1200w, /img/jn6-1600.jpg 1600w, /img/jn6-2000.jpg 2000w" sizes="(min-width:1000px) 56vw, 92vw" alt="The Line bracelet worn at its true scale on a wrist, in soft directional light" loading="lazy" decoding="async"></div>
         </figure>
       </div>
-      <div class="jsteps">
-        <article class="jstep" data-i="01" tabindex="-1" aria-labelledby="jt1">
+      <div class="jside">
+        <div class="jsteps">
+          <article class="jstep on" data-i="01" tabindex="-1" aria-labelledby="jt1">
           <div class="jn k">01</div>
           <h3 class="jt" id="jt1" data-en="The Inspiration" data-he="ההשראה">The Inspiration</h3>
           <p class="jp" data-en="Every piece begins with a vision." data-he="כל תכשיט מתחיל בחזון.">Every piece begins with a vision.</p>
         </article>
-        <article class="jstep" data-i="02" tabindex="-1" aria-labelledby="jt2">
+          <article class="jstep" data-i="02" tabindex="-1" aria-labelledby="jt2">
           <div class="jn k">02</div>
           <h3 class="jt" id="jt2" data-en="The First Lines" data-he="הקווים הראשונים">The First Lines</h3>
           <p class="jp" data-en="An idea takes its first shape." data-he="רעיון מקבל צורה ראשונה.">An idea takes its first shape.</p>
         </article>
-        <article class="jstep" data-i="03" tabindex="-1" aria-labelledby="jt3">
+          <article class="jstep" data-i="03" tabindex="-1" aria-labelledby="jt3">
           <div class="jn k">03</div>
           <h3 class="jt" id="jt3" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</h3>
           <p class="jp" data-en="Every curve, carefully considered." data-he="כל עקומה, נשקלת בקפידה.">Every curve, carefully considered.</p>
         </article>
-        <article class="jstep" data-i="04" tabindex="-1" aria-labelledby="jt4">
+          <article class="jstep" data-i="04" tabindex="-1" aria-labelledby="jt4">
           <div class="jn k">04</div>
           <h3 class="jt" id="jt4" data-en="The Craft" data-he="העשייה">The Craft</h3>
           <p class="jp" data-en="Brought to life, detail by detail." data-he="קורם עור וגידים, פרט אחר פרט.">Brought to life, detail by detail.</p>
         </article>
-        <article class="jstep" data-i="05" tabindex="-1" aria-labelledby="jt5">
+          <article class="jstep" data-i="05" tabindex="-1" aria-labelledby="jt5">
           <div class="jn k">05</div>
           <h3 class="jt" id="jt5" data-en="The Presentation" data-he="ההגשה">The Presentation</h3>
           <p class="jp" data-en="Considered down to the final detail." data-he="נשקל עד לפרט האחרון.">Considered down to the final detail.</p>
         </article>
-        <article class="jstep" data-i="06" tabindex="-1" aria-labelledby="jt6">
+          <article class="jstep" data-i="06" tabindex="-1" aria-labelledby="jt6">
           <div class="jn k">06</div>
           <h3 class="jt" id="jt6" data-en="Yours to Wear" data-he="שלכם לענוד">Yours to Wear</h3>
           <p class="jp" data-en="Your story begins here." data-he="הסיפור שלכם מתחיל כאן.">Your story begins here.</p>
         </article>
+        </div>
+        <nav class="jdots" aria-label="The six stages"><button type="button" class="jdot on" data-go="01" aria-label="The Inspiration"><span>01</span></button><button type="button" class="jdot" data-go="02" aria-label="The First Lines"><span>02</span></button><button type="button" class="jdot" data-go="03" aria-label="Precision in 3D"><span>03</span></button><button type="button" class="jdot" data-go="04" aria-label="The Craft"><span>04</span></button><button type="button" class="jdot" data-go="05" aria-label="The Presentation"><span>05</span></button><button type="button" class="jdot" data-go="06" aria-label="Yours to Wear"><span>06</span></button></nav>
       </div>
-      <nav class="jdots" aria-label="The six stages"><button type="button" class="jdot on" data-go="01" aria-label="The Inspiration"><span>01</span></button><button type="button" class="jdot" data-go="02" aria-label="The First Lines"><span>02</span></button><button type="button" class="jdot" data-go="03" aria-label="Precision in 3D"><span>03</span></button><button type="button" class="jdot" data-go="04" aria-label="The Craft"><span>04</span></button><button type="button" class="jdot" data-go="05" aria-label="The Presentation"><span>05</span></button><button type="button" class="jdot" data-go="06" aria-label="Yours to Wear"><span>06</span></button></nav>
     </div>
 
     <div class="jfoot rv d3">
@@ -5103,79 +5094,56 @@
     else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
   });
 
-  /* ── v106: the journey ────────────────────────────────────────────────────
-     Six figures with one home at a time: on a wide screen they live in the
-     stage and cross-fade as the chapters pass; on a phone each goes back into
-     the chapter it belongs to and the page just scrolls. Moving them beats
-     shipping them twice — a photograph hidden by display:none is a photograph
-     the phone may still fetch. */
+  /* ── v106: the journey, in one frame ──────────────────────────────────────
+     Six photographs in one place, crossing over into each other, with the
+     stage and its line changing with them. It plays on its own so a reader who
+     does nothing still sees the piece made, and it stops the moment anyone
+     takes hold of it — a thing that keeps moving under your hand is not
+     restraint. It does not play at all off-screen, in a background tab, or for
+     a reader who has asked for less motion. */
   (function () {
     var jrn = $("jrn"); if (!jrn) return;
-    var stage = jrn.querySelector(".jstage");
-    var steps = [].slice.call(jrn.querySelectorAll(".jstep"));
     var shots = [].slice.call(jrn.querySelectorAll(".jshot"));
+    var steps = [].slice.call(jrn.querySelectorAll(".jstep"));
     var dots  = [].slice.call(jrn.querySelectorAll(".jdot"));
-    if (!stage || !steps.length) return;
-    var wide = matchMedia("(min-width:1000px)");
-    var cur = -1;
-
-    function place() {
-      shots.forEach(function (sh, i) {
-        var want = wide.matches ? stage : steps[i];
-        if (want && sh.parentElement !== want) {
-          if (want === stage) want.appendChild(sh);
-          else want.insertBefore(sh, want.firstChild);
-        }
-        /* the stage shows one at a time and says so; in the chapters they are
-           all real figures and none of them is hidden from a reader */
-        sh.setAttribute("aria-hidden", wide.matches && i !== Math.max(0, cur) ? "true" : "false");
-      });
-    }
+    if (shots.length < 2) return;
+    var cur = 0, timer = null, held = false, seen = false;
+    var calm = matchMedia("(prefers-reduced-motion:reduce)");
 
     function show(i) {
-      if (i === cur) return; cur = i;
-      shots.forEach(function (sh, k) { sh.classList.toggle("on", k === i); });
-      steps.forEach(function (st, k) { st.classList.toggle("on", k === i); });
-      dots.forEach(function (d, k) {
-        d.classList.toggle("on", k === i);
-        d.setAttribute("aria-current", k === i ? "true" : "false");
-      });
-      /* whatever is about to be needed is asked for before it is needed */
-      var next = shots[i + 1]; if (next) { var im = next.querySelector("img"); if (im) im.loading = "eager"; }
-      place();
+      cur = (i + shots.length) % shots.length;
+      shots.forEach(function (sh, k) { sh.classList.toggle("on", k === cur); sh.setAttribute("aria-hidden", k === cur ? "false" : "true"); });
+      steps.forEach(function (st, k) { st.classList.toggle("on", k === cur); });
+      dots.forEach(function (d, k) { d.classList.toggle("on", k === cur); d.setAttribute("aria-current", k === cur ? "true" : "false"); });
+      /* the next photograph is asked for before it is wanted */
+      var n = shots[(cur + 1) % shots.length], im = n && n.querySelector("img");
+      if (im && im.loading === "lazy") im.loading = "eager";
     }
-
-    /* which chapter is the reader in: the one nearest the middle of the screen */
-    var io = new IntersectionObserver(function () {
-      if (!wide.matches) return;
-      var mid = innerHeight / 2, best = 0, bd = 1e9;
-      steps.forEach(function (st, k) {
-        var r = st.getBoundingClientRect(), d = Math.abs(r.top + r.height / 2 - mid);
-        if (d < bd) { bd = d; best = k; }
-      });
-      show(best);
-    }, { threshold: [0, .25, .5, .75, 1], rootMargin: "-10% 0px -10% 0px" });
-    steps.forEach(function (st) { io.observe(st); });
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function play() {
+      stop();
+      if (held || !seen || calm.matches || document.hidden) return;
+      timer = setInterval(function () { show(cur + 1); }, 4200);
+    }
+    function hold() { held = true; stop(); }
 
     dots.forEach(function (d, k) {
-      d.addEventListener("click", function () {
-        var t = steps[k]; if (!t) return;
-        var y = t.getBoundingClientRect().top + scrollY - innerHeight * 0.34;
-        scrollTo({ top: y, behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "instant" : "smooth" });
-        /* focus stays on the control the reader is operating — moving it to
-           the chapter took it off the indicator and broke arrow navigation.
-           aria-current is what announces the change. */
-      });
+      d.addEventListener("click", function () { hold(); show(k); });
       d.addEventListener("keydown", function (e) {
         var n = e.key === "ArrowRight" || e.key === "ArrowDown" ? k + 1
-              : e.key === "ArrowLeft" || e.key === "ArrowUp" ? k - 1 : -1;
+              : e.key === "ArrowLeft"  || e.key === "ArrowUp"   ? k - 1 : -1;
         if (n < 0 || n >= dots.length) return;
-        e.preventDefault(); dots[n].focus(); dots[n].click();
+        e.preventDefault(); hold(); dots[n].focus(); show(n);
       });
     });
-
-    (wide.addEventListener ? wide.addEventListener.bind(wide, "change") : wide.addListener.bind(wide))(function () { cur = -1; place(); show(0); });
-    place(); show(0);
+    jrn.addEventListener("pointerenter", stop);
+    jrn.addEventListener("pointerleave", function () { if (!held) play(); });
+    jrn.addEventListener("focusin", hold);
+    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : play(); });
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { seen = e.isIntersecting; e.isIntersecting ? play() : stop(); });
+    }, { threshold: 0.3 }).observe(jrn);
+    show(0);
   })();
 
   /* v93 — a rail drops its fade once there is nothing left to the side. The

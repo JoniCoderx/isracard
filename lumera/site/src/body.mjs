@@ -272,13 +272,13 @@ ${markDefs()}
     <div class="wrap">
     <div class="sechead jhead">
       <div class="k gold rv ol" data-en="The SILAVU journey" data-he="המסע של סילאבו">The SILAVU journey</div>
-      <h2 class="h sp rv" data-en="Imagined. Crafted. <em>Yours.</em>" data-he="נהגה. נוצר. <em>שלכם.</em>">Imagined. Crafted. <em>Yours.</em></h2>
+      <h2 class="h2 sp rv" data-en="Imagined. Crafted. <em>Yours.</em>" data-he="נהגה. נוצר. <em>שלכם.</em>">Imagined. Crafted. <em>Yours.</em></h2>
       <p class="p rv d2" data-en="From the first line to the final detail." data-he="מהקו הראשון ועד לפרט האחרון.">From the first line to the final detail.</p>
     </div>
 
     <div class="jrn rv d2" id="jrn">
-      <div class="jstage" aria-hidden="true">
-        <figure class="jshot" data-i="01" aria-hidden="false">
+      <div class="jstage">
+        <figure class="jshot on" data-i="01" aria-hidden="false">
           <div class="jim">${pic("jn1", "A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold", SIZES_JRN, false)}</div>
         </figure>
         <figure class="jshot" data-i="02" aria-hidden="true">
@@ -297,39 +297,41 @@ ${markDefs()}
           <div class="jim">${pic("jn6", "The Line bracelet worn at its true scale on a wrist, in soft directional light", SIZES_JRN, true)}</div>
         </figure>
       </div>
-      <div class="jsteps">
-        <article class="jstep" data-i="01" tabindex="-1" aria-labelledby="jt1">
+      <div class="jside">
+        <div class="jsteps">
+          <article class="jstep on" data-i="01" tabindex="-1" aria-labelledby="jt1">
           <div class="jn k">01</div>
           <h3 class="jt" id="jt1" data-en="The Inspiration" data-he="ההשראה">The Inspiration</h3>
           <p class="jp" data-en="Every piece begins with a vision." data-he="כל תכשיט מתחיל בחזון.">Every piece begins with a vision.</p>
         </article>
-        <article class="jstep" data-i="02" tabindex="-1" aria-labelledby="jt2">
+          <article class="jstep" data-i="02" tabindex="-1" aria-labelledby="jt2">
           <div class="jn k">02</div>
           <h3 class="jt" id="jt2" data-en="The First Lines" data-he="הקווים הראשונים">The First Lines</h3>
           <p class="jp" data-en="An idea takes its first shape." data-he="רעיון מקבל צורה ראשונה.">An idea takes its first shape.</p>
         </article>
-        <article class="jstep" data-i="03" tabindex="-1" aria-labelledby="jt3">
+          <article class="jstep" data-i="03" tabindex="-1" aria-labelledby="jt3">
           <div class="jn k">03</div>
           <h3 class="jt" id="jt3" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</h3>
           <p class="jp" data-en="Every curve, carefully considered." data-he="כל עקומה, נשקלת בקפידה.">Every curve, carefully considered.</p>
         </article>
-        <article class="jstep" data-i="04" tabindex="-1" aria-labelledby="jt4">
+          <article class="jstep" data-i="04" tabindex="-1" aria-labelledby="jt4">
           <div class="jn k">04</div>
           <h3 class="jt" id="jt4" data-en="The Craft" data-he="העשייה">The Craft</h3>
           <p class="jp" data-en="Brought to life, detail by detail." data-he="קורם עור וגידים, פרט אחר פרט.">Brought to life, detail by detail.</p>
         </article>
-        <article class="jstep" data-i="05" tabindex="-1" aria-labelledby="jt5">
+          <article class="jstep" data-i="05" tabindex="-1" aria-labelledby="jt5">
           <div class="jn k">05</div>
           <h3 class="jt" id="jt5" data-en="The Presentation" data-he="ההגשה">The Presentation</h3>
           <p class="jp" data-en="Considered down to the final detail." data-he="נשקל עד לפרט האחרון.">Considered down to the final detail.</p>
         </article>
-        <article class="jstep" data-i="06" tabindex="-1" aria-labelledby="jt6">
+          <article class="jstep" data-i="06" tabindex="-1" aria-labelledby="jt6">
           <div class="jn k">06</div>
           <h3 class="jt" id="jt6" data-en="Yours to Wear" data-he="שלכם לענוד">Yours to Wear</h3>
           <p class="jp" data-en="Your story begins here." data-he="הסיפור שלכם מתחיל כאן.">Your story begins here.</p>
         </article>
+        </div>
+        <nav class="jdots" aria-label="The six stages"><button type="button" class="jdot on" data-go="01" aria-label="The Inspiration"><span>01</span></button><button type="button" class="jdot" data-go="02" aria-label="The First Lines"><span>02</span></button><button type="button" class="jdot" data-go="03" aria-label="Precision in 3D"><span>03</span></button><button type="button" class="jdot" data-go="04" aria-label="The Craft"><span>04</span></button><button type="button" class="jdot" data-go="05" aria-label="The Presentation"><span>05</span></button><button type="button" class="jdot" data-go="06" aria-label="Yours to Wear"><span>06</span></button></nav>
       </div>
-      <nav class="jdots" aria-label="The six stages"><button type="button" class="jdot on" data-go="01" aria-label="The Inspiration"><span>01</span></button><button type="button" class="jdot" data-go="02" aria-label="The First Lines"><span>02</span></button><button type="button" class="jdot" data-go="03" aria-label="Precision in 3D"><span>03</span></button><button type="button" class="jdot" data-go="04" aria-label="The Craft"><span>04</span></button><button type="button" class="jdot" data-go="05" aria-label="The Presentation"><span>05</span></button><button type="button" class="jdot" data-go="06" aria-label="Yours to Wear"><span>06</span></button></nav>
     </div>
 
     <div class="jfoot rv d3">

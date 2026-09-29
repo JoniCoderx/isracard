@@ -3744,74 +3744,63 @@
      document that has none */
   .doc.ivory::before { display:none; }
 
-  /* ══ v106 — the journey ═══════════════════════════════════════════════════
-     One bracelet, six stages, from the first line to a wrist. On a wide screen
-     the photograph is the stage and holds still while the six chapters pass it;
-     on a phone there is no stage at all — the figures are moved into the
-     chapters themselves and the page simply scrolls, which is what a phone is
-     good at. The moving is done in script (the same six figures, one home at a
-     time) rather than by shipping the photographs twice. */
+  /* ══ v106 — the journey, in one frame ════════════════════════════════════
+     Six stages of one bracelet used to be six chapters, each most of a screen,
+     and a stage that held still while a reader scrolled past all of them — the
+     better part of four screens to say one thing. It is one frame now. The six
+     photographs live in the same place and cross over into each other; the
+     number, the stage and its line change with them; six marks say where you
+     are and take you anywhere. It plays on its own and stops the moment anyone
+     touches it, and the whole chapter is under a screen. */
   .jhead { max-width:58ch; }
   .jhead .p { margin-top:16px; color:var(--ink3); max-width:40ch; }
 
-  .jrn { margin-top:clamp(40px,5vw,84px); }
-  .jstage { display:none; }
-  .jshot { margin:0; }
+  .jrn { margin-top:clamp(32px,4vw,64px); display:grid; gap:clamp(22px,3vw,44px); }
+  .jstage { display:grid; }
+  .jshot { grid-area:1 / 1; margin:0; opacity:0; transition:opacity .9s var(--ease); pointer-events:none; }
+  .jshot.on { opacity:1; pointer-events:auto; }
   .jim { position:relative; overflow:hidden; border-radius:var(--r);
     background:rgba(20,19,15,.05); aspect-ratio:4/3; }
-  .jim img { width:100%; height:100%; object-fit:cover; display:block; }
-  /* the figure carries no caption: the chapter beside it (on a wide screen) or
-     under it (on a phone) already says the same sentence, and saying it twice
-     is not restraint */
+  .jim img { width:100%; height:100%; object-fit:cover; display:block;
+    transform:scale(1.035); transition:transform 5s linear; }
+  .jshot.on .jim img { transform:none; }
 
-  .jstep { padding-block:clamp(26px,3vw,40px); }
+  .jside { display:grid; gap:clamp(18px,2.4vw,30px); align-content:center; }
+  .jsteps { display:grid; }
+  .jstep { grid-area:1 / 1; opacity:0; transition:opacity .55s var(--ease); pointer-events:none; }
+  .jstep.on { opacity:1; pointer-events:auto; }
   .jn { color:var(--gold); font-size:.68rem; letter-spacing:.24em; }
   .jt { font-family:var(--serif); font-style:italic; font-weight:400;
     font-size:clamp(1.5rem,2.6vw,2.1rem); letter-spacing:0; margin:10px 0 0; line-height:1.12; }
   html[data-ns] .jt { font-style:normal; }
   .jp { margin:12px 0 0; color:var(--ink3); max-width:34ch; }
-  .jdots { display:none; }
-  .jfoot { margin-top:clamp(44px,5vw,80px); }
 
-  /* ── the phone: the figures come into the chapters and it simply scrolls ── */
-  @media (max-width:999px) {
-    .jstep { padding-block:clamp(30px,6vw,48px); }
-    .jstep .jshot { margin-bottom:22px; }
-    .jstep + .jstep { border-top:1px solid var(--line); }
-  }
+  .jdots { display:flex; flex-wrap:wrap; gap:clamp(8px,1.2vw,16px); }
+  .jdot { appearance:none; background:none; border:0; cursor:pointer; padding:9px 2px;
+    color:var(--ink3); font-size:.63rem; letter-spacing:.18em;
+    position:relative; transition:color .45s var(--ease); }
+  .jdot::after { content:""; position:absolute; left:2px; right:2px; bottom:3px; height:1px;
+    background:currentColor; transform:scaleX(0); transform-origin:left;
+    transition:transform .5s var(--ease); }
+  .jdot.on { color:var(--ink); } .jdot.on::after { transform:scaleX(1); }
+  .jdot:hover { color:var(--ink2); }
+  .jdot:focus-visible { outline:1px solid var(--gold); outline-offset:3px; }
+  html[dir="rtl"] .jdot::after { transform-origin:right; }
 
-  /* ── the wide screen: a stage that holds still ── */
+  .jfoot { margin-top:clamp(30px,3.6vw,54px); }
+
   @media (min-width:1000px) {
-    .jrn { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
-      gap:clamp(40px,5vw,96px); align-items:start; }
-    .jsteps { grid-column:1; }
-    .jstage { grid-column:2; grid-row:1 / span 2; display:block;
-      position:sticky; top:calc(var(--hh, 72px) + clamp(28px,5vh,70px)); }
-    .jstage .jshot { position:absolute; inset:0 0 auto 0; opacity:0;
-      transition:opacity .9s var(--ease); pointer-events:none; }
-    .jstage .jshot.on { opacity:1; position:relative; pointer-events:auto; }
-    .jstage .jim img { transform:scale(1.015); transition:transform 1.6s var(--ease); }
-    .jstage .jshot.on .jim img { transform:none; }
-    /* each chapter gets most of a screen so the stage has time to change */
-    .jstep { min-height:62svh; display:flex; flex-direction:column;
-      justify-content:center; padding-block:0; opacity:.34;
-      transition:opacity .7s var(--ease); }
-    .jstep.on { opacity:1; }
-    .jdots { display:flex; grid-column:1; gap:10px; margin-top:26px; }
-    .jdot { appearance:none; background:none; border:0; cursor:pointer; padding:8px 2px;
-      color:var(--ink3); font-size:.64rem; letter-spacing:.18em;
-      position:relative; transition:color .45s var(--ease); }
-    .jdot::after { content:""; position:absolute; left:2px; right:2px; bottom:2px; height:1px;
-      background:currentColor; transform:scaleX(0); transform-origin:left;
-      transition:transform .5s var(--ease); }
-    .jdot.on { color:var(--ink); } .jdot.on::after { transform:scaleX(1); }
-    .jdot:hover { color:var(--ink2); }
-    .jdot:focus-visible { outline:1px solid var(--gold); outline-offset:3px; }
-    html[dir="rtl"] .jdot::after { transform-origin:right; }
+    .jrn { grid-template-columns:minmax(0,1.24fr) minmax(0,.76fr);
+      gap:clamp(36px,4.4vw,80px); align-items:center;
+      margin-top:clamp(26px,3vw,44px); }
+    .jstage { grid-column:1; } .jside { grid-column:2; }
+    /* the frame keeps its ratio until that would push the chapter past a
+       screen; the whole point of collapsing six chapters into one was that it
+       should be a screen */
+    .jim { max-height:min(54svh, 500px); }
+    .jhead .h { margin-bottom:0; }
   }
-
   @media (prefers-reduced-motion:reduce) {
-    .jstage .jshot { transition:none; }
-    .jstage .jim img, .jstage .jshot.on .jim img { transform:none; transition:none; }
-    .jstep { opacity:1 !important; transition:none; }
+    .jshot, .jstep { transition:none; }
+    .jim img, .jshot.on .jim img { transform:none; transition:none; }
   }
