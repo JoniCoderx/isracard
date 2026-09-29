@@ -19,6 +19,7 @@ for (const W of [390, 360, 320]) {
     cards.forEach(c => { const y = Y(c).t; (rows[y] = rows[y] || []).push({
       card: Y(c), fig: Y(c.querySelector(".fig")), bd: Y(c.querySelector(".bd")),
       meta: Y(c.querySelector(".meta")), acts: Y(c.querySelector(".acts")),
+      soon: c.classList.contains("soon"),
       lone: c.classList.contains("lone"), w: Math.round(c.getBoundingClientRect().width) }); });
     return { n: cards.length, rows: Object.values(rows), gridW: Math.round(document.querySelector("#collection .pgrid").getBoundingClientRect().width) };
   });
@@ -29,8 +30,18 @@ for (const W of [390, 360, 320]) {
   /* only the top is judged: a card still to come carries no price and no link,
      so the foot of its body is an empty box edge nobody sees */
   ok(pairs.every(([a, c]) => a.bd && c.bd && a.bd.t === c.bd.t), `${W} both bodies in a row start flush under the picture`);
-  ok(pairs.every(([a, c]) => !a.meta || same(a, c, "meta")), `${W} the price sits on one line across the row`);
-  ok(pairs.every(([a, c]) => !a.acts || same(a, c, "acts")), `${W} the link sits on one line across the row`);
+  /* a piece that can be held carries a price and a link; one still to come
+     carries neither, so a row holding both cannot share those baselines and
+     should not be asked to. Only like is compared with like. */
+  const alike = pairs.filter(([a, c]) => a.soon === c.soon);
+  ok(alike.every(([a, c]) => !a.meta || same(a, c, "meta")), `${W} the price sits on one line across a row of like pieces (${alike.length} of ${pairs.length} rows)`);
+  ok(alike.every(([a, c]) => !a.acts || same(a, c, "acts")), `${W} the link sits on one line across a row of like pieces`);
+  /* and nothing still to come is placed ahead of something that can be held */
+  const flat = r.rows.flat();
+  const lastReal = flat.map(x => x.soon).lastIndexOf(false);
+  const firstSoon = flat.map(x => x.soon).indexOf(true);
+  ok(firstSoon === -1 || lastReal === -1 || firstSoon > lastReal,
+    `${W} the pieces that can be held come first (last available at ${lastReal}, first forthcoming at ${firstSoon})`);
   const singles = r.rows.filter(x => x.length === 1);
   ok(singles.every(([s]) => s.lone && s.w > r.gridW * 0.9),
     `${W} an odd card fills its row rather than leaving half of one empty (${singles.length} single${singles.length === 1 ? "" : "s"})`);

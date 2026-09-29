@@ -67,6 +67,11 @@ export const PIECES = [
   }  ,{
     id: "star", cat: "necklaces", ref: "SLV·N·001",
     widths: [800, 1200, 1600, 2000],
+    /* Not of the collection. Every other piece here carries the house mark and
+       can be made again; this is one stone, graded once, and there is no second
+       of it. Standing it in a grid of monogram pieces made the grid read as a
+       set it is not part of, so it is shown on its own below them. */
+    exceptional: true,
     name: S("The Desert <em>Star</em>", "<em>כוכב</em> המדבר"),
     plain: "The Desert Star",
     line: S("Eighteen carats, D, internally flawless. There is one.",
@@ -105,6 +110,16 @@ export const PIECES = [
    shape of the collection is visible before the photography exists — and so
    the grid never reflows when a piece lands. */
 export const SOON = [
+  /* The mark set rather than polished, on a chain that carries stones of its
+     own. The pendant's geometry is the house symbol itself — the plate in
+     media/clover is drawn from the same path the site draws, so there is a
+     setter's drawing to work from and nothing was redrawn by eye. It waits
+     here for its photography rather than going in as an illustration beside
+     the shot pieces. */
+  { cat: "necklaces", ref: "SLV·N·003", when: S("Spring", "אביב"),
+    name: S("The Knot, <em>Pavé</em>", "הקשר, <em>פאווה</em>"),
+    line: S("The mark set with 205 brilliants, on a chain that carries four more.",
+            "הסמל משובץ ב־205 יהלומים, על שרשרת שנושאת עוד ארבעה.") },
   { cat: "necklaces", ref: "SLV·N·002", when: S("Spring", "אביב"),
     name: S("The Knot <em>Pendant</em>", "<em>תליון</em> הקשר"),
     line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, תלוי בעצם הבריח על שרשרת 42 ס\"מ.") },

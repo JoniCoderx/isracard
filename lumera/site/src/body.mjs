@@ -101,7 +101,16 @@ function soonCard(x) {
 const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
-    <div class="pgrid">${PIECES.map(pieceCard).join("\n")}${SOON.map(soonCard).join("\n")}</div>`;
+    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}${SOON.map(soonCard).join("\n")}</div>
+    ${PIECES.filter(x => x.exceptional).map(x => `
+    <section class="excep rv" aria-labelledby="excep-h">
+      <div class="excephd">
+        <div class="k gold" data-en="One of one" data-he="אחד ויחיד">One of one</div>
+        <h3 class="h3" id="excep-h" data-en="Exceptional <em>pieces.</em>" data-he="תכשיטים <em>יוצאי דופן.</em>">Exceptional <em>pieces.</em></h3>
+        <p class="p" data-en="A stone that will not come again, set once. These are not made a second time." data-he="אבן שלא תחזור, משובצת פעם אחת. אלה לא נעשים פעם שנייה.">A stone that will not come again, set once. These are not made a second time.</p>
+      </div>
+      <div class="excepbody">${pieceCard(x)}</div>
+    </section>`).join("\n")}`;
 
 const SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
@@ -249,7 +258,7 @@ ${markDefs()}
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
       <h2 class="h2 sp rv" data-en="The house <em>collection.</em>" data-he="<em>הקולקציה</em> של הבית.">The house <em>collection.</em></h2>
-      <p class="p rv d2" data-en="Five pieces carrying the house mark. Two of them you can hold this week." data-he="חמישה תכשיטים שנושאים את סמל הבית. שניים מהם כבר כאן.">Five pieces carrying the house mark. Two of them you can hold this week.</p>
+      <p class="p rv d2" data-en="Pieces carrying the house mark. One of them you can hold this week." data-he="תכשיטים שנושאים את סמל הבית. אחד מהם אפשר להחזיק כבר השבוע.">Pieces carrying the house mark. One of them you can hold this week.</p>
       <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or start from nothing" data-he="או להתחיל מאפס">Or start from nothing</a></div>
     </div>
     ${COLLECTION}

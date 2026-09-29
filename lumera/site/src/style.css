@@ -3671,3 +3671,35 @@
   .sh nav a:hover::after { animation:none; }
   .glint, .tw { display:none !important; }
   .fig .sheen, .shine .sheen { display:none; }
+
+  /* ══ v104 — the one of one stands apart ═══════════════════════════════════
+     Every other piece in the chapter carries the house mark and can be made
+     again. An eighteen-carat stone graded once cannot, and standing it in a
+     grid of monogram pieces made the grid read as a set it is not part of. It
+     is shown on its own beneath them, with room around it and at a size the
+     rest of the row could not be given. */
+  .excep { margin-top:clamp(56px,7vw,110px); padding-top:clamp(40px,5vw,72px);
+    border-top:1px solid var(--line); display:grid; gap:clamp(26px,3.4vw,52px); }
+  .excephd { max-width:52ch; }
+  .excephd .h3 { font-size:clamp(1.6rem,3vw,2.5rem); line-height:1.1;
+    letter-spacing:-.015em; margin:12px 0 0; }
+  .excephd .p { margin-top:14px; color:var(--ink3); max-width:44ch; }
+  .excepbody .piece { max-width:none; }
+  /* bigger than a grid cell, but still a piece on a page rather than a wall:
+     it keeps its ratio until that would push it past the screen */
+  .excepbody .piece .fig { aspect-ratio:4/5; max-height:76svh; }
+  .excepbody .piece .fig .im { height:100%; }
+  .excepbody .piece .t { font-size:clamp(1.7rem,2.6vw,2.2rem); }
+  @media (min-width:900px) {
+    .excep { grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+      align-items:center; gap:clamp(40px,5vw,86px); }
+    .excephd { align-self:center; }
+  }
+  @media (max-width:479px) {
+    /* the grid's phone rules shrink a card to half a column; this one has a
+       column of its own and keeps its full size */
+    .excepbody .piece .fig.r11 { aspect-ratio:4/5; }
+    .excepbody .piece .t { font-size:1.45rem; }
+    .excepbody .piece .p { font-size:.88rem; }
+    .excepbody .piece .meta span:not(.price) { display:inline; }
+  }
