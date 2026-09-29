@@ -56,13 +56,17 @@ jobs:
       # before a single photograph. They are muted, looping and decorative, so
       # they are re-cut here at a phone's real pixel count with the audio track
       # dropped. The landscape masters are untouched.
+      # The first cut left them at 1.2MB and 2.0MB, still three megabytes of
+      # motion behind the words. They sit behind a scrim and under text, at 640
+      # across on a screen that is 390 points wide, so the grain they are losing
+      # here is grain nobody was going to read through a dark overlay.
       - name: The loops, cut for a phone
         run: |
           set -e
           for v in hero-loop-v inside-v; do
             [ -f "dist/v/$v.mp4" ] || continue
             before=$(stat -c%s "dist/v/$v.mp4")
-            ffmpeg -nostdin -v error -i "dist/v/$v.mp4" -an               -vf "scale='min(720,iw)':-2:flags=lanczos"               -c:v libx264 -preset slow -crf 31 -profile:v high -pix_fmt yuv420p               -movflags +faststart "dist/v/$v.tmp.mp4" -y
+            ffmpeg -nostdin -v error -i "dist/v/$v.mp4" -an               -vf "scale='min(640,iw)':-2:flags=lanczos"               -c:v libx264 -preset slow -crf 34 -profile:v high -pix_fmt yuv420p               -movflags +faststart "dist/v/$v.tmp.mp4" -y
             after=$(stat -c%s "dist/v/$v.tmp.mp4")
             if [ "$after" -gt 0 ] && [ "$after" -lt "$before" ]; then
               mv "dist/v/$v.tmp.mp4" "dist/v/$v.mp4"

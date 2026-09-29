@@ -21,8 +21,17 @@ if curl -fsSL --retry 3 -o "$T/b.mp4" "$MASTER"; then
   ffmpeg -nostdin -v error -i "$T/b.mp4" -vf "$UN" -vsync 0 -start_number 0 -c:v libwebp -quality 76 -compression_level 6 -preset picture "$OUT/xx-%02d.webp" -y
   ffmpeg -nostdin -v error -i "$T/b.mp4" -vf "$UN,scale=2560:-2:flags=lanczos" -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/x-%02d.webp" -y
   ffmpeg -nostdin -v error -i "$T/b.mp4" -vf "$UN,scale=1920:-2:flags=lanczos" -vsync 0 -start_number 0 -c:v libwebp -quality 80 -compression_level 6 -preset picture "$OUT/d-%02d.webp" -y
-  # the phone strip is a tall centre crop of the same frame, 9:16
-  ffmpeg -nostdin -v error -i "$T/b.mp4" -vf "$UN,crop=1205:2142:1317:0,scale=1080:1920:flags=lanczos" -vsync 0 -start_number 0 -c:v libwebp -quality 78 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
+  # The phone strip is a tall centre crop of the same frame, 9:16. It was cut at
+  # 1080 wide, and the canvas it is drawn into can never use that: the loader
+  # caps its buffer at devicePixelRatio 2, so a 390pt phone paints 780 across
+  # and the largest phone about 880. Every pixel past 900 was fetched over a
+  # mobile connection and thrown away — 4.8MB of a 10.5MB page, on the chapter a
+  # reader meets second. Cut to 900 the strip keeps its headroom over the widest
+  # phone, keeps all ninety-six frames, and keeps the scroll exactly as it is.
+  # Measured against the published frames, downscaled to what a phone actually
+  # paints: SSIM 0.950 where re-encoding the old setting itself scores 0.957,
+  # so all but 0.007 of that is the measurement's own double pass.
+  ffmpeg -nostdin -v error -i "$T/b.mp4" -vf "$UN,crop=1205:2142:1317:0,scale=900:1600:flags=lanczos" -vsync 0 -start_number 0 -c:v libwebp -quality 70 -compression_level 6 -preset picture "$OUT/m-%02d.webp" -y
   # the loader asks for -00 first and -95 last; if either is missing the
   # sequence is broken and it is better to fail the build than ship it
   OK=1

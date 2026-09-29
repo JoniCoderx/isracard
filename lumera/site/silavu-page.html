@@ -4017,7 +4017,30 @@
 
   /* ── the hero film, looping ── */
   var hv = $("herovid");
-  if (!reduce) { hv.src = desk() ? "/v/hero-loop.mp4" : "/v/hero-loop-v.mp4"; hv.addEventListener("canplay", function () { hv.classList.add("on"); }); var pl = hv.play(); if (pl && pl.catch) pl.catch(function () {}); }
+  /* The opening still is preloaded and is what the first screen is made of; the
+     loop is motion laid over it, and it fades in on canplay. Its source used to
+     be set here, on the first line of the first script, so a megabyte of video
+     went out to compete with the still, the fonts and the page itself over a
+     phone's first connection — and the thing it was competing with was the
+     thing the reader was waiting to see. It is asked for once the page is
+     loaded instead, and on a metered or a two-bar connection it is not asked
+     for at all: the still is already the picture. */
+  var hvSrc = null;
+  if (!reduce) {
+    hv.addEventListener("canplay", function () { hv.classList.add("on"); });
+    var conn = navigator.connection || navigator.webkitConnection || {};
+    var thin = !!conn.saveData || /(^|[^0-9])2g$/.test(conn.effectiveType || "");
+    if (!thin) {
+      hvSrc = function () {
+        if (hv.src) return;
+        hv.src = desk() ? "/v/hero-loop.mp4" : "/v/hero-loop-v.mp4";
+        var pl = hv.play(); if (pl && pl.catch) pl.catch(function () {});
+      };
+      var soon = function () { (window.requestIdleCallback || function (f) { setTimeout(f, 300); })(hvSrc, { timeout: 2000 }); };
+      if (document.readyState === "complete") soon();
+      else addEventListener("load", soon, { once: true });
+    }
+  }
 
   /* ── intro ── */
   var intro = $("intro"), header = $("header"), where = $("where"), fab = $("fab");
@@ -4033,7 +4056,9 @@
     if (entered) return; entered = true;
     intro.classList.add("gone"); window.__unlock(); header.classList.add("show"); where.classList.add("show"); document.querySelectorAll(".late").forEach(function (el) { el.classList.add("in"); }); requestAnimationFrame(function () { var q = window.__defer || []; window.__defer = { push: function (f) { f(); } }; (function step() { var f = q.shift(); if (!f) return; try { f(); } catch (err) { console.error(err); } if (q.length) requestAnimationFrame(step); })(); });
     setTimeout(function () { intro.style.display = "none"; }, 1300);
-    if (!reduce) { var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
+    /* if the reader gets through the opening before the loop has been asked
+       for, it is wanted now rather than at the next idle moment */
+    if (!reduce) { if (hvSrc) hvSrc(); var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
   function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); contract(); }
   /* the symbol becomes the header symbol: the same object, moved and scaled, then the header takes over */
@@ -6998,8 +7023,11 @@
       /* A strip of full-screen frames is a great deal of decoded bitmap to keep
          resident, and a phone has to hold the box chapter as well. When this one
          is well out of the way, let it go; the frames come back from the HTTP
-         cache the moment it is approached again. */
-      if (o.release && started && r.bottom < -innerHeight * 2.5) { frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+         cache the moment it is approached again. Out of the way is either
+         direction: a reader who scrolls back up above a chapter has left it
+         just as surely as one who scrolled down past it. */
+      var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
+      if (o.release && started && gone) { frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
       if (!started) { size(); loadAll(); }
       var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, o.still || 0.5);
@@ -7029,6 +7057,15 @@
   }
   var box = sequence({
     pin: "stonepin", canvas: "boxcv", n: 96, dir: "/f/box/", ext: ".webp",
+    /* Ninety-six full-screen frames is the largest thing on the page, and it
+       was the one strip that never let go of them: the film released its fifty
+       when it was well out of the way, the box held all ninety-six from the
+       moment a reader passed it until they closed the tab. Everything after it
+       — the catalogue, the builder, the film, the form — was asking a phone for
+       memory the second chapter was still holding. It comes back out of the
+       HTTP cache the moment the chapter is approached again, so the scroll
+       through it is unchanged; only what happens after it is. */
+    release: true,
     /* Four tiers now. The frames are cut from a 4K restoration rather than
        fetched as 2560 JPEGs that had themselves been upscaled from something
        smaller — which is why the box went soft on a wide screen: the canvas

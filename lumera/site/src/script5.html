@@ -75,8 +75,11 @@
       /* A strip of full-screen frames is a great deal of decoded bitmap to keep
          resident, and a phone has to hold the box chapter as well. When this one
          is well out of the way, let it go; the frames come back from the HTTP
-         cache the moment it is approached again. */
-      if (o.release && started && r.bottom < -innerHeight * 2.5) { frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+         cache the moment it is approached again. Out of the way is either
+         direction: a reader who scrolls back up above a chapter has left it
+         just as surely as one who scrolled down past it. */
+      var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
+      if (o.release && started && gone) { frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
       if (!started) { size(); loadAll(); }
       var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, o.still || 0.5);
@@ -106,6 +109,15 @@
   }
   var box = sequence({
     pin: "stonepin", canvas: "boxcv", n: 96, dir: "/f/box/", ext: ".webp",
+    /* Ninety-six full-screen frames is the largest thing on the page, and it
+       was the one strip that never let go of them: the film released its fifty
+       when it was well out of the way, the box held all ninety-six from the
+       moment a reader passed it until they closed the tab. Everything after it
+       — the catalogue, the builder, the film, the form — was asking a phone for
+       memory the second chapter was still holding. It comes back out of the
+       HTTP cache the moment the chapter is approached again, so the scroll
+       through it is unchanged; only what happens after it is. */
+    release: true,
     /* Four tiers now. The frames are cut from a 4K restoration rather than
        fetched as 2560 JPEGs that had themselves been upscaled from something
        smaller — which is why the box went soft on a wide screen: the canvas
