@@ -135,12 +135,75 @@
   function fabClear() {
     if (innerWidth >= 1000) return true;
     if (fabDown) return false;
-    var r = fab.getBoundingClientRect(), xs = [r.left + 5, r.left + r.width / 2, r.right - 5], ys = [r.top + 4, r.top + r.height / 2, r.bottom - 4], busy = /^(P|H1|H2|H3|H4|LI|A|BUTTON|INPUT|TEXTAREA|SELECT|LABEL|SPAN|SMALL|EM|STRONG|BLOCKQUOTE|FIGCAPTION|TD|TH|SVG|DT|DD|IMG|CANVAS|VIDEO)$/;
-    function hasText(el) { for (var c = el.firstChild; c; c = c.nextSibling) if (c.nodeType === 3 && c.nodeValue.trim()) return true; return false; }
-    for (var k = 0; k < xs.length; k++) for (var m = 0; m < ys.length; m++) { var els = document.elementsFromPoint(xs[k], ys[m]); for (var j = 0; j < els.length; j++) { var el = els[j]; if (el === fab || fab.contains(el)) continue; if (busy.test(el.tagName) || hasText(el) || el.closest(".btn, .chip, .modal, form")) return false; break; } }
+    /* the button is asked where it WILL be, not where it is. While it is away
+       it is held twelve pixels lower by a transform, and clearance measured
+       there is clearance for a box the reader never sees: it then rises those
+       twelve pixels onto the line above. The transform is taken back out. */
+    var r0 = fab.getBoundingClientRect(), dx = 0, dy = 0;
+    try { var m = new DOMMatrixReadOnly(getComputedStyle(fab).transform); dx = m.m41; dy = m.m42; } catch (e) {}
+    var r = { left: r0.left - dx, right: r0.right - dx, top: r0.top - dy, bottom: r0.bottom - dy };
+    var over = function (b) { return Math.min(r.right, b.right) - Math.max(r.left, b.left) > 2 &&
+                                     Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top) > 2; };
+    /* v97 — the old test asked the nine points of the button's box who was
+       under them, and took the first answer. A row whose words sat one level
+       further down, or a transparent layer over them, both read as clear —
+       which is how the button came to rest on the wrist size in the builder
+       and on the valuation line in the box chapter.
+       The page is walked from the top instead, and a branch is entered only
+       while its box still touches the button, so the descent is a few dozen
+       elements. A drawn line of text that overlaps the button wins. */
+    /* Pruning a branch on its own box is what kept missing things: an open
+       <details> reports the height of its summary while its list paints below
+       it, and a readout's rows sit outside the box of the block that owns
+       them. The one box that is always honest is a text node's own parent,
+       which always contains that text's line boxes. So every text node is
+       considered and only its parent prunes it. At rest, once. */
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), n, seen = 0, rg = document.createRange();
+    while ((n = w.nextNode()) && seen++ < 4000) {
+      if (!n.nodeValue || !n.nodeValue.trim()) continue;
+      var pe = n.parentElement; if (!pe || pe === fab || fab.contains(pe)) continue;
+      if (!over(pe.getBoundingClientRect())) continue;
+      var cs = getComputedStyle(pe);
+      if (cs.visibility === "hidden" || parseFloat(cs.opacity) < 0.06) continue;
+      rg.selectNodeContents(n);
+      var rects = rg.getClientRects();
+      for (var i = 0; i < rects.length; i++) {
+        var t = rects[i]; if (!over(t)) continue;
+        /* words behind something opaque — the builder panel scrolls over the
+           carat readout — are not words the button is sitting on */
+        var cx = (Math.max(r.left, t.left) + Math.min(r.right, t.right)) / 2;
+        var cy = (Math.max(r.top, t.top) + Math.min(r.bottom, t.bottom)) / 2;
+        var keep = fab.style.pointerEvents; fab.style.pointerEvents = "none";
+        var top = document.elementFromPoint(cx, cy);
+        fab.style.pointerEvents = keep;
+        if (top && (top === pe || top.contains(pe) || pe.contains(top))) return false;
+      }
+    }
+    /* a control or a picture under the button counts as much as a word */
+    for (var px = r.left + 4; px < r.right; px += 24)
+      for (var py = r.top + 4; py < r.bottom; py += 14) {
+        var hit = document.elementsFromPoint(px, py);
+        for (var hj = 0; hj < hit.length && hj < 3; hj++) {
+          var he = hit[hj]; if (he === fab || fab.contains(he)) continue;
+          if (/^(BUTTON|A|INPUT|TEXTAREA|SELECT|LABEL|IMG|VIDEO)$/.test(he.tagName)) return false;
+          if (he.classList.contains("btn") || he.classList.contains("chip")) return false;
+          break;
+        }
+      }
     return true;
   }
-  addEventListener("scroll", function () { var y = scrollY; fabDown = y > fabLastY + 2; fabLastY = y; clearTimeout(fabRest); fabRest = setTimeout(function () { fabDown = false; compass(); }, 420); }, { passive: true });
+  /* the check is made again over the second after the page comes to rest: a
+     chapter's reveal is still running when the scroll stops, and a heading
+     that arrives late would otherwise arrive under a button already shown */
+  var fabAgain = [];
+  addEventListener("scroll", function () {
+    var y = scrollY; fabDown = y > fabLastY + 2; fabLastY = y;
+    clearTimeout(fabRest); fabAgain.forEach(clearTimeout); fabAgain.length = 0;
+    fabRest = setTimeout(function () {
+      fabDown = false; compass();
+      [280, 620, 1000].forEach(function (d) { fabAgain.push(setTimeout(compass, d)); });
+    }, 420);
+  }, { passive: true });
 
   /* ── diamond dust: a few dozen specks of light drifting up through the whole page, twinkling ── */
   var dust = $("dust"), dctx = dust.getContext("2d"), motes = [], dw = 0, dh = 0, sprite = document.createElement("canvas");
@@ -351,8 +414,18 @@
         var c = b.getAttribute("data-cat");
         cats.forEach(function (o) { var on = o === b; o.classList.toggle("on", on); o.setAttribute("aria-selected", on); });
         cards.forEach(function (card) { card.hidden = !(c === "all" || card.getAttribute("data-cat") === c); });
+        lone();
       });
     });
+    /* v94 — an odd card is laid on its side rather than left holding half a
+       row of nothing. :nth-child cannot see the filter, so the count is taken
+       from what is actually on screen. */
+    function lone() {
+      var on = cards.filter(function (c) { return !c.hidden; });
+      cards.forEach(function (c) { c.classList.remove("lone"); });
+      if (on.length % 2) on[on.length - 1].classList.add("lone");
+    }
+    lone();
   })();
 
   $("pmReq").addEventListener("click", function () { closeModals(); });
@@ -560,7 +633,12 @@
       row.setAttribute("role", "button"); row.setAttribute("tabindex", "0");
       g.insertBefore(row, head); row.appendChild(head);
       var now = document.createElement("span");
-      now.className = "optnow"; row.appendChild(now);
+      now.className = "optnow";
+      /* v95 — the answer carries the question's key, so a measure can be told
+         apart from a word and set left to right in Hebrew */
+      var ch = g.querySelector(".chip[data-k]");
+      if (ch) now.setAttribute("data-k", ch.getAttribute("data-k"));
+      row.appendChild(now);
     });
     function label(g) {
       var on = g.querySelector(".chip.on");
@@ -661,5 +739,21 @@
     if (chan === "WhatsApp" && wa) { try { window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(body), "_blank", "noopener"); } catch (err) {} }
     else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
   });
+
+  /* v93 — a rail drops its fade once there is nothing left to the side. The
+     fade is the only sign that the row keeps going; at the end it is a lie. */
+  (function () {
+    var rails = [].slice.call(document.querySelectorAll(".cats, #bespoke .bjourney"));
+    if (!rails.length) return;
+    function mark(r) {
+      /* scrollLeft runs negative in rtl, so the distance travelled is its
+         magnitude either way */
+      var left = Math.abs(r.scrollLeft), max = r.scrollWidth - r.clientWidth;
+      r.classList.toggle("atend", max <= 2 || left >= max - 2);
+    }
+    rails.forEach(function (r) { mark(r); r.addEventListener("scroll", function () { mark(r); }, { passive: true }); });
+    addEventListener("resize", function () { rails.forEach(mark); }, { passive: true });
+    new MutationObserver(function () { rails.forEach(mark); }).observe(document.documentElement, { attributes: true, attributeFilter: ["dir", "data-lang"] });
+  })();
 })();
 </script>

@@ -3491,3 +3491,90 @@
     #opts .opt { margin:0; }
     #opts .opt.open { margin-block:6px 14px; }
   }
+
+  /* ══ v91 — the bar is a bar, not a veil ═══════════════════════════════════
+     Eighty-two per cent of black over a page that is still moving leaves the
+     other eighteen on the glass: BEGIN reads through the wordmark, a headline
+     crosses MENU, and the strip under the bar carries whichever chapter the
+     reader has half-left. On a phone there is no room for a bar to be both
+     transparent and legible, so here it is opaque. Both chapters keep their
+     own ground and their own hairline; the desktop keeps its blur. ───────── */
+  @media (max-width:759px) {
+    header.sh.scrolled { background:#000; box-shadow:0 1px 0 rgba(242,239,233,.13); }
+    body.onivory header.sh.scrolled { background:#f4f1e9; box-shadow:0 1px 0 rgba(20,19,15,.13); }
+    header.sh.scrolled::before { opacity:0; }
+  }
+
+  /* ══ v92 — a row of cards ends on one line ════════════════════════════════
+     Two cards sit side by side with sentences of different lengths, so PRICE
+     ON REQUEST lands at two heights and VIEW THE PIECE at two more. The row
+     already shares a top edge; this gives it a bottom one, by letting the
+     sentence take the slack and holding the price and the link to the floor
+     of the card. ──────────────────────────────────────────────────────────── */
+  @media (max-width:479px) {
+    /* the body is the row that takes the slack, so it starts flush under the
+       picture on every card instead of floating on a share of the spare */
+    .pgrid .piece { grid-template-rows:auto 1fr; align-content:stretch; }
+    .pgrid .piece .bd { display:flex; flex-direction:column; gap:4px; min-height:0; }
+    .pgrid .piece .bd .p { flex:1 1 auto; }
+    .pgrid .piece .bd .meta { margin-block-start:2px; }
+    .pgrid .piece .bd .acts { margin-block-start:auto; }
+  }
+
+  /* ══ v93 — a rail says there is more ══════════════════════════════════════
+     The filter row and the journey both run off the side of the screen, and
+     both end on a hard edge that reads as a crop rather than as a rail. A
+     short fade on the scrolling edge is the whole affordance. ─────────────── */
+  @media (max-width:759px) {
+    .cats, #bespoke .bjourney {
+      -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 34px), transparent 100%);
+      mask-image:linear-gradient(to right, #000 calc(100% - 34px), transparent 100%);
+    }
+    .cats.atend, #bespoke .bjourney.atend { -webkit-mask-image:none; mask-image:none; }
+    html[dir="rtl"] .cats, html[dir="rtl"] #bespoke .bjourney {
+      -webkit-mask-image:linear-gradient(to left, #000 calc(100% - 34px), transparent 100%);
+      mask-image:linear-gradient(to left, #000 calc(100% - 34px), transparent 100%);
+    }
+  }
+
+  /* ══ v94 — the odd card lies down ═════════════════════════════════════════
+     Five pieces in two columns leave the fifth alone beside half a row of
+     nothing. Turned on its side it fills the row: the picture keeps its half,
+     the name and the sentence take the other. ────────────────────────────── */
+  @media (max-width:479px) {
+    /* .piece.soon is laid out as a block, so the grid has to be asked for
+       again here or the columns below are inert */
+    .pgrid .piece.lone { display:grid; grid-column:1 / -1; grid-template-columns:repeat(2, minmax(0,1fr)); grid-template-rows:auto; column-gap:12px; }
+    .pgrid .piece.lone .fig { grid-area:1 / 1; }
+    .pgrid .piece.lone .bd { grid-area:1 / 2; padding-top:0; justify-content:center; }
+    /* the season badge is anchored to the card; on its side the card is twice
+       as wide as the picture it belongs to */
+    .pgrid .piece.lone.soon .swhen { left:auto; right:auto; inset-inline-start:0;
+      width:calc(50% - 6px); transform:none; justify-content:center; }
+  }
+
+  /* ══ v95 — a measure is read left to right in Hebrew too ══════════════════
+     "6 ct" and "17 cm" are a number and a Latin unit. Set in a right-to-left
+     paragraph the two swap and the chips read "ct 6" and "cm 17". The same
+     isolation the specification figures already carry is given to the weight
+     and wrist chips, and to the folded answer that repeats them. ─────────── */
+  html[dir="rtl"] .chip[data-k="ct"], html[dir="rtl"] .chip[data-k="wrist"],
+  html[dir="rtl"] .optnow[data-k="ct"], html[dir="rtl"] .optnow[data-k="wrist"] {
+    direction:ltr; unicode-bidi:isolate;
+  }
+
+  /* ══ v96 — the furniture comes down with the frame ════════════════════════
+     v86 sized these controls against the 348x228 a 390 phone gives the
+     builder. On a 320 screen the pinned frame is 278x180, and the same tabs
+     and the same stage button take a fifth of it — the piece is drawn inside
+     what is left. Below 360 they come down again. The reach does not: the
+     44px target is carried by the ::after in v86, which is measured from the
+     centre and is not affected by the box shrinking. ─────────────────────── */
+  @media (max-width:359px) {
+    #stripwrap .vt { padding:2px; left:6px; top:6px; }
+    #stripwrap .vtb { padding:5px 7px; font-size:.52rem; letter-spacing:.07em; }
+    html[data-ns] #stripwrap .vtb { font-size:.62rem; letter-spacing:0; }
+    #stripwrap .stbtn { right:6px; bottom:6px; padding:0 10px; min-height:29px;
+      font-size:.52rem; letter-spacing:.07em; border-radius:9px; }
+    html[data-ns] #stripwrap .stbtn { font-size:.62rem; letter-spacing:0; }
+  }
