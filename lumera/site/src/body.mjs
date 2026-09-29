@@ -33,6 +33,7 @@ export const seal = (cls) => `<svg class="seal${cls ? " " + cls : ""}" viewBox="
 export const emblem = (cls) => mark(cls);
 export const gemUse = () => mark("sm", "b");
 import { PIECES, CATS, SOON } from "./pieces.mjs";
+import { POLICIES } from "./policies.mjs";
 export const wmk = (cls) => logo(cls);
 const W = [800, 1200, 1600, 2000];
 /* a contained photograph: 4:5, 1:1 or 16:9, in four widths */
@@ -443,6 +444,8 @@ ${markDefs()}
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לבית">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
+    <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
+      `<a href="/${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div>
     <div class="fbot k rv"><span>© SILAVU MMXXVI</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>

@@ -3703,3 +3703,43 @@
     .excepbody .piece .p { font-size:.88rem; }
     .excepbody .piece .meta span:not(.price) { display:inline; }
   }
+
+  /* ══ v105 — the house documents, kept quiet ═══════════════════════════════
+     Six things a reader looks for before they write to a concierge: what
+     becomes of what they say, what they are agreeing to, what the house stands
+     behind, how to keep the piece, what proves it, and how it arrives. They
+     belong in the footer and they belong small — one line under the columns,
+     not a seventh column competing with them. */
+  .ftrust { display:flex; flex-wrap:wrap; gap:6px clamp(16px,2.4vw,34px);
+    margin-top:clamp(30px,4vw,54px); padding-top:clamp(18px,2.2vw,26px);
+    border-top:1px solid var(--line); }
+  .ftrust a { color:var(--ink3); text-decoration:none; font-size:.66rem;
+    letter-spacing:.14em; text-transform:uppercase; transition:color .45s var(--ease); }
+  .ftrust a:hover { color:var(--ink2); }
+  html[data-ns] .ftrust a { letter-spacing:.02em; text-transform:none; font-size:.8rem; }
+  @media (max-width:559px) { .ftrust { gap:10px 18px; } .ftrust a { font-size:.64rem; } }
+
+  /* the documents themselves: one column, nothing else on the page */
+  .doc { max-width:62ch; margin:0 auto; padding:clamp(90px,12vh,150px) var(--pad) clamp(70px,9vh,120px); }
+  .doc .back { display:inline-block; margin-bottom:clamp(30px,5vh,56px); color:var(--ink3);
+    text-decoration:none; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; }
+  .doc .back:hover { color:var(--ink); }
+  .doc h1 { font-size:clamp(2rem,4.4vw,3.2rem); line-height:1.06; letter-spacing:-.02em; margin:0; }
+  .doc .lede { margin:16px 0 0; color:var(--ink3); font-size:clamp(1rem,1.5vw,1.15rem); max-width:44ch; }
+  .doc section { margin-top:clamp(34px,4.6vh,56px); }
+  .doc h2 { font-size:.7rem; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--ink3); margin:0 0 12px; font-weight:400; }
+  html[data-ns] .doc h2 { letter-spacing:.03em; text-transform:none; font-size:.86rem; }
+  .doc p { margin:0; line-height:1.72; color:var(--ink2); }
+  .doc .docfoot { margin-top:clamp(56px,8vh,96px); padding-top:26px;
+    border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:10px 26px; }
+  .doc .docfoot a { color:var(--ink3); text-decoration:none; font-size:.66rem;
+    letter-spacing:.14em; text-transform:uppercase; }
+  .doc .docfoot a:hover { color:var(--ink); }
+
+  /* a document page is one column on the house's paper and nothing else */
+  html:has(.doc), body:has(.doc) { background:#f4f1e9; }
+  .doc.ivory { min-height:100svh; background:linear-gradient(180deg, #f4f1e9 0%, #efeadf 60%, #e9e3d6 100%); }
+  /* the chapter transition band belongs between chapters, not at the top of a
+     document that has none */
+  .doc.ivory::before { display:none; }

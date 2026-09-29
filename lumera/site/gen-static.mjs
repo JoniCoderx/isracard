@@ -178,7 +178,40 @@ ${fontLinks}
 const SRCDIR = path.dirname(path.resolve(src));
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</html>\n");
+let POLICY_SLUGS = [];
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
+
+/* The house documents. Real pages at real addresses rather than overlays on
+   the one page: a reader who wants to know what happens to what they tell you
+   should be able to link to the answer, and a crawler should be able to find
+   it. They share the site's head so they share its type and its palette, and
+   they carry nothing else — no header, no chapters, no bar. */
+{
+  const { POLICIES } = await import("./src/policies.mjs");
+  POLICY_SLUGS = POLICIES.map(d => d.slug);
+  const others = d => POLICIES.filter(o => o.slug !== d.slug)
+    .map(o => `<a href="/${o.slug}/">${o.title.en}</a>`).join("");
+  for (const d of POLICIES) {
+    const dir = path.join(outDir, d.slug);
+    fs.mkdirSync(dir, { recursive: true });
+    const dhead = head
+      .replace(/<title>[^<]*<\/title>/, `<title>${d.title.en} · SILAVU</title>`)
+      .replace(/(<meta name="description" content=")[^"]*/, `$1${d.lede.en}`)
+      .replace(base + "/", base + "/" + d.slug + "/");
+    /* the documents get the site's own type and palette: the stylesheet lives
+       in a <style> block inside the page body, not in the shared head */
+    const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
+    const body = styleBlock + `<main class="doc ivory">
+<a class="back" href="/">← SILAVU</a>
+<h1>${d.title.en}</h1>
+<p class="lede">${d.lede.en}</p>
+${d.body.map(([h, t]) => `<section><h2>${h.en}</h2><p>${t.en}</p></section>`).join("\n")}
+<div class="docfoot">${others(d)}</div>
+</main>`;
+    fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
+  }
+  console.log("documents:", POLICIES.map(d => d.slug).join(" "));
+}
 /* the extra languages travel as data, fetched only when someone picks one */
 {
   const from = path.join(SRCDIR, "lang");
@@ -200,7 +233,11 @@ fs.writeFileSync(path.join(outDir, "sitemap.xml"),
   + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
   + "  <url>\n    <loc>" + base + "/</loc>\n"
   + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
-  + "    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n");
+  + "    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n"
+  + POLICY_SLUGS.map(sl => "  <url>\n    <loc>" + base + "/" + sl + "/</loc>\n"
+      + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
+      + "    <changefreq>yearly</changefreq>\n    <priority>0.3</priority>\n  </url>\n").join("")
+  + "</urlset>\n");
 /* A custom domain is one file away. Drop the bought domain into
    lumera/site/CNAME and GitHub Pages serves the site from it; everything
    above then needs the origin passed to match, which the workflow does. */
