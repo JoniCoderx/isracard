@@ -3578,3 +3578,20 @@
       font-size:.52rem; letter-spacing:.07em; border-radius:9px; }
     html[data-ns] #stripwrap .stbtn { font-size:.62rem; letter-spacing:0; }
   }
+
+  /* ══ v99 — the estimate says what it is ═══════════════════════════════════
+     A figure under a configurator reads as a price unless it is told not to.
+     "Indicative estimate" is the label; this is the sentence that keeps it
+     honest — the stones are chosen and graded before there is a number, and
+     what is available in a grade moves. Set quiet and small: it is a condition
+     of the figure, not a disclaimer shouted at a reader. */
+  .estnote { margin:12px 0 0; max-width:46ch; font-size:.74rem; line-height:1.55;
+    color:var(--ink3); letter-spacing:.005em; }
+  @media (max-width:759px) { .estnote { font-size:.72rem; max-width:none; } }
+
+  /* ══ the clocks are drawn only once they are right ════════════════════════
+     They used to be served as a dashed placeholder and wait for the script.
+     A house that
+     does not know the time in its own two rooms is worse than a house that
+     does not show a clock, so until the figure is real it is not drawn. */
+  .clock.pending .c { visibility:hidden; }

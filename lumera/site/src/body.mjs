@@ -328,7 +328,7 @@ ${markDefs()}
           <button class="chip" data-k="metal" data-v="platinum"><span class="sw" style="background:#dfe1e6"></span><span data-en="Platinum" data-he="פלטינה">Platinum</span></button></div></div>
       </div>
       <div class="total">
-        <div class="tot"><div class="k" data-en="Indicative estimate" data-he="הערכה ראשונית">Indicative estimate</div><div class="pricerow">${seal("sealsm")}<div class="price" id="est" data-aed="28500">AED 28,500</div></div><div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div><div class="row k" style="margin-top:10px"><span id="sumStones">—</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumWrist">17 cm</span></div></div>
+        <div class="tot"><div class="k" data-en="Indicative estimate" data-he="הערכה ראשונית">Indicative estimate</div><div class="pricerow">${seal("sealsm")}<div class="price" id="est" data-aed="28500">AED 28,500</div></div><div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div><div class="row k" style="margin-top:10px"><span id="sumStones">—</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumWrist">17 cm</span></div><p class="estnote" data-en="The final figure is set once the stones are chosen and certified, and depends on what is available in that grade at the time." data-he="המחיר הסופי נקבע לאחר בחירת האבנים והנפקת התעודות, ותלוי בזמינות באותה דרגה באותו מועד.">The final figure is set once the stones are chosen and certified, and depends on what is available in that grade at the time.</p></div>
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet</a>
       </div>
       <div class="playbar">
@@ -380,12 +380,28 @@ ${markDefs()}
         <div class="k gold rv ol" data-en="05 · Enquire" data-he="05 · פנייה">05 · Enquire</div>
         <h2 class="h2 sp rv" style="margin-top:14px" data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו מה <em>יש לכם בראש.</em>">Tell us what <em>you have in mind.</em></h2>
         <div class="clocks rv d2" style="margin-top:26px">
-          <div class="clock on"><div class="c" id="clkDXB">--:--</div><div class="k" data-en="Dubai" data-he="דובאי">Dubai</div></div>
-          <div class="clock on"><div class="c" id="clkTLV">--:--</div><div class="k" data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</div></div>
+          <div class="clock on pending"><div class="c" id="clkDXB"></div><div class="k" data-en="Dubai" data-he="דובאי">Dubai</div></div>
+          <div class="clock on pending"><div class="c" id="clkTLV"></div><div class="k" data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</div></div>
         </div>
+        <script>/* The two clocks carried a dashed placeholder in the markup and
+          waited for the page's own script to replace it, so the document as
+          served said the house did not know what time it was. They are filled here, the moment
+          the markup exists, before anything else is parsed; the main script
+          keeps them to the minute afterwards. If this cannot run at all the row
+          stays .pending and the time is not drawn — a city and its hours with
+          no clock reads as a house, a broken clock reads as a broken page. */
+          (function () { try {
+            var f = function (tz) { return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date()); };
+            [["clkDXB", "Asia/Dubai"], ["clkTLV", "Asia/Jerusalem"]].forEach(function (p) {
+              var el = document.getElementById(p[0]); if (!el) return;
+              el.textContent = f(p[1]);
+              if (el.parentElement) el.parentElement.classList.remove("pending");
+            });
+          } catch (e) {} })();
+        </script>
         <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form." data-he="עונה אדם, לא טופס.">A person replies, not a form.</p>
       </div>
-      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="">
+      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="">
         <div class="fields">
           <div class="field"><input id="fName" type="text" autocomplete="name" required><label for="fName" data-en="Name" data-he="שם">Name</label></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
@@ -393,11 +409,11 @@ ${markDefs()}
           <div class="field"><textarea id="fMsg" rows="2"></textarea><label for="fMsg" data-en="How can we help" data-he="איך נוכל לעזור">How can we help</label></div>
           <div class="chan"><span class="k" data-en="Reply by" data-he="מענה ב־">Reply by</span>
             <button type="button" class="chip" data-ch="WhatsApp" hidden>WhatsApp</button>
-            <button type="button" class="chip" data-ch="Call" data-en="Call" data-he="שיחה" hidden>Call</button>
+            <button type="button" class="chip" data-ch="Call" data-en="Call the house" data-he="התקשרו לבית" hidden>Call the house</button>
             <button type="button" class="chip on" data-ch="Email" data-en="Email" data-he="אימייל">Email</button></div>
         </div>
-        <button class="btn solid" type="submit" style="justify-self:start" data-en="Continue by email" data-he="המשיכו במייל">Continue by email</button>
-        <p class="done" data-en="Your message is ready in your mail app. If not, write to concierge@silavu.com." data-he="ההודעה שלכם מוכנה באפליקציית המייל. אם לא, כתבו ל־concierge@silavu.com.">Your message is ready in your mail app. If not, write to concierge@silavu.com.</p>
+        <button class="btn solid" id="csend" type="submit" style="justify-self:start" data-en="Continue by email" data-he="המשיכו במייל">Continue by email</button>
+        <p class="done" id="cdone" data-en="Your message is ready in your mail app. If not, write to concierge@silavu.com." data-he="ההודעה שלכם מוכנה באפליקציית המייל. אם לא, כתבו ל־concierge@silavu.com.">Your message is ready in your mail app. If not, write to concierge@silavu.com.</p>
       </form>
       <div class="soc rv d3" data-socials></div>
     </div>

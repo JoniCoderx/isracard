@@ -496,6 +496,18 @@
      still be undefined on the first call — guard rather than reorder, since
      the reorder would only move the same hazard somewhere else */
   function T(en) { var d = typeof dicts !== "undefined" && dicts ? dicts[lang] : null; return (d && d[en]) || (lang === "he" ? null : en); }
+  /* What one element should read in the language now showing. The whole-page
+     pass is this applied to every [data-en]; anything that rewrites its own
+     data-en later — the enquiry button, which names the channel a reader
+     picked — asks for the same answer rather than keeping its own copy of the
+     rule. */
+  function say(el) {
+    var en = el.getAttribute("data-en");
+    if (lang === "he") return el.getAttribute("data-he");
+    var d = typeof dicts !== "undefined" && dicts ? dicts[lang] : null;
+    return d && d[en] != null ? d[en] : en;
+  }
+  window.__say = say;
 
   function paint() {
     var def = langDef(lang), d = dicts[lang];
@@ -508,11 +520,7 @@
     else document.documentElement.removeAttribute("data-ns");
     try { clocks(); } catch (e) {}
     document.querySelectorAll("[data-en]").forEach(function (el) {
-      var en = el.getAttribute("data-en"), v;
-      if (lang === "he") v = el.getAttribute("data-he");
-      else if (d) v = d[en] != null ? d[en] : en;
-      else v = en;
-      if (v != null) el.innerHTML = v;
+      var v = say(el); if (v != null) el.innerHTML = v;
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
@@ -748,11 +756,39 @@
     }
   }
   clocks(); setInterval(clocks, 15000);
-  var form = $("cform"), chan = "Email", mail = form.getAttribute("data-mail") || "concierge@silavu.com", wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
-  (function () { var w = form.querySelector('.chip[data-ch="WhatsApp"]'); if (w && wa) { w.hidden = false; } })();
+  var form = $("cform"), chan = "Email", mail = form.getAttribute("data-mail") || "concierge@silavu.com",
+      wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, ""),
+      tel = (form.getAttribute("data-tel") || "").replace(/[^0-9+]/g, "");
+  (function () {
+    var w = form.querySelector('.chip[data-ch="WhatsApp"]'); if (w && wa) w.hidden = false;
+    var c = form.querySelector('.chip[data-ch="Call"]'); if (c && tel) c.hidden = false;
+  })();
+  /* v98 — the button says what it is about to do. Whichever way a reader asks
+     to be answered, the last thing they press used to say "Continue by email",
+     which is either wrong or a small lie about where they are going next. The
+     label and the confirmation follow the choice, in every language: the pair
+     is written onto data-en/data-he and the language pass is asked to run over
+     those two elements again, so a change of language keeps them. */
+  var CHAN = {
+    Email:    { en: "Continue by email",   he: "המשיכו במייל",
+                doneEn: "Your message is ready in your mail app. If not, write to concierge@silavu.com.",
+                doneHe: "ההודעה שלכם מוכנה באפליקציית המייל. אם לא, כתבו ל־concierge@silavu.com." },
+    WhatsApp: { en: "Continue on WhatsApp", he: "המשיכו בוואטסאפ",
+                doneEn: "Your message is ready in WhatsApp. If it did not open, write to concierge@silavu.com.",
+                doneHe: "ההודעה שלכם מוכנה בוואטסאפ. אם הוא לא נפתח, כתבו ל־concierge@silavu.com." },
+    Call:     { en: "Request a call",       he: "בקשו שיחה",
+                doneEn: "We will call you back. If you prefer, write to concierge@silavu.com.",
+                doneHe: "נחזור אליכם טלפונית. ואם נוח יותר, כתבו ל־concierge@silavu.com." }
+  };
+  function chanLabel() {
+    var c = CHAN[chan] || CHAN.Email, b = $("csend"), d = $("cdone");
+    if (b) { b.setAttribute("data-en", c.en); b.setAttribute("data-he", c.he); }
+    if (d) { d.setAttribute("data-en", c.doneEn); d.setAttribute("data-he", c.doneHe); }
+    [b, d].forEach(function (el) { if (el && window.__say) el.innerHTML = window.__say(el); });
+  }
   form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); el.parentElement.classList.remove("err"); }); el.addEventListener("blur", f); });
   form.addEventListener("click", function (e) {
-    var c = e.target.closest(".chip[data-ch]"); if (c) { form.querySelectorAll(".chip[data-ch]").forEach(function (x) { x.classList.remove("on"); }); c.classList.add("on"); chan = c.getAttribute("data-ch"); return; }
+    var c = e.target.closest(".chip[data-ch]"); if (c) { form.querySelectorAll(".chip[data-ch]").forEach(function (x) { x.classList.remove("on"); }); c.classList.add("on"); chan = c.getAttribute("data-ch"); chanLabel(); return; }
   });
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -762,6 +798,7 @@
     var body = [name.value, $("fCity").value, contact.value, "Reply by " + chan, "", msgEl.value].join("\n");
     form.classList.add("sent");
     if (chan === "WhatsApp" && wa) { try { window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(body), "_blank", "noopener"); } catch (err) {} }
+    else if (chan === "Call" && tel) { try { location.href = "tel:" + tel; } catch (err) {} }
     else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
   });
 
