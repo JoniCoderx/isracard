@@ -383,10 +383,20 @@
     /* v94 — an odd card is laid on its side rather than left holding half a
        row of nothing. :nth-child cannot see the filter, so the count is taken
        from what is actually on screen. */
+    /* v107 — finished pieces and pieces still on the bench are counted apart:
+       the grid is told how many of each are showing, so one result is laid
+       out as a feature rather than a small card beside empty columns, and
+       the bench gets its own quieter row under its own heading */
+    var grid = document.querySelector(".pgrid"), soonh = grid && grid.querySelector(".soonh");
     function lone() {
-      var on = cards.filter(function (c) { return !c.hidden; });
+      var on = cards.filter(function (c) { return !c.hidden; }),
+          done = on.filter(function (c) { return !c.classList.contains("soon"); }),
+          soon = on.filter(function (c) { return c.classList.contains("soon"); });
       cards.forEach(function (c) { c.classList.remove("lone"); });
-      if (on.length % 2) on[on.length - 1].classList.add("lone");
+      if (done.length % 2) done[done.length - 1].classList.add("lone");
+      if (soon.length % 2) soon[soon.length - 1].classList.add("lone");
+      if (grid) { grid.setAttribute("data-n", done.length); grid.setAttribute("data-s", soon.length); }
+      if (soonh) soonh.hidden = !soon.length;
     }
     lone();
   })();

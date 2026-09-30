@@ -3807,3 +3807,56 @@
     .jshot, .jstep { transition:none; }
     .jim img, .jshot.on .jim img { transform:none; transition:none; }
   }
+
+  /* ══ v107 — the collection fits what it is showing ═══════════════════════
+     Five across on a desktop squeezed three finished pieces and two blank
+     plates into cards a quarter of a screen wide, and a filter that left one
+     piece left one small card beside four empty columns. The grid is now told
+     how many pieces are showing (data-n) and how many are still on the bench
+     (data-s). Finished pieces take the row between them: three across, two
+     across, or one laid out as a feature, picture and text side by side. The
+     bench is a quieter row under its own heading, as flat plates rather than
+     cards that pretend to hold a photograph. ─────────────────────────────── */
+  .pgrid .soonh { grid-column:1 / -1; display:flex; align-items:center; gap:14px; margin-top:clamp(6px,1.4vw,18px);
+    color:var(--ink3); font-size:.62rem; letter-spacing:.2em; }
+  .pgrid .soonh i { flex:1; height:1px; background:var(--line); }
+  .pgrid .soonh[hidden] { display:none; }
+  @media (min-width:900px) {
+    .pgrid { grid-template-columns:repeat(12, minmax(0,1fr)) !important; gap:clamp(20px,2.2vw,34px) clamp(18px,2vw,30px); }
+    .pgrid .piece:not(.soon) { grid-column:span 4; }
+    .pgrid[data-n="2"] .piece:not(.soon) { grid-column:span 6; }
+    .pgrid[data-n="1"] .piece:not(.soon) { grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+      grid-template-rows:auto; column-gap:clamp(28px,4vw,64px); align-items:center; }
+    .pgrid[data-n="1"] .piece:not(.soon) .fig { max-width:600px; width:100%; justify-self:end; }
+    .pgrid[data-n="1"] .piece:not(.soon) .bd { padding:0; max-width:46ch; gap:10px; }
+    .pgrid[data-n="1"] .piece:not(.soon) .t { font-size:clamp(1.6rem,2.3vw,2.2rem); }
+    .pgrid[data-n="1"] .piece:not(.soon) .p { font-size:1rem; }
+    .pgrid[data-n="1"] .piece:not(.soon) .meta { font-size:.66rem; }
+    .pgrid[data-n="1"] .piece:not(.soon) .acts .lnk { font-size:.66rem; }
+    /* the bench: a plate, the mark small at its head, the name and the season */
+    .pgrid .piece.soon { grid-column:span 6; display:grid; grid-template-columns:clamp(96px,9vw,132px) minmax(0,1fr);
+      grid-template-rows:auto; column-gap:clamp(16px,1.8vw,26px); align-items:center; }
+    .pgrid[data-s="1"] .piece.soon { grid-column:1 / -1; max-width:760px; }
+    .pgrid .piece.soon .sfig { aspect-ratio:1/1; border-radius:12px; }
+    .pgrid .piece.soon .sfig .sm { width:34%; }
+    .pgrid .piece.soon .bd { padding:0; gap:5px; }
+    .pgrid .piece.soon .t { font-size:clamp(1.02rem,1.2vw,1.2rem); }
+    .pgrid .piece.soon .p { font-size:.84rem; max-width:52ch; }
+  }
+  /* on a tablet the odd card lies down too, as it does on a phone */
+  @media (min-width:480px) and (max-width:899px) {
+    .pgrid .piece.lone { display:grid; grid-column:1 / -1; grid-template-columns:repeat(2, minmax(0,1fr)); grid-template-rows:auto; column-gap:20px; align-items:center; }
+    .pgrid .piece.lone .fig { grid-area:1 / 1; }
+    .pgrid .piece.lone .bd { grid-area:1 / 2; padding-top:0; justify-content:center; }
+    .pgrid .piece.lone.soon .swhen { left:auto; right:auto; inset-inline-start:0; width:calc(50% - 10px); transform:none; justify-content:center; }
+  }
+  /* on a phone and a tablet the bench is a list of slim plates, full width,
+     not two blank squares the size of the photographs above them */
+  @media (max-width:899px) {
+    .pgrid .piece.soon, .pgrid .piece.soon.lone { grid-column:1 / -1; display:grid; grid-template-columns:clamp(78px,22vw,110px) minmax(0,1fr);
+      grid-template-rows:auto; column-gap:14px; align-items:center; }
+    .pgrid .piece.soon .sfig, .pgrid .piece.soon.lone .fig { grid-area:auto; aspect-ratio:1/1; border-radius:10px; }
+    .pgrid .piece.soon .bd, .pgrid .piece.soon.lone .bd { grid-area:auto; padding:0; gap:3px; }
+    .pgrid .piece.soon .sfig .sm { width:30%; }
+    .pgrid .piece.soon .swhen, .pgrid .piece.lone.soon .swhen { bottom:6px; inset-inline-start:auto; inset-inline-end:auto; left:50%; right:auto; width:auto; transform:translateX(-50%); font-size:.6rem; padding:3px 7px; }
+  }

@@ -102,7 +102,7 @@ function soonCard(x) {
 const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
-    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}${SOON.map(soonCard).join("\n")}</div>
+    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<div class="k soonh"><span data-en="In the workshop" data-he="בסדנה">In the workshop</span><i></i></div>${SOON.map(soonCard).join("\n")}</div>
     ${PIECES.filter(x => x.exceptional).map(x => `
     <section class="excep rv" aria-labelledby="excep-h">
       <div class="excephd">
