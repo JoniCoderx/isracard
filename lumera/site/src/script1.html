@@ -260,14 +260,18 @@
     var sh = gShots[gAt]; if (!sh) return;
     var wide = sh.w && sh.w.length ? sh.w : [800, 1200, 1600, 2000];
     var img = $("pmImg");
-    img.src = "img/" + sh.i + "-" + wide[Math.min(1, wide.length - 1)] + ".jpg";
+    /* the next photograph fades in once it has arrived, rather than the old
+       one blinking out and the new one painting in strips */
+    var nsrc = "img/" + sh.i + "-" + wide[Math.min(1, wide.length - 1)] + ".jpg";
+    if (img.getAttribute("src") !== nsrc) { img.classList.add("ld"); img.onload = img.onerror = function () { img.classList.remove("ld"); }; }
+    img.src = nsrc;
     img.srcset = wide.map(function (w) { return "img/" + sh.i + "-" + w + ".jpg " + w + "w"; }).join(", ");
     img.sizes = "(min-width:900px) 52vw, 92vw";
     img.alt = (lang === "he" ? sh.h : sh.a) || sh.a || "";
     $("pmIm").classList.remove("two", "flip");
     $("pmImg2").removeAttribute("src");
     var th = $("pmThumbs").children;
-    for (var i = 0; i < th.length; i++) th[i].classList.toggle("on", i === gAt);
+    for (var i = 0; i < th.length; i++) { th[i].classList.toggle("on", i === gAt); th[i].setAttribute("aria-selected", i === gAt ? "true" : "false"); }
     var many = gShots.length > 1;
     $("pmPrev").hidden = !many; $("pmNext").hidden = !many;
     $("pmThumbs").hidden = !many;
@@ -275,6 +279,15 @@
   function gGo(d) { if (!gShots.length) return; gAt = (gAt + d + gShots.length) % gShots.length; gPaint(); }
   $("pmPrev").addEventListener("click", function (e) { e.stopPropagation(); gGo(-1); });
   $("pmNext").addEventListener("click", function (e) { e.stopPropagation(); gGo(1); });
+  /* the arrow keys turn the photographs while the piece window is open; in
+     Hebrew and Arabic the next photograph is to the left */
+  addEventListener("keydown", function (e) {
+    if (!$("pmodal").classList.contains("open") || gShots.length < 2) return;
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var t = e.target; if (t && /INPUT|TEXTAREA|SELECT/.test(t.tagName)) return;
+    var fwd = (e.key === "ArrowRight") !== (document.documentElement.dir === "rtl");
+    e.preventDefault(); gGo(fwd ? 1 : -1);
+  });
   $("pmThumbs").addEventListener("click", function (e) {
     var b = e.target.closest("[data-i]"); if (!b) return;
     gAt = +b.getAttribute("data-i"); gPaint();

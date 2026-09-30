@@ -1,0 +1,14 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport:{width:1440,height:900} });
+await ctx.addInitScript(() => { localStorage.setItem("silavu-seen","1"); });
+const p = await ctx.newPage(); await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn").catch(()=>{});
+await p.evaluate(() => { const e=document.querySelector(".pgrid"); scrollTo(0, e.getBoundingClientRect().top+scrollY-120); }); await p.waitForTimeout(2500);
+const card = await p.$(".pgrid .piece:not(.soon)");
+const st = () => p.evaluate(() => { const c=document.querySelector(".pgrid .piece:not(.soon)"), f=c.querySelector(".fig"), im=f.querySelector(".im img"), dt=f.querySelector(".im.dt"), r=f.getBoundingClientRect(); return { figT:getComputedStyle(f).transform, figTop:Math.round(r.top), img:getComputedStyle(im).transform, dt:getComputedStyle(dt).opacity, sig:getComputedStyle(c.querySelector(".k.sig")).letterSpacing, sheen: !!f.querySelector(".sheen") && getComputedStyle(f.querySelector(".sheen")).display }; });
+console.log("rest", JSON.stringify(await st()));
+const bb = await card.boundingBox(); await p.mouse.move(bb.x+bb.width/2, bb.y+100); await p.waitForTimeout(1300);
+console.log("hover", JSON.stringify(await st()));
+await p.mouse.move(5,450); await p.waitForTimeout(1300);
+console.log("out", JSON.stringify(await st()));
+await b.close();

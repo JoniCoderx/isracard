@@ -3881,3 +3881,42 @@
      shadow would show through them and grey the gold, so it takes a filter */
   .hcap .h em, .hcap .h em * { text-shadow:none; }
   .hcap .h em { filter:drop-shadow(0 0 14px rgba(0,0,0,.5)); }
+
+  /* ══ v109 — one hover, everywhere ════════════════════════════════════════
+     Nine passes had each added a hover to the cards: a lift, a lift with a
+     scale, a sheen sweeping across, lines drawing round the frame, the label
+     spreading its letters, and a pull back to the first photograph while the
+     ticker was flipping to the second. Stacked, they read as a twitch. There
+     is one gesture now: the frame stays where it is, the photograph eases in
+     by four percent and cross-fades to the other view of the same piece. The
+     name is underlined. Nothing else moves. ─────────────────────────────── */
+  html body .piece .fig, html body .card .fig,
+  html body .pgrid .piece:not(.soon):hover .fig.r11, html body .pgrid .piece.soon:hover .sfig,
+  html body .piece:hover .fig, html body .card:hover .fig { transform:none; }
+  html body .fig .sheen, html body .fig .lt { display:none; }
+  html body .pgrid .piece .fig.r11 .wrapln, html body .pgrid .piece .sfig .wrapln { display:none; }
+  html body .pgrid .piece:not(.soon):hover .k.sig { letter-spacing:.1em; }
+  html body .pgrid .piece .k.sig { transition:none; }
+  html body .pgrid .piece.soon:hover .sfig .sm { transform:none; opacity:.34; }
+  html body .fig .im img { transition:transform .9s var(--ease) !important; }
+  html body .fig.swp .im.dt { transition:opacity .7s var(--ease); }
+  @media (hover:hover) and (pointer:fine) {
+    html body .piece:not(.soon):hover .fig .im img, html body .card:hover .fig .im img,
+    html body .fig:hover .im img { transform:scale(1.04) translateY(var(--py,0)) !important; }
+    /* a revealed frame already rests at 1.04 under the drift, so it eases on from there */
+    html body .piece:not(.soon):hover .fig.rv.in .im img, html body .card:hover .fig.rv.in .im img,
+    html body .fig.rv.in:hover .im img { transform:scale(1.08) translateY(var(--py,0)) !important; }
+    html body .piece:hover .fig.swp .im.dt, html body .fig.swp:hover .im.dt { opacity:1; }
+    html body .piece:hover .fig.swp, html body .fig.swp:hover { --da:var(--off); --db:var(--on); }
+    html body .piece:hover .fig.swp.swl, html body .fig.swp.swl:hover { --on:rgba(20,19,15,.82); --off:rgba(20,19,15,.26); --dr:rgba(255,255,255,.55); }
+    html body .pgrid .piece:not(.soon):hover .fig.r11 { border-color:rgba(20,19,15,.18); }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    html body .fig .im img, html body .fig:hover .im img,
+    html body .piece:not(.soon):hover .fig .im img, html body .card:hover .fig .im img { transform:none !important; transition:none !important; }
+    html body .fig.swp .im.dt { transition:none; }
+  }
+  /* the piece window's photograph fades in when it has arrived */
+  #pmImg { transition:opacity .35s var(--ease); }
+  #pmImg.ld { opacity:.15; }
+  @media (prefers-reduced-motion:reduce) { #pmImg { transition:none; } }

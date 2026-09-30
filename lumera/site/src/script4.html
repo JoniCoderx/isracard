@@ -179,7 +179,7 @@
     figs.forEach(function (f) { io.observe(f); });
     /* 3.4s a frame, each card a third of a beat behind the one before it */
     function beat() {
-      if (vis > 0) { n++; figs.forEach(function (f, i) { f.classList.toggle("flip", ((n + i) % 3) === 0); }); }
+      if (vis > 0) { n++; figs.forEach(function (f, i) { if (!f.matches(":hover")) f.classList.toggle("flip", ((n + i) % 3) === 0); }); }
       t = setTimeout(beat, 3400);
     }
     t = setTimeout(beat, 2600);
