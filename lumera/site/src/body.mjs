@@ -190,12 +190,6 @@ ${markDefs()}
       <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
-      <dl class="hmeta">
-        <div><dt class="k" data-en="Setting" data-he="שיבוץ">Setting</dt><dd data-en="By hand" data-he="ביד">By hand</dd></div>
-        <div><dt class="k" data-en="Stones" data-he="אבנים">Stones</dt><dd dir="ltr">D–F · VVS+</dd></div>
-        <div><dt class="k" data-en="Graded" data-he="דירוג">Graded</dt><dd dir="ltr">GIA · IGI</dd></div>
-        <div><dt class="k" data-en="Made" data-he="נעשה">Made</dt><dd data-en="Dubai" data-he="בדובאי">Dubai</dd></div>
-      </dl>
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
     </div>
   </section>
@@ -204,7 +198,7 @@ ${markDefs()}
     <div class="hsig rv">${mark("hmark")}</div>
     <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="הבית · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
     <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="סילאבו חותמת <em>על כל תכשיט שיוצא ממנה.</em>">SILAVU signs <em>every piece it makes.</em></h2>
-    <p class="p rv d3" data-en="Every stone graded by GIA or IGI. Every piece set by hand in Dubai. Every certificate carries your name." data-he="כל אבן מדורגת ב־GIA או IGI. כל תכשיט משובץ ביד בדובאי. כל תעודה נושאת את שמכם.">Stones graded by GIA and IGI, set by hand in Dubai, and a certificate that carries your name.</p>
+    <p class="p rv d3" data-en="Nothing leaves the bench unsigned. Every piece carries the mark, and is made once — for you." data-he="שום דבר לא יוצא מהסדנה בלי חתימה. כל תכשיט נושא את הסמל, ונעשה פעם אחת — בשבילכם.">Nothing leaves the bench unsigned. Every piece carries the mark, and is made once — for you.</p>
   </div>
 </section>
 

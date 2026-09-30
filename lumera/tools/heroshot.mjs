@@ -1,6 +1,6 @@
 import { chromium } from "playwright-core";
 const OUT="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/";
-const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--disable-background-networking","--disable-component-update"] });
 for (const [t,w,h,l] of [["d",1440,900,"he"],["m",390,844,"en"]]) {
   const ctx = await b.newContext({ viewport:{width:w,height:h} });
   await ctx.addInitScript(l => { localStorage.setItem("silavu-lang", l); localStorage.setItem("silavu-seen","1"); }, l);
