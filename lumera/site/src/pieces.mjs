@@ -28,7 +28,7 @@ export const PIECES = [
     name: S("The <em>Knot</em>", "<em>הקשר</em>"),
     plain: "The Knot",
     line: S("The house mark, cast whole and polished, on a chain that never comes off.",
-            "סמל הבית, יצוק בשלמותו ומלוטש, על שרשרת שלא יורדת."),
+            "סמל הבית, יצוק בשלמותו ומלוטש, על שרשרת שאין צורך להסיר."),
     shots: [
       { img: "knot-flat",  alt: S("The Knot bracelet laid open, the SILAVU mark at its centre", "צמיד הקשר פרוש, סמל סילאבו במרכזו") },
       { img: "knot-worn",  alt: S("Three Knot bracelets stacked on a wrist", "שלושה צמידי הקשר על פרק יד") },
@@ -45,11 +45,11 @@ export const PIECES = [
       [S("Weight", "משקל"),  S("4.6 g", "4.6 גרם")]
     ],
     story: S("It is the house mark, cast in one piece rather than soldered from two, so the ribbon really does pass through itself and the light runs the whole way round without a seam to stop it. It is small on purpose — twelve millimetres across — because this is the bracelet you forget you are wearing. The chain is rolo, heavy enough to hang straight, and the clasp carries the name on a plaque you can read.",
-             "זה סמל הבית, יצוק בחתיכה אחת ולא מולחם משתיים, כך שהסרט באמת עובר דרך עצמו והאור רץ סביבו בלי תפר שיעצור אותו. הוא קטן בכוונה — שנים־עשר מילימטר — כי זה הצמיד ששוכחים שעונדים. השרשרת היא רולו, כבדה מספיק כדי ליפול ישר, והסגר נושא את השם על לוחית שאפשר לקרוא."),
+             "זה סמל הבית, יצוק בחתיכה אחת ולא מולחם משני חלקים, כך שהסרט באמת עובר דרך עצמו והאור זורם סביבו בלי תפר שיקטע אותו. הוא קטן בכוונה — שנים־עשר מילימטר — כי זה הצמיד ששוכחים שהוא על היד. השרשרת בשזירת רולו, כבדה מספיק כדי ליפול ישר, והסגר נושא את השם על לוחית חרוטה."),
     stones: S("None as standard: this one is about the metal. The centre takes 0.42 ct of E VS pav&eacute; to order, thirty-one stones set by hand, and the certificates travel with it.",
-              "ללא אבנים בגרסה הרגילה: כאן הסיפור הוא המתכת. המרכז מקבל 0.42 ct של פאווה E VS לפי הזמנה, שלושים ואחת אבנים משובצות ביד, והתעודות נוסעות איתו."),
+              "בגרסה הבסיסית אין אבנים: כאן המתכת היא העיקר. לפי הזמנה אפשר לשבץ במרכז 0.42 ct של פאווה בדרגת E VS — שלושים ואחת אבנים משובצות ביד, בליווי תעודות."),
     care: S("Four to six weeks from the order, because it is cut, cast and polished for you. Resizing, cleaning and a check of the clasp are on the house, for as long as you own it.",
-            "ארבעה עד שישה שבועות מההזמנה, כי הוא נחתך, נוצק ומלוטש בשבילכם. שינוי מידה, ניקוי ובדיקת סגר — על חשבון הבית, כל עוד הוא שלכם."),
+            "ארבעה עד שישה שבועות מההזמנה, כי הוא נוצק ומלוטש במיוחד עבורכם. שינוי מידה, ניקוי ובדיקת הסגר — על חשבון הבית, כל עוד התכשיט שלכם."),
     specs: [
       [S("Reference", "מק\"ט"),        S("SLV·B·001", "SLV·B·001")],
       [S("Metal", "מתכת"),             S("18K white gold", "זהב לבן 18K")],            /* PROVISIONAL */
@@ -69,12 +69,12 @@ export const PIECES = [
     widths: [640, 900, 1254],
     name: S("The Knot <em>Ring</em>", "<em>טבעת</em> הקשר"),
     plain: "The Knot Ring",
-    line: S("The house mark set in pavé, on a band that carries the stones the whole way round.",
-            "סמל הבית משובץ בפאווה, על טבעת שנושאת את האבנים לכל אורכה."),
+    line: S("The house mark set in pavé, on a band paved to the shoulders.",
+            "סמל הבית משובץ בפאווה, על טבעת שמשובצת עד הכתפיים."),
     /* the gallery runs the way a jewellery house runs one: the piece on white,
        then worn, then the angle, then the mark close, then the signature */
     shots: [
-      { img: "ring-front",  alt: S("The Knot Ring, the SILAVU mark in pavé on a pavé band", "טבעת הקשר, סמל סילאבו בפאווה") },
+      { img: "ring-front",  alt: S("The Knot Ring, the SILAVU mark in pavé on a band paved to the shoulders", "טבעת הקשר, סמל סילאבו בפאווה על טבעת שמשובצת עד הכתפיים") },
       { img: "ring-worn",   alt: S("The Knot Ring worn on the hand", "טבעת הקשר ענודה על היד") },
       { img: "ring-side",   alt: S("The Knot Ring from three quarters", "טבעת הקשר בזווית שלושת־רבעי") },
       { img: "ring-macro",  alt: S("The SILAVU mark on the Knot Ring, close", "סמל סילאבו על טבעת הקשר, מקרוב") },
@@ -86,16 +86,16 @@ export const PIECES = [
       [S("Size", "מידה"),    S("EU 47–58", "EU 47–58")],
       [S("Setting", "שיבוץ"), S("Pavé", "פאווה")]
     ],
-    story: S("The mark again, but set rather than polished: the ribbon is followed by stones the whole way round, and the two open loops are left bare so the eye still reads the knot passing through itself. The band carries pavé to either shoulder and then runs plain, so it sits flat against the next finger. Inside it, where only you see it, the house signs its name.",
-             "שוב הסמל, אבל משובץ ולא מלוטש: האבנים עוקבות אחרי הסרט לכל אורכו, ושתי הלולאות הפתוחות נשארות חשופות. בפנים, במקום שרק אתם רואים, הבית חותם את שמו."),
-    stones: S("Brilliants throughout, matched for colour across the mark and the band so the line does not change tone where the pavé meets the shoulder. The count and the total weight travel on the certificate.",
-              "בריליאנטים לכל אורכה, מותאמים בצבע בין הסמל לטבעת. הכמות והמשקל הכולל נוסעים עם התעודה."),
+    story: S("The mark again, but set rather than polished: stones follow its ribbon from end to end, and the two open loops are left bare so the eye still reads the knot passing through itself. The band is paved down both shoulders and runs plain and polished underneath, so it sits flat against the next finger. Inside it, where only you see it, the house signs its name.",
+             "שוב הסמל, אבל משובץ ולא מלוטש: האבנים עוקבות אחרי הסרט שלו מקצה לקצה, ושתי הלולאות הפתוחות נשארות חלקות, כך שהעין עדיין רואה את הקשר עובר דרך עצמו. הטבעת משובצת לאורך שתי הכתפיים וחלקה ומלוטשת בחלקה התחתון, כך שהיא יושבת שטוח ליד האצבע הסמוכה. בפנים, במקום שרק אתם רואים, הבית חותם את שמו."),
+    stones: S("Brilliants on the mark and down both shoulders, matched for colour so the tone does not change where the mark meets the band. The count and the total weight are stated on the certificate.",
+              "יהלומי בריליאנט על הסמל ולאורך שתי הכתפיים, מותאמים בצבע כך שהגוון לא משתנה במעבר מהסמל לטבעת. מספר האבנים והמשקל הכולל מצוינים בתעודה."),
     care: S("Four to six weeks from the order. Sized to the half, and resizing, cleaning and a check of every stone under the loupe are on the house for as long as you own it.",
-            "ארבעה עד שישה שבועות מההזמנה. במידות של חצי, ושינוי מידה, ניקוי ובדיקת כל אבן — על חשבון הבית."),
+            "ארבעה עד שישה שבועות מההזמנה. מידות בחצאים; שינוי מידה, ניקוי ובדיקת כל אבן — על חשבון הבית, כל עוד הטבעת שלכם."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·R·001", "SLV·R·001")],
       [S("Metal", "מתכת"),          S("18K white gold", "זהב לבן 18K")],
-      [S("Setting", "שיבוץ"),       S("Pavé, grain-set by hand", "פאווה, משובץ ביד")],
+      [S("Setting", "שיבוץ"),       S("Pavé on the mark and shoulders, grain-set by hand", "פאווה על הסמל והכתפיים, משובץ ביד")],
       [S("Motif", "המוטיב"),        S("The SILAVU mark", "סמל סילאבו")],
       [S("Size", "מידה"),           S("EU 47–58, to the half", "EU 47–58, בחצאי מידות")],
       [S("Signature", "חתימה"),     S("SILAVU, engraved inside the band", "סילאבו, חרוט בתוך הטבעת")],
@@ -115,25 +115,25 @@ export const PIECES = [
       { img: "necklace-detail", alt: S("The pendant and the chain either side of it", "התליון והשרשרת משני צדיו") },
       { img: "necklace-macro",  alt: S("The SILAVU mark in pavé, close", "סמל סילאבו בפאווה, מקרוב") }
     ],
-    meta: [S("18K white gold", "זהב לבן 18K"), S("42 cm", "42 סמ"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
+    meta: [S("18K white gold", "זהב לבן 18K"), S("42 cm", "42 ס\"מ"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
       [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
-      [S("Length", "אורך"),  S("42 cm", "42 סמ")],
+      [S("Length", "אורך"),  S("42 cm", "42 ס\"מ")],
       [S("Setting", "שיבוץ"), S("Pavé", "פאווה")]
     ],
     story: S("The same mark as the bracelet and the ring, set rather than polished. The stones follow the ribbon the whole way round and the two open loops are left bare, so the knot still reads as passing through itself rather than as a shape filled in. The chain is not plain either: it carries stones of its own, set in rubover at intervals either side of the pendant, so the line to the throat is not empty.",
-             "אותו סמל כמו בצמיד ובטבעת, משובץ ולא מלוטש. האבנים עוקבות אחרי הסרט לכל אורכו ושתי הלולאות הפתוחות נשארות חשופות, כך שהקשר עדיין נקרא כעובר דרך עצמו. גם השרשרת אינה חלקה: היא נושאת אבנים משלה, במרווחים משני צדי התליון."),
+             "אותו סמל כמו בצמיד ובטבעת, משובץ ולא מלוטש. האבנים עוקבות אחרי הסרט לכל אורכו ושתי הלולאות הפתוחות נשארות חלקות, כך שהקשר עדיין נראה עובר דרך עצמו. גם השרשרת משובצת: יהלומים בשיבוץ סגור, במרווחים משני צדי התליון."),
     stones: S("Brilliants across the mark and in rubover along the chain, matched for colour so the tone does not change between the pendant and the stones that lead to it. The count and the total weight travel on the certificate.",
-              "בריליאנטים על הסמל ובשיבוץ סגור לאורך השרשרת, מותאמים בצבע. הכמות והמשקל הכולל נוסעים עם התעודה."),
+              "יהלומי בריליאנט על הסמל ובשיבוץ סגור לאורך השרשרת, מותאמים בצבע. מספר האבנים והמשקל הכולל מצוינים בתעודה."),
     care: S("Four to six weeks from the order. Shortening the chain, cleaning and a check of every setting under the loupe are on the house for as long as you own it.",
-            "ארבעה עד שישה שבועות מההזמנה. קיצור השרשרת, ניקוי ובדיקת כל שיבוץ — על חשבון הבית."),
+            "ארבעה עד שישה שבועות מההזמנה. קיצור השרשרת, ניקוי ובדיקת כל שיבוץ — על חשבון הבית, כל עוד התכשיט שלכם."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·N·003", "SLV·N·003")],
       [S("Metal", "מתכת"),          S("18K white gold", "זהב לבן 18K")],
       [S("Setting", "שיבוץ"),       S("Pavé on the mark, rubover on the chain", "פאווה על הסמל, שיבוץ סגור על השרשרת")],
       [S("Motif", "המוטיב"),        S("The SILAVU mark", "סמל סילאבו")],
-      [S("Chain", "שרשרת"),          S("Cable, with set stations", "כבל, עם תחנות משובצות")],
-      [S("Length", "אורך"),           S("42 cm", "42 סמ")],
+      [S("Chain", "שרשרת"),          S("Cable, with set stations", "שרשרת כבל עם תחנות משובצות")],
+      [S("Length", "אורך"),           S("42 cm", "42 ס\"מ")],
       [S("Made", "ייצור"),          S("Dubai, by hand", "דובאי, בעבודת יד")]
     ],
     reserve: true
@@ -148,7 +148,7 @@ export const PIECES = [
     name: S("The Desert <em>Star</em>", "<em>כוכב</em> המדבר"),
     plain: "The Desert Star",
     line: S("Eighteen carats, D, internally flawless. There is one.",
-            "שמונה־עשר קראט, D, ללא רבב פנימי. יש אחת."),
+            "שמונה־עשר קראט, צבע D, ללא פגמים פנימיים. יש רק אחת."),
     shots: [
       { img: "star-worn", alt: S("The Desert Star worn at the throat", "כוכב המדבר ענוד על הצוואר") },
       { img: "star",      alt: S("The Desert Star, an eighteen carat brilliant in a radiating halo", "כוכב המדבר, בריליאנט 18 קראט בהילה קורנת") }
@@ -156,24 +156,24 @@ export const PIECES = [
     meta: [S("18.06 ct", "18.06 ct"), S("D · IF", "D · IF"), S("Platinum", "פלטינה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
       [S("Centre stone", "אבן מרכזית"), S("18.06 ct", "18.06 ct")],
-      [S("Grade", "דירוג"),             S("D · Internally flawless", "D · ללא רבב פנימי")],
+      [S("Grade", "דירוג"),             S("D · Internally flawless", "D · ללא פגמים פנימיים")],
       [S("Metal", "מתכת"),              S("Platinum", "פלטינה")]
     ],
     story: S("Eighteen carats is where a diamond stops being a stone and starts being a decision. This one came out of the rough at D colour and internally flawless, which is roughly one stone in several thousand at this weight, and the house bought it before it had a design. The halo is tapered baguettes, cut to fall away from the centre so nothing competes with it. There is one. There will not be another.",
-             "שמונה־עשר קראט הם הנקודה שבה יהלום מפסיק להיות אבן ומתחיל להיות החלטה. זה יצא מהרַף בצבע D וללא רבב פנימי, בערך אבן אחת מכמה אלפים במשקל הזה, והבית קנה אותה לפני שהיה עיצוב. ההילה היא בגטים מתחדדים, מלוטשים כך שייפלו מהמרכז ולא יתחרו בו. יש אחת. לא תהיה עוד."),
+             "בשמונה־עשר קראט יהלום מפסיק להיות אבן והופך להחלטה. האבן הזו יצאה מהגלם בצבע D וללא פגמים פנימיים — בערך אחת מכמה אלפים במשקל הזה — והבית רכש אותה עוד לפני שנולד העיצוב. ההילה עשויה בגטים מתחדדים, מלוטשים כך שיובילו את העין אל המרכז ולא יתחרו בו. יש רק אחת, ולא תהיה נוספת."),
     stones: S("One 18.06 ct round brilliant, D colour, internally flawless, with its GIA report. Forty-two tapered baguettes around it, F–G VS, matched for length within a tenth of a millimetre.",
-              "בריליאנט עגול אחד של 18.06 ct, צבע D, ללא רבב פנימי, עם תעודת GIA שלו. ארבעים ושניים בגטים מתחדדים סביבו, F–G VS, מותאמים באורך בדיוק של עשירית מילימטר."),
+              "בריליאנט עגול אחד במשקל 18.06 ct, צבע D, ללא פגמים פנימיים, עם תעודת GIA משלו. סביבו ארבעים ושניים בגטים מתחדדים בדרגת F–G VS, מותאמים באורכם בדיוק של עשירית מילימטר."),
     care: S("It exists. A private viewing in Dubai or Tel Aviv, and it travels to you with a courier and an appraiser, not in a parcel.",
-            "הוא קיים. פגישה פרטית בדובאי או בתל אביב, והוא מגיע אליכם עם שליח ושמאי, לא בחבילה."),
+            "התכשיט קיים ומוכן. הצפייה בפגישה פרטית בדובאי או בתל אביב, והמסירה על ידי שליח ושמאי — לא בחבילה."),
     specs: [
       [S("Reference", "מק\"ט"),   S("SLV·N·001", "SLV·N·001")],
       [S("Centre stone", "אבן מרכזית"), S("18.06 ct round brilliant", "18.06 ct בריליאנט עגול")],
       [S("Colour", "צבע"),        S("D", "D")],
-      [S("Clarity", "ניקיון"),     S("Internally flawless", "ללא רבב פנימי")],
+      [S("Clarity", "ניקיון"),     S("Internally flawless", "ללא פגמים פנימיים")],
       [S("Certificate", "תעודה"),  S("GIA", "GIA")],
       [S("Metal", "מתכת"),        S("Platinum", "פלטינה")],
       [S("Halo", "הילה"),         S("Tapered baguettes, radiating", "בגטים מתחדדים, קורנים")],
-      [S("Made", "ייצור"),         S("Dubai, by hand. Once.", "דובאי, בעבודת יד. פעם אחת.")]
+      [S("Made", "ייצור"),         S("Dubai, by hand. Once.", "דובאי, בעבודת יד. עותק יחיד.")]
     ],
     reserve: true
   }
@@ -185,10 +185,10 @@ export const PIECES = [
 export const SOON = [
   { cat: "necklaces", ref: "SLV·N·002", when: S("Spring", "אביב"),
     name: S("The Knot <em>Pendant</em>", "<em>תליון</em> הקשר"),
-    line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, תלוי בעצם הבריח על שרשרת 42 ס\"מ.") },
+    line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, נח על עצם הבריח, על שרשרת באורך 42 ס\"מ.") },
   { cat: "earrings",  ref: "SLV·E·001", when: S("Spring", "אביב"),
     name: S("The Knot <em>Earrings</em>", "<em>עגילי</em> הקשר"),
-    line: S("Close to the lobe. Nothing swings, nothing catches.", "צמודים לתנוך. שום דבר לא מתנדנד, שום דבר לא נתפס.") },];
+    line: S("Close to the lobe. Nothing swings, nothing catches.", "צמודים לתנוך. שום דבר לא מתנדנד ושום דבר לא נתפס.") },];
 /* The Line is not in this list on purpose. It is the only piece in the house
    you build rather than choose, and it has a chapter of its own further down
    the page — carrying it here as well made the catalogue six long and said the

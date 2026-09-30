@@ -80,10 +80,12 @@ const NEW_PRICE = `  var CUTS = {
     var stones = perCt * b.ct, metal = b.metal === "platinum" ? 9500 : 6500, making = 9000 + (c.set === "channel" ? 1500 : 0) + spec.n * 40;
     var total = stones + metal + making;
     estEl.setAttribute("data-aed", Math.round(total / 500) * 500); estEl.textContent = window.__money ? window.__money.fmt(Math.round(total / 500) * 500) : "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");
-    sumStones.textContent = spec.n + " × " + each.toFixed(2) + " ct · " + c[lang === "he" ? "he" : "en"]; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";
-    $("eachCt").innerHTML = each.toFixed(2) + "<small>ct</small>";
+    /* the weight of one stone is the total shared out and rounded, so it is
+       marked as approximate: 44 × 0.14 is 6.16, not the 6 ct chosen */
+    sumStones.textContent = spec.n + " × ≈" + each.toFixed(2) + " ct · " + (lang === "he" ? c.he : (T(c.en) || c.en)); sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";
+    $("eachCt").innerHTML = "≈" + each.toFixed(2) + "<small>ct</small>";
     $("eachMm").innerHTML = (c.ratio === 1 ? spec.L.toFixed(1) : spec.L.toFixed(1) + "×" + spec.W.toFixed(1)) + "<small>mm</small>";
-    $("eachLbl").textContent = lang === "he" ? "כל אחת מ־" + spec.n + " האבנים" : "Each of the " + spec.n + " stones";
+    $("eachLbl").textContent = ({ he: "כל אחת מ־" + spec.n + " האבנים, בקירוב", fr: "Chacune des " + spec.n + " pierres, environ", ru: "Каждый из " + spec.n + " камней, примерно", ar: "كل حجر من " + spec.n + " حجرًا، تقريبًا" })[lang] || "Each of the " + spec.n + " stones, approx.";
     $("lineLen").innerHTML = b.wrist + "<small>cm</small>";
     var st = $("stone1"), k = 3.78 * 2.2, pw = Math.max(18, Math.min(64, spec.L * k)), ph = Math.max(10, Math.min(64, spec.W * k)); st.style.width = pw + "px"; st.style.height = ph + "px"; st.style.borderRadius = SHAPE[b.cut] || "50%"; st.style.clipPath = CLIP[b.cut] || "none";
     window.__lineSpec = spec; try { window.dispatchEvent(new Event("silavu:build")); } catch (e) {}

@@ -729,8 +729,10 @@
   function lineSpecText() {
     var b = window.__build || {}, rtl = document.documentElement.dir === "rtl";
     var L = function (x) { return rtl ? "\u2066" + x + "\u2069" : x; };
+    /* "44 × ≈0.14 ct = 6 ct": the count, each stone's share marked as
+       approximate, and the total that was actually chosen */
     var ss = $("sumStones").textContent.split(" · ");
-    return (ss[1] ? ss[1] + " · " : "") + L(ss[0] + " (" + b.ct + " ct)") + " · " + oname(b.origin) + " · " + mname(b.metal) + " · " + L(b.wrist + " cm") + " · " + L($("est").textContent);
+    return (ss[1] ? ss[1] + " · " : "") + L(ss[0] + " = " + b.ct + " ct") + " · " + oname(b.origin) + " · " + mname(b.metal) + " · " + L(b.wrist + " cm") + " · " + L($("est").textContent);
   }
   function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); fit(); }
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
@@ -785,7 +787,7 @@
   var CHAN = {
     Email:    { en: "Continue by email",   he: "המשיכו במייל",
                 doneEn: "Your message is ready in your mail app. If not, write to concierge@silavu.com.",
-                doneHe: "ההודעה שלכם מוכנה באפליקציית המייל. אם לא, כתבו ל־concierge@silavu.com." },
+                doneHe: "ההודעה מוכנה באפליקציית הדואר שלכם. אם היא לא נפתחה, כתבו אל concierge@silavu.com." },
     WhatsApp: { en: "Continue on WhatsApp", he: "המשיכו בוואטסאפ",
                 doneEn: "Your message is ready in WhatsApp. If it did not open, write to concierge@silavu.com.",
                 doneHe: "ההודעה שלכם מוכנה בוואטסאפ. אם הוא לא נפתח, כתבו ל־concierge@silavu.com." },

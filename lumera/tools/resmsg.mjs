@@ -1,5 +1,5 @@
 import { chromium } from "playwright-core";
-const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--disable-background-networking","--disable-component-update","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
 const out = {};
 for (const lang of ["en","he"]) {
   const p = await b.newPage({ viewport:{width:1280,height:800} }); const errs=[]; p.on("pageerror", e=>errs.push(e.message));
