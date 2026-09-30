@@ -83,7 +83,7 @@ function pieceCard(p) {
           <div class="t">${T("span", "nm", p.name.en, p.name.he)}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
           <div class="row k meta">${meta}</div>
-          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-en="Reserve" data-he="שריון">Reserve</a></div></div>
+          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריון">Reserve</a></div></div>
       </article>`;
 }
 
@@ -334,7 +334,7 @@ ${markDefs()}
     </div>
 
     <div class="jfoot rv d3">
-      <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-en="Create your SILAVU" data-he="צרו את סילאבו שלכם">Create your SILAVU</a>
+      <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהזמנה אישית" data-en="Create your SILAVU" data-he="צרו את סילאבו שלכם">Create your SILAVU</a>
     </div>
     </div>
   </section>

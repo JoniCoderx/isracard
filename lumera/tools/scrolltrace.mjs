@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport:{width:1280,height:760} });
+await ctx.addInitScript(() => { localStorage.setItem("silavu-seen","1"); });
+const p = await ctx.newPage(); await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(500);
+const vw = (await p.$$(".pgrid .piece:not(.soon) .lnk.vw"))[1]; await vw.scrollIntoViewIfNeeded(); await vw.click(); await p.waitForTimeout(900);
+await p.evaluate(()=>{ window.__tr=[]; const t0=performance.now(); const f=()=>{ window.__tr.push([Math.round(performance.now()-t0), Math.round(scrollY), Math.round(document.getElementById("concierge").getBoundingClientRect().top)]); }; const iv=setInterval(()=>{ f(); if (performance.now()-t0>5000) clearInterval(iv); }, 100); });
+await p.click("#pmRes"); await p.waitForTimeout(5200);
+const tr = await p.evaluate(()=>window.__tr); console.log(tr.filter((x,i)=>true).map(x=>x.join(":")).join("  "));
+await b.close();

@@ -118,6 +118,11 @@
   document.addEventListener("click", function (e) {
     var a = e.target.closest('a[href^="#"]'); if (!a) return; var el = document.querySelector(a.getAttribute("href")); if (!el) return;
     e.preventDefault(); setMenu(false);
+    /* a link inside an open window (the piece window's "Reserve this piece" and
+       "Book a private viewing") leaves the window: it closes first and gives
+       the scroll back, so the page underneath can actually move to the form */
+    var fromModal = a.closest(".modal.open");
+    if (fromModal) { mReturn = null; closeModals(); }
     var r = el.getBoundingClientRect(), top = el.id === "hero" ? 0 : scrollY + r.top;
     if (a.hasAttribute("data-piece")) {
       /* a reservation is a different sentence from a viewing */
@@ -125,9 +130,24 @@
       var lead = res
         ? (lang === "he" ? "אשמח לשריין: " : T("I would like to reserve: "))
         : (lang === "he" ? "אשמח לצפייה פרטית: " : T("I would like a private viewing of: "));
-      prefill(lead + a.getAttribute("data-piece"));
+      var pn = a.getAttribute("data-piece");
+      prefill(lead + ((lang === "he" && a.getAttribute("data-piece-he")) || T(pn) || pn));
     }
-    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? "instant" : "smooth" });
+    /* a long way is travelled at once: gliding through the film and the box
+       on the way made every chapter between render, and the page took three
+       seconds to arrive */
+    var far = Math.abs(top - scrollY) > innerHeight * 3;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce || far ? "instant" : "smooth" });
+    /* arriving at the form from a piece puts the cursor where the reader
+       starts: their name, or the send button once the name is in */
+    if (el.id === "concierge" && (fromModal || a.hasAttribute("data-piece"))) {
+      /* on a touch screen focusing a field would throw the keyboard up over
+         the form the reader has not seen yet, so the form itself takes focus */
+      var nm = $("fName"), touch = matchMedia("(hover: none)").matches, go;
+      if (touch) { go = $("cform"); if (go && !go.hasAttribute("tabindex")) go.setAttribute("tabindex", "-1"); }
+      else go = nm && !nm.value.trim() ? nm : $("csend");
+      if (go) try { go.focus({ preventScroll: true }); } catch (err) { go.focus(); }
+    }
   });
 
   /* ── the compass: which chapter you are in, and how far along ── */
@@ -380,6 +400,8 @@
     var sw = $("pmSpecWrap"); if (sw) sw.open = innerWidth >= 900;
     $("pmReq").setAttribute("data-piece", pmPiece);
     $("pmRes").setAttribute("data-piece", pmPiece);
+    var pmHe = btn ? btn.getAttribute("data-piece-he") || "" : "";
+    $("pmReq").setAttribute("data-piece-he", pmHe); $("pmRes").setAttribute("data-piece-he", pmHe);
     /* the try-on draws a tennis line on a photograph; it has nothing to say
        about a chain bracelet or a pendant */
     $("pmTry").hidden = !pc.hasAttribute("data-tryon");
@@ -425,7 +447,7 @@
     lone();
   })();
 
-  $("pmReq").addEventListener("click", function () { closeModals(); });
+  /* pmReq and pmRes are closed by the anchor handler, which leaves the window before it scrolls */
   $("pmIm").addEventListener("click", function () { if (this.classList.contains("two")) this.classList.toggle("flip"); });
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
