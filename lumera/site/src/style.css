@@ -3920,3 +3920,13 @@
   #pmImg { transition:opacity .35s var(--ease); }
   #pmImg.ld { opacity:.15; }
   @media (prefers-reduced-motion:reduce) { #pmImg { transition:none; } }
+  /* v110 — square photographs sit in a square frame in the piece window */
+  html body .mbox .mim.sq { aspect-ratio:1/1; height:auto; max-height:none; }
+  @media (max-width:899px) { html body .mbox .mim.sq { max-height:52svh; width:auto; margin-inline:auto; } }
+  /* the close control sits over the photograph, which is often white: it
+     carries its own dark plate so it reads over any frame */
+  html body #pmodal .mclose2 { background:rgba(12,12,11,.78); color:#f4f1e9; border-color:rgba(244,241,233,.35);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  html body #pmodal .mclose2:hover, html body #pmodal .mclose2:focus-visible { background:rgba(12,12,11,.92); border-color:rgba(244,241,233,.7); }
+  /* three figures in a two-column grid left a blank cell: the odd one spans */
+  @media (max-width:899px) { html body .mkeys .mk:last-child:nth-child(odd) { grid-column:1 / -1; } }

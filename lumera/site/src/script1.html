@@ -263,7 +263,7 @@
     /* the next photograph fades in once it has arrived, rather than the old
        one blinking out and the new one painting in strips */
     var nsrc = "img/" + sh.i + "-" + wide[Math.min(1, wide.length - 1)] + ".jpg";
-    if (img.getAttribute("src") !== nsrc) { img.classList.add("ld"); img.onload = img.onerror = function () { img.classList.remove("ld"); }; }
+    if (img.getAttribute("src") !== nsrc) { img.classList.add("ld"); img.onload = img.onerror = function () { img.classList.remove("ld"); sq(); }; }
     img.src = nsrc;
     img.srcset = wide.map(function (w) { return "img/" + sh.i + "-" + w + ".jpg " + w + "w"; }).join(", ");
     img.sizes = "(min-width:900px) 52vw, 92vw";
@@ -276,6 +276,9 @@
     $("pmPrev").hidden = !many; $("pmNext").hidden = !many;
     $("pmThumbs").hidden = !many;
   }
+  /* a square photograph gets a square frame, so nothing of the piece is cut
+     away at the sides to fill a taller one */
+  function sq() { var i = $("pmImg"); if (i.naturalWidth) $("pmIm").classList.toggle("sq", Math.abs(i.naturalWidth / i.naturalHeight - 1) < 0.06); }
   function gGo(d) { if (!gShots.length) return; gAt = (gAt + d + gShots.length) % gShots.length; gPaint(); }
   $("pmPrev").addEventListener("click", function (e) { e.stopPropagation(); gGo(-1); });
   $("pmNext").addEventListener("click", function (e) { e.stopPropagation(); gGo(1); });
