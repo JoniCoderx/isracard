@@ -3979,3 +3979,10 @@
   body:not(.onivory) header.sh:not(.scrolled) nav a { color:#fbf9f4; }
   body:not(.onivory) header.sh:not(.scrolled) #langBtn,
   body:not(.onivory) header.sh:not(.scrolled) .btn { color:#fbf9f4; background:rgba(0,0,0,.34); border-color:rgba(251,249,244,.38); }
+  /* v115 — without WebGL the Line is an illustration, and says so */
+  html body .glfb.drawn img { display:none; }
+  .glfbtag { position:absolute; z-index:2; left:50%; bottom:14px; transform:translateX(-50%); white-space:nowrap;
+    padding:6px 12px; border-radius:999px; background:rgba(0,0,0,.55); border:1px solid rgba(244,241,233,.18);
+    color:#e9e4d8; font-size:max(.68rem, 11px); letter-spacing:.12em; }
+  html[data-ns] .glfbtag { letter-spacing:.02em; font-size:12px; }
+  @media (max-width:479px) { .glfbtag { white-space:normal; text-align:center; width:max-content; max-width:88%; } }
