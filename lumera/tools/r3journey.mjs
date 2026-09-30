@@ -8,7 +8,7 @@ for (const [tag,w,h,lang] of [["d-en",1440,900,"en"],["m-he",390,844,"he"]]) {
   await p.goto(U,{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn",{timeout:3000}).catch(()=>{}); await p.waitForTimeout(800);
   await p.evaluate(()=>{document.documentElement.style.scrollBehavior="auto"; const e=document.getElementById("bespoke"); scrollTo(0,e.getBoundingClientRect().top+scrollY);}); await p.waitForTimeout(2500);
   await p.screenshot({path:O+`jr-${tag}-head.jpg`,type:"jpeg",quality:65});
-  for (const f of [0.45]) {
+  for (const f of [0.0,0.45]) {
     const st=await p.evaluate(f=>{const e=document.getElementById("jpin"); const top=e.getBoundingClientRect().top+scrollY; scrollTo(0, top+(e.offsetHeight-innerHeight)*f); return 1;},f); await p.waitForTimeout(1600);
     const info=await p.evaluate(()=>({now:document.getElementById("jnow").textContent, on:[...document.querySelectorAll(".jstep")].findIndex(s=>s.classList.contains("on")), img:[...document.querySelectorAll(".jshot.on img")].map(i=>i.naturalWidth)}));
     console.log(tag,f,JSON.stringify(info));
