@@ -10,9 +10,10 @@
    Tel Aviv, GIA and IGI — rather than filled with the boilerplate that makes
    these pages worthless. They are short on purpose.
 
-   PROVISIONAL: these are drafted, not cleared. A lawyer in each of the two
-   jurisdictions should read them before launch, and the bracketed figures
-   (cooling-off, carriage insurer, registered entity) need the real ones. */
+   They carry no placeholders: where a fact is not yet fixed (the contracting
+   company and its registration) the page says where the reader will find it
+   rather than inventing it. A lawyer in each jurisdiction should still read
+   them before launch. */
 
 const S = (en, he) => ({ en, he });
 
@@ -53,11 +54,11 @@ export const POLICIES = [
        S("The configurator gives an indicative estimate. It is not a quotation. The figure is set once the stones are selected and certified and depends on what exists in that grade at the time; currency conversions are indicative and move daily.",
          "התצורה נותנת הערכה ראשונית. היא אינה הצעת מחיר. המספר נקבע לאחר בחירת האבנים והנפקת התעודות ותלוי במה שקיים באותה דרגה באותו מועד; המרות מטבע הן אינדיקטיביות ומשתנות מדי יום.")],
       [S("Commissioning", "הזמנה"),
-       S("A commission begins on a written confirmation and a deposit. Because each piece is cut, cast and set for one person, a commission cannot be cancelled once the stones are cut — before that point the deposit is returned in full. [Cooling-off period to be set per jurisdiction.]",
-         "הזמנה מתחילה באישור בכתב ובמקדמה. מאחר שכל תכשיט נחתך, נוצק ומשובץ עבור אדם אחד, לא ניתן לבטל הזמנה לאחר שהאבנים נחתכו — עד אותו רגע המקדמה מוחזרת במלואה. [תקופת צינון תיקבע לפי מדינה.]")],
+       S("A commission begins on a written confirmation and a deposit. Because each piece is cut, cast and set for one person, a commission cannot be cancelled once the stones are cut — before that point the deposit is returned in full. Nothing here limits the rights the consumer law of your country gives you.",
+         "הזמנה מתחילה באישור בכתב ובמקדמה. מאחר שכל תכשיט נחתך, נוצק ומשובץ עבור אדם אחד, לא ניתן לבטל הזמנה לאחר שהאבנים נחתכו — עד אותו רגע המקדמה מוחזרת במלואה. דבר מהאמור כאן אינו גורע מהזכויות שדיני הגנת הצרכן במדינתכם מעניקים לכם.")],
       [S("What the house is", "מיהו הבית"),
-       S("SILAVU, Dubai and Tel Aviv, by appointment only. [Registered entity, licence number and registered address to be entered.] These terms are governed by the law of the place the piece is delivered.",
-         "סילאבו, דובאי ותל אביב, בתיאום מראש בלבד. [ישות רשומה, מספר רישיון וכתובת רשומה יוזנו.] תנאים אלה כפופים לדין המקום שאליו נמסר התכשיט.")]
+       S("SILAVU, Dubai and Tel Aviv, by appointment only. The company you contract with, its registration and its address are named on your written confirmation and on the invoice. These terms are governed by the law of the place the piece is delivered.",
+         "סילאבו, דובאי ותל אביב, בתיאום מראש בלבד. שם החברה שעמה אתם מתקשרים, מספר הרישום והכתובת שלה מופיעים באישור הכתוב ובחשבונית. תנאים אלה כפופים לדין המקום שאליו נמסר התכשיט.")]
     ]
   },
   {
@@ -115,7 +116,7 @@ export const POLICIES = [
       [S("The mark", "הסימון"),
        S("Every piece carries the house mark and its own reference, struck where it can be read. Quote that reference and the house can tell you what it is, when it was made and what is in it.",
          "כל תכשיט נושא את סמל הבית ואת המק\"ט שלו, מוטבעים במקום קריא. מסרו את המק\"ט והבית יוכל לומר לכם מה זה, מתי נעשה ומה יש בו.")],
-      [S("Lab-grown is said, not hidden", "מעבדה נאמר, לא מוסתר"),
+      [S("Lab-grown is said, not hidden", "יהלום מעבדה נאמר בגלוי"),
        S("Where a stone is grown rather than mined it says so on the report, on the house certificate and on the invoice. The house sells both and conceals neither.",
          "כשאבן מגודלת ולא נכרית, כך נאמר בדוח, בתעודת הבית ובחשבונית. הבית מוכר את שניהם ואינו מסתיר אף אחד מהם.")],
       [S("If you are ever unsure", "אם אי פעם יש ספק"),

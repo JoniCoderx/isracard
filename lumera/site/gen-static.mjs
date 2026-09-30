@@ -179,6 +179,7 @@ const SRCDIR = path.dirname(path.resolve(src));
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</html>\n");
 let POLICY_SLUGS = [];
+const escA = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 
 /* The house documents. Real pages at real addresses rather than overlays on
@@ -190,7 +191,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   const { POLICIES } = await import("./src/policies.mjs");
   POLICY_SLUGS = POLICIES.map(d => d.slug);
   const others = d => POLICIES.filter(o => o.slug !== d.slug)
-    .map(o => `<a href="${o.slug}/">${o.title.en}</a>`).join("");
+    .map(o => `<a href="${o.slug}/" data-en="${escA(o.title.en)}" data-he="${escA(o.title.he)}">${o.title.en}</a>`).join("");
   for (const d of POLICIES) {
     const dir = path.join(outDir, d.slug);
     fs.mkdirSync(dir, { recursive: true });
@@ -211,13 +212,33 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     /* the documents get the site's own type and palette: the stylesheet lives
        in a <style> block inside the page body, not in the shared head */
     const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
+    /* Every line carries its English and its Hebrew, and the page follows
+       the language the reader chose on the site (kept in their browser):
+       Hebrew is swapped in at once and the page turns right to left; French,
+       Russian and Arabic come from the same dictionaries the site uses. */
+    const A = x => `data-en="${escA(x.en)}" data-he="${escA(x.he)}"`;
     const body = styleBlock + `<main class="doc ivory">
-<a class="back" href="./">← SILAVU</a>
-<h1>${d.title.en}</h1>
-<p class="lede">${d.lede.en}</p>
-${d.body.map(([h, t]) => `<section><h2>${h.en}</h2><p>${t.en}</p></section>`).join("\n")}
+<a class="back" href="./"><span class="bk" aria-hidden="true">←</span> SILAVU</a>
+<h1 ${A(d.title)}>${d.title.en}</h1>
+<p class="lede" ${A(d.lede)}>${d.lede.en}</p>
+${d.body.map(([h, t]) => `<section><h2 ${A(h)}>${h.en}</h2><p ${A(t)}>${t.en}</p></section>`).join("\n")}
 <div class="docfoot">${others(d)}</div>
-</main>`;
+</main>
+<script>(function () {
+  var l = "en"; try { l = localStorage.getItem("silavu-lang") || "en"; } catch (e) {}
+  if (l === "en") return;
+  var h = document.documentElement, rtl = l === "he" || l === "ar";
+  function apply(dict) {
+    h.lang = l; if (rtl) { h.dir = "rtl"; h.setAttribute("data-ns", "1"); }
+    document.querySelectorAll("[data-en]").forEach(function (el) {
+      var t = l === "he" ? el.getAttribute("data-he") : dict && dict[el.getAttribute("data-en")];
+      if (t) el.textContent = t;
+    });
+    var t1 = document.querySelector("h1"); if (t1) document.title = t1.textContent + " · SILAVU";
+  }
+  if (l === "he") apply(null);
+  else fetch("lang/" + l + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); }).then(apply).catch(function () {});
+})();</script>`;
     fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
   }
   console.log("documents:", POLICIES.map(d => d.slug).join(" "));

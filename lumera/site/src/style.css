@@ -3747,7 +3747,7 @@
   .doc.ivory { min-height:100svh; background:linear-gradient(180deg, #f4f1e9 0%, #efeadf 60%, #e9e3d6 100%); }
   /* the chapter transition band belongs between chapters, not at the top of a
      document that has none */
-  .doc.ivory::before { display:none; }
+  .doc.ivory::before, .doc.ivory::after { display:none; }
 
   /* ══ v106 — the journey, in one frame ════════════════════════════════════
      Six stages of one bracelet used to be six chapters, each most of a screen,
@@ -3986,3 +3986,6 @@
     color:#e9e4d8; font-size:max(.68rem, 11px); letter-spacing:.12em; }
   html[data-ns] .glfbtag { letter-spacing:.02em; font-size:12px; }
   @media (max-width:479px) { .glfbtag { white-space:normal; text-align:center; width:max-content; max-width:88%; } }
+  /* the documents turn right to left with the site */
+  html[dir="rtl"] .doc .bk { display:inline-block; transform:scaleX(-1); }
+  html[dir="rtl"] .doc { text-align:right; }
