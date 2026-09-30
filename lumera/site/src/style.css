@@ -3937,3 +3937,10 @@
   /* v111 — the chapter marker shows while the page moves, not while it rests */
   html body #where.show:not(.live) { opacity:0; }
   html body #where { transition:opacity .45s var(--ease); }
+
+  /* ══ v112 — the box shows one stage at a time ════════════════════════════
+     The scroll picks the stage; the change is a short fade in time, the old
+     stage out before the new one in, so no stopping point stacks two. */
+  #beats .beat { opacity:0; transition:opacity .26s var(--ease); }
+  #beats .beat.on { opacity:1; transition:opacity .42s var(--ease) .26s; }
+  @media (prefers-reduced-motion:reduce) { #beats .beat, #beats .beat.on { transition:none; } }

@@ -115,7 +115,17 @@
   var beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
   function beatsAt(p) {
     var n = beats.length;
-    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, d = Math.abs(p - c) / (0.68 / n), s2 = c01((d - 0.5) / 0.5), op = 1 - s2 * s2 * (3 - 2 * s2); beats[i].style.opacity = op.toFixed(3); beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = op > 0.5 ? "auto" : "none"; }
+    /* One stage at a time. The fades used to follow the scroll and cross, so
+       a reader who stopped between two stages got both headlines and both
+       paragraphs stacked at half strength; tying the fade to the scroll at
+       all means some stopping point shows two, or none. So the scroll only
+       chooses the stage — the nearest one — and the change itself is a short
+       fade in time: the old stage leaves, then the new one arrives. Wherever
+       the reader stops, one stage is on screen, going down or coming back. */
+    var k0 = Math.max(0, Math.min(n - 1, Math.floor(p * n)));
+    for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, on = i === k0;
+      beats[i].classList.toggle("on", on); beats[i].style.opacity = "";
+      beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = on ? "auto" : "none"; }
     pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
