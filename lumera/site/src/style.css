@@ -4424,3 +4424,33 @@
   #house::before { content:""; position:absolute; left:50%; top:0; width:min(1100px, 90vw); height:clamp(160px, 22vw, 300px); transform:translateX(-50%);
     pointer-events:none; background:radial-gradient(50% 100% at 50% 0%, rgba(236,240,245,.07), rgba(236,240,245,.02) 55%, transparent 100%); }
   @media (prefers-reduced-motion:reduce) { #hero .hseam .hsg { animation:none; } }
+
+  /* ── v129 — play: the bracelet off its stand, across the whole window ── */
+  #snakeveil, #snakehint, #snakeback { display:none; }
+  html.silavu-snake #snakeveil { display:block; position:fixed; inset:0; z-index:25; touch-action:none; cursor:none;
+    background:radial-gradient(80% 80% at 50% 50%, rgba(14,15,17,.86), rgba(2,2,3,.94)); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    opacity:0; transition:opacity .6s var(--ease); }
+  html.silavu-snake.snake-in #snakeveil { opacity:1; }
+  html.silavu-snake #bgrab, html.silavu-snake #playbar { display:none !important; }
+  html.silavu-snake #snakehint { display:block; position:fixed; z-index:28; left:50%; bottom:max(28px, calc(env(safe-area-inset-bottom) + 18px)); transform:translate(-50%, 8px);
+    color:rgba(244,239,228,.7); font-size:.62rem; letter-spacing:.22em; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .6s var(--ease) .4s, transform .6s var(--ease) .4s; }
+  html[data-ns].silavu-snake #snakehint { letter-spacing:.03em; font-size:.8rem; }
+  html.silavu-snake.snake-in #snakehint { opacity:1; transform:translate(-50%, 0); }
+  html.silavu-snake #snakeback { display:inline-flex; position:fixed; z-index:28; top:max(20px, calc(env(safe-area-inset-top) + 12px)); right:var(--pad);
+    opacity:0; transition:opacity .5s var(--ease) .3s; color:#f4efe4; border-color:rgba(255,255,255,.22); background:rgba(0,0,0,.35); }
+  html[dir="rtl"].silavu-snake #snakeback { right:auto; left:var(--pad); }
+  html.silavu-snake.snake-in #snakeback { opacity:1; }
+  html.silavu-snake #bcv { animation:snakeFade .55s var(--ease) both; }
+  @keyframes snakeFade { from { opacity:0; } to { opacity:1; } }
+  @media (max-width:759px) { html.silavu-snake #snakehint { font-size:.56rem; letter-spacing:.14em; } }
+  /* set back on its stand: a breath of light blooms from it and fades */
+  #stripwrap.bloom::before { content:""; position:absolute; left:50%; top:45%; width:70%; aspect-ratio:1.9; z-index:3; pointer-events:none;
+    transform:translate(-50%,-50%) scale(.6); border-radius:50%; mix-blend-mode:screen;
+    background:radial-gradient(closest-side, rgba(255,255,255,.55), rgba(220,232,255,.18) 45%, transparent 75%);
+    animation:bloomIn 1.5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes bloomIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(.5); } 25% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-50%) scale(1.25); } }
+  @media (prefers-reduced-motion:reduce) { #stripwrap.bloom::before { animation:none; display:none; } }
+  /* play sits over everything, the header included */
+  html.silavu-snake #snakeveil { z-index:9000; }
+  html.silavu-snake #bcv { z-index:9001 !important; }
+  html.silavu-snake #snakehint, html.silavu-snake #snakeback { z-index:9002; }

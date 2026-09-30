@@ -1154,6 +1154,8 @@
     var cf = frames[Math.round(n * 0.5) % n], cd = -depth * 0.66;
     ci.set([cf.T[0], cf.T[1], cf.T[2], cf.U[0], cf.U[1], cf.U[2], cf.A[0], cf.A[1], cf.A[2], cf.pos[0] + cf.U[0] * cd, cf.pos[1] + cf.U[1] * cd, cf.pos[2] + cf.U[2] * cd], 0);
     pStone.instances(si2); pHead.instances(hi); pLink.instances(li); pClasp.instances(ci);
+    state.frames = frames; state.step = step; state.depth = depth;
+    if (snake) snakeRing();
     dirty = true;
   }
 
@@ -1252,9 +1254,16 @@
          A phone pulls the camera back far enough to clear its own furniture. */
       fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (coarse && !staged ? 1.30 : 1.12);
     }
-    var R = state.R, dist = fitD * cam.d;
-    var cp = Math.cos(cam.ph), sp = Math.sin(cam.ph);
-    var eye = [lookX + Math.sin(cam.th) * cp * dist, lookY + sp * dist, Math.cos(cam.th) * cp * dist];
+    var R = state.R, dist = fitD * cam.d, th0 = cam.th, ph0 = cam.ph;
+    if (snake) {
+      /* the line is about two screens long on a desk and four on a phone, so
+         it coils and wanders rather than lying across the frame like a ruler */
+      var len = state.n * state.step, hw = len / (asp < 1 ? 4.2 : 2.2);
+      dist = hw / (tanF * asp); lookX = 0; lookY = 0; th0 = 0; ph0 = 0;
+      snake.halfW = hw; snake.halfH = tanF * dist;
+    }
+    var cp = Math.cos(ph0), sp = Math.sin(ph0);
+    var eye = [lookX + Math.sin(th0) * cp * dist, lookY + sp * dist, Math.cos(th0) * cp * dist];
     var f = [lookX - eye[0], lookY - eye[1], -eye[2]], fl = Math.hypot(f[0], f[1], f[2]); f = [f[0] / fl, f[1] / fl, f[2] / fl];
     var up = [0, 1, 0];
     var s2 = [f[1] * up[2] - f[2] * up[1], f[2] * up[0] - f[0] * up[2], f[0] * up[1] - f[1] * up[0]], sl = Math.hypot(s2[0], s2[1], s2[2]); s2 = [s2[0] / sl, s2[1] / sl, s2[2] / sl];
@@ -1270,7 +1279,7 @@
     }
     var view = new Float32Array([s2[0], u2[0], -f[0], 0, s2[1], u2[1], -f[1], 0, s2[2], u2[2], -f[2], 0,
       -(s2[0] * eye[0] + s2[1] * eye[1] + s2[2] * eye[2]), -(u2[0] * eye[0] + u2[1] * eye[1] + u2[2] * eye[2]), (f[0] * eye[0] + f[1] * eye[1] + f[2] * eye[2]), 1]);
-    var t = 1 / Math.tan(fov0 / 2), near = Math.max(1, dist - (hand.on ? R * 10 : R * 3)), far = dist + (hand.on ? R * 12 : R * 4);
+    var t = 1 / Math.tan(fov0 / 2), near = Math.max(1, dist - (snake ? R * 8 : hand.on ? R * 10 : R * 3)), far = dist + (snake ? R * 8 : hand.on ? R * 12 : R * 4);
     var proj = new Float32Array([t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (far + near) / (near - far), -1, 0, 0, 2 * far * near / (near - far), 0]);
     state.halfH = tanF * dist; state.halfW = state.halfH * asp;
     if (toy) {
@@ -1302,6 +1311,7 @@
     /* the hand is a photograph now and lives in the other canvas; this one
        draws the bracelet alone, and never builds the mesh */
     if (wrap.classList.contains("wrist")) return;
+    if (snake) { snakeStep(performance.now()); dirty = true; }
     if (!page) {
       var r = wrap.getBoundingClientRect();
       if (r.bottom < -80 || r.top > innerHeight + 80) return;
@@ -1518,12 +1528,165 @@
   document.addEventListener("click", function (e) {
     var t = e.target.closest && e.target.closest("[data-toy]"); if (!t) return;
     var v = t.getAttribute("data-toy");
-    if (v === "up") pickUp(); else putBack();
+    if (v === "up") snakeOpen(); else { if (snake) snakeClose(); else putBack(); }
   });
+  /* ── play: the bracelet off its stand ──────────────────────────────────
+     Inspect lifts it into the whole window. It opens at the clasp and lies
+     out as a line; the first stone follows the pointer (or the finger) and
+     every stone after it follows the one before, so it travels like a snake,
+     with a slow twist running down it that carries the light from stone to
+     stone. A click — or a tap that is not a drag — curls it back into its
+     oval and sets it down on the stand. */
+  var snake = null, snakeVeil = null, snakeHint = null, snakeBack = null, cvHome = null;
+  function nrm(v) { var l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
+  function crs(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+  function ortho(T, U) { T = nrm(T); var d = U[0] * T[0] + U[1] * T[1] + U[2] * T[2]; U = nrm([U[0] - T[0] * d, U[1] - T[1] * d, U[2] - T[2] * d]); return { T: T, U: U, A: crs(T, U) }; }
+  /* the oval as it stands, tilted to the camera the way the stand shows it */
+  function snakeRing() {
+    var b = 0.42, c = Math.cos(b), s2 = Math.sin(b), r = function (v) { return [v[0], v[1] * c - v[2] * s2, v[1] * s2 + v[2] * c]; };
+    snake.ring = state.frames.map(function (f) { return { pos: r(f.pos), T: r(f.T), U: r(f.U), A: r(f.A) }; });
+    if (!snake.rope) snakeLay();
+  }
+  /* a gentle wave, walked at the true spacing of the stones */
+  function snakeLay() {
+    var n = state.n, st = state.step, hw = (n * st) / (innerWidth < innerHeight ? 4.2 : 2.2), amp = hw * 0.16, k = Math.PI * 2 / (hw * 1.3);
+    var pts = [], x = hw * 0.95, y = 0, i = 0;
+    pts.push([x, Math.sin(x * k) * amp]);
+    while (pts.length < n && i < 200000) { i++; x -= st * 0.02; var yy = Math.sin(x * k) * amp, q = pts[pts.length - 1]; if (Math.hypot(x - q[0], yy - q[1]) >= st) pts.push([x, yy]); }
+    snake.rope = pts; snake.head = pts[0].slice(); snake.aim = null;
+  }
+  function frameAt(i, t) {
+    var p = snake.rope, n = p.length, a = p[Math.max(0, i - 1)], b2 = p[Math.min(n - 1, i + 1)];
+    /* index runs tail-ward, as it does round the oval */
+    var T = [b2[0] - a[0], b2[1] - a[1], 0];
+    var roll = 0.55 * Math.sin(i * 0.33 - t * 0.0032), z = Math.sin(i * 0.27 - t * 0.0021) * state.step * 0.9;
+    var tn = nrm(T), side = crs(tn, [0, 0, 1]);
+    var U = [side[0] * Math.sin(roll), side[1] * Math.sin(roll), Math.cos(roll)];
+    var o = ortho(tn, U); o.pos = [p[i][0], p[i][1], z]; return o;
+  }
+  function mixF(a, b, e) {
+    var L = function (u, v) { return [u[0] + (v[0] - u[0]) * e, u[1] + (v[1] - u[1]) * e, u[2] + (v[2] - u[2]) * e]; };
+    var T = L(a.T, b.T); if (Math.hypot(T[0], T[1], T[2]) < 1e-3) T = b.T;
+    var o = ortho(T, L(a.U, b.U)); o.pos = L(a.pos, b.pos); return o;
+  }
+  var sb = null;
+  function writeFrames(F) {
+    var n = F.length, depth = state.depth, lift = depth * 0.335, ld = -depth * 0.36, cd = -depth * 0.66, i;
+    if (!sb || sb.n !== n) sb = { n: n, s: new Float32Array(n * 12), l: new Float32Array(n * 12), c: new Float32Array(12) };
+    for (i = 0; i < n; i++) {
+      var f = F[i], o = i * 12, c0 = f.T, c1 = f.U, c2 = f.A;
+      sb.s.set([c0[0], c0[1], c0[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2], f.pos[0] + c1[0] * lift, f.pos[1] + c1[1] * lift, f.pos[2] + c1[2] * lift], o);
+      var g = F[(i + 1) % n], gap = Math.hypot(g.pos[0] - f.pos[0], g.pos[1] - f.pos[1], g.pos[2] - f.pos[2]);
+      if (i === n - 1 && gap > state.step * 1.6) { sb.l.fill(0, o, o + 12); continue; }
+      var m = ortho([f.T[0] + g.T[0], f.T[1] + g.T[1], f.T[2] + g.T[2]], [f.U[0] + g.U[0], f.U[1] + g.U[1], f.U[2] + g.U[2]]);
+      var mx = (f.pos[0] + g.pos[0]) / 2, my = (f.pos[1] + g.pos[1]) / 2, mz = (f.pos[2] + g.pos[2]) / 2;
+      sb.l.set([m.T[0], m.T[1], m.T[2], m.U[0], m.U[1], m.U[2], m.A[0], m.A[1], m.A[2], mx + m.U[0] * ld, my + m.U[1] * ld, mz + m.U[2] * ld], o);
+    }
+    var cf = F[Math.round(n * 0.5) % n];
+    sb.c.set([cf.T[0], cf.T[1], cf.T[2], cf.U[0], cf.U[1], cf.U[2], cf.A[0], cf.A[1], cf.A[2], cf.pos[0] + cf.U[0] * cd, cf.pos[1] + cf.U[1] * cd, cf.pos[2] + cf.U[2] * cd], 0);
+    pStone.instances(sb.s); pHead.instances(sb.s); pLink.instances(sb.l); pClasp.instances(sb.c);
+  }
+  function ease3(x) { x = Math.max(0, Math.min(1, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function snakeStep(now) {
+    var S = snake, n = state.n, i, e;
+    if (S.phase === "open") {
+      e = ease3((now - S.t0) / 1100);
+      writeFrames(S.ring.map(function (f, k) { return mixF(f, frameAt(k, now), Math.max(0, Math.min(1, e * 1.25 - (k / n) * 0.25))); }));
+      if (e >= 1) S.phase = "play";
+      return;
+    }
+    if (S.phase === "close") {
+      e = ease3((now - S.t0) / 1150);
+      if (!S.frozen) S.frozen = S.rope.map(function (q, k) { return frameAt(k, now); });
+      writeFrames(S.frozen.map(function (f, k) { return mixF(f, S.ring[k], Math.max(0, Math.min(1, e * 1.25 - ((n - 1 - k) / n) * 0.25))); }));
+      if (e >= 1) snakeEnd();
+      return;
+    }
+    /* the head goes where it is led — or, left alone, wanders a slow figure of eight */
+    var hw = S.halfW || 100, hh = S.halfH || 60, aim;
+    if (S.aim && now - S.aimT < 2600) aim = S.aim;
+    else { var w = now * 0.00042; aim = [Math.sin(w) * hw * 0.62, Math.sin(w * 2) * hh * 0.42]; }
+    var h = S.rope[0], dx = aim[0] - h[0], dy = aim[1] - h[1], dl = Math.hypot(dx, dy), vmax = state.step * (coarse ? 1.3 : 1.7);
+    var mv = Math.min(dl * 0.14, vmax);
+    if (dl > 1e-3) {
+      /* and it sways as it goes, the way a snake does, more when it is moving fast */
+      var ux = dx / dl, uy = dy / dl, sw = Math.sin(now * 0.009) * state.step * 0.55 * Math.min(1, mv / (vmax * 0.5));
+      h[0] += ux * mv - uy * sw * 0.35; h[1] += uy * mv + ux * sw * 0.35;
+    }
+    h[0] = Math.max(-hw * 0.96, Math.min(hw * 0.96, h[0])); h[1] = Math.max(-hh * 0.9, Math.min(hh * 0.9, h[1]));
+    for (i = 1; i < n; i++) {
+      var a = S.rope[i - 1], b2 = S.rope[i], ddx = b2[0] - a[0], ddy = b2[1] - a[1], d = Math.hypot(ddx, ddy) || 1;
+      b2[0] = a[0] + ddx / d * state.step; b2[1] = a[1] + ddy / d * state.step;
+    }
+    var F = []; for (i = 0; i < n; i++) F.push(frameAt(i, now));
+    writeFrames(F);
+  }
+  function toWorld(cx, cy) {
+    var hw = snake.halfW || 100, hh = snake.halfH || 60;
+    return [(cx / innerWidth - 0.5) * 2 * hw, (0.5 - cy / innerHeight) * 2 * hh];
+  }
+  function he() { return (document.documentElement.getAttribute("data-lang") || document.documentElement.lang) === "he"; }
+  function snakeOpen() {
+    if (snake || !state.frames) return;
+    if (toy) putBack();
+    snake = { phase: "open", t0: performance.now(), rope: null };
+    snakeRing();
+    /* the canvas leaves the panel for the top of the page, so nothing the
+       panel is layered inside can put the veil over it */
+    if (window.__lock) window.__lock();      /* first, so it remembers the page before anything moves */
+    cvHome = [cv.parentNode, cv.nextSibling]; document.body.appendChild(cv);
+    page = true; document.documentElement.classList.add("silavu-play", "silavu-snake");
+    if (!snakeVeil) {
+      snakeVeil = document.createElement("div"); snakeVeil.id = "snakeveil"; document.body.appendChild(snakeVeil);
+      snakeHint = document.createElement("div"); snakeHint.id = "snakehint"; snakeHint.className = "k"; document.body.appendChild(snakeHint);
+      snakeBack = document.createElement("button"); snakeBack.id = "snakeback"; snakeBack.type = "button"; snakeBack.className = "btn"; document.body.appendChild(snakeBack);
+      var down = null;
+      snakeVeil.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, t: e.timeStamp }; if (snake) { snake.aim = toWorld(e.clientX, e.clientY); snake.aimT = performance.now(); } });
+      snakeVeil.addEventListener("pointermove", function (e) { if (!snake) return; if (e.pointerType !== "mouse" && !down) return; snake.aim = toWorld(e.clientX, e.clientY); snake.aimT = performance.now(); });
+      snakeVeil.addEventListener("pointerup", function (e) {
+        var d0 = down; down = null; if (!d0 || !snake || snake.phase === "close") return;
+        if (Math.hypot(e.clientX - d0.x, e.clientY - d0.y) < 10 && e.timeStamp - d0.t < 500) snakeClose();
+      });
+      snakeVeil.addEventListener("pointercancel", function () { down = null; });
+      snakeBack.addEventListener("click", function () { snakeClose(); });
+      addEventListener("keydown", function (e) { if (e.key === "Escape" && snake) snakeClose(); });
+    }
+    var touch = matchMedia("(pointer:coarse)").matches;
+    var lg = document.documentElement.getAttribute("data-lang") || document.documentElement.lang || "en";
+    var M = {
+      en: ["Move to lead it · Click to set it back", "Drag to lead it · Tap to set it back", "Return to stand"],
+      he: ["הזיזו את העכבר כדי להוביל אותו · לחצו כדי להחזיר למעמד", "גררו כדי להוביל אותו · הקישו כדי להחזיר למעמד", "החזרה למעמד"],
+      fr: ["Bougez pour le guider · Cliquez pour le reposer", "Glissez pour le guider · Touchez pour le reposer", "Remettre sur le présentoir"],
+      ru: ["Ведите курсором · Нажмите, чтобы вернуть", "Ведите пальцем · Коснитесь, чтобы вернуть", "Вернуть на подставку"],
+      ar: ["حرّك المؤشر لتقوده · انقر لإعادته", "اسحب لتقوده · المس لإعادته", "إعادته إلى الحامل"]
+    }[lg] || null;
+    if (!M) M = he() ? ["הזיזו את העכבר כדי להוביל אותו · לחצו כדי להחזיר למעמד", "גררו כדי להוביל אותו · הקישו כדי להחזיר למעמד", "החזרה למעמד"] : ["Move to lead it · Click to set it back", "Drag to lead it · Tap to set it back", "Return to stand"];
+    snakeHint.textContent = touch ? M[1] : M[0];
+    snakeBack.textContent = M[2];
+    requestAnimationFrame(function () { document.documentElement.classList.add("snake-in"); });
+    size(); dirty = true;
+  }
+  window.__snakeState = function () { return snake ? snake.phase : null; };
+  function snakeClose() {
+    if (!snake || snake.phase === "close") return;
+    snake.phase = "close"; snake.t0 = performance.now(); snake.frozen = null;
+    document.documentElement.classList.remove("snake-in");
+  }
+  function snakeEnd() {
+    snake = null; page = false;
+    if (cvHome) { cvHome[0].insertBefore(cv, cvHome[1]); cvHome = null; }
+    document.documentElement.classList.remove("silavu-play", "silavu-snake", "snake-in");
+    if (window.__unlock) window.__unlock();
+    build();                      /* the oval, exactly as the stand holds it */
+    cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; cam.d = 1; idle = !reduce; idleN = 0;
+    wrap.classList.remove("bloom"); void wrap.offsetWidth; wrap.classList.add("bloom");
+    setTimeout(function () { wrap.classList.remove("bloom"); }, 1600);
+    size(); dirty = true;
+  }
   /* a picture of exactly what is on screen, for the reader to keep or send:
      drawn fresh and handed over in the same task, before the browser is free
      to clear the buffer */
   function snap() { size(); draw(); return cv; }
-  window.__bracelet = { build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+  window.__bracelet = { play: snakeOpen, unplay: snakeClose, build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
 })();
 </script>
