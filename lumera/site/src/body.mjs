@@ -425,8 +425,8 @@ ${markDefs()}
       <div class="embfloat"><div class="embtilt" id="embtilt">
         <i class="embhalo"></i>
         <div class="embart">
-          <svg class="embsvg" viewBox="0 0 ${Math.ceil(MARK_W)} 1000" focusable="false"><defs><linearGradient id="embGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4d6"/><stop offset=".28" stop-color="#d9b872"/><stop offset=".52" stop-color="#8a6a33"/><stop offset=".74" stop-color="#e8cf95"/><stop offset="1" stop-color="#7a5b28"/></linearGradient></defs><path class="embline" d="${MARK}" pathLength="1"/><path class="embfill" d="${MARK}" fill="url(#embGold)"/></svg>
-          <i class="embshine"></i>
+          <svg class="embsvg" viewBox="0 0 ${Math.ceil(MARK_W)} 1000" focusable="false"><defs><linearGradient id="embGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".22" stop-color="#dfe4ea"/><stop offset=".42" stop-color="#8e969f"/><stop offset=".56" stop-color="#f7f9fb"/><stop offset=".74" stop-color="#b3bac2"/><stop offset=".88" stop-color="#eef1f4"/><stop offset="1" stop-color="#7b838c"/></linearGradient></defs><path class="embline" d="${MARK}" pathLength="1"/><path class="embfill" d="${MARK}" fill="url(#embGold)"/></svg>
+          <i class="embshine"></i><i class="embpave"></i>
         </div>
         <span class="embword" dir="ltr">SILAVU</span>
         <span class="embsub k" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span>
@@ -438,11 +438,11 @@ ${markDefs()}
 
   <section id="end" data-n="" aria-label="Footer">
     <div class="wrap">
-    <div class="fbig rv"><span class="fmk">${mark("huge")}</span>${logo("big")}<div class="k" data-en="Private high jewellery · Dubai · Tel Aviv · By appointment only" data-he="תכשיטי יוקרה פרטיים · דובאי · תל אביב · בתיאום מראש בלבד">Private high jewellery · Dubai · Tel Aviv · By appointment only</div></div>
     <div class="fgrid">
       <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#bespoke" data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לבית">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="Private high jewellery" data-he="תכשיטי יוקרה פרטיים">Private high jewellery</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>

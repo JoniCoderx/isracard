@@ -4305,3 +4305,63 @@
   }
   /* the names are Latin inside a right-to-left page: they sit on the right, where the Hebrew around them starts */
   html[dir="rtl"] #pmodal .t, html[dir="rtl"] .piece .t { text-align:right; }
+
+  /* ── v124 — the enquiry mark in white gold: chrome light, a pavé glitter
+       that twinkles inside the mark's own outline, and a glow kept low. ── */
+  #enquire { background:radial-gradient(60% 70% at 80% 46%, #121417 0%, #09090a 50%, #050505 100%); }
+  html[dir="rtl"] #enquire { background:radial-gradient(60% 70% at 20% 46%, #121417 0%, #09090a 50%, #050505 100%); }
+  #enquire .embhalo { width:120%; background:radial-gradient(closest-side, rgba(226,232,240,.09), rgba(226,232,240,.025) 55%, rgba(226,232,240,0) 100%); }
+  #enquire .emb.hov .embhalo { filter:brightness(1.25); }
+  #enquire .embline { stroke:#eef2f6; }
+  #enquire .emb.in .embline { stroke-opacity:.35; }
+  #enquire .embsvg { filter:drop-shadow(0 24px 40px rgba(0,0,0,.75)); }
+  #enquire .embpave { position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:0;
+    -webkit-mask:var(--mkfit) center / 100% 100% no-repeat; mask:var(--mkfit) center / 100% 100% no-repeat;
+    background:
+      radial-gradient(circle at 30% 30%, #fff 0 .7px, transparent 1.4px) 0 0 / 9px 9px,
+      radial-gradient(circle at 70% 60%, rgba(220,236,255,.95) 0 .6px, transparent 1.3px) 3px 5px / 13px 11px,
+      radial-gradient(circle at 50% 50%, rgba(255,240,250,.9) 0 .8px, transparent 1.6px) 6px 2px / 17px 15px;
+    transition:opacity 1.4s ease 2s; }
+  #enquire .emb.in .embpave { opacity:.55; animation:embtwinkle 3.2s steps(1) infinite; }
+  #enquire .emb.hov .embpave { opacity:.9; animation-duration:1.1s; }
+  @keyframes embtwinkle { 0% { background-position:0 0, 3px 5px, 6px 2px; } 33% { background-position:4px 3px, 0 1px, 2px 8px; } 66% { background-position:2px 6px, 7px 2px, 9px 5px; } }
+  #enquire .embshine { background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.95) 50%, transparent 60%) 0 0 / 250% 100% no-repeat; }
+  #enquire .embword { background:linear-gradient(100deg, #9aa2ab, #ffffff 45%, #c9d0d7 70%, #8a929b); -webkit-background-clip:text; background-clip:text; }
+  #enquire .embsub { color:rgba(214,221,229,.62); }
+  #enquire .embdust b { background:#ffffff; filter:drop-shadow(0 0 5px rgba(225,238,255,.85)); }
+  @media (prefers-reduced-motion:reduce) { #enquire .emb.in .embpave { animation:none; opacity:.55; } }
+
+  /* ── the footer lockup, small, in the row with the columns ── */
+  #end .fbrand { align-content:start; gap:12px; }
+  #end .fbl { display:inline-flex; align-items:center; gap:14px; text-decoration:none; color:var(--ink); width:max-content; }
+  #end .fbl svg.sy.fsm { height:40px; width:auto; margin:0; color:#f2ede2; transition:transform .6s var(--ease), filter .6s var(--ease); }
+  #end .fbl svg.sy.fsm path { fill:currentColor; fill-opacity:1; stroke:none; stroke-opacity:0; animation:none !important; }
+  #end .fbl svg.sy.fsm { animation:none !important; }
+  #end .fbl .lg.fsm { font-weight:300; font-size:1.02rem; letter-spacing:.42em; margin-inline-end:-.42em; transition:letter-spacing .8s var(--ease), margin .8s var(--ease); }
+  #end .fbl:hover svg.sy.fsm { transform:translateY(-2px); filter:drop-shadow(0 6px 14px rgba(255,255,255,.18)); }
+  #end .fbl:hover .lg.fsm { letter-spacing:.56em; margin-inline-end:-.56em; }
+  #end .fbl:focus-visible { outline:1px solid var(--gold); outline-offset:6px; border-radius:4px; }
+  #end .fbrand .ftag { margin:0; color:var(--ink3); font-size:.58rem; letter-spacing:.2em; line-height:1.9; display:grid; }
+  #end .fcol.fbrand .ftag span { white-space:nowrap; font-size:.58rem; line-height:1.9; color:var(--ink3); letter-spacing:.2em; }
+  @media (min-width:900px) { #end .fgrid { grid-template-columns:minmax(0,1.15fr) repeat(2,minmax(0,.9fr)) minmax(0,1.2fr) minmax(0,.9fr); gap:36px; margin-top:clamp(20px,3vw,40px); } }
+  @media (max-width:899px) { #end .fbrand { order:-1; grid-column:1 / -1; justify-items:center; text-align:center; margin-bottom:6px; } #end .fbrand .ftag { margin-inline:auto; } }
+
+  /* ── v125 — what was chosen stands apart from the question: the label on
+       the left, the answer on the right, in the house's pale gold ── */
+  #opts .opt > .opthead { display:flex; align-items:baseline; justify-content:space-between; gap:16px; }
+  #opts .opt > .opthead > .k { margin:0; }
+  #opts .opt > .opthead .optnow { margin-inline-start:auto; color:#e2c98f; font-family:var(--serif); font-style:italic; font-size:1.02rem;
+    letter-spacing:.01em; text-transform:none; white-space:nowrap; }
+  html[data-ns] #opts .opt > .opthead .optnow { font-family:inherit; font-style:normal; font-size:.92rem; }
+  @media (min-width:760px) { #opts .opt > .opthead .optnow::before { content:""; display:inline-block; width:18px; height:1px; margin-inline-end:10px;
+    vertical-align:middle; background:currentColor; opacity:.5; } }
+
+  /* ── the journey holds from the top of the screen, not its middle, so the
+       heading and the first step are not a screen apart ── */
+  #bespoke .jhead { margin-bottom:0; }
+  .jpin { margin-top:clamp(8px,1.5vw,20px); }
+  .jsticky { align-items:start; padding-top:clamp(18px,4svh,48px); box-sizing:border-box; }
+  #bespoke .jstage { background:#f3f1ec; box-shadow:0 24px 50px -30px rgba(20,19,15,.35); }
+
+  /* the footer starts closer to what is above it */
+  #end { padding-top:clamp(44px,5vw,76px) !important; }
