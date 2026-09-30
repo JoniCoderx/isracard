@@ -1,0 +1,11 @@
+import { chromium } from "playwright-core";
+const O="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/r3/", tag=process.argv[2]||"x";
+const b=await chromium.launch({executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome",args:["--no-sandbox","--disable-background-networking","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader","--ignore-gpu-blocklist"]});
+const p=await (await b.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1})).newPage(); const errs=[]; p.on("pageerror",e=>errs.push(e.message)); p.on("console",m=>{if(m.type()==="error")errs.push(m.text().slice(0,200))});
+await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());
+await p.goto("http://localhost:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn",{timeout:3000}).catch(()=>{}); await p.waitForTimeout(800);
+await p.evaluate(()=>{document.documentElement.style.scrollBehavior="auto"; const e=document.getElementById("stripwrap"); scrollTo(0,e.getBoundingClientRect().top+scrollY-90);}); await p.waitForTimeout(5000);
+await (await p.$("#stripwrap")).screenshot({path:O+`st-${tag}-full.png`});
+const bx=await p.$eval("#bcv",e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}});
+await p.screenshot({path:O+`st-${tag}-zoom.png`,clip:{x:bx.x+bx.w*0.25,y:bx.y+bx.h*0.62,width:bx.w*0.5,height:bx.h*0.38}});
+console.log(errs.join("|")||"clean"); await b.close();

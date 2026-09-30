@@ -457,7 +457,7 @@
   $("pmIm").addEventListener("click", function () { if (this.classList.contains("two")) this.classList.toggle("flip"); });
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
-  $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
+  if ($("tryonBtn")) $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
   $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = lineSpecText(); void sp; void b; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
 
   /* ── parallax on the atelier chapter ── */
@@ -735,6 +735,87 @@
     return (ss[1] ? ss[1] + " · " : "") + L(ss[0] + " = " + b.ct + " ct") + " · " + oname(b.origin) + " · " + mname(b.metal) + " · " + L(b.wrist + " cm") + " · " + L($("est").textContent);
   }
   function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); fit(); }
+
+  /* ── the design as a picture: what is on screen, with what was chosen
+       written under it and the house mark at the foot — to keep, or to send
+       to the jeweller. The mark is the page's own path, never redrawn. ── */
+  function designImage(cb) {
+    var W = 1200, H = 1500, c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d"), rtl = document.documentElement.dir === "rtl";
+    var g = x.createRadialGradient(W / 2, 470, 60, W / 2, 470, 900); g.addColorStop(0, "#1d1d20"); g.addColorStop(1, "#050505");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    var src = null;
+    try { if (!document.documentElement.classList.contains("no3d") && window.__bracelet && window.__bracelet.snap) src = window.__bracelet.snap(); } catch (e) { src = null; }
+    if (!src || !src.width) src = $("stripcv");
+    if (src && src.width) {
+      /* cropped to the piece itself, so the bracelet fills the picture rather
+         than floating in the empty frame around it */
+      var sx = 0, sy = 0, sw = src.width, shh = src.height;
+      try {
+        var t = document.createElement("canvas"); t.width = src.width; t.height = src.height; var tx = t.getContext("2d"); tx.drawImage(src, 0, 0);
+        var px = tx.getImageData(0, 0, t.width, t.height).data, x1 = t.width, y1 = t.height, x2 = -1, y2 = -1, ix, iy;
+        for (iy = 0; iy < t.height; iy += 2) for (ix = 0; ix < t.width; ix += 2) if (px[(iy * t.width + ix) * 4 + 3] > 24) { if (ix < x1) x1 = ix; if (ix > x2) x2 = ix; if (iy < y1) y1 = iy; if (iy > y2) y2 = iy; }
+        if (x2 > x1 && y2 > y1) { var pad = Math.round((x2 - x1) * 0.04); sx = Math.max(0, x1 - pad); sy = Math.max(0, y1 - pad); sw = Math.min(t.width, x2 + pad) - sx; shh = Math.min(t.height, y2 + pad) - sy; }
+        src = t;
+      } catch (e) {}
+      var bw = W - 120, bh = 780, k = Math.min(bw / sw, bh / shh), dw = sw * k, dh = shh * k;
+      try { x.drawImage(src, sx, sy, sw, shh, (W - dw) / 2, 110 + (bh - dh) / 2, dw, dh); } catch (e) {}
+    }
+    var face = "Jost, system-ui, sans-serif";
+    try { face = getComputedStyle(document.querySelector(".lg")).fontFamily || face; } catch (e) {}
+    var gold = "#d9b872", ink = "#f4efe4", mute = "rgba(244,239,228,.56)";
+    x.fillStyle = gold; x.fillRect(80, 960, W - 160, 1);
+    /* the chosen options, read from the page in the reader's own language */
+    var rows = [].slice.call(document.querySelectorAll("#opts .opt")).map(function (o) {
+      var k2 = o.querySelector(".k"), on = o.querySelector(".chip.on");
+      return [k2 ? k2.textContent.trim() : "", on ? on.textContent.trim() : ""];
+    }).filter(function (r) { return r[1]; });
+    var tk = document.querySelector(".tot .k"); rows.push([tk ? tk.textContent.trim() : "", $("est").textContent.trim()]);
+    x.direction = rtl ? "rtl" : "ltr"; x.textAlign = rtl ? "right" : "left"; x.textBaseline = "alphabetic";
+    rows.forEach(function (r, i) {
+      var col = i % 2, row = Math.floor(i / 2), px = rtl ? W - 80 - col * 540 : 80 + col * 540, py = 1030 + row * 108;
+      x.fillStyle = gold; x.font = "500 20px " + face; x.fillText(r[0].toUpperCase(), px, py);
+      x.fillStyle = ink; x.font = "400 36px " + face; x.fillText(rtl && /[0-9A-Za-z]/.test(r[1]) && !/[\u0590-\u05ff\u0600-\u06ff]/.test(r[1]) ? "\u2066" + r[1] + "\u2069" : r[1], px, py + 46);
+    });
+    /* the foot: the mark, the word, the date */
+    x.direction = "ltr"; x.textAlign = "center";
+    x.fillStyle = ink; x.font = "300 38px " + face;
+    var word = "SILAVU", sp = 17, tw = 0, i2; for (i2 = 0; i2 < word.length; i2++) tw += x.measureText(word[i2]).width + (i2 < word.length - 1 ? sp : 0);
+    var pth = document.querySelector("#symb path"), vb = (document.querySelector("#symb") || {}).viewBox;
+    var mw = vb && vb.baseVal && vb.baseVal.width ? vb.baseVal.width : 875, mh = 64, sc = mh / 1000, mwp = pth && window.Path2D ? mw * sc : 0, gap = mwp ? 24 : 0;
+    var x0 = W / 2 - (mwp + gap + tw) / 2;
+    if (mwp) { x.save(); x.translate(x0, 1385 - mh / 2); x.scale(sc, sc); x.fillStyle = gold; x.fill(new Path2D(pth.getAttribute("d"))); x.restore(); }
+    var cx = x0 + mwp + gap; x.textAlign = "left"; x.fillStyle = ink;
+    for (i2 = 0; i2 < word.length; i2++) { x.fillText(word[i2], cx, 1398); cx += x.measureText(word[i2]).width + sp; }
+    x.textAlign = "center"; x.fillStyle = mute; x.font = "400 18px " + face;
+    var d = new Date(); x.fillText("THE LINE · " + ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear() + " · DUBAI · TEL AVIV", W / 2, 1452);
+    c.toBlob(function (b) { cb(b, c); }, "image/png");
+  }
+  function designName() { var b = window.__build || {}; return "SILAVU-The-Line-" + (window.__lineSpec && window.__lineSpec.cut || "design") + "-" + (b.ct || "") + "ct.png"; }
+  function keep(blob) {
+    var u = URL.createObjectURL(blob), a = document.createElement("a"); a.href = u; a.download = designName();
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+  }
+  function flash(el, en, he) { var sp2 = el.querySelector("span"), was = sp2.innerHTML; sp2.textContent = lang === "he" ? he : (T(en) || en); el.classList.add("ok"); setTimeout(function () { sp2.innerHTML = was; el.classList.remove("ok"); }, 2600); }
+  var saveBtn = $("saveImg"), sendBtn = $("sendSpec");
+  if (saveBtn) saveBtn.addEventListener("click", function () { designImage(function (b) { if (b) { keep(b); flash(saveBtn, "Saved", "נשמר"); } }); });
+  if (sendBtn) sendBtn.addEventListener("click", function () {
+    var he = lang === "he", text = (he ? "העיצוב שלי ל־SILAVU The Line: " : T("My SILAVU Line design: ")) + lineSpecText();
+    designImage(function (b) {
+      if (!b) return;
+      var file = null; try { file = new File([b], designName(), { type: "image/png" }); } catch (e) {}
+      /* on a phone the picture and the specification go together, through
+         whatever the reader already uses to talk to people */
+      if (file && matchMedia("(pointer:coarse)").matches && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: "SILAVU · The Line", text: text }).catch(function () {});
+        return;
+      }
+      /* elsewhere the picture is kept, and the enquiry is written for them */
+      keep(b);
+      prefill(text + "\n" + (he ? "שמרתי את התמונה של העיצוב ואצרף אותה." : T("I have saved the picture of my design and will attach it.")));
+      var a = document.createElement("a"); a.href = "#concierge"; a.style.display = "none"; document.body.appendChild(a); a.click(); a.remove();
+    });
+  });
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
     var b = window.__build;

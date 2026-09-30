@@ -4221,3 +4221,38 @@
     #enquire .embhalo { opacity:1; transition:none; transform:translate(-50%,-50%); }
     #enquire .embtilt { transition:none; }
   }
+
+  /* ── v122 — the builder on one screen. The viewer stands beside the
+       choices instead of above them; the per-stone figure and its
+       specification drawer are gone (the summary line under the price
+       already says it); the picture can be kept or sent. ── */
+  #build .carat { display:none; }
+  #configure .cacts { display:flex; flex-wrap:wrap; gap:2px 24px; justify-content:center; }
+  #configure .clink { all:unset; box-sizing:border-box; cursor:pointer; display:inline-flex; align-items:center; gap:9px; min-height:44px;
+    font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink2); border-bottom:1px solid transparent;
+    transition:color .3s var(--ease), border-color .3s var(--ease); }
+  html[data-ns] #configure .clink { text-transform:none; letter-spacing:.02em; font-size:.84rem; }
+  #configure .clink svg { width:17px; height:17px; flex:none; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+  #configure .clink:hover { color:var(--ink); border-bottom-color:var(--gold); }
+  #configure .clink:focus-visible { outline:1px solid var(--gold); outline-offset:3px; }
+  #configure .clink.ok { color:var(--gold); }
+  @media (min-width:1100px) {
+    #configure.panel { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(360px,1fr); column-gap:clamp(28px,3.2vw,56px); row-gap:16px; align-items:start; }
+    #configure > * { grid-column:2; }
+    /* the viewer holds still beside the choices while they are scrolled */
+    #configure > #stripwrap { grid-column:1; grid-row:1 / span 3; height:clamp(440px,38vw,600px); align-self:start;
+      position:sticky; top:calc(var(--hh, 72px) + 16px); }
+    #configure > .vposwrap { grid-column:1; grid-row:1 / span 3; align-self:start; margin-top:calc(clamp(440px,38vw,600px) + 14px);
+      position:sticky; top:calc(var(--hh, 72px) + 30px + clamp(440px,38vw,600px)); }
+    #configure > .opts { grid-row:1; gap:4px; }
+    #configure > .total { grid-row:2; }
+    #configure > .cacts { grid-row:3; justify-content:flex-start; }
+    #configure .opt { grid-template-columns:1fr; gap:8px; padding-top:12px; }
+    #configure .opt:first-child { border-top:0; padding-top:0; }
+    #configure .opts .chip { padding:7px 11px; min-height:0; font-size:.64rem; }
+    #configure .opts .chips { gap:6px; }
+    #configure .total { padding-top:18px; gap:14px; }
+    #configure .total .price { font-size:clamp(2rem,2.8vw,2.8rem); }
+    #configure .total .btn { width:100%; justify-content:center; }
+    #configure .total .tot { width:100%; }
+  }

@@ -808,6 +808,23 @@
     "  c += vec3(0.95,0.97,1.0) * u2 * u2 * 30.0;",
     "  return c;",
     "}",
+    /* The stones see a photographer's studio, not the room: a ring of tall
+       softboxes with black between them and a hard light overhead. A diamond
+       is only ever a mosaic of the bright and the black it reflects — a soft
+       grey room turns it into grey glass. */
+    "vec3 envS(vec3 d){",
+    "  vec3 c = env(d) * 0.35;",
+    "  float y = d.y, az = atan(d.z, d.x);",
+    "  float band = smoothstep(-0.05, 0.18, y) * smoothstep(0.92, 0.62, y);",
+    "  float pan = smoothstep(0.30, 0.38, abs(fract(az * 1.909859) - 0.5));",
+    "  c += vec3(1.0, 0.985, 0.96) * band * pan * 2.2;",
+    "  float pan2 = smoothstep(0.40, 0.46, abs(fract(az * 3.183099 + 0.21) - 0.5));",
+    "  c += vec3(0.92, 0.95, 1.0) * smoothstep(0.55, 0.75, y) * smoothstep(0.97, 0.88, y) * pan2 * 1.4;",
+    "  c += vec3(1.0) * smoothstep(0.955, 0.985, y) * 4.0;",
+    "  float low = smoothstep(-0.02, -0.16, y) * smoothstep(-0.62, -0.38, y) * smoothstep(0.36, 0.44, abs(fract(az * 0.954930 + 0.25) - 0.5));",
+    "  c += vec3(0.96, 0.98, 1.0) * low * 0.9;",
+    "  return c;",
+    "}",
     "float fres(float c, float f0){ return f0 + (1.0 - f0) * pow(1.0 - c, 5.0); }",
     /* Value noise that hands back its own gradient. Skin is not a smooth
        surface at any scale a reader can see — pores, the grain between them,
@@ -844,7 +861,7 @@
     "    vec3 Nf = dot(Nl, Vl) < 0.0 ? -Nl : Nl;",
     "    float c = max(dot(Nf, Vl), 1e-4);",
     "    float F = fres(c, 0.172);",
-    "    col = env(reflect(-Vw, dot(Nw, Vw) < 0.0 ? -Nw : Nw)) * F;",
+    "    col = envS(reflect(-Vw, dot(Nw, Vw) < 0.0 ? -Nw : Nw)) * F;",
     /* into the stone, and around the pavilion until it finds a way out */
     "    vec3 d = refract(-Vl, Nf, 1.0 / 2.417);",
     "    vec3 inside = vec3(0.0);",
@@ -856,8 +873,8 @@
     "      vec3 b2 = reflect(b1, normalize(-up * 0.74 + lat2 * 0.67));",
     "      vec3 ex = refract(b2, -up, 2.426); if (dot(ex, ex) < 1e-8) ex = reflect(b2, up);",
     "      vec3 exB = refract(b2, -up, 2.465); if (dot(exB, exB) < 1e-8) exB = ex;",
-    "      float spread = clamp(length(exB - ex) * 3.2, 0.0, 1.0);",
-    "      vec3 e = env(R * ex);",
+    "      float spread = clamp(length(exB - ex) * 4.5, 0.0, 1.0);",
+    "      vec3 e = envS(R * ex);",
     "      inside = e * (vec3(1.0) + spread * vec3(0.55, -0.06, -0.42));",
     "    } else if (dot(d, d) > 1e-8) {",
     "      vec3 p = vL + d * 1e-3;",
@@ -874,11 +891,11 @@
     "        }",
     "        if (!got) break;",
     "        p += d * tmin;",
-    "        vec3 oR = refract(d, -hn, 2.402);",
+    "        vec3 oR = refract(d, -hn, 2.380);",
     "        vec3 oG = refract(d, -hn, 2.426);",
-    "        vec3 oB = refract(d, -hn, 2.465);",
+    "        vec3 oB = refract(d, -hn, 2.500);",
     "        if (dot(oG, oG) < 1e-8) { d = reflect(d, hn); energy *= 0.985; continue; }",
-    "        vec3 e = vec3(env(R * (dot(oR,oR) > 1e-8 ? oR : oG)).r, env(R * oG).g, env(R * (dot(oB,oB) > 1e-8 ? oB : oG)).b);",
+    "        vec3 e = vec3(envS(R * (dot(oR,oR) > 1e-8 ? oR : oG)).r, envS(R * oG).g, envS(R * (dot(oB,oB) > 1e-8 ? oB : oG)).b);",
     "        inside += e * energy;",
     "        break;",
     "      }",
@@ -1218,7 +1235,10 @@
        third where it sits, and a hand above it rather than a column of arm */
     /* the thumb throws the hand's mass to one side; the frame is centred on
        the hand, not on the origin it happens to be built around */
-    var lookY = hand.on ? state.R * 1.42 : 0, lookX = hand.on ? -state.R * 0.10 : 0;
+    /* in perspective the near side of the ring sits lower and larger than
+       the far side, so the eye looks a little below the centre and stands a
+       little further back, or the front stones run off the bottom */
+    var lookY = hand.on ? state.R * 1.42 : -state.fit * 0.10 * Math.abs(Math.sin(cam.ph)), lookX = hand.on ? -state.R * 0.10 : 0;
     if (hand.on) {
       var wantH = state.R * (asp < 1 ? 4.70 : 4.05), wantW = state.R * (asp < 1 ? 2.85 : 3.3);
       fitD = Math.max(wantW / (tanF * asp), wantH / tanF);
@@ -1230,7 +1250,7 @@
          two controls are 213 and 90 wide: the ring ran under both of them,
          which is what made the builder look like a pile rather than a piece.
          A phone pulls the camera back far enough to clear its own furniture. */
-      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (coarse && !staged ? 1.26 : 1.01);
+      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (coarse && !staged ? 1.30 : 1.12);
     }
     var R = state.R, dist = fitD * cam.d;
     var cp = Math.cos(cam.ph), sp = Math.sin(cam.ph);
@@ -1500,6 +1520,10 @@
     var v = t.getAttribute("data-toy");
     if (v === "up") pickUp(); else putBack();
   });
-  window.__bracelet = { build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+  /* a picture of exactly what is on screen, for the reader to keep or send:
+     drawn fresh and handed over in the same task, before the browser is free
+     to clear the buffer */
+  function snap() { size(); draw(); return cv; }
+  window.__bracelet = { build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
 })();
 </script>

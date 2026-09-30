@@ -301,7 +301,6 @@ ${markDefs()}
         <div class="k gold rv ol" data-en="04 · Your bracelet" data-he="04 · הצמיד שלכם">04 · Your bracelet</div>
         <h2 class="h2 sp rv" data-en="Design <em>your bracelet.</em>" data-he="עצבו <em>את הצמיד שלכם.</em>">Design <em>your bracelet.</em></h2>
         <p class="p rv d2" data-en-no3d="Choose the cut, the carats, the metal and your wrist size. This browser cannot draw the bracelet in three dimensions, so it is shown as an illustration that follows every choice." data-he-no3d="בחרו את הליטוש, הקראטים, המתכת ומידת פרק היד. הדפדפן הזה אינו מציג תלת־ממד, ולכן הצמיד מוצג כהמחשה שמתעדכנת בכל בחירה." data-en="Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick." data-he="בחרו את הליטוש, הקראטים, המתכת ומידת פרק היד. הצמיד נבנה בתלת־ממד תוך כדי, ואז נענד על יד שתבחרו.">Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick.</p>
-        <div class="acts rv d3"><a class="btn solid" href="#configure" data-en="Start designing" data-he="התחילו לעצב">Start designing</a><button class="btn" type="button" id="tryonBtn" data-en="See it on a wrist" data-he="ראו אותו על פרק היד">See it on a wrist</button></div>
       </div>
     </div>
     <div class="panel rv" id="configure">
@@ -345,8 +344,10 @@ ${markDefs()}
         <div class="tot"><div class="k" data-en="Indicative estimate" data-he="הערכה ראשונית">Indicative estimate</div><div class="pricerow">${seal("sealsm")}<div class="price" id="est" data-aed="28500">AED 28,500</div></div><div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div><div class="row k" style="margin-top:10px"><span id="sumStones">—</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumWrist">17 cm</span></div><p class="estnote" data-en="The final figure is set once the stones are chosen and certified, and depends on what is available in that grade at the time." data-he="המחיר הסופי נקבע לאחר בחירת האבנים והנפקת התעודות, ותלוי בזמינות באותה דרגה באותו מועד.">The final figure is set once the stones are chosen and certified, and depends on what is available in that grade at the time.</p></div>
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet</a>
       </div>
-      <div class="playbar">
-        <button class="btn" type="button" id="tryonBtn2" data-en="Try it on your photo" data-he="נסו על תמונה שלכם">Try it on your photo</button>
+      <div class="cacts">
+        <button class="clink" type="button" id="saveImg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-en="Save the image" data-he="שמרו את התמונה">Save the image</span></button>
+        <button class="clink" type="button" id="sendSpec"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg><span data-en="Send it to the jeweller" data-he="שלחו אותו לצורף">Send it to the jeweller</span></button>
+        <button class="clink" type="button" id="tryonBtn2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-en="Try it on your photo" data-he="נסו על תמונה שלכם">Try it on your photo</span></button>
       </div>
       
     </div>
