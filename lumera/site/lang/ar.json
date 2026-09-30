@@ -228,7 +228,6 @@
  "Done": "تم",
  "Drag to turn · pinch to zoom · double tap to reset": "اسحب للتدوير · اقرص للتكبير · انقر مرتين لإعادة الضبط",
  "The house <em>collection.</em>": "<em>مجموعة</em> الدار.",
- "Three pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.": "ثلاث قطع جاهزة ويمكنكم رؤيتها هذا الأسبوع. وكل ما عداها يُرسم معكم ويُرصَّع يدويًا في دبي.",
  "Every stone graded by GIA or IGI. Every piece set by hand in Dubai. Every certificate carries your name.": "كل حجر مصنَّف من GIA أو IGI. كل قطعة مرصَّعة يدويًا في دبي. كل شهادة تحمل اسمكم.",
  "Continue on WhatsApp": "المتابعة عبر واتساب",
  "Request a call": "طلب مكالمة",
@@ -239,7 +238,6 @@
  "By hand": "يدويًا",
  "Graded": "التصنيف",
  "Made to <em>your measure.</em>": "مصنوع <em>على مقاسكم.</em>",
- "Pieces carrying the house mark. Three of them you can hold this week.": "قطع تحمل ختم الدار. ثلاث منها يمكنكم رؤيتها هذا الأسبوع.",
  "EU 47–58": "EU 47–58",
  "Pavé": "بافيه",
  "The Knot, <em>Pavé</em>": "العقدة، <em>بافيه</em>",
@@ -347,5 +345,7 @@
  "The Knot Ring, the SILAVU mark in pavé on a band paved to the shoulders": "خاتم العقدة، ختم SILAVU بالبافيه على حلقة مرصّعة حتى الكتفين",
  "The mark again, but set rather than polished: stones follow its ribbon from end to end, and the two open loops are left bare so the eye still reads the knot passing through itself. The band is paved down both shoulders and runs plain and polished underneath, so it sits flat against the next finger. Inside it, where only you see it, the house signs its name.": "الختم مجددًا، لكنه مرصّع بدل أن يكون مصقولًا: تتبع الأحجار شريطه من طرفه إلى طرفه، وتُترك الحلقتان المفتوحتان عاريتين كي تبقى العين تقرأ العقدة وهي تمر عبر نفسها. الحلقة مرصّعة على الكتفين وملساء مصقولة من الأسفل، فتستقر مسطّحة بجوار الإصبع المجاور. وفي داخلها، حيث لا يراه غيركم، توقّع الدار اسمها.",
  "Brilliants on the mark and down both shoulders, matched for colour so the tone does not change where the mark meets the band. The count and the total weight are stated on the certificate.": "ألماس بقطع البريليانت على الختم وعلى الكتفين، متطابق اللون كي لا يتغير اللون حيث يلتقي الختم بالحلقة. العدد والوزن الإجمالي مذكوران في الشهادة.",
- "Pavé on the mark and shoulders, grain-set by hand": "بافيه على الختم والكتفين، مرصّع يدويًا بالحبيبات"
+ "Pavé on the mark and shoulders, grain-set by hand": "بافيه على الختم والكتفين، مرصّع يدويًا بالحبيبات",
+ "Pieces carrying the house mark, each finished by hand in Dubai.": "قطع تحمل ختم الدار، وكل قطعة تُنجز يدويًا في دبي.",
+ "Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.": "ألماس يُختار حجرًا حجرًا، ويُرصَّع يدويًا في دبي، ويُنجز ليُرتدى مدى الحياة."
 }

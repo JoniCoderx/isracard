@@ -186,7 +186,7 @@ ${markDefs()}
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
       <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה, שנעשים <em>לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
-      <p class="p rv d2" data-en="Three pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai." data-he="שלושה תכשיטים מוכנים ואפשר לראות אותם השבוע. כל השאר מעוצב יחד אתכם ומשובץ ביד בדובאי.">Three pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.</p>
+      <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד־אחד, משובצים ביד בדובאי ומוגמרים כדי ללוות אתכם לכל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
@@ -258,7 +258,7 @@ ${markDefs()}
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
       <h2 class="h2 sp rv" data-en="The house <em>collection.</em>" data-he="<em>הקולקציה</em> של הבית.">The house <em>collection.</em></h2>
-      <p class="p rv d2" data-en="Pieces carrying the house mark. Three of them you can hold this week." data-he="תכשיטים שנושאים את סמל הבית. שלושה מהם זמינים לצפייה כבר השבוע.">Pieces carrying the house mark. Three of them you can hold this week.</p>
+      <p class="p rv d2" data-en="Pieces carrying the house mark, each finished by hand in Dubai." data-he="תכשיטים הנושאים את חותם הבית, כל אחד מוגמר ביד בדובאי.">Pieces carrying the house mark, each finished by hand in Dubai.</p>
       <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or start from nothing" data-he="או להתחיל מדף חלק">Or start from nothing</a></div>
     </div>
     ${COLLECTION}

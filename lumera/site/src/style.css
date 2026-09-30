@@ -4017,3 +4017,27 @@
   html[dir="rtl"] :is(#sumStones, #sumMetal, #sumOrigin, #sumWrist, .mk .kv, .mspecs .sv, #eachMm, #eachCt, #lineLen, .meta span, .price) { unicode-bidi:plaintext; }
   :is(#sumStones, #sumWrist, #eachMm, #eachCt, #lineLen) { text-transform:none; }
   html[dir="rtl"] :is(.mk .kv, .mspecs .sv, #sumStones, #sumMetal, #sumOrigin, #sumWrist) { text-align:right; }
+
+  /* ══ v118 — the one of one reads as one block ═══════════════════════════
+     On a desktop the heading stood alone on the left while the piece's own
+     name, line and links sat under its photograph on the right, so the block
+     read as two unrelated halves with a hole under the heading. The photograph
+     now takes the left column whole, and the right column carries everything
+     that is said about it, top to bottom: the heading, then the piece. ───── */
+  @media (min-width:900px) {
+    .excep { grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); grid-template-areas:"fig hd" "fig bd";
+      grid-template-rows:auto auto; align-content:center; column-gap:clamp(40px,5vw,86px); row-gap:clamp(22px,2.6vw,34px); }
+    .excepbody, .excepbody .piece { display:contents; }
+    .excepbody .piece .fig { grid-area:fig; align-self:center; width:100%; max-height:78svh; }
+    .excephd { grid-area:hd; align-self:end; max-width:46ch; }
+    .excepbody .piece .bd { grid-area:bd; align-self:start; padding:0; max-width:46ch; }
+  }
+
+  /* the laboratories after the box: a quiet band with room around it,
+     readable, rather than two faint words floating above the next chapter */
+  .certs { padding-block:clamp(26px,3.4vw,42px); margin-top:clamp(28px,3.6vw,48px);
+    border-top:1px solid var(--line); gap:10px clamp(18px,2.4vw,30px); }
+  .certs .k { font-size:max(.7rem, 12px); letter-spacing:.2em; color:var(--ink2); }
+  .certs .cert b { font-size:clamp(.95rem,1.3vw,1.15rem); letter-spacing:.3em; color:var(--ink); }
+  .certs .cert:hover b { color:var(--gold); }
+  html[data-ns] .certs .k { letter-spacing:.02em; }
