@@ -81,10 +81,10 @@ jobs:
         run: bash lumera/site/piece-assets.sh dist/img
       - name: The journey, six stages of one bracelet
         run: bash lumera/site/journey-assets.sh dist/img
-      - name: The Dubai film, cut into frames
-        run: bash lumera/site/film-frames.sh lumera/site/media/silavu-film.mp4 dist/f/film
       - name: The box sequence, cut from the 4K restoration
         run: bash lumera/site/box-frames.sh dist/f/box
+      - name: The Line at night, cut from its 4K master
+        run: bash lumera/site/bench-frames.sh dist/f/bench
       # The cards are built in the browser from the catalogue, so a missing
       # derivative is invisible to anything that only reads the HTML. This
       # reads the catalogue, works out every file the page can ask for, and

@@ -221,113 +221,75 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="craft" data-n="" data-title-en="The work" data-title-he="העבודה" aria-label="At the bench">
-  <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
-  <div class="wrap">
-  <div class="ed">
-    ${fig("craft", "A setter's hands holding one round brilliant in steel tweezers over a dark bench", "r45", SIZES_ED, "", `<div class="cap k"><span data-en="Dubai · the bench" data-he="דובאי · שולחן העבודה">Dubai · the bench</span></div>`)}
-    <div class="copy">
-      <div class="k gold rv ol" data-en="Set by hand in Dubai" data-he="משובץ ביד בדובאי">Set by hand in Dubai</div>
-      <h2 class="h2 sp rv" data-en="At <em>the bench.</em>" data-he="הידיים <em>שמאחורי הקו.</em>">At <em>the bench.</em></h2>
-      <ul class="craftlines rv d2">
-        <li data-en="Every setting finished as one line." data-he="כל שיבוץ מושלם לקו רציף אחד.">Every setting finished as one line.</li>
-        <li data-en="Inspected stone by stone, under the loupe." data-he="נבדק אבן אחר אבן, תחת זכוכית מגדלת.">Inspected stone by stone, under the loupe.</li>
-        <li data-en="Matched within a tenth of a millimetre." data-he="מותאם בדיוק של עשירית מילימטר.">Matched within a tenth of a millimetre.</li>
-      </ul>
+  <section id="craft" data-n="" data-title-en="The Line" data-title-he="הקו" aria-label="The Line, at night in Dubai">
+    <!-- a scroll-scrubbed film, cut into frames the same way as the box -->
+    <div class="pin benchpin" id="benchpin">
+      <div class="pinin">
+        <canvas id="benchcv" role="img" aria-label="Diamond tennis bracelets draped across the bonnet of a black car at night, the Dubai skyline behind"></canvas>
+        <div class="benchveil" aria-hidden="true"></div>
+        <div class="benchtxt">
+          <div class="k gold ol" data-en="The Line · Dubai" data-he="הקו · דובאי">The Line · Dubai</div>
+          <h2 class="h2" data-en="Made to be <em>seen.</em>" data-he="נוצר <em>כדי להיראות.</em>">Made to be <em>seen.</em></h2>
+          <p class="p" data-en="Every line set by hand, stone by stone, to catch the light wherever you take it." data-he="כל קו משובץ ביד, אבן אחר אבן, כדי לתפוס את האור בכל מקום שתיקחו אותו.">Every line set by hand, stone by stone, to catch the light wherever you take it.</p>
+        </div>
+      </div>
     </div>
-  </div>
-  </div>
 </section>
 <section id="collection" class="ivory paper" data-n="02" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
     <div class="sechead">
       <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
-      <h2 class="h2 sp rv" data-en="The house <em>collection.</em>" data-he="<em>הקולקציה</em> של הבית.">The house <em>collection.</em></h2>
-      <p class="p rv d2" data-en="Pieces carrying the house mark, each finished by hand in Dubai." data-he="תכשיטים הנושאים את חותם הבית, כל אחד מוגמר ביד בדובאי.">Pieces carrying the house mark, each finished by hand in Dubai.</p>
-      <div class="acts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="btn" href="#bespoke" data-en="Or start from nothing" data-he="או להתחיל מדף חלק">Or start from nothing</a></div>
+      <h2 class="h2 sp rv" data-en="Made once. <em>Worn always.</em>" data-he="נעשה פעם אחת. <em>נענד תמיד.</em>">Made once. <em>Worn always.</em></h2>
+      <p class="p rv d2" data-en="Few pieces, and each one made to be the one you reach for first." data-he="מעט תכשיטים, וכל אחד מהם נעשה כדי להיות זה שתבחרו ראשון.">Few pieces, and each one made to be the one you reach for first.</p>
     </div>
     ${COLLECTION}
     </div>
   </section>
 
-  <section id="bespoke" class="ivory" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="The SILAVU journey">
+  <section id="bespoke" class="ivory paper jwhite" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="How a commission is made">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
-  <div class="bwm" aria-hidden="true">${markUse("")}</div>
     <div class="wrap">
     <div class="sechead jhead">
-      <div class="k gold rv ol" data-en="The SILAVU journey" data-he="המסע של סילאבו">The SILAVU journey</div>
-      <h2 class="h2 sp rv" data-en="Imagined. Crafted. <em>Yours.</em>" data-he="נהגה. נוצר. <em>שלכם.</em>">Imagined. Crafted. <em>Yours.</em></h2>
-      <p class="p rv d2" data-en="From the first line to the final detail." data-he="מהקו הראשון ועד לפרט האחרון.">From the first line to the final detail.</p>
+      <div class="k gold rv ol" data-en="Bespoke · How it is made" data-he="בהזמנה אישית · איך זה נעשה">Bespoke · How it is made</div>
+      <h2 class="h2 sp rv" data-en="From one conversation <em>to your wrist.</em>" data-he="משיחה אחת <em>ועד פרק היד.</em>">From one conversation <em>to your wrist.</em></h2>
+      <p class="p rv d2" data-en="A piece made for you alone, in six steps and four to six weeks. Scroll through it." data-he="תכשיט שנעשה רק בשבילכם, בשישה שלבים ובארבעה עד שישה שבועות. גללו כדי לראות.">A piece made for you alone, in six steps and four to six weeks. Scroll through it.</p>
     </div>
-
-    <div class="jrn rv d2" id="jrn">
-      <div class="jstage">
-        <figure class="jshot on" data-i="01" aria-hidden="false">
-          <div class="jim">${pic("jn1", "A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold", SIZES_JRN, false)}</div>
-        </figure>
-        <figure class="jshot" data-i="02" aria-hidden="true">
-          <div class="jim">${pic("jn2", "A hand-drawn design of the Line bracelet in graphite on ivory paper, with detail studies of a link and the clasp", SIZES_JRN, true)}</div>
-        </figure>
-        <figure class="jshot" data-i="03" aria-hidden="true">
-          <div class="jim">${pic("jn3", "The Line bracelet as a technical model, wireframe geometry flowing into a shaded render", SIZES_JRN, true)}</div>
-        </figure>
-        <figure class="jshot" data-i="04" aria-hidden="true">
-          <div class="jim">${pic("jn4", "A setter's hands placing one brilliant into the Line bracelet at the bench", SIZES_JRN, true)}</div>
-        </figure>
-        <figure class="jshot" data-i="05" aria-hidden="true">
-          <div class="jim">${pic("jn5", "The finished Line bracelet fitted into its presentation box, on pale champagne suede", SIZES_JRN, true)}</div>
-        </figure>
-        <figure class="jshot" data-i="06" aria-hidden="true">
-          <div class="jim">${pic("jn6", "The Line bracelet worn at its true scale on a wrist, in soft directional light", SIZES_JRN, true)}</div>
-        </figure>
-      </div>
-      <div class="jside">
-        <div class="jsteps">
-          <article class="jstep on" data-i="01" tabindex="-1" aria-labelledby="jt1">
-          <div class="jn k">01</div>
-          <h3 class="jt" id="jt1" data-en="The Inspiration" data-he="ההשראה">The Inspiration</h3>
-          <p class="jp" data-en="Every piece begins with a vision." data-he="כל תכשיט מתחיל בחזון.">Every piece begins with a vision.</p>
-        </article>
-          <article class="jstep" data-i="02" tabindex="-1" aria-labelledby="jt2">
-          <div class="jn k">02</div>
-          <h3 class="jt" id="jt2" data-en="The First Lines" data-he="הקווים הראשונים">The First Lines</h3>
-          <p class="jp" data-en="An idea takes its first shape." data-he="הרעיון מקבל צורה.">An idea takes its first shape.</p>
-        </article>
-          <article class="jstep" data-i="03" tabindex="-1" aria-labelledby="jt3">
-          <div class="jn k">03</div>
-          <h3 class="jt" id="jt3" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</h3>
-          <p class="jp" data-en="Every curve, carefully considered." data-he="כל קימור נשקל בקפידה.">Every curve, carefully considered.</p>
-        </article>
-          <article class="jstep" data-i="04" tabindex="-1" aria-labelledby="jt4">
-          <div class="jn k">04</div>
-          <h3 class="jt" id="jt4" data-en="The Craft" data-he="העשייה">The Craft</h3>
-          <p class="jp" data-en="Brought to life, detail by detail." data-he="קורם עור וגידים, פרט אחר פרט.">Brought to life, detail by detail.</p>
-        </article>
-          <article class="jstep" data-i="05" tabindex="-1" aria-labelledby="jt5">
-          <div class="jn k">05</div>
-          <h3 class="jt" id="jt5" data-en="The Presentation" data-he="ההגשה">The Presentation</h3>
-          <p class="jp" data-en="Considered down to the final detail." data-he="מוקפד עד הפרט האחרון.">Considered down to the final detail.</p>
-        </article>
-          <article class="jstep" data-i="06" tabindex="-1" aria-labelledby="jt6">
-          <div class="jn k">06</div>
-          <h3 class="jt" id="jt6" data-en="Yours to Wear" data-he="מוכן לענידה">Yours to Wear</h3>
-          <p class="jp" data-en="Your story begins here." data-he="הסיפור שלכם מתחיל כאן.">Your story begins here.</p>
-        </article>
+    </div>
+    <div class="jpin" id="jpin">
+      <div class="jsticky">
+        <div class="wrap jgrid" id="jrn">
+          <div class="jstage">
+          <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", "A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold", SIZES_JRN, false)}</div></figure>
+          <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", "A hand-drawn design of the Line bracelet in graphite on ivory paper, with detail studies of a link and the clasp", SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="02"><div class="jim">${pic("jn3", "The Line bracelet as a technical model, wireframe geometry flowing into a shaded render", SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="03"><div class="jim">${pic("jn4", "A setter's hands placing one brilliant into the Line bracelet at the bench", SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="04"><div class="jim">${pic("jn5", "The finished Line bracelet fitted into its presentation box, on pale champagne suede", SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="05"><div class="jim">${pic("jn6", "The Line bracelet worn at its true scale on a wrist, in soft directional light", SIZES_JRN, true)}</div></figure>
+            <div class="jcount k" aria-hidden="true"><b id="jnow">01</b> / 06</div>
+          </div>
+          <div class="jside">
+            <ol class="jsteps">
+            <li class="jstep on" data-i="0"><button type="button" class="jgo" aria-label="The conversation"><span class="jn">01</span><span class="jt" data-en="The conversation" data-he="השיחה">The conversation</span></button><p class="jp" data-en="You tell us who it is for, what it marks and how it should feel. Nothing is drawn yet." data-he="אתם מספרים לנו למי התכשיט, מה הוא מציין ואיך הוא צריך להרגיש. עוד לא משרטטים דבר.">You tell us who it is for, what it marks and how it should feel. Nothing is drawn yet.</p></li>
+            <li class="jstep" data-i="1"><button type="button" class="jgo" aria-label="The first lines"><span class="jn">02</span><span class="jt" data-en="The first lines" data-he="הקווים הראשונים">The first lines</span></button><p class="jp" data-en="Sketches in pencil around your idea, until one of them is unmistakably yours." data-he="סקיצות בעיפרון סביב הרעיון שלכם, עד שאחת מהן היא בבירור שלכם.">Sketches in pencil around your idea, until one of them is unmistakably yours.</p></li>
+            <li class="jstep" data-i="2"><button type="button" class="jgo" aria-label="Precision in 3D"><span class="jn">03</span><span class="jt" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</span></button><p class="jp" data-en="Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand." data-he="כל קימור ממודל בדיוק של עשירית מילימטר, וכל אבן נבחרת יחד אתכם, עם תעודת המעבדה ביד.">Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand.</p></li>
+            <li class="jstep" data-i="3"><button type="button" class="jgo" aria-label="At the bench"><span class="jn">04</span><span class="jt" data-en="At the bench" data-he="על שולחן העבודה">At the bench</span></button><p class="jp" data-en="Cast, set and polished by hand in Dubai, stone by stone, under the loupe." data-he="נוצק, משובץ ומלוטש ביד בדובאי, אבן אחר אבן, תחת זכוכית מגדלת.">Cast, set and polished by hand in Dubai, stone by stone, under the loupe.</p></li>
+            <li class="jstep" data-i="4"><button type="button" class="jgo" aria-label="Signed and boxed"><span class="jn">05</span><span class="jt" data-en="Signed and boxed" data-he="חתום וארוז">Signed and boxed</span></button><p class="jp" data-en="The house mark struck inside, the certificates written in your name, closed in black lacquer." data-he="סמל הבית מוטבע בפנים, התעודות נכתבות על שמכם, והכול נסגר בקופסת לכה שחורה.">The house mark struck inside, the certificates written in your name, closed in black lacquer.</p></li>
+            <li class="jstep" data-i="5"><button type="button" class="jgo" aria-label="Yours to wear"><span class="jn">06</span><span class="jt" data-en="Yours to wear" data-he="שלכם לענוד">Yours to wear</span></button><p class="jp" data-en="Brought to you by hand. Four to six weeks from the first conversation." data-he="נמסר לכם ביד. ארבעה עד שישה שבועות מהשיחה הראשונה.">Brought to you by hand. Four to six weeks from the first conversation.</p></li>
+            </ol>
+            <div class="jfoot">
+              <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהזמנה אישית" data-en="Begin your commission" data-he="התחילו הזמנה אישית">Begin your commission</a>
+            </div>
+          </div>
         </div>
-        <nav class="jdots" aria-label="The six stages"><button type="button" class="jdot on" data-go="01" aria-label="The Inspiration"><span>01</span></button><button type="button" class="jdot" data-go="02" aria-label="The First Lines"><span>02</span></button><button type="button" class="jdot" data-go="03" aria-label="Precision in 3D"><span>03</span></button><button type="button" class="jdot" data-go="04" aria-label="The Craft"><span>04</span></button><button type="button" class="jdot" data-go="05" aria-label="The Presentation"><span>05</span></button><button type="button" class="jdot" data-go="06" aria-label="Yours to Wear"><span>06</span></button></nav>
+        <div class="jbar" aria-hidden="true"><i id="jbar"></i></div>
       </div>
-    </div>
-
-    <div class="jfoot rv d3">
-      <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהזמנה אישית" data-en="Create your SILAVU" data-he="צרו את סילאבו שלכם">Create your SILAVU</a>
-    </div>
     </div>
   </section>
 
   <section id="macro" data-n="" data-title-en="The stone" data-title-he="האבן" aria-label="Inside the stone">
     <div class="mfilm"><video id="insidevid" muted playsinline loop preload="none" poster="/img/one-2000.jpg" aria-hidden="true"></video><div class="mveil"></div>
-      <div class="mtxt"><div class="k gold" data-en="Inside one of the stones" data-he="בתוך אחת מהאבנים">Inside one of the stones</div><h2 class="h" data-en="Fifty-seven facets, <em>drawn to scale.</em>" data-he="חמישים ושבע פאות, <em>בקנה מידה נאמן.</em>">Fifty-seven facets, <em>drawn to scale.</em></h2></div>
+      <div class="mtxt"><div class="k gold" data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</div><h2 class="h" data-en="Light goes in. <em>Fire comes out.</em>" data-he="האור נכנס. <em>האש יוצאת.</em>">Light goes in. <em>Fire comes out.</em></h2></div>
     </div>
   </section>
 
@@ -412,20 +374,8 @@ ${markDefs()}
 
   
 
-  <section id="film" data-n="05" data-title-en="Enquire" data-title-he="פנייה" aria-label="Dubai at night, and how to reach the house">
-    <div class="fpin" id="filmpin">
-      <div class="fstick">
-        <div class="fscreen">
-          <canvas id="filmcv" role="img" aria-label="Three bags on wet marble above the Dubai skyline at night, the SILAVU bag at the centre"></canvas>
-          <i class="fgrade" aria-hidden="true"></i>
-        </div>
-        <i class="fveil" aria-hidden="true"></i>
-        <div class="ftxt" id="ftxt">
-          <div class="k gold" data-en="Dubai · tonight" data-he="דובאי · הערב">Dubai · tonight</div>
-        </div>
-      </div>
-    </div>
-
+  <section id="enquire" class="enq" data-n="05" data-title-en="Enquire" data-title-he="פנייה" aria-label="Enquire">
+  <div class="egrid">
   <div class="cwrap" id="concierge" data-n="05" data-title-en="Enquire" data-title-he="פנייה" aria-label="Enquire">
     <div class="cbody">
       <div>
@@ -470,6 +420,19 @@ ${markDefs()}
       <div class="soc rv d3" data-socials></div>
     </div>
     </div>
+    <div class="emb" id="emb" aria-hidden="true">
+      <div class="embfloat"><div class="embtilt" id="embtilt">
+        <i class="embhalo"></i>
+        <div class="embart">
+          <svg class="embsvg" viewBox="0 0 ${Math.ceil(MARK_W)} 1000" focusable="false"><defs><linearGradient id="embGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4d6"/><stop offset=".28" stop-color="#d9b872"/><stop offset=".52" stop-color="#8a6a33"/><stop offset=".74" stop-color="#e8cf95"/><stop offset="1" stop-color="#7a5b28"/></linearGradient></defs><path class="embline" d="${MARK}" pathLength="1"/><path class="embfill" d="${MARK}" fill="url(#embGold)"/></svg>
+          <i class="embshine"></i>
+        </div>
+        <span class="embword" dir="ltr">SILAVU</span>
+        <span class="embsub k" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span>
+        <i class="embdust"><b></b><b></b><b></b><b></b><b></b><b></b></i>
+      </div></div>
+    </div>
+  </div>
   </section>
 
   <section id="end" data-n="" aria-label="Footer">

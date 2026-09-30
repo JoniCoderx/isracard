@@ -817,56 +817,37 @@
     else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }
   });
 
-  /* ── v106: the journey, in one frame ──────────────────────────────────────
-     Six photographs in one place, crossing over into each other, with the
-     stage and its line changing with them. It plays on its own so a reader who
-     does nothing still sees the piece made, and it stops the moment anyone
-     takes hold of it — a thing that keeps moving under your hand is not
-     restraint. It does not play at all off-screen, in a background tab, or for
-     a reader who has asked for less motion. */
+  /* ── v120: the journey, told by the scroll ────────────────────────────────
+     It used to play on a timer and wait for clicks, and readers did not see
+     what it was for. Now the section holds on screen while the reader
+     scrolls, and the scroll walks through the six steps of a commission: the
+     photograph changes, the step lights up in the list, a bar fills. Nothing
+     needs pressing; a step can still be pressed to jump to it. ─────────── */
   (function () {
-    var jrn = $("jrn"); if (!jrn) return;
-    var shots = [].slice.call(jrn.querySelectorAll(".jshot"));
-    var steps = [].slice.call(jrn.querySelectorAll(".jstep"));
-    var dots  = [].slice.call(jrn.querySelectorAll(".jdot"));
-    if (shots.length < 2) return;
-    var cur = 0, timer = null, held = false, seen = false;
-    var calm = matchMedia("(prefers-reduced-motion:reduce)");
-
+    var pin = $("jpin"); if (!pin) return;
+    var shots = [].slice.call(pin.querySelectorAll(".jshot")), steps = [].slice.call(pin.querySelectorAll(".jstep")),
+        now = $("jnow"), bar = $("jbar"), N = steps.length, cur = -1;
     function show(i) {
-      cur = (i + shots.length) % shots.length;
-      shots.forEach(function (sh, k) { sh.classList.toggle("on", k === cur); sh.setAttribute("aria-hidden", k === cur ? "false" : "true"); });
-      steps.forEach(function (st, k) { st.classList.toggle("on", k === cur); });
-      dots.forEach(function (d, k) { d.classList.toggle("on", k === cur); d.setAttribute("aria-current", k === cur ? "true" : "false"); });
-      /* the next photograph is asked for before it is wanted */
-      var n = shots[(cur + 1) % shots.length], im = n && n.querySelector("img");
-      if (im && im.loading === "lazy") im.loading = "eager";
+      if (i === cur) return; cur = i;
+      shots.forEach(function (s, k) { s.classList.toggle("on", k === i); s.setAttribute("aria-hidden", k === i ? "false" : "true"); });
+      steps.forEach(function (s, k) { s.classList.toggle("on", k === i); s.classList.toggle("past", k < i); });
+      if (now) now.textContent = (i < 9 ? "0" : "") + (i + 1);
     }
-    function stop() { if (timer) { clearInterval(timer); timer = null; } }
-    function play() {
-      stop();
-      if (held || !seen || calm.matches || document.hidden) return;
-      timer = setInterval(function () { show(cur + 1); }, 4200);
+    function tick() {
+      var r = pin.getBoundingClientRect(), span = r.height - innerHeight;
+      var p = span > 0 ? Math.max(0, Math.min(1, -r.top / span)) : 0;
+      if (bar) bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+      show(Math.min(N - 1, Math.floor(p * N * 0.999)));
     }
-    function hold() { held = true; stop(); }
-
-    dots.forEach(function (d, k) {
-      d.addEventListener("click", function () { hold(); show(k); });
-      d.addEventListener("keydown", function (e) {
-        var n = e.key === "ArrowRight" || e.key === "ArrowDown" ? k + 1
-              : e.key === "ArrowLeft"  || e.key === "ArrowUp"   ? k - 1 : -1;
-        if (n < 0 || n >= dots.length) return;
-        e.preventDefault(); hold(); dots[n].focus(); show(n);
+    addEventListener("scroll", tick, { passive: true }); addEventListener("resize", tick); tick();
+    /* pressing a step scrolls to the point where it is shown */
+    steps.forEach(function (s, k) {
+      var b = s.querySelector(".jgo"); if (!b) return;
+      b.addEventListener("click", function () {
+        var top = pin.getBoundingClientRect().top + scrollY, span = pin.offsetHeight - innerHeight;
+        scrollTo({ top: top + span * (k + 0.5) / N, behavior: reduce ? "instant" : "smooth" });
       });
     });
-    jrn.addEventListener("pointerenter", stop);
-    jrn.addEventListener("pointerleave", function () { if (!held) play(); });
-    jrn.addEventListener("focusin", hold);
-    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : play(); });
-    new IntersectionObserver(function (es) {
-      es.forEach(function (e) { seen = e.isIntersecting; e.isIntersecting ? play() : stop(); });
-    }, { threshold: 0.3 }).observe(jrn);
-    show(0);
   })();
 
   /* v93 — a rail drops its fade once there is nothing left to the side. The
@@ -883,6 +864,24 @@
     rails.forEach(function (r) { mark(r); r.addEventListener("scroll", function () { mark(r); }, { passive: true }); });
     addEventListener("resize", function () { rails.forEach(mark); }, { passive: true });
     new MutationObserver(function () { rails.forEach(mark); }).observe(document.documentElement, { attributes: true, attributeFilter: ["dir", "data-lang"] });
+  })();
+  /* ── the house mark beside the enquiry: it draws itself in when it is
+       reached, and leans toward the pointer while it is over it. Only
+       transforms and light move — the mark's own geometry is never touched. ── */
+  (function () {
+    var emb = $("emb"), tilt = $("embtilt"); if (!emb || !tilt) return;
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es, ob) { es.forEach(function (e) { if (e.isIntersecting) { emb.classList.add("in"); ob.disconnect(); } }); }, { threshold: 0.25 }).observe(emb);
+    } else emb.classList.add("in");
+    if (reduce || !matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+    var raf = 0, tx = 0, ty = 0;
+    function apply() { raf = 0; tilt.style.setProperty("--rx", (-ty * 16).toFixed(2) + "deg"); tilt.style.setProperty("--ry", (tx * 22).toFixed(2) + "deg");
+      tilt.style.setProperty("--lx", (50 + tx * 60).toFixed(1) + "%"); tilt.style.setProperty("--ly", (50 + ty * 60).toFixed(1) + "%"); }
+    emb.addEventListener("pointermove", function (e) { var r = emb.getBoundingClientRect();
+      tx = Math.max(-1, Math.min(1, (e.clientX - r.left) / r.width * 2 - 1)); ty = Math.max(-1, Math.min(1, (e.clientY - r.top) / r.height * 2 - 1));
+      if (!raf) raf = requestAnimationFrame(apply); });
+    emb.addEventListener("pointerenter", function () { emb.classList.add("hov"); });
+    emb.addEventListener("pointerleave", function () { emb.classList.remove("hov"); tx = ty = 0; if (!raf) raf = requestAnimationFrame(apply); });
   })();
 })();
 </script>

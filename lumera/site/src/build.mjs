@@ -100,7 +100,9 @@ b = b.slice(0, hs) + b.slice(hs, he).replace(/class="([^"]*)\brv\b([^"]*)"/g, 'c
 /* the three heavy canvases wait for the loader: they are stored, then run in order */
 const defer = (s) => s.replace(/^<script>\n/, "<script>\n(window.__defer = window.__defer || []).push(function () {\n").replace(/<\/script>\n?$/, "});\n</script>\n");
 /* the symbol as a mask, available to anything on the page that wants to light it */
-const MKVAR = ":root{--mk:url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + Math.ceil(MARK_W) + ' 1000" preserveAspectRatio="none"><path d="' + MARK + '" fill="#fff"/></svg>') + "')}\n";
+const MKVAR = ":root{--mk:url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + Math.ceil(MARK_W) + ' 1000" preserveAspectRatio="none"><path d="' + MARK + '" fill="#fff"/></svg>') + "');"
+  /* the same mark with its own proportions, for places that must never stretch it */
+  + "--mkfit:url('data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.ceil(MARK_W) + '" height="1000" viewBox="0 0 ' + Math.ceil(MARK_W) + ' 1000"><path d="' + MARK + '" fill="#fff"/></svg>') + "')}\n";
 /* The typefaces load from a real <link>, not from an @import inside the sheet.
    An @import is only honoured at the very top of a stylesheet, and this sheet
    opens with the mark variable above — the import sat second and the browser

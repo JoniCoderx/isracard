@@ -8,7 +8,7 @@
 
   /* ── a scrubbed film: a tall pin, a sticky screen, and a strip of frames drawn
        to a canvas as the page moves. The box chapter has used this since the
-       beginning; the Dubai film uses the same machine, with its own frames. ── */
+       beginning; The Line uses the same machine, with its own frames. ── */
   function sequence(o) {
     var pin = $(o.pin), cv = $(o.canvas), ctx = cv && cv.getContext("2d");
     if (!pin || !ctx) return null;
@@ -155,36 +155,22 @@
     at: beatsAt
   });
 
-  /* ── the Dubai film ── */
-  var fveil = document.querySelector("#film .fveil"), ftxt = $("ftxt"), fscreen = document.querySelector("#film .fscreen");
-  var film = sequence({
-    pin: "filmpin", canvas: "filmcv", dir: "/f/film/", ext: ".webp",
-    /* the same tier rule the box chapter uses */
-    set: function () { return phone ? "m" : (innerWidth * Math.min(devicePixelRatio || 1, 2) >= 2400 ? "x" : "d"); },
-    /* what each strip actually holds, so the canvas never asks for more pixels
-       than exist in the frame — and, now that the frames are 4K restorations,
-       never settles for fewer either */
-    src: function (set) { return set === "m" ? 888 : set === "x" ? 2200 : 1600; },
-    /* the phone strip is two thirds of the frames: a ten-second push-in carries
-       perfectly well at fifty, and it is a third of what a phone would fetch */
-    n: function (set) { return set === "m" ? 50 : 75; },
-    still: 0.62,
-    /* it opens out of black and closes back into it, and drifts a little the whole way */
-    zoom: function (p) { return { s: 1.055 - 0.055 * p, y: (0.5 - p) * 26 }; },
-    release: true,
-    at: function (p) {
-      if (reduce) return;   /* the stylesheet holds it open and still */
-      /* It used to come up out of a full black frame, which is a title card, not
-         a cut. It arrives already lit and only the first breath is veiled, so it
-         enters from the chapter above it rather than from nowhere. It still
-         leaves by dissolving from the bottom up. */
-      if (fveil) fveil.style.opacity = (0.55 * (1 - c01(p / 0.09))).toFixed(3);
-      if (fscreen) {
-        var g = c01((p - 0.86) / 0.14); g = g * g * (3 - 2 * g);     /* short, and only at the very end */
-        fscreen.style.setProperty("--fmp", (-5 - g * 295).toFixed(1) + "%");
-      }
-      if (ftxt) { var t = c01(p / 0.10) * (1 - c01((p - 0.30) / 0.16)); ftxt.style.opacity = t.toFixed(3); ftxt.style.transform = "translateY(" + ((1 - t) * 22).toFixed(1) + "px)"; }
-    }
+  /* ── the Line at night: bracelets on a car, scrubbed by the scroll ──
+     Same engine and the same tiers as the box, cut from a 4K master. It
+     drifts in a little as it plays and its line of copy comes up once the
+     camera has settled. */
+  var btxt = document.querySelector("#craft .benchtxt");
+  var bench = sequence({
+    pin: "benchpin", canvas: "benchcv", n: 96, dir: "/f/bench/", ext: ".webp", release: true,
+    set: function () {
+      if (phone) return "m";
+      var px = innerWidth * Math.min(devicePixelRatio || 1, 2);
+      return px >= 3200 ? "xx" : px >= 2400 ? "x" : "d";
+    },
+    src: function (set) { return set === "m" ? 900 : set === "xx" ? 3840 : set === "x" ? 2560 : 1920; },
+    zoom: function (p) { return { s: 1.04 - 0.04 * p, y: 0 }; },
+    still: 0.55,
+    at: function (p) { if (btxt) btxt.classList.toggle("on", reduce || p > 0.12); }
   });
 
   /* ── the rail ── */
@@ -198,10 +184,10 @@
   railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
   setTimeout(railSize, 800); addEventListener("load", railSize);
 
-  function tick() { requestAnimationFrame(tick); if (document.hidden) return; if (box) box.tick(); if (film) film.tick(); railTick(); }
+  function tick() { requestAnimationFrame(tick); if (document.hidden) return; if (box) box.tick(); if (bench) bench.tick(); railTick(); }
   tick();
   window.__box = box || { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
   window.__stone = window.__box;
-  window.__film = film || { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
+  window.__film = { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
 })();
 </script>

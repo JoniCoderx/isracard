@@ -4041,3 +4041,183 @@
   .certs .cert b { font-size:clamp(.95rem,1.3vw,1.15rem); letter-spacing:.3em; color:var(--ink); }
   .certs .cert:hover b { color:var(--gold); }
   html[data-ns] .certs .k { letter-spacing:.02em; }
+
+  /* ══ v119 — the Line at night ═══════════════════════════════════════════
+     The bench photograph is replaced by a film scrubbed by the scroll, cut
+     into frames like the box: bracelets draped over a black car, Dubai
+     behind. It holds for a little over two screens; the copy sits low on the
+     starting side, on its own shade, and rises in once the camera settles. */
+  #craft { padding:0 !important; }
+  #craft .chap { display:none; }
+  .benchpin { height:260svh; }
+  @media (max-width:999px) { .benchpin { height:210svh; } }
+  .benchpin .pinin { background:#000; }
+  #benchcv { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .benchveil { position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.28) 34%, rgba(0,0,0,0) 58%),
+               linear-gradient(to bottom, rgba(0,0,0,.45), transparent 22%); }
+  .benchtxt { position:absolute; z-index:2; left:var(--pad); right:var(--pad); bottom:max(9svh, 64px);
+    max-width:560px; display:grid; gap:12px; opacity:0; transform:translateY(18px);
+    transition:opacity .9s var(--ease), transform 1.1s var(--ease); }
+  html[dir="rtl"] .benchtxt { left:var(--pad); right:var(--pad); margin-inline-start:0; }
+  .benchtxt.on { opacity:1; transform:none; }
+  .benchtxt .h2 { font-size:clamp(2.2rem,5vw,4.2rem); line-height:1.02; margin:0; }
+  .benchtxt .p { color:#e9e4d8; max-width:44ch; text-shadow:0 1px 2px rgba(0,0,0,.5), 0 0 18px rgba(0,0,0,.6); }
+  .benchtxt .k { text-shadow:0 1px 2px rgba(0,0,0,.6); }
+  @media (max-width:999px) { .benchtxt { bottom:max(12svh, 96px); } }
+  @media (prefers-reduced-motion:reduce) { .benchtxt { transition:none; } }
+
+  /* ══ v120 — the journey, told by the scroll ═════════════════════════════
+     White like the collection. The heading says what the section is for;
+     then the section holds on screen and the scroll walks the six steps:
+     the photograph on one side, the six steps listed on the other with the
+     current one lit and described, and a bar that fills across the bottom. */
+  #bespoke.jwhite { background:linear-gradient(180deg, #ffffff 0%, #fdfdfc 55%, #f8f7f5 100%) !important; padding-bottom:0 !important; }
+  #bespoke.jwhite::before, #bespoke.jwhite::after, #bespoke .bwm { display:none !important; }
+  /* overflow:hidden on the section would stop the stage from holding still */
+  #bespoke.jwhite { overflow:visible !important; overflow-x:clip !important; }
+  #bespoke .jhead { text-align:center; margin-inline:auto; max-width:760px; }
+  #bespoke .jhead .p { margin-inline:auto; max-width:52ch; }
+  .jpin { position:relative; height:520svh; margin-top:clamp(18px,3vw,40px); }
+  .jsticky { position:sticky; top:var(--hh, 72px); height:calc(100svh - var(--hh, 72px)); display:grid; align-items:center; overflow:hidden; }
+  #bespoke .jgrid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:clamp(32px,5vw,84px); align-items:center;
+    width:100%; max-width:1440px; margin:0 auto; padding-inline:var(--pad); box-sizing:border-box; }
+  #bespoke .jstage { position:relative; display:grid; aspect-ratio:4/3; max-height:calc(100svh - var(--hh,72px) - 90px); border-radius:18px; overflow:hidden; background:#0b0b0a;
+    box-shadow:0 30px 60px -34px rgba(20,19,15,.45); }
+  #bespoke .jshot { grid-area:1/1; margin:0; opacity:0; transition:opacity .8s var(--ease); height:100%; min-height:0; position:relative; }
+  #bespoke .jshot.on { opacity:1; }
+  #bespoke .jshot .jim, #bespoke .jshot picture, #bespoke .jshot img { width:100%; height:100%; display:block; max-height:none; aspect-ratio:auto; }
+  #bespoke .jshot img { object-fit:cover; transform:scale(1.06); transition:transform 1.6s var(--ease); }
+  #bespoke .jshot.on img { transform:scale(1); }
+  #bespoke .jcount { position:absolute; z-index:2; bottom:14px; inset-inline-start:16px; color:#f4f1e9; font-size:12px; letter-spacing:.16em;
+    background:rgba(0,0,0,.4); padding:6px 10px; border-radius:999px; }
+  #bespoke .jcount b { font-weight:500; }
+  #bespoke .jsteps { list-style:none; margin:0; padding:0; display:grid; gap:0; counter-reset:none; }
+  #bespoke .jstep { grid-area:auto; pointer-events:auto; border-top:1px solid var(--line); padding:clamp(10px,1.3vw,16px) 0; transition:opacity .5s var(--ease); opacity:.42; }
+  #bespoke .jstep:last-child { border-bottom:1px solid var(--line); }
+  #bespoke .jstep.past { opacity:.6; }
+  #bespoke .jstep.on { opacity:1; }
+  #bespoke .jgo { all:unset; cursor:pointer; display:flex; align-items:baseline; gap:16px; width:100%; }
+  #bespoke .jgo:focus-visible { outline:1px solid var(--gold); outline-offset:4px; border-radius:4px; }
+  #bespoke .jn { font-size:12px; letter-spacing:.14em; color:var(--gold); min-width:2.2em; font-variant-numeric:tabular-nums; }
+  #bespoke .jt { font-family:var(--serif); font-style:italic; font-size:clamp(1.25rem,1.9vw,1.7rem); color:var(--ink); line-height:1.15; }
+  html[data-ns] #bespoke .jt { font-family:inherit; font-style:normal; font-weight:500; }
+  #bespoke .jp { margin:0; padding-inline-start:calc(2.2em + 16px); color:var(--ink2); font-size:.98rem; line-height:1.55; max-width:44ch;
+    display:grid; grid-template-rows:0fr; overflow:hidden; opacity:0; transition:opacity .5s var(--ease), margin .5s var(--ease); }
+  #bespoke .jstep.on .jp { opacity:1; margin-top:8px; }
+  #bespoke .jstep:not(.on) .jp { height:0; }
+  #bespoke .jfoot { margin-top:clamp(18px,2.4vw,30px); }
+  #bespoke .jbar { position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--line); }
+  #bespoke .jbar i { position:absolute; inset:0; background:var(--gold); transform-origin:left; transform:scaleX(0); }
+  html[dir="rtl"] #bespoke .jbar i { transform-origin:right; }
+  /* the old click-through layout is gone */
+  #bespoke .jside .jdots, #bespoke .jrn { display:none; }
+  @media (max-width:899px) {
+    .jpin { height:440svh; }
+    #bespoke .jgrid { grid-template-columns:1fr; gap:14px; align-content:center; }
+    #bespoke .jstage { aspect-ratio:4/3; max-height:40svh; border-radius:14px; }
+    #bespoke .jstep { padding:8px 0; }
+    #bespoke .jstep:not(.on) { display:none; }
+    #bespoke .jstep.on { border:0; }
+    #bespoke .jt { font-size:1.35rem; }
+    #bespoke .jp { padding-inline-start:0; margin-top:6px; }
+    #bespoke .jgo { gap:12px; }
+    #bespoke .jfoot { margin-top:10px; }
+  }
+  @media (prefers-reduced-motion:reduce) { #bespoke .jshot, #bespoke .jshot img, #bespoke .jp { transition:none; } }
+  /* the watermark behind the Line keeps the mark's true proportions */
+  .bgmk { -webkit-mask-image:var(--mkfit); mask-image:var(--mkfit); }
+
+  /* ── v121 — the enquiry: the Dubai film is gone. A wide form, and beside it
+       the house mark, large, in gold, floating. It draws itself in when it is
+       reached; under the pointer it leans, catches the light and the word
+       opens its tracking. Nothing ever scales one axis of the mark. ── */
+  #enquire { position:relative; overflow:hidden; padding:clamp(76px,9vw,150px) 0 clamp(76px,8vw,130px) !important;
+    background:radial-gradient(70% 80% at 80% 46%, #1b150b 0%, #0c0a07 48%, #050505 100%); }
+  html[dir="rtl"] #enquire { background:radial-gradient(70% 80% at 20% 46%, #1b150b 0%, #0c0a07 48%, #050505 100%); }
+  #enquire .egrid { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:clamp(32px,5vw,110px);
+    align-items:center; max-width:1480px; margin:0 auto; padding-inline:var(--pad); }
+  #enquire #concierge.cwrap { position:relative; display:block; min-height:0; height:auto; padding:0 !important; margin:0; background:none; top:auto; }
+  #enquire #concierge .cbody { width:100%; max-width:none; margin:0; padding:0; gap:clamp(26px,3vw,42px); }
+  #enquire #concierge .cbody::before { display:none; }
+  #enquire #concierge .h2 { max-width:15ch; font-size:clamp(2.2rem,4vw,3.9rem); margin-top:14px !important; }
+  #enquire .fields { grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:clamp(22px,3vw,44px); row-gap:clamp(10px,1.4vw,18px); }
+  #enquire .fields > .field:nth-child(3), #enquire .fields > .field:nth-child(4), #enquire .fields > .chan { grid-column:1 / -1; }
+  @media (min-width:1100px) {
+    #enquire .fields { grid-template-columns:repeat(3, minmax(0,1fr)); }
+    #enquire .fields > .field:nth-child(3) { grid-column:auto; }
+  }
+  #enquire .field input, #enquire .field textarea { font-size:1.06rem; }
+  #enquire #csend { min-width:min(100%, 260px); }
+
+  #enquire .emb { position:relative; display:grid; place-items:center; min-height:clamp(440px,64svh,760px); perspective:1400px; }
+  #enquire .embfloat { animation:embfloat 9s ease-in-out infinite; will-change:transform; }
+  @keyframes embfloat { 0%,100% { transform:translate3d(0,-12px,0) rotate(-.7deg); } 50% { transform:translate3d(0,14px,0) rotate(.7deg); } }
+  #enquire .embtilt { position:relative; display:grid; justify-items:center; gap:clamp(20px,2.4vw,34px); transform-style:preserve-3d;
+    transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1)); transition:transform 1.1s cubic-bezier(.2,.8,.2,1); }
+  #enquire .emb.hov .embtilt { --sc:1.08; transition:transform .35s cubic-bezier(.2,.8,.2,1); }
+  #enquire .embhalo { position:absolute; left:50%; top:40%; width:170%; aspect-ratio:1; transform:translate(-50%,-50%); pointer-events:none; z-index:-1;
+    background:radial-gradient(closest-side, rgba(226,192,120,.26), rgba(226,192,120,.07) 52%, rgba(226,192,120,0) 100%);
+    opacity:0; transition:opacity 2s ease .6s, filter .8s; animation:embbreath 7s ease-in-out infinite; }
+  #enquire .emb.in .embhalo { opacity:1; }
+  #enquire .emb.hov .embhalo { filter:brightness(1.7); }
+  @keyframes embbreath { 0%,100% { transform:translate(-50%,-50%) scale(.94); } 50% { transform:translate(-50%,-50%) scale(1.06); } }
+  #enquire .embart { position:relative; width:clamp(210px,23vw,380px); aspect-ratio:872 / 1000; }
+  #enquire .embsvg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; filter:drop-shadow(0 34px 50px rgba(0,0,0,.7)); }
+  #enquire .embline { fill:none; stroke:#e2c078; stroke-width:3.5; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-opacity 1.2s ease 2.2s; }
+  #enquire .embfill { opacity:0; transition:opacity 1.6s ease 1.5s; }
+  #enquire .emb.in .embline { animation:embdraw 2.4s cubic-bezier(.45,0,.2,1) forwards; stroke-opacity:.45; }
+  #enquire .emb.in .embfill { opacity:1; }
+  @keyframes embdraw { to { stroke-dashoffset:0; } }
+  #enquire .embshine, #enquire .embart::after { position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;
+    -webkit-mask:var(--mkfit) center / 100% 100% no-repeat; mask:var(--mkfit) center / 100% 100% no-repeat; }
+  #enquire .embshine { opacity:0; background:linear-gradient(115deg, transparent 40%, rgba(255,249,232,.9) 50%, transparent 60%) 0 0 / 250% 100% no-repeat; }
+  #enquire .emb.in .embshine { opacity:1; animation:embsweep 6.5s cubic-bezier(.5,0,.3,1) 3.2s infinite; }
+  #enquire .emb.hov .embshine { animation-duration:1.6s; animation-delay:0s; }
+  @keyframes embsweep { 0% { background-position:0 0; } 42%,100% { background-position:100% 0; } }
+  #enquire .embart::after { content:""; opacity:0; transition:opacity .6s ease;
+    background:radial-gradient(circle at var(--lx,50%) var(--ly,40%), rgba(255,247,222,.8), rgba(255,247,222,0) 42%); }
+  #enquire .emb.hov .embart::after { opacity:1; }
+  #enquire .embword { font-family:var(--word); font-weight:300; text-transform:uppercase; white-space:nowrap; line-height:1;
+    font-size:clamp(1.3rem,2.1vw,2.1rem); letter-spacing:.52em; margin-inline-end:-.52em;
+    background:linear-gradient(100deg, #b8914d, #fff1cc 45%, #c9a45e 70%, #8e6d33); -webkit-background-clip:text; background-clip:text; color:transparent;
+    opacity:0; transform:translateY(10px); transition:opacity 1.2s ease 2s, transform 1.2s cubic-bezier(.2,.8,.2,1) 2s, letter-spacing 1.2s cubic-bezier(.2,.8,.2,1), margin 1.2s cubic-bezier(.2,.8,.2,1); }
+  #enquire .emb.in .embword { opacity:1; transform:none; }
+  #enquire .emb.hov .embword { letter-spacing:1.05em; margin-inline-end:-1.05em; transition-delay:0s; }
+  #enquire .embsub { color:rgba(226,192,120,.72); letter-spacing:.3em; opacity:0; transition:opacity 1.2s ease 2.4s, letter-spacing 1.2s cubic-bezier(.2,.8,.2,1); }
+  #enquire .emb.in .embsub { opacity:1; }
+  #enquire .emb.hov .embsub { letter-spacing:.5em; transition-delay:0s; }
+  #enquire .embdust { position:absolute; inset:-8% -16%; pointer-events:none; }
+  #enquire .embdust b { position:absolute; width:14px; height:14px; background:#fff6dc; opacity:0; transform:scale(0);
+    clip-path:polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%); filter:drop-shadow(0 0 6px rgba(255,236,190,.9)); }
+  #enquire .emb.in .embdust b { animation:embglint 5s ease-in-out infinite; }
+  #enquire .embdust b:nth-child(1) { left:18%; top:14%; animation-delay:3s; }
+  #enquire .embdust b:nth-child(2) { left:78%; top:22%; animation-delay:4.4s; width:10px; height:10px; }
+  #enquire .embdust b:nth-child(3) { left:84%; top:58%; animation-delay:5.6s; }
+  #enquire .embdust b:nth-child(4) { left:10%; top:52%; animation-delay:6.3s; width:9px; height:9px; }
+  #enquire .embdust b:nth-child(5) { left:30%; top:72%; animation-delay:3.8s; width:11px; height:11px; }
+  #enquire .embdust b:nth-child(6) { left:66%; top:6%; animation-delay:7s; width:8px; height:8px; }
+  #enquire .emb.hov .embdust b { animation-duration:1.8s; }
+  @keyframes embglint { 0%,70%,100% { opacity:0; transform:scale(0) rotate(0); } 80% { opacity:1; transform:scale(1) rotate(45deg); } 90% { opacity:.6; transform:scale(.5) rotate(90deg); } }
+
+  @media (max-width:999px) {
+    #enquire { padding:clamp(40px,10vw,72px) 0 clamp(56px,12vw,90px) !important; background:radial-gradient(90% 45% at 50% 14%, #1b150b 0%, #0a0907 55%, #050505 100%); }
+    html[dir="rtl"] #enquire { background:radial-gradient(90% 45% at 50% 14%, #1b150b 0%, #0a0907 55%, #050505 100%); }
+    #enquire .egrid { grid-template-columns:1fr; gap:clamp(18px,5vw,34px); }
+    #enquire .emb { order:-1; min-height:0; padding-top:6px; }
+    #enquire .embart { width:clamp(112px,30vw,170px); }
+    #enquire .embtilt { gap:14px; }
+    #enquire .embword { font-size:1.05rem; }
+    #enquire .embsub { display:none; }
+    #enquire #concierge .h2 { font-size:clamp(1.9rem,7.4vw,2.6rem); }
+  }
+  @media (max-width:560px) {
+    #enquire .fields { grid-template-columns:1fr; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    #enquire .embfloat, #enquire .embhalo, #enquire .emb.in .embshine, #enquire .emb.in .embdust b { animation:none; }
+    #enquire .embline { animation:none !important; stroke-dashoffset:0; stroke-opacity:.45; }
+    #enquire .embfill, #enquire .embword, #enquire .embsub { opacity:1; transform:none; transition:none; }
+    #enquire .embhalo { opacity:1; transition:none; transform:translate(-50%,-50%); }
+    #enquire .embtilt { transition:none; }
+  }
