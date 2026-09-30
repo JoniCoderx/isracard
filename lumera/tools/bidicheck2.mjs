@@ -1,0 +1,14 @@
+import { chromium } from "playwright-core";
+const OUT="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--disable-background-networking","--disable-component-update"] });
+const ctx = await b.newContext({ viewport:{width:390,height:844}, hasTouch:true, isMobile:true, deviceScaleFactor:2 });
+await ctx.addInitScript(() => { localStorage.setItem("silavu-lang","he"); localStorage.setItem("silavu-seen","1"); });
+const p = await ctx.newPage(); await p.route(/fonts\./, r=>r.abort());
+await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(1200); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(500);
+await p.evaluate(()=>document.querySelector('.chip[data-k="cut"][data-v="emerald"]').click());
+await p.evaluate(()=>{ const e=document.getElementById("sumStones"); e.scrollIntoView({block:"center"}); }); await p.waitForTimeout(1200);
+await (await p.$("#sumStones")).evaluate(e=>e.closest(".total")||e.parentElement).then(()=>0);
+const tot = await p.$(".total"); await tot.screenshot({ path: OUT+"bidi-total.png" });
+await p.evaluate(()=>document.querySelectorAll(".pgrid .piece:not(.soon) .lnk.vw")[1].click()); await p.waitForTimeout(1200);
+const mk = await p.$("#pmKeys"); await mk.screenshot({ path: OUT+"bidi-keys.png" });
+await b.close();

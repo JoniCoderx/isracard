@@ -4007,3 +4007,13 @@
      below the bar, and above the bottom bar on a phone */
   html { scroll-padding-top:calc(var(--hh, 72px) + 12px); }
   @media (max-width:999px) { html { scroll-padding-bottom:84px; } }
+
+  /* ══ v117 — measures read left to right in Hebrew and Arabic ═════════════
+     "EU 47–58" came out as "EU 58–47" and "44 × 0.14 ct" as "CT 0.14 × 44":
+     a run of numbers and Latin units set inside a right-to-left line is
+     reordered by the bidi algorithm, and the labels' capitals turned ct and
+     cm into CT and CM. Each value now takes its direction from its own first
+     letter, and units keep their case. ─────────────────────────────────── */
+  html[dir="rtl"] :is(#sumStones, #sumMetal, #sumOrigin, #sumWrist, .mk .kv, .mspecs .sv, #eachMm, #eachCt, #lineLen, .meta span, .price) { unicode-bidi:plaintext; }
+  :is(#sumStones, #sumWrist, #eachMm, #eachCt, #lineLen) { text-transform:none; }
+  html[dir="rtl"] :is(.mk .kv, .mspecs .sv, #sumStones, #sumMetal, #sumOrigin, #sumWrist) { text-align:right; }

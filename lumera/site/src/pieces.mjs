@@ -80,10 +80,10 @@ export const PIECES = [
       { img: "ring-macro",  alt: S("The SILAVU mark on the Knot Ring, close", "סמל סילאבו על טבעת הקשר, מקרוב") },
       { img: "ring-signed", alt: S("SILAVU engraved inside the band of the Knot Ring", "סילאבו חרוט בתוך טבעת הקשר") }
     ],
-    meta: [S("18K white gold", "זהב לבן 18K"), S("EU 47–58", "47–58 EU"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
+    meta: [S("18K white gold", "זהב לבן 18K"), S("EU 47–58", "EU 47–58"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
       [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
-      [S("Size", "מידה"),    S("EU 47–58", "47–58 EU")],
+      [S("Size", "מידה"),    S("EU 47–58", "EU 47–58")],
       [S("Setting", "שיבוץ"), S("Pavé", "פאווה")]
     ],
     story: S("The mark again, but set rather than polished: the ribbon is followed by stones the whole way round, and the two open loops are left bare so the eye still reads the knot passing through itself. The band carries pavé to either shoulder and then runs plain, so it sits flat against the next finger. Inside it, where only you see it, the house signs its name.",
@@ -97,7 +97,7 @@ export const PIECES = [
       [S("Metal", "מתכת"),          S("18K white gold", "זהב לבן 18K")],
       [S("Setting", "שיבוץ"),       S("Pavé, grain-set by hand", "פאווה, משובץ ביד")],
       [S("Motif", "המוטיב"),        S("The SILAVU mark", "סמל סילאבו")],
-      [S("Size", "מידה"),           S("EU 47–58, to the half", "47–58 EU, במידות של חצי")],
+      [S("Size", "מידה"),           S("EU 47–58, to the half", "EU 47–58, בחצאי מידות")],
       [S("Signature", "חתימה"),     S("SILAVU, engraved inside the band", "סילאבו, חרוט בתוך הטבעת")],
       [S("Made", "ייצור"),          S("Dubai, by hand", "דובאי, בעבודת יד")]
     ],
