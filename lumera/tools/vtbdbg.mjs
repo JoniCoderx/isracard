@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--disable-background-networking","--disable-component-update"] });
+const ctx = await b.newContext({ viewport:{width:430,height:932}, hasTouch:true, isMobile:true, deviceScaleFactor:2 });
+await ctx.addInitScript(() => { localStorage.setItem("silavu-lang", "ar"); localStorage.setItem("silavu-seen","1"); });
+const p = await ctx.newPage(); await p.route(/fonts\./, r=>r.abort());
+await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(600);
+await p.evaluate(()=>{ const e=document.getElementById("stripwrap"); scrollTo(0, e.getBoundingClientRect().top+scrollY-100); }); await p.waitForTimeout(1200);
+console.log(await p.evaluate(()=>[...document.querySelectorAll(".vtb")].map(e=>{ const s=getComputedStyle(e); const r=document.createRange(); r.selectNodeContents(e); const tr=r.getBoundingClientRect(), er=e.getBoundingClientRect(); return { t:e.textContent, sw:e.scrollWidth, cw:e.clientWidth, textW:Math.round(tr.width), boxW:Math.round(er.width), pad:s.paddingLeft+"/"+s.paddingRight, fs:s.fontSize, ov:s.overflow }; })));
+const vt = await p.$(".vt"); await vt.screenshot({ path:"/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/vt-ar.png" });
+await b.close();

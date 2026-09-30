@@ -3989,3 +3989,21 @@
   /* the documents turn right to left with the site */
   html[dir="rtl"] .doc .bk { display:inline-block; transform:scaleX(-1); }
   html[dir="rtl"] .doc { text-align:right; }
+
+  /* ══ v116 — nothing on a phone reads below twelve pixels ═════════════════
+     Measured at 390px: fifty-nine kinds of label, chip, tab and button sat
+     between 8.8 and 11.8px — the view tabs over the Line at 8.8. On a phone
+     every one of them now sets at twelve. The tracking comes in a touch with
+     it so the same words still fit the same buttons. This is a floor, so it
+     is written to win over the many older, smaller sizes. ──────────────── */
+  @media (max-width:999px) {
+    html body :is(.k, .btn, .lnk, .cat, .chip, .vtb, .stbtn, .vp, .price, .menubtn, #langBtn, .cert, .cert b,
+      .estnote, .fbot, .cap, .jn, .jdot, .vhint, #sumStones, #sumMetal, #sumOrigin, #sumWrist, .ftrust a, .swhen, .glfbtag),
+    html body :is(.k, .ftrust, .fbot, .row, #menuBtn, summary) > span { font-size:12px !important; }
+    html body :is(.k, .btn, .lnk, .cat, .chip, .vtb, .stbtn, .vp, .menubtn) { letter-spacing:min(.12em, 1.6px) !important; }
+    html[data-ns] body :is(.k, .btn, .lnk, .cat, .chip, .vtb, .stbtn, .vp, .menubtn) { letter-spacing:.01em !important; }
+  }
+  /* a field brought into view (by the keyboard, by a link, by focus) stops
+     below the bar, and above the bottom bar on a phone */
+  html { scroll-padding-top:calc(var(--hh, 72px) + 12px); }
+  @media (max-width:999px) { html { scroll-padding-bottom:84px; } }

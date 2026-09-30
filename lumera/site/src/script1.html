@@ -48,6 +48,8 @@
 
   /* ── intro ── */
   var intro = $("intro"), header = $("header"), where = $("where"), fab = $("fab");
+  var resBlock = null, footEl = null;
+  (function () { var r = $("reserve"); resBlock = r ? (r.closest(".total") || r) : null; footEl = $("end"); })();
   /* scroll lock that keeps the page exactly where it is: the document stops scrolling, nothing is repositioned, and the same offset is restored on release */
   var __lockY = 0;
   window.__lock = function () { var h = document.documentElement; if (h.classList.contains("locked")) return; __lockY = window.scrollY; h.style.setProperty("--sbw", (innerWidth - h.clientWidth) + "px"); h.classList.add("locked"); document.body.classList.add("locked"); };
@@ -182,7 +184,11 @@
     /* the bar arrives once the opening screen is behind the reader, and leaves
        when the enquiry it points at is in front of them */
     var cr = $("concierge").getBoundingClientRect();
-    fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6);
+    /* the bar stands aside wherever it would sit on something the reader is
+       about to press: the Line's own reservation block and the footer */
+    var rz = resBlock ? resBlock.getBoundingClientRect() : null, ft = footEl ? footEl.getBoundingClientRect() : null;
+    var clash = (rz && rz.top < innerHeight && rz.bottom > innerHeight * 0.25) || (ft && ft.top < innerHeight);
+    fab.classList.toggle("show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6 && !clash);
     pbar.style.width = (c01(scrollY / Math.max(1, document.body.scrollHeight - innerHeight)) * 100).toFixed(2) + "%";
   }
   var pbar = $("pbar");
