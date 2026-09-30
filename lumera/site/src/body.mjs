@@ -186,7 +186,7 @@ ${markDefs()}
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
       <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה, שנעשים <em>לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
-      <p class="p rv d2" data-en="Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai." data-he="שני תכשיטים מוכנים ואפשר לראות אותם השבוע. כל השאר משורטט יחד אתכם ומשובץ ביד בדובאי.">Two pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.</p>
+      <p class="p rv d2" data-en="Three pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai." data-he="שלושה תכשיטים מוכנים ואפשר לראות אותם השבוע. כל השאר משורטט יחד אתכם ומשובץ ביד בדובאי.">Three pieces are finished and you can see them this week. Anything else is drawn with you and set by hand in Dubai.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
@@ -497,7 +497,7 @@ ${markDefs()}
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
-      `<a href="/${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div>
+      `<a href="${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div>
     <div class="fbot k rv"><span>© SILAVU MMXXVI</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>

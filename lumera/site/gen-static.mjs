@@ -190,19 +190,29 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   const { POLICIES } = await import("./src/policies.mjs");
   POLICY_SLUGS = POLICIES.map(d => d.slug);
   const others = d => POLICIES.filter(o => o.slug !== d.slug)
-    .map(o => `<a href="/${o.slug}/">${o.title.en}</a>`).join("");
+    .map(o => `<a href="${o.slug}/">${o.title.en}</a>`).join("");
   for (const d of POLICIES) {
     const dir = path.join(outDir, d.slug);
     fs.mkdirSync(dir, { recursive: true });
     const dhead = head
       .replace(/<title>[^<]*<\/title>/, `<title>${d.title.en} · SILAVU</title>`)
       .replace(/(<meta name="description" content=")[^"]*/, `$1${d.lede.en}`)
-      .replace(base + "/", base + "/" + d.slug + "/");
+      .replace(base + "/", base + "/" + d.slug + "/")
+      /* the site lives under a sub-path on Pages: every relative address in
+         the shared head and in the documents resolves from the site root */
+      .replace(/<head>\n/, `<head>\n<base href="../">\n`)
+      /* the documents never show the opening photograph */
+      .replace(/<link rel="preload" as="image"[^>]*>\n/g, "")
+      .replace(/(<meta property="og:url" content=")[^"]*/, `$1${base}/${d.slug}/`)
+      .replace(/(<meta property="og:title" content=")[^"]*/, `$1${d.title.en} · SILAVU`)
+      .replace(/(<meta property="og:description" content=")[^"]*/, `$1${d.lede.en}`)
+      .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${d.title.en} · SILAVU`)
+      .replace(/(<meta name="twitter:description" content=")[^"]*/, `$1${d.lede.en}`);
     /* the documents get the site's own type and palette: the stylesheet lives
        in a <style> block inside the page body, not in the shared head */
     const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
     const body = styleBlock + `<main class="doc ivory">
-<a class="back" href="/">← SILAVU</a>
+<a class="back" href="./">← SILAVU</a>
 <h1>${d.title.en}</h1>
 <p class="lede">${d.lede.en}</p>
 ${d.body.map(([h, t]) => `<section><h2>${h.en}</h2><p>${t.en}</p></section>`).join("\n")}

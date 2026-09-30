@@ -396,7 +396,7 @@
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
   $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
-  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = (sp.n || 36) + " × " + (sp.cut || "round") + " · " + b.ct + " ct · " + mname(b.metal) + " · " + b.wrist + " cm"; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
+  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = $("sumStones").textContent.split(" · ").reverse().join(" · ") + " (" + b.ct + " ct) · " + oname(b.origin) + " · " + mname(b.metal) + " · " + b.wrist + " cm · " + $("est").textContent; void sp; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
 
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));

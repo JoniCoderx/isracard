@@ -2197,6 +2197,9 @@
   html.no3d #stripwrap > canvas { display:none; }
   html.no3d .vt, html.no3d .vposwrap, html.no3d .vhint { display:none; }
   html.no3d .glfb { display:block; }
+  .glfbcv { position:absolute; inset:0; width:100%; height:100%; display:none; }
+  .glfb.drawn .glfbcv { display:block; }
+  .glfb.drawn img { visibility:hidden; }
 
   /* ══ v62 — the piece window as a product page ═════════════════════════════
      It was a picture, a name, a grid of four figures and a list. That reads
