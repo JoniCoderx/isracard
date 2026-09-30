@@ -1665,8 +1665,10 @@
   body.onivory header.sh, body.onivory .sh nav a, body.onivory .menubtn, body.onivory #langBtn { color:#14130f; }
   body.onivory .sh nav a::after { background:#14130f; }
   body.onivory .mark .sy, body.onivory .mark .lg { color:#14130f; }
-  body.onivory .btn { color:#14130f; border-color:rgba(20,19,15,.32); background:rgba(255,255,255,.4); }
-  body.onivory .btn:hover { background:rgba(255,255,255,.75); }
+  /* only the bar's own buttons change with the ground; a dialog or a dark
+     chapter keeps its buttons as they are */
+  body.onivory header.sh .btn { color:#14130f; border-color:rgba(20,19,15,.32); background:rgba(255,255,255,.4); }
+  body.onivory header.sh .btn:hover { background:rgba(255,255,255,.75); }
   body.footivory #where { color:#3d3a33; }
   body.footivory #where .n { color:#14130f; }
   body.footivory #where .bar { background:rgba(20,19,15,.18); }
@@ -4871,7 +4873,7 @@
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
   $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
-  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = $("sumStones").textContent.split(" · ").reverse().join(" · ") + " (" + b.ct + " ct) · " + oname(b.origin) + " · " + mname(b.metal) + " · " + b.wrist + " cm · " + $("est").textContent; void sp; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
+  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = lineSpecText(); void sp; void b; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
 
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
@@ -5175,11 +5177,24 @@
   opts.addEventListener("mouseout", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = null; });
   price();
   var msgEl = $("fMsg");
-  function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); }
+  /* the message grows to show everything that was put in it; a two-line box
+     cut the specification off at the price */
+  function fit() { msgEl.style.height = "auto"; msgEl.style.height = Math.min(msgEl.scrollHeight + 2, 260) + "px"; }
+  msgEl.addEventListener("input", fit);
+  /* the Line as one sentence: the cut, the stones and their total, origin,
+     metal, wrist and estimate. In Hebrew and Arabic every measure is isolated
+     left to right, or "44 × 0.14 ct" comes out as "ct 0.14 × 44". */
+  function lineSpecText() {
+    var b = window.__build || {}, rtl = document.documentElement.dir === "rtl";
+    var L = function (x) { return rtl ? "\u2066" + x + "\u2069" : x; };
+    var ss = $("sumStones").textContent.split(" · ");
+    return (ss[1] ? ss[1] + " · " : "") + L(ss[0] + " (" + b.ct + " ct)") + " · " + oname(b.origin) + " · " + mname(b.metal) + " · " + L(b.wrist + " cm") + " · " + L($("est").textContent);
+  }
+  function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); fit(); }
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
     var b = window.__build;
-    prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : T("I would like to reserve a SILAVU Line: ")) + sumStones.textContent.split(" · ").reverse().join(" · ") + " (" + b.ct + " ct) · " + oname(b.origin) + " · " + mname(b.metal) + " · " + b.wrist + " cm · " + estEl.textContent);
+    prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : T("I would like to reserve a SILAVU Line: ")) + lineSpecText());
   });
 
   /* ── concierge ── */

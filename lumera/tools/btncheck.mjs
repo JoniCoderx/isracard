@@ -1,0 +1,7 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport:{width:1440,height:900} }); await ctx.addInitScript(() => { localStorage.setItem("silavu-seen","1"); });
+const p = await ctx.newPage(); await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(800);
+await p.evaluate(()=>document.querySelectorAll(".pgrid .piece:not(.soon) .lnk.vw")[2].click());
+for (const t of [300,1500,3000]) { await p.waitForTimeout(t===300?300:t-300); console.log(t, JSON.stringify(await p.evaluate(()=>["pmReq","pmRes"].map(id=>{ const e=document.getElementById(id), s=getComputedStyle(e); return [id, s.opacity, s.backgroundColor, s.color, s.filter, getComputedStyle(e.parentElement).opacity, getComputedStyle(document.querySelector("#pmodal .mbox")).opacity]; })))); }
+await p.screenshot({path:"/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/btn.png", clip:{x:700,y:560,width:700,height:300}}); console.log(await p.evaluate(()=>{ const r=document.getElementById("pmReq").getBoundingClientRect(); const e=document.elementFromPoint(r.x+r.width/2, r.y+r.height/2); return (e.id||e.className)+" "+Math.round(r.x)+","+Math.round(r.y); })); await b.close();

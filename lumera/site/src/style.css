@@ -1657,8 +1657,10 @@
   body.onivory header.sh, body.onivory .sh nav a, body.onivory .menubtn, body.onivory #langBtn { color:#14130f; }
   body.onivory .sh nav a::after { background:#14130f; }
   body.onivory .mark .sy, body.onivory .mark .lg { color:#14130f; }
-  body.onivory .btn { color:#14130f; border-color:rgba(20,19,15,.32); background:rgba(255,255,255,.4); }
-  body.onivory .btn:hover { background:rgba(255,255,255,.75); }
+  /* only the bar's own buttons change with the ground; a dialog or a dark
+     chapter keeps its buttons as they are */
+  body.onivory header.sh .btn { color:#14130f; border-color:rgba(20,19,15,.32); background:rgba(255,255,255,.4); }
+  body.onivory header.sh .btn:hover { background:rgba(255,255,255,.75); }
   body.footivory #where { color:#3d3a33; }
   body.footivory #where .n { color:#14130f; }
   body.footivory #where .bar { background:rgba(20,19,15,.18); }

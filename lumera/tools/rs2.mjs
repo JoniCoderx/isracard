@@ -1,0 +1,18 @@
+import { chromium } from "playwright-core";
+const OUT="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/rep/"; import fs from "fs"; fs.mkdirSync(OUT,{recursive:true});
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
+const which = process.argv[2];
+const [tag,w,h,lang] = which==="d" ? ["desk",1440,900,"en"] : ["mob",390,844,"he"];
+const ctx = await b.newContext({ viewport:{width:w,height:h}, deviceScaleFactor: which==="d"?1:2, hasTouch: which!=="d" });
+await ctx.addInitScript(l => { localStorage.setItem("silavu-lang", l); localStorage.setItem("silavu-seen","1"); }, lang);
+const p = await ctx.newPage(); await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(2000); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(1500);
+const shot = async n => { await p.screenshot({ path: OUT+tag+"-"+n+".png" }); };
+await p.evaluate(()=>{ const e=document.querySelector("#collection .cats"); scrollTo(0, scrollY+e.getBoundingClientRect().top-80); }); await p.waitForTimeout(1800); await shot("2-collection");
+await p.evaluate(()=>document.querySelector('.cat[data-cat="rings"]').click()); await p.waitForTimeout(1200); await shot("3-rings");
+await p.evaluate(()=>document.querySelector('.cat[data-cat="all"]').click()); await p.waitForTimeout(400);
+await p.evaluate(()=>document.querySelectorAll(".pgrid .piece:not(.soon) .lnk.vw")[2].click()); await p.waitForTimeout(1500); await shot("4-piece");
+await p.waitForTimeout(2500); await shot("4b-piece"); console.log(JSON.stringify(await p.evaluate(()=>{ const e=document.getElementById("pmReq"), s=getComputedStyle(e), r=e.getBoundingClientRect(); const top=document.elementFromPoint(r.x+r.width/2, r.y+r.height/2); let chain=[]; let q=e; while(q){ const cs=getComputedStyle(q); if(cs.opacity!=="1"||cs.filter!=="none") chain.push((q.id||q.className)+" op="+cs.opacity+" f="+cs.filter); q=q.parentElement; } return {bg:s.backgroundColor, op:s.opacity, top:top.id||top.className, chain, cls:e.className}; }))); await b.close(); process.exit(0);
+await p.evaluate(()=>{ const e=document.getElementById("configure"); scrollTo(0, scrollY+e.getBoundingClientRect().top-70); }); await p.waitForTimeout(2000);
+await p.evaluate(()=>{ const q=(k,v)=>document.querySelector(`.chip[data-k="${k}"][data-v="${v}"]`).click(); q("cut","emerald"); }); await p.waitForTimeout(2500); await shot("5-emerald");
+await p.evaluate(()=>document.getElementById("reserve").click()); await p.waitForTimeout(2500); await shot("6-enquiry");
+await b.close();

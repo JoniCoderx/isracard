@@ -1,0 +1,16 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox"] });
+const ctx = await b.newContext({ viewport:{width:1280,height:800} }); await ctx.addInitScript(() => { localStorage.setItem("silavu-seen","1"); });
+const p = await ctx.newPage(); await p.goto("http://127.0.0.1:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn").catch(()=>{});
+const has = await p.evaluate(()=>[...document.querySelectorAll("[data-cur] .chip")].map(c=>c.getAttribute("data-c")));
+console.log("currency chips", has);
+await p.evaluate(()=>document.querySelector('[data-cur] .chip[data-c="USD"]').click()); await p.waitForTimeout(300);
+const a = await p.evaluate(()=>document.getElementById("est").textContent);
+await p.evaluate(()=>document.querySelector('.chip[data-k="cut"][data-v="emerald"]').click()); await p.waitForTimeout(300);
+const b2 = await p.evaluate(()=>document.getElementById("est").textContent);
+await p.evaluate(()=>document.getElementById("reserve").click()); await p.waitForTimeout(300);
+const m = await p.$eval("#fMsg", e=>e.value);
+await p.reload({waitUntil:"load"}); await p.waitForTimeout(1500);
+const c = await p.evaluate(()=>document.getElementById("est").textContent);
+console.log({ usd:a, afterCut:b2, msg:m, afterReload:c }, /US\$/.test(a+b2+m+c) ? "PASS" : "FAIL");
+await b.close();

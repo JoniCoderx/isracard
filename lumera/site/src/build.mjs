@@ -17,7 +17,7 @@ rep(`window.__build = { origin: "lab", ct: 6, metal: "white" };`, `window.__buil
 rep(`sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin);`, `sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";`);
 rep(`$("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";`, `$("lineLen").innerHTML = b.wrist + "<small>cm</small>";`);
 rep(`window.__build[k] = k === "ct" ? Number(v) : v;`, `window.__build[k] = (k === "ct" || k === "wrist") ? Number(v) : v;`);
-rep(`+ b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);`, `+ sumStones.textContent.split(" · ").reverse().join(" · ") + " (" + b.ct + " ct) · " + oname(b.origin) + " · " + mname(b.metal) + " · " + b.wrist + " cm · " + estEl.textContent);`);
+rep(`+ b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);`, `+ lineSpecText());`);
 rep(`var iv = $("insidevid"), ivLoaded = false;`, `var iv = $("insidevid"), ivLoaded = true;`);
 rep(`function insideTick() { var r = iv.getBoundingClientRect();`, `function insideTick() { if (!iv) return; var r = iv.getBoundingClientRect();`);
 
