@@ -4256,3 +4256,52 @@
     #configure .total .btn { width:100%; justify-content:center; }
     #configure .total .tot { width:100%; }
   }
+
+  /* ── v123 — MOMENT, ICON, SOUL. One window, three lights: the structure
+       is the same for each so nothing has to be learned twice, and the
+       accent, the ground and the name behind the text are the piece's own.
+       Pearl for the polished bracelet, gold for the pavé ring, champagne
+       for the necklace worn close to the skin. ── */
+  .piece .t .kd { display:block; margin-top:8px; font-family:var(--word, inherit); font-style:normal; font-weight:400;
+    font-size:.68rem; letter-spacing:.24em; text-transform:uppercase; color:var(--ink3); }
+  html[data-ns] .piece .t .kd { letter-spacing:.04em; font-size:.82rem; }
+  .mbox .t .kd { display:block; margin-top:10px; font-style:normal; font-weight:400; font-size:.72rem; letter-spacing:.26em;
+    text-transform:uppercase; color:var(--pacc, var(--ink3)); }
+  html[data-ns] .mbox .t .kd { letter-spacing:.04em; font-size:.86rem; }
+
+  #pmodal[data-p="moment"] { --pacc:#d3dbe6; --pglow:rgba(211,219,230,.20); --pbg:linear-gradient(165deg, #12151a 0%, #08090b 55%, #050506 100%); }
+  #pmodal[data-p="icon"]   { --pacc:#e2c078; --pglow:rgba(226,192,120,.20); --pbg:radial-gradient(90% 70% at 100% 0%, #1c160b 0%, #080705 58%, #050505 100%); }
+  #pmodal[data-p="soul"]   { --pacc:#eec6b1; --pglow:rgba(238,198,177,.18); --pbg:linear-gradient(165deg, #1a1311 0%, #0a0707 58%, #060505 100%); }
+  html[dir="rtl"] #pmodal[data-p="icon"] { --pbg:radial-gradient(90% 70% at 0% 0%, #1c160b 0%, #080705 58%, #050505 100%); }
+  #pmodal[data-p] .mbox { background:var(--pbg); border-color:color-mix(in srgb, var(--pacc) 22%, transparent); }
+  #pmodal[data-p] .t em { color:var(--pacc); }
+  #pmodal[data-p] #pmK svg { color:var(--pacc); }
+  #pmodal[data-p] .mprice .pv { color:var(--pacc); }
+  #pmodal[data-p] .mkeys { background:color-mix(in srgb, var(--pacc) 24%, transparent); border-color:color-mix(in srgb, var(--pacc) 24%, transparent); }
+  #pmodal[data-p] .mkeys .mk { background:rgba(5,5,6,.92); }
+  #pmodal[data-p] .mim { box-shadow:0 40px 90px -40px var(--pglow), 0 0 0 1px color-mix(in srgb, var(--pacc) 14%, transparent); }
+  #pmodal[data-p] .gthumbs button.on { outline:1px solid var(--pacc); outline-offset:2px; }
+  #pmodal[data-p] .mbd { position:relative; isolation:isolate; overflow-x:clip; }
+  #pmodal[data-p] .mbd::before { content:attr(data-word); position:absolute; z-index:-1; pointer-events:none; top:clamp(6px,1vw,14px); inset-inline-end:-.06em;
+    font-family:var(--word, inherit); font-weight:300; font-size:clamp(4.4rem,8.4vw,8.6rem); letter-spacing:.06em; line-height:1; white-space:nowrap;
+    color:transparent; -webkit-text-stroke:1px color-mix(in srgb, var(--pacc) 34%, transparent); opacity:.55; direction:ltr; }
+  /* every piece opens the same way: the photograph settles, then the words arrive in order */
+  #pmodal.open .mim img:not(.dt) { animation:pmSettle 1.3s var(--ease) both; }
+  #pmodal.open .mbd > * { animation:pmRise .75s var(--ease) both; }
+  #pmodal.open .mbd > :nth-child(2) { animation-delay:.06s; } #pmodal.open .mbd > :nth-child(3) { animation-delay:.12s; }
+  #pmodal.open .mbd > :nth-child(4) { animation-delay:.18s; } #pmodal.open .mbd > :nth-child(5) { animation-delay:.24s; }
+  #pmodal.open .mbd > :nth-child(6) { animation-delay:.30s; } #pmodal.open .mbd > :nth-child(7) { animation-delay:.36s; }
+  #pmodal.open .mbd > :nth-child(n+8) { animation-delay:.42s; }
+  #pmodal.open .mbd::before { animation:pmWord 1.6s var(--ease) .1s both; }
+  @keyframes pmSettle { from { transform:scale(1.06); opacity:.4; } to { transform:none; opacity:1; } }
+  @keyframes pmRise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  @keyframes pmWord { from { opacity:0; letter-spacing:.2em; } to { opacity:.55; letter-spacing:.06em; } }
+  /* three figures, three across, at every width: two-and-one left one alone on a row */
+  #pmodal .mkeys { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  html body #pmodal .mkeys .mk:last-child:nth-child(odd) { grid-column:auto; }
+  @media (max-width:479px) { #pmodal .mkeys .mk { padding:11px 10px; } #pmodal .mkeys .kv { font-size:.86rem; } }
+  @media (prefers-reduced-motion:reduce) {
+    #pmodal.open .mim img:not(.dt), #pmodal.open .mbd > *, #pmodal.open .mbd::before { animation:none; }
+  }
+  /* the names are Latin inside a right-to-left page: they sit on the right, where the Hebrew around them starts */
+  html[dir="rtl"] #pmodal .t, html[dir="rtl"] .piece .t { text-align:right; }

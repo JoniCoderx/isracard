@@ -23,118 +23,106 @@ const S = (en, he) => ({ en, he });
 
 export const PIECES = [
   {
+    /* SILAVU MOMENT. The figures below are the ones the house has confirmed:
+       metal, finish, length, price on request. Nothing else is stated. */
     id: "knot", cat: "bracelets", ref: "SLV·B·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],   /* what your photographs were actually shot at */
-    name: S("The <em>Knot</em>", "<em>הקשר</em>"),
-    plain: "The Knot",
-    line: S("The house mark, cast whole and polished, on a chain that never comes off.",
-            "סמל הבית, יצוק בשלמותו ומלוטש, על שרשרת שאין צורך להסיר."),
+    theme: "moment", word: "MOMENT",
+    name: S("SILAVU <em>MOMENT</em>", "SILAVU <em>MOMENT</em>"),
+    kind: S("Bracelet", "צמיד"),
+    plain: "SILAVU MOMENT — Bracelet", plainHe: "SILAVU MOMENT — צמיד",
+    line: S("A delicate 18k white-gold chain, finished with the SILAVU signature in a polished sculptural form.",
+            "שרשרת עדינה מזהב לבן 18K, עם חתימת SILAVU בצורה פיסולית ומלוטשת."),
     shots: [
-      { img: "knot-flat",  alt: S("The Knot bracelet laid open, the SILAVU mark at its centre", "צמיד הקשר פרוש, סמל סילאבו במרכזו") },
-      { img: "knot-worn",  alt: S("Three Knot bracelets stacked on a wrist", "שלושה צמידי הקשר על פרק יד") },
-      { img: "knot-macro", alt: S("The SILAVU mark at the centre of the Knot bracelet, close", "סמל סילאבו במרכז צמיד הקשר, מקרוב") },
-      { img: "knot-clasp", alt: S("The lobster clasp and the engraved SILAVU plaque", "האבזם והלוחית החרוטה של סילאבו") },
-      { img: "knot-full",  alt: S("The Knot bracelet, full length, on white", "צמיד הקשר במלואו, על רקע לבן") }
+      { img: "knot-flat",  alt: S("The SILAVU MOMENT bracelet laid open, the SILAVU signature at its centre", "צמיד SILAVU MOMENT פרוש, חתימת SILAVU במרכזו") },
+      { img: "knot-worn",  alt: S("SILAVU MOMENT bracelets layered on a wrist", "צמידי SILAVU MOMENT בשכבות על פרק היד") },
+      { img: "knot-macro", alt: S("The polished SILAVU signature of the MOMENT bracelet, close", "חתימת SILAVU המלוטשת של צמיד MOMENT, מקרוב") },
+      { img: "knot-clasp", alt: S("The clasp and the engraved SILAVU plaque", "הסגר והלוחית החרוטה של SILAVU") },
+      { img: "knot-full",  alt: S("The SILAVU MOMENT bracelet, full length, on white", "צמיד SILAVU MOMENT במלואו, על רקע לבן") }
     ],
     /* the four figures the card shows under the name */
     meta: [S("18K white gold", "זהב לבן 18K"), S("16–19 cm", "16–19 ס\"מ"), S("Polished", "מלוטש"), S("Price on request", "מחיר לפי בקשה")],
     /* the three figures that sit above the fold of the piece window */
     key: [
       [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
-      [S("Length", "אורך"),  S("16–19 cm", "16–19 ס\"מ")],
-      [S("Weight", "משקל"),  S("4.6 g", "4.6 גרם")]
+      [S("Finish", "גימור"), S("Polished", "מלוטש")],
+      [S("Length", "אורך"),  S("16–19 cm", "16–19 ס\"מ")]
     ],
-    story: S("It is the house mark, cast in one piece rather than soldered from two, so the ribbon really does pass through itself and the light runs the whole way round without a seam to stop it. It is small on purpose — twelve millimetres across — because this is the bracelet you forget you are wearing. The chain is rolo, heavy enough to hang straight, and the clasp carries the name on a plaque you can read.",
-             "זה סמל הבית, יצוק בחתיכה אחת ולא מולחם משני חלקים, כך שהסרט באמת עובר דרך עצמו והאור זורם סביבו בלי תפר שיקטע אותו. הוא קטן בכוונה — שנים־עשר מילימטר — כי זה הצמיד ששוכחים שהוא על היד. השרשרת בשזירת רולו, כבדה מספיק כדי ליפול ישר, והסגר נושא את השם על לוחית חרוטה."),
-    stones: S("None as standard: this one is about the metal. The centre takes 0.42 ct of E VS pav&eacute; to order, thirty-one stones set by hand, and the certificates travel with it.",
-              "בגרסה הבסיסית אין אבנים: כאן המתכת היא העיקר. לפי הזמנה אפשר לשבץ במרכז 0.42 ct של פאווה בדרגת E VS — שלושים ואחת אבנים משובצות ביד, בליווי תעודות."),
-    care: S("Four to six weeks from the order, because it is cut, cast and polished for you. Resizing, cleaning and a check of the clasp are on the house, for as long as you own it.",
-            "ארבעה עד שישה שבועות מההזמנה, כי הוא נוצק ומלוטש במיוחד עבורכם. שינוי מידה, ניקוי ובדיקת הסגר — על חשבון הבית, כל עוד התכשיט שלכם."),
+    story: S("Designed as an everyday signature, MOMENT places the SILAVU mark on a fine white-gold chain. Its polished form catches the light with every movement: delicate when worn alone, and beautiful layered with other pieces. A quiet detail that becomes part of your everyday look.",
+             "\u200fMOMENT נוצר כחתימה יומיומית: סמל SILAVU על שרשרת עדינה מזהב לבן. הצורה המלוטשת שלו תופסת את האור בכל תנועה — עדין כשהוא ענוד לבד, ויפה בשכבות עם תכשיטים אחרים. פרט שקט שהופך לחלק מהמראה היומיומי שלכם."),
     specs: [
-      [S("Reference", "מק\"ט"),        S("SLV·B·001", "SLV·B·001")],
-      [S("Metal", "מתכת"),             S("18K white gold", "זהב לבן 18K")],            /* PROVISIONAL */
-      [S("Finish", "גימור"),           S("High polish", "ליטוש מלא")],
-      [S("Centre motif", "המוטיב"),    S("The SILAVU mark · 12.4 × 14.2 mm", "סמל סילאבו · 12.4 × 14.2 מ\"מ")],  /* PROVISIONAL */
-      [S("Chain", "שרשרת"),            S("Rolo, 1.8 mm", "רולו, 1.8 מ\"מ")],            /* PROVISIONAL */
-      [S("Length", "אורך"),            S("16–19 cm, adjustable", "16–19 ס\"מ, מתכוונן")],
-      [S("Clasp", "סגר"),              S("Lobster, engraved house plaque", "סגר לובסטר, לוחית בית חרוטה")],
-      [S("Weight", "משקל"),            S("4.6 g", "4.6 גרם")],                          /* PROVISIONAL */
-      [S("Stones", "אבנים"),           S("None. Pav&eacute; to order.", "ללא. פאווה לפי הזמנה.")],
-      [S("Made", "ייצור"),             S("Dubai, by hand", "דובאי, בעבודת יד")],
-      [S("Delivery", "אספקה"),         S("4–6 weeks", "4–6 שבועות")]                     /* PROVISIONAL */
+      [S("Reference", "מק\"ט"),  S("SLV·B·001", "SLV·B·001")],
+      [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
+      [S("Finish", "גימור"),     S("Polished", "מלוטש")],
+      [S("Length", "אורך"),      S("16–19 cm", "16–19 ס\"מ")],
+      [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
     ],
     reserve: true
   }  ,{
+    /* SILAVU ICON: metal, setting and sizes as confirmed; no stone figures */
     id: "ring", cat: "rings", ref: "SLV·R·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],
-    name: S("The Knot <em>Ring</em>", "<em>טבעת</em> הקשר"),
-    plain: "The Knot Ring",
-    line: S("The house mark set in pavé, on a band paved to the shoulders.",
-            "סמל הבית משובץ בפאווה, על טבעת שמשובצת עד הכתפיים."),
+    theme: "icon", word: "ICON",
+    name: S("SILAVU <em>ICON</em>", "SILAVU <em>ICON</em>"),
+    kind: S("Ring", "טבעת"),
+    plain: "SILAVU ICON — Ring", plainHe: "SILAVU ICON — טבעת",
+    line: S("A sculptural 18k white-gold ring with the SILAVU signature set in pavé diamonds.",
+            "טבעת פיסולית מזהב לבן 18K, עם חתימת SILAVU משובצת ביהלומי פאווה."),
     /* the gallery runs the way a jewellery house runs one: the piece on white,
        then worn, then the angle, then the mark close, then the signature */
     shots: [
-      { img: "ring-front",  alt: S("The Knot Ring, the SILAVU mark in pavé on a band paved to the shoulders", "טבעת הקשר, סמל סילאבו בפאווה על טבעת שמשובצת עד הכתפיים") },
-      { img: "ring-worn",   alt: S("The Knot Ring worn on the hand", "טבעת הקשר ענודה על היד") },
-      { img: "ring-side",   alt: S("The Knot Ring from three quarters", "טבעת הקשר בזווית שלושת־רבעי") },
-      { img: "ring-macro",  alt: S("The SILAVU mark on the Knot Ring, close", "סמל סילאבו על טבעת הקשר, מקרוב") },
-      { img: "ring-signed", alt: S("SILAVU engraved inside the band of the Knot Ring", "סילאבו חרוט בתוך טבעת הקשר") }
+      { img: "ring-front",  alt: S("The SILAVU ICON ring, the SILAVU signature in pavé diamonds", "טבעת SILAVU ICON, חתימת SILAVU ביהלומי פאווה") },
+      { img: "ring-worn",   alt: S("The SILAVU ICON ring worn on the hand", "טבעת SILAVU ICON ענודה על היד") },
+      { img: "ring-side",   alt: S("The SILAVU ICON ring from three quarters", "טבעת SILAVU ICON בזווית שלושת־רבעי") },
+      { img: "ring-macro",  alt: S("The pavé SILAVU signature of the ICON ring, close", "חתימת הפאווה של טבעת ICON, מקרוב") },
+      { img: "ring-signed", alt: S("SILAVU engraved inside the band of the ICON ring", "SILAVU חרוט בתוך טבעת ICON") }
     ],
     meta: [S("18K white gold", "זהב לבן 18K"), S("EU 47–58", "EU 47–58"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
-      [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
-      [S("Size", "מידה"),    S("EU 47–58", "EU 47–58")],
-      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")]
+      [S("Metal", "מתכת"),    S("18K white gold", "זהב לבן 18K")],
+      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")],
+      [S("Size", "מידה"),     S("EU 47–58", "EU 47–58")]
     ],
-    story: S("The mark again, but set rather than polished: stones follow its ribbon from end to end, and the two open loops are left bare so the eye still reads the knot passing through itself. The band is paved down both shoulders and runs plain and polished underneath, so it sits flat against the next finger. Inside it, where only you see it, the house signs its name.",
-             "שוב הסמל, אבל משובץ ולא מלוטש: האבנים עוקבות אחרי הסרט שלו מקצה לקצה, ושתי הלולאות הפתוחות נשארות חלקות, כך שהעין עדיין רואה את הקשר עובר דרך עצמו. הטבעת משובצת לאורך שתי הכתפיים וחלקה ומלוטשת בחלקה התחתון, כך שהיא יושבת שטוח ליד האצבע הסמוכה. בפנים, במקום שרק אתם רואים, הבית חותם את שמו."),
-    stones: S("Brilliants on the mark and down both shoulders, matched for colour so the tone does not change where the mark meets the band. The count and the total weight are stated on the certificate.",
-              "יהלומי בריליאנט על הסמל ולאורך שתי הכתפיים, מותאמים בצבע כך שהגוון לא משתנה במעבר מהסמל לטבעת. מספר האבנים והמשקל הכולל מצוינים בתעודה."),
-    care: S("Four to six weeks from the order. Sized to the half, and resizing, cleaning and a check of every stone under the loupe are on the house for as long as you own it.",
-            "ארבעה עד שישה שבועות מההזמנה. מידות בחצאים; שינוי מידה, ניקוי ובדיקת כל אבן — על חשבון הבית, כל עוד הטבעת שלכם."),
+    story: S("ICON turns the SILAVU mark into a sculptural ring, traced with pavé diamonds across its flowing form and band. The design balances a bold silhouette with fine detail, letting the diamonds catch the light from every angle.",
+             "\u200fICON הופכת את סמל SILAVU לטבעת פיסולית, עם יהלומי פאווה לאורך הצורה הזורמת שלה ולאורך הטבעת עצמה. העיצוב מאזן בין צללית נועזת לפרטים עדינים, ומאפשר ליהלומים לתפוס את האור מכל זווית."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·R·001", "SLV·R·001")],
-      [S("Metal", "מתכת"),          S("18K white gold", "זהב לבן 18K")],
-      [S("Setting", "שיבוץ"),       S("Pavé on the mark and shoulders, grain-set by hand", "פאווה על הסמל והכתפיים, משובץ ביד")],
-      [S("Motif", "המוטיב"),        S("The SILAVU mark", "סמל סילאבו")],
-      [S("Size", "מידה"),           S("EU 47–58, to the half", "EU 47–58, בחצאי מידות")],
-      [S("Signature", "חתימה"),     S("SILAVU, engraved inside the band", "סילאבו, חרוט בתוך הטבעת")],
-      [S("Made", "ייצור"),          S("Dubai, by hand", "דובאי, בעבודת יד")]
+      [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
+      [S("Setting", "שיבוץ"),    S("Pavé", "פאווה")],
+      [S("Size", "מידה"),        S("EU 47–58", "EU 47–58")],
+      [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
     ],
     reserve: true
   }  ,{
+    /* SILAVU SOUL: metal, setting and length as confirmed; no stone figures */
     id: "pave", cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
     widths: [640, 900, 1254],
-    name: S("The Knot, <em>Pavé</em>", "הקשר, <em>פאווה</em>"),
-    plain: "The Knot, Pavé",
-    line: S("The mark set rather than polished, on a chain that carries stones of its own.",
-            "הסמל משובץ ולא מלוטש, על שרשרת שנושאת אבנים משלה."),
+    theme: "soul", word: "SOUL",
+    name: S("SILAVU <em>SOUL</em>", "SILAVU <em>SOUL</em>"),
+    kind: S("Necklace", "שרשרת"),
+    plain: "SILAVU SOUL — Necklace", plainHe: "SILAVU SOUL — שרשרת",
+    line: S("A fine 18k white-gold chain with a pavé SILAVU signature pendant at its center.",
+            "שרשרת עדינה מזהב לבן 18K, ובמרכזה תליון חתימת SILAVU בשיבוץ פאווה."),
     shots: [
-      { img: "necklace-front",  alt: S("The Knot in pavé on a station chain, full length", "הקשר בפאווה על שרשרת תחנות, במלואה") },
-      { img: "necklace-worn",   alt: S("The Knot in pavé worn at the collarbone", "הקשר בפאווה ענוד על עצם הבריח") },
-      { img: "necklace-detail", alt: S("The pendant and the chain either side of it", "התליון והשרשרת משני צדיו") },
-      { img: "necklace-macro",  alt: S("The SILAVU mark in pavé, close", "סמל סילאבו בפאווה, מקרוב") }
+      { img: "necklace-front",  alt: S("The SILAVU SOUL necklace, full length", "שרשרת SILAVU SOUL, במלואה") },
+      { img: "necklace-worn",   alt: S("The SILAVU SOUL necklace worn at the collarbone", "שרשרת SILAVU SOUL ענודה על עצם הבריח") },
+      { img: "necklace-detail", alt: S("The SOUL pendant and the chain either side of it", "תליון SOUL והשרשרת משני צדיו") },
+      { img: "necklace-macro",  alt: S("The pavé SILAVU signature of the SOUL pendant, close", "חתימת הפאווה של תליון SOUL, מקרוב") }
     ],
     meta: [S("18K white gold", "זהב לבן 18K"), S("42 cm", "42 ס\"מ"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
-      [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
-      [S("Length", "אורך"),  S("42 cm", "42 ס\"מ")],
-      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")]
+      [S("Metal", "מתכת"),    S("18K white gold", "זהב לבן 18K")],
+      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")],
+      [S("Length", "אורך"),   S("42 cm", "42 ס\"מ")]
     ],
-    story: S("The same mark as the bracelet and the ring, set rather than polished. The stones follow the ribbon the whole way round and the two open loops are left bare, so the knot still reads as passing through itself rather than as a shape filled in. The chain is not plain either: it carries stones of its own, set in rubover at intervals either side of the pendant, so the line to the throat is not empty.",
-             "אותו סמל כמו בצמיד ובטבעת, משובץ ולא מלוטש. האבנים עוקבות אחרי הסרט לכל אורכו ושתי הלולאות הפתוחות נשארות חלקות, כך שהקשר עדיין נראה עובר דרך עצמו. גם השרשרת משובצת: יהלומים בשיבוץ סגור, במרווחים משני צדי התליון."),
-    stones: S("Brilliants across the mark and in rubover along the chain, matched for colour so the tone does not change between the pendant and the stones that lead to it. The count and the total weight travel on the certificate.",
-              "יהלומי בריליאנט על הסמל ובשיבוץ סגור לאורך השרשרת, מותאמים בצבע. מספר האבנים והמשקל הכולל מצוינים בתעודה."),
-    care: S("Four to six weeks from the order. Shortening the chain, cleaning and a check of every setting under the loupe are on the house for as long as you own it.",
-            "ארבעה עד שישה שבועות מההזמנה. קיצור השרשרת, ניקוי ובדיקת כל שיבוץ — על חשבון הבית, כל עוד התכשיט שלכם."),
+    story: S("SOUL brings the SILAVU mark close, set in pavé diamonds at the center of a fine white-gold chain. Delicate diamond accents add points of light along the necklace, creating a piece that feels personal on its own and layers naturally with others.",
+             "\u200fSOUL מקרבת אליכם את סמל SILAVU, משובץ ביהלומי פאווה במרכזה של שרשרת עדינה מזהב לבן. נגיעות יהלומים עדינות מוסיפות נקודות אור לאורך השרשרת — תכשיט שמרגיש אישי כשהוא לבד, ומשתלב באופן טבעי עם אחרים."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·N·003", "SLV·N·003")],
-      [S("Metal", "מתכת"),          S("18K white gold", "זהב לבן 18K")],
-      [S("Setting", "שיבוץ"),       S("Pavé on the mark, rubover on the chain", "פאווה על הסמל, שיבוץ סגור על השרשרת")],
-      [S("Motif", "המוטיב"),        S("The SILAVU mark", "סמל סילאבו")],
-      [S("Chain", "שרשרת"),          S("Cable, with set stations", "שרשרת כבל עם תחנות משובצות")],
-      [S("Length", "אורך"),           S("42 cm", "42 ס\"מ")],
-      [S("Made", "ייצור"),          S("Dubai, by hand", "דובאי, בעבודת יד")]
+      [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
+      [S("Setting", "שיבוץ"),    S("Pavé", "פאווה")],
+      [S("Length", "אורך"),      S("42 cm", "42 ס\"מ")],
+      [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
     ],
     reserve: true
   }  ,{

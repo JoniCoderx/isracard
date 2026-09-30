@@ -77,13 +77,13 @@ function pieceCard(p) {
     : `<span class="${i === p.meta.length - 1 ? "price por" : ""}" data-en="${esc(m.en)}" data-he="${esc(m.he)}">${m.en}</span>`).join("<i></i>");
   const keys = JSON.stringify((p.key || []).map(r => [r[0].en, r[0].he, r[1].en, r[1].he]));
   const prose = JSON.stringify({ story: p.story || null, stones: p.stones || null, care: p.care || null });
-  return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}" data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
+  return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
         <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt.en, SIZES_PC, true, wide)}</div><div class="im dt">${pic(b.img, b.alt.en, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>
         <div class="bd"><div class="k sig">${markUse("tiny")}<span dir="ltr">${p.ref}</span></div>
-          <div class="t">${T("span", "nm", p.name.en, p.name.he)}</div>
+          <div class="t">${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="— ${esc(p.kind.en)}" data-he="— ${esc(p.kind.he)}">— ${p.kind.en}</span>` : ""}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
           <div class="row k meta">${meta}</div>
-          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריון">Reserve</a></div></div>
+          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.plainHe || p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריון">Reserve</a></div></div>
       </article>`;
 }
 
@@ -467,7 +467,7 @@ ${markDefs()}
       <div class="mbuy">
       <div class="mprice">
         <div><span class="pv" id="pmPrice" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span>
-        <span class="k pn" data-en="Every piece is quoted to the stones it carries" data-he="כל תכשיט מתומחר לפי האבנים שבו">Every piece is quoted to the stones it carries</span></div>
+        <span class="k pn" data-en="Quoted personally, on enquiry" data-he="הצעת מחיר אישית, לפי פנייה">Quoted personally, on enquiry</span></div>
       </div>
       <a class="btn solid mprim" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
       </div>

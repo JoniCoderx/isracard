@@ -52,7 +52,7 @@ const head = `<!doctype html>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
 <meta property="og:title" content="SILAVU — Private high jewellery, Dubai &amp; Tel Aviv">
-<meta property="og:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. The Knot bracelet, ring and pavé necklace, and commissions made to measure. Viewings by appointment.">
+<meta property="og:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, and commissions made to measure. Viewings by appointment.">
 <meta property="og:image" content="${base}/og.jpg?v=7">
 <meta property="og:image:secure_url" content="${base}/og.jpg?v=7">
 <meta property="og:image:type" content="image/jpeg">

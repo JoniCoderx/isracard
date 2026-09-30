@@ -354,6 +354,11 @@
       else { mim.classList.remove("two"); $("pmImg2").removeAttribute("src"); }
     }
 
+    /* each piece keeps the same window but its own light: pearl for MOMENT,
+       gold for ICON, champagne for SOUL — and its name, large and faint,
+       behind the text */
+    pmodal.setAttribute("data-p", pc.getAttribute("data-theme") || "");
+    var mbd = pmodal.querySelector(".mbd"); if (mbd) mbd.setAttribute("data-word", pc.getAttribute("data-word") || "");
     $("pmK").innerHTML = pc.querySelector(".k").innerHTML;
     $("pmT").innerHTML = pc.querySelector(".t").innerHTML;
     $("pmP").innerHTML = pc.querySelector(".p").innerHTML;
