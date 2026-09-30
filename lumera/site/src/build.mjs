@@ -5,6 +5,7 @@ const css = fs.readFileSync(S + "style.css", "utf8");
 const FONT_HREF = "https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Assistant:wght@200;300;400;500&family=Noto+Sans+Arabic:wght@200;300;400;500&display=swap";
 let s1 = fs.readFileSync(S + "script1.html", "utf8");
 const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S + "script2.html", "utf8"), s3 = fs.readFileSync(S + "script3.html", "utf8"), s4 = fs.readFileSync(S + "script4.html", "utf8"), s5 = fs.readFileSync(S + "script5.html", "utf8"), s6 = fs.readFileSync(S + "script6.html", "utf8");
+const s9 = fs.readFileSync(S + "script9.html", "utf8");
 function rep(a, b) { if (!s1.includes(a)) { console.error("MISSING in script1:", a.slice(0, 80)); process.exit(1); } s1 = s1.replace(a, b); }
 rep(`window.__lock();`, `window.__lock(); window.__defer = window.__defer || [];`);
 rep(`document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });`, `document.querySelectorAll(".rv:not(.late)").forEach(function (el) { io.observe(el); });`);
@@ -112,6 +113,6 @@ const MKVAR = ":root{--mk:url('data:image/svg+xml;utf8," + encodeURIComponent('<
 const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
   + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
   + '<link rel="stylesheet" href="' + FONT_HREF + '">';
-const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}`;
+const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}`;
 fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", page);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

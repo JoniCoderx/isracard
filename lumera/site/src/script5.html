@@ -155,24 +155,6 @@
     at: beatsAt
   });
 
-  /* ── the Line at night: bracelets on a car, scrubbed by the scroll ──
-     Same engine and the same tiers as the box, cut from a 4K master. It
-     drifts in a little as it plays and its line of copy comes up once the
-     camera has settled. */
-  var btxt = document.querySelector("#craft .benchtxt");
-  var bench = sequence({
-    pin: "benchpin", canvas: "benchcv", n: 96, dir: "/f/bench/", ext: ".webp", release: true,
-    set: function () {
-      if (phone) return "m";
-      var px = innerWidth * Math.min(devicePixelRatio || 1, 2);
-      return px >= 3200 ? "xx" : px >= 2400 ? "x" : "d";
-    },
-    src: function (set) { return set === "m" ? 900 : set === "xx" ? 3840 : set === "x" ? 2560 : 1920; },
-    zoom: function (p) { return { s: 1.04 - 0.04 * p, y: 0 }; },
-    still: 0.55,
-    at: function (p) { if (btxt) btxt.classList.toggle("on", reduce || p > 0.12); }
-  });
-
   /* ── the rail ── */
   var hpin = $("hpin"), track = $("htrack"), range = 0, lastX = -1, lastP2 = -1, rprog = $("rprog"), rcue = document.querySelector(".rcue");
   function railSize() { if (!hpin || mobile) { if (hpin) { hpin.style.height = ""; } return; } range = Math.max(0, track.scrollWidth - innerWidth); hpin.style.height = (innerHeight + range) + "px"; var hs = hpin.querySelector(".hstick"); if (hs) hs.classList.toggle("fits", range === 0); }
@@ -184,7 +166,7 @@
   railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
   setTimeout(railSize, 800); addEventListener("load", railSize);
 
-  function tick() { requestAnimationFrame(tick); if (document.hidden) return; if (box) box.tick(); if (bench) bench.tick(); railTick(); }
+  function tick() { requestAnimationFrame(tick); if (document.hidden) return; if (box) box.tick(); railTick(); }
   tick();
   window.__box = box || { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
   window.__stone = window.__box;

@@ -184,6 +184,7 @@ ${markDefs()}
     <div class="hfacts rv d4">
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
     </div>
+    <div class="hseam" aria-hidden="true"><i class="hsl"></i><i class="hsg"></i></div>
   </section>
 <section id="house" data-n="·" data-title-en="The house" data-title-he="הבית" aria-label="The house">
   <div class="wrap hwrap">
@@ -221,20 +222,24 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="craft" data-n="" data-title-en="The Line" data-title-he="הקו" aria-label="The Line, at night in Dubai">
-    <!-- a scroll-scrubbed film, cut into frames the same way as the box -->
-    <div class="pin benchpin" id="benchpin">
-      <div class="pinin">
-        <canvas id="benchcv" role="img" aria-label="Diamond tennis bracelets draped across the bonnet of a black car at night, the Dubai skyline behind"></canvas>
-        <div class="benchveil" aria-hidden="true"></div>
-        <div class="benchtxt">
-          <div class="k gold ol" data-en="The Line · Dubai" data-he="הקו · דובאי">The Line · Dubai</div>
-          <h2 class="h2" data-en="Made to be <em>seen.</em>" data-he="נוצר <em>כדי להיראות.</em>">Made to be <em>seen.</em></h2>
-          <p class="p" data-en="Every line set by hand, stone by stone, to catch the light wherever you take it." data-he="כל קו משובץ ביד, אבן אחר אבן, כדי לתפוס את האור בכל מקום שתיקחו אותו.">Every line set by hand, stone by stone, to catch the light wherever you take it.</p>
+  <section id="craft" data-n="" data-title-en="The Line" data-title-he="הקו" aria-label="The Line, drawn and then made">
+    <!-- the Line drawn as you scroll: a hairline, then every facet, then the metal and the light -->
+    <div class="drawpin" id="drawpin">
+      <div class="drawin">
+        <canvas id="drawcv" role="img" aria-label="A diamond tennis bracelet drawn in white line on black, facet by facet, then set and lit"></canvas>
+        <div class="drawcap" aria-live="off">
+          <div class="k gold" data-en="The Line" data-he="הקו">The Line</div>
+          <div class="dcs">
+            <h2 class="h2 dc on" data-en="It begins as <em>a line.</em>" data-he="זה מתחיל <em>בקו אחד.</em>">It begins as <em>a line.</em></h2>
+            <h2 class="h2 dc" data-en="Then every facet <em>is drawn.</em>" data-he="אחר כך כל פאה <em>משורטטת.</em>">Then every facet <em>is drawn.</em></h2>
+            <h2 class="h2 dc" data-en="Then it is set, <em>and it catches the light.</em>" data-he="ואז הוא משובץ, <em>ותופס את האור.</em>">Then it is set, <em>and it catches the light.</em></h2>
+          </div>
+          <a class="lnk dgo" href="#build" data-en="Design yours" data-he="עצבו את שלכם">Design yours</a>
         </div>
+        <div class="drawbar" aria-hidden="true"><i id="drawbar"></i></div>
       </div>
     </div>
-</section>
+  </section>
 <section id="collection" class="ivory paper" data-n="02" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">

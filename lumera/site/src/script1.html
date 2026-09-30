@@ -969,5 +969,11 @@
     emb.addEventListener("pointerenter", function () { emb.classList.add("hov"); });
     emb.addEventListener("pointerleave", function () { emb.classList.remove("hov"); tx = ty = 0; if (!raf) raf = requestAnimationFrame(apply); });
   })();
+  /* ── the seam under the opening screen deepens as it is left behind ── */
+  (function () {
+    var h = $("hero"); if (!h) return; var last = -1;
+    function f() { var v = Math.max(0, Math.min(1, scrollY / Math.max(1, h.offsetHeight))); if (Math.abs(v - last) < 0.004) return; last = v; h.style.setProperty("--hs", v.toFixed(3)); }
+    addEventListener("scroll", f, { passive: true }); f();
+  })();
 })();
 </script>

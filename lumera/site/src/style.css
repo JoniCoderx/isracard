@@ -4384,3 +4384,43 @@
   html body.footivory #where .bar i { background:#8a6f3c; }
   html body.footivory #where .t { color:#14130f; }
   html[data-ns] body #where .t { letter-spacing:.02em; font-size:.78rem; }
+
+  /* ── v127 — The Line, drawn as you scroll ── */
+  #craft { padding:0 !important; background:#000; }
+  .drawpin { position:relative; height:340svh; }
+  @media (max-width:999px) { .drawpin { height:280svh; } }
+  .drawin { position:sticky; top:0; height:100svh; overflow:hidden; background:#000; }
+  #drawcv { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .drawin::after { content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(120% 80% at 50% 50%, transparent 55%, rgba(0,0,0,.65) 100%); }
+  .drawcap { position:absolute; z-index:2; left:var(--pad); right:var(--pad); bottom:max(10svh, 70px); display:grid; gap:14px; justify-items:start; pointer-events:none; }
+  .drawcap .dcs { display:grid; }
+  .drawcap .dc { grid-area:1 / 1; margin:0; max-width:18ch; font-size:clamp(2rem,4.4vw,3.8rem); line-height:1.04; color:#f4efe4;
+    opacity:0; transform:translateY(16px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  .drawcap .dc.on { opacity:1; transform:none; }
+  .drawcap .dc em { color:#e8edf2; }
+  .drawcap .dgo { pointer-events:auto; opacity:0; transform:translateY(10px); transition:opacity .6s var(--ease), transform .6s var(--ease); color:#f4efe4; }
+  .drawcap .dgo.on { opacity:1; transform:none; }
+  .drawbar { position:absolute; z-index:2; left:var(--pad); right:var(--pad); top:calc(var(--hh, 72px) + 22px); height:1px; background:rgba(255,255,255,.14); }
+  .drawbar i { position:absolute; inset:0; background:linear-gradient(90deg, #cfd6de, #ffffff); transform-origin:left; transform:scaleX(0); }
+  html[dir="rtl"] .drawbar i { transform-origin:right; }
+  @media (max-width:759px) { .drawcap { bottom:max(12svh, 80px); } .drawcap .dc { font-size:clamp(1.8rem,8.4vw,2.4rem); } }
+  @media (prefers-reduced-motion:reduce) { .drawcap .dc { transition:none; } }
+
+  /* ── v128 — the seam between the opening screen and the house. No edge:
+       the photograph sinks into black over its last third, a single hairline
+       of light lies where the two meet, a glint runs along it, and the light
+       spills down into the next chapter. It deepens as the page is left. ── */
+  #hero { position:relative; }
+  #hero .hseam { position:absolute; left:0; right:0; bottom:0; height:calc(34svh + var(--hs, 0) * 22svh); z-index:1; pointer-events:none;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.18) 26%, rgba(0,0,0,.48) 52%, rgba(0,0,0,.8) 76%, #000 100%); }
+  #hero .hseam .hsl { position:absolute; left:8%; right:8%; bottom:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(236,240,245,.18) 22%, rgba(255,255,255,.42) 50%, rgba(236,240,245,.18) 78%, transparent); }
+  #hero .hseam .hsg { position:absolute; bottom:-1px; left:0; width:22%; height:3px; filter:blur(1.5px);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+    animation:hsglint 7s cubic-bezier(.45,0,.25,1) 1.5s infinite; opacity:0; }
+  @keyframes hsglint { 0% { transform:translateX(-30%); opacity:0; } 12% { opacity:1; } 48% { opacity:1; } 60%,100% { transform:translateX(480%); opacity:0; } }
+  #house { background:#000; }
+  #house::before { content:""; position:absolute; left:50%; top:0; width:min(1100px, 90vw); height:clamp(160px, 22vw, 300px); transform:translateX(-50%);
+    pointer-events:none; background:radial-gradient(50% 100% at 50% 0%, rgba(236,240,245,.07), rgba(236,240,245,.02) 55%, transparent 100%); }
+  @media (prefers-reduced-motion:reduce) { #hero .hseam .hsg { animation:none; } }
