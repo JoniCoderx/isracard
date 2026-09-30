@@ -103,15 +103,7 @@ const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection ca
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
     <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<div class="k soonh"><span data-en="In the workshop" data-he="בסדנה">In the workshop</span><i></i></div>${SOON.map(soonCard).join("\n")}</div>
-    ${PIECES.filter(x => x.exceptional).map(x => `
-    <section class="excep rv" aria-labelledby="excep-h">
-      <div class="excephd">
-        <div class="k gold" data-en="One of one" data-he="יחיד מסוגו">One of one</div>
-        <h3 class="h3" id="excep-h" data-en="Exceptional <em>pieces.</em>" data-he="תכשיטים <em>יוצאי דופן.</em>">Exceptional <em>pieces.</em></h3>
-        <p class="p" data-en="A stone that will not come again, set once. These are not made a second time." data-he="אבן שלא תחזור, משובצת פעם אחת. תכשיטים כאלה אינם נעשים פעמיים.">A stone that will not come again, set once. These are not made a second time.</p>
-      </div>
-      <div class="excepbody">${pieceCard(x)}</div>
-    </section>`).join("\n")}`;
+`;
 
 const SIZES_JRN = "(min-width:1000px) 56vw, 92vw", SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
