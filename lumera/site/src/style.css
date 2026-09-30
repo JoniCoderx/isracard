@@ -3930,3 +3930,5 @@
   html body #pmodal .mclose2:hover, html body #pmodal .mclose2:focus-visible { background:rgba(12,12,11,.92); border-color:rgba(244,241,233,.7); }
   /* three figures in a two-column grid left a blank cell: the odd one spans */
   @media (max-width:899px) { html body .mkeys .mk:last-child:nth-child(odd) { grid-column:1 / -1; } }
+  /* the eyebrow over the film measured 4.1:1 at eleven pixels; lighter and a step larger */
+  html body .hcap .k.gold { color:#f3ecdc; font-size:max(.74rem, 12px); }

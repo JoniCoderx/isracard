@@ -34,7 +34,7 @@ const head = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SILAVU — Private high jewellery, Dubai &amp; Tel Aviv</title>
-<meta name="description" content="SILAVU is a private jewellery house in Dubai and Tel Aviv. Diamonds graded by GIA or IGI, set by hand, one piece at a time — the Knot bracelet, the Desert Star, and commissions made to a single wrist. Viewings by appointment.">
+<meta name="description" content="SILAVU is a private jewellery house in Dubai and Tel Aviv. Diamonds graded by GIA or IGI, set by hand, one piece at a time — the Knot bracelet, ring and pavé necklace, the Desert Star, and commissions made to measure. Viewings by appointment.">
 <link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
 <meta name="silavu-build" content="${BUILD}">
@@ -52,7 +52,7 @@ const head = `<!doctype html>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
 <meta property="og:title" content="SILAVU — Private high jewellery, Dubai &amp; Tel Aviv">
-<meta property="og:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. The Knot, the Desert Star, and commissions made to a single wrist. Viewings by appointment.">
+<meta property="og:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. The Knot bracelet, ring and pavé necklace, the Desert Star, and commissions made to measure. Viewings by appointment.">
 <meta property="og:image" content="${base}/og.jpg?v=7">
 <meta property="og:image:secure_url" content="${base}/og.jpg?v=7">
 <meta property="og:image:type" content="image/jpeg">

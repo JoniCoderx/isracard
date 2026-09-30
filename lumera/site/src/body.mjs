@@ -235,7 +235,7 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="craft" data-n="02" data-title-en="The work" data-title-he="העבודה" aria-label="At the bench">
+  <section id="craft" data-n="" data-title-en="The work" data-title-he="העבודה" aria-label="At the bench">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
   <div class="wrap">
   <div class="ed">
@@ -248,7 +248,6 @@ ${markDefs()}
         <li data-en="Inspected stone by stone, under the loupe." data-he="נבדק אבן אחר אבן, תחת הלופה.">Inspected stone by stone, under the loupe.</li>
         <li data-en="Matched within a tenth of a millimetre." data-he="מותאם בטווח של עשירית מילימטר.">Matched within a tenth of a millimetre.</li>
       </ul>
-      <div class="acts rv d3"><a class="btn" href="#configure" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
     </div>
   </div>
   </div>
