@@ -139,6 +139,14 @@
     var alias = { standard: "inside", atelier: "partners" }, id = alias[sec.id] || sec.id;
     navLinks.forEach(function (a) { a.classList.toggle("cur", a.getAttribute("href") === "#" + id); });
   }
+  /* v111 — the chapter marker is a fixed pill over whatever is passing. Held
+     on screen it sat on card text and captions; it shows while the page is
+     moving, which is when "where am I" is being asked, and fades when it
+     stops. */
+  (function () {
+    var w = $("where"), t = 0; if (!w) return;
+    addEventListener("scroll", function () { w.classList.add("live"); clearTimeout(t); t = setTimeout(function () { w.classList.remove("live"); }, 1600); }, { passive: true });
+  })();
   function compass() {
     var mid = innerHeight * 0.45, best = secs[0];
     for (var i = 0; i < secs.length; i++) { var r = secs[i].getBoundingClientRect(); if (r.top <= mid) best = secs[i]; }

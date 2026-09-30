@@ -3932,3 +3932,6 @@
   @media (max-width:899px) { html body .mkeys .mk:last-child:nth-child(odd) { grid-column:1 / -1; } }
   /* the eyebrow over the film measured 4.1:1 at eleven pixels; lighter and a step larger */
   html body .hcap .k.gold { color:#f3ecdc; font-size:max(.74rem, 12px); }
+  /* v111 — the chapter marker shows while the page moves, not while it rests */
+  html body #where.show:not(.live) { opacity:0; }
+  html body #where { transition:opacity .45s var(--ease); }
