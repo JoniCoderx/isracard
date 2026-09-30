@@ -3944,3 +3944,22 @@
   #beats .beat { opacity:0; transition:opacity .26s var(--ease); }
   #beats .beat.on { opacity:1; transition:opacity .42s var(--ease) .26s; }
   @media (prefers-reduced-motion:reduce) { #beats .beat, #beats .beat.on { transition:none; } }
+
+  /* ══ v113 — the enquiry sits on the dark side in every language ══════════
+     The film dissolves to black on the right, and the form is meant to sit
+     on that black. In Hebrew and Arabic the grid mirrors, so "column 2" put
+     the form on the left, over the bags and the skyline, with the black half
+     empty. Column 1 is the right-hand side in a right-to-left grid, so the
+     form goes back onto the dark in both directions. The fields also get a
+     quiet plate of their own, so they read over any frame of the film on a
+     narrower screen where the two meet. ─────────────────────────────────── */
+  @media (min-width:1000px) {
+    html[dir="rtl"] #film #concierge.cwrap { grid-column:1; }
+  }
+  #concierge .cbody { position:relative; isolation:isolate; }
+  #concierge .cbody::before { content:""; position:absolute; z-index:-1; pointer-events:none;
+    inset:calc(-1 * clamp(14px,2vw,28px)); border-radius:18px;
+    background:rgba(8,8,7,.66); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    box-shadow:0 0 0 1px rgba(244,241,233,.06); }
+  @media (max-width:999px) { #concierge .cbody::before { inset:-14px -10px; border-radius:14px; } }
+  @media (min-width:1000px) { #film #concierge .cbody { margin-inline:clamp(44px,4.6vw,84px) auto; } }
