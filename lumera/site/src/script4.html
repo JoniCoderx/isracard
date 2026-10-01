@@ -68,9 +68,14 @@
   function onScroll() {
     var y = scrollY; if (y === lastY) return; lastY = y;
     header.classList.toggle("scrolled", y > 40);
-    if (!reduce && y < innerHeight) { var f = Math.min(1, y / (innerHeight * 0.7)); hcap.style.transform = "translateY(" + (y * 0.28).toFixed(1) + "px)"; hcap.style.opacity = (1 - f * f).toFixed(3); if (hfacts) hfacts.style.opacity = (1 - f * 1.4).toFixed(3); var sc = "scale(" + (1 + f * 0.12).toFixed(3) + ")"; heroMedia.forEach(function (m) { m.style.transform = sc; }); }
+    if (!reduce && y < innerHeight) { var f = Math.min(1, y / (innerHeight * 0.7)); hcap.style.opacity = (1 - f * f).toFixed(3); if (hfacts) hfacts.style.opacity = (1 - f * 1.4).toFixed(3);
+      /* on a phone the words stay where they are and only fade: following the
+         finger with the caption and growing the photograph cost a frame on
+         every touch move, and the text sliding under the thumb read badly */
+      if (!still) { hcap.style.transform = "translateY(" + (y * 0.28).toFixed(1) + "px)"; var sc = "scale(" + (1 + f * 0.12).toFixed(3) + ")"; heroMedia.forEach(function (m) { m.style.transform = sc; }); } }
   }
-  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  var still = matchMedia("(max-width:899px), (pointer:coarse)").matches, tick = 0;
+  addEventListener("scroll", function () { if (!tick) tick = requestAnimationFrame(function () { tick = 0; onScroll(); }); }, { passive: true }); onScroll();
 
   /* ── second try-on button, inside the configurator ── */
   var t2 = $("tryonBtn2"); if (t2) t2.addEventListener("click", function () { if (window.__tryon) window.__tryon.open(); });

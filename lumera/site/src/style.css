@@ -5022,3 +5022,31 @@
      white too, so each stage sits on the page rather than in a box */
   #bespoke .jshot, #bespoke .jim, #bespoke .jshot picture { background:#fff !important; }
   @media (max-width:759px) { #bespoke .jshot { background:#fff !important; } }
+
+  /* ══ v138 ══ the journey counts its stages once, in the list */
+  #bespoke .jcount { display:none !important; }
+
+  /* ══ v139 ══ a lighter opening on phones: the caption fades in place */
+  @media (max-width:899px), (pointer:coarse) {
+    #hero .hcap { transform:none !important; will-change:opacity; }
+    #hero .hv { transform:none !important; will-change:auto; }
+    #hero .hlight { display:none; }
+  }
+
+  /* ══ v140 ══ phones: the bracelet turns under the finger, and the enquiry
+     reads form-first with the mark beside its heading ═════════════════════ */
+  @media (pointer:coarse) {
+    /* a touch on the bracelet is for the bracelet: drag turns it in any
+       direction, two fingers zoom, and the page stays where it is */
+    #build #stripwrap #bcv, #build #stripwrap:not(.wrist) #bcv, #stripwrap.wrist, #bcv { touch-action:none !important; overscroll-behavior:contain; }
+  }
+  @media (max-width:999px) {
+    #enquire .egrid { position:relative; }
+    #enquire .emb { position:absolute; order:0; top:0; inset-inline-end:var(--pad, 20px); width:clamp(78px,22vw,112px);
+      min-height:0; padding:0; z-index:1; pointer-events:none; }
+    #enquire .embtilt { gap:0; }
+    #enquire .embfloat, #enquire .embtilt { width:100%; } #enquire .embart { width:clamp(78px,22vw,112px); }
+    #enquire .embword, #enquire .embsub, #enquire .embdust { display:none; }
+    #enquire .embhalo { transform:translate(-50%,-50%) scale(.7); }
+    #enquire #concierge .cbody > div:first-child { padding-inline-end:calc(clamp(78px,22vw,112px) + 10px); }
+  }

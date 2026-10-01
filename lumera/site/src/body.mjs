@@ -193,7 +193,7 @@ ${markDefs()}
 <section id="house" data-n="·" data-title-en="The house" data-title-he="הבית" aria-label="The house">
   <div class="wrap hwrap">
     <div class="hsig rv">${mark("hmark")}</div>
-    <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="בית התכשיטים · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
+    <div class="k gold rv d1" data-en="The signature" data-he="החתימה">The signature</div>
     <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="‏SILAVU חותמת <em>על כל תכשיט שהיא יוצרת.</em>">SILAVU signs <em>every piece it makes.</em></h2>
     <p class="p rv d3" data-en="Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you." data-he="שום תכשיט לא יוצא מהסדנה בלי חתימה. כל תכשיט נושא את הסמל ונוצר פעם אחת, בשבילכם.">Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you.</p>
   </div>
@@ -250,7 +250,7 @@ ${markDefs()}
     <div class="wrap">
     <div class="sechead">
       <div class="k gold rv ol" data-en="Collection" data-he="הקולקציה">Collection</div>
-      <h2 class="h2 sp rv" data-en="Made once. <em>Worn always.</em>" data-he="נוצר פעם אחת. <em>נשאר לתמיד.</em>">Made once. <em>Worn always.</em></h2>
+      <h2 class="h2 sp rv" data-en="The mark, <em>in three pieces.</em>" data-he="הסמל, <em>בשלושה תכשיטים.</em>">The mark, <em>in three pieces.</em></h2>
       <p class="p rv d2" data-en="A few pieces, each made to be the one you reach for first." data-he="מעט תכשיטים, וכל אחד מהם נועד להיות הראשון שתבחרו.">A few pieces, each made to be the one you reach for first.</p>
     </div>
     ${COLLECTION}
@@ -407,7 +407,7 @@ ${markDefs()}
             });
           } catch (e) {} })();
         </script>
-        <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form." data-he="עונה לכם אדם אמיתי, לא מערכת.">A person replies, not a form.</p>
+        <p class="fine rv d3" style="margin-top:22px" data-en="Every message is read and answered personally by the SILAVU concierge." data-he="כל פנייה נקראת ונענית באופן אישי על ידי הקונסיירז' של SILAVU.">Every message is read and answered personally by the SILAVU concierge.</p>
       </div>
       <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="">
         <div class="fields">
@@ -439,7 +439,7 @@ ${markDefs()}
           <i class="embshine"></i><i class="embpave"></i>
         </div>
         <span class="embword" dir="ltr">SILAVU</span>
-        <span class="embsub k" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</span>
+        <span class="embsub k" data-en="By appointment" data-he="בתיאום מראש">By appointment</span>
         <i class="embdust"><b></b><b></b><b></b><b></b><b></b><b></b></i>
       </div></div>
     </div>
@@ -483,12 +483,12 @@ ${markDefs()}
       </div>
       <div class="macts"><a class="btn" href="#concierge" id="pmRes" data-en="Reserve this piece" data-he="שריינו את התכשיט">Reserve this piece</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
       <div class="macc">
-        <details class="mdt" id="pmSpecWrap"><summary><span data-en="Specification" data-he="מפרט">Specification</span></summary><div class="mspecs" id="pmSpecs"></div></details>
-        <details class="mdt" id="pmStoneWrap"><summary><span data-en="The stones" data-he="האבנים">The stones</span></summary><p class="p" id="pmStones"></p></details>
+        <details class="mdt" id="pmSpecWrap"><summary><span data-en="Metal, size and reference" data-he="מתכת, מידה ומק״ט">Metal, size and reference</span></summary><div class="mspecs" id="pmSpecs"></div></details>
+        <details class="mdt" id="pmStoneWrap"><summary><span data-en="The diamonds" data-he="היהלומים">The diamonds</span></summary><p class="p" id="pmStones"></p></details>
         <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-stones="" data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי לחברת הביטוח">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת לכה שחורה">The black lacquer box</li><li data-en="Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere" data-he="מסירה אישית בדובאי ובתל אביב, משלוח מבוטח לכל מקום אחר">Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
-        <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and care" data-he="משלוח ושירות">Delivery and care</span></summary><p class="p" id="pmCare"></p></details>
+        <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and lifetime care" data-he="מסירה ושירות לכל החיים">Delivery and lifetime care</span></summary><p class="p" id="pmCare"></p></details>
       </div>
-      <p class="k mfoot" data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</p>
+      <p class="k mfoot" data-en="Viewed privately, by appointment" data-he="לצפייה בפגישה פרטית, בתיאום מראש">Viewed privately, by appointment</p>
     </div>
   </div>
 </div>

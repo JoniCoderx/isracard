@@ -1047,7 +1047,9 @@
   })();
   /* ── the seam under the opening screen deepens as it is left behind ── */
   (function () {
-    var h = $("hero"); if (!h) return; var last = -1;
+    /* a phone keeps the seam as it is: resizing it on every scroll repaints
+       a blurred band the full width of the screen */
+    var h = $("hero"); if (!h || matchMedia("(max-width:899px), (pointer:coarse)").matches) return; var last = -1;
     function f() { var v = Math.max(0, Math.min(1, scrollY / Math.max(1, h.offsetHeight))); if (Math.abs(v - last) < 0.004) return; last = v; h.style.setProperty("--hs", v.toFixed(3)); }
     addEventListener("scroll", f, { passive: true }); f();
   })();
