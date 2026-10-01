@@ -245,7 +245,6 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
   const NAV = [
     ["./#collection", S("Collection", "הקולקציה")],
-    ["./#bespoke", S("Bespoke", "בהתאמה אישית")],
     ["./#build", S("The Line", "הקו")],
     ["about/", S("About", "אודות")]
   ];

@@ -28,7 +28,7 @@ ok(!r.exceptional, `${dv} exceptional pieces section removed`);
 ok(!r.colActs && /in three pieces/.test(r.colH) && /A few pieces/.test(r.colP), `${dv} collection head: buttons gone, new sentences`);
 ok(JSON.stringify(r.names)===JSON.stringify(["SILAVU MOMENTBracelet","SILAVU ICONRing","SILAVU SOULNecklace"]), `${dv} cards named ${JSON.stringify(r.names)}`);
 ok(r.lines[0]==="A delicate 18k white-gold chain, finished with the SILAVU signature in a polished sculptural form." && r.lines[1]==="A sculptural 18k white-gold ring with the SILAVU signature set in pavé diamonds." && r.lines[2]==="A fine 18k white-gold chain with a pavé SILAVU signature pendant at its center.", `${dv} card descriptions exactly as given`);
-ok(/255, 255, 255/.test(r.bespokeBg||"") && r.jpin && r.jsteps===4, `${dv} journey white, scroll-pinned, four steps`);
+ok(true, `${dv} journey checks retired`);
 ok(r.macro.some(x=>/Light goes in/.test(x)) && !r.macro.some(x=>/Fifty-seven/.test(x)), `${dv} macro heading rewritten`);
 ok(r.drawcv && !r.benchcv, `${dv} The Line is the drawing, car film gone`);
 ok(r.caratShown==="none" && r.cacts.join()==="saveImg,sendSpec,tryonBtn2" && !r.buildActs, `${dv} builder trimmed; save / send / try on present`);
@@ -40,13 +40,8 @@ if (w>900) { const o=await p.evaluate(()=>{const g=document.querySelector("#opts
   ok(o.vx>o.kx+150 && o.vy<14 && o.col!=="rgb(246, 243, 237)", `desk chosen value on the right, own colour ${JSON.stringify(o)}`); }
 // enquiry form width (desktop)
 if (w>900) { const fw=await p.evaluate(()=>document.getElementById("cform").getBoundingClientRect().width); ok(fw>600, `desk enquiry form is wide (${Math.round(fw)}px)`); }
-// journey: sticky holds and changes step with scroll
-const j=await p.evaluate(async()=>{ const e=document.getElementById("jpin"), top=e.getBoundingClientRect().top+scrollY, span=e.offsetHeight-innerHeight; document.documentElement.style.scrollBehavior="auto";
-  scrollTo(0,top+span*0.1); await new Promise(r=>setTimeout(r,300)); const a=document.getElementById("jnow").textContent, sa=document.querySelector(".jsticky").getBoundingClientRect().top;
-  scrollTo(0,top+span*0.9); await new Promise(r=>setTimeout(r,300)); const b2=document.getElementById("jnow").textContent, sb=document.querySelector(".jsticky").getBoundingClientRect().top; return {a,b2,sa:Math.round(sa),sb:Math.round(sb)}; });
-if (w>900) ok(j.a==="01" && j.b2==="04" && Math.abs(j.sa-j.sb)<3, `${dv} journey walks 01→04 by scroll and holds still ${JSON.stringify(j)}`);
-else { const v=await p.evaluate(()=>{ const sh=[...document.querySelectorAll("#bespoke .jshot")], st=[...document.querySelectorAll("#bespoke .jstep")]; return { shots:sh.filter(e=>getComputedStyle(e).opacity==="1"&&e.getBoundingClientRect().height>100).length, steps:st.filter(e=>getComputedStyle(e).display!=="none").length, order: sh.every((e,i)=>e.getBoundingClientRect().top < st[i].getBoundingClientRect().top && (i===sh.length-1 || st[i].getBoundingClientRect().top < sh[i+1].getBoundingClientRect().top)) }; });
-  ok(v.shots===4 && v.steps===4 && v.order, `${dv} journey told in order: picture then step, four times ${JSON.stringify(v)}`); }
+// the bespoke journey was taken out at the client's request; nothing may still point at it
+{ const g=await p.evaluate(()=>({sec:!!document.getElementById("bespoke"), links:document.querySelectorAll('a[href="#bespoke"]').length})); ok(!g.sec && g.links===0, `${dv} no journey section and no link to it ${JSON.stringify(g)}`); }
 // hero → house seam: no hard edge (last row of hero ≈ black)
 ok(bad.filter(x=>!/fonts/.test(x)).length===0, `${dv} no failed requests ${bad.slice(0,3).join(" | ")}`);
 ok(errs.length===0, `${dv} no script errors ${errs.join(" | ")}`);

@@ -136,7 +136,6 @@ ${markDefs()}
 <header class="sh" id="header">
   <nav id="topnav">
     <a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a>
-    <a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a>
     <a href="#build" data-en="The Line" data-he="הקו">The Line</a>
     <a href="about/" data-en="About" data-he="אודות">About</a>
   </nav>
@@ -155,10 +154,9 @@ ${markDefs()}
   <div class="mlist" id="mlist">
     <a href="#inside"><span class="k">01</span><span data-en="The box" data-he="הקופסה">The box</span></a>
     <a href="#collection"><span class="k">02</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
-    <a href="#bespoke"><span class="k">03</span><span data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</span></a>
-    <a href="#build"><span class="k">04</span><span data-en="The Line" data-he="הקו">The Line</span></a>
-    <a href="#concierge"><span class="k">05</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
-     <a href="about/"><span class="k">06</span><span data-en="About" data-he="אודות">About</span></a>
+    <a href="#build"><span class="k">03</span><span data-en="The Line" data-he="הקו">The Line</span></a>
+    <a href="#concierge"><span class="k">04</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
+    <a href="about/"><span class="k">05</span><span data-en="About" data-he="אודות">About</span></a>
   </div>
   <div class="mfoot">
     <a class="btn solid" href="#concierge" style="justify-self:start" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
@@ -183,7 +181,7 @@ ${markDefs()}
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
       <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה <em>שנוצרים לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
       <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד בדובאי ומלוטשים כדי ללוות אתכם כל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
-      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="ליצירת תכשיט בהתאמה אישית">Begin a bespoke piece</a></div>
+      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהתאמה אישית" data-en="Begin a bespoke piece" data-he="ליצירת תכשיט בהתאמה אישית">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
@@ -257,41 +255,6 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="bespoke" class="ivory paper jwhite" data-n="03" data-title-en="Bespoke" data-title-he="בהתאמה אישית" aria-label="How a commission is made">
-  <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
-    <div class="wrap">
-    <div class="sechead jhead">
-      <div class="k gold rv ol" data-en="How a bespoke piece is made" data-he="איך נוצר תכשיט בהתאמה אישית">How a bespoke piece is made</div>
-      <h2 class="h2 sp rv" data-en="From one conversation <em>to your wrist.</em>" data-he="משיחה אחת <em>ועד פרק היד שלכם.</em>">From one conversation <em>to your wrist.</em></h2>
-      <p class="p rv d2" data-en="A piece made for you alone, in four steps and four to six weeks." data-he="תכשיט שנעשה רק בשבילכם, בארבעה שלבים ובארבעה עד שישה שבועות.">A piece made for you alone, in four steps and four to six weeks.</p>
-    </div>
-    </div>
-    <div class="jpin" id="jpin">
-      <div class="jsticky">
-        <div class="wrap jgrid" id="jrn">
-          <div class="jstage">
-          <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", { en: "Loose round brilliant diamonds on folded diamond paper beside a notebook, a pencil and a loupe, on white", he: "יהלומי בריליאנט לא משובצים על נייר יהלומים, לצד מחברת, עיפרון וזכוכית מגדלת, על רקע לבן" }, SIZES_JRN, false)}</div></figure>
-          <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", { en: "A graphite design sheet for the Line bracelet, with studies of one setting and of the clasp", he: "גיליון עיצוב בעיפרון לצמיד Line, עם סקיצות של שיבוץ ושל הסוגר" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="02"><div class="jim">${pic("jn4", { en: "Tweezers placing a brilliant into one of the last open settings of the Line bracelet", he: "פינצטה מניחה יהלום בריליאנט באחד השיבוצים האחרונים בצמיד Line" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="03"><div class="jim">${pic("jn5", { en: "The finished Line bracelet in its black lacquer box, beside its certificate", he: "צמיד Line המוגמר בקופסת הלכה השחורה, לצד התעודה שלו" }, SIZES_JRN, true)}</div></figure>
-            <div class="jcount k" aria-hidden="true"><b id="jnow">01</b> / 06</div>
-          </div>
-          <div class="jside">
-            <ol class="jsteps">
-            <li class="jstep on" data-i="0"><button type="button" class="jgo" aria-label="Your idea"><span class="jn">01</span><span class="jt" data-en="Your idea" data-he="הרעיון שלכם">Your idea</span></button><p class="jp" data-en="Who it is for, what it marks, how it should feel. Bring a sketch, a photograph or only a feeling." data-he="למי התכשיט, מה הוא מציין ואיך הוא צריך להרגיש. אפשר להביא סקיצה, תמונה או רק תחושה.">Who it is for, what it marks, how it should feel. Bring a sketch, a photograph or only a feeling.</p></li>
-            <li class="jstep" data-i="1"><button type="button" class="jgo" aria-label="The design"><span class="jn">02</span><span class="jt" data-en="The design" data-he="העיצוב">The design</span></button><p class="jp" data-en="Ariel draws it by hand, it is modelled in 3D to a tenth of a millimetre, and the stones are chosen with you." data-he="אריאל משרטט אותו ביד, הוא נבנה בתלת־ממד בדיוק של עשירית מילימטר, והאבנים נבחרות יחד אתכם.">Ariel draws it by hand, it is modelled in 3D to a tenth of a millimetre, and the stones are chosen with you.</p></li>
-            <li class="jstep" data-i="2"><button type="button" class="jgo" aria-label="At the bench"><span class="jn">03</span><span class="jt" data-en="At the bench" data-he="בסדנה">At the bench</span></button><p class="jp" data-en="Cast, set stone by stone under the microscope and polished by hand in our Dubai atelier." data-he="נוצק, משובץ אבן אחר אבן תחת מיקרוסקופ ומלוטש ביד בסדנה שלנו בדובאי.">Cast, set stone by stone under the microscope and polished by hand in our Dubai atelier.</p></li>
-            <li class="jstep" data-i="3"><button type="button" class="jgo" aria-label="Yours"><span class="jn">04</span><span class="jt" data-en="Yours" data-he="שלכם">Yours</span></button><p class="jp" data-en="Signed with the house mark, boxed with its certificates and brought to you in person." data-he="נחתם בסמל הבית, נארז עם התעודות שלו ונמסר לכם אישית.">Signed with the house mark, boxed with its certificates and brought to you in person.</p></li>
-            </ol>
-            <div class="jfoot">
-              <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהתאמה אישית" data-en="Begin your commission" data-he="לתיאום שיחה ראשונה">Begin your commission</a>
-            </div>
-          </div>
-        </div>
-        <div class="jbar" aria-hidden="true"><i id="jbar"></i></div>
-      </div>
-    </div>
-  </section>
 
   <section id="macro" data-n="" data-title-en="The stone" data-title-he="האבן" aria-label="Inside the stone">
     <div class="mfilm"><video id="insidevid" muted playsinline loop preload="none" poster="/img/one-2000.jpg" aria-hidden="true"></video><div class="mveil"></div>
@@ -445,7 +408,7 @@ ${markDefs()}
   <section id="end" data-n="" aria-label="Footer">
     <div class="wrap">
     <div class="fgrid">
-      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="about/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a><a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
+      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="about/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
       <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="Private high jewellery" data-he="תכשיטנות עילית">Private high jewellery</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>

@@ -79,8 +79,6 @@ jobs:
         run: bash lumera/site/wrist-assets.sh dist/img
       - name: Collection photography (committed originals)
         run: bash lumera/site/piece-assets.sh dist/img
-      - name: The journey, six stages of one bracelet
-        run: bash lumera/site/journey-assets.sh dist/img
       - name: The box sequence, cut from the 4K restoration
         run: bash lumera/site/box-frames.sh dist/f/box
       # The cards are built in the browser from the catalogue, so a missing

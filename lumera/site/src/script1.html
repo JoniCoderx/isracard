@@ -139,7 +139,12 @@
         ? (lang === "he" ? "אשמח לשריין: " : T("I would like to reserve: "))
         : (lang === "he" ? "אשמח לקבוע פגישה פרטית לצפייה ב: " : T("I would like a private viewing of: "));
       var pn = a.getAttribute("data-piece");
-      prefill(lead + ((lang === "he" && a.getAttribute("data-piece-he")) || T(pn) || pn));
+      if (pn === "A bespoke piece") {
+        /* a commission is not a viewing of something that exists: say so, and
+           mark it as such in the form */
+        prefill(lang === "he" ? "אשמח להתחיל תכשיט בהתאמה אישית." : T("I would like to begin a bespoke piece."));
+        var bc = document.querySelector('#cform .want .chip[data-en="Bespoke commission"]'); if (bc) bc.click();
+      } else prefill(lead + ((lang === "he" && a.getAttribute("data-piece-he")) || T(pn) || pn));
     }
     /* a long way is travelled at once: gliding through the film and the box
        on the way made every chapter between render, and the page took three
