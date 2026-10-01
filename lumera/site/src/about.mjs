@@ -1,11 +1,13 @@
-/* About SILAVU: the designer, and the atelier that makes what he draws.
+/* About SILAVU: the designer, the atelier that makes what he draws, and how
+   to meet the house.
 
-   Only what the house has said about itself is written here. The atelier is
-   described by its crafts, not by invented names: when the team wants to be
-   named, each role takes a name and a photograph without the page changing.
-   The portrait is a reserved frame until a real photograph is supplied; set
-   `portrait` to the image name in img/ (as ariel-1200.jpg, ariel-800.jpg) and
-   the frame shows it. */
+   Only what the house has said about itself is written here: Ariel Silas
+   founded it and draws every piece, he designed for Jacob & Co. before, the
+   atelier is in Dubai with ten specialists, and pieces are shown privately in
+   Dubai and Tel Aviv. The atelier is described by its crafts, not by invented
+   names: when the team wants to be named, each role takes a name without the
+   page changing. The portrait lives in public/ as <portrait>-800.jpg and
+   <portrait>-1100.jpg. */
 
 const S = (en, he) => ({ en, he });
 
@@ -13,28 +15,35 @@ export const ABOUT = {
   slug: "about",
   title: S("About", "אודות"),
   seo: S("About SILAVU | Ariel Silas", "אודות SILAVU | אריאל סילס"),
-  desc: S("SILAVU is the house of Ariel Silas, a high jewellery designer in Dubai who previously designed for Jacob & Co., and of the ten specialists in his atelier.",
-          "‏SILAVU הוא בית התכשיטים של אריאל סילס, מעצב תכשיטי יוקרה בדובאי שעיצב בעבר עבור Jacob & Co., ושל עשרת אנשי המקצוע בסדנה שלו."),
-  eyebrow: S("About SILAVU", "אודות SILAVU"),
-  h1: S("One designer. <em>Ten pairs of hands.</em>", "מעצב אחד. <em>עשרה זוגות ידיים.</em>"),
-  lede: S("SILAVU is the house of Ariel Silas, a high jewellery designer working in Dubai, and of the ten specialists who make what he draws.",
-          "‏SILAVU הוא בית התכשיטים של אריאל סילס, מעצב תכשיטי יוקרה הפועל בדובאי, ושל עשרת אנשי המקצוע שמייצרים את מה שהוא משרטט."),
+  desc: S("SILAVU is the high jewellery house of designer Ariel Silas. Every piece is drawn by him and made by ten specialists in his Dubai atelier. Private viewings in Dubai and Tel Aviv.",
+          "‏SILAVU הוא בית תכשיטי היוקרה של המעצב אריאל סילס. כל תכשיט משורטט על ידו ונעשה בידי עשרה אנשי מקצוע בסדנה שלו בדובאי. פגישות פרטיות בדובאי ובתל אביב."),
+  h1: S("The house of <em>Ariel Silas.</em>", "בית התכשיטים של <em>אריאל סילס.</em>"),
+  lede: S("SILAVU is a high jewellery house founded by the designer Ariel Silas. He draws every piece, and ten specialists in his Dubai atelier make it.",
+          "‏SILAVU הוא בית תכשיטי יוקרה שייסד המעצב אריאל סילס. הוא משרטט כל תכשיט, ועשרה אנשי מקצוע בסדנה שלו בדובאי מייצרים אותו."),
   portrait: "ariel-silas",
   name: S("Ariel Silas", "אריאל סילס"),
   role: S("Founder and designer", "מייסד ומעצב"),
+  /* the four facts a reader looks for first */
+  facts: [
+    [S("Founder", "מייסד"), S("Ariel Silas", "אריאל סילס")],
+    [S("Atelier", "סדנה"), S("Dubai", "דובאי")],
+    [S("Specialists", "אנשי מקצוע"), S("Ten", "עשרה")],
+    [S("Private viewings", "פגישות פרטיות"), S("Dubai and Tel Aviv", "דובאי ותל אביב")]
+  ],
+  founderH: S("Before SILAVU", "לפני SILAVU"),
   founder: [
-    S("Before founding SILAVU, Ariel designed high jewellery for Jacob & Co. He left with two convictions: a piece starts from its stones, and the metal around them should be as quiet as it can be.",
-      "לפני שייסד את SILAVU עיצב אריאל תכשיטי יוקרה עבור <bdi>Jacob & Co.</bdi> הוא יצא משם עם שתי אמונות: תכשיט מתחיל מהאבנים שלו, והמתכת סביבן צריכה להיות שקטה ככל האפשר."),
-    S("He draws every SILAVU piece himself, sits with the client when the stones are chosen, and is the last person to look at a piece before it is signed and boxed. Nothing leaves the bench without his approval.",
-      "הוא משרטט בעצמו כל תכשיט של SILAVU, יושב עם הלקוח בזמן בחירת האבנים, והוא האחרון שבודק כל תכשיט לפני שהוא נחתם ונארז. שום תכשיט לא יוצא מהסדנה בלי האישור שלו.")
+    S("Ariel designed high jewellery for Jacob & Co. before founding SILAVU. He took two convictions from that work: a piece begins with its stones, and the metal around them should hold them without competing for attention.",
+      "לפני שייסד את SILAVU עיצב אריאל תכשיטי יוקרה עבור <bdi>Jacob & Co.</bdi> מהעבודה שם הוא לקח שתי אמונות: תכשיט מתחיל מהאבנים שלו, והמתכת סביבן צריכה להחזיק אותן בלי להתחרות בהן."),
+    S("He draws every SILAVU piece himself. He sits with each client when the stones are chosen, and he is the last to examine a piece before it is signed and boxed. Nothing leaves the atelier without his approval.",
+      "הוא משרטט בעצמו כל תכשיט של SILAVU. הוא יושב עם כל לקוח בזמן בחירת האבנים, והוא האחרון שבוחן כל תכשיט לפני שהוא נחתם ונארז. שום תכשיט לא יוצא מהסדנה בלי האישור שלו.")
   ],
   atelierH: S("The atelier in Dubai", "הסדנה בדובאי"),
-  atelierP: S("Ten specialists, each responsible for one stage of the work, and every one of them working to Ariel's drawing.",
-              "עשרה אנשי מקצוע, כל אחד אחראי על שלב אחד בעבודה, וכולם עובדים לפי השרטוט של אריאל."),
+  atelierP: S("Ten specialists, each responsible for one stage of the work, all working from Ariel's drawings.",
+              "עשרה אנשי מקצוע, כל אחד אחראי על שלב אחד בעבודה, וכולם עובדים לפי השרטוטים של אריאל."),
   roles: [
     [S("Diamonds", "יהלומים"),
-     S("Source, match and check every stone against its GIA or IGI report before it reaches the bench.",
-       "מאתרים, מתאימים ובודקים כל אבן מול תעודת GIA או IGI שלה, לפני שהיא מגיעה לשולחן הצורף.")],
+     S("Source and match every stone, and check it against its GIA or IGI report before it reaches the bench.",
+       "מאתרים ומתאימים כל אבן, ובודקים אותה מול תעודת GIA או IGI שלה לפני שהיא מגיעה לשולחן הצורף.")],
     [S("Design and 3D", "עיצוב ותלת־ממד"),
      S("Turn Ariel's drawings into models accurate to a tenth of a millimetre.",
        "הופכים את השרטוטים של אריאל למודלים מדויקים לעשירית המילימטר.")],
@@ -48,10 +57,11 @@ export const ABOUT = {
      S("Bring the metal to a mirror finish without softening a single edge.",
        "מביאים את המתכת לברק מראה בלי לעגל אף קצה.")],
     [S("Client care", "ליווי לקוחות"),
-     S("Arrange private viewings in Dubai and Tel Aviv, and look after every piece for as long as you own it.",
-       "מתאמים פגישות פרטיות בדובאי ובתל אביב, ומלווים כל תכשיט כל עוד הוא בבעלותכם.")]
+     S("Arrange private viewings and look after every piece for as long as you own it.",
+       "מתאמים פגישות פרטיות ומלווים כל תכשיט כל עוד הוא בבעלותכם.")]
   ],
-  close: S("Every SILAVU piece is drawn by Ariel, made by the atelier, and signed only when he is satisfied with it.",
-           "כל תכשיט של SILAVU משורטט על ידי אריאל, נעשה בסדנה, ונחתם רק כשהוא מרוצה ממנו."),
+  meetH: S("Meet the house", "להיפגש איתנו"),
+  meetP: S("SILAVU pieces are shown privately, by appointment, in Dubai and Tel Aviv. Write to the concierge and a viewing is arranged at a time that suits you.",
+           "תכשיטי SILAVU מוצגים בפגישה פרטית, בתיאום מראש, בדובאי ובתל אביב. כתבו לקונסיירז' ונתאם פגישה בזמן שנוח לכם."),
   cta: S("Book a private viewing", "קביעת פגישה פרטית")
 };

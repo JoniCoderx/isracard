@@ -5056,3 +5056,45 @@
   @media (max-width:1100px) { .jpin { height:300svh; } }
 
   #enquire .chan[hidden] { display:none !important; }
+
+  /* ══ v142 ══ About, rewritten: the founder and the facts first, then his
+     story, the atelier as a list, and how to meet the house ══════════════ */
+  .dpage .doc.about { max-width:1160px; }
+  .dpage .doc.about section { border-top:0; padding-top:0; margin-top:0; }
+  .ahero2 { display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr); gap:clamp(32px,6vw,96px); align-items:end; }
+  .ahtext { display:grid; gap:clamp(18px,2.4vw,28px); padding-bottom:6px; }
+  .ahtext h1 { margin:0; font-size:clamp(2.4rem,5.4vw,4.4rem) !important; line-height:1.02; }
+  .ahtext .lede { margin:0; max-width:46ch; color:var(--ink2); font-size:clamp(1.05rem,1.4vw,1.2rem); line-height:1.6; }
+  .afacts { margin:clamp(8px,1.5vw,16px) 0 0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); border-top:1px solid var(--line); }
+  .afacts > div { padding:16px 0; border-bottom:1px solid var(--line); display:grid; gap:4px; }
+  .afacts > div:nth-child(odd) { padding-inline-end:20px; }
+  .afacts dt { margin:0; font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink3); }
+  .afacts dd { margin:0; color:var(--ink); font-size:1.05rem; }
+  html[data-ns] .afacts dt { letter-spacing:.02em; text-transform:none; font-size:.86rem; }
+  .ahero2 .aport { margin:0; display:grid; gap:12px; }
+  .ahero2 .aport img { width:100%; height:auto; aspect-ratio:4 / 5; object-fit:cover; border-radius:var(--r); display:block; }
+  .ahero2 .aport figcaption { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .ahero2 .aport figcaption b { font-weight:400; color:var(--ink); }
+  .ahero2 .aport figcaption .k { color:var(--ink3); }
+  .asplit { display:grid; grid-template-columns:minmax(0, 4fr) minmax(0, 7fr); gap:clamp(24px,5vw,80px);
+    margin-top:clamp(64px,10vh,120px) !important; padding-top:clamp(28px,4vh,40px) !important; border-top:1px solid var(--line) !important; }
+  .asplit > .k.gold { padding-top:6px; }
+  .asplitb { display:grid; gap:18px; max-width:60ch; }
+  .asplitb p { margin:0; font-size:clamp(1.05rem,1.35vw,1.2rem) !important; line-height:1.7 !important; color:var(--ink2) !important; }
+  .asplit h2 { margin:0 0 12px !important; font-size:clamp(1.6rem,2.6vw,2.2rem) !important; letter-spacing:-.01em !important; text-transform:none !important; color:var(--ink) !important; font-weight:300; }
+  .asplit .aint { margin:0; max-width:34ch; }
+  .aroles2 { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); column-gap:clamp(20px,3vw,40px); }
+  .aroles2 li { padding:18px 0; border-top:1px solid var(--line); display:grid; gap:6px; align-content:start; }
+  .aroles2 h3 { margin:0; font-weight:400; font-size:1.02rem; color:var(--ink); }
+  .aroles2 p { margin:0; font-size:.95rem; line-height:1.6; }
+  .ameet { margin-top:clamp(64px,10vh,120px) !important; padding:clamp(32px,5vw,56px) !important; border:1px solid var(--line) !important;
+    border-radius:var(--r); display:grid; gap:16px; justify-items:start; }
+  .ameet h2 { margin:0 !important; font-size:clamp(1.6rem,2.6vw,2.2rem) !important; letter-spacing:-.01em !important; text-transform:none !important; color:var(--ink) !important; font-weight:300; }
+  .ameet p { margin:0 0 8px; max-width:58ch; }
+  @media (max-width:899px) {
+    .ahero2 { grid-template-columns:1fr; align-items:start; }
+    .ahero2 .aport { order:-1; max-width:420px; }
+    .asplit { grid-template-columns:1fr; }
+    .aroles2 { grid-template-columns:1fr; }
+  }
+  @media (max-width:400px) { .afacts { grid-template-columns:1fr; } .afacts > div:nth-child(odd) { padding-inline-end:0; } }

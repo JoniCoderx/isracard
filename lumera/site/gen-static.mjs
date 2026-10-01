@@ -325,26 +325,33 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
   {
     const a = ABOUT;
     const portrait = a.portrait
-      ? `<img src="${a.portrait}-1100.jpg" srcset="${a.portrait}-800.jpg 800w, ${a.portrait}-1100.jpg 1100w" sizes="(min-width:900px) 40vw, 92vw" width="1100" height="1375" fetchpriority="high" alt="${escA(a.name.en)}, ${escA(a.role.en)} of SILAVU, at a table with three Line bracelets in a black tray" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)} של SILAVU, ליד שולחן ועליו שלושה צמידי Line במגש שחור">`
+      ? `<img src="${a.portrait}-1100.jpg" srcset="${a.portrait}-800.jpg 800w, ${a.portrait}-1100.jpg 1100w" sizes="(min-width:900px) 38vw, 92vw" width="1100" height="1375" fetchpriority="high" alt="${escA(a.name.en)}, ${escA(a.role.en)} of SILAVU, at a table with three Line bracelets in a black tray" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)} של SILAVU, ליד שולחן ועליו שלושה צמידי Line במגש שחור">`
       : `<div class="aph" role="img" aria-label="${escA(a.name.en)}">${mark("aphmk", "b")}</div>`;
     const inner = `<main class="doc about">
 <span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
-<header class="ahero">
-<h1 data-doc-title ${A(a.h1)}>${a.h1.en}</h1>
+<section class="ahero2">
+<div class="ahtext">
+<h1 ${A(a.h1)}>${a.h1.en}</h1>
 <p class="lede" ${A(a.lede)}>${a.lede.en}</p>
-</header>
-<section class="afounder">
-<figure class="aport">${portrait}<figcaption><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
-<div class="atext">${T("h2", a.name)}${a.founder.map(p => T("p", p)).join("")}</div>
+<dl class="afacts">${a.facts.map(([k, v]) => `<div>${T("dt", k)}${T("dd", v)}</div>`).join("")}</dl>
+</div>
+<figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
 </section>
-<section class="aatelier">
-${T("h2", a.atelierH)}${T("p", a.atelierP, "aint")}
-<ol class="aroles">${a.roles.map(([h, t]) => `<li>${T("h3", h)}${T("p", t)}</li>`).join("")}</ol>
+<section class="asplit">
+<div class="k gold" ${A(a.founderH)}>${a.founderH.en}</div>
+<div class="asplitb">${a.founder.map(p => T("p", p)).join("")}</div>
 </section>
-<section class="aclose">${T("p", a.close)}<a class="btn solid" href="./#concierge" ${A(a.cta)}>${a.cta.en}</a></section>
+<section class="asplit">
+<div>${T("h2", a.atelierH)}${T("p", a.atelierP, "aint")}</div>
+<ul class="aroles2">${a.roles.map(([h, t]) => `<li>${T("h3", h)}${T("p", t)}</li>`).join("")}</ul>
+</section>
+<section class="ameet">
+${T("h2", a.meetH)}${T("p", a.meetP)}
+<a class="btn solid" href="./#concierge" ${A(a.cta)}>${a.cta.en}</a>
+</section>
 </main>`;
     /* the tab reads the same in every language; the heading carries markup */
-    page(a.slug, a.seo.en, a.desc.en, inner.replace("<h1 data-doc-title ", "<h1 "), "");
+    page(a.slug, a.seo.en, a.desc.en, inner, "");
   }
   console.log("documents:", POLICY_SLUGS.join(" "));
 }
