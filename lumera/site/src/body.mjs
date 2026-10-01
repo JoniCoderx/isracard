@@ -36,8 +36,10 @@ import { PIECES, CATS, SOON } from "./pieces.mjs";
 import { POLICIES } from "./policies.mjs";
 export const wmk = (cls) => logo(cls);
 const W = [800, 1200, 1600, 2000];
+/* an alt is a string, or { en, he }: the Hebrew rides along for the Hebrew page */
+const altA = a => typeof a === "string" ? `alt="${a}"` : `alt="${a.en.replace(/"/g, "&quot;")}" data-alt-he="${a.he.replace(/"/g, "&quot;")}"`;
 /* a contained photograph: 4:5, 1:1 or 16:9, in four widths */
-export const pic = (name, alt, sizes, lazy = true, widths = W) => `<img src="/img/${name}-${widths[Math.min(1, widths.length - 1)]}.jpg" srcset="${widths.map(w => `/img/${name}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" alt="${alt}"${lazy ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`;
+export const pic = (name, alt, sizes, lazy = true, widths = W) => `<img src="/img/${name}-${widths[Math.min(1, widths.length - 1)]}.jpg" srcset="${widths.map(w => `/img/${name}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" ${altA(alt)}${lazy ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`;
 export const fig = (name, alt, ratio, sizes, extra = "", cap = "") => `<div class="fig ${ratio} rv${extra ? " " + extra : ""}"><div class="im">${pic(name, alt, sizes)}</div><i class="sheen"></i><i class="lt"></i>${cap}</div>`;
 /* a figure with a second photograph beneath it: the detail that the hover, or a tap in the piece window, reveals */
 // Two frames of one piece — worn, then clean on white. They change on their own
@@ -77,13 +79,13 @@ function pieceCard(p) {
     : `<span class="${i === p.meta.length - 1 ? "price por" : ""}" data-en="${esc(m.en)}" data-he="${esc(m.he)}">${m.en}</span>`).join("<i></i>");
   const keys = JSON.stringify((p.key || []).map(r => [r[0].en, r[0].he, r[1].en, r[1].he]));
   const prose = JSON.stringify({ story: p.story || null, stones: p.stones || null, care: p.care || null });
-  return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.stonesInside === false ? ' data-nostones=""' : ""}${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
-        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt.en, SIZES_PC, true, wide)}</div><div class="im dt">${pic(b.img, b.alt.en, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>
+  return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.stonesInside === false ? ' data-nostones=""' : ""}${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""}${p.title ? ` data-title="${esc(p.title.en)}" data-title-he="${esc(p.title.he)}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
+        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt, SIZES_PC, true, wide)}</div><div class="im dt">${pic(b.img, b.alt, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true"><i></i><i></i></div></div>
         <div class="bd"><div class="k sig">${markUse("tiny")}<span dir="ltr">${p.ref}</span></div>
-          <div class="t">${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="— ${esc(p.kind.en)}" data-he="— ${esc(p.kind.he)}">— ${p.kind.en}</span>` : ""}</div>
+          <div class="t">${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
           <div class="row k meta">${meta}</div>
-          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.plainHe || p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריון">Reserve</a></div></div>
+          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.plainHe || p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריינו">Reserve</a></div></div>
       </article>`;
 }
 
@@ -135,7 +137,7 @@ ${markDefs()}
   <nav id="topnav">
     <a href="#inside" data-en="The box" data-he="הקופסה">The box</a>
     <a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a>
-    <a href="#bespoke" data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</a>
+    <a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a>
     <a href="#build" data-en="The Line" data-he="הקו">The Line</a>
   </nav>
   <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu"><i></i><span data-en="Menu" data-he="תפריט">Menu</span></button>
@@ -153,7 +155,7 @@ ${markDefs()}
   <div class="mlist" id="mlist">
     <a href="#inside"><span class="k">01</span><span data-en="The box" data-he="הקופסה">The box</span></a>
     <a href="#collection"><span class="k">02</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>
-    <a href="#bespoke"><span class="k">03</span><span data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</span></a>
+    <a href="#bespoke"><span class="k">03</span><span data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</span></a>
     <a href="#build"><span class="k">04</span><span data-en="The Line" data-he="הקו">The Line</span></a>
     <a href="#concierge"><span class="k">05</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
   </div>
@@ -171,16 +173,16 @@ ${markDefs()}
   <section id="hero" data-n="" data-title-en="SILAVU" data-title-he="סילאבו" aria-label="SILAVU" data-spark>
     <picture>
       <source media="(max-width:899px)" srcset="/img/herov-1080.jpg 1080w, /img/herov-1440.jpg 1440w" sizes="100vw">
-      <img class="hv" id="heroimg" src="/img/hero-2560.jpg" srcset="/img/hero-1600.jpg 1600w, /img/hero-2560.jpg 2560w, /img/hero-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line, hand-matched brilliants in 18K white gold on black glass" fetchpriority="high">
+      <img class="hv" id="heroimg" src="/img/hero-2560.jpg" srcset="/img/hero-1600.jpg 1600w, /img/hero-2560.jpg 2560w, /img/hero-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line, hand-matched brilliants in 18K white gold on black glass" data-alt-he="צמיד SILAVU Line, יהלומי בריליאנט שהותאמו ביד, בזהב לבן 18K על זכוכית שחורה" fetchpriority="high">
     </picture>
     <video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
     <i class="hlight" aria-hidden="true"></i>
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
-      <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה, שנעשים <em>לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
-      <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד־אחד, משובצים ביד בדובאי ומוגמרים כדי ללוות אתכם לכל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
-      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="התחילו תכשיט בהזמנה">Begin a bespoke piece</a></div>
+      <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה <em>שנוצרים לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
+      <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד בדובאי ומלוטשים כדי ללוות אתכם כל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
+      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#bespoke" data-en="Begin a bespoke piece" data-he="ליצירת תכשיט בהתאמה אישית">Begin a bespoke piece</a></div>
     </div>
     <div class="hfacts rv d4">
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
@@ -190,9 +192,9 @@ ${markDefs()}
 <section id="house" data-n="·" data-title-en="The house" data-title-he="הבית" aria-label="The house">
   <div class="wrap hwrap">
     <div class="hsig rv">${mark("hmark")}</div>
-    <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="הבית · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
-    <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="סילאבו חותמת <em>על כל תכשיט שיוצא ממנה.</em>">SILAVU signs <em>every piece it makes.</em></h2>
-    <p class="p rv d3" data-en="Nothing leaves the bench unsigned. Every piece carries the mark, and is made once — for you." data-he="שום דבר לא יוצא מהסדנה בלי חתימה. כל תכשיט נושא את הסמל, ונעשה פעם אחת — בשבילכם.">Nothing leaves the bench unsigned. Every piece carries the mark, and is made once — for you.</p>
+    <div class="k gold rv d1" data-en="The house · Dubai · Tel Aviv" data-he="בית התכשיטים · דובאי · תל אביב">The house · Dubai · Tel Aviv</div>
+    <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="‏SILAVU חותמת <em>על כל תכשיט שהיא יוצרת.</em>">SILAVU signs <em>every piece it makes.</em></h2>
+    <p class="p rv d3" data-en="Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you." data-he="שום תכשיט לא יוצא מהסדנה בלי חתימה. כל תכשיט נושא את הסמל ונוצר פעם אחת, בשבילכם.">Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you.</p>
   </div>
 </section>
 
@@ -202,9 +204,9 @@ ${markDefs()}
         <canvas id="boxcv" aria-label="The SILAVU box opening, diamonds rising out of it" role="img"></canvas>
         <div class="veil2"></div>
         <div class="beats" id="beats">
-          <div class="beat"><div class="k gold ol" data-en="01 · The box" data-he="01 · הקופסה">01 · The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="היא מגיעה <em>סגורה.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט שלכם, התעודות שלו, והערכת שווי למבטח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Loose, <em>under a loupe.</em>" data-he="אבנים בודדות, <em>תחת זכוכית מגדלת.</em>">Loose, <em>under a loupe.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות על ידי GIA או IGI. אתם רואים אותן לפני שאנחנו משבצים.">Graded by GIA or IGI. You see them before we set them.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made to <em>your measure.</em>" data-he="נעשה <em>למידה שלכם.</em>">Made to <em>your measure.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. מגיע אליכם, לכל מקום.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
+          <div class="beat"><div class="k gold ol" data-en="The box" data-he="הקופסה">The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="היא מגיעה <em>סגורה.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט, התעודות שלו והערכת שווי לחברת הביטוח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Loose, <em>under a loupe.</em>" data-he="אבנים לא משובצות, <em>תחת זכוכית מגדלת.</em>">Loose, <em>under a loupe.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות ב־GIA או ב־IGI. אתם רואים אותן לפני השיבוץ.">Graded by GIA or IGI. You see them before we set them.</p></div>
+          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made to <em>your measure.</em>" data-he="נעשה <em>לפי המידה שלכם.</em>">Made to <em>your measure.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. נמסר לכם בכל מקום בעולם.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
         <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -213,12 +215,12 @@ ${markDefs()}
     </div>
     <div class="wrap">
     <div class="certs rv d2" id="certs">
-      <div class="k gold" data-en="Graded by" data-he="מדורג על ידי">Graded by</div>
+      <div class="k gold" data-en="Graded by" data-he="בדירוג">Graded by</div>
       <div class="certrow">
         <a class="cert" href="https://www.gia.edu/report-check-landing" target="_blank" rel="noopener"><b>GIA</b></a>
         <a class="cert" href="https://www.igi.org/verify-your-report/" target="_blank" rel="noopener"><b>IGI</b></a>
       </div>
-      <p class="k certnote" data-en="Independent laboratories. Every report is yours to check." data-he="מעבדות עצמאיות. כל תעודה ניתנת לאימות בעצמכם.">Independent laboratories. Every report is yours to check.</p>
+      <p class="k certnote" data-en="Independent laboratories. Every report is yours to check." data-he="מעבדות בלתי תלויות. אפשר לאמת כל תעודה בעצמכם.">Independent laboratories. Every report is yours to check.</p>
     </div>
     </div>
   </section>
@@ -232,9 +234,9 @@ ${markDefs()}
           <div class="k gold" data-en="The Line" data-he="הקו">The Line</div>
           <div class="dcs">
             <h2 class="h2 dc on" data-en="It begins as <em>a line.</em>" data-he="זה מתחיל <em>בקו אחד.</em>">It begins as <em>a line.</em></h2>
-            <h2 class="h2 dc" data-en="Then every facet <em>is drawn.</em>" data-he="אחר כך כל פאה <em>משורטטת.</em>">Then every facet <em>is drawn.</em></h2>
-            <h2 class="h2 dc" data-en="Then the metal <em>takes its shape.</em>" data-he="אחר כך המתכת <em>מקבלת צורה.</em>">Then the metal <em>takes its shape.</em></h2>
-            <h2 class="h2 dc" data-en="Then the stones <em>are set.</em>" data-he="ולבסוף האבנים <em>משובצות.</em>">Then the stones <em>are set.</em></h2>
+            <h2 class="h2 dc" data-en="Then every facet <em>is drawn.</em>" data-he="אחר כך משורטטת <em>כל פאה.</em>">Then every facet <em>is drawn.</em></h2>
+            <h2 class="h2 dc" data-en="Then the metal <em>takes its shape.</em>" data-he="אחר כך המתכת <em>מקבלת את צורתה.</em>">Then the metal <em>takes its shape.</em></h2>
+            <h2 class="h2 dc" data-en="Then the stones <em>are set.</em>" data-he="ולבסוף משובצות <em>האבנים.</em>">Then the stones <em>are set.</em></h2>
           </div>
           <a class="lnk dgo" href="#build" data-en="Design yours" data-he="עצבו את שלכם">Design yours</a>
         </div>
@@ -246,20 +248,20 @@ ${markDefs()}
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
     <div class="sechead">
-      <div class="k gold rv ol" data-en="02 · Collection" data-he="02 · הקולקציה">02 · Collection</div>
-      <h2 class="h2 sp rv" data-en="Made once. <em>Worn always.</em>" data-he="נעשה פעם אחת. <em>נענד תמיד.</em>">Made once. <em>Worn always.</em></h2>
-      <p class="p rv d2" data-en="Few pieces, and each one made to be the one you reach for first." data-he="מעט תכשיטים, וכל אחד מהם נעשה כדי להיות זה שתבחרו ראשון.">Few pieces, and each one made to be the one you reach for first.</p>
+      <div class="k gold rv ol" data-en="Collection" data-he="הקולקציה">Collection</div>
+      <h2 class="h2 sp rv" data-en="Made once. <em>Worn always.</em>" data-he="נוצר פעם אחת. <em>נשאר לתמיד.</em>">Made once. <em>Worn always.</em></h2>
+      <p class="p rv d2" data-en="A few pieces, each made to be the one you reach for first." data-he="מעט תכשיטים, וכל אחד מהם נועד להיות הראשון שתבחרו.">A few pieces, each made to be the one you reach for first.</p>
     </div>
     ${COLLECTION}
     </div>
   </section>
 
-  <section id="bespoke" class="ivory paper jwhite" data-n="03" data-title-en="Bespoke" data-title-he="בהזמנה אישית" aria-label="How a commission is made">
+  <section id="bespoke" class="ivory paper jwhite" data-n="03" data-title-en="Bespoke" data-title-he="בהתאמה אישית" aria-label="How a commission is made">
   <div class="chap" aria-hidden="true"><i></i>${markUse("")}<i></i></div>
     <div class="wrap">
     <div class="sechead jhead">
-      <div class="k gold rv ol" data-en="Bespoke · How it is made" data-he="בהזמנה אישית · איך זה נעשה">Bespoke · How it is made</div>
-      <h2 class="h2 sp rv" data-en="From one conversation <em>to your wrist.</em>" data-he="משיחה אחת <em>ועד פרק היד.</em>">From one conversation <em>to your wrist.</em></h2>
+      <div class="k gold rv ol" data-en="How a bespoke piece is made" data-he="איך נוצר תכשיט בהתאמה אישית">How a bespoke piece is made</div>
+      <h2 class="h2 sp rv" data-en="From one conversation <em>to your wrist.</em>" data-he="משיחה אחת <em>ועד פרק היד שלכם.</em>">From one conversation <em>to your wrist.</em></h2>
       <p class="p rv d2" data-en="A piece made for you alone, in six steps and four to six weeks. Scroll through it." data-he="תכשיט שנעשה רק בשבילכם, בשישה שלבים ובארבעה עד שישה שבועות. גללו כדי לראות.">A piece made for you alone, in six steps and four to six weeks. Scroll through it.</p>
     </div>
     </div>
@@ -267,25 +269,25 @@ ${markDefs()}
       <div class="jsticky">
         <div class="wrap jgrid" id="jrn">
           <div class="jstage">
-          <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", "A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold", SIZES_JRN, false)}</div></figure>
-          <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", "A hand-drawn design of the Line bracelet in graphite on ivory paper, with detail studies of a link and the clasp", SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="02"><div class="jim">${pic("jn3", "The Line bracelet as a technical model, wireframe geometry flowing into a shaded render", SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="03"><div class="jim">${pic("jn4", "A setter's hands placing one brilliant into the Line bracelet at the bench", SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="04"><div class="jim">${pic("jn5", "The finished Line bracelet fitted into its presentation box, on pale champagne suede", SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="05"><div class="jim">${pic("jn6", "The Line bracelet worn at its true scale on a wrist, in soft directional light", SIZES_JRN, true)}</div></figure>
+          <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", { en: "A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold", he: "שולחן העבודה בתחילת הזמנה אישית: נייר בגוון שנהב, עיפרון, יהלומים לא משובצים וסליל של זהב לבן" }, SIZES_JRN, false)}</div></figure>
+          <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", { en: "A hand-drawn design of the Line bracelet in graphite on ivory paper, with detail studies of a link and the clasp", he: "סקיצה של צמיד Line בעיפרון על נייר בגוון שנהב, עם פרטים של חוליה ושל הסוגר" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="02"><div class="jim">${pic("jn3", { en: "The Line bracelet as a technical model, wireframe geometry flowing into a shaded render", he: "צמיד Line כמודל טכני, משלד גיאומטרי ועד הדמיה מלאה" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="03"><div class="jim">${pic("jn4", { en: "A setter's hands placing one brilliant into the Line bracelet at the bench", he: "ידי המשבץ מניחות יהלום בריליאנט בצמיד Line, על שולחן הצורף" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="04"><div class="jim">${pic("jn5", { en: "The finished Line bracelet fitted into its presentation box, on pale champagne suede", he: "צמיד Line המוגמר בקופסת התצוגה שלו, על זמש בגוון שמפניה" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="05"><div class="jim">${pic("jn6", { en: "The Line bracelet worn at its true scale on a wrist, in soft directional light", he: "צמיד Line ענוד על פרק היד בגודלו האמיתי, באור רך" }, SIZES_JRN, true)}</div></figure>
             <div class="jcount k" aria-hidden="true"><b id="jnow">01</b> / 06</div>
           </div>
           <div class="jside">
             <ol class="jsteps">
             <li class="jstep on" data-i="0"><button type="button" class="jgo" aria-label="The conversation"><span class="jn">01</span><span class="jt" data-en="The conversation" data-he="השיחה">The conversation</span></button><p class="jp" data-en="You tell us who it is for, what it marks and how it should feel. Nothing is drawn yet." data-he="אתם מספרים לנו למי התכשיט, מה הוא מציין ואיך הוא צריך להרגיש. עוד לא משרטטים דבר.">You tell us who it is for, what it marks and how it should feel. Nothing is drawn yet.</p></li>
-            <li class="jstep" data-i="1"><button type="button" class="jgo" aria-label="The first lines"><span class="jn">02</span><span class="jt" data-en="The first lines" data-he="הקווים הראשונים">The first lines</span></button><p class="jp" data-en="Sketches in pencil around your idea, until one of them is unmistakably yours." data-he="סקיצות בעיפרון סביב הרעיון שלכם, עד שאחת מהן היא בבירור שלכם.">Sketches in pencil around your idea, until one of them is unmistakably yours.</p></li>
-            <li class="jstep" data-i="2"><button type="button" class="jgo" aria-label="Precision in 3D"><span class="jn">03</span><span class="jt" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</span></button><p class="jp" data-en="Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand." data-he="כל קימור ממודל בדיוק של עשירית מילימטר, וכל אבן נבחרת יחד אתכם, עם תעודת המעבדה ביד.">Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand.</p></li>
-            <li class="jstep" data-i="3"><button type="button" class="jgo" aria-label="At the bench"><span class="jn">04</span><span class="jt" data-en="At the bench" data-he="על שולחן העבודה">At the bench</span></button><p class="jp" data-en="Cast, set and polished by hand in Dubai, stone by stone, under the loupe." data-he="נוצק, משובץ ומלוטש ביד בדובאי, אבן אחר אבן, תחת זכוכית מגדלת.">Cast, set and polished by hand in Dubai, stone by stone, under the loupe.</p></li>
+            <li class="jstep" data-i="1"><button type="button" class="jgo" aria-label="The first lines"><span class="jn">02</span><span class="jt" data-en="The first lines" data-he="הקווים הראשונים">The first lines</span></button><p class="jp" data-en="Sketches in pencil around your idea, until one of them is unmistakably yours." data-he="סקיצות בעיפרון סביב הרעיון שלכם, עד שאחת מהן מרגישה שלכם לגמרי.">Sketches in pencil around your idea, until one of them is unmistakably yours.</p></li>
+            <li class="jstep" data-i="2"><button type="button" class="jgo" aria-label="Precision in 3D"><span class="jn">03</span><span class="jt" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</span></button><p class="jp" data-en="Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand." data-he="כל קימור נבנה בדיוק של עשירית מילימטר, וכל אבן נבחרת יחד אתכם, עם תעודת המעבדה ביד.">Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand.</p></li>
+            <li class="jstep" data-i="3"><button type="button" class="jgo" aria-label="At the bench"><span class="jn">04</span><span class="jt" data-en="At the bench" data-he="על שולחן הצורף">At the bench</span></button><p class="jp" data-en="Cast, set and polished by hand in Dubai, stone by stone, under the loupe." data-he="נוצק, משובץ ומלוטש ביד בדובאי, אבן אחר אבן, תחת זכוכית מגדלת.">Cast, set and polished by hand in Dubai, stone by stone, under the loupe.</p></li>
             <li class="jstep" data-i="4"><button type="button" class="jgo" aria-label="Signed and boxed"><span class="jn">05</span><span class="jt" data-en="Signed and boxed" data-he="חתום וארוז">Signed and boxed</span></button><p class="jp" data-en="The house mark struck inside, the certificates written in your name, closed in black lacquer." data-he="סמל הבית מוטבע בפנים, התעודות נכתבות על שמכם, והכול נסגר בקופסת לכה שחורה.">The house mark struck inside, the certificates written in your name, closed in black lacquer.</p></li>
-            <li class="jstep" data-i="5"><button type="button" class="jgo" aria-label="Yours to wear"><span class="jn">06</span><span class="jt" data-en="Yours to wear" data-he="שלכם לענוד">Yours to wear</span></button><p class="jp" data-en="Brought to you by hand. Four to six weeks from the first conversation." data-he="נמסר לכם ביד. ארבעה עד שישה שבועות מהשיחה הראשונה.">Brought to you by hand. Four to six weeks from the first conversation.</p></li>
+            <li class="jstep" data-i="5"><button type="button" class="jgo" aria-label="Yours to wear"><span class="jn">06</span><span class="jt" data-en="Yours to wear" data-he="מוכן לענידה">Yours to wear</span></button><p class="jp" data-en="Brought to you by hand. Four to six weeks from the first conversation." data-he="נמסר לכם אישית, ארבעה עד שישה שבועות אחרי השיחה הראשונה.">Brought to you by hand. Four to six weeks from the first conversation.</p></li>
             </ol>
             <div class="jfoot">
-              <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהזמנה אישית" data-en="Begin your commission" data-he="התחילו הזמנה אישית">Begin your commission</a>
+              <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהזמנה אישית" data-en="Begin your commission" data-he="לתיאום שיחה ראשונה">Begin your commission</a>
             </div>
           </div>
         </div>
@@ -305,19 +307,19 @@ ${markDefs()}
     <div class="wrap">
     <div class="ed solo">
       <div class="copy">
-        <div class="k gold rv ol" data-en="04 · Your bracelet" data-he="04 · הצמיד שלכם">04 · Your bracelet</div>
+        <div class="k gold rv ol" data-en="Your bracelet" data-he="הצמיד שלכם">Your bracelet</div>
         <h2 class="h2 sp rv" data-en="Design <em>your bracelet.</em>" data-he="עצבו <em>את הצמיד שלכם.</em>">Design <em>your bracelet.</em></h2>
-        <p class="p rv d2" data-en-no3d="Choose the cut, the carats, the metal and your wrist size. This browser cannot draw the bracelet in three dimensions, so it is shown as an illustration that follows every choice." data-he-no3d="בחרו את הליטוש, הקראטים, המתכת ומידת פרק היד. הדפדפן הזה אינו מציג תלת־ממד, ולכן הצמיד מוצג כהמחשה שמתעדכנת בכל בחירה." data-en="Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick." data-he="בחרו את הליטוש, הקראטים, המתכת ומידת פרק היד. הצמיד נבנה בתלת־ממד תוך כדי, ואז נענד על יד שתבחרו.">Choose the cut, the carats, the metal and your wrist size. The bracelet is built in three dimensions while you decide, and then worn on a hand you pick.</p>
+        <p class="p rv d2" data-en-no3d="Choose the cut, the carats, the metal and your wrist size. This browser cannot draw the bracelet in three dimensions, so it is shown as an illustration that follows every choice." data-he-no3d="בחרו את הליטוש, הקראטים, המתכת ומידת פרק היד. הדפדפן הזה אינו מציג תלת־ממד, ולכן הצמיד מוצג כהמחשה שמתעדכנת בכל בחירה." data-en="Choose the shape, the carat weight, the metal and your wrist size. The bracelet is built in three dimensions while you decide, then shown on a wrist you choose." data-he="בחרו את צורת היהלום, המשקל בקראט, המתכת ומידת פרק היד. הצמיד נבנה בתלת־ממד תוך כדי הבחירה, ואז מוצג על יד לבחירתכם.">Choose the shape, the carat weight, the metal and your wrist size. The bracelet is built in three dimensions while you decide, then shown on a wrist you choose.</p>
       </div>
     </div>
     <div class="panel rv" id="configure">
-      <div id="stripwrap"><i class="bgmk" aria-hidden="true"></i><div class="glfb"><img data-src="/img/tennis-1200.jpg" data-srcset="/img/tennis-800.jpg 800w, /img/tennis-1200.jpg 1200w, /img/tennis-1600.jpg 1600w" sizes="(min-width:900px) 52vw, 92vw" alt="The SILAVU Line, thirty-six brilliants in a single row of white gold" decoding="async"></div><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it · Tap to look closer" data-he="גררו כדי לסובב · הקישו כדי להתקרב">Drag to turn it · Tap to look closer</div><span class="vmark">${markUse("")}</span><button class="stbtn" type="button" data-stage="open" data-en="Turn it" data-he="סובבו אותו">Turn it</button><button class="stclose" type="button" data-stage="close" data-en="Done" data-he="סיום">Done</button><p class="sthint" data-en="Drag to turn · pinch to zoom · double tap to reset" data-he="גררו לסיבוב · צבטו לזום · הקישו פעמיים לאיפוס">Drag to turn · pinch to zoom · double tap to reset</p></div><div class="handbar" id="handbar" hidden>
+      <div id="stripwrap"><i class="bgmk" aria-hidden="true"></i><div class="glfb"><img data-src="/img/tennis-1200.jpg" data-srcset="/img/tennis-800.jpg 800w, /img/tennis-1200.jpg 1200w, /img/tennis-1600.jpg 1600w" sizes="(min-width:900px) 52vw, 92vw" alt="The SILAVU Line, thirty-six brilliants in a single row of white gold" data-alt-he="צמיד SILAVU Line, שלושים ושישה יהלומי בריליאנט בשורה אחת של זהב לבן" decoding="async"></div><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it. Tap to look closer." data-he="גררו כדי לסובב. הקישו כדי להתקרב.">Drag to turn it. Tap to look closer.</div><span class="vmark">${markUse("")}</span><button class="stbtn" type="button" data-stage="open" data-en="Turn it" data-he="סובבו אותו">Turn it</button><button class="stclose" type="button" data-stage="close" data-en="Done" data-he="סיום">Done</button><p class="sthint" data-en="Drag to turn, pinch to zoom, double tap to reset." data-he="גררו לסיבוב, צבטו להגדלה, הקישו פעמיים לאיפוס.">Drag to turn, pinch to zoom, double tap to reset.</p></div><div class="handbar" id="handbar" hidden>
       <div class="hgrp" role="group" aria-label="Whose hand">
         <button class="vp on" type="button" data-hand="f" data-en="Her" data-he="אישה">Her</button>
         <button class="vp" type="button" data-hand="m" data-en="Him" data-he="גבר">Him</button>
       </div>
       <div class="hgrp skins" role="group" aria-label="Skin tone"><button class="sk" type="button" data-skin="0" style="--s:#f0cdb6" aria-label="Skin tone 1"></button><button class="sk on" type="button" data-skin="1" style="--s:#e4b394" aria-label="Skin tone 2"></button><button class="sk" type="button" data-skin="2" style="--s:#cf9468" aria-label="Skin tone 3"></button><button class="sk" type="button" data-skin="3" style="--s:#a9713f" aria-label="Skin tone 4"></button><button class="sk" type="button" data-skin="4" style="--s:#7a4d29" aria-label="Skin tone 5"></button><button class="sk" type="button" data-skin="5" style="--s:#4e3019" aria-label="Skin tone 6"></button></div>
-    </div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="detail" data-en="Detail" data-he="פרט">Detail</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Inspect" data-he="בחינה">Inspect</button><button class="vp" type="button" data-toy="down" data-en="Return to stand" data-he="החזרה למעמד">Return to stand</button></div></div>
+    </div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="detail" data-en="Detail" data-he="תקריב">Detail</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Inspect" data-he="התבוננות">Inspect</button><button class="vp" type="button" data-toy="down" data-en="Return to stand" data-he="החזרה למעמד">Return to stand</button></div></div>
       <div class="opts" id="opts">
         <div class="opt"><div class="k" data-en="Diamond shape" data-he="צורת היהלום">Diamond shape</div><div class="chips cuts">
           <button class="chip on" data-k="cut" data-v="round"><svg class="ci" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg><span data-en="Round" data-he="עגול">Round</span></button>
@@ -350,11 +352,11 @@ ${markDefs()}
           <p class="estnote" data-en="Indicative estimate. The final quotation is confirmed privately, once the stones are chosen." data-he="הערכה ראשונית בלבד. הצעת המחיר הסופית נמסרת באופן אישי, לאחר בחירת האבנים.">Indicative estimate. The final quotation is confirmed privately, once the stones are chosen.</p>
         </div>
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet</a>
-        <p class="trustline" data-en="GIA or IGI certified · Insured delivery · Lifetime care" data-he="תעודת GIA או IGI · משלוח מבוטח · טיפול לכל החיים">GIA or IGI certified · Insured delivery · Lifetime care</p>
+        <p class="trustline" data-en="GIA or IGI certified · Insured delivery · Lifetime care" data-he="תעודת GIA או IGI · משלוח מבוטח · שירות לכל החיים">GIA or IGI certified · Insured delivery · Lifetime care</p>
         <details class="sdet carat" id="carat"><summary><span data-en="Stone details" data-he="פרטי האבנים">Stone details</span></summary>
-          <div class="row k sdrow"><span id="sumStones">—</span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumWrist">17 cm</span></div>
+          <div class="row k sdrow"><span id="sumStones"></span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumWrist">17 cm</span></div>
 
-        <div><div class="specbody"><p class="p" style="margin-top:8px;font-size:.95rem" data-en="Carat is weight, not size. The total is shared by every stone in the line." data-he="קראט הוא יחידת משקל, לא גודל. המשקל הכולל מתחלק בין כל האבנים בצמיד.">Carat is weight, not size. The total is shared by every stone in the line.</p><p class="p" data-en="Each stone is drawn from the true geometry of its cut. Dimensions are representative." data-he="כל אבן משורטטת לפי הגיאומטריה האמיתית של הליטוש. המידות להמחשה.">Each stone is drawn from the true geometry of its cut. Dimensions are representative.</p><div class="specrow"><div><div class="big" id="eachMm">3.6<small>mm</small></div><div class="k" style="margin-top:8px" data-en="Across, at the girdle" data-he="רוחב האבן, בחגורה">Across, at the girdle</div></div><div style="display:flex;gap:14px;align-items:center"><div class="stone1" id="stone1"></div><div><div class="big" id="lineLen">17<small>cm</small></div><div class="k" style="margin-top:6px" data-en="Your wrist, measured" data-he="פרק היד שלכם, לפי מידה">Your wrist, measured</div></div></div></div></div></div>
+        <div><div class="specbody"><p class="p" style="margin-top:8px;font-size:.95rem" data-en="Carat is weight, not size. The total is shared by every stone in the line." data-he="קראט הוא יחידת משקל, לא גודל. המשקל הכולל מתחלק בין כל האבנים בצמיד.">Carat is weight, not size. The total is shared by every stone in the line.</p><p class="p" data-en="Each stone is drawn from the true geometry of its cut. Dimensions are representative." data-he="כל אבן משורטטת לפי הגיאומטריה האמיתית של הליטוש. המידות להמחשה.">Each stone is drawn from the true geometry of its cut. Dimensions are representative.</p><div class="specrow"><div><div class="big" id="eachMm">3.6<small>mm</small></div><div class="k" style="margin-top:8px" data-en="Across, at the girdle" data-he="רוחב האבן, בחגורה">Across, at the girdle</div></div><div style="display:flex;gap:14px;align-items:center"><div class="stone1" id="stone1"></div><div><div class="big" id="lineLen">17<small>cm</small></div><div class="k" style="margin-top:6px" data-en="Your wrist, measured" data-he="היקף פרק היד שלכם">Your wrist, measured</div></div></div></div></div></div>
         <div><div class="big" id="eachCt">0.17<small>ct</small></div><div class="k" style="margin-top:8px" id="eachLbl">Each stone</div></div>
         
         
@@ -363,7 +365,7 @@ ${markDefs()}
       </div>
       <div class="cacts">
         <button class="clink" type="button" id="saveImg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-en="Save the image" data-he="שמרו את התמונה">Save the image</span></button>
-        <button class="clink" type="button" id="sendSpec"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg><span data-en="Send it to the jeweller" data-he="שלחו אותו לצורף">Send it to the jeweller</span></button>
+        <button class="clink" type="button" id="sendSpec"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg><span data-en="Send it to the jeweller" data-he="שלחו את העיצוב לצורף">Send it to the jeweller</span></button>
         <button class="clink" type="button" id="tryonBtn2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-en="Try it on your photo" data-he="נסו על תמונה שלכם">Try it on your photo</span></button>
       </div>
       
@@ -375,12 +377,12 @@ ${markDefs()}
     <div class="wpin" id="wpin">
       <div class="wstick">
         <div class="wframe" id="wframe">
-          <picture><source media="(max-width:899px)" srcset="/img/wristv-600.jpg 600w, /img/wristv-900.jpg 900w, /img/wristv-1229.jpg 1229w" sizes="100vw"><img id="wimg" src="/img/wrist-1300.jpg" srcset="/img/wrist-900.jpg 900w, /img/wrist-1300.jpg 1300w, /img/wrist-1900.jpg 1900w, /img/wrist-2560.jpg 2560w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width:899px)" srcset="/img/wristv-600.jpg 600w, /img/wristv-900.jpg 900w, /img/wristv-1229.jpg 1229w" sizes="100vw"><img id="wimg" src="/img/wrist-1300.jpg" srcset="/img/wrist-900.jpg 900w, /img/wrist-1300.jpg 1300w, /img/wrist-1900.jpg 1900w, /img/wrist-2560.jpg 2560w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" data-alt-he="צמיד SILAVU Line ענוד על פרק היד לצד שעון" loading="lazy" decoding="async"></picture>
           <div class="veil"></div>
         </div>
         <div class="wtxt" id="wtxt">
-          <h2 class="h" data-en="Made to sit flat <em>beside your watch.</em>" data-he="יושב שטוח <em>לצד השעון שלכם.</em>">Made to sit flat <em>beside your watch.</em></h2>
-          <p class="p" data-en="3.6 millimetres high, a hidden clasp, no sharp edges." data-he="3.6 מילימטר גובה, סוגר נסתר, בלי פינות חדות.">3.6 millimetres high, a hidden clasp, no sharp edges.</p>
+          <h2 class="h" data-en="Made to sit flat <em>beside your watch.</em>" data-he="מונח שטוח <em>לצד השעון שלכם.</em>">Made to sit flat <em>beside your watch.</em></h2>
+          <p class="p" data-en="3.6 millimetres high, a hidden clasp, no sharp edges." data-he="בגובה 3.6 מ&quot;מ, עם סוגר נסתר ובלי פינות חדות.">3.6 millimetres high, a hidden clasp, no sharp edges.</p>
           <div><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
         </div>
       </div>
@@ -397,8 +399,8 @@ ${markDefs()}
   <div class="cwrap" id="concierge" data-n="05" data-title-en="Enquire" data-title-he="פנייה" aria-label="Enquire">
     <div class="cbody">
       <div>
-        <div class="k gold rv ol" data-en="05 · Enquire" data-he="05 · פנייה">05 · Enquire</div>
-        <h2 class="h2 sp rv" style="margin-top:14px" data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו מה <em>יש לכם בראש.</em>">Tell us what <em>you have in mind.</em></h2>
+        <div class="k gold rv ol" data-en="Enquire" data-he="פנייה">Enquire</div>
+        <h2 class="h2 sp rv" style="margin-top:14px" data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו <em>על מה חשבתם.</em>">Tell us what <em>you have in mind.</em></h2>
         <div class="clocks rv d2" style="margin-top:26px">
           <div class="clock on pending"><div class="c" id="clkDXB"></div><div class="k" data-en="Dubai" data-he="דובאי">Dubai</div></div>
           <div class="clock on pending"><div class="c" id="clkTLV"></div><div class="k" data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</div></div>
@@ -419,7 +421,7 @@ ${markDefs()}
             });
           } catch (e) {} })();
         </script>
-        <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form." data-he="עונה לכם אדם, לא מערכת.">A person replies, not a form.</p>
+        <p class="fine rv d3" style="margin-top:22px" data-en="A person replies, not a form." data-he="עונה לכם אדם אמיתי, לא מערכת.">A person replies, not a form.</p>
       </div>
       <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="">
         <div class="fields">
@@ -461,10 +463,10 @@ ${markDefs()}
   <section id="end" data-n="" aria-label="Footer">
     <div class="wrap">
     <div class="fgrid">
-      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#bespoke" data-en="Bespoke" data-he="בהזמנה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
+      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
-      <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לבית">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
-      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="Private high jewellery" data-he="תכשיטי יוקרה פרטיים">Private high jewellery</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
+      <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="Private high jewellery" data-he="תכשיטנות עילית">Private high jewellery</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
@@ -479,7 +481,7 @@ ${markDefs()}
 <div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="mbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
-    <div class="mgal"><div class="mim" id="pmIm"><img id="pmImg" alt=""><img id="pmImg2" class="dt" alt=""><span class="k dtag" data-en="Detail" data-he="פרט">Detail</span><button class="gnav gprev" type="button" id="pmPrev" aria-label="Previous photograph"></button><button class="gnav gnext" type="button" id="pmNext" aria-label="Next photograph"></button></div><div class="gthumbs" id="pmThumbs" role="tablist" aria-label="Photographs"></div></div>
+    <div class="mgal"><div class="mim" id="pmIm"><img id="pmImg" alt=""><img id="pmImg2" class="dt" alt=""><span class="k dtag" data-en="Detail" data-he="תקריב">Detail</span><button class="gnav gprev" type="button" id="pmPrev" aria-label="Previous photograph"></button><button class="gnav gnext" type="button" id="pmNext" aria-label="Next photograph"></button></div><div class="gthumbs" id="pmThumbs" role="tablist" aria-label="Photographs"></div></div>
     <div class="mbd">
       <div class="k gold" id="pmK"></div>
       <div class="t h3" id="pmT"></div>
@@ -497,8 +499,8 @@ ${markDefs()}
       <div class="macc">
         <details class="mdt" id="pmSpecWrap"><summary><span data-en="Specification" data-he="מפרט">Specification</span></summary><div class="mspecs" id="pmSpecs"></div></details>
         <details class="mdt" id="pmStoneWrap"><summary><span data-en="The stones" data-he="האבנים">The stones</span></summary><p class="p" id="pmStones"></p></details>
-        <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-stones="" data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי למבטח שלכם">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת לכה שחורה">The black lacquer box</li><li data-en="Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere" data-he="מסירה אישית בדובאי ובתל אביב, משלוח מבוטח לכל מקום אחר">Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
-        <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and care" data-he="משלוח וטיפול">Delivery and care</span></summary><p class="p" id="pmCare"></p></details>
+        <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-stones="" data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי לחברת הביטוח">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת לכה שחורה">The black lacquer box</li><li data-en="Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere" data-he="מסירה אישית בדובאי ובתל אביב, משלוח מבוטח לכל מקום אחר">Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
+        <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and care" data-he="משלוח ושירות">Delivery and care</span></summary><p class="p" id="pmCare"></p></details>
       </div>
       <p class="k mfoot" data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</p>
     </div>
@@ -512,7 +514,7 @@ ${markDefs()}
       <div class="tempty" id="tempty"><div><div class="k gold" data-en="On your wrist" data-he="על פרק היד שלכם">On your wrist</div><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label><p class="ttip" data-en="For best results, photograph your wrist from above in natural light." data-he="לתוצאה הטובה ביותר, צלמו את פרק היד מלמעלה, באור טבעי.">For best results, photograph your wrist from above in natural light.</p></div></div>
     </div>
     <div class="tctl">
-      <div class="tsteps k"><span><b>1</b><i data-en="Upload" data-he="העלו תמונה">Upload</i></span><span><b>2</b><i data-en="Position" data-he="מקמו">Position</i></span><span><b>3</b><i data-en="See your line" data-he="ראו את הצמיד">See your line</i></span></div>
+      <div class="tsteps k"><span><b>1</b><i data-en="Upload" data-he="העלו תמונה">Upload</i></span><span><b>2</b><i data-en="Position" data-he="מיקום">Position</i></span><span><b>3</b><i data-en="See your line" data-he="ראו את הצמיד">See your line</i></span></div>
       <div class="tplace">
         <p class="k thint" data-en="Drag to move it. Pinch to resize, twist to turn." data-he="גררו כדי להזיז. צבטו כדי לשנות גודל, סובבו בשתי אצבעות.">Drag to move it. Pinch to resize, twist to turn.</p>
         <details class="tfine"><summary><span data-en="Fine adjustments" data-he="כוונון עדין">Fine adjustments</span></summary>
@@ -524,11 +526,11 @@ ${markDefs()}
         <button class="btn solid" type="button" id="tdone" data-en="See your line" data-he="ראו את הצמיד">See your line</button>
       </div>
       <div class="tseen">
-        <div class="k gold" data-en="Your line" data-he="הקו שלכם">Your line</div>
+        <div class="k gold" data-en="Your line" data-he="הצמיד שלכם">Your line</div>
         <div class="tsum" id="tsum"></div>
         <p class="k thint" data-en="Drag to turn it on the wrist." data-he="גררו כדי לסובב אותו על פרק היד.">Drag to turn it on the wrist.</p>
-        <div class="tacts"><button class="btn sm" type="button" id="tadjust" data-en="Adjust" data-he="התאמה">Adjust</button><button class="btn sm" type="button" id="torig" data-en="Hold to see original" data-he="החזיקו לתמונה המקורית">Hold to see original</button><button class="btn sm" type="button" id="tsave" data-en="Save the picture" data-he="שמרו את התמונה">Save the picture</button><label class="btn sm"><input type="file" id="tfile2" accept="image/*" hidden><span data-en="Another photo" data-he="תמונה אחרת">Another photo</span></label></div>
-        <a class="btn solid" href="#concierge" id="tsend" data-en="Enquire about this line" data-he="שאלו על הקו הזה">Enquire about this line</a>
+        <div class="tacts"><button class="btn sm" type="button" id="tadjust" data-en="Adjust" data-he="כוונון">Adjust</button><button class="btn sm" type="button" id="torig" data-en="Hold to see original" data-he="החזיקו לצפייה במקור">Hold to see original</button><button class="btn sm" type="button" id="tsave" data-en="Save the picture" data-he="שמרו את התמונה">Save the picture</button><label class="btn sm"><input type="file" id="tfile2" accept="image/*" hidden><span data-en="Another photo" data-he="תמונה אחרת">Another photo</span></label></div>
+        <a class="btn solid" href="#concierge" id="tsend" data-en="Enquire about this line" data-he="שאלו על הצמיד הזה">Enquire about this line</a>
       </div>
       <p class="k tnote" data-en="The photograph is drawn on here, on your device. It is not uploaded." data-he="הצמיד מצויר על התמונה כאן, במכשיר שלכם. התמונה אינה מועלית לשום מקום.">The photograph is drawn on here, on your device. It is not uploaded.</p>
     </div>

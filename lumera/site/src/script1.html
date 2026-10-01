@@ -137,7 +137,7 @@
       var res = a.id === "pmRes" || a.getAttribute("data-en") === "Reserve";
       var lead = res
         ? (lang === "he" ? "אשמח לשריין: " : T("I would like to reserve: "))
-        : (lang === "he" ? "אשמח לצפייה פרטית: " : T("I would like a private viewing of: "));
+        : (lang === "he" ? "אשמח לקבוע פגישה פרטית לצפייה ב: " : T("I would like a private viewing of: "));
       var pn = a.getAttribute("data-piece");
       prefill(lead + ((lang === "he" && a.getAttribute("data-piece-he")) || T(pn) || pn));
     }
@@ -273,8 +273,11 @@
     m.classList.add("open"); m.setAttribute("aria-hidden", "false"); window.__lock();
     var f = mFocusables(m); if (f.length) setTimeout(function () { f[0].focus(); }, 60);
   }
+  /* a piece window names the tab after the piece while it is open */
+  var pageTitle = null;
   function closeModals() {
     var was = document.querySelector(".modal.open");
+    if (pageTitle != null) { document.title = pageTitle; pageTitle = null; }
     document.querySelectorAll(".modal.open").forEach(function (m) { m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); });
     if (!menu.classList.contains("open")) window.__unlock();
     if (was && mReturn && document.contains(mReturn)) { try { mReturn.focus({ preventScroll: true }); } catch (e) { mReturn.focus(); } }
@@ -369,6 +372,8 @@
        gold for ICON, champagne for SOUL — and its name, large and faint,
        behind the text */
     pmodal.setAttribute("data-p", pc.getAttribute("data-theme") || "");
+    var ttl = pc.getAttribute(document.documentElement.lang === "he" ? "data-title-he" : "data-title");
+    if (ttl) { if (pageTitle == null) pageTitle = document.title; document.title = ttl; }
     var mbd = pmodal.querySelector(".mbd"); if (mbd) mbd.setAttribute("data-word", pc.getAttribute("data-word") || "");
     $("pmK").innerHTML = pc.querySelector(".k").innerHTML;
     $("pmT").innerHTML = pc.querySelector(".t").innerHTML;
@@ -476,7 +481,7 @@
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
   if ($("tryonBtn")) $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
-  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = lineSpecText(); void sp; void b; prefill((lang === "he" ? "מדדתי את הקו על תמונה שלי. אשמח לפגישה פרטית. הקו שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
+  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = lineSpecText(); void sp; void b; prefill((lang === "he" ? "ניסיתי את הצמיד על תמונה שלי ואשמח לקבוע פגישה פרטית. הצמיד שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
 
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
@@ -507,6 +512,9 @@
   var lang = "en", dicts = {}, btns = [$("langBtn"), $("langBtn2"), $("langBtn3")].filter(Boolean);
   function langDef(c) { for (var i = 0; i < LANGS.length; i++) if (LANGS[i].c === c) return LANGS[i]; return LANGS[0]; }
   try { var saved = localStorage.getItem("silavu-lang"); if (saved && langDef(saved).c === saved) lang = saved; } catch (e) {}
+  /* the Hebrew address is Hebrew whatever was chosen before, and remembers it
+     so the house documents open in Hebrew too */
+  if (window.__pageLang) { lang = window.__pageLang; try { localStorage.setItem("silavu-lang", lang); } catch (e) {} }
 
   /* the one string table the scripts themselves read, so a metal name or a
      prefilled message follows the language too */
@@ -541,6 +549,10 @@
       var v = say(el); if (v != null) el.innerHTML = v;
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
+    document.querySelectorAll("img[data-alt-he]").forEach(function (im) {
+      if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt);
+      im.alt = lang === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en");
+    });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
   }
   function applyLang() {
@@ -749,8 +761,8 @@
     var phoneQ = matchMedia("(max-width:759px)"), inBuild = false, totalSeen = false;
     function words() {
       var he = lang === "he";
-      kEl.textContent = he ? "הקו שלכם" : (T("Your line") || "Your line");
-      btn.textContent = he ? "שריון" : (T("Reserve") || "Reserve");
+      kEl.textContent = he ? "הצמיד שלכם" : (T("Your line") || "Your line");
+      btn.textContent = he ? "שריינו" : (T("Reserve") || "Reserve");
       var pick = function (k) { var c = document.querySelector('#opts .chip.on[data-k="' + k + '"]'); return c ? c.textContent.trim() : ""; };
       sumEl.textContent = [pick("cut"), pick("ct"), pick("metal")].filter(Boolean).join(" · ");
       prEl.textContent = est.textContent;
@@ -879,7 +891,7 @@
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
     var b = window.__build;
-    prefill((lang === "he" ? "אשמח לשריין קו SILAVU: " : T("I would like to reserve a SILAVU Line: ")) + b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);
+    prefill((lang === "he" ? "אשמח לשריין צמיד SILAVU Line: " : T("I would like to reserve a SILAVU Line: ")) + b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);
   });
 
   /* ── concierge ── */

@@ -29,7 +29,7 @@
     cv.className = "glfbcv"; cv.setAttribute("role", "img"); fbw.appendChild(cv); fbw.classList.add("drawn");
     if (ph) { ph.removeAttribute("srcset"); ph.removeAttribute("src"); }
     var tag = document.createElement("div"); tag.className = "k glfbtag";
-    tag.setAttribute("data-en", "Illustration · 3D is not available in this browser"); tag.setAttribute("data-he", "המחשה · תלת־ממד אינו זמין בדפדפן זה");
+    tag.setAttribute("data-en", "Illustration only. 3D is not available in this browser."); tag.setAttribute("data-he", "המחשה בלבד. תצוגת תלת־ממד אינה זמינה בדפדפן זה.");
     tag.textContent = document.documentElement.lang === "he" ? tag.getAttribute("data-he") : tag.getAttribute("data-en");
     fbw.appendChild(tag); if (window.__say) try { tag.textContent = window.__say(tag); } catch (e) {}
     var MET = { white: ["#f7f8fb", "#c3c6cf", "#6f727c"], yellow: ["#f8e7b0", "#d6b25a", "#8a6a22"], rose: ["#f7d6c6", "#d6a086", "#8c5a44"], platinum: ["#f1f3f6", "#c9cdd5", "#7a7e88"] };

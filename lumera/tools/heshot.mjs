@@ -1,24 +1,12 @@
 import { chromium } from "playwright-core";
-const OUT="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad";
-const b = await chromium.launch({ executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
-const p = await b.newPage({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true, deviceScaleFactor:2 });
-await p.goto("file:///home/user/isracard/lumera/site/silavu-page.html",{waitUntil:"load"});
-await p.waitForTimeout(3000); await p.click("#enterBtn",{timeout:4000}).catch(()=>{});
-await p.waitForTimeout(700);
-await p.evaluate(()=>{const a=document.querySelector("#langBtn,.lang");a&&a.click();});
-await p.waitForTimeout(1500);
-await p.evaluate(()=>{const m=document.getElementById("menuBtn"); m&&m.click();});
-await p.waitForTimeout(1200);
-await p.screenshot({path:OUT+"/he-menu.png"});
-console.log("menu items as rendered:");
-console.log(await p.evaluate(()=>[...document.querySelectorAll("#mlist a")].map(a=>{
-  const n=a.querySelector(".n,.num"); return "  ["+(n?n.textContent.trim():"-")+"] "+(a.textContent||"").trim().replace(/\s+/g," ").slice(0,30);
-}).join("\n")));
-await p.evaluate(()=>{const m=document.getElementById("menuBtn"); m&&m.click();});
-await p.waitForTimeout(800);
-await p.evaluate(()=>{const e=document.getElementById("build");e&&window.scrollTo({top:scrollY+e.getBoundingClientRect().top,behavior:"instant"});});
-await p.waitForTimeout(700);
-await p.evaluate(()=>{const t=[...document.querySelectorAll("#build a,#build button")].find(e=>/עיצוב|התחילו|START/i.test(e.textContent));t&&t.click();});
-await p.waitForTimeout(4000);
-await p.screenshot({path:OUT+"/he-build.png"});
+const O="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/m/";
+const b=await chromium.launch({executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome",args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader","--ignore-gpu-blocklist"]});
+for (const [w,h] of [[1440,900],[360,780]]) {
+  const p=await (await b.newContext({viewport:{width:w,height:h},hasTouch:w<900})).newPage(); await p.route(/fonts\./,r=>r.abort());
+  await p.goto("http://localhost:8777/he/",{waitUntil:"load"}); await p.waitForTimeout(2500); await p.click("#enterBtn",{timeout:3000}).catch(()=>{}); await p.waitForTimeout(1500);
+  await p.screenshot({path:O+`he-hero-${w}.jpg`,type:"jpeg",quality:60});
+  for (const id of ["bespoke","build"]) { await p.evaluate(id=>{document.documentElement.style.scrollBehavior="auto"; const e=document.getElementById(id)||document.querySelector("."+id); e&&scrollTo(0,e.getBoundingClientRect().top+scrollY+ (id==="bespoke"?40:0));},id); await p.waitForTimeout(2500);
+    await p.screenshot({path:O+`he-${id}-${w}.jpg`,type:"jpeg",quality:60}); }
+  const ov=await p.evaluate(()=>document.documentElement.scrollWidth-innerWidth); console.log(w,"overflow",ov);
+}
 await b.close();

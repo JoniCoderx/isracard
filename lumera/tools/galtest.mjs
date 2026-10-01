@@ -23,7 +23,7 @@ for (const [w,h,lang] of [[1440,900,"en"],[390,844,"he"]]) {
     ok(!back.open && back.foc && !back.locked, `${T} Escape closes, focus returns, scroll unlocked`);
   }
   // close button path
-  const vw = (await p.$$(".pgrid .piece:not(.soon) .lnk.vw"))[0]; await vw.click(); await p.waitForTimeout(600);
+  const fg = (await p.$$(".pgrid .piece:not(.soon) .fig"))[0]; await fg.scrollIntoViewIfNeeded(); await fg.click(); await p.waitForTimeout(600);
   await p.click("#pmodal .mclose2"); await p.waitForTimeout(500);
   ok(!(await p.evaluate(() => document.getElementById("pmodal").classList.contains("open"))), `${T} Close button closes`);
   ok(errs.length===0, `${T} no page errors ${errs.join("|")}`);

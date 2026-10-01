@@ -12,7 +12,7 @@
    replaced with the real workshop figures. */
 
 export const CATS = [
-  { id: "all",       en: "All",        he: "הכל" },
+  { id: "all",       en: "All",        he: "הכול" },
   { id: "bracelets", en: "Bracelets",  he: "צמידים" },
   { id: "necklaces", en: "Necklaces",  he: "שרשראות" },
   { id: "earrings",  en: "Earrings",   he: "עגילים" },
@@ -28,9 +28,10 @@ export const PIECES = [
     id: "knot", cat: "bracelets", ref: "SLV·B·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],   /* what your photographs were actually shot at */
     theme: "moment", word: "MOMENT",
+    title: S("SILAVU MOMENT | White Gold Bracelet", "SILAVU MOMENT | צמיד זהב לבן"),
     name: S("SILAVU <em>MOMENT</em>", "SILAVU <em>MOMENT</em>"),
     kind: S("Bracelet", "צמיד"),
-    plain: "SILAVU MOMENT — Bracelet", plainHe: "SILAVU MOMENT — צמיד",
+    plain: "SILAVU MOMENT Bracelet", plainHe: "צמיד SILAVU MOMENT",
     line: S("A delicate 18k white-gold chain, finished with the SILAVU signature in a polished sculptural form.",
             "שרשרת עדינה מזהב לבן 18K, עם חתימת SILAVU בצורה פיסולית ומלוטשת."),
     shots: [
@@ -51,7 +52,7 @@ export const PIECES = [
     ],
     stonesInside: false,
     story: S("Designed as an everyday signature, MOMENT places the SILAVU mark on a fine white-gold chain. Its polished form catches the light with every movement: delicate when worn alone, and beautiful layered with other pieces. A quiet detail that becomes part of your everyday look.",
-             "\u200fMOMENT נוצר כחתימה יומיומית: סמל SILAVU על שרשרת עדינה מזהב לבן. הצורה המלוטשת שלו תופסת את האור בכל תנועה — עדין כשהוא ענוד לבד, ויפה בשכבות עם תכשיטים אחרים. פרט שקט שהופך לחלק מהמראה היומיומי שלכם."),
+             "\u200fMOMENT נוצר כחתימה יומיומית: סמל SILAVU על שרשרת עדינה מזהב לבן. הצורה המלוטשת שלו תופסת את האור בכל תנועה. הוא עדין כשהוא ענוד לבד, ויפה בשכבות עם תכשיטים אחרים. פרט שקט שהופך לחלק מהמראה היומיומי שלכם."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·B·001", "SLV·B·001")],
       [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
@@ -65,9 +66,10 @@ export const PIECES = [
     id: "ring", cat: "rings", ref: "SLV·R·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     theme: "icon", word: "ICON",
+    title: S("SILAVU ICON | Diamond Ring", "SILAVU ICON | טבעת יהלומים"),
     name: S("SILAVU <em>ICON</em>", "SILAVU <em>ICON</em>"),
     kind: S("Ring", "טבעת"),
-    plain: "SILAVU ICON — Ring", plainHe: "SILAVU ICON — טבעת",
+    plain: "SILAVU ICON Ring", plainHe: "טבעת SILAVU ICON",
     line: S("A sculptural 18k white-gold ring with the SILAVU signature set in pavé diamonds.",
             "טבעת פיסולית מזהב לבן 18K, עם חתימת SILAVU משובצת ביהלומי פאווה."),
     /* the gallery runs the way a jewellery house runs one: the piece on white,
@@ -102,9 +104,10 @@ export const PIECES = [
     id: "pave", cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     theme: "soul", word: "SOUL",
+    title: S("SILAVU SOUL | Diamond Necklace", "SILAVU SOUL | שרשרת יהלומים"),
     name: S("SILAVU <em>SOUL</em>", "SILAVU <em>SOUL</em>"),
     kind: S("Necklace", "שרשרת"),
-    plain: "SILAVU SOUL — Necklace", plainHe: "SILAVU SOUL — שרשרת",
+    plain: "SILAVU SOUL Necklace", plainHe: "שרשרת SILAVU SOUL",
     line: S("A fine 18k white-gold chain with a pavé SILAVU signature pendant at its center.",
             "שרשרת עדינה מזהב לבן 18K, ובמרכזה תליון חתימת SILAVU בשיבוץ פאווה."),
     shots: [
@@ -122,7 +125,7 @@ export const PIECES = [
     ],
     stonesInside: true,
     story: S("SOUL brings the SILAVU mark close, set in pavé diamonds at the center of a fine white-gold chain. Delicate diamond accents add points of light along the necklace, creating a piece that feels personal on its own and layers naturally with others.",
-             "\u200fSOUL מקרבת אליכם את סמל SILAVU, משובץ ביהלומי פאווה במרכזה של שרשרת עדינה מזהב לבן. נגיעות יהלומים עדינות מוסיפות נקודות אור לאורך השרשרת — תכשיט שמרגיש אישי כשהוא לבד, ומשתלב באופן טבעי עם אחרים."),
+             "\u200fSOUL מקרבת אליכם את סמל SILAVU, משובץ ביהלומי פאווה במרכזה של שרשרת עדינה מזהב לבן. נגיעות יהלומים עדינות מוסיפות נקודות אור לאורך השרשרת. זהו תכשיט שמרגיש אישי כשהוא נענד לבד, ומשתלב בטבעיות עם תכשיטים אחרים."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·N·003", "SLV·N·003")],
       [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
@@ -154,11 +157,11 @@ export const PIECES = [
       [S("Metal", "מתכת"),              S("Platinum", "פלטינה")]
     ],
     story: S("Eighteen carats is where a diamond stops being a stone and starts being a decision. This one came out of the rough at D colour and internally flawless, which is roughly one stone in several thousand at this weight, and the house bought it before it had a design. The halo is tapered baguettes, cut to fall away from the centre so nothing competes with it. There is one. There will not be another.",
-             "בשמונה־עשר קראט יהלום מפסיק להיות אבן והופך להחלטה. האבן הזו יצאה מהגלם בצבע D וללא פגמים פנימיים — בערך אחת מכמה אלפים במשקל הזה — והבית רכש אותה עוד לפני שנולד העיצוב. ההילה עשויה בגטים מתחדדים, מלוטשים כך שיובילו את העין אל המרכז ולא יתחרו בו. יש רק אחת, ולא תהיה נוספת."),
+             "בשמונה־עשר קראט יהלום מפסיק להיות אבן והופך להחלטה. האבן הזו יצאה מהגלם בצבע D וללא פגמים פנימיים, בערך אחת מכמה אלפים במשקל הזה, והבית רכש אותה עוד לפני שנולד העיצוב. ההילה עשויה בגטים מתחדדים, מלוטשים כך שיובילו את העין אל המרכז ולא יתחרו בו. יש רק אחת, ולא תהיה נוספת."),
     stones: S("One 18.06 ct round brilliant, D colour, internally flawless, with its GIA report. Forty-two tapered baguettes around it, F–G VS, matched for length within a tenth of a millimetre.",
               "בריליאנט עגול אחד במשקל 18.06 ct, צבע D, ללא פגמים פנימיים, עם תעודת GIA משלו. סביבו ארבעים ושניים בגטים מתחדדים בדרגת F–G VS, מותאמים באורכם בדיוק של עשירית מילימטר."),
     care: S("It exists. A private viewing in Dubai or Tel Aviv, and it travels to you with a courier and an appraiser, not in a parcel.",
-            "התכשיט קיים ומוכן. הצפייה בפגישה פרטית בדובאי או בתל אביב, והמסירה על ידי שליח ושמאי — לא בחבילה."),
+            "התכשיט קיים ומוכן. הצפייה בפגישה פרטית בדובאי או בתל אביב, והמסירה על ידי שליח ושמאי, ולא בחבילה."),
     specs: [
       [S("Reference", "מק\"ט"),   S("SLV·N·001", "SLV·N·001")],
       [S("Centre stone", "אבן מרכזית"), S("18.06 ct round brilliant", "18.06 ct בריליאנט עגול")],
@@ -178,10 +181,10 @@ export const PIECES = [
    the grid never reflows when a piece lands. */
 export const SOON = [
   { cat: "necklaces", ref: "SLV·N·002", when: S("Spring", "אביב"),
-    name: S("The Knot <em>Pendant</em>", "<em>תליון</em> הקשר"),
-    line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, נח על עצם הבריח, על שרשרת באורך 42 ס\"מ.") },
+    name: S("The Knot <em>Pendant</em>", "<em>תליון</em> Knot"),
+    line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, על שרשרת באורך 42 ס\"מ, בגובה עצם הבריח.") },
   { cat: "earrings",  ref: "SLV·E·001", when: S("Spring", "אביב"),
-    name: S("The Knot <em>Earrings</em>", "<em>עגילי</em> הקשר"),
+    name: S("The Knot <em>Earrings</em>", "<em>עגילי</em> Knot"),
     line: S("Close to the lobe. Nothing swings, nothing catches.", "צמודים לתנוך. שום דבר לא מתנדנד ושום דבר לא נתפס.") },];
 /* The Line is not in this list on purpose. It is the only piece in the house
    you build rather than choose, and it has a chapter of its own further down

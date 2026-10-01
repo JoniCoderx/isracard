@@ -1698,13 +1698,13 @@
     var touch = matchMedia("(pointer:coarse)").matches;
     var lg = document.documentElement.getAttribute("data-lang") || document.documentElement.lang || "en";
     var M = {
-      en: ["Move to lead it · Click to set it back", "Drag to lead it · Tap to set it back", "Return to stand"],
-      he: ["הזיזו את העכבר כדי להוביל אותו · לחצו כדי להחזיר למעמד", "גררו כדי להוביל אותו · הקישו כדי להחזיר למעמד", "החזרה למעמד"],
-      fr: ["Bougez pour le guider · Cliquez pour le reposer", "Glissez pour le guider · Touchez pour le reposer", "Remettre sur le présentoir"],
-      ru: ["Ведите курсором · Нажмите, чтобы вернуть", "Ведите пальцем · Коснитесь, чтобы вернуть", "Вернуть на подставку"],
-      ar: ["حرّك المؤشر لتقوده · انقر لإعادته", "اسحب لتقوده · المس لإعادته", "إعادته إلى الحامل"]
+      en: ["Move to lead it. Click to set it back.", "Drag to lead it. Tap to set it back.", "Return to stand"],
+      he: ["הזיזו את העכבר כדי להוביל אותו. לחצו כדי להחזיר אותו למעמד.", "גררו כדי להוביל אותו. הקישו כדי להחזיר אותו למעמד.", "החזרה למעמד"],
+      fr: ["Bougez pour le guider. Cliquez pour le reposer.", "Glissez pour le guider. Touchez pour le reposer.", "Remettre sur le présentoir"],
+      ru: ["Ведите курсором. Нажмите, чтобы вернуть.", "Ведите пальцем. Коснитесь, чтобы вернуть.", "Вернуть на подставку"],
+      ar: ["حرّك المؤشر لتقوده. انقر لإعادته.", "اسحب لتقوده. المس لإعادته.", "إعادته إلى الحامل"]
     }[lg] || null;
-    if (!M) M = he() ? ["הזיזו את העכבר כדי להוביל אותו · לחצו כדי להחזיר למעמד", "גררו כדי להוביל אותו · הקישו כדי להחזיר למעמד", "החזרה למעמד"] : ["Move to lead it · Click to set it back", "Drag to lead it · Tap to set it back", "Return to stand"];
+    if (!M) M = he() ? ["הזיזו את העכבר כדי להוביל אותו. לחצו כדי להחזיר אותו למעמד.", "גררו כדי להוביל אותו. הקישו כדי להחזיר אותו למעמד.", "החזרה למעמד"] : ["Move to lead it. Click to set it back.", "Drag to lead it. Tap to set it back.", "Return to stand"];
     snakeHint.textContent = touch ? M[1] : M[0];
     snakeBack.textContent = M[2];
     requestAnimationFrame(function () { document.documentElement.classList.add("snake-in"); });

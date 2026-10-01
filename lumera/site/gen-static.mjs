@@ -28,21 +28,28 @@ html = html.replace(/<link rel="preconnect" href="https:\/\/fonts\.[^>]*>\s*/g, 
 /* every asset path becomes relative, so the page works under a sub-path such as /isracard/ */
 html = html.replace(/(["'(=,\s])\/(img\/|f\/|v\/|icon-|favicon\.|og\.jpg|site\.webmanifest)/g, "$1$2");
 const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
+/* What the tab and a search result say. Short, in the form the established
+   houses use: the name, then what it is. The Hebrew page has its own. */
+const TITLE = { en: "SILAVU | High Jewellery", he: "SILAVU | תכשיטי יוקרה" };
+const DESC = {
+  en: "Private high jewellery from Dubai and Tel Aviv. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, bespoke diamond commissions and private viewings by appointment.",
+  he: "תכשיטי יוקרה מדובאי ותל אביב: צמיד SILAVU MOMENT, טבעת ICON ושרשרת SOUL, תכשיטי יהלומים בהתאמה אישית ופגישות פרטיות בתיאום מראש."
+};
 const head = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SILAVU — Private high jewellery, Dubai &amp; Tel Aviv</title>
-<meta name="description" content="SILAVU is a private jewellery house in Dubai and Tel Aviv. Diamonds graded by GIA or IGI, set by hand, one piece at a time — the Knot bracelet, ring and pavé necklace, and commissions made to measure. Viewings by appointment.">
+<title data-en="${TITLE.en}" data-he="${TITLE.he}">${TITLE.en}</title>
+<meta name="description" content="${DESC.en}">
 <link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
 <meta name="silavu-build" content="${BUILD}">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="author" content="SILAVU">
 <meta name="format-detection" content="telephone=no">
-<!-- one page, five languages, chosen in the browser: every locale is the same
-     URL, so each alternate points here and x-default is the English default -->
+<link rel="alternate" hreflang="en" href="${base}/">
+<link rel="alternate" hreflang="he" href="${base}/he/">
 <link rel="alternate" hreflang="x-default" href="${base}/">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="he_IL">
@@ -51,8 +58,8 @@ const head = `<!doctype html>
 <meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
-<meta property="og:title" content="SILAVU — Private high jewellery, Dubai &amp; Tel Aviv">
-<meta property="og:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, and commissions made to measure. Viewings by appointment.">
+<meta property="og:title" content="${TITLE.en}">
+<meta property="og:description" content="${DESC.en}">
 <meta property="og:image" content="${base}/og.jpg?v=7">
 <meta property="og:image:secure_url" content="${base}/og.jpg?v=7">
 <meta property="og:image:type" content="image/jpeg">
@@ -61,8 +68,8 @@ const head = `<!doctype html>
 <meta property="og:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
 <meta property="og:url" content="${base}/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SILAVU — Private high jewellery, Dubai &amp; Tel Aviv">
-<meta name="twitter:description" content="Diamonds graded by GIA or IGI, set by hand in Dubai, one piece at a time. Viewings by appointment.">
+<meta name="twitter:title" content="${TITLE.en}">
+<meta name="twitter:description" content="${DESC.en}">
 <meta name="twitter:image" content="${base}/og.jpg?v=7">
 <meta name="twitter:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
 <link rel="icon" href="favicon.ico?v=6" sizes="48x48 32x32 16x16">
@@ -123,8 +130,8 @@ ${fontLinks}
       "@id": base + "/#collection",
       "name": "The SILAVU Collection",
       "itemListOrder": "https://schema.org/ItemListOrderAscending",
-      "numberOfItems": PIECES.length,
-      "itemListElement": PIECES.map(function (p, i) {
+      "numberOfItems": PIECES.filter(p => !p.exceptional).length,
+      "itemListElement": PIECES.filter(p => !p.exceptional).map(function (p, i) {
         const plain = s => String(s).replace(/<[^>]+>/g, "");
         return {
           "@type": "ListItem", "position": i + 1,
@@ -143,30 +150,14 @@ ${fontLinks}
             }),
             "offers": {
               "@type": "Offer",
-              "availability": "https://schema.org/InStock",
+              "availability": "https://schema.org/MadeToOrder",
               "itemCondition": "https://schema.org/NewCondition",
               "availableAtOrFrom": { "@type": "Place", "name": "SILAVU Dubai" },
               "seller": { "@id": base + "/#house" },
-              "description": "Price on request. Every piece is quoted to the stones it carries."
+              "description": "Price on request. Every piece is made to order and quoted personally."
             }
           }
         };
-      })
-    },
-    {
-      "@type": "FAQPage",
-      "@id": base + "/#faq",
-      "mainEntity": [
-        ["Where can I see a SILAVU piece?",
-         "In Dubai or Tel Aviv, by appointment. A viewing is private — the pieces are brought out for you, and a piece that has to travel comes with a courier and an appraiser rather than in a parcel."],
-        ["Are the diamonds certified?",
-         "Every stone above the melee sizes is graded by GIA or IGI, and the report travels with the piece. You see the stones loose, under a loupe, before anything is set."],
-        ["What does a bespoke commission involve?",
-         "You bring an idea or a reference. The house sources the stones, draws the piece, and shows you both before the setter starts. Four to six weeks is usual for a bracelet; a large single stone takes as long as it takes to find."],
-        ["Why is there no price on the site?",
-         "Because the price is the stones. Two bracelets of the same design, one at E VS and one at G SI, are not the same object. Every piece is quoted to what it carries."]
-      ].map(function (q) {
-        return { "@type": "Question", "name": q[0], "acceptedAnswer": { "@type": "Answer", "text": q[1] } };
       })
     }
   ]
@@ -178,6 +169,60 @@ ${fontLinks}
 const SRCDIR = path.dirname(path.resolve(src));
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</html>\n");
+
+/* The Hebrew page. Same page, at its own address, so a search engine can find
+   and show the Hebrew: the text is written into the markup here rather than
+   swapped in by the script after load, the head speaks Hebrew, and both pages
+   name each other. Every element that carries data-he gets that as its
+   content, which is exactly what the script does when someone picks Hebrew. */
+{
+  const unA = v => v.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
+  /* scripts, styles and SVG text are left exactly as they are */
+  const masked = html.replace(/<(script|style|svg)\b[\s\S]*?<\/\1>/gi, m => " ".repeat(m.length));
+  const stack = [], cuts = [];
+  const re = /<(\/?)([a-zA-Z][\w-]*)((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
+  let m;
+  while ((m = re.exec(masked))) {
+    const close = m[1] === "/", name = m[2].toLowerCase(), attrs = m[3];
+    if (!close) {
+      if (VOID.has(name) || /\/\s*$/.test(attrs)) continue;
+      const he = attrs.match(/\sdata-he="([^"]*)"/);
+      stack.push({ name, from: re.lastIndex, he: he ? unA(he[1]) : null });
+    } else {
+      let i = stack.length - 1;
+      while (i >= 0 && stack[i].name !== name) i--;
+      if (i < 0) continue;
+      const el = stack[i]; stack.length = i;
+      if (el.he != null) cuts.push([el.from, m.index, el.he]);
+    }
+  }
+  /* the outermost element wins: its new content replaces whatever was inside */
+  cuts.sort((x, y) => x[0] - y[0] || y[1] - x[1]);
+  let out = "", at = 0, end = -1;
+  for (const [from, to, he] of cuts) {
+    if (from < end) continue;
+    out += html.slice(at, from) + he; at = to; end = to;
+  }
+  const heHtml = (out + html.slice(at)).replace(/alt="([^"]*)" data-alt-he="([^"]*)"/g, 'alt="$2" data-alt-en="$1" data-alt-he="$2"');
+  const heHead = head
+    .replace('<html lang="en">', '<html lang="he" dir="rtl" data-lang="he" data-ns="1">')
+    .replace(/<head>\n/, '<head>\n<base href="../">\n')
+    .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">" + TITLE.he + "<"))
+    .replace(/(<meta name="description" content=")[^"]*/, "$1" + DESC.he)
+    .replace(`<link rel="canonical" href="${base}/">`, `<link rel="canonical" href="${base}/he/">`)
+    .replace('<meta property="og:locale" content="en_US">', '<meta property="og:locale" content="he_IL">')
+    .replace('<meta property="og:locale:alternate" content="he_IL">', '<meta property="og:locale:alternate" content="en_US">')
+    .replace(/(<meta property="og:url" content=")[^"]*/, `$1${base}/he/`)
+    .replace(/(<meta property="og:title" content=")[^"]*/, "$1" + TITLE.he)
+    .replace(/(<meta name="twitter:title" content=")[^"]*/, "$1" + TITLE.he)
+    .replace(/(<meta property="og:description" content=")[^"]*/, "$1" + DESC.he)
+    .replace(/(<meta name="twitter:description" content=")[^"]*/, "$1" + DESC.he)
+    .replace('<script>window.__silavuBuild', '<script>window.__pageLang="he";window.__silavuBuild');
+  fs.mkdirSync(path.join(outDir, "he"), { recursive: true });
+  fs.writeFileSync(path.join(outDir, "he", "index.html"), heHead + heHtml + "\n</body>\n</html>\n");
+  console.log("hebrew page:", cuts.length, "strings written in");
+}
 let POLICY_SLUGS = [];
 const escA = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
@@ -196,7 +241,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     const dir = path.join(outDir, d.slug);
     fs.mkdirSync(dir, { recursive: true });
     const dhead = head
-      .replace(/<title>[^<]*<\/title>/, `<title>${d.title.en} · SILAVU</title>`)
+      .replace(/<title[^>]*>[^<]*<\/title>/, `<title>${d.title.en} | SILAVU</title>`)
       .replace(/(<meta name="description" content=")[^"]*/, `$1${d.lede.en}`)
       .replace(base + "/", base + "/" + d.slug + "/")
       /* the site lives under a sub-path on Pages: every relative address in
@@ -204,10 +249,11 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
       .replace(/<head>\n/, `<head>\n<base href="../">\n`)
       /* the documents never show the opening photograph */
       .replace(/<link rel="preload" as="image"[^>]*>\n/g, "")
+      .replace(/<link rel="alternate" hreflang[^>]*>\n/g, "")
       .replace(/(<meta property="og:url" content=")[^"]*/, `$1${base}/${d.slug}/`)
-      .replace(/(<meta property="og:title" content=")[^"]*/, `$1${d.title.en} · SILAVU`)
+      .replace(/(<meta property="og:title" content=")[^"]*/, `$1${d.title.en} | SILAVU`)
       .replace(/(<meta property="og:description" content=")[^"]*/, `$1${d.lede.en}`)
-      .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${d.title.en} · SILAVU`)
+      .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${d.title.en} | SILAVU`)
       .replace(/(<meta name="twitter:description" content=")[^"]*/, `$1${d.lede.en}`);
     /* the documents get the site's own type and palette: the stylesheet lives
        in a <style> block inside the page body, not in the shared head */
@@ -234,7 +280,7 @@ ${d.body.map(([h, t]) => `<section><h2 ${A(h)}>${h.en}</h2><p ${A(t)}>${t.en}</p
       var t = l === "he" ? el.getAttribute("data-he") : dict && dict[el.getAttribute("data-en")];
       if (t) el.textContent = t;
     });
-    var t1 = document.querySelector("h1"); if (t1) document.title = t1.textContent + " · SILAVU";
+    var t1 = document.querySelector("h1"); if (t1) document.title = t1.textContent + " | SILAVU";
   }
   if (l === "he") apply(null);
   else fetch("lang/" + l + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); }).then(apply).catch(function () {});
@@ -255,16 +301,18 @@ ${d.body.map(([h, t]) => `<section><h2 ${A(h)}>${h.en}</h2><p ${A(t)}>${t.en}</p
 }
 fs.writeFileSync(path.join(outDir, "robots.txt"),
   "User-agent: *\nAllow: /\n\nSitemap: " + base + "/sitemap.xml\n");
-/* One page, one entry. The five language alternates that used to sit here all
-   pointed at this same URL, which claims five translated versions exist at an
-   address that has one — the language is switched inside the page. A crawler
-   either ignores that or distrusts it, and neither helps. */
+/* English and Hebrew each have an address and name each other. French,
+   Russian and Arabic are switched inside the page and have none, so they are
+   not claimed here. */
 fs.writeFileSync(path.join(outDir, "sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n'
-  + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-  + "  <url>\n    <loc>" + base + "/</loc>\n"
-  + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
-  + "    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n"
+  + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+  + ["/", "/he/"].map(u => "  <url>\n    <loc>" + base + u + "</loc>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"" + base + "/\"/>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"he\" href=\"" + base + "/he/\"/>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" + base + "/\"/>\n"
+      + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
+      + "    <changefreq>weekly</changefreq>\n    <priority>" + (u === "/" ? "1.0" : "0.9") + "</priority>\n  </url>\n").join("")
   + POLICY_SLUGS.map(sl => "  <url>\n    <loc>" + base + "/" + sl + "/</loc>\n"
       + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
       + "    <changefreq>yearly</changefreq>\n    <priority>0.3</priority>\n  </url>\n").join("")
