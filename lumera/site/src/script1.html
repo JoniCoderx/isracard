@@ -688,24 +688,23 @@
       var on = g.querySelector(".chip.on");
       return on ? (on.textContent || "").trim() : "";
     }
+    /* a phone has room for one short word over each answer */
+    var SHORT = { "Diamond shape": ["Shape", "צורה"], "Diamond type": ["Type", "סוג"], "Total carat weight": ["Carat", "קראט"], "Wrist size": ["Wrist", "פרק יד"], "Metal": ["Metal", "מתכת"] };
     function paint() {
       groups.forEach(function (g) {
+        var kk = g.querySelector(".opthead > .k"), en = kk && kk.getAttribute("data-en"), sh = en && SHORT[en];
+        if (sh) kk.setAttribute("data-short", lang === "he" ? sh[1] : (T(sh[0]) || sh[0]));
         var n = g.querySelector(".optnow"); if (n) n.textContent = label(g);
         var row = g.querySelector(".opthead");
         if (row) row.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
       });
     }
     function fit() {
-      var ph = phone();
-      if (!ph) groups.forEach(function (g) { g.classList.add("open"); });
-      else {
-        var cur = groups.filter(function (g) { return g.classList.contains("open"); });
-        if (cur.length !== 1) groups.forEach(function (g, k) { g.classList.toggle("open", k === 0); });
-      }
+      var cur = groups.filter(function (g) { return g.classList.contains("open"); });
+      if (cur.length !== 1) groups.forEach(function (g, k) { g.classList.toggle("open", k === 0); });
       paint();
     }
     function toggle(g) {
-      if (!phone()) return;
       groups.forEach(function (x) { x.classList.toggle("open", x === g); });
       paint();
       /* the selected answer is brought into view in its row */
@@ -748,6 +747,7 @@
       var pick = function (k) { var c = document.querySelector('#opts .chip.on[data-k="' + k + '"]'); return c ? c.textContent.trim() : ""; };
       sumEl.textContent = [pick("cut"), pick("ct"), pick("metal")].filter(Boolean).join(" · ");
       prEl.textContent = est.textContent;
+      var ls = $("lsum"); if (ls) ls.innerHTML = '<span dir="auto">' + [pick("cut"), pick("origin"), pick("ct")].filter(Boolean).join(" · ") + '</span><span dir="auto">' + [pick("wrist"), pick("metal")].filter(Boolean).join(" · ") + "</span>";
     }
     function show() {
       var on = phoneQ.matches && inBuild && !totalSeen && !document.documentElement.classList.contains("locked");
@@ -764,6 +764,7 @@
     if (window.MutationObserver) { new MutationObserver(words).observe(est, { childList: true, characterData: true, subtree: true });
       new MutationObserver(show).observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-lang"] }); }
     btn.addEventListener("click", function () { var r = $("reserve"); if (r) r.click(); });
+    words();
     phoneQ.addEventListener && phoneQ.addEventListener("change", show);
   })();
 

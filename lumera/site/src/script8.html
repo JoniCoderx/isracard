@@ -690,10 +690,31 @@
   }
 
   /* the head: four prongs over the girdle, a basket under it, a seat the stone sits in */
-  function headMesh(L, W, depth) {
+  /* Each cut is held the way a bench would hold it: brilliants and ovals on
+     four claws at the diagonals, squares and step cuts on claws at their
+     corners, a marquise by its points and its sides, a pear by its point
+     and its shoulders, and a baguette in a channel between two rails. */
+  function prongsFor(cut, hx, hz) {
+    if (cut === "princess") return [[hx * 0.95, hz * 0.95], [-hx * 0.95, hz * 0.95], [-hx * 0.95, -hz * 0.95], [hx * 0.95, -hz * 0.95]];
+    if (cut === "emerald") return [[hx * 0.90, hz * 0.90], [-hx * 0.90, hz * 0.90], [-hx * 0.90, -hz * 0.90], [hx * 0.90, -hz * 0.90]];
+    if (cut === "cushion") return [[hx * 0.82, hz * 0.82], [-hx * 0.82, hz * 0.82], [-hx * 0.82, -hz * 0.82], [hx * 0.82, -hz * 0.82]];
+    if (cut === "marquise") return [[hx * 0.99, 0], [-hx * 0.99, 0], [0, hz * 0.98], [0, -hz * 0.98]];
+    if (cut === "pear") return [[hx * 0.99, 0], [-hx * 0.40, hz * 0.90], [-hx * 0.40, -hz * 0.90], [-hx * 0.99, 0]];
+    if (cut === "baguette") return [];
+    return [[hx * 0.74, hz * 0.80], [-hx * 0.74, hz * 0.80], [-hx * 0.74, -hz * 0.80], [hx * 0.74, -hz * 0.80]];
+  }
+  function headMesh(L, W, depth, cut) {
     var m = new Mesh(), hx = L / 2, hz = W / 2, wire = Math.max(0.085, Math.min(L, W) * 0.062), i;
-    var corners = [[hx * 0.74, hz * 0.80], [-hx * 0.74, hz * 0.80], [-hx * 0.74, -hz * 0.80], [hx * 0.74, -hz * 0.80]];
-    for (i = 0; i < 4; i++) {
+    var corners = prongsFor(cut || "round", hx, hz);
+    if (cut === "baguette") {
+      /* the channel: two rails that run the length of the stone and hold it by its sides */
+      for (i = -1; i <= 1; i += 2) {
+        tube(m, [[-hx * 1.04, depth * 0.10, i * hz * 1.03], [hx * 1.04, depth * 0.10, i * hz * 1.03]], wire * 1.25, 8, true, true);
+        tube(m, [[-hx * 1.04, -depth * 0.30, i * hz * 1.02], [hx * 1.04, -depth * 0.30, i * hz * 1.02]], wire * 1.05, 7, true, true);
+        for (var q = -1; q <= 1; q += 2) tube(m, [[q * hx * 0.98, depth * 0.10, i * hz * 1.03], [q * hx * 0.98, -depth * 0.62, i * hz * 0.80]], wire * 0.9, 7, false, false);
+      }
+    }
+    for (i = 0; i < corners.length; i++) {
       var cx = corners[i][0], cz = corners[i][1], sx = Math.sign(cx), sz = Math.sign(cz);
       var path = spline([
         [cx * 0.86, -depth * 0.80, cz * 0.86],
@@ -718,19 +739,22 @@
     tube(m, ringPath, wire * 0.78, 7, false, false);
     var ring2 = ringPath.map(function (p) { return [p[0] * 0.66, -depth * 0.70, p[2] * 0.66]; });
     tube(m, ring2, wire * 0.70, 7, false, false);
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < corners.length; i++) {
       var c2 = corners[i];
       tube(m, [[c2[0] * 0.86, -depth * 0.80, c2[1] * 0.86], [c2[0] * 0.92, -depth * 0.30, c2[1] * 0.92]], wire * 0.76, 7, false, false);
     }
     return m;
   }
   /* the link between two heads: a pair of fine bars with rounded ends */
+  /* the link: two bars from basket to basket and, under them, a hinge barrel
+     across the line, which is what lets a tennis bracelet drape */
   function linkMesh(gap, W, wire) {
     var m = new Mesh(), z = W * 0.30, i;
     for (i = -1; i <= 1; i += 2) {
-      var p = spline([[-gap * 0.70, 0, i * z], [-gap * 0.24, gap * 0.05, i * z], [gap * 0.24, gap * 0.05, i * z], [gap * 0.70, 0, i * z]], 8);
-      tube(m, p, wire * 0.92, 7, true, true);
+      var p = spline([[-gap * 0.80, 0, i * z], [-gap * 0.24, gap * 0.05, i * z], [gap * 0.24, gap * 0.05, i * z], [gap * 0.80, 0, i * z]], 8);
+      tube(m, p, wire * 1.05, 7, true, true);
     }
+    tube(m, [[0, -wire * 1.6, -W * 0.36], [0, -wire * 1.6, W * 0.36]], wire * 1.35, 10, true, true);
     return m;
   }
   /* the clasp: a box tucked under the line at the back, with a seam and a tongue */
@@ -813,7 +837,7 @@
        is only ever a mosaic of the bright and the black it reflects — a soft
        grey room turns it into grey glass. */
     "vec3 envS(vec3 d){",
-    "  vec3 c = env(d) * 0.35;",
+    "  vec3 c = env(d) * 0.5 + vec3(0.03);",
     "  float y = d.y, az = atan(d.z, d.x);",
     "  float band = smoothstep(-0.05, 0.18, y) * smoothstep(0.92, 0.62, y);",
     "  float pan = smoothstep(0.30, 0.38, abs(fract(az * 1.909859) - 0.5));",
@@ -1139,7 +1163,7 @@
     pStone.geometry(solid(planesFor(cut, L, W)));
     var tp = tracePlanes(cut, L, W);
     gl.useProgram(prog); gl.uniform4fv(U.p, tp.planes); gl.uniform1i(U.np, tp.n);
-    pHead.geometry(headMesh(L, W, depth));
+    pHead.geometry(headMesh(L, W, depth, cut));
     var gap = Math.max(0.35, step - L * 0.98);
     var wire = Math.max(0.16, Math.min(L, W) * 0.105);
     pLink.geometry(linkMesh(gap, W, wire * 0.8));
@@ -1276,9 +1300,12 @@
       dist = hw / (tanF * asp); lookX = 0; lookY = 0; th0 = 0; ph0 = 0;
       snake.halfW = hw; snake.halfH = tanF * dist;
     }
+    /* the detail view looks at the front of the line, not at the empty middle of the oval */
+    var lookZ = 0, cf = snake || hand.on ? 0 : (cam.f || 0);
+    if (cf) { lookX += Math.sin(th0) * state.R * cf * 0.95; lookZ = Math.cos(th0) * state.R * cf * 0.95; lookY += state.thick * 0.1 * cf; }
     var cp = Math.cos(ph0), sp = Math.sin(ph0);
-    var eye = [lookX + Math.sin(th0) * cp * dist, lookY + sp * dist, Math.cos(th0) * cp * dist];
-    var f = [lookX - eye[0], lookY - eye[1], -eye[2]], fl = Math.hypot(f[0], f[1], f[2]); f = [f[0] / fl, f[1] / fl, f[2] / fl];
+    var eye = [lookX + Math.sin(th0) * cp * dist, lookY + sp * dist, lookZ + Math.cos(th0) * cp * dist];
+    var f = [lookX - eye[0], lookY - eye[1], lookZ - eye[2]], fl = Math.hypot(f[0], f[1], f[2]); f = [f[0] / fl, f[1] / fl, f[2] / fl];
     var up = [0, 1, 0];
     var s2 = [f[1] * up[2] - f[2] * up[1], f[2] * up[0] - f[0] * up[2], f[0] * up[1] - f[1] * up[0]], sl = Math.hypot(s2[0], s2[1], s2[2]); s2 = [s2[0] / sl, s2[1] / sl, s2[2] / sl];
     var u2 = [s2[1] * f[2] - s2[2] * f[1], s2[2] * f[0] - s2[0] * f[2], s2[0] * f[1] - s2[1] * f[0]];
@@ -1344,6 +1371,7 @@
       }
     }
     if (Math.abs(cam.d - cam.td) > 1e-4) { cam.d += (cam.td - cam.d) * 0.12; dirty = true; }
+    if (Math.abs((cam.f || 0) - (cam.fT || 0)) > 1e-4) { cam.f = (cam.f || 0) + ((cam.fT || 0) - (cam.f || 0)) * 0.12; dirty = true; }
     if (toy) {
       var R0 = state.fit;
       var limY = Math.max(R0 * 0.1, (state.halfH || R0 * 2) - R0 * 1.06);
@@ -1423,8 +1451,9 @@
     var v = e.target.closest && e.target.closest("[data-vpos]"); if (!v) return;
     idle = false; cam.vth = cam.vph = 0;
     var p = v.getAttribute("data-vpos");
-    cam.th = p === "side" ? -1.57 : p === "under" ? -0.62 : -0.62;
-    cam.ph = p === "under" ? -0.88 : p === "side" ? 0.05 : (portrait ? 0.90 : 0.42);
+    cam.th = p === "side" ? -1.57 : p === "detail" ? -0.30 : -0.62;
+    cam.ph = p === "under" ? -0.88 : p === "side" ? 0.05 : p === "detail" ? 0.34 : (portrait ? 0.90 : 0.42);
+    cam.fT = p === "detail" ? 1 : 0; cam.td = p === "detail" ? 0.34 : 1;
     v.parentNode.querySelectorAll("[data-vpos]").forEach(function (o) { o.classList.toggle("on", o === v); });
     dirty = true;
   });

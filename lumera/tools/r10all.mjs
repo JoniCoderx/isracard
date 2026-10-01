@@ -18,7 +18,7 @@ const r=await p.evaluate(()=>{ const q=s=>document.querySelector(s), t=s=>(q(s)|
     bespokeBg:cs("#bespoke","backgroundImage"), jpin:!!q("#jpin"), jsteps:document.querySelectorAll(".jstep").length,
     macro:[...document.querySelectorAll("h2,h3")].map(e=>e.textContent).filter(x=>/Light goes in|Fifty-seven/.test(x)),
     drawcv:!!q("#drawcv"), benchcv:!!q("#benchcv"),
-    caratShown:cs("#build .carat","display"), cacts:[...document.querySelectorAll("#configure .cacts button")].map(e=>e.id), buildActs:!!q("#build .copy .acts"),
+    caratShown:(q("#build .sdet")&&!q("#build .sdet").open)?"none":"shown", cacts:[...document.querySelectorAll("#configure .cacts button")].map(e=>e.id), buildActs:!!q("#build .copy .acts"),
     filmcv:!!q("#filmcv"), emb:!!q("#emb"), embStop:q("#embGold stop")?q("#embGold stop").getAttribute("stop-color"):null,
     fbig:!!q(".fbig"), fbrand:!!q("#end .fbrand"), seam:!!q("#hero .hseam"),
   };});

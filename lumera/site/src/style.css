@@ -4226,7 +4226,7 @@
        choices instead of above them; the per-stone figure and its
        specification drawer are gone (the summary line under the price
        already says it); the picture can be kept or sent. ── */
-  #build .carat { display:none; }
+  #build .carat:not(.sdet) { display:none; }
   #configure .cacts { display:flex; flex-wrap:wrap; gap:2px 24px; justify-content:center; }
   #configure .clink { all:unset; box-sizing:border-box; cursor:pointer; display:inline-flex; align-items:center; gap:9px; min-height:44px;
     font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink2); border-bottom:1px solid transparent;
@@ -4760,3 +4760,67 @@
     #configure > .handbar { grid-column:1; grid-row:1 / span 3; align-self:start; justify-self:center; margin-top:calc(clamp(440px,38vw,600px) + 14px);
       position:sticky; top:calc(var(--hh, 72px) + 30px + clamp(440px,38vw,600px)); z-index:3; }
   }
+
+  /* ── v132 — the builder as a sequence of decisions ──
+     One question is open at a time; the others fold to a line that shows
+     what was chosen. The estimate is a card of its own: the line in two
+     short phrases, the figure, how it is confirmed, the reservation, and
+     the stone arithmetic folded away for whoever wants it. */
+  #opts { counter-reset:step; }
+  @media (min-width:760px) {
+    #build #opts { gap:0; }
+    #build #opts .opt { display:block; border-top:1px solid var(--line); padding:0; }
+    #build #opts .opt:first-child { border-top:0; }
+    #build #opts .opt > .opthead { display:flex; align-items:baseline; gap:14px; padding:14px 0; cursor:pointer; counter-increment:step; }
+    #build #opts .opt > .opthead::before { content:counter(step); font-family:var(--serif); font-style:italic; font-size:.92rem; color:var(--ink3); min-width:1.1em; }
+    #build #opts .opt.open > .opthead::before { color:#e2c98f; }
+    #build #opts .opt > .opthead > .k { font-size:.66rem; letter-spacing:.18em; color:var(--ink2); }
+    #build #opts .opt.open > .opthead > .k { color:var(--ink); }
+    #build #opts .opt > .opthead .optnow { font-size:1rem; }
+    #build #opts .opt > .opthead .optnow::before { display:none; }
+    #build #opts .opt > .opthead::after { content:""; width:7px; height:7px; border-right:1px solid currentColor; border-bottom:1px solid currentColor;
+      transform:rotate(45deg) translateY(-3px); opacity:.5; margin-inline-start:6px; transition:transform .35s var(--ease); }
+    #build #opts .opt.open > .opthead::after { transform:rotate(-135deg) translateY(-1px); opacity:.9; }
+    #build #opts .opt:not(.open) > .chips { display:none !important; }
+    #build #opts .opt.open > .chips { padding:2px 0 18px calc(1.1em + 14px); animation:optIn .4s var(--ease) both; }
+    html[dir="rtl"] #build #opts .opt.open > .chips { padding:2px calc(1.1em + 14px) 18px 0; }
+    #build #opts .opt > .opthead:focus-visible { outline:1px solid #e2c98f; outline-offset:2px; }
+  }
+  @keyframes optIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+
+  /* the estimate card */
+  #build #configure .total { display:grid; gap:14px; border:1px solid rgba(246,243,237,.12); border-radius:16px; padding:22px 22px 18px;
+    background:linear-gradient(180deg, rgba(246,243,237,.035), rgba(246,243,237,.01)); text-align:start; }
+  #build #configure .total .tot { display:grid; gap:10px; }
+  #build #configure .total .ltk { color:#e2c98f; font-size:.62rem; letter-spacing:.22em; }
+  #build #configure .total .lsum { margin:0; display:grid; gap:2px; font-family:var(--serif); font-style:italic; font-size:1.12rem; line-height:1.35; color:var(--ink); }
+  html[data-ns] #build #configure .total .lsum { font-family:inherit; font-style:normal; font-size:1rem; }
+  #build #configure .total .pricerow { display:flex; align-items:center; gap:12px; margin-top:6px; }
+  #build #configure .total .price { font-variant-numeric:tabular-nums; }
+  #build #configure .total .estnote { font-size:.78rem; line-height:1.5; color:var(--ink3); margin:0; max-width:44ch; }
+  #build #configure .total .btn.solid { width:100%; justify-content:center; min-height:48px; }
+  #build #configure .total .trustline { margin:0; font-size:.72rem; letter-spacing:.04em; color:var(--ink3); text-align:center; }
+  #build #configure .total .sdet.carat { display:block !important; border-top:1px solid var(--line); padding-top:4px; margin:0; grid-template-columns:none; }
+  #build .sdet > summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; min-height:40px;
+    font-size:.64rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink2); }
+  html[data-ns] #build .sdet > summary { letter-spacing:.02em; text-transform:none; font-size:.82rem; }
+  #build .sdet > summary::-webkit-details-marker { display:none; }
+  #build .sdet > summary::after { content:"+"; font-size:1rem; color:var(--ink3); transition:transform .3s var(--ease); }
+  #build .sdet[open] > summary::after { transform:rotate(45deg); }
+  #build .sdet .sdrow { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:.62rem; margin:4px 0 10px; }
+  #build .sdet .sdrow i { display:none; }
+  #build .sdet .specbody .p { font-size:.84rem !important; line-height:1.55; color:var(--ink3); margin:0 0 8px !important; }
+  #build .sdet .specrow { display:flex; gap:22px; align-items:flex-end; flex-wrap:wrap; margin-top:6px; }
+  #build .sdet .big { font-size:1.4rem; }
+  #build .sdet .stone1 { display:none; }
+  #build .sdet > div { display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px; }
+  @media (max-width:759px) {
+    #build #configure .total { padding:18px 16px 14px; border-radius:14px; }
+    #build #configure .total .price { font-size:clamp(1.8rem, 8vw, 2.2rem) !important; }
+  }
+  @media (max-width:759px) {
+    #build #opts .opt > .opthead > .k[data-short] { font-size:0 !important; letter-spacing:0; }
+    #build #opts .opt > .opthead > .k[data-short]::after { content:attr(data-short); font-size:.56rem; letter-spacing:.14em; }
+    html[data-ns] #build #opts .opt > .opthead > .k[data-short]::after { font-size:.7rem; letter-spacing:0; }
+  }
+  #build #configure .total > .btn.solid, #build #configure .total #reserve { width:100% !important; max-width:none !important; justify-self:stretch; }

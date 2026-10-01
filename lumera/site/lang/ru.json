@@ -199,7 +199,7 @@
  "Wrist size": "Размер запястья",
  "Wrist width": "Ширина запястья",
  "Write to the house": "Написать Дому",
- "Your line": "Ваша линия",
+ "Your line": "Ваш браслет",
  "Your message is ready in your mail app. If not, write to concierge@silavu.com.": "Ваше письмо готово в почтовом приложении. Если нет — напишите на concierge@silavu.com.",
  "Your piece": "Ваше украшение",
  "Your piece, its certificates, and a valuation for your insurer.": "Ваше украшение, его сертификаты и оценка для страховщика.",
@@ -400,5 +400,17 @@
  "Then every facet <em>is drawn.</em>": "Затем прорисована <em>каждая грань.</em>",
  "Then it is set, <em>and it catches the light.</em>": "Затем камни закреплены — <em>и ловят свет.</em>",
  "Design yours": "Создайте свой",
- "Drag to turn it · Tap to look closer": "Поверните · Коснитесь, чтобы приблизить"
+ "Drag to turn it · Tap to look closer": "Поверните · Коснитесь, чтобы приблизить",
+ "Her": "Она",
+ "Him": "Он",
+ "Diamond shape": "Форма бриллианта",
+ "Diamond type": "Тип бриллианта",
+ "Total carat weight": "Общий вес в каратах",
+ "Stone details": "О камнях",
+ "Indicative estimate. The final quotation is confirmed privately, once the stones are chosen.": "Ориентировочная оценка. Окончательная цена подтверждается лично, после выбора камней.",
+ "GIA or IGI certified · Insured delivery · Lifetime care": "Сертификат GIA или IGI · Застрахованная доставка · Уход на всю жизнь",
+ "Shape": "Форма",
+ "Type": "Тип",
+ "Carat": "Караты",
+ "Wrist": "Запястье"
 }

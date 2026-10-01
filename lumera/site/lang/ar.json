@@ -199,7 +199,7 @@
  "Wrist size": "مقاس المعصم",
  "Wrist width": "عرض المعصم",
  "Write to the house": "اكتب إلى الدار",
- "Your line": "خطك",
+ "Your line": "سوارك",
  "Your message is ready in your mail app. If not, write to concierge@silavu.com.": "رسالتك جاهزة في تطبيق البريد لديك. وإن لم تكن، فاكتب إلى concierge@silavu.com.",
  "Your piece": "قطعتك",
  "Your piece, its certificates, and a valuation for your insurer.": "قطعتك، وشهاداتها، وتقييم لشركة التأمين.",
@@ -400,5 +400,17 @@
  "Then every facet <em>is drawn.</em>": "ثم تُرسم <em>كل واجهة.</em>",
  "Then it is set, <em>and it catches the light.</em>": "ثم يُرصّع، <em>فيلتقط الضوء.</em>",
  "Design yours": "صمّم قطعتك",
- "Drag to turn it · Tap to look closer": "اسحب لتدويره · المس للاقتراب"
+ "Drag to turn it · Tap to look closer": "اسحب لتدويره · المس للاقتراب",
+ "Her": "هي",
+ "Him": "هو",
+ "Diamond shape": "شكل الألماسة",
+ "Diamond type": "نوع الألماس",
+ "Total carat weight": "الوزن الإجمالي بالقيراط",
+ "Stone details": "تفاصيل الأحجار",
+ "Indicative estimate. The final quotation is confirmed privately, once the stones are chosen.": "تقدير مبدئي. يُؤكَّد عرض السعر النهائي بشكل خاص بعد اختيار الأحجار.",
+ "GIA or IGI certified · Insured delivery · Lifetime care": "شهادة GIA أو IGI · توصيل مؤمَّن · عناية مدى الحياة",
+ "Shape": "الشكل",
+ "Type": "النوع",
+ "Carat": "القيراط",
+ "Wrist": "المعصم"
 }
