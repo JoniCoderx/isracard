@@ -1,0 +1,23 @@
+import { chromium } from "playwright-core";
+const O="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/m/", W=+(process.argv[2]||390), H=+(process.argv[3]||844);
+const b=await chromium.launch({executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome",args:["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"]});
+const p=await (await b.newContext({viewport:{width:W,height:H},isMobile:true,hasTouch:true,deviceScaleFactor:2})).newPage(); const errs=[]; p.on("pageerror",e=>errs.push(e.message));
+await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());
+await p.goto("http://localhost:8777/",{waitUntil:"load"}); await p.waitForTimeout(1200); await p.click("#enterBtn").catch(()=>{}); await p.waitForTimeout(800);
+await p.evaluate(()=>{document.documentElement.style.scrollBehavior="auto"; document.getElementById("collection").scrollIntoView();}); await p.waitForTimeout(800);
+await p.evaluate(()=>document.querySelector("#p-knot .lnk.vw").click()); await p.waitForTimeout(1500);
+await p.screenshot({path:O+`mod-${W}-top.jpg`,type:"jpeg",quality:60});
+const m=await p.evaluate(()=>{const c=document.querySelector("#pmodal .mclose2").getBoundingClientRect(), bx=document.querySelector("#pmodal .mbox"); return {closeTop:Math.round(c.top), closeRight:Math.round(innerWidth-c.right), boxH:bx.clientHeight, inner:innerHeight, scrollable:bx.scrollHeight>bx.clientHeight, bodyLocked:document.documentElement.classList.contains("locked")};});
+console.log("modal",JSON.stringify(m));
+await p.evaluate(()=>{const bx=document.querySelector("#pmodal .mbox"); bx.scrollTop=bx.scrollHeight;}); await p.waitForTimeout(500);
+const m2=await p.evaluate(()=>{const c=document.querySelector("#pmodal .mclose2").getBoundingClientRect(); return {closeTopAfterScroll:Math.round(c.top)};}); console.log(JSON.stringify(m2));
+await p.screenshot({path:O+`mod-${W}-bottom.jpg`,type:"jpeg",quality:60});
+await p.click("#pmodal .mclose2"); await p.waitForTimeout(700);
+// try-on
+await p.evaluate(()=>window.__tryon && window.__tryon.open()); await p.waitForTimeout(900);
+await p.setInputFiles("#tfile", "/home/user/isracard/lumera/site/dist/img/"+(process.argv[4]||"wrist-900.jpg")); await p.waitForTimeout(1800);
+await p.screenshot({path:O+`try-${W}-place.jpg`,type:"jpeg",quality:60});
+await p.click("#tdone").catch(e=>console.log("tdone",e.message.slice(0,80))); await p.waitForTimeout(1500);
+await p.screenshot({path:O+`try-${W}-seen.jpg`,type:"jpeg",quality:60});
+console.log("tryon state", await p.evaluate(()=>document.getElementById("tryon").className), "errs", errs.join("|")||"none");
+await b.close();

@@ -111,7 +111,13 @@
 
   /* ── menu ── */
   var menu = $("menu"), menuBtn = $("menuBtn");
-  function setMenu(open) { menu.classList.toggle("open", open); menu.setAttribute("aria-hidden", open ? "false" : "true"); menuBtn.setAttribute("aria-expanded", open ? "true" : "false"); document.body.classList.toggle("locked", open); }
+  function setMenu(open) {
+    var was = menu.classList.contains("open");
+    menu.classList.toggle("open", open); menu.setAttribute("aria-hidden", open ? "false" : "true"); menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    /* the page under the menu holds still, exactly where it was, and gets its place back on close */
+    if (open && !was) window.__lock();
+    else if (!open && was && !document.querySelector(".modal.open")) window.__unlock();
+  }
   menuBtn.addEventListener("click", function () { setMenu(!menu.classList.contains("open")); });
   $("menuClose").addEventListener("click", function () { setMenu(false); });
   addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
@@ -691,15 +697,19 @@
     }
     function fit() {
       var ph = phone();
-      groups.forEach(function (g) { g.classList.toggle("open", !ph); });
+      if (!ph) groups.forEach(function (g) { g.classList.add("open"); });
+      else {
+        var cur = groups.filter(function (g) { return g.classList.contains("open"); });
+        if (cur.length !== 1) groups.forEach(function (g, k) { g.classList.toggle("open", k === 0); });
+      }
       paint();
     }
     function toggle(g) {
       if (!phone()) return;
-      var was = g.classList.contains("open");
-      groups.forEach(function (x) { x.classList.remove("open"); });
-      g.classList.toggle("open", !was);
+      groups.forEach(function (x) { x.classList.toggle("open", x === g); });
       paint();
+      /* the selected answer is brought into view in its row */
+      var on = g.querySelector(".chip.on"); if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
     }
     opts.addEventListener("click", function (e) {
       var head = e.target.closest(".opt > .opthead");
@@ -718,6 +728,43 @@
        have just been rewritten under it */
     if (window.MutationObserver) new MutationObserver(paint)
       .observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  })();
+
+  /* ── on a phone, while the bracelet is being made: a quiet line along the
+       bottom with what has been chosen, what it comes to, and the way to
+       reserve it. It stands aside when the full estimate is on screen, and
+       is not there at all anywhere else on the page. ── */
+  (function () {
+    var build = $("build"), total = document.querySelector("#configure .total"), est = $("est"); if (!build || !est) return;
+    var bar = document.createElement("div"); bar.id = "cbar"; bar.setAttribute("aria-hidden", "true");
+    bar.innerHTML = '<div class="cbt"><span class="cbk k"></span><span class="cbs"></span></div><div class="cbp"></div><button type="button" class="btn solid cbr"></button>';
+    document.body.appendChild(bar);
+    var sumEl = bar.querySelector(".cbs"), prEl = bar.querySelector(".cbp"), kEl = bar.querySelector(".cbk"), btn = bar.querySelector(".cbr");
+    var phoneQ = matchMedia("(max-width:759px)"), inBuild = false, totalSeen = false;
+    function words() {
+      var he = lang === "he";
+      kEl.textContent = he ? "הקו שלכם" : (T("Your line") || "Your line");
+      btn.textContent = he ? "שריון" : (T("Reserve") || "Reserve");
+      var pick = function (k) { var c = document.querySelector('#opts .chip.on[data-k="' + k + '"]'); return c ? c.textContent.trim() : ""; };
+      sumEl.textContent = [pick("cut"), pick("ct"), pick("metal")].filter(Boolean).join(" · ");
+      prEl.textContent = est.textContent;
+    }
+    function show() {
+      var on = phoneQ.matches && inBuild && !totalSeen && !document.documentElement.classList.contains("locked");
+      bar.classList.toggle("on", on); bar.setAttribute("aria-hidden", on ? "false" : "true");
+      document.body.classList.toggle("cbar-on", on);
+      if (on) words();
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { es.forEach(function (e) { inBuild = e.isIntersecting; }); show(); }, { rootMargin: "-35% 0px -35% 0px" }).observe(build);
+      if (total) new IntersectionObserver(function (es) { es.forEach(function (e) { totalSeen = e.isIntersecting; }); show(); }, { threshold: 0.35 }).observe(total);
+    }
+    opts.addEventListener("click", function () { setTimeout(words, 30); });
+    addEventListener("silavu:build", words);
+    if (window.MutationObserver) { new MutationObserver(words).observe(est, { childList: true, characterData: true, subtree: true });
+      new MutationObserver(show).observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-lang"] }); }
+    btn.addEventListener("click", function () { var r = $("reserve"); if (r) r.click(); });
+    phoneQ.addEventListener && phoneQ.addEventListener("change", show);
   })();
 
   opts.addEventListener("mouseover", function (e) { var c = e.target.closest('.chip[data-k="metal"]'); if (c) window.__preview = c.getAttribute("data-v"); });
