@@ -227,67 +227,127 @@ let POLICY_SLUGS = [];
 const escA = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 
-/* The house documents. Real pages at real addresses rather than overlays on
-   the one page: a reader who wants to know what happens to what they tell you
-   should be able to link to the answer, and a crawler should be able to find
-   it. They share the site's head so they share its type and its palette, and
-   they carry nothing else — no header, no chapters, no bar. */
+/* The house documents and the About page. Real pages at real addresses, so a
+   reader can link to the answer and a crawler can find it. They are part of
+   the site, not print-outs of it: black like the rest of the house, the mark
+   at the top leading home, the same chapters one click away, every document
+   in the footer, and the language the reader chose on the site. */
 {
   const { POLICIES } = await import("./src/policies.mjs");
-  POLICY_SLUGS = POLICIES.map(d => d.slug);
-  const others = d => POLICIES.filter(o => o.slug !== d.slug)
-    .map(o => `<a href="${o.slug}/" data-en="${escA(o.title.en)}" data-he="${escA(o.title.he)}">${o.title.en}</a>`).join("");
-  for (const d of POLICIES) {
-    const dir = path.join(outDir, d.slug);
+  const { ABOUT } = await import("./src/about.mjs");
+  const { mark, logo } = await import("./src/body.mjs");
+  POLICY_SLUGS = [ABOUT.slug, ...POLICIES.map(d => d.slug)];
+  const A = x => `data-en="${escA(x.en)}" data-he="${escA(x.he)}"`;
+  const T = (tag, x, cls = "") => `<${tag}${cls ? ` class="${cls}"` : ""} ${A(x)}>${x.en}</${tag}>`;
+  const S = (en, he) => ({ en, he });
+  /* the documents get the site's own type and palette: the stylesheet lives
+     in a <style> block inside the page body, not in the shared head */
+  const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
+  const NAV = [
+    ["./#collection", S("Collection", "הקולקציה")],
+    ["./#bespoke", S("Bespoke", "בהתאמה אישית")],
+    ["./#build", S("Your bracelet", "הצמיד שלכם")],
+    ["about/", S("About", "אודות")]
+  ];
+  const LANGS = [["en", "EN"], ["he", "עב"], ["fr", "FR"], ["ar", "AR"], ["ru", "RU"]];
+  const header = here => `<header class="dhd">
+<a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
+<nav class="dnav" aria-label="Site">${NAV.map(([h, t]) => `<a href="${h}"${h === here + "/" ? ' aria-current="page"' : ""} ${A(t)}>${t.en}</a>`).join("")}</nav>
+<div class="dact"><div class="dlang" role="group" aria-label="Language">${LANGS.map(([c, l]) => `<button type="button" data-lang="${c}" lang="${c}">${l}</button>`).join("")}</div>
+<a class="dbook" href="./#concierge" ${A(S("Book a viewing", "פגישה פרטית"))}>Book a viewing</a></div>
+</header>`;
+  const footer = here => `<footer class="dft">
+<a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
+<div class="dfcols">
+<div><div class="k" ${A(S("The house", "בית התכשיטים"))}>The house</div>${NAV.map(([h, t]) => `<a href="${h}" ${A(t)}>${t.en}</a>`).join("")}<a href="./#concierge" ${A(S("Book a private viewing", "קביעת פגישה פרטית"))}>Book a private viewing</a></div>
+<div><div class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</div>${POLICIES.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div>
+<div><div class="k" ${A(S("Visit", "ביקור"))}>Visit</div><span ${A(S("Dubai", "דובאי"))}>Dubai</span><span ${A(S("Tel Aviv", "תל אביב"))}>Tel Aviv</span><span ${A(S("By appointment", "בתיאום מראש"))}>By appointment</span><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+</div>
+<div class="dfbot k"><span>© SILAVU MMXXVI</span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
+</footer>`;
+  /* the reader's language, applied before the first paint where it can be:
+     Hebrew is in the page, the others come from the site's dictionaries */
+  const langScript = titleOf => `<script>(function () {
+  var h = document.documentElement, cache = {}, orig = document.title;
+  function apply(l, dict) {
+    var rtl = l === "he" || l === "ar";
+    h.lang = l; h.dir = rtl ? "rtl" : "ltr";
+    if (rtl) h.setAttribute("data-ns", "1"); else h.removeAttribute("data-ns");
+    document.querySelectorAll("[data-en]").forEach(function (el) {
+      var en = el.getAttribute("data-en"), t = l === "en" ? en : l === "he" ? el.getAttribute("data-he") : dict && dict[en];
+      el.innerHTML = t || en;
+    });
+    document.querySelectorAll(".dlang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === l ? "true" : "false"); });
+    var t1 = document.querySelector("[data-doc-title]");
+    document.title = l === "en" ? orig : (t1 ? t1.textContent : "") ${titleOf};
+  }
+  function go(l) {
+    try { localStorage.setItem("silavu-lang", l); } catch (e) {}
+    if (l === "en" || l === "he" || cache[l]) return apply(l, cache[l]);
+    fetch("lang/" + l + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); })
+      .then(function (d) { cache[l] = d; apply(l, d); }).catch(function () { apply("en"); });
+  }
+  document.querySelectorAll(".dlang button").forEach(function (b) { b.addEventListener("click", function () { go(b.getAttribute("data-lang")); }); });
+  var l = "en"; try { l = localStorage.getItem("silavu-lang") || "en"; } catch (e) {}
+  go(l);
+})();</script>`;
+  const page = (slug, title, desc, inner, titleOf) => {
+    const dir = path.join(outDir, slug);
     fs.mkdirSync(dir, { recursive: true });
     const dhead = head
-      .replace(/<title[^>]*>[^<]*<\/title>/, `<title>${d.title.en} | SILAVU</title>`)
-      .replace(/(<meta name="description" content=")[^"]*/, `$1${d.lede.en}`)
-      .replace(base + "/", base + "/" + d.slug + "/")
+      .replace(/<title[^>]*>[^<]*<\/title>/, `<title>${title}</title>`)
+      .replace(/(<meta name="description" content=")[^"]*/, `$1${escA(desc)}`)
+      .replace(`<link rel="canonical" href="${base}/">`, `<link rel="canonical" href="${base}/${slug}/">`)
       /* the site lives under a sub-path on Pages: every relative address in
          the shared head and in the documents resolves from the site root */
       .replace(/<head>\n/, `<head>\n<base href="../">\n`)
       /* the documents never show the opening photograph */
       .replace(/<link rel="preload" as="image"[^>]*>\n/g, "")
       .replace(/<link rel="alternate" hreflang[^>]*>\n/g, "")
-      .replace(/(<meta property="og:url" content=")[^"]*/, `$1${base}/${d.slug}/`)
-      .replace(/(<meta property="og:title" content=")[^"]*/, `$1${d.title.en} | SILAVU`)
-      .replace(/(<meta property="og:description" content=")[^"]*/, `$1${d.lede.en}`)
-      .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${d.title.en} | SILAVU`)
-      .replace(/(<meta name="twitter:description" content=")[^"]*/, `$1${d.lede.en}`);
-    /* the documents get the site's own type and palette: the stylesheet lives
-       in a <style> block inside the page body, not in the shared head */
-    const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
-    /* Every line carries its English and its Hebrew, and the page follows
-       the language the reader chose on the site (kept in their browser):
-       Hebrew is swapped in at once and the page turns right to left; French,
-       Russian and Arabic come from the same dictionaries the site uses. */
-    const A = x => `data-en="${escA(x.en)}" data-he="${escA(x.he)}"`;
-    const body = styleBlock + `<main class="doc ivory">
-<a class="back" href="./"><span class="bk" aria-hidden="true">←</span> SILAVU</a>
-<h1 ${A(d.title)}>${d.title.en}</h1>
-<p class="lede" ${A(d.lede)}>${d.lede.en}</p>
-${d.body.map(([h, t]) => `<section><h2 ${A(h)}>${h.en}</h2><p ${A(t)}>${t.en}</p></section>`).join("\n")}
-<div class="docfoot">${others(d)}</div>
-</main>
-<script>(function () {
-  var l = "en"; try { l = localStorage.getItem("silavu-lang") || "en"; } catch (e) {}
-  if (l === "en") return;
-  var h = document.documentElement, rtl = l === "he" || l === "ar";
-  function apply(dict) {
-    h.lang = l; if (rtl) { h.dir = "rtl"; h.setAttribute("data-ns", "1"); }
-    document.querySelectorAll("[data-en]").forEach(function (el) {
-      var t = l === "he" ? el.getAttribute("data-he") : dict && dict[el.getAttribute("data-en")];
-      if (t) el.textContent = t;
-    });
-    var t1 = document.querySelector("h1"); if (t1) document.title = t1.textContent + " | SILAVU";
-  }
-  if (l === "he") apply(null);
-  else fetch("lang/" + l + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); }).then(apply).catch(function () {});
-})();</script>`;
+      .replace(/(<meta property="og:url" content=")[^"]*/, `$1${base}/${slug}/`)
+      .replace(/(<meta property="og:title" content=")[^"]*/, `$1${title}`)
+      .replace(/(<meta property="og:description" content=")[^"]*/, `$1${escA(desc)}`)
+      .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${title}`)
+      .replace(/(<meta name="twitter:description" content=")[^"]*/, `$1${escA(desc)}`);
+    const body = styleBlock + `<div class="dpage" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n` + langScript(titleOf);
     fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
+  };
+  for (const d of POLICIES) {
+    const inner = `<main class="doc">
+<div class="k gold" ${A(S("Client care", "שירות לקוחות"))}>Client care</div>
+<h1 data-doc-title ${A(d.title)}>${d.title.en}</h1>
+<p class="lede" ${A(d.lede)}>${d.lede.en}</p>
+${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\n")}
+<p class="dask"><span ${A(S("A question this page does not answer?", "יש שאלה שלא נענתה כאן?"))}>A question this page does not answer?</span> <a href="./#concierge" ${A(S("Write to the concierge", "כתבו לקונסיירז'"))}>Write to the concierge</a></p>
+</main>`;
+    page(d.slug, `${d.title.en} | SILAVU`, d.lede.en, inner, '+ " | SILAVU"');
   }
-  console.log("documents:", POLICIES.map(d => d.slug).join(" "));
+  {
+    const a = ABOUT;
+    const portrait = a.portrait
+      ? `<img src="img/${a.portrait}-1200.jpg" srcset="img/${a.portrait}-800.jpg 800w, img/${a.portrait}-1200.jpg 1200w" sizes="(min-width:900px) 40vw, 92vw" alt="${escA(a.name.en)}, ${escA(a.role.en)}" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)}">`
+      : `<div class="aph" role="img" aria-label="${escA(a.name.en)}">${mark("aphmk", "b")}</div>`;
+    const inner = `<main class="doc about">
+<span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
+<header class="ahero">
+<div class="k gold" ${A(a.eyebrow)}>${a.eyebrow.en}</div>
+<h1 data-doc-title ${A(a.h1)}>${a.h1.en}</h1>
+<p class="lede" ${A(a.lede)}>${a.lede.en}</p>
+</header>
+<section class="afounder">
+<figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
+<div class="atext">${T("h2", a.name)}${a.founder.map(p => T("p", p)).join("")}</div>
+</section>
+<section class="aatelier">
+${T("h2", a.atelierH)}${T("p", a.atelierP, "aint")}
+<ol class="aroles">${a.roles.map(([h, t]) => `<li>${T("h3", h)}${T("p", t)}</li>`).join("")}</ol>
+</section>
+<section class="aclose">${T("p", a.close)}<a class="btn solid" href="./#concierge" ${A(a.cta)}>${a.cta.en}</a></section>
+</main>`;
+    /* the tab reads the same in every language; the heading carries markup */
+    page(a.slug, a.seo.en, a.desc.en, inner.replace("<h1 data-doc-title ", "<h1 "), "");
+  }
+  console.log("documents:", POLICY_SLUGS.join(" "));
 }
 /* the extra languages travel as data, fetched only when someone picks one */
 {

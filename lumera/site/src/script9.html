@@ -157,7 +157,9 @@
   }
   function mixMetal(f, a) { var c = Math.round(120 + f * 110); return "rgba(" + c + "," + (c + 3) + "," + (c + 8) + "," + a + ")"; }
 
-  function progress() { var r = pin.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? c01(-r.top / span) : 0; }
+  /* the drawing starts as the chapter comes up the screen, not once it has
+     filled it, so nobody scrolls through a black frame waiting for the line */
+  function progress() { var r = pin.getBoundingClientRect(), lead = innerHeight * 0.75, span = r.height - innerHeight + lead; return span > 0 ? c01((lead - r.top) / span) : 0; }
   var capAt = -1;
   function captions(p) {
     var c = p < 0.30 ? 0 : p < 0.50 ? 1 : p < 0.66 ? 2 : 3;

@@ -158,6 +158,7 @@ ${markDefs()}
     <a href="#bespoke"><span class="k">03</span><span data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</span></a>
     <a href="#build"><span class="k">04</span><span data-en="The Line" data-he="הקו">The Line</span></a>
     <a href="#concierge"><span class="k">05</span><span data-en="Enquire" data-he="פנייה">Enquire</span></a>
+     <a href="about/"><span class="k">06</span><span data-en="About" data-he="אודות">About</span></a>
   </div>
   <div class="mfoot">
     <a class="btn solid" href="#concierge" style="justify-self:start" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
@@ -287,7 +288,7 @@ ${markDefs()}
             <li class="jstep" data-i="5"><button type="button" class="jgo" aria-label="Yours to wear"><span class="jn">06</span><span class="jt" data-en="Yours to wear" data-he="מוכן לענידה">Yours to wear</span></button><p class="jp" data-en="Brought to you by hand. Four to six weeks from the first conversation." data-he="נמסר לכם אישית, ארבעה עד שישה שבועות אחרי השיחה הראשונה.">Brought to you by hand. Four to six weeks from the first conversation.</p></li>
             </ol>
             <div class="jfoot">
-              <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהזמנה אישית" data-en="Begin your commission" data-he="לתיאום שיחה ראשונה">Begin your commission</a>
+              <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהתאמה אישית" data-en="Begin your commission" data-he="לתיאום שיחה ראשונה">Begin your commission</a>
             </div>
           </div>
         </div>
@@ -373,21 +374,6 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="wrist" data-n="04" data-title-en="On the wrist" data-title-he="על פרק היד" aria-label="On the wrist">
-    <div class="wpin" id="wpin">
-      <div class="wstick">
-        <div class="wframe" id="wframe">
-          <picture><source media="(max-width:899px)" srcset="/img/wristv-600.jpg 600w, /img/wristv-900.jpg 900w, /img/wristv-1229.jpg 1229w" sizes="100vw"><img id="wimg" src="/img/wrist-1300.jpg" srcset="/img/wrist-900.jpg 900w, /img/wrist-1300.jpg 1300w, /img/wrist-1900.jpg 1900w, /img/wrist-2560.jpg 2560w" sizes="100vw" alt="The SILAVU Line worn on the wrist beside a watch" data-alt-he="צמיד SILAVU Line ענוד על פרק היד לצד שעון" loading="lazy" decoding="async"></picture>
-          <div class="veil"></div>
-        </div>
-        <div class="wtxt" id="wtxt">
-          <h2 class="h" data-en="Made to sit flat <em>beside your watch.</em>" data-he="מונח שטוח <em>לצד השעון שלכם.</em>">Made to sit flat <em>beside your watch.</em></h2>
-          <p class="p" data-en="3.6 millimetres high, a hidden clasp, no sharp edges." data-he="בגובה 3.6 מ&quot;מ, עם סוגר נסתר ובלי פינות חדות.">3.6 millimetres high, a hidden clasp, no sharp edges.</p>
-          <div><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
 
   
@@ -463,7 +449,7 @@ ${markDefs()}
   <section id="end" data-n="" aria-label="Footer">
     <div class="wrap">
     <div class="fgrid">
-      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
+      <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="about/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a><a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
       <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="Private high jewellery" data-he="תכשיטנות עילית">Private high jewellery</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>

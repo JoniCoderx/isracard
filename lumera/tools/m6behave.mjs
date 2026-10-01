@@ -38,7 +38,7 @@ ok(tabs==="00100" && tabs2==="00100", `${w} tabs: one open, a second tap keeps i
 await p.evaluate(()=>{const e=document.getElementById("stripwrap"); scrollTo(0,e.getBoundingClientRect().top+scrollY-80);}); await p.waitForTimeout(1000);
 if (await p.evaluate(()=>document.getElementById("cbar").classList.contains("on"))) { await p.tap("#cbar .cbr"); await p.waitForTimeout(1800);
   const r=await p.evaluate(()=>({msg:document.getElementById("fMsg").value, top:Math.round(document.getElementById("concierge").getBoundingClientRect().top)}));
-  ok(/ct/.test(r.msg) && r.top<300, `${w} Reserve in the bar writes the enquiry and goes to it (${r.msg.slice(0,50)}…)`); }
+  ok(/ct/.test(r.msg) && r.top<300, `${w} Reserve in the bar writes the enquiry and goes to it (top ${r.top}; ${r.msg.slice(0,50)}…)`); }
 ok(await p.evaluate(()=>document.documentElement.scrollWidth-innerWidth)===0 && errs.length===0, `${w} no sideways scroll, no errors ${errs.join("|")}`);
 await p.close(); }
 await b.close(); console.log(pass,"pass,",fail,"fail");

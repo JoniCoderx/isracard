@@ -36,7 +36,7 @@ export const POLICIES = [
       [S("How long", "משך השמירה"),
        S("An enquiry that does not become a commission is kept for two years and then deleted. A commission is kept for as long as the piece is under the house's care, because a certificate, a resize and a valuation all need its record.",
          "פנייה שלא הבשילה להזמנה נשמרת שנתיים ואז נמחקת. פרטי הזמנה נשמרים כל עוד התכשיט בטיפולנו, משום שהנפקת תעודה, שינוי מידה והערכת שווי מסתמכים עליהם.")],
-      [S("Your say", "הזכויות שלכם"),
+      [S("Your rights", "הזכויות שלכם"),
        S("Write to concierge@silavu.com and ask for a copy of what is held, a correction, or its deletion. It is done, and you are told when.",
          "כתבו אל concierge@silavu.com ובקשו לעיין במידע השמור, לתקן אותו או למחוק אותו. הבקשה תטופל, ונעדכן אתכם כשהיא הושלמה.")]
     ]
@@ -54,11 +54,11 @@ export const POLICIES = [
        S("The configurator gives an indicative estimate. It is not a quotation. The figure is set once the stones are selected and certified and depends on what exists in that grade at the time; currency conversions are indicative and move daily.",
          "כלי העיצוב מציג הערכה ראשונית בלבד ואינו הצעת מחיר. המחיר הסופי נקבע לאחר בחירת האבנים והנפקת התעודות, ותלוי בזמינות אבנים באותה דרגה באותה עת. המרות המטבע משוערות ומשתנות מדי יום.")],
       [S("Commissioning", "ביצוע הזמנה"),
-       S("A commission begins on a written confirmation and a deposit. Because each piece is cut, cast and set for one person, a commission cannot be cancelled once the stones are cut. Before that point the deposit is returned in full. Nothing here limits the rights the consumer law of your country gives you.",
-         "הזמנה נכנסת לתוקף עם אישור בכתב ותשלום מקדמה. מאחר שכל תכשיט נחתך, נוצק ומשובץ עבור לקוח אחד, לא ניתן לבטל הזמנה לאחר חיתוך האבנים; עד אז המקדמה מוחזרת במלואה. אין באמור כדי לגרוע מזכויותיכם לפי דיני הגנת הצרכן במדינתכם.")],
+       S("A commission begins on a written confirmation and a deposit. Because each piece is cast and set for one person, a commission cannot be cancelled once its stones are bought and its metal is cast. Before that point the deposit is returned in full. Nothing here limits the rights the consumer law of your country gives you.",
+         "הזמנה נכנסת לתוקף עם אישור בכתב ותשלום מקדמה. מאחר שכל תכשיט נוצק ומשובץ עבור לקוח אחד, לא ניתן לבטל הזמנה לאחר רכישת האבנים ויציקת המתכת. עד אז המקדמה מוחזרת במלואה. אין באמור כדי לגרוע מזכויותיכם לפי דיני הגנת הצרכן במדינתכם.")],
       [S("What the house is", "מי אנחנו"),
        S("SILAVU, Dubai and Tel Aviv, by appointment only. The company you contract with, its registration and its address are named on your written confirmation and on the invoice. These terms are governed by the law of the place the piece is delivered.",
-         "סילאבו, דובאי ותל אביב, בתיאום מראש בלבד. שם החברה שעמה נחתמת העסקה, מספר הרישום שלה וכתובתה מופיעים באישור ההזמנה ובחשבונית. על תנאים אלה חל הדין של המקום שבו נמסר התכשיט.")]
+         "\u200fSILAVU, דובאי ותל אביב, בתיאום מראש בלבד. שם החברה שעמה נחתמת העסקה, מספר הרישום שלה וכתובתה מופיעים באישור ההזמנה ובחשבונית. על תנאים אלה חל הדין של המקום שבו נמסר התכשיט.")]
     ]
   },
   {
@@ -137,8 +137,8 @@ export const POLICIES = [
        S("Insured door-to-door carriage for the full value, signature required, tracked from the moment it leaves the workshop. Carriage and insurance are on the house. Duties and import tax at the destination are not, and are yours.",
          "משלוח מבוטח מדלת לדלת בשווי המלא, בחתימה ובמעקב מרגע היציאה מהסדנה. עלות המשלוח והביטוח עלינו. מכס ומיסי יבוא במדינת היעד חלים על הלקוח.")],
       [S("When", "מועדים"),
-       S("A finished piece leaves within three working days of payment clearing. A commission is four to six weeks from the order, and you are told the week it will be ready as soon as the stones are cut.",
-         "תכשיט מוכן נשלח תוך שלושה ימי עסקים מקבלת התשלום. הזמנה אישית נמשכת ארבעה עד שישה שבועות, ומיד לאחר חיתוך האבנים נודיע לכם באיזה שבוע היא תהיה מוכנה.")],
+       S("A finished piece leaves within three working days of payment clearing. A commission is four to six weeks from the order, and you are told the week it will be ready as soon as the stones are chosen.",
+         "תכשיט מוכן נשלח תוך שלושה ימי עסקים מקבלת התשלום. הזמנה אישית נמשכת ארבעה עד שישה שבועות, ומיד לאחר בחירת האבנים נודיע לכם באיזה שבוע היא תהיה מוכנה.")],
       [S("If something is wrong on arrival", "אם התכשיט הגיע פגום"),
        S("Tell the house within forty-eight hours and do not sign for a package whose seal is broken. A piece that arrives damaged is replaced or remade, carried both ways at the house's cost.",
          "הודיעו לנו תוך 48 שעות, ואל תחתמו על חבילה שהחותם שלה פגום. תכשיט שהגיע פגום יוחלף או ייוצר מחדש, והמשלוח לשני הכיוונים על חשבוננו.")]
