@@ -19,7 +19,7 @@ export const ABOUT = {
   h1: S("One designer. <em>Ten pairs of hands.</em>", "מעצב אחד. <em>עשרה זוגות ידיים.</em>"),
   lede: S("SILAVU is the house of Ariel Silas, a high jewellery designer working in Dubai, and of the ten specialists who make what he draws.",
           "‏SILAVU הוא בית התכשיטים של אריאל סילס, מעצב תכשיטי יוקרה הפועל בדובאי, ושל עשרת אנשי המקצוע שמייצרים את מה שהוא משרטט."),
-  portrait: null,
+  portrait: "ariel-silas",
   name: S("Ariel Silas", "אריאל סילס"),
   role: S("Founder and designer", "מייסד ומעצב"),
   founder: [
