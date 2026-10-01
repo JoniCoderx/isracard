@@ -246,7 +246,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   const NAV = [
     ["./#collection", S("Collection", "הקולקציה")],
     ["./#bespoke", S("Bespoke", "בהתאמה אישית")],
-    ["./#build", S("Your bracelet", "הצמיד שלכם")],
+    ["./#build", S("The Line", "הקו")],
     ["about/", S("About", "אודות")]
   ];
   const LANGS = [["en", "EN"], ["he", "עב"], ["fr", "FR"], ["ar", "AR"], ["ru", "RU"]];
@@ -330,12 +330,11 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
     const inner = `<main class="doc about">
 <span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
 <header class="ahero">
-<div class="k gold" ${A(a.eyebrow)}>${a.eyebrow.en}</div>
 <h1 data-doc-title ${A(a.h1)}>${a.h1.en}</h1>
 <p class="lede" ${A(a.lede)}>${a.lede.en}</p>
 </header>
 <section class="afounder">
-<figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
+<figure class="aport">${portrait}<figcaption><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
 <div class="atext">${T("h2", a.name)}${a.founder.map(p => T("p", p)).join("")}</div>
 </section>
 <section class="aatelier">

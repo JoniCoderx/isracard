@@ -5050,3 +5050,9 @@
     #enquire .embhalo { transform:translate(-50%,-50%) scale(.7); }
     #enquire #concierge .cbody > div:first-child { padding-inline-end:calc(clamp(78px,22vw,112px) + 10px); }
   }
+
+  /* ══ v141 ══ four stages, so the walk through them is shorter */
+  .jpin { height:340svh; }
+  @media (max-width:1100px) { .jpin { height:300svh; } }
+
+  #enquire .chan[hidden] { display:none !important; }

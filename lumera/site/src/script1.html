@@ -774,10 +774,18 @@
       document.body.classList.toggle("cbar-on", on);
       if (on) words();
     }
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (es) { es.forEach(function (e) { inBuild = e.isIntersecting; }); show(); }, { rootMargin: "-35% 0px -35% 0px" }).observe(build);
-      if (total) new IntersectionObserver(function (es) { es.forEach(function (e) { totalSeen = e.isIntersecting; }); show(); }, { threshold: 0.35 }).observe(total);
+    /* measured on scroll rather than observed: a tall estimate card could sit
+       in full view without ever crossing an observer's threshold, and the
+       bar stayed up over the very figure it summarises */
+    function measure() {
+      var h = innerHeight, b = build.getBoundingClientRect();
+      inBuild = b.top < h * 0.65 && b.bottom > h * 0.35;
+      if (total) { var t = total.getBoundingClientRect(), vis = Math.max(0, Math.min(h, t.bottom) - Math.max(0, t.top));
+        totalSeen = vis >= Math.min(t.height * 0.35, h * 0.3); }
+      show();
     }
+    var mt = 0; addEventListener("scroll", function () { if (!mt) mt = requestAnimationFrame(function () { mt = 0; measure(); }); }, { passive: true });
+    addEventListener("resize", measure); setTimeout(measure, 0);
     opts.addEventListener("click", function () { setTimeout(words, 30); });
     addEventListener("silavu:build", words);
     if (window.MutationObserver) { new MutationObserver(words).observe(est, { childList: true, characterData: true, subtree: true });
@@ -931,7 +939,9 @@
     var w = form.querySelector('.chip[data-ch="WhatsApp"]'); if (w && wa) w.hidden = false;
     var c = form.querySelector('.chip[data-ch="Call"]'); if (c && tel) c.hidden = false;
     /* where the house answers on WhatsApp, that is the easy way and it comes first */
-    if (w && wa) { form.querySelectorAll(".chan .chip[data-ch]").forEach(function (x) { x.classList.toggle("on", x === w); }); chan = "WhatsApp"; setTimeout(function () { if (typeof chanLabel === "function") chanLabel(); }, 0); }
+    if (w && wa) { form.querySelectorAll(".chan .chip[data-ch]").forEach(function (x) { x.classList.toggle("on", x === w); }); chan = "WhatsApp"; setTimeout(function () { if (typeof chanLabel === "function") chanLabel(); }, 0); }    /* a choice of one is not a choice: the row only appears once WhatsApp or a
+       phone number is set on the form */
+    var row = form.querySelector(".chan"); if (row) row.hidden = form.querySelectorAll(".chan .chip[data-ch]:not([hidden])").length < 2;
   })();
   /* v98 — the button says what it is about to do. Whichever way a reader asks
      to be answered, the last thing they press used to say "Continue by email",

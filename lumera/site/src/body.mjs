@@ -135,10 +135,10 @@ ${markDefs()}
 
 <header class="sh" id="header">
   <nav id="topnav">
-    <a href="#inside" data-en="The box" data-he="הקופסה">The box</a>
     <a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a>
     <a href="#bespoke" data-en="Bespoke" data-he="בהתאמה אישית">Bespoke</a>
     <a href="#build" data-en="The Line" data-he="הקו">The Line</a>
+    <a href="about/" data-en="About" data-he="אודות">About</a>
   </nav>
   <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu"><i></i><span data-en="Menu" data-he="תפריט">Menu</span></button>
   <a class="mark" href="#hero" aria-label="SILAVU">${lockup()}</a>
@@ -263,7 +263,7 @@ ${markDefs()}
     <div class="sechead jhead">
       <div class="k gold rv ol" data-en="How a bespoke piece is made" data-he="איך נוצר תכשיט בהתאמה אישית">How a bespoke piece is made</div>
       <h2 class="h2 sp rv" data-en="From one conversation <em>to your wrist.</em>" data-he="משיחה אחת <em>ועד פרק היד שלכם.</em>">From one conversation <em>to your wrist.</em></h2>
-      <p class="p rv d2" data-en="A piece made for you alone, in six steps and four to six weeks. Scroll through it." data-he="תכשיט שנעשה רק בשבילכם, בשישה שלבים ובארבעה עד שישה שבועות. גללו כדי לראות.">A piece made for you alone, in six steps and four to six weeks. Scroll through it.</p>
+      <p class="p rv d2" data-en="A piece made for you alone, in four steps and four to six weeks." data-he="תכשיט שנעשה רק בשבילכם, בארבעה שלבים ובארבעה עד שישה שבועות.">A piece made for you alone, in four steps and four to six weeks.</p>
     </div>
     </div>
     <div class="jpin" id="jpin">
@@ -272,20 +272,16 @@ ${markDefs()}
           <div class="jstage">
           <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", { en: "Loose round brilliant diamonds on folded diamond paper beside a notebook, a pencil and a loupe, on white", he: "יהלומי בריליאנט לא משובצים על נייר יהלומים, לצד מחברת, עיפרון וזכוכית מגדלת, על רקע לבן" }, SIZES_JRN, false)}</div></figure>
           <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", { en: "A graphite design sheet for the Line bracelet, with studies of one setting and of the clasp", he: "גיליון עיצוב בעיפרון לצמיד Line, עם סקיצות של שיבוץ ושל הסוגר" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="02"><div class="jim">${pic("jn3", { en: "A castable wax model of a section of the Line bracelet beside a steel caliper", he: "מודל שעווה ליציקה של מקטע מצמיד Line, לצד קליבר פלדה" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="03"><div class="jim">${pic("jn4", { en: "Tweezers placing a brilliant into one of the last open settings of the Line bracelet", he: "פינצטה מניחה יהלום בריליאנט באחד השיבוצים האחרונים בצמיד Line" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="04"><div class="jim">${pic("jn5", { en: "The finished Line bracelet in its black lacquer box, beside its certificate", he: "צמיד Line המוגמר בקופסת הלכה השחורה, לצד התעודה שלו" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="05"><div class="jim">${pic("jn6", { en: "The finished Line bracelet laid in a soft oval, ready to wear", he: "צמיד Line המוגמר מונח באליפסה רכה, מוכן לענידה" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="02"><div class="jim">${pic("jn4", { en: "Tweezers placing a brilliant into one of the last open settings of the Line bracelet", he: "פינצטה מניחה יהלום בריליאנט באחד השיבוצים האחרונים בצמיד Line" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="03"><div class="jim">${pic("jn5", { en: "The finished Line bracelet in its black lacquer box, beside its certificate", he: "צמיד Line המוגמר בקופסת הלכה השחורה, לצד התעודה שלו" }, SIZES_JRN, true)}</div></figure>
             <div class="jcount k" aria-hidden="true"><b id="jnow">01</b> / 06</div>
           </div>
           <div class="jside">
             <ol class="jsteps">
-            <li class="jstep on" data-i="0"><button type="button" class="jgo" aria-label="The conversation"><span class="jn">01</span><span class="jt" data-en="The conversation" data-he="השיחה">The conversation</span></button><p class="jp" data-en="You tell us who it is for, what it marks and how it should feel. Nothing is drawn yet." data-he="אתם מספרים לנו למי התכשיט, מה הוא מציין ואיך הוא צריך להרגיש. עוד לא משרטטים דבר.">You tell us who it is for, what it marks and how it should feel. Nothing is drawn yet.</p></li>
-            <li class="jstep" data-i="1"><button type="button" class="jgo" aria-label="The first lines"><span class="jn">02</span><span class="jt" data-en="The first lines" data-he="הקווים הראשונים">The first lines</span></button><p class="jp" data-en="Sketches in pencil around your idea, until one of them is unmistakably yours." data-he="סקיצות בעיפרון סביב הרעיון שלכם, עד שאחת מהן מרגישה שלכם לגמרי.">Sketches in pencil around your idea, until one of them is unmistakably yours.</p></li>
-            <li class="jstep" data-i="2"><button type="button" class="jgo" aria-label="Precision in 3D"><span class="jn">03</span><span class="jt" data-en="Precision in 3D" data-he="דיוק בתלת־ממד">Precision in 3D</span></button><p class="jp" data-en="Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand." data-he="כל קימור נבנה בדיוק של עשירית מילימטר, וכל אבן נבחרת יחד אתכם, עם תעודת המעבדה ביד.">Every curve modelled to the tenth of a millimetre, and every stone chosen with you, report in hand.</p></li>
-            <li class="jstep" data-i="3"><button type="button" class="jgo" aria-label="At the bench"><span class="jn">04</span><span class="jt" data-en="At the bench" data-he="על שולחן הצורף">At the bench</span></button><p class="jp" data-en="Cast, set and polished by hand in Dubai, stone by stone, under the loupe." data-he="נוצק, משובץ ומלוטש ביד בדובאי, אבן אחר אבן, תחת זכוכית מגדלת.">Cast, set and polished by hand in Dubai, stone by stone, under the loupe.</p></li>
-            <li class="jstep" data-i="4"><button type="button" class="jgo" aria-label="Signed and boxed"><span class="jn">05</span><span class="jt" data-en="Signed and boxed" data-he="חתום וארוז">Signed and boxed</span></button><p class="jp" data-en="The house mark struck inside, the certificates written in your name, closed in black lacquer." data-he="סמל הבית מוטבע בפנים, התעודות נכתבות על שמכם, והכול נסגר בקופסת לכה שחורה.">The house mark struck inside, the certificates written in your name, closed in black lacquer.</p></li>
-            <li class="jstep" data-i="5"><button type="button" class="jgo" aria-label="Yours to wear"><span class="jn">06</span><span class="jt" data-en="Yours to wear" data-he="מוכן לענידה">Yours to wear</span></button><p class="jp" data-en="Brought to you by hand. Four to six weeks from the first conversation." data-he="נמסר לכם אישית, ארבעה עד שישה שבועות אחרי השיחה הראשונה.">Brought to you by hand. Four to six weeks from the first conversation.</p></li>
+            <li class="jstep on" data-i="0"><button type="button" class="jgo" aria-label="Your idea"><span class="jn">01</span><span class="jt" data-en="Your idea" data-he="הרעיון שלכם">Your idea</span></button><p class="jp" data-en="Who it is for, what it marks, how it should feel. Bring a sketch, a photograph or only a feeling." data-he="למי התכשיט, מה הוא מציין ואיך הוא צריך להרגיש. אפשר להביא סקיצה, תמונה או רק תחושה.">Who it is for, what it marks, how it should feel. Bring a sketch, a photograph or only a feeling.</p></li>
+            <li class="jstep" data-i="1"><button type="button" class="jgo" aria-label="The design"><span class="jn">02</span><span class="jt" data-en="The design" data-he="העיצוב">The design</span></button><p class="jp" data-en="Ariel draws it by hand, it is modelled in 3D to a tenth of a millimetre, and the stones are chosen with you." data-he="אריאל משרטט אותו ביד, הוא נבנה בתלת־ממד בדיוק של עשירית מילימטר, והאבנים נבחרות יחד אתכם.">Ariel draws it by hand, it is modelled in 3D to a tenth of a millimetre, and the stones are chosen with you.</p></li>
+            <li class="jstep" data-i="2"><button type="button" class="jgo" aria-label="At the bench"><span class="jn">03</span><span class="jt" data-en="At the bench" data-he="בסדנה">At the bench</span></button><p class="jp" data-en="Cast, set stone by stone under the microscope and polished by hand in our Dubai atelier." data-he="נוצק, משובץ אבן אחר אבן תחת מיקרוסקופ ומלוטש ביד בסדנה שלנו בדובאי.">Cast, set stone by stone under the microscope and polished by hand in our Dubai atelier.</p></li>
+            <li class="jstep" data-i="3"><button type="button" class="jgo" aria-label="Yours"><span class="jn">04</span><span class="jt" data-en="Yours" data-he="שלכם">Yours</span></button><p class="jp" data-en="Signed with the house mark, boxed with its certificates and brought to you in person." data-he="נחתם בסמל הבית, נארז עם התעודות שלו ונמסר לכם אישית.">Signed with the house mark, boxed with its certificates and brought to you in person.</p></li>
             </ol>
             <div class="jfoot">
               <a class="btn solid" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהתאמה אישית" data-en="Begin your commission" data-he="לתיאום שיחה ראשונה">Begin your commission</a>
@@ -420,7 +416,7 @@ ${markDefs()}
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Bespoke commission" data-he="תכשיט בהתאמה אישית">Bespoke commission</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Something else" data-he="משהו אחר">Something else</button></div>
           <div class="field"><textarea id="fMsg" rows="2"></textarea><label for="fMsg" data-en="How can we help" data-he="איך נוכל לעזור">How can we help</label></div>
-          <div class="chan"><span class="k" data-en="How should we reach you?" data-he="איך נחזור אליכם?">How should we reach you?</span>
+          <div class="chan" hidden><span class="k" data-en="How should we reach you?" data-he="איך נחזור אליכם?">How should we reach you?</span>
             <button type="button" class="chip" data-ch="WhatsApp" hidden>WhatsApp</button>
             <button type="button" class="chip" data-ch="Call" data-en="Call the house" data-he="התקשרו אלינו" hidden>Call the house</button>
             <button type="button" class="chip on" data-ch="Email" data-en="Email" data-he="אימייל">Email</button></div>

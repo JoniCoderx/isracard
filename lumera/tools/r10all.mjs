@@ -28,7 +28,7 @@ ok(!r.exceptional, `${dv} exceptional pieces section removed`);
 ok(!r.colActs && /in three pieces/.test(r.colH) && /A few pieces/.test(r.colP), `${dv} collection head: buttons gone, new sentences`);
 ok(JSON.stringify(r.names)===JSON.stringify(["SILAVU MOMENTBracelet","SILAVU ICONRing","SILAVU SOULNecklace"]), `${dv} cards named ${JSON.stringify(r.names)}`);
 ok(r.lines[0]==="A delicate 18k white-gold chain, finished with the SILAVU signature in a polished sculptural form." && r.lines[1]==="A sculptural 18k white-gold ring with the SILAVU signature set in pavé diamonds." && r.lines[2]==="A fine 18k white-gold chain with a pavé SILAVU signature pendant at its center.", `${dv} card descriptions exactly as given`);
-ok(/255, 255, 255/.test(r.bespokeBg||"") && r.jpin && r.jsteps===6, `${dv} journey white, scroll-pinned, six steps`);
+ok(/255, 255, 255/.test(r.bespokeBg||"") && r.jpin && r.jsteps===4, `${dv} journey white, scroll-pinned, four steps`);
 ok(r.macro.some(x=>/Light goes in/.test(x)) && !r.macro.some(x=>/Fifty-seven/.test(x)), `${dv} macro heading rewritten`);
 ok(r.drawcv && !r.benchcv, `${dv} The Line is the drawing, car film gone`);
 ok(r.caratShown==="none" && r.cacts.join()==="saveImg,sendSpec,tryonBtn2" && !r.buildActs, `${dv} builder trimmed; save / send / try on present`);
@@ -44,9 +44,9 @@ if (w>900) { const fw=await p.evaluate(()=>document.getElementById("cform").getB
 const j=await p.evaluate(async()=>{ const e=document.getElementById("jpin"), top=e.getBoundingClientRect().top+scrollY, span=e.offsetHeight-innerHeight; document.documentElement.style.scrollBehavior="auto";
   scrollTo(0,top+span*0.1); await new Promise(r=>setTimeout(r,300)); const a=document.getElementById("jnow").textContent, sa=document.querySelector(".jsticky").getBoundingClientRect().top;
   scrollTo(0,top+span*0.9); await new Promise(r=>setTimeout(r,300)); const b2=document.getElementById("jnow").textContent, sb=document.querySelector(".jsticky").getBoundingClientRect().top; return {a,b2,sa:Math.round(sa),sb:Math.round(sb)}; });
-if (w>900) ok(j.a==="01" && j.b2==="06" && Math.abs(j.sa-j.sb)<3, `${dv} journey walks 01→06 by scroll and holds still ${JSON.stringify(j)}`);
-else { const v=await p.evaluate(()=>{ const sh=[...document.querySelectorAll("#bespoke .jshot")], st=[...document.querySelectorAll("#bespoke .jstep")]; return { shots:sh.filter(e=>getComputedStyle(e).opacity==="1"&&e.getBoundingClientRect().height>100).length, steps:st.filter(e=>getComputedStyle(e).display!=="none").length, order: sh.every((e,i)=>e.getBoundingClientRect().top < st[i].getBoundingClientRect().top && (i===5 || st[i].getBoundingClientRect().top < sh[i+1].getBoundingClientRect().top)) }; });
-  ok(v.shots===6 && v.steps===6 && v.order, `${dv} journey told in order: picture then step, six times ${JSON.stringify(v)}`); }
+if (w>900) ok(j.a==="01" && j.b2==="04" && Math.abs(j.sa-j.sb)<3, `${dv} journey walks 01→04 by scroll and holds still ${JSON.stringify(j)}`);
+else { const v=await p.evaluate(()=>{ const sh=[...document.querySelectorAll("#bespoke .jshot")], st=[...document.querySelectorAll("#bespoke .jstep")]; return { shots:sh.filter(e=>getComputedStyle(e).opacity==="1"&&e.getBoundingClientRect().height>100).length, steps:st.filter(e=>getComputedStyle(e).display!=="none").length, order: sh.every((e,i)=>e.getBoundingClientRect().top < st[i].getBoundingClientRect().top && (i===sh.length-1 || st[i].getBoundingClientRect().top < sh[i+1].getBoundingClientRect().top)) }; });
+  ok(v.shots===4 && v.steps===4 && v.order, `${dv} journey told in order: picture then step, four times ${JSON.stringify(v)}`); }
 // hero → house seam: no hard edge (last row of hero ≈ black)
 ok(bad.filter(x=>!/fonts/.test(x)).length===0, `${dv} no failed requests ${bad.slice(0,3).join(" | ")}`);
 ok(errs.length===0, `${dv} no script errors ${errs.join(" | ")}`);

@@ -26,7 +26,7 @@ await p.evaluate(()=>document.querySelector("#configure .total").scrollIntoView(
 const bar2=await p.evaluate(()=>document.getElementById("cbar").classList.contains("on"));
 await p.evaluate(()=>document.getElementById("enquire").scrollIntoView()); await p.waitForTimeout(900);
 const bar3=await p.evaluate(()=>document.getElementById("cbar").classList.contains("on"));
-ok(bar1.on===bar1.want && !bar2 && !bar3, `${w} summary bar: shown only while the estimate is off-screen (${bar1.on}/${bar1.want} ${bar1.txt}); off at the estimate and outside the builder`);
+ok(bar1.on===bar1.want && !bar2 && !bar3, `${w} summary bar: shown only while the estimate is off-screen (${bar1.on}/${bar1.want} ${bar1.txt}); off at the estimate and outside the builder [at estimate ${bar2}, at enquiry ${bar3}]`);
 // tabs: exactly one open, and switching works
 await p.evaluate(()=>document.getElementById("stripwrap").scrollIntoView()); await p.waitForTimeout(400);
 await p.evaluate(()=>[...document.querySelectorAll("#opts .opt > .opthead")][2].click()); await p.waitForTimeout(300);
