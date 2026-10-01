@@ -825,6 +825,18 @@
     "  c += vec3(0.96, 0.98, 1.0) * low * 0.9;",
     "  return c;",
     "}",
+    /* Metal is seen by what it reflects, and a room that is all black and a
+       few blinding points shows every metal as the same white. The metal gets
+       a photographer's set of its own: broad soft boxes and a warm card, so
+       most of a surface reflects mid-tones the alloy can colour. */
+    "vec3 envM(vec3 d){",
+    "  vec3 e = env(d); e = e / (1.0 + e * 0.6);",
+    "  float y = d.y, az = atan(d.z, d.x);",
+    "  e += vec3(0.62) * smoothstep(-0.25, 0.85, y) * 0.75;",
+    "  e += vec3(0.30) * smoothstep(0.55, 0.0, abs(y)) * (0.6 + 0.4 * sin(az * 3.0));",
+    "  e += vec3(0.05);",
+    "  return e;",
+    "}",
     "float fres(float c, float f0){ return f0 + (1.0 - f0) * pow(1.0 - c, 5.0); }",
     /* Value noise that hands back its own gradient. Skin is not a smooth
        surface at any scale a reader can see — pores, the grain between them,
@@ -1019,8 +1031,8 @@
     "    float c = max(dot(Nf, Vw), 1e-4);",
     "    vec3 Rf = reflect(-Vw, Nf);",
     "    vec3 F = uCol + (vec3(1.0) - uCol) * pow(1.0 - c, 5.0);",
-    "    col = mix(env(Rf), env(Nf), uRough * 0.45) * F * 0.92;",
-    "    col += uCol * env(Nf) * 0.10;",
+    "    col = mix(envM(Rf), envM(Nf), uRough * 0.45) * F * 0.95;",
+    "    col += uCol * uCol * 0.05;",
     "  }",
     "  col *= uFade;",
     "  vec2 q = gl_FragCoord.xy / max(uRes, vec2(1.0)) - 0.5;",
@@ -1092,7 +1104,9 @@
   var pStone = new Part(), pHead = new Part(), pLink = new Part(), pClasp = new Part(), pHand = new Part(), pNail = new Part();
 
   /* ─────────────────────────── the bracelet ─────────────────────────── */
-  var METAL = { white: [0.93, 0.93, 0.95], yellow: [1.00, 0.79, 0.38], rose: [1.00, 0.74, 0.62], platinum: [0.90, 0.91, 0.94] };
+  /* reflectance at normal incidence, linear: white gold under its rhodium is
+     bright and a touch cool, platinum greyer and deeper, the golds warm */
+  var METAL = { white: [0.88, 0.89, 0.92], yellow: [1.00, 0.66, 0.22], rose: [0.98, 0.58, 0.44], platinum: [0.70, 0.71, 0.73] };
   var state = { n: 36, L: 3.6, W: 3.6, cut: "round", metal: "white", wrist: 17, R: 40 };
   function build() {
     var b = window.__build || {}, spec = window.__lineSpec || {};
@@ -1205,7 +1219,7 @@
   var portrait = innerWidth < 760;
   var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
   /* the toy: while it is held the bracelet has a place in the frame, a spin and a fall */
-  var toy = null;
+  var toy = null, lastPrev = "";
   /* Nothing about the bracelet changes while the page is moving, and the
      chapter is sticky — so it sits on screen for the whole of it, redrawing
      the heaviest shader on the page on every scroll frame, competing with the
@@ -1293,7 +1307,7 @@
     gl.uniform3fv(U.eye, eye);
     gl.uniform2f(U.res, W2, H2);
     gl.uniform1f(U.fade, 1);
-    var mc = METAL[state.metal] || METAL.white;
+    var mc = METAL[window.__preview || state.metal] || METAL.white;
     if (hand.on) {
       var sk = SKINS[hand.skin] || SKINS[1];
       gl.uniform1f(U.bandY, 0); gl.uniform1f(U.bandW, state.thick * 0.9 + 2);
@@ -1348,6 +1362,7 @@
       toy.wx *= 0.948; toy.wy *= 0.972;
       dirty = true;
     }
+    if ((window.__preview || "") !== lastPrev) { lastPrev = window.__preview || ""; dirty = true; }
     if (!dirty) return;
     dirty = false; draw(); placeGrab();
   }
