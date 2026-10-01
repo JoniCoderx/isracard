@@ -4824,3 +4824,37 @@
     html[data-ns] #build #opts .opt > .opthead > .k[data-short]::after { font-size:.7rem; letter-spacing:0; }
   }
   #build #configure .total > .btn.solid, #build #configure .total #reserve { width:100% !important; max-width:none !important; justify-self:stretch; }
+
+  /* ── v133 — the piece window as a small page of its own; the cards ── */
+  /* the window rises a few pixels as it fades in, nothing grows out of a card */
+  .mbox { transform:translateY(14px) !important; transition:transform .5s var(--ease), opacity .4s var(--ease) !important; }
+  .modal.open .mbox { transform:none !important; }
+  @media (prefers-reduced-motion:reduce) { .mbox { transform:none !important; } }
+  /* the facts as a quiet list, label and value, no boxes */
+  #pmodal .mkeys { display:grid; grid-template-columns:1fr !important; gap:0; background:none !important; border:0 !important; border-radius:0; overflow:visible; margin:4px 0; }
+  #pmodal .mkeys .mk { display:grid; grid-template-columns:minmax(96px, 30%) minmax(0,1fr); gap:16px; align-items:baseline; padding:11px 0; background:none !important; border-top:1px solid var(--line); }
+  #pmodal .mkeys .mk:last-child { border-bottom:1px solid var(--line); }
+  #pmodal .mkeys .mk .k { order:-1; font-size:.62rem; letter-spacing:.18em; color:var(--ink3); }
+  html[data-ns] #pmodal .mkeys .mk .k { letter-spacing:.02em; font-size:.8rem; }
+  #pmodal .mkeys .mk .kv { font-size:.98rem; line-height:1.45; color:var(--ink); }
+  #pmodal .mkeys .mk:last-child:nth-child(odd) { grid-column:auto !important; }
+  #pmodal #pmSpecWrap, #pmodal #pmStoneWrap[hidden], #pmodal #pmCareWrap[hidden] { display:none !important; }
+  #pmodal .mbd .lead { font-family:var(--serif); font-style:italic; font-size:clamp(1.12rem, 1.5vw, 1.32rem); line-height:1.45; color:var(--ink); max-width:40ch; }
+  html[data-ns] #pmodal .mbd .lead { font-family:inherit; font-style:normal; font-size:1.05rem; }
+  #pmodal .mbd .story { color:var(--ink2); }
+  #pmodal .mim img { transition:opacity .6s var(--ease); }
+  #pmodal .mim img.ld { opacity:0; }
+
+  /* cards: the whole card is the way in; Reserve stays its own action */
+  .piece:not(.soon) { cursor:pointer; }
+  .piece .acts .lnk.vw { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  .piece .acts .lnk.vw:focus-visible { position:static; width:auto; height:auto; clip-path:none; }
+  .piece .acts { justify-content:flex-start; }
+  @media (hover:hover) and (pointer:fine) {
+    .piece:not(.soon) .fig { cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='32' cy='32' r='30' fill='rgba(10,10,10,.82)' stroke='rgba(246,243,237,.5)'/%3E%3Ctext x='32' y='36' text-anchor='middle' font-family='Arial' font-size='11' letter-spacing='2' fill='%23f6f3ed'%3EVIEW%3C/text%3E%3C/svg%3E") 32 32, pointer; }
+    .piece:not(.soon) .fig .im img { transition:transform 1.4s var(--ease), opacity .7s var(--ease) !important; }
+    .piece:not(.soon):hover .fig .im img { transform:scale(1.035); }
+    .piece:not(.soon) .t { transition:transform .6s var(--ease); }
+    .piece:not(.soon):hover .t { transform:translateX(4px); }
+    html[dir="rtl"] .piece:not(.soon):hover .t { transform:translateX(-4px); }
+  }

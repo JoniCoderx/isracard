@@ -44,10 +44,12 @@ export const PIECES = [
     meta: [S("18K white gold", "זהב לבן 18K"), S("16–19 cm", "16–19 ס\"מ"), S("Polished", "מלוטש"), S("Price on request", "מחיר לפי בקשה")],
     /* the three figures that sit above the fold of the piece window */
     key: [
-      [S("Metal", "מתכת"),   S("18K white gold", "זהב לבן 18K")],
-      [S("Finish", "גימור"), S("Polished", "מלוטש")],
-      [S("Length", "אורך"),  S("16–19 cm", "16–19 ס\"מ")]
+      [S("Material", "חומר"),          S("18K white gold, polished", "זהב לבן 18K, מלוטש")],
+      [S("Diamonds", "יהלומים"),       S("None. The signature is polished metal", "ללא. החתימה עשויה מתכת מלוטשת")],
+      [S("Dimensions", "מידות"),       S("16–19 cm", "16–19 ס\"מ")],
+      [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
     ],
+    stonesInside: false,
     story: S("Designed as an everyday signature, MOMENT places the SILAVU mark on a fine white-gold chain. Its polished form catches the light with every movement: delicate when worn alone, and beautiful layered with other pieces. A quiet detail that becomes part of your everyday look.",
              "\u200fMOMENT נוצר כחתימה יומיומית: סמל SILAVU על שרשרת עדינה מזהב לבן. הצורה המלוטשת שלו תופסת את האור בכל תנועה — עדין כשהוא ענוד לבד, ויפה בשכבות עם תכשיטים אחרים. פרט שקט שהופך לחלק מהמראה היומיומי שלכם."),
     specs: [
@@ -79,10 +81,12 @@ export const PIECES = [
     ],
     meta: [S("18K white gold", "זהב לבן 18K"), S("EU 47–58", "EU 47–58"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
-      [S("Metal", "מתכת"),    S("18K white gold", "זהב לבן 18K")],
-      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")],
-      [S("Size", "מידה"),     S("EU 47–58", "EU 47–58")]
+      [S("Material", "חומר"),          S("18K white gold", "זהב לבן 18K")],
+      [S("Diamonds", "יהלומים"),       S("Pavé, across the signature and the band", "פאווה, לאורך החתימה והטבעת")],
+      [S("Dimensions", "מידות"),       S("EU sizes 47–58", "מידות EU 47–58")],
+      [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
     ],
+    stonesInside: true,
     story: S("ICON turns the SILAVU mark into a sculptural ring, traced with pavé diamonds across its flowing form and band. The design balances a bold silhouette with fine detail, letting the diamonds catch the light from every angle.",
              "\u200fICON הופכת את סמל SILAVU לטבעת פיסולית, עם יהלומי פאווה לאורך הצורה הזורמת שלה ולאורך הטבעת עצמה. העיצוב מאזן בין צללית נועזת לפרטים עדינים, ומאפשר ליהלומים לתפוס את האור מכל זווית."),
     specs: [
@@ -111,10 +115,12 @@ export const PIECES = [
     ],
     meta: [S("18K white gold", "זהב לבן 18K"), S("42 cm", "42 ס\"מ"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
     key: [
-      [S("Metal", "מתכת"),    S("18K white gold", "זהב לבן 18K")],
-      [S("Setting", "שיבוץ"), S("Pavé", "פאווה")],
-      [S("Length", "אורך"),   S("42 cm", "42 ס\"מ")]
+      [S("Material", "חומר"),          S("18K white gold", "זהב לבן 18K")],
+      [S("Diamonds", "יהלומים"),       S("Pavé signature, diamond accents along the chain", "חתימה בשיבוץ פאווה, נגיעות יהלומים לאורך השרשרת")],
+      [S("Dimensions", "מידות"),       S("42 cm", "42 ס\"מ")],
+      [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
     ],
+    stonesInside: true,
     story: S("SOUL brings the SILAVU mark close, set in pavé diamonds at the center of a fine white-gold chain. Delicate diamond accents add points of light along the necklace, creating a piece that feels personal on its own and layers naturally with others.",
              "\u200fSOUL מקרבת אליכם את סמל SILAVU, משובץ ביהלומי פאווה במרכזה של שרשרת עדינה מזהב לבן. נגיעות יהלומים עדינות מוסיפות נקודות אור לאורך השרשרת — תכשיט שמרגיש אישי כשהוא לבד, ומשתלב באופן טבעי עם אחרים."),
     specs: [

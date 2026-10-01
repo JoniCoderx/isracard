@@ -10,8 +10,8 @@ for (const [dv,w,h,lang] of [["d-en",1440,900,"en"],["m-en",390,844,"en"],["d-he
   await p.evaluate(()=>{document.documentElement.style.scrollBehavior="auto"; document.getElementById("collection").scrollIntoView();}); await p.waitForTimeout(2000);
   if (dv==="d-en"||dv==="m-en") { await p.evaluate(()=>scrollBy(0, 300)); await p.waitForTimeout(1200); await p.screenshot({path:O+`cards-${tag}-${dv}.jpg`,type:"jpeg",quality:65}); }
   for (const id of ["knot","ring","pave"]) {
-    await p.evaluate(id=>{ const b=document.querySelector(`#p-${id} .lnk.vw`); b.scrollIntoView({block:"center"}); },id); await p.waitForTimeout(400);
-    await p.click(`#p-${id} .lnk.vw`); await p.waitForTimeout(1500);
+    await p.evaluate(id=>{ const b=document.querySelector(`#p-${id} .fig`); b.scrollIntoView({block:"center"}); },id); await p.waitForTimeout(400);
+    await p.click(`#p-${id} .fig`); await p.waitForTimeout(1500);
     const st=await p.evaluate(()=>({open:document.getElementById("pmodal").classList.contains("open"), t:document.getElementById("pmT").textContent.trim(), story:document.getElementById("pmStory").textContent.trim().slice(0,40), img:document.getElementById("pmImg").getAttribute("src"), nat:document.getElementById("pmImg").naturalWidth, piece:document.getElementById("pmRes").getAttribute("data-piece")}));
     console.log(dv,id,JSON.stringify(st));
     ok(st.open && st.nat>0, `${dv} ${id} opens with photo`);
@@ -21,7 +21,7 @@ for (const [dv,w,h,lang] of [["d-en",1440,900,"en"],["m-en",390,844,"en"],["d-he
     ok(await p.evaluate(()=>!document.getElementById("pmodal").classList.contains("open")), `${dv} ${id} closes`);
   }
   // reserve from SOUL
-  await p.click(`#p-pave .lnk.vw`); await p.waitForTimeout(1200); await p.click("#pmRes"); await p.waitForTimeout(2500);
+  await p.click(`#p-pave .fig`); await p.waitForTimeout(1200); await p.click("#pmRes"); await p.waitForTimeout(2500);
   const r=await p.evaluate(()=>({open:document.getElementById("pmodal").classList.contains("open"), msg:document.getElementById("fMsg").value, top:Math.round(document.getElementById("concierge").getBoundingClientRect().top)}));
   ok(!r.open && /SILAVU SOUL/.test(r.msg), `${dv} reserve → form: ${r.msg}`);
   ok(errs.length===0, `${dv} no errors ${errs.join("|")}`);

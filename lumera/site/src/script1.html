@@ -310,6 +310,11 @@
     img.alt = (lang === "he" ? sh.h : sh.a) || sh.a || "";
     $("pmIm").classList.remove("two", "flip");
     $("pmImg2").removeAttribute("src");
+    /* on the first photograph the worn one waits underneath: a hover (or a
+       tap on a phone) shows the piece on the body, then lets it go */
+    var worn = gAt === 0 && gShots[1];
+    if (worn) { var ww = worn.w && worn.w.length ? worn.w : [800, 1200, 1600, 2000];
+      $("pmImg2").src = "img/" + worn.i + "-" + ww[Math.min(1, ww.length - 1)] + ".jpg"; $("pmImg2").alt = (lang === "he" ? worn.h : worn.a) || ""; $("pmIm").classList.add("two"); }
     var th = $("pmThumbs").children;
     for (var i = 0; i < th.length; i++) { th[i].classList.toggle("on", i === gAt); th[i].setAttribute("aria-selected", i === gAt ? "true" : "false"); }
     var many = gShots.length > 1;
@@ -422,6 +427,8 @@
     /* the try-on draws a tennis line on a photograph; it has nothing to say
        about a chain bracelet or a pendant */
     $("pmTry").hidden = !pc.hasAttribute("data-tryon");
+    /* a piece without stones does not promise stone reports */
+    pmodal.querySelectorAll("[data-stones]").forEach(function (li) { li.hidden = pc.hasAttribute("data-nostones"); });
     openModal(pmodal, pc);
   }
 
