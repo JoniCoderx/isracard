@@ -380,7 +380,7 @@
     var ttl = pc.getAttribute(document.documentElement.lang === "he" ? "data-title-he" : "data-title");
     if (ttl) { if (pageTitle == null) pageTitle = document.title; document.title = ttl; }
     var mbd = pmodal.querySelector(".mbd"); if (mbd) mbd.setAttribute("data-word", pc.getAttribute("data-word") || "");
-    $("pmK").innerHTML = pc.querySelector(".k").innerHTML;
+    var kk = pc.querySelector(".k.sig"); $("pmK").innerHTML = kk ? kk.innerHTML : ""; $("pmK").hidden = !kk;
     $("pmT").innerHTML = pc.querySelector(".t").innerHTML;
     $("pmP").innerHTML = pc.querySelector(".p").innerHTML;
 

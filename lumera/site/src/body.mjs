@@ -82,7 +82,7 @@ function pieceCard(p) {
   return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.stonesInside === false ? ' data-nostones=""' : ""}${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""}${p.title ? ` data-title="${esc(p.title.en)}" data-title-he="${esc(p.title.he)}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
         <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true">${p.shots.map((x, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div></div>
         <div class="bd">
-          <div class="t">${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
+          <div class="t">${mark("nmk", "b")}${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
           <div class="row k meta">${meta}</div>
           <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.plainHe || p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריינו">Reserve</a></div></div>

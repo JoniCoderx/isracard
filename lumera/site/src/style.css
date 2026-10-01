@@ -5107,3 +5107,26 @@
   .pgrid .fig.swp .swd i, .pgrid .fig.swp .swd i:first-child, .pgrid .fig.swp .swd i:last-child { background:var(--off); }
   .pgrid .fig.swp .swd i.on { background:var(--on) !important; }
   @media (prefers-reduced-motion:reduce) { .pgrid .fig.swp .im.hx { transition:none; } }
+
+  /* ══ v144 ══ the name as a signature: the mark in black, SILAVU in the
+     wordmark's letters, the piece's own name in its colour ════════════════ */
+  .piece[data-theme="moment"] { --pc:#56677a; }
+  .piece[data-theme="icon"]   { --pc:#9a7634; }
+  .piece[data-theme="soul"]   { --pc:#a8705b; }
+  .pgrid .piece .t { font-family:var(--word, inherit) !important; font-style:normal !important; }
+  .pgrid .piece .t svg.sy.nmk { height:1.25em; width:auto; margin-inline-end:.5em; vertical-align:-.3em; color:#14130f; }
+  .pgrid .piece .t svg.sy.nmk path, #pmodal .t svg.sy.nmk path { fill:currentColor; stroke:none; animation:none !important; }
+  .pgrid .piece .t .nm { font-family:var(--word, inherit); font-style:normal; font-weight:400; text-transform:uppercase;
+    letter-spacing:.2em; font-size:clamp(.98rem,1.15vw,1.12rem); color:#14130f; }
+  .pgrid .piece .t .nm em { font-family:var(--word, inherit) !important; font-style:normal !important; font-weight:600; letter-spacing:.2em;
+    font-size:1em; background:none !important; -webkit-background-clip:border-box !important; background-clip:border-box !important;
+    color:var(--pc, #14130f) !important; -webkit-text-fill-color:var(--pc, #14130f) !important; }
+  .pgrid .piece .t .kd { margin-top:10px; }
+  #pmodal .t svg.sy.nmk { height:.95em; width:auto; margin-inline-end:.4em; vertical-align:-.1em; color:#f2ede2; }
+  @media (max-width:759px) { #collection .piece .t .nm { font-size:1.02rem; letter-spacing:.16em; } #collection .piece .t .nm em { letter-spacing:.16em; } }
+  .pgrid .piece .t svg.sy.nmk, #pmodal .t svg.sy.nmk { display:inline-block !important; margin-top:0; margin-bottom:0; }
+  .pgrid .piece .t .nm, #pmodal .t .nm { display:inline !important; }
+  #pmK[hidden] { display:none !important; }
+  /* the name is Latin, so the lockup reads mark-then-name in Hebrew too; the
+     space sits on the side the name is actually on */
+  html[dir="rtl"] .pgrid .piece .t svg.sy.nmk, html[dir="rtl"] #pmodal .t svg.sy.nmk { margin-inline-end:0; margin-inline-start:.5em; }
