@@ -14,19 +14,19 @@ B="https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf"
 
 # stage : file
 SRC=(
-  "1:hf_20260929_075828_ebb4ead6-1fc0-430d-b4ed-59ae8bb7272e.png"
-  "2:hf_20260929_080301_4c025335-b28c-43ad-adf4-e83556436803.png"
-  "3:hf_20260929_080301_2442422d-c7dc-4c36-97ce-c695f6245a69.png"
-  "4:hf_20260929_075828_493d0b6f-0b42-40bf-8def-6ac4d72187b3.png"
-  "5:hf_20260929_075828_51deb85b-e99d-4242-b734-b265c85df50b.png"
-  "6:hf_20260929_075829_c08b7dcd-7aa3-45fa-b04a-9a64723efdf0.png"
+  "1:hf_20261001_144817_8dabc9e2-082d-400c-905b-4df3539ffcba.png"
+  "2:hf_20261001_144817_ff169fb6-8602-47fb-a85c-bb898e3a9ead.png"
+  "3:hf_20261001_144817_a73de631-6169-400f-987b-3abd93f4a1d2.png"
+  "4:hf_20261001_144816_2e1cf9d2-2232-48ea-aaf6-3bb39cff162a.png"
+  "5:hf_20261001_144816_2482476f-5c3c-4eba-9232-266cac4ebbb8.png"
+  "6:hf_20261001_144816_0251a8c4-85e1-41dc-b473-7148fee1eac9.png"
 )
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 rc=0
 for e in "${SRC[@]}"; do
   n="${e%%:*}"; f="${e#*:}"
   if curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors --connect-timeout 15 --max-time 180 -o "$T/$n.png" "$B/$f"; then
-    # shot at 2336 wide; 2000 is the largest honest width the page asks for
+    # shot at 2400 wide, on white; 2000 is the largest honest width the page asks for
     for w in 800 1200 1600 2000; do
       convert "$T/$n.png" -resize "${w}x" -quality 86 -strip "$OUT/jn$n-$w.jpg"
     done

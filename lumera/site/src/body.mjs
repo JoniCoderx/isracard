@@ -270,12 +270,12 @@ ${markDefs()}
       <div class="jsticky">
         <div class="wrap jgrid" id="jrn">
           <div class="jstage">
-          <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", { en: "A designer's desk at the beginning of a commission: ivory paper, a pencil, loose brilliants and a coil of white gold", he: "שולחן העבודה בתחילת הזמנה אישית: נייר בגוון שנהב, עיפרון, יהלומים לא משובצים וסליל של זהב לבן" }, SIZES_JRN, false)}</div></figure>
-          <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", { en: "A hand-drawn design of the Line bracelet in graphite on ivory paper, with detail studies of a link and the clasp", he: "סקיצה של צמיד Line בעיפרון על נייר בגוון שנהב, עם פרטים של חוליה ושל הסוגר" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="02"><div class="jim">${pic("jn3", { en: "The Line bracelet as a technical model, wireframe geometry flowing into a shaded render", he: "צמיד Line כמודל טכני, משלד גיאומטרי ועד הדמיה מלאה" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="03"><div class="jim">${pic("jn4", { en: "A setter's hands placing one brilliant into the Line bracelet at the bench", he: "ידי המשבץ מניחות יהלום בריליאנט בצמיד Line, על שולחן הצורף" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="04"><div class="jim">${pic("jn5", { en: "The finished Line bracelet fitted into its presentation box, on pale champagne suede", he: "צמיד Line המוגמר בקופסת התצוגה שלו, על זמש בגוון שמפניה" }, SIZES_JRN, true)}</div></figure>
-          <figure class="jshot" data-i="05"><div class="jim">${pic("jn6", { en: "The Line bracelet worn at its true scale on a wrist, in soft directional light", he: "צמיד Line ענוד על פרק היד בגודלו האמיתי, באור רך" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot on" data-i="00"><div class="jim">${pic("jn1", { en: "Loose round brilliant diamonds on folded diamond paper beside a notebook, a pencil and a loupe, on white", he: "יהלומי בריליאנט לא משובצים על נייר יהלומים, לצד מחברת, עיפרון וזכוכית מגדלת, על רקע לבן" }, SIZES_JRN, false)}</div></figure>
+          <figure class="jshot" data-i="01"><div class="jim">${pic("jn2", { en: "A graphite design sheet for the Line bracelet, with studies of one setting and of the clasp", he: "גיליון עיצוב בעיפרון לצמיד Line, עם סקיצות של שיבוץ ושל הסוגר" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="02"><div class="jim">${pic("jn3", { en: "A castable wax model of a section of the Line bracelet beside a steel caliper", he: "מודל שעווה ליציקה של מקטע מצמיד Line, לצד קליבר פלדה" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="03"><div class="jim">${pic("jn4", { en: "Tweezers placing a brilliant into one of the last open settings of the Line bracelet", he: "פינצטה מניחה יהלום בריליאנט באחד השיבוצים האחרונים בצמיד Line" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="04"><div class="jim">${pic("jn5", { en: "The finished Line bracelet in its black lacquer box, beside its certificate", he: "צמיד Line המוגמר בקופסת הלכה השחורה, לצד התעודה שלו" }, SIZES_JRN, true)}</div></figure>
+          <figure class="jshot" data-i="05"><div class="jim">${pic("jn6", { en: "The finished Line bracelet laid in a soft oval, ready to wear", he: "צמיד Line המוגמר מונח באליפסה רכה, מוכן לענידה" }, SIZES_JRN, true)}</div></figure>
             <div class="jcount k" aria-hidden="true"><b id="jnow">01</b> / 06</div>
           </div>
           <div class="jside">

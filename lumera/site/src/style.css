@@ -5017,3 +5017,8 @@
   .dpage { overflow-x:clip; }
   .dpage .doc, .dhd, .dft { box-sizing:border-box; }
   .dpage .doc h1 { font-weight:300; }
+
+  /* ══ v137 ══ the journey photographs are cut-outs on white: the frame is
+     white too, so each stage sits on the page rather than in a box */
+  #bespoke .jshot, #bespoke .jim, #bespoke .jshot picture { background:#fff !important; }
+  @media (max-width:759px) { #bespoke .jshot { background:#fff !important; } }
