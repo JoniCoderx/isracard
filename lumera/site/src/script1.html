@@ -554,18 +554,38 @@
     else document.documentElement.removeAttribute("data-ns");
     try { clocks(); } catch (e) {}
     var island = def.rtl ? /[\u0590-\u06ff]/ : null;
+    isleOn = !!def.rtl;
     document.querySelectorAll("[data-en]").forEach(function (el) {
       var v = say(el); if (v == null) return;
       if (el.tagName === "TITLE") { el.textContent = v; return; }
       el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + v + "</bdi>" : v;
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
+    setTimeout(function () { isle(document.body); }, 0);
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) {
       if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt);
       im.alt = lang === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en");
     });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
   }
+  /* Text the page writes for itself after load (the piece window's details,
+     the story, the summaries) gets the same right-to-left island as the
+     translated copy, so a Hebrew line with a number or a Latin name inside it
+     reads in the right order without the page itself being mirrored. */
+  var isleRe = /[\u0590-\u06ff]/, isleOn = false, isleRaf = 0;
+  function isle(root) {
+    if (!isleOn) return;
+    (root || document.body).querySelectorAll("*").forEach(function (el) {
+      if (el.children.length || /^(BDI|TITLE|SCRIPT|STYLE|OPTION|TEXTAREA|INPUT|CANVAS)$/.test(el.tagName)) return;
+      if (el.closest("bdi, svg")) return;
+      if (!isleRe.test(el.textContent)) return;
+      el.innerHTML = '<bdi dir="rtl">' + el.innerHTML + "</bdi>";
+    });
+  }
+  if (window.MutationObserver) new MutationObserver(function () {
+    if (!isleOn || isleRaf) return;
+    isleRaf = requestAnimationFrame(function () { isleRaf = 0; isle(document.body); });
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
   function applyLang() {
     if (lang === "en" || lang === "he" || dicts[lang]) { paint(); return; }
     var want = lang;
