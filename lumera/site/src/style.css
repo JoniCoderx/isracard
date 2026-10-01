@@ -5130,3 +5130,15 @@
   /* the name is Latin, so the lockup reads mark-then-name in Hebrew too; the
      space sits on the side the name is actually on */
   html[dir="rtl"] .pgrid .piece .t svg.sy.nmk, html[dir="rtl"] #pmodal .t svg.sy.nmk { margin-inline-end:0; margin-inline-start:.5em; }
+
+  /* ══ v145 ══ Hebrew and Arabic without mirroring the page ═══════════════
+     The layout is the English layout in every language. Each Hebrew or Arabic
+     text is set inside its own right-to-left island (a <bdi dir="rtl">), so
+     the sentence reads correctly while the block keeps its English place and
+     alignment. Typed text in the form finds its own direction. */
+  html[data-ns] input, html[data-ns] textarea { unicode-bidi:plaintext; }
+  /* the phone summary bar has no business on a desktop page */
+  @media (min-width:760px) { #cbar { display:none !important; } }
+  /* Hebrew and Arabic are not tracked: the wide spacing of the English labels
+     pulls their letters apart. The wordmark and the Latin piece names keep it. */
+  html[data-ns] body :where(*):not(.lg):not(.nm):not(.nm *):not(.embword):not(.dlg) { letter-spacing:.01em !important; }

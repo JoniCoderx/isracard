@@ -13,7 +13,7 @@ for (const [w,h,lang] of [[1440,900,"en"],[390,844,"he"]]) {
     const st = () => p.evaluate(() => ({ open: document.getElementById("pmodal").classList.contains("open"), inside: document.getElementById("pmodal").contains(document.activeElement), src: document.getElementById("pmImg").getAttribute("src"), nThumbs: document.querySelectorAll("#pmThumbs button").length, sel: [...document.querySelectorAll("#pmThumbs button")].findIndex(b=>b.getAttribute("aria-selected")==="true"), title: document.getElementById("pmT").textContent, nat: document.getElementById("pmImg").naturalWidth }));
     let s = await st(); ok(s.open && s.inside, `${T} piece ${idx} opens by keyboard, focus inside (${s.title})`);
     ok(s.nat > 0, `${T} piece ${idx} first photo loaded ${s.src}`);
-    const src0 = s.src; await p.keyboard.press(lang==="he"?"ArrowLeft":"ArrowRight"); await p.waitForTimeout(500); s = await st();
+    const src0 = s.src; await p.keyboard.press("ArrowRight"); await p.waitForTimeout(500); s = await st();
     ok(s.src !== src0 && s.sel === 1, `${T} piece ${idx} arrow key → next (${s.sel}/${s.nThumbs})`);
     await p.click("#pmNext"); await p.waitForTimeout(400); s = await st(); ok(s.sel === 2 % s.nThumbs, `${T} next button → ${s.sel}`);
     await p.click("#pmPrev"); await p.waitForTimeout(400); s = await st(); ok(s.sel === 1, `${T} prev button → ${s.sel}`);

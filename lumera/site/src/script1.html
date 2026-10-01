@@ -543,15 +543,21 @@
   function paint() {
     var def = langDef(lang), d = dicts[lang];
     document.documentElement.setAttribute("data-lang", lang);
-    document.documentElement.setAttribute("dir", def.rtl ? "rtl" : "ltr");
+    /* the page keeps its layout in every language: Hebrew and Arabic change
+       the words and the direction each line is written in, not where things
+       sit. Mirroring the whole page moved the header and every section */
+    document.documentElement.setAttribute("dir", "ltr");
     document.documentElement.setAttribute("lang", lang);
     /* Hebrew and Arabic have no italic and no upper case, so the typography
        rules that drop both hang off this rather than off one language */
     if (def.rtl) document.documentElement.setAttribute("data-ns", "1");
     else document.documentElement.removeAttribute("data-ns");
     try { clocks(); } catch (e) {}
+    var island = def.rtl ? /[\u0590-\u06ff]/ : null;
     document.querySelectorAll("[data-en]").forEach(function (el) {
-      var v = say(el); if (v != null) el.innerHTML = v;
+      var v = say(el); if (v == null) return;
+      if (el.tagName === "TITLE") { el.textContent = v; return; }
+      el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + v + "</bdi>" : v;
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) {
@@ -654,7 +660,7 @@
      software read were otherwise only set once somebody switched away and back */
   document.documentElement.setAttribute("data-lang", lang);
   document.documentElement.setAttribute("lang", lang);
-  document.documentElement.setAttribute("dir", langDef(lang).rtl ? "rtl" : "ltr");
+  document.documentElement.setAttribute("dir", "ltr");
   if (langDef(lang).rtl) document.documentElement.setAttribute("data-ns", "1");
   if (lang !== "en") setTimeout(applyLang, 0);   /* a remembered choice, applied once every definition in this script exists */
   var NAMES = { white: { en: "18K white gold", he: "זהב לבן 18K" }, yellow: { en: "18K yellow gold", he: "זהב צהוב 18K" }, rose: { en: "18K rose gold", he: "זהב ורוד 18K" }, platinum: { en: "Platinum", he: "פלטינה" } };
@@ -812,7 +818,7 @@
      metal, wrist and estimate. In Hebrew and Arabic every measure is isolated
      left to right, or "44 × 0.14 ct" comes out as "ct 0.14 × 44". */
   function lineSpecText() {
-    var b = window.__build || {}, rtl = document.documentElement.dir === "rtl";
+    var b = window.__build || {}, rtl = lang === "he" || lang === "ar";
     var L = function (x) { return rtl ? "\u2066" + x + "\u2069" : x; };
     /* "44 × ≈0.14 ct = 6 ct": the count, each stone's share marked as
        approximate, and the total that was actually chosen */
@@ -826,7 +832,7 @@
        to the jeweller. The mark is the page's own path, never redrawn. ── */
   function designImage(cb) {
     var W = 1200, H = 1500, c = document.createElement("canvas"); c.width = W; c.height = H;
-    var x = c.getContext("2d"), rtl = document.documentElement.dir === "rtl";
+    var x = c.getContext("2d"), rtl = lang === "he" || lang === "ar";
     var g = x.createRadialGradient(W / 2, 470, 60, W / 2, 470, 900); g.addColorStop(0, "#1d1d20"); g.addColorStop(1, "#050505");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
     var src = null;

@@ -6,11 +6,11 @@ let pass=0,fail=0; const ok=(c,m)=>{c?pass++:fail++; console.log((c?"PASS ":"FAI
 { const c=await b.newContext({javaScriptEnabled:false}); const p=await c.newPage(); await p.route(/fonts\./,r=>r.abort());
   await p.goto("http://localhost:8777/he/",{waitUntil:"domcontentloaded"});
   const r=await p.evaluate(()=>{ const t=document.createElement("template"); let bad=[], n=0;
-    document.querySelectorAll("body [data-he]").forEach(el=>{ if(el.closest("svg")) return; if(el.parentElement.closest("[data-he]")) return; n++; t.innerHTML=el.getAttribute("data-he"); if(el.innerHTML.trim()!==t.innerHTML.trim()) bad.push(el.outerHTML.slice(0,120)); });
+    document.querySelectorAll("body [data-he]").forEach(el=>{ if(el.closest("svg")) return; if(el.parentElement.closest("[data-he]")) return; n++; t.innerHTML=el.getAttribute("data-he"); const inner=el.innerHTML.replace(/^<bdi dir="rtl">([\s\S]*)<\/bdi>$/,"$1"); if(inner.trim()!==t.innerHTML.trim()) bad.push(el.outerHTML.slice(0,120)); });
     return {n,bad:bad.slice(0,5),nb:bad.length,title:document.title,lang:document.documentElement.lang,dir:document.dir,h1:[...document.querySelectorAll("h1")].map(h=>h.textContent),canon:document.querySelector("link[rel=canonical]").href,alts:[...document.querySelectorAll("link[hreflang]")].map(l=>l.hreflang+"="+l.href),desc:document.querySelector("meta[name=description]").content}; });
   console.log(JSON.stringify(r,null,1));
   ok(r.nb===0 && r.n>150, `static Hebrew: ${r.n} outer strings, ${r.nb} mismatched`);
-  ok(r.lang==="he"&&r.dir==="rtl"&&r.h1.length===1, "he/rtl, one h1");
+  ok(r.lang==="he"&&r.dir==="ltr"&&r.h1.length===1, "he, layout kept left to right, one h1");
   ok(/\/he\/$/.test(r.canon)&&r.alts.length===3, "canonical + 3 hreflang");
   await c.close(); }
 // 2. live Hebrew page: assets, errors, anchors, title in modal
