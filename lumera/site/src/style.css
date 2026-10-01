@@ -4858,3 +4858,58 @@
     .piece:not(.soon):hover .t { transform:translateX(4px); }
     html[dir="rtl"] .piece:not(.soon):hover .t { transform:translateX(-4px); }
   }
+
+  /* ── v134 — the hero: one slow light passing through the jewellery ──
+     A soft band crosses the photograph every fourteen seconds in overlay,
+     so it lifts what is already bright (metal, stones) and leaves the dark
+     ground alone. On a desktop the picture leans a few pixels from the
+     pointer. Nothing sparkles on its own. */
+  #hero .hv { translate:var(--hpx, 0) var(--hpy, 0); }
+  #hero .hlight { position:absolute; inset:0; z-index:1; pointer-events:none; mix-blend-mode:overlay; opacity:.55;
+    background:linear-gradient(105deg, transparent 38%, rgba(255,255,255,.55) 49%, rgba(255,255,255,.75) 50%, rgba(255,255,255,.55) 51%, transparent 62%) 0 0 / 300% 100% no-repeat;
+    animation:hlight 14s cubic-bezier(.45,0,.3,1) 2.5s infinite; }
+  @keyframes hlight { 0% { background-position:100% 0; } 55%, 100% { background-position:0% 0; } }
+  @media (prefers-reduced-motion:reduce) { #hero .hlight { display:none; } #hero .hv { translate:none; } }
+
+  /* ── bespoke: the photograph takes the larger share on a desktop ── */
+  @media (min-width:900px) { #bespoke .jgrid { grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) !important; } #bespoke .jstage { max-height:calc(100svh - var(--hh,72px) - 70px); } }
+  /* on a phone the six steps are simply told in order: picture, number, title, a line */
+  @media (max-width:899px) {
+    .jpin { height:auto !important; margin-top:24px; }
+    .jsticky { position:static !important; height:auto !important; padding-top:0 !important; overflow:visible !important; }
+    #bespoke .jgrid { display:grid !important; grid-template-columns:1fr !important; gap:0 !important; }
+    #bespoke .jstage, #bespoke .jside, #bespoke .jsteps { display:contents !important; }
+    #bespoke .jshot { position:relative !important; grid-area:auto !important; opacity:1 !important; height:auto; aspect-ratio:4/3; border-radius:14px; overflow:hidden; margin-top:34px; background:#efece6; }
+    #bespoke .jshot:first-child { margin-top:0; }
+    #bespoke .jshot img { transform:none !important; }
+    #bespoke .jstep { display:block !important; opacity:1 !important; border:0 !important; padding:14px 0 0 !important; }
+    #bespoke .jstep .jgo { pointer-events:none; min-height:0; }
+    #bespoke .jstep .jp { opacity:1 !important; height:auto !important; margin-top:6px !important; padding-inline-start:0 !important; color:var(--ink2); }
+    #bespoke .jcount, #bespoke .jbar { display:none !important; }
+    #bespoke .jshot:nth-child(1) { order:1; } #bespoke .jstep:nth-child(1) { order:2; }
+    #bespoke .jshot:nth-child(2) { order:3; } #bespoke .jstep:nth-child(2) { order:4; }
+    #bespoke .jshot:nth-child(3) { order:5; } #bespoke .jstep:nth-child(3) { order:6; }
+    #bespoke .jshot:nth-child(4) { order:7; } #bespoke .jstep:nth-child(4) { order:8; }
+    #bespoke .jshot:nth-child(5) { order:9; } #bespoke .jstep:nth-child(5) { order:10; }
+    #bespoke .jshot:nth-child(6) { order:11; } #bespoke .jstep:nth-child(6) { order:12; }
+    #bespoke .jfoot { order:13; margin-top:30px !important; padding-bottom:var(--mgap, 64px); }
+    #bespoke .jhead .p { display:none; }
+  }
+
+  /* ── enquiry: what they are looking for, as four quiet choices ── */
+  #enquire .want { grid-column:1 / -1; display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:6px; }
+  #enquire .want .k { width:100%; margin-bottom:2px; }
+  #enquire .want .chip { min-height:42px; }
+  #enquire .want .chip.on, #enquire .chan .chip.on { background:#f4efe4; color:#0b0b0b; border-color:#f4efe4; }
+
+  /* ── try-on: hands first, sliders folded away ── */
+  #tryon .ttip { margin:10px auto 0; max-width:30ch; font-size:.82rem; line-height:1.5; color:var(--ink3); text-align:center; }
+  #tryon .tplace .thint { margin:0; font-size:.7rem; letter-spacing:.06em; color:var(--ink2); text-transform:none; }
+  #tryon .tfine { border-top:1px solid var(--line); padding-top:2px; }
+  #tryon .tfine > summary { list-style:none; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:space-between;
+    font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink3); }
+  #tryon .tfine > summary::-webkit-details-marker { display:none; }
+  #tryon .tfine > summary::after { content:"+"; font-size:1rem; transition:transform .3s var(--ease); }
+  #tryon .tfine[open] > summary::after { transform:rotate(45deg); }
+  #tryon .tfine[open] { display:grid; gap:10px; padding-bottom:6px; }
+  #tryon .tcv { touch-action:none; }

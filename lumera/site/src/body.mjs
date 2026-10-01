@@ -174,6 +174,7 @@ ${markDefs()}
       <img class="hv" id="heroimg" src="/img/hero-2560.jpg" srcset="/img/hero-1600.jpg 1600w, /img/hero-2560.jpg 2560w, /img/hero-3840.jpg 3840w" sizes="100vw" alt="The SILAVU Line, hand-matched brilliants in 18K white gold on black glass" fetchpriority="high">
     </picture>
     <video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+    <i class="hlight" aria-hidden="true"></i>
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
@@ -232,7 +233,8 @@ ${markDefs()}
           <div class="dcs">
             <h2 class="h2 dc on" data-en="It begins as <em>a line.</em>" data-he="זה מתחיל <em>בקו אחד.</em>">It begins as <em>a line.</em></h2>
             <h2 class="h2 dc" data-en="Then every facet <em>is drawn.</em>" data-he="אחר כך כל פאה <em>משורטטת.</em>">Then every facet <em>is drawn.</em></h2>
-            <h2 class="h2 dc" data-en="Then it is set, <em>and it catches the light.</em>" data-he="ואז הוא משובץ, <em>ותופס את האור.</em>">Then it is set, <em>and it catches the light.</em></h2>
+            <h2 class="h2 dc" data-en="Then the metal <em>takes its shape.</em>" data-he="אחר כך המתכת <em>מקבלת צורה.</em>">Then the metal <em>takes its shape.</em></h2>
+            <h2 class="h2 dc" data-en="Then the stones <em>are set.</em>" data-he="ולבסוף האבנים <em>משובצות.</em>">Then the stones <em>are set.</em></h2>
           </div>
           <a class="lnk dgo" href="#build" data-en="Design yours" data-he="עצבו את שלכם">Design yours</a>
         </div>
@@ -424,13 +426,18 @@ ${markDefs()}
           <div class="field"><input id="fName" type="text" autocomplete="name" required><label for="fName" data-en="Name" data-he="שם">Name</label></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
           <div class="field"><input id="fContact" type="text" autocomplete="tel" required inputmode="email" placeholder="+971 · +972 · email"><label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label></div>
+          <div class="want" role="radiogroup" aria-labelledby="wantK"><span class="k" id="wantK" data-en="What are you looking for?" data-he="מה אתם מחפשים?">What are you looking for?</span>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-en="Private viewing" data-he="פגישה פרטית">Private viewing</button>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-en="A piece from the collection" data-he="תכשיט מהקולקציה">A piece from the collection</button>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-en="Bespoke commission" data-he="תכשיט בהתאמה אישית">Bespoke commission</button>
+            <button type="button" class="chip" role="radio" aria-checked="false" data-en="Something else" data-he="משהו אחר">Something else</button></div>
           <div class="field"><textarea id="fMsg" rows="2"></textarea><label for="fMsg" data-en="How can we help" data-he="איך נוכל לעזור">How can we help</label></div>
-          <div class="chan"><span class="k" data-en="Reply by" data-he="מענה ב־">Reply by</span>
+          <div class="chan"><span class="k" data-en="How should we reach you?" data-he="איך נחזור אליכם?">How should we reach you?</span>
             <button type="button" class="chip" data-ch="WhatsApp" hidden>WhatsApp</button>
             <button type="button" class="chip" data-ch="Call" data-en="Call the house" data-he="התקשרו אלינו" hidden>Call the house</button>
             <button type="button" class="chip on" data-ch="Email" data-en="Email" data-he="אימייל">Email</button></div>
         </div>
-        <button class="btn solid" id="csend" type="submit" style="justify-self:start" data-en="Continue by email" data-he="המשיכו במייל">Continue by email</button>
+        <button class="btn solid" id="csend" type="submit" style="justify-self:start" data-en="Send enquiry" data-he="שליחת הפנייה">Send enquiry</button>
         <p class="done" id="cdone" data-en="Your message is ready in your mail app. If not, write to concierge@silavu.com." data-he="ההודעה מוכנה באפליקציית הדואר שלכם. אם היא לא נפתחה, כתבו אל concierge@silavu.com.">Your message is ready in your mail app. If not, write to concierge@silavu.com.</p>
       </form>
       <div class="soc rv d3" data-socials></div>
@@ -502,14 +509,17 @@ ${markDefs()}
   <div class="mbox tbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
     <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas>
-      <div class="tempty" id="tempty"><div><div class="k gold" data-en="On your wrist" data-he="על פרק היד שלכם">On your wrist</div><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label></div></div>
+      <div class="tempty" id="tempty"><div><div class="k gold" data-en="On your wrist" data-he="על פרק היד שלכם">On your wrist</div><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label><p class="ttip" data-en="For best results, photograph your wrist from above in natural light." data-he="לתוצאה הטובה ביותר, צלמו את פרק היד מלמעלה, באור טבעי.">For best results, photograph your wrist from above in natural light.</p></div></div>
     </div>
     <div class="tctl">
       <div class="tsteps k"><span><b>1</b><i data-en="Upload" data-he="העלו תמונה">Upload</i></span><span><b>2</b><i data-en="Position" data-he="מקמו">Position</i></span><span><b>3</b><i data-en="See your line" data-he="ראו את הצמיד">See your line</i></span></div>
       <div class="tplace">
+        <p class="k thint" data-en="Drag to move it. Pinch to resize, twist to turn." data-he="גררו כדי להזיז. צבטו כדי לשנות גודל, סובבו בשתי אצבעות.">Drag to move it. Pinch to resize, twist to turn.</p>
+        <details class="tfine"><summary><span data-en="Fine adjustments" data-he="כוונון עדין">Fine adjustments</span></summary>
         <label><span class="k" data-en="Wrist width" data-he="רוחב פרק היד">Wrist width</span><input type="range" id="tsize" min="0.08" max="0.45" step="0.005" value="0.2"></label>
         <label><span class="k" data-en="Angle" data-he="זווית">Angle</span><input type="range" id="tang" min="-90" max="90" step="1" value="0"></label>
         <label><span class="k" data-en="Tilt" data-he="הטיה">Tilt</span><input type="range" id="tcurve" min="0.08" max="0.5" step="0.01" value="0.26"></label>
+        </details>
         
         <button class="btn solid" type="button" id="tdone" data-en="See your line" data-he="ראו את הצמיד">See your line</button>
       </div>

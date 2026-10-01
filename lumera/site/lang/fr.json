@@ -412,5 +412,18 @@
  "Shape": "Forme",
  "Type": "Type",
  "Carat": "Carats",
- "Wrist": "Poignet"
+ "Wrist": "Poignet",
+ "What are you looking for?": "Que recherchez-vous ?",
+ "Private viewing": "Rendez-vous privé",
+ "A piece from the collection": "Une pièce de la collection",
+ "Bespoke commission": "Création sur mesure",
+ "Something else": "Autre chose",
+ "How should we reach you?": "Comment vous répondre ?",
+ "Send enquiry": "Envoyer la demande",
+ "Call SILAVU": "Appeler SILAVU",
+ "Then the metal <em>takes its shape.</em>": "Puis le métal <em>prend forme.</em>",
+ "Then the stones <em>are set.</em>": "Puis les pierres <em>sont serties.</em>",
+ "Drag to move it. Pinch to resize, twist to turn.": "Faites-le glisser. Pincez pour la taille, tournez à deux doigts.",
+ "Fine adjustments": "Réglages fins",
+ "For best results, photograph your wrist from above in natural light.": "Pour un meilleur résultat, photographiez votre poignet du dessus, à la lumière naturelle."
 }

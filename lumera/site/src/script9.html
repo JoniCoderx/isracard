@@ -78,7 +78,9 @@
       ctx.stroke(); ctx.setLineDash([]);
     }
     /* stage three, .52 → .80: the light arrives — facets fill, the metal takes its polish */
-    var fill = ease((p - 0.52) / 0.24), spark = ease((p - 0.74) / 0.16);
+    /* line → geometry → metal → stones → finished: the metal is formed
+       first, the stones are set into it, and only then does it catch light */
+    var metalF = ease((p - 0.46) / 0.16), fill = ease((p - 0.60) / 0.18), spark = ease((p - 0.80) / 0.16);
     var light = p * 9 + t * 0.00045;
     for (var k = 0; k < n; k++) {
       var s = stones[k];
@@ -88,17 +90,21 @@
       if (k < n - 1 && dp > 0.6) {
         var s2 = stones[k + 1], la = ease((dp - 0.6) / 0.4);
         var m1 = trm(s, [0.98, 0]), m2 = trm(s2, [-0.98, 0]);
-        ctx.strokeStyle = fill > 0 ? mixMetal(fill, 0.9) : "rgba(255,255,255," + (0.7 * la).toFixed(3) + ")";
-        ctx.lineWidth = R * (0.10 + fill * 0.08); ctx.lineCap = "round";
+        ctx.strokeStyle = metalF > 0 ? mixMetal(metalF, 0.9) : "rgba(255,255,255," + (0.7 * la).toFixed(3) + ")";
+        ctx.lineWidth = R * (0.10 + metalF * 0.08); ctx.lineCap = "round";
         ctx.beginPath(); ctx.moveTo(m1[0], m1[1]); ctx.lineTo(m1[0] + (m2[0] - m1[0]) * la, m1[1] + (m2[1] - m1[1]) * la); ctx.stroke();
+      }
+      var ma = ease((metalF * 1.4) - (k / n) * 0.4);
+      if (ma > 0) {
+        /* the basket, formed in metal before any stone is in it */
+        var gr = ctx.createRadialGradient(s.x - R * 0.3, s.y - R * 0.3, R * 0.2, s.x, s.y, R * 1.12);
+        gr.addColorStop(0, "rgba(245,247,250," + ma + ")"); gr.addColorStop(0.7, "rgba(150,156,164," + ma + ")"); gr.addColorStop(1, "rgba(60,62,66," + ma + ")");
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(s.x, s.y, R * 1.1, 0, 6.283); ctx.fill();
+        ctx.fillStyle = "rgba(0,0,0," + (ma * (1 - ease((fill * 1.4) - (k / n) * 0.4)) * 0.92).toFixed(3) + ")"; ctx.beginPath(); ctx.arc(s.x, s.y, R * 0.98, 0, 6.283); ctx.fill();
       }
       if (fill > 0) {
         var fa = ease((fill * 1.4) - (k / n) * 0.4);
         if (fa > 0) {
-          /* the basket, seen as a polished rim */
-          var gr = ctx.createRadialGradient(s.x - R * 0.3, s.y - R * 0.3, R * 0.2, s.x, s.y, R * 1.12);
-          gr.addColorStop(0, "rgba(245,247,250," + fa + ")"); gr.addColorStop(0.7, "rgba(150,156,164," + fa + ")"); gr.addColorStop(1, "rgba(60,62,66," + fa + ")");
-          ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(s.x, s.y, R * 1.1, 0, 6.283); ctx.fill();
           /* the facets: each one its own mirror, turning bright or dark as the light moves */
           FACETS.forEach(function (f, fi) {
             var v = f.base + (1 - f.base) * Math.pow(0.5 + 0.5 * Math.sin(f.ph + s.lit + light * f.k), 4.5);
@@ -124,7 +130,7 @@
         if (pa > 0) for (var pr = 0; pr < 4; pr++) {
           var ang = (pr * 90 + 45) * D, c2 = trm(s, [Math.cos(ang) * 1.02, Math.sin(ang) * 1.02]);
           ctx.beginPath(); ctx.arc(c2[0], c2[1], R * 0.13 * pa, 0, 6.283);
-          if (fill > 0) { ctx.fillStyle = mixMetal(fill, 1); ctx.fill(); }
+          if (metalF > 0) { ctx.fillStyle = mixMetal(metalF, 1); ctx.fill(); }
           ctx.strokeStyle = "rgba(255,255,255," + (0.85 * (1 - fill * 0.6)).toFixed(3) + ")"; ctx.lineWidth = lw; ctx.stroke();
         }
       }
@@ -138,7 +144,7 @@
           var ph = Math.sin(st.lit * 3.1 + m * 2.2 + t * 0.0021 * (1 + m * 0.6) + p * 14);
           var a2 = Math.pow(c01(ph), 8) * spark; if (a2 < 0.02) continue;
           var ga = st.lit + m * 2.4, gx = st.x + Math.cos(ga) * R * 0.45, gy = st.y + Math.sin(ga) * R * 0.45, len = R * (0.9 + m * 0.5) * a2;
-          var hue = (st.lit * 57 + m * 140 + t * 0.02) % 360, fire = m === 1 ? "hsla(" + hue.toFixed(0) + ",90%,75%," : "rgba(255,255,255,";
+          var fire = "rgba(255,255,255,"; len *= 0.6;
           ctx.strokeStyle = fire + (0.95 * a2).toFixed(3) + ")"; ctx.lineWidth = lw * 1.2;
           ctx.beginPath(); ctx.moveTo(gx - len, gy); ctx.lineTo(gx + len, gy); ctx.moveTo(gx, gy - len); ctx.lineTo(gx, gy + len); ctx.stroke();
           var rg = ctx.createRadialGradient(gx, gy, 0, gx, gy, R * 0.5 * a2 + 1);
@@ -154,7 +160,7 @@
   function progress() { var r = pin.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? c01(-r.top / span) : 0; }
   var capAt = -1;
   function captions(p) {
-    var c = p < 0.34 ? 0 : p < 0.62 ? 1 : 2;
+    var c = p < 0.30 ? 0 : p < 0.50 ? 1 : p < 0.66 ? 2 : 3;
     if (c !== capAt) { capAt = c; caps.forEach(function (el, k) { el.classList.toggle("on", k === c); }); }
     if (go) go.classList.toggle("on", p > 0.86);
     if (bar) bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
@@ -165,7 +171,7 @@
     var p = reduce ? 1 : progress();
     /* once the light has come it keeps moving on its own; before that the
        frame only changes when the page does */
-    if (p === P0 && (p < 0.74 || reduce)) return;
+    if (p === P0 && (p < 0.80 || reduce)) return;
     P0 = p; draw(p, reduce ? 0 : t); captions(p);
   }
   layout(); addEventListener("resize", function () { layout(); P0 = -1; });

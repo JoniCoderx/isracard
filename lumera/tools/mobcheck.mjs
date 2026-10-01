@@ -41,7 +41,7 @@ await p.screenshot({ path: OUT+`${W}-${lang}-menu.png` });
 await p.keyboard.press("Escape"); await p.waitForTimeout(500);
 ok(await p.evaluate(()=>!document.getElementById("menu").classList.contains("open") && !document.documentElement.classList.contains("locked")), `${T} menu closes with Escape`);
 // the gallery
-const vw = (await p.$$(".pgrid .piece:not(.soon) .lnk.vw"))[1]; await vw.scrollIntoViewIfNeeded(); await vw.tap(); await p.waitForTimeout(1200);
+const vw = (await p.$$(".pgrid .piece:not(.soon) .fig"))[1]; await vw.scrollIntoViewIfNeeded(); await vw.tap(); await p.waitForTimeout(1200);
 const g = await p.evaluate(()=>{ const q=id=>document.getElementById(id).getBoundingClientRect(); const im=q("pmIm"), pr=q("pmPrev"), nx=q("pmNext"), cl=document.querySelector("#pmodal .mclose2").getBoundingClientRect(), th=q("pmThumbs"), req=q("pmReq");
   const hit=(r,el)=>{ const e=document.elementFromPoint(r.left+r.width/2, r.top+r.height/2); return e && (e===el||el.contains(e)); };
   return { imIn: im.left>=-1 && im.right<=innerWidth+1, navOk: pr.width>=40 && nx.width>=40 && hit(pr,document.getElementById("pmPrev")) && hit(nx,document.getElementById("pmNext")), closeOk: hit(cl, document.querySelector("#pmodal .mclose2")), thumbsIn: th.right<=innerWidth+1 && th.left>=-1, reqOk: hit(req, document.getElementById("pmReq")) && req.bottom<=innerHeight+1 }; });

@@ -25,7 +25,7 @@ await p.waitForTimeout(700);
 /* the two channels a house has not published a number for are hidden; unhide
    them so the label logic can be read */
 await p.evaluate(() => document.querySelectorAll("#cform .chip[data-ch]").forEach(c => c.hidden = false));
-const want = { Email: "Continue by email", WhatsApp: "Continue on WhatsApp", Call: "Request a call" };
+const want = { Email: "Send enquiry", WhatsApp: "Continue on WhatsApp", Call: "Call SILAVU" };
 for (const ch of ["WhatsApp", "Call", "Email"]) {
   await p.click(`#cform .chip[data-ch="${ch}"]`);
   await p.waitForTimeout(150);

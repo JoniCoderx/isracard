@@ -77,10 +77,35 @@
   var tmodal = $("tryon"), tc = $("tcanvas"), tx = tc.getContext("2d"), img = null, tw = 0, th = 0, TD = 1, pos = { x: 0.5, y: 0.56 }, dragging = false, dpx = 0, dpy = 0, pinch = null, tmode = "place", tphase = 0, showOrig = false, tone = { b: 0.5, warm: 0 };
   function tsize() { var r = $("tcv").getBoundingClientRect(); TD = Math.min(devicePixelRatio || 1, 2); tw = Math.round(r.width); th = Math.round(r.height); tc.width = Math.round(tw * TD); tc.height = Math.round(th * TD); tx.setTransform(TD, 0, 0, TD, 0, 0); tdraw(); }
   function sampleTone() { try { var c = document.createElement("canvas"); c.width = 24; c.height = 24; var x = c.getContext("2d"); x.drawImage(img, 0, 0, 24, 24); var d = x.getImageData(0, 0, 24, 24).data, r = 0, g = 0, b = 0, n = 0; for (var i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; } r /= n; g /= n; b /= n; tone = { b: (0.299 * r + 0.587 * g + 0.114 * b) / 255, warm: (r - b) / 255 }; } catch (e) { tone = { b: 0.5, warm: 0 }; } }
+  /* A first guess, so the line is already on the wrist when the photograph
+     opens: the skin in the picture is found, its long axis is the arm, the
+     line goes across it at the middle, and its spread is the wrist's width.
+     Everything stays adjustable by hand. */
+  function autoPlace() {
+    try {
+      var S = 96, c = document.createElement("canvas"), x = c.getContext("2d"), sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight);
+      c.width = S; c.height = Math.max(1, Math.round(S * th / tw)); var H = c.height, dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
+      x.drawImage(img, (tw - dw) / 2 * S / tw, (th - dh) / 2 * S / tw, dw * S / tw, dh * S / tw);
+      var d = x.getImageData(0, 0, S, H).data, n = 0, mx = 0, my = 0, pts = [];
+      for (var yy = 0; yy < H; yy++) for (var xx = 0; xx < S; xx++) { var i = (yy * S + xx) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+        if (r > 90 && g > 40 && b > 20 && r > g && r > b && r - Math.min(g, b) > 15 && Math.abs(r - g) > 12) { pts.push(xx, yy); mx += xx; my += yy; n++; } }
+      if (n < S * H * 0.04) return;
+      mx /= n; my /= n; var sxx = 0, syy = 0, sxy = 0;
+      for (var k = 0; k < pts.length; k += 2) { var ax = pts[k] - mx, ay = pts[k + 1] - my; sxx += ax * ax; syy += ay * ay; sxy += ax * ay; }
+      sxx /= n; syy /= n; sxy /= n;
+      var arm = 0.5 * Math.atan2(2 * sxy, sxx - syy), across = arm + Math.PI / 2;
+      var ca = Math.cos(across), sa = Math.sin(across), spread = Math.sqrt(Math.max(1e-6, ((sxx + syy) - Math.sqrt((sxx - syy) * (sxx - syy) + 4 * sxy * sxy)) / 2));
+      pos = { x: Math.min(0.85, Math.max(0.15, mx / S)), y: Math.min(0.85, Math.max(0.15, my / H)) };
+      var ang = across * 180 / Math.PI; while (ang > 90) ang -= 180; while (ang < -90) ang += 180;
+      $("tang").value = ang.toFixed(0);
+      $("tsize").value = Math.max(0.08, Math.min(0.45, spread * 1.6 / S)).toFixed(3);
+      void ca; void sa;
+    } catch (e) {}
+  }
   function setMode(m) { tmode = m; tmodal.classList.toggle("placing", m === "place"); tmodal.classList.toggle("seen", m === "view"); $("tcv").classList.toggle("turn", m === "view"); tsum(); }
   function load(file) {
     if (!file) return; var u = URL.createObjectURL(file), im = new Image();
-    im.onload = function () { img = im; $("tempty").style.display = "none"; pos = { x: 0.5, y: 0.56 }; tphase = 0; sampleTone(); setMode("place"); tdraw(); URL.revokeObjectURL(u); };
+    im.onload = function () { img = im; $("tempty").style.display = "none"; pos = { x: 0.5, y: 0.56 }; tphase = 0; sampleTone(); autoPlace(); setMode("place"); tdraw(); URL.revokeObjectURL(u); };
     im.onerror = function () { URL.revokeObjectURL(u); $("tempty").style.display = ""; };
     im.src = u;
   }
@@ -116,8 +141,13 @@
   $("tcv").addEventListener("pointerdown", function (e) { if (!img) return; dragging = true; dpx = e.clientX; dpy = e.clientY; $("tcv").setPointerCapture(e.pointerId); });
   $("tcv").addEventListener("pointermove", function (e) { if (!dragging) return; var dx = e.clientX - dpx, dy = e.clientY - dpy; dpx = e.clientX; dpy = e.clientY; if (tmode === "place") { pos.x += dx / tw; pos.y += dy / th; } else { var g = ringGeom(); tphase += (dx * g.u[0] + dy * g.u[1]) / Math.max(1, g.rb); } tdraw(); });
   $("tcv").addEventListener("pointerup", function () { dragging = false; }); $("tcv").addEventListener("pointercancel", function () { dragging = false; });
-  $("tcv").addEventListener("touchstart", function (e) { if (e.touches.length === 2) { pinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), s: +$("tsize").value }; dragging = false; } }, { passive: true });
-  $("tcv").addEventListener("touchmove", function (e) { if (pinch && e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); $("tsize").value = Math.max(0.08, Math.min(0.45, pinch.s * d / pinch.d)); tdraw(); } }, { passive: true });
+  /* two fingers: spread to resize, twist to turn */
+  function tAng(e) { return Math.atan2(e.touches[1].clientY - e.touches[0].clientY, e.touches[1].clientX - e.touches[0].clientX); }
+  $("tcv").addEventListener("touchstart", function (e) { if (e.touches.length === 2) { pinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), s: +$("tsize").value, a: tAng(e), r: +$("tang").value }; dragging = false; } }, { passive: true });
+  $("tcv").addEventListener("touchmove", function (e) { if (pinch && e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); $("tsize").value = Math.max(0.08, Math.min(0.45, pinch.s * d / pinch.d));
+    if (tmode === "place") { var da = (tAng(e) - pinch.a) * 180 / Math.PI; $("tang").value = Math.max(-90, Math.min(90, pinch.r + da)); } tdraw(); } }, { passive: true });
+  /* a mouse wheel resizes */
+  $("tcv").addEventListener("wheel", function (e) { if (!img || tmode !== "place") return; e.preventDefault(); $("tsize").value = Math.max(0.08, Math.min(0.45, +$("tsize").value * (e.deltaY < 0 ? 1.04 : 0.96))); tdraw(); }, { passive: false });
   $("tcv").addEventListener("touchend", function () { pinch = null; });
   $("tsave").addEventListener("click", function () { tdraw(); tc.toBlob(function (b) { if (!b) return; var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "silavu-line.jpg"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }, "image/jpeg", 0.92); });
   window.addEventListener("silavu:build", tsum);

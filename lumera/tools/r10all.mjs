@@ -44,7 +44,9 @@ if (w>900) { const fw=await p.evaluate(()=>document.getElementById("cform").getB
 const j=await p.evaluate(async()=>{ const e=document.getElementById("jpin"), top=e.getBoundingClientRect().top+scrollY, span=e.offsetHeight-innerHeight; document.documentElement.style.scrollBehavior="auto";
   scrollTo(0,top+span*0.1); await new Promise(r=>setTimeout(r,300)); const a=document.getElementById("jnow").textContent, sa=document.querySelector(".jsticky").getBoundingClientRect().top;
   scrollTo(0,top+span*0.9); await new Promise(r=>setTimeout(r,300)); const b2=document.getElementById("jnow").textContent, sb=document.querySelector(".jsticky").getBoundingClientRect().top; return {a,b2,sa:Math.round(sa),sb:Math.round(sb)}; });
-ok(j.a==="01" && j.b2==="06" && Math.abs(j.sa-j.sb)<3, `${dv} journey walks 01→06 by scroll and holds still ${JSON.stringify(j)}`);
+if (w>900) ok(j.a==="01" && j.b2==="06" && Math.abs(j.sa-j.sb)<3, `${dv} journey walks 01→06 by scroll and holds still ${JSON.stringify(j)}`);
+else { const v=await p.evaluate(()=>{ const sh=[...document.querySelectorAll("#bespoke .jshot")], st=[...document.querySelectorAll("#bespoke .jstep")]; return { shots:sh.filter(e=>getComputedStyle(e).opacity==="1"&&e.getBoundingClientRect().height>100).length, steps:st.filter(e=>getComputedStyle(e).display!=="none").length, order: sh.every((e,i)=>e.getBoundingClientRect().top < st[i].getBoundingClientRect().top && (i===5 || st[i].getBoundingClientRect().top < sh[i+1].getBoundingClientRect().top)) }; });
+  ok(v.shots===6 && v.steps===6 && v.order, `${dv} journey told in order: picture then step, six times ${JSON.stringify(v)}`); }
 // hero → house seam: no hard edge (last row of hero ≈ black)
 ok(bad.filter(x=>!/fonts/.test(x)).length===0, `${dv} no failed requests ${bad.slice(0,3).join(" | ")}`);
 ok(errs.length===0, `${dv} no script errors ${errs.join(" | ")}`);
