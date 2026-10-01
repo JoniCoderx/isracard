@@ -5098,3 +5098,12 @@
     .aroles2 { grid-template-columns:1fr; }
   }
   @media (max-width:400px) { .afacts { grid-template-columns:1fr; } .afacts > div:nth-child(odd) { padding-inline-end:0; } }
+
+  /* ══ v143 ══ cards rest on their first photograph; hover walks the rest ═ */
+  .pgrid .fig.swp { --on:rgba(20,19,15,.78); --off:rgba(20,19,15,.22); --dr:rgba(255,255,255,.6); }
+  .pgrid .fig.swp .im.hx { position:absolute; inset:0; z-index:1; opacity:0; background:#f6f4ef; transition:opacity .6s var(--ease); }
+  .pgrid .fig.swp .im.hx img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pgrid .fig.swp .im.hx.on { opacity:1; }
+  .pgrid .fig.swp .swd i, .pgrid .fig.swp .swd i:first-child, .pgrid .fig.swp .swd i:last-child { background:var(--off); }
+  .pgrid .fig.swp .swd i.on { background:var(--on) !important; }
+  @media (prefers-reduced-motion:reduce) { .pgrid .fig.swp .im.hx { transition:none; } }

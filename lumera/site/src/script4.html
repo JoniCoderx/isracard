@@ -160,36 +160,46 @@
     }, { passive: true });
     addEventListener("blur", function () { clear(litH); litH = null; words = []; });
   })();
-  /* ── the picture that changes ───────────────────────────────────────────
-     Every monogram card holds two frames: the piece worn, and the piece shot
-     clean on white. One ticker drives all of them, staggered by position so
-     the rail reads as a rhythm rather than a blink, and it only runs while
-     the collection is actually on screen. Pointer devices get the worn frame
-     back on hover — that is handled in CSS, so nothing here fights it. */
+  /* ── the picture that changes, only when asked ─────────────────────────
+     Each card rests on its first photograph, the piece clean on white, so the
+     three sit together as one set. A pointer resting on a card walks through
+     the rest of that piece's photographs; leaving puts the first one back.
+     The extra frames are fetched on the first visit, not with the page. */
   (function () {
-    var figs = [].slice.call(document.querySelectorAll(".fig.swp"));
-    if (!figs.length) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    var t = 0, n = 0, vis = 0;
-    /* An observer hands you only the entries that CHANGED, so the count has to
-       be carried between callbacks — reading `some(isIntersecting)` off one
-       batch turns the ticker off the moment a single card leaves the screen. */
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        var was = e.target.__sv === true;
-        if (was !== e.isIntersecting) { e.target.__sv = e.isIntersecting; vis += e.isIntersecting ? 1 : -1; }
+    if (!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+    var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    [].slice.call(document.querySelectorAll(".pgrid .piece[data-shots]")).forEach(function (pc) {
+      var fig = pc.querySelector(".fig.swp"); if (!fig) return;
+      var shots; try { shots = JSON.parse(pc.getAttribute("data-shots")); } catch (e) { return; }
+      if (!shots || shots.length < 2) return;
+      var base = fig.querySelector(".im img"), sizes = base ? base.getAttribute("sizes") : "100vw";
+      var dots = [].slice.call(fig.querySelectorAll(".swd i")), layers = null, at = 0, t = 0, over = false;
+      function build() {
+        layers = [null];
+        for (var i = 1; i < shots.length; i++) {
+          var sh = shots[i], w = sh.w && sh.w.length ? sh.w : [800, 1200, 1600, 2000];
+          var d = document.createElement("div"); d.className = "im hx";
+          var im = document.createElement("img"); im.alt = ""; im.decoding = "async"; im.setAttribute("sizes", sizes);
+          im.setAttribute("srcset", w.map(function (x) { return "img/" + sh.i + "-" + x + ".jpg " + x + "w"; }).join(", "));
+          im.src = "img/" + sh.i + "-" + w[Math.min(1, w.length - 1)] + ".jpg";
+          d.appendChild(im); fig.insertBefore(d, fig.querySelector(".sheen")); layers.push(d);
+        }
+      }
+      function ready(i) { var im = layers[i] && layers[i].firstChild; return !im || (im.complete && im.naturalWidth > 0); }
+      function show(i) {
+        at = i;
+        layers.forEach(function (l, k) { if (l) l.classList.toggle("on", k === i); });
+        dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
+      }
+      function next() {
+        var n = at + 1 >= shots.length ? 1 : at + 1;
+        if (ready(n)) show(n); else layers[n].firstChild.addEventListener("load", function () { if (over) show(n); }, { once: true });
+      }
+      pc.addEventListener("pointerenter", function () {
+        over = true; if (!layers) build(); clearInterval(t);
+        next(); if (!still) t = setInterval(next, 1600);
       });
-      if (vis < 0) vis = 0;
-    }, { rootMargin: "10% 0px" });
-    figs.forEach(function (f) { io.observe(f); });
-    /* 3.4s a frame, each card a third of a beat behind the one before it */
-    function beat() {
-      if (vis > 0) { n++; figs.forEach(function (f, i) { if (!f.matches(":hover")) f.classList.toggle("flip", ((n + i) % 3) === 0); }); }
-      t = setTimeout(beat, 3400);
-    }
-    t = setTimeout(beat, 2600);
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) { clearTimeout(t); } else { clearTimeout(t); t = setTimeout(beat, 1200); }
+      pc.addEventListener("pointerleave", function () { over = false; clearInterval(t); show(0); });
     });
   })();
 
