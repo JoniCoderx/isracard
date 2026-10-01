@@ -140,8 +140,14 @@
         }
       }
       function ready(i) { var im = layers[i] && layers[i].firstChild; return !im || (im.complete && im.naturalWidth > 0); }
+      var wasT = 0;
       function show(i) {
+        var prev = layers[at];
         at = i;
+        /* the outgoing frame holds still underneath while the next fades in over it */
+        clearTimeout(wasT);
+        layers.forEach(function (l) { if (l) l.classList.remove("was"); });
+        if (prev && i !== 0) { prev.classList.add("was"); wasT = setTimeout(function () { prev.classList.remove("was"); }, 700); }
         layers.forEach(function (l, k) { if (l) l.classList.toggle("on", k === i); });
         dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
       }

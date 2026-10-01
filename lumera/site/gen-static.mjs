@@ -32,8 +32,8 @@ const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
    houses use: the name, then what it is. The Hebrew page has its own. */
 const TITLE = { en: "SILAVU | High Jewellery", he: "SILAVU | תכשיטי יוקרה" };
 const DESC = {
-  en: "Private high jewellery from Dubai and Tel Aviv. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, bespoke diamond commissions and private viewings by appointment.",
-  he: "תכשיטי יוקרה מדובאי ותל אביב: צמיד SILAVU MOMENT, טבעת ICON ושרשרת SOUL, תכשיטי יהלומים בהתאמה אישית ופגישות פרטיות בתיאום מראש."
+  en: "SILAVU, The Line of Desire. Private high jewellery from Dubai and Tel Aviv. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, bespoke diamond commissions and private viewings by appointment.",
+  he: "\u200fSILAVU, The Line of Desire. תכשיטי יוקרה מדובאי ותל אביב: צמיד SILAVU MOMENT, טבעת ICON ושרשרת SOUL, תכשיטי יהלומים בהתאמה אישית ופגישות פרטיות בתיאום מראש."
 };
 const head = `<!doctype html>
 <html lang="en">
@@ -58,7 +58,7 @@ const head = `<!doctype html>
 <meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SILAVU">
-<meta property="og:title" content="${TITLE.en}">
+<meta property="og:title" content="SILAVU | The Line of Desire">
 <meta property="og:description" content="${DESC.en}">
 <meta property="og:image" content="${base}/og.jpg?v=7">
 <meta property="og:image:secure_url" content="${base}/og.jpg?v=7">
@@ -68,7 +68,7 @@ const head = `<!doctype html>
 <meta property="og:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
 <meta property="og:url" content="${base}/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${TITLE.en}">
+<meta name="twitter:title" content="SILAVU | The Line of Desire">
 <meta name="twitter:description" content="${DESC.en}">
 <meta name="twitter:image" content="${base}/og.jpg?v=7">
 <meta name="twitter:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
@@ -91,7 +91,7 @@ ${fontLinks}
       "@id": base + "/#house",
       "name": "SILAVU",
       "alternateName": ["Silavu", "SILAVU Jewellery", "SILAVU High Jewellery"],
-      "slogan": "High jewellery, made for one person.",
+      "slogan": "The Line of Desire",
       "description": "A private high-jewellery house in Dubai and Tel Aviv. House collection, bespoke commissions and the SILAVU Line, by appointment.",
       "url": base + "/",
       "sameAs": sameAs,
@@ -214,8 +214,8 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
     .replace('<meta property="og:locale" content="en_US">', '<meta property="og:locale" content="he_IL">')
     .replace('<meta property="og:locale:alternate" content="he_IL">', '<meta property="og:locale:alternate" content="en_US">')
     .replace(/(<meta property="og:url" content=")[^"]*/, `$1${base}/he/`)
-    .replace(/(<meta property="og:title" content=")[^"]*/, "$1" + TITLE.he)
-    .replace(/(<meta name="twitter:title" content=")[^"]*/, "$1" + TITLE.he)
+    .replace(/(<meta property="og:title" content=")[^"]*/, "$1SILAVU | The Line of Desire")
+    .replace(/(<meta name="twitter:title" content=")[^"]*/, "$1SILAVU | The Line of Desire")
     .replace(/(<meta property="og:description" content=")[^"]*/, "$1" + DESC.he)
     .replace(/(<meta name="twitter:description" content=")[^"]*/, "$1" + DESC.he)
     .replace('<script>window.__silavuBuild', '<script>window.__pageLang="he";window.__silavuBuild');

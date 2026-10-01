@@ -178,7 +178,7 @@ ${markDefs()}
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
-      <h1 class="h sp rv" data-en="High jewellery, made <em>for one person.</em>" data-he="תכשיטי יוקרה <em>שנוצרים לאדם אחד.</em>">High jewellery, made <em>for one person.</em></h1>
+      <h1 class="h sp rv" data-en="The Line of <em>Desire</em>" data-he="The Line of <em>Desire</em>">The Line of <em>Desire</em></h1>
       <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד בדובאי ומלוטשים כדי ללוות אתכם כל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהתאמה אישית" data-en="Begin a bespoke piece" data-he="ליצירת תכשיט בהתאמה אישית">Begin a bespoke piece</a></div>
     </div>
@@ -410,7 +410,7 @@ ${markDefs()}
       <div class="fcol rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="about/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
       <div class="fcol rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
-      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="Private high jewellery" data-he="תכשיטנות עילית">Private high jewellery</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
+      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="The Line of Desire" data-he="The Line of Desire">The Line of Desire</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
