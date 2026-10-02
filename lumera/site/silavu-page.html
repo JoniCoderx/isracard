@@ -5271,7 +5271,7 @@
     <!-- the Line drawn as you scroll: a hairline, then every facet, then the metal and the light -->
     <div class="drawpin" id="drawpin">
       <div class="drawin">
-        <canvas id="drawcv" role="img" aria-label="A diamond tennis bracelet drawn in white line on black, facet by facet, then set and lit"></canvas>
+        <canvas id="drawcv" role="img" aria-label="A diamond tennis bracelet drawn in white line on black, facet by facet, that becomes the real piece"></canvas>
         <div class="drawcap" aria-live="off">
           <div class="k gold" data-en="The Line" data-he="הקו">The Line</div>
           <div class="dcs">
@@ -9400,9 +9400,9 @@
 /* The Line, drawn. A tennis bracelet built from nothing as the page moves:
    a hairline guide, then every brilliant drawn facet by facet — girdle,
    table, stars, kites, upper girdle — with its prongs and links; then the
-   facets take their light and the metal its polish; then it sparkles.
-   Everything is drawn from geometry at the screen's own resolution, so it is
-   as sharp on a 5K display as on a phone, and weighs nothing to download. */
+   drawing becomes the real piece, a photograph of the bracelet coming in
+   stone by stone on the stones the drawing traced; then it sparkles. If the
+   photograph cannot load, the stones are lit from geometry instead. */
 (function () {
   "use strict";
   var pin = document.getElementById("drawpin"), cv = document.getElementById("drawcv");
@@ -9514,34 +9514,67 @@
     }
   }
 
-  /* the line: a long, gentle curve across the frame, the way a bracelet lies
-     when it is set down — stones follow it, turned to its direction */
+  /* the real bracelet: one photograph on black, and where each of its stones
+     sits in it (centre x, centre y, radius, as fractions of the photograph's
+     width and height), measured from the photograph itself. The drawing is
+     laid out on exactly those stones, so as the photograph comes in, each
+     drawn stone is already where the real one is. */
+  var PA = 6336 / 2688, REAL = [[0.0472,0.2049,0.0466],[0.0735,0.2836,0.0485],[0.1076,0.3589,0.0543],[0.1516,0.4294,0.0601],[0.2034,0.487,0.0657],[0.264,0.5316,0.0715],[0.331,0.5603,0.0746],[0.4,0.5759,0.0754],[0.4696,0.5834,0.0759],[0.54,0.5829,0.0761],[0.6098,0.5741,0.0749],[0.6774,0.5558,0.0726],[0.7419,0.5255,0.069],[0.8004,0.482,0.0638],[0.8511,0.4252,0.059],[0.8942,0.3554,0.0529],[0.9261,0.2813,0.0463],[0.9505,0.2056,0.0441]];
+  var box = { x: 0, y: 0, w: 1, h: 1 }, photo = null, loading = false;
   function layout() {
     var r = pin.querySelector(".drawin").getBoundingClientRect();
     DPR = Math.min(devicePixelRatio || 1, 2); W = Math.round(r.width * DPR); H = Math.round(r.height * DPR);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-    var portrait = H > W, n = portrait ? 5.2 : 14;
-    R = Math.min(W / (n * 2.3), H * (portrait ? 0.075 : 0.085));
-    stones = []; seed = 11;
-    var x0 = -R * 1.4, x1 = W + R * 1.4, cy = H * (portrait ? 0.40 : 0.42), amp = H * (portrait ? 0.05 : 0.11);
-    var y = function (x) { var u = x / W; return cy + Math.sin(u * Math.PI * 1.15 - 0.35) * amp - (u - 0.5) * amp * 0.5; };
-    /* walk along the curve at equal arc length, so the stones sit shoulder to shoulder */
-    var pts = [], L = 0, px = x0, py = y(x0), steps = 900;
-    for (i = 0; i <= steps; i++) { var x = x0 + (x1 - x0) * i / steps, yy = y(x); L += Math.hypot(x - px, yy - py); pts.push([x, yy, L]); px = x; py = yy; }
-    var gap = R * 2.18, cnt = Math.floor(L / gap), off = (L - cnt * gap) / 2, j = 0;
-    for (i = 0; i <= cnt; i++) {
-      var at = off + i * gap; while (j < pts.length - 2 && pts[j + 1][2] < at) j++;
-      var a = pts[j], b2 = pts[j + 1], f = (at - a[2]) / Math.max(1e-6, b2[2] - a[2]);
-      var sx = a[0] + (b2[0] - a[0]) * f, sy = a[1] + (b2[1] - a[1]) * f, ang = Math.atan2(b2[1] - a[1], b2[0] - a[0]);
-      stones.push({ x: sx, y: sy, a: ang, rot: rnd() * 0.4, lit: rnd() * 6.283 });
-    }
-    guide = pts; guideL = L;
+    /* the photograph is wider than any screen: on a phone the middle of the
+       curve fills the frame, on a desktop nearly all of it; either way the
+       stones sit above the captions */
+    var portrait = H > W, iw = portrait ? W * 2.6 : Math.max(W * 1.08, Math.min(W * 1.2, H * 2.6)), ih = iw / PA;
+    box = { x: (W - iw) / 2, y: H * (portrait ? 0.40 : 0.44) - 0.585 * ih, w: iw, h: ih };
+    stones = []; seed = 11; R = 1;
+    REAL.forEach(function (q) { stones.push({ x: box.x + q[0] * iw, y: box.y + q[1] * ih, r: q[2] * ih, rot: rnd() * 0.4, lit: rnd() * 6.283 }); R = Math.max(R, q[2] * ih); });
+    stones.forEach(function (s, k) { var a = stones[Math.max(0, k - 1)], b = stones[Math.min(stones.length - 1, k + 1)]; s.a = Math.atan2(b.y - a.y, b.x - a.x); });
+    /* the guide runs through every centre, and on past both ends */
+    var f = stones[0], l = stones[stones.length - 1], ext = W * 0.5;
+    var gp = [[f.x - Math.cos(f.a) * ext, f.y - Math.sin(f.a) * ext]].concat(stones.map(function (s) { return [s.x, s.y]; }), [[l.x + Math.cos(l.a) * ext, l.y + Math.sin(l.a) * ext]]);
+    guide = []; guideL = 0;
+    gp.forEach(function (q, k) { if (k) guideL += Math.hypot(q[0] - gp[k - 1][0], q[1] - gp[k - 1][1]); guide.push([q[0], q[1], guideL]); });
     frames();
   }
   var guide = [], guideL = 1;
+  /* the photograph, fetched once the chapter is near, at the width the frame needs */
+  function load() {
+    loading = true;
+    var w = box.w, size = w <= 1300 ? 1200 : w <= 2200 ? 2000 : 3200, im = new Image();
+    im.decoding = "async";
+    im.onload = function () {
+      var done = function () { photo = im; P0 = -1; };
+      if (im.decode) im.decode().then(done, done); else done();
+    };
+    im.src = "img/line-real-" + size + ".jpg";
+  }
 
-  function tr(s, q) { var c = Math.cos(s.a + s.rot), sn = Math.sin(s.a + s.rot); return [s.x + (q[0] * c - q[1] * sn) * R, s.y + (q[0] * sn + q[1] * c) * R]; }
-  function trm(s, q) { var c = Math.cos(s.a), sn = Math.sin(s.a); return [s.x + (q[0] * c - q[1] * sn) * R, s.y + (q[0] * sn + q[1] * c) * R]; }
+  function tr(s, q) { var c = Math.cos(s.a + s.rot), sn = Math.sin(s.a + s.rot); return [s.x + (q[0] * c - q[1] * sn) * s.r, s.y + (q[0] * sn + q[1] * c) * s.r]; }
+  function trm(s, q) { var c = Math.cos(s.a), sn = Math.sin(s.a); return [s.x + (q[0] * c - q[1] * sn) * s.r, s.y + (q[0] * sn + q[1] * c) * s.r]; }
+
+  /* the photograph comes in stone by stone, each through a soft circle on
+     the stone it was drawn as, and then all of it at once */
+  var mk = null, mx = null;
+  function paintPhoto(real, whole) {
+    if (whole >= 0.999) { ctx.drawImage(photo, box.x, box.y, box.w, box.h); return; }
+    if (!mk) { mk = document.createElement("canvas"); mx = mk.getContext("2d"); }
+    if (mk.width !== W || mk.height !== H) { mk.width = W; mk.height = H; }
+    mx.globalCompositeOperation = "source-over"; mx.clearRect(0, 0, W, H);
+    if (whole > 0) { mx.globalAlpha = whole; mx.fillStyle = "#fff"; mx.fillRect(0, 0, W, H); mx.globalAlpha = 1; }
+    var n = stones.length;
+    for (var k = 0; k < n; k++) {
+      var s = stones[k], a = ease(real * 1.5 - (k / n) * 0.5); if (a <= 0) continue;
+      var rr = s.r * 1.7, g = mx.createRadialGradient(s.x, s.y, 0, s.x, s.y, rr);
+      g.addColorStop(0, "rgba(255,255,255," + a.toFixed(3) + ")"); g.addColorStop(0.62, "rgba(255,255,255," + a.toFixed(3) + ")"); g.addColorStop(1, "rgba(255,255,255,0)");
+      mx.fillStyle = g; mx.fillRect(s.x - rr, s.y - rr, rr * 2, rr * 2);
+    }
+    mx.globalCompositeOperation = "source-in"; mx.drawImage(photo, box.x, box.y, box.w, box.h);
+    ctx.drawImage(mk, 0, 0);
+  }
 
   var P0 = -1, T0 = 0;
   function draw(p, t) {
@@ -9553,40 +9586,47 @@
     if (g > 0 && gf > 0) {
       ctx.strokeStyle = "rgba(255,255,255," + (0.5 * gf).toFixed(3) + ")"; ctx.lineWidth = lw * 0.8; ctx.setLineDash([6 * DPR, 7 * DPR]);
       ctx.beginPath(); var lim = guideL * g;
-      for (i = 0; i < guide.length && guide[i][2] <= lim; i++) { if (i === 0) ctx.moveTo(guide[i][0], guide[i][1]); else ctx.lineTo(guide[i][0], guide[i][1]); }
+      for (i = 0; i < guide.length; i++) {
+        var q = guide[i];
+        if (i === 0) { ctx.moveTo(q[0], q[1]); continue; }
+        if (q[2] <= lim) { ctx.lineTo(q[0], q[1]); continue; }
+        var q0 = guide[i - 1], u = (lim - q0[2]) / Math.max(1e-6, q[2] - q0[2]);
+        ctx.lineTo(q0[0] + (q[0] - q0[0]) * u, q0[1] + (q[1] - q0[1]) * u); break;
+      }
       ctx.stroke(); ctx.setLineDash([]);
     }
-    /* stage three, .52 → .80: the light arrives — facets fill, the metal takes its polish */
-    /* line → geometry → metal → stones → finished: the metal is formed
-       first, the stones are set into it, and only then does it catch light */
-    var metalF = ease((p - 0.46) / 0.16), fill = ease((p - 0.60) / 0.18), spark = ease((p - 0.80) / 0.16);
+    /* with the photograph: line → facets → the real piece, stone by stone.
+       Without it (offline, or before it arrives): the metal is formed, the
+       stones are set into it, and then it catches the light. */
+    var real = photo ? ease((p - 0.50) / 0.26) : 0, whole = photo ? ease((p - 0.70) / 0.12) : 0;
+    if (real > 0) paintPhoto(real, whole);
+    var metalF = photo ? 0 : ease((p - 0.46) / 0.16), fill = photo ? 0 : ease((p - 0.60) / 0.18), spark = ease((p - 0.80) / 0.16);
     var light = p * 9 + t * 0.00045;
     for (var k = 0; k < n; k++) {
-      var s = stones[k];
+      var s = stones[k], R1 = s.r, set = photo ? Math.max(ease(real * 1.5 - (k / n) * 0.5), whole) : 0, keep = 1 - set;
       /* stage two, .08 → .56: each stone drawn in turn, overlapping the next */
       var d0 = 0.08 + (k / n) * 0.36, dp = c01((p - d0) / 0.14);
       /* links between this stone and the next, under everything */
-      if (k < n - 1 && dp > 0.6) {
+      if (k < n - 1 && dp > 0.6 && keep > 0.01) {
         var s2 = stones[k + 1], la = ease((dp - 0.6) / 0.4);
         var m1 = trm(s, [0.98, 0]), m2 = trm(s2, [-0.98, 0]);
-        ctx.strokeStyle = metalF > 0 ? mixMetal(metalF, 0.9) : "rgba(255,255,255," + (0.7 * la).toFixed(3) + ")";
-        ctx.lineWidth = R * (0.10 + metalF * 0.08); ctx.lineCap = "round";
+        ctx.strokeStyle = metalF > 0 ? mixMetal(metalF, 0.9) : "rgba(255,255,255," + (0.7 * la * keep).toFixed(3) + ")";
+        ctx.lineWidth = R1 * (0.10 + metalF * 0.08); ctx.lineCap = "round";
         ctx.beginPath(); ctx.moveTo(m1[0], m1[1]); ctx.lineTo(m1[0] + (m2[0] - m1[0]) * la, m1[1] + (m2[1] - m1[1]) * la); ctx.stroke();
         if (metalF > 0) { /* a polished edge along the link */
-          ctx.strokeStyle = "rgba(255,255,255," + (0.45 * metalF).toFixed(3) + ")"; ctx.lineWidth = R * 0.035;
-          ctx.beginPath(); ctx.moveTo(m1[0], m1[1] - R * 0.04); ctx.lineTo(m1[0] + (m2[0] - m1[0]) * la, m1[1] - R * 0.04 + (m2[1] - m1[1]) * la); ctx.stroke(); }
+          ctx.strokeStyle = "rgba(255,255,255," + (0.45 * metalF).toFixed(3) + ")"; ctx.lineWidth = R1 * 0.035;
+          ctx.beginPath(); ctx.moveTo(m1[0], m1[1] - R1 * 0.04); ctx.lineTo(m1[0] + (m2[0] - m1[0]) * la, m1[1] - R1 * 0.04 + (m2[1] - m1[1]) * la); ctx.stroke(); }
       }
       var ma = ease((metalF * 1.4) - (k / n) * 0.4);
       if (ma > 0) {
-        /* the basket, formed in metal before any stone is in it */
         /* the basket: a polished white-gold rim, lit from the upper left */
-        var gr = ctx.createLinearGradient(s.x - R * 1.1, s.y - R * 1.1, s.x + R * 1.1, s.y + R * 1.1);
+        var gr = ctx.createLinearGradient(s.x - R1 * 1.1, s.y - R1 * 1.1, s.x + R1 * 1.1, s.y + R1 * 1.1);
         gr.addColorStop(0, "rgba(248,249,251," + ma + ")"); gr.addColorStop(0.35, "rgba(196,200,206," + ma + ")");
         gr.addColorStop(0.7, "rgba(112,117,124," + ma + ")"); gr.addColorStop(1, "rgba(52,54,58," + ma + ")");
-        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(s.x, s.y, R * 1.1, 0, 6.283); ctx.fill();
-        ctx.strokeStyle = "rgba(0,0,0," + (0.55 * ma).toFixed(3) + ")"; ctx.lineWidth = Math.max(1, R * 0.03);
-        ctx.beginPath(); ctx.arc(s.x, s.y, R * 1.0, 0, 6.283); ctx.stroke();
-        ctx.fillStyle = "rgba(0,0,0," + (ma * (1 - ease((fill * 1.4) - (k / n) * 0.4)) * 0.92).toFixed(3) + ")"; ctx.beginPath(); ctx.arc(s.x, s.y, R * 0.98, 0, 6.283); ctx.fill();
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(s.x, s.y, R1 * 1.1, 0, 6.283); ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0," + (0.55 * ma).toFixed(3) + ")"; ctx.lineWidth = Math.max(1, R1 * 0.03);
+        ctx.beginPath(); ctx.arc(s.x, s.y, R1 * 1.0, 0, 6.283); ctx.stroke();
+        ctx.fillStyle = "rgba(0,0,0," + (ma * (1 - ease((fill * 1.4) - (k / n) * 0.4)) * 0.92).toFixed(3) + ")"; ctx.beginPath(); ctx.arc(s.x, s.y, R1 * 0.98, 0, 6.283); ctx.fill();
       }
       if (fill > 0) {
         var fa = ease((fill * 1.4) - (k / n) * 0.4);
@@ -9594,52 +9634,54 @@
           /* the stone itself: two neighbouring frames of light, turned to the stone */
           var fp = ((light * 0.35 + s.lit) / 6.2832 * NF) % NF; if (fp < 0) fp += NF;
           var f0 = Math.floor(fp), fr2 = fp - f0;
-          ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.a + s.rot);
+          ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.a + s.rot); ctx.scale(R1 / R, R1 / R);
           ctx.globalAlpha = fa; ctx.drawImage(FR[f0], -FS / 2, -FS / 2);
           if (fr2 > 0.02) { ctx.globalAlpha = fa * fr2; ctx.drawImage(FR[(f0 + 1) % NF], -FS / 2, -FS / 2); }
           ctx.restore(); ctx.globalAlpha = 1;
         }
       }
       /* the drawing itself: every edge, in order, up to how far this stone has got */
-      if (dp > 0) {
-        var want = ETOT * ease(dp), acc = 0, alpha = 0.92 * (1 - fill);
+      if (dp > 0 && keep > 0.01) {
+        var want = ETOT * ease(dp), acc = 0, alpha = 0.92 * (1 - fill) * keep;
         ctx.strokeStyle = "rgba(255,255,255," + alpha.toFixed(3) + ")"; ctx.lineWidth = lw * (1 - fill * 0.4); ctx.lineCap = "round";
         ctx.beginPath();
         for (var e = 0; e < EDGES.length && acc < want; e++) {
-          var E = EDGES[e], L2 = ELEN[e], u = Math.min(1, (want - acc) / L2), A = tr(s, E[0]), B = tr(s, E[1]);
-          ctx.moveTo(A[0], A[1]); ctx.lineTo(A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u); acc += L2;
+          var E = EDGES[e], L2 = ELEN[e], u2 = Math.min(1, (want - acc) / L2), A = tr(s, E[0]), B = tr(s, E[1]);
+          ctx.moveTo(A[0], A[1]); ctx.lineTo(A[0] + (B[0] - A[0]) * u2, A[1] + (B[1] - A[1]) * u2); acc += L2;
         }
         ctx.stroke();
         /* four prongs at the corners of the basket */
         var pa = ease((dp - 0.75) / 0.25);
         if (pa > 0) for (var pr = 0; pr < 4; pr++) {
           var ang = (pr * 90 + 45) * D, c2 = trm(s, [Math.cos(ang) * 1.02, Math.sin(ang) * 1.02]);
-          ctx.beginPath(); ctx.arc(c2[0], c2[1], R * 0.13 * pa, 0, 6.283);
+          ctx.beginPath(); ctx.arc(c2[0], c2[1], R1 * 0.13 * pa, 0, 6.283);
           if (metalF > 0) {
             /* a claw is a small polished bead: bright where it faces the light */
-            var pr2 = R * 0.13 * pa, bg = ctx.createRadialGradient(c2[0] - pr2 * 0.4, c2[1] - pr2 * 0.45, pr2 * 0.05, c2[0], c2[1], pr2);
+            var pr2 = R1 * 0.13 * pa, bg = ctx.createRadialGradient(c2[0] - pr2 * 0.4, c2[1] - pr2 * 0.45, pr2 * 0.05, c2[0], c2[1], pr2);
             bg.addColorStop(0, "rgba(255,255,255," + metalF + ")"); bg.addColorStop(0.45, "rgba(196,200,207," + metalF + ")"); bg.addColorStop(1, "rgba(70,73,79," + metalF + ")");
             ctx.fillStyle = bg; ctx.fill();
           }
-          if (fill < 1) { ctx.strokeStyle = "rgba(255,255,255," + (0.85 * (1 - fill)).toFixed(3) + ")"; ctx.lineWidth = lw; ctx.stroke(); }
+          if (fill < 1) { ctx.strokeStyle = "rgba(255,255,255," + (0.85 * (1 - fill) * keep).toFixed(3) + ")"; ctx.lineWidth = lw; ctx.stroke(); }
         }
       }
     }
-    /* stage four, .74 → 1: it sparkles — four-point glints and the odd flash of fire */
+    /* stage four, .80 → 1: it sparkles — a glint now and then where a facet
+       turns to the light; on the photograph only the odd one, and small */
     if (spark > 0) {
+      var sk = photo ? 0.6 : 1;
       ctx.globalCompositeOperation = "lighter";
       for (k = 0; k < n; k++) {
-        var st = stones[k];
+        var st = stones[k], R2 = st.r;
         for (var m = 0; m < 2; m++) {
           var ph = Math.sin(st.lit * 3.1 + m * 2.2 + t * 0.0021 * (1 + m * 0.6) + p * 14);
-          var a2 = Math.pow(c01(ph), 8) * spark; if (a2 < 0.02) continue;
-          var ga = st.lit + m * 2.4, gx = st.x + Math.cos(ga) * R * 0.45, gy = st.y + Math.sin(ga) * R * 0.45, len = R * (0.55 + m * 0.25) * a2;
+          var a2 = Math.pow(c01(ph), 8) * spark * sk; if (a2 < 0.02) continue;
+          var ga = st.lit + m * 2.4, gx = st.x + Math.cos(ga) * R2 * 0.45, gy = st.y + Math.sin(ga) * R2 * 0.45, len = R2 * (0.55 + m * 0.25) * a2;
           var fire = "rgba(255,255,255,";
           ctx.strokeStyle = fire + (0.8 * a2).toFixed(3) + ")"; ctx.lineWidth = Math.max(0.6, lw * 0.7);
           ctx.beginPath(); ctx.moveTo(gx - len, gy); ctx.lineTo(gx + len, gy); ctx.moveTo(gx, gy - len); ctx.lineTo(gx, gy + len); ctx.stroke();
-          var rg = ctx.createRadialGradient(gx, gy, 0, gx, gy, R * 0.22 * a2 + 1);
+          var rg = ctx.createRadialGradient(gx, gy, 0, gx, gy, R2 * 0.22 * a2 + 1);
           rg.addColorStop(0, fire + (0.9 * a2).toFixed(3) + ")"); rg.addColorStop(1, fire + "0)");
-          ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(gx, gy, R * 0.22 * a2 + 1, 0, 6.283); ctx.fill();
+          ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(gx, gy, R2 * 0.22 * a2 + 1, 0, 6.283); ctx.fill();
         }
       }
       ctx.globalCompositeOperation = "source-over";
@@ -9659,7 +9701,9 @@
   }
   function tick(t) {
     requestAnimationFrame(tick);
-    var r = pin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    var r = pin.getBoundingClientRect();
+    if (!loading && r.top < innerHeight * 3 && r.bottom > -innerHeight) load();
+    if (r.bottom < 0 || r.top > innerHeight) return;
     var p = reduce ? 1 : progress();
     /* once the light has come it keeps moving on its own; before that the
        frame only changes when the page does */

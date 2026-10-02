@@ -227,7 +227,7 @@ ${markDefs()}
     <!-- the Line drawn as you scroll: a hairline, then every facet, then the metal and the light -->
     <div class="drawpin" id="drawpin">
       <div class="drawin">
-        <canvas id="drawcv" role="img" aria-label="A diamond tennis bracelet drawn in white line on black, facet by facet, then set and lit"></canvas>
+        <canvas id="drawcv" role="img" aria-label="A diamond tennis bracelet drawn in white line on black, facet by facet, that becomes the real piece"></canvas>
         <div class="drawcap" aria-live="off">
           <div class="k gold" data-en="The Line" data-he="הקו">The Line</div>
           <div class="dcs">
