@@ -5151,3 +5151,20 @@
      half strength through the change */
   .pgrid .fig.swp .im.hx.on { z-index:2; }
   .pgrid .fig.swp .im.hx.was { z-index:1; opacity:1; transition:none; }
+
+  /* ── v147 — the footer on a phone: one short, centred column. The brand
+     line already says where and how to visit, and the bar below books the
+     viewing, so the Visit column and the second way to write are dropped
+     here; the links run in wrapped rows instead of one per line. ───────── */
+  @media (max-width:759px) {
+    #end { padding-top:36px !important; padding-bottom:calc(18px + env(safe-area-inset-bottom)) !important; }
+    #end .fgrid { display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
+    #end .fbrand { margin-bottom:6px; padding-bottom:0; }
+    #end .fcol.fexp, #end .fcol.fcon, #end .fcol.ffol { display:flex; flex-wrap:wrap; justify-content:center; column-gap:20px; row-gap:0; width:100%; }
+    #end .fcol.fexp > .k, #end .fcol.fcon > .k, #end .fcol.ffol > .k, #end .fcol.fvis, #end .fcol .fwr { display:none; }
+    #end .fcol.fexp a, #end .fcol.fcon a { min-height:38px; font-size:.9rem; }
+    #end .ffol .soc { justify-content:center; }
+    #end .ftrust { display:flex; flex-wrap:wrap; justify-content:center; gap:0 16px; margin-top:16px; padding-top:10px; text-align:center; }
+    #end .ftrust a { min-height:34px; }
+    #end .fbot { justify-content:center; gap:22px; margin-top:4px; }
+  }
