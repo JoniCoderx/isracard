@@ -558,7 +558,7 @@
     document.querySelectorAll("[data-en]").forEach(function (el) {
       var v = say(el); if (v == null) return;
       if (el.tagName === "TITLE") { el.textContent = v; return; }
-      el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + v + "</bdi>" : v;
+      el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + ltrU(v) + "</bdi>" : v;
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
     setTimeout(function () { isle(document.body); }, 0);
@@ -572,6 +572,9 @@
      the story, the summaries) gets the same right-to-left island as the
      translated copy, so a Hebrew line with a number or a Latin name inside it
      reads in the right order without the page itself being mirrored. */
+  /* inside a right-to-left line, "6 ct" would split into "ct 6": a number
+     followed by a Latin unit is kept as one left-to-right run */
+  function ltrU(s) { return s.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>'); }
   var isleRe = /[\u0590-\u06ff]/, isleOn = false, isleRaf = 0;
   function isle(root) {
     if (!isleOn) return;
@@ -579,7 +582,7 @@
       if (el.children.length || /^(BDI|TITLE|SCRIPT|STYLE|OPTION|TEXTAREA|INPUT|CANVAS)$/.test(el.tagName)) return;
       if (el.closest("bdi, svg")) return;
       if (!isleRe.test(el.textContent)) return;
-      el.innerHTML = '<bdi dir="rtl">' + el.innerHTML + "</bdi>";
+      el.innerHTML = '<bdi dir="rtl">' + ltrU(el.innerHTML) + "</bdi>";
     });
   }
   if (window.MutationObserver) new MutationObserver(function () {

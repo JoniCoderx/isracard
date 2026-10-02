@@ -202,7 +202,7 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   let out = "", at = 0, end = -1;
   for (const [from, to, he] of cuts) {
     if (from < end) continue;
-    out += html.slice(at, from) + (/[\u0590-\u05ff]/.test(he) ? '<bdi dir="rtl">' + he + "</bdi>" : he); at = to; end = to;
+    out += html.slice(at, from) + (/[\u0590-\u05ff]/.test(he) ? '<bdi dir="rtl">' + he.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : he); at = to; end = to;
   }
   const heHtml = (out + html.slice(at)).replace(/alt="([^"]*)" data-alt-he="([^"]*)"/g, 'alt="$2" data-alt-en="$1" data-alt-he="$2"');
   const heHead = head
@@ -274,7 +274,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     if (rtl) h.setAttribute("data-ns", "1"); else h.removeAttribute("data-ns");
     document.querySelectorAll("[data-en]").forEach(function (el) {
       var en = el.getAttribute("data-en"), t = l === "en" ? en : l === "he" ? el.getAttribute("data-he") : dict && dict[en];
-      el.innerHTML = rtl && t && /[\u0590-\u06ff]/.test(t) ? '<bdi dir="rtl">' + t + "</bdi>" : (t || en);
+      el.innerHTML = rtl && t && /[\u0590-\u06ff]/.test(t) ? '<bdi dir="rtl">' + t.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : (t || en);
     });
     document.querySelectorAll(".dlang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === l ? "true" : "false"); });
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) { if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt); im.alt = l === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en"); });

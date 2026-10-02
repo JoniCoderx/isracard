@@ -4580,6 +4580,9 @@
     #build .handbar { position:static; top:auto; margin-top:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
     #build .handbar .hgrp { background:none; }
     #build .handbar .sk { width:32px; height:32px; }
+    /* older wrist rules pinned this row under a sticky viewer; the viewer
+       no longer sticks, so neither does the row — it stays under the wrist */
+    #build #configure > #stripwrap.wrist ~ .handbar { position:static; top:auto; margin-top:10px; padding:0; background:none; box-shadow:none; border-radius:0; }
 
     /* the five questions as tabs: what each one is, what you chose */
     #build #opts { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:0; margin-top:18px; padding:0; border-top:1px solid var(--line); }
