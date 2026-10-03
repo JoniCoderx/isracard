@@ -5384,3 +5384,83 @@
      does not carry, is set light and small so it sits like the other symbols */
   #build #configure .total { justify-content:stretch; grid-template-columns:minmax(0,1fr); }
   .shk { font-family:"Segoe UI", "Noto Sans Hebrew", Arial, sans-serif; font-weight:300; font-size:.74em; opacity:.92; }
+
+  /* ── v156 — the piece window as a white dossier. It belongs to the white
+     collection it opens from: warm white, charcoal type, the photograph large
+     and first, the facts set close under the name. Nothing behind the words. ── */
+  #pmodal { background:rgba(14,13,11,.62); }
+  #pmodal .mbox, #pmodal[data-p] .mbox {
+    --ink:#16150f; --ink2:#3e3b34; --ink3:#6f6b62; --gold:#8a6f3c; --line:rgba(20,19,15,.075);
+    --pbg:#fcfbf8; background:#fcfbf8; color:var(--ink); border:0; color-scheme:light; scrollbar-color:rgba(20,19,15,.18) transparent; }
+  #pmodal[data-p="moment"] { --pacc:#56677a; } #pmodal[data-p="icon"] { --pacc:#9a7634; } #pmodal[data-p="soul"] { --pacc:#a8705b; }
+  #pmodal[data-p] .mbd::before { content:none; display:none; }
+  #pmodal[data-p] .mim { box-shadow:none; background:#f3f2ef; }
+  #pmodal .mim .dtag { color:var(--ink3); }
+
+  /* name: the mark and SILAVU, the piece beneath it in the serif, then what it is */
+  #pmodal .t { color:var(--ink); line-height:1.02; }
+  #pmodal .t svg.sy.nmk { color:var(--ink); }
+  #pmodal .t .nm em { display:block; margin-top:.08em; background:none !important; color:var(--pacc, var(--ink)) !important; -webkit-text-fill-color:var(--pacc, var(--ink)) !important; }
+  #pmodal .t .kd { color:var(--ink3); margin-top:14px; }
+  #pmodal .mbd .lead { color:var(--ink); }
+  #pmodal .mbd .story { color:var(--ink2); }
+  #pmodal .mkeys .mk { border-top-color:var(--line); padding:9px 0; }
+  #pmodal .mkeys .mk:last-child { border-bottom-color:var(--line); }
+  #pmodal .mkeys .mk .k { color:var(--ink3); }
+  #pmodal .mkeys .mk .kv { color:var(--ink); }
+  #pmodal .mprice { border-color:var(--line); }
+  #pmodal[data-p] .mprice .pv { color:var(--ink); }
+  #pmodal .mprice .pn, #pmodal .mfoot { color:var(--ink3); }
+  #pmodal .mdt { border-color:var(--line); }
+  #pmodal .mdt > summary { color:var(--ink2); }
+  #pmodal .mdt[open] > summary, #pmodal .mdt > summary:hover { color:var(--ink); }
+  #pmodal .mdt .p, #pmodal .incl li { color:var(--ink2); }
+
+  /* controls: charcoal on white, no plates, no glow */
+  #pmodal .btn { color:var(--ink); background:transparent; border-color:rgba(20,19,15,.2); box-shadow:none; }
+  #pmodal .btn:hover { border-color:rgba(20,19,15,.5); background:transparent; }
+  #pmodal .btn.solid { color:#fcfbf8; background:#16150f; border-color:#16150f; }
+  #pmodal .btn.solid:hover { background:#000; border-color:#000; }
+  #pmodal .btn:focus-visible { outline:1px solid var(--ink); outline-offset:3px; }
+  html body #pmodal .mclose2 { background:transparent; color:var(--ink); border:0; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none;
+    min-height:40px; height:40px; padding:0 4px; font-size:.62rem; letter-spacing:.24em; text-decoration:underline; text-decoration-color:transparent;
+    text-underline-offset:6px; text-decoration-thickness:1px; transition:text-decoration-color .3s var(--ease); }
+  html body #pmodal .mclose2:hover, html body #pmodal .mclose2:focus-visible { background:transparent; text-decoration-color:currentColor; outline:none; }
+  #pmodal .gnav { background:rgba(252,251,248,.9); border:0; -webkit-backdrop-filter:none; backdrop-filter:none; opacity:.9; }
+  #pmodal .gnav::before { border-color:#16150f; }
+  @media (hover:hover) and (pointer:fine) { #pmodal .gnav:hover { background:#fcfbf8; opacity:1; } }
+  #pmodal .gthumbs button { border:0; border-radius:2px; opacity:.5; background:#f3f2ef; outline:0 !important; position:relative; transition:opacity .3s var(--ease); }
+  #pmodal .gthumbs button::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:transparent; }
+  #pmodal .gthumbs button.on { opacity:1; }
+  #pmodal .gthumbs button.on::after { background:#16150f; }
+  @media (hover:hover) and (pointer:fine) { #pmodal .gthumbs button:hover { opacity:.85; } }
+
+  @media (min-width:900px) {
+    #pmodal .mbox { --bp:clamp(22px,2.2vw,36px); --mh:min(94svh, 980px);
+      width:min(94vw, 1500px); max-height:var(--mh); border-radius:6px; padding:var(--bp);
+      grid-template-columns:minmax(0,55fr) minmax(0,45fr); column-gap:clamp(32px,3.6vw,64px); align-items:start; }
+    #pmodal .mbox .mgal, html[dir="rtl"] #pmodal .mbox .mgal { --sq:min(100%, calc(var(--mh) - 2 * var(--bp) - 66px));
+      position:sticky; top:0; padding:0; display:grid; gap:12px; justify-items:center; align-content:start; grid-template-rows:none; }
+    #pmodal .mbox .mim, html body #pmodal .mbox .mim.sq { width:var(--sq); height:auto; aspect-ratio:1 / 1; max-height:none; min-height:0; border-radius:3px; margin:0; }
+    #pmodal .mbox .mgal .gthumbs { width:var(--sq); padding:0; gap:8px; flex-wrap:nowrap; }
+    #pmodal .gthumbs button { width:52px; height:52px; }
+    #pmodal .mbox .mbd { padding:clamp(4px,1vw,14px) 0 0; gap:14px; align-content:start; }
+    #pmodal .t { font-size:clamp(1.9rem,2.5vw,2.6rem); padding-inline-end:84px; }
+    #pmodal .mbd .lead { max-width:44ch; }
+    #pmodal .mbd .story { font-size:.94rem; line-height:1.6; max-width:62ch; }
+    #pmodal .mbuy { grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:24px; }
+    #pmodal .mprice { padding:12px 0; }
+    #pmodal .mclose2, html body #pmodal .mclose2 { top:calc(var(--bp) - 6px); inset-inline-end:var(--bp); }
+  }
+
+  @media (max-width:899px) {
+    #pmodal { background:#fcfbf8; }
+    #pmodal .mbox { border-radius:0; }
+    #pmodal .mbox .mgal { padding:0; }
+    #pmodal .mim, html body #pmodal .mbox .mim.sq { width:100%; aspect-ratio:1 / 1; max-height:none; border-radius:0; }
+    html body #pmodal .mclose2 { background:rgba(252,251,248,.94); border-radius:999px; padding:0 14px; text-decoration:none; }
+    #pmodal .gthumbs button { width:46px; height:46px; flex:0 0 46px; }
+    #pmodal .mbuy { background:#fcfbf8; -webkit-backdrop-filter:none; backdrop-filter:none; border-top:1px solid rgba(20,19,15,.08); }
+  }
+  @media (min-width:900px) { html[dir="rtl"] #pmodal .t { padding-right:0; padding-left:84px; } }
+  html[data-ns] body #pmodal .mclose2 { letter-spacing:.02em; font-size:.84rem; }
