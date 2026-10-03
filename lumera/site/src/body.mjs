@@ -215,28 +215,30 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="craft" data-n="" data-title-en="The mark" data-title-he="הסמל" aria-label="The SILAVU mark, drawn by hand">
-    <!-- the signature: a hand makes the first stroke, the line goes on and becomes the mark -->
+  <section id="craft" data-n="" data-title-en="The signature" data-title-he="החתימה" aria-label="SILAVU, written in one line">
+    <!-- one line comes in from the left and writes the name, without lifting -->
     <div class="sgstage">
-      <img class="sghand" src="/img/atelier-hand-1200.jpg" srcset="/img/atelier-hand-700.jpg 700w, /img/atelier-hand-1200.jpg 1200w" sizes="(max-width:759px) 66vw, 40vw" alt="" aria-hidden="true" decoding="async" loading="lazy" width="1200" height="1282">
       <div class="sgfig">
-        <svg class="sgsvg" viewBox="-130 -130 ${(MARK_BW + 260).toFixed(1)} 1260" role="img" aria-label="The SILAVU mark" overflow="visible">
-          <defs><linearGradient id="sgmetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f4ee"/><stop offset=".46" stop-color="#d8d4cb"/><stop offset=".7" stop-color="#f3f0e9"/><stop offset="1" stop-color="#c9c4ba"/></linearGradient></defs>
-          <g class="sgguides" fill="none">
-            <circle cx="437" cy="500" r="590" pathLength="1"/><circle cx="128" cy="470" r="200" pathLength="1"/><circle cx="746" cy="470" r="200" pathLength="1"/>
-            <path d="M 437 -110 V 1110" pathLength="1"/><path d="M -110 470 H 985" pathLength="1"/>
+        <svg class="sgsvg" viewBox="150 30 1060 360" role="img" aria-label="SILAVU, written by hand in a single line" overflow="visible">
+          <defs>
+            <linearGradient id="sgfade" gradientUnits="userSpaceOnUse" x1="-560" y1="0" x2="260" y2="0"><stop offset="0" stop-color="#f2eee6" stop-opacity="0"/><stop offset=".72" stop-color="#f2eee6" stop-opacity=".82"/><stop offset="1" stop-color="#f6f2ea"/></linearGradient>
+            <radialGradient id="sgglow"><stop offset="0" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".25" stop-color="#fff6e6" stop-opacity=".45"/><stop offset="1" stop-color="#fff6e6" stop-opacity="0"/></radialGradient>
+          </defs>
+          <path class="sghalo" d="M -760 378 C -620 390, -460 362, -300 360 C -190 378, -80 318, 30 318 C 110 318, 160 330, 205 318 C 262 300, 312 170, 350 98 C 362 76, 390 52, 394 66 C 398 82, 360 92, 318 84 C 278 78, 236 100, 236 132 C 236 164, 272 178, 306 194 C 346 214, 362 244, 356 278 C 350 318, 308 340, 262 338 C 222 336, 188 330, 176 344 C 166 360, 230 364, 300 360 C 370 356, 420 330, 446 240 C 440 292, 432 330, 462 332 C 498 334, 528 270, 548 200 C 562 150, 568 96, 552 84 C 534 72, 518 112, 518 180 C 518 250, 516 330, 548 332 C 574 334, 600 300, 626 262 C 640 242, 664 234, 680 242 C 652 232, 616 254, 612 290 C 608 320, 628 336, 650 326 C 672 316, 684 280, 690 244 C 684 290, 680 330, 708 332 C 734 334, 748 300, 760 270 C 768 250, 770 238, 782 240 C 790 270, 794 316, 808 330 C 830 300, 856 262, 868 240 C 880 222, 900 232, 892 244 C 880 270, 872 306, 884 326 C 900 344, 930 326, 946 290 C 956 266, 960 250, 964 240 C 958 280, 952 330, 980 332 C 1040 334, 1110 220, 1170 110" fill="none"/>
+          <path class="sgpath" d="M -760 378 C -620 390, -460 362, -300 360 C -190 378, -80 318, 30 318 C 110 318, 160 330, 205 318 C 262 300, 312 170, 350 98 C 362 76, 390 52, 394 66 C 398 82, 360 92, 318 84 C 278 78, 236 100, 236 132 C 236 164, 272 178, 306 194 C 346 214, 362 244, 356 278 C 350 318, 308 340, 262 338 C 222 336, 188 330, 176 344 C 166 360, 230 364, 300 360 C 370 356, 420 330, 446 240 C 440 292, 432 330, 462 332 C 498 334, 528 270, 548 200 C 562 150, 568 96, 552 84 C 534 72, 518 112, 518 180 C 518 250, 516 330, 548 332 C 574 334, 600 300, 626 262 C 640 242, 664 234, 680 242 C 652 232, 616 254, 612 290 C 608 320, 628 336, 650 326 C 672 316, 684 280, 690 244 C 684 290, 680 330, 708 332 C 734 334, 748 300, 760 270 C 768 250, 770 238, 782 240 C 790 270, 794 316, 808 330 C 830 300, 856 262, 868 240 C 880 222, 900 232, 892 244 C 880 270, 872 306, 884 326 C 900 344, 930 326, 946 290 C 956 266, 960 250, 964 240 C 958 280, 952 330, 980 332 C 1040 334, 1110 220, 1170 110" fill="none"/>
+          <circle class="sgdot" cx="457" cy="197" r="5"/>
+          <g class="sgpen"><circle r="22" fill="url(#sgglow)"/><circle class="sgcore" r="2.2"/></g>
+          <g class="sgspark">
+            <g transform="translate(457 197)"><circle r="26" fill="url(#sgglow)"/><path d="M 0 -26 L 1.6 -1.6 L 26 0 L 1.6 1.6 L 0 26 L -1.6 1.6 L -26 0 L -1.6 -1.6 Z"/></g>
+            <g transform="translate(392 60)"><circle r="20" fill="url(#sgglow)"/><path d="M 0 -20 L 1.3 -1.3 L 20 0 L 1.3 1.3 L 0 20 L -1.3 1.3 L -20 0 L -1.3 -1.3 Z"/></g>
+            <g transform="translate(552 82)"><circle r="16" fill="url(#sgglow)"/><path d="M 0 -16 L 1.1 -1.1 L 16 0 L 1.1 1.1 L 0 16 L -1.1 1.1 L -16 0 L -1.1 -1.1 Z"/></g>
+            <g transform="translate(1170 110)"><circle r="30" fill="url(#sgglow)"/><path d="M 0 -32 L 1.8 -1.8 L 32 0 L 1.8 1.8 L 0 32 L -1.8 1.8 L -32 0 L -1.8 -1.8 Z"/></g>
           </g>
-          <path class="sglead sgd" d="M -1250 690 C -980 760, -700 650, -470 540 C -230 420, 150 40, 433 0.2" fill="none"/>
-          <path class="sglead sgm" d="M -250 1120 C -330 880, -330 520, -170 260 C -40 60, 220 -20, 433 0.2" fill="none"/>
-          <use class="sgfill" href="#symb" x="0" y="0" width="${Math.ceil(MARK_BW)}" height="1000"/>
-          <g class="sgline">${(() => { const sp = MARK_B.split(/(?=M )/).map(d => d.trim()); return [0, 3, 2, 1, 4, 5].map(i => `<path d="${sp[i]}"/>`).join(""); })()}</g>
-          <g class="sgpts"><circle cx="433" cy="1" r="7"/><circle cx="438" cy="999" r="7"/><circle cx="1" cy="470" r="7"/><circle cx="874" cy="470" r="7"/></g>
-          <circle class="sghead" r="5" cx="0" cy="0"/>
         </svg>
       </div>
       <div class="sgcopy">
         <p class="sgc1" data-en="Every line is drawn." data-he="כל קו משורטט.">Every line is drawn.</p>
-        <p class="sgc2" data-en="Every stone is chosen." data-he="כל אבן נבחרת.">Every stone is chosen.</p>
+        <p class="sgc2"><i aria-hidden="true"></i><span data-en="Every stone is chosen." data-he="כל אבן נבחרת.">Every stone is chosen.</span><i aria-hidden="true"></i></p>
       </div>
     </div>
   </section>

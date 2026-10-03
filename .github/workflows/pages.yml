@@ -82,8 +82,6 @@ jobs:
           done
       - name: Wrist photographs
         run: bash lumera/site/wrist-assets.sh dist/img
-      - name: The atelier hand, for the drawn mark
-        run: bash lumera/site/hand-assets.sh dist/img
       - name: Collection photography (committed originals)
         run: bash lumera/site/piece-assets.sh dist/img
       - name: The box sequence, cut from the 4K restoration

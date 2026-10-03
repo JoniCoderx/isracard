@@ -1,5 +1,5 @@
-// The drawn mark: held passage on desktop and phone, the hand only at the start, the
-// mark complete and filled at the end, the words only near the end, reduced motion static.
+// The signature: held passage on desktop and phone, one line writing SILAVU, the words
+// only near the end, the sparks brief, reduced motion static and complete.
 import { chromium } from "playwright-core";
 const OUT = "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/";
 const BASE = process.env.BASE || "http://localhost:8777/";
@@ -16,27 +16,27 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   await p.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
   const top = await p.evaluate(() => document.getElementById("craft").getBoundingClientRect().top + scrollY);
   const H = await p.evaluate(() => document.getElementById("craft").offsetHeight);
-  ok(rm ? H < h * 1.2 : H > h * (mob ? 1.5 : 1.9) && H < h * 2.1, `${tag} section ${(H / h).toFixed(2)} screens`);
+  ok(rm ? H < h * 1.2 : H > h * (mob ? 1.5 : 1.8) && H < h * 2, `${tag} section ${(H / h).toFixed(2)} screens`);
   const probe = () => p.evaluate(() => { const q = s => document.querySelector("#craft " + s), O = e => +getComputedStyle(e).opacity, R = e => e.getBoundingClientRect();
-    const st = R(q(".sgstage")), fig = R(q(".sgfig")), cp = R(q(".sgcopy")), hd = q(".sghand");
+    const st = R(q(".sgstage")), fig = R(q(".sgfig")), cp = R(q(".sgcopy"));
     return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, O(q(".sgc1")), O(q(".sgc2"))],
-      hand: hd ? O(hd) * (getComputedStyle(hd).display === "none" ? 0 : 1) : 0, fill: O(q(".sgfill")), line: (() => { const ps = [...document.querySelectorAll("#craft .sgline path")]; return ps.reduce((a, e) => a + parseFloat(getComputedStyle(e).strokeDashoffset), 0) / ps.reduce((a, e) => a + e.getTotalLength(), 0); })(),
+      dot: O(q(".sgdot")), spark: Math.max(...[...document.querySelectorAll("#craft .sgspark > g")].map(O)) * O(q(".sgspark")),
+      line: (() => { const e = q(".sgpath"); return (parseFloat(getComputedStyle(e).strokeDashoffset) || 0) / e.getTotalLength(); })(), pen: O(q(".sgpen")),
       over: document.documentElement.scrollWidth - innerWidth, vw: innerWidth }; });
-  const fs = rm ? [0.5] : [0, 0.1, 0.2, 0.35, 0.6, 0.85, 0.95, 1];
+  const fs = rm ? [0.5] : [0, 0.1, 0.2, 0.35, 0.6, 0.83, 0.88, 1];
   for (const f of fs) {
     await p.evaluate(y => scrollTo(0, y), Math.round(rm ? top - (h - H) / 2 : top + f * (H - h))); await p.waitForTimeout(rm ? 500 : 1400);
     const r = await probe();
     ok(r.over <= 0, `${tag} @${f} no sideways overflow`);
     ok(Math.abs((r.fig[0] + r.fig[2]) / 2 - r.vw / 2) < 2, `${tag} @${f} mark centred`);
     ok(r.copy[0] >= r.fig[3] - 2, `${tag} @${f} words below the mark`);
-    if (rm) { ok(r.fill > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.99 && r.hand === 0, `${tag} finished mark and words, no hand`); }
+    if (rm) { ok(r.line < 0.001 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.99 && r.spark === 0, `${tag} written name and words, no sparks`); }
     else {
       if (f > 0 && f < 1) ok(Math.abs(r.st) < 1, `${tag} @${f} stage held`);
-      if (f === 0.1) ok(r.hand > 0.6, `${tag} hand present at the first stroke (${r.hand.toFixed(2)})`);
-      if (f >= 0.35) ok(r.hand < 0.02, `${tag} @${f} hand gone`);
-      if (f <= 0.6) ok(r.copy[2] < 0.02 && r.fill < 0.02, `${tag} @${f} no words, no fill yet`);
-      if (f === 0.6) ok(r.line > 0.05 && r.line < 0.95, `${tag} line part-drawn (${r.line.toFixed(2)})`);
-      if (f === 1) ok(r.fill > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.98 && r.line < 0.001, `${tag} end: mark drawn and filled, words shown`);
+      if (f === 0.2 || f === 0.35 || f === 0.6) ok(r.line > 0.05 && r.line < 0.95 && r.pen > 0.5, `${tag} @${f} writing, pen light on (${r.line.toFixed(2)})`);
+      if (f <= 0.6) ok(r.copy[2] < 0.02 && r.spark < 0.02, `${tag} @${f} no words, no sparks yet`);
+      if (f === 1) ok(r.line < 0.001 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.98 && r.pen < 0.01, `${tag} end: written, dotted, words shown`);
+      if (f === 1) ok(r.spark < 0.35, `${tag} end: sparks settled (${r.spark.toFixed(2)})`);
       if (f === 1) ok(r.copy[1] < h - 8, `${tag} words inside the screen (${Math.round(r.copy[1])})`);
     }
     if (process.env.SHOT) await p.screenshot({ path: `${OUT}sg-${w}${rm ? "r" : ""}-${f}.jpg`, type: "jpeg", quality: 60 });
