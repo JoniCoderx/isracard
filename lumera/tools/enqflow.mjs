@@ -13,7 +13,10 @@ for (const [W,H,mob] of [[1440,900,false],[390,844,true]]) {
   await p.evaluate(()=>{document.documentElement.style.scrollBehavior="auto"; sessionStorage.clear();});
   const tag=mob?"phone":"desktop";
   const geo=await p.evaluate(()=>{const f=document.getElementById("cform").getBoundingClientRect(), t=document.getElementById("fMsg").getBoundingClientRect(); return [Math.round(f.width),Math.round(t.width),Math.round(t.height)];});
-  ok(geo[1]>=geo[0]-4 && geo[2]>=110, `${tag} message spans the form (${geo[1]} of ${geo[0]}px, ${geo[2]}px tall)`);
+  ok(geo[1]>=geo[0]-4 && geo[2]<=80, `${tag} message spans the form and rests at one line (${geo[1]} of ${geo[0]}px, ${geo[2]}px tall)`);
+  await p.evaluate(()=>document.getElementById("fMsg").focus()); await p.waitForTimeout(600);
+  const hf=await p.evaluate(()=>Math.round(document.getElementById("fMsg").getBoundingClientRect().height)); await p.evaluate(()=>document.activeElement.blur());
+  ok(hf>=110, `${tag} message opens when you go to write (${hf}px)`);
   /* Reserve on a card */
   const card=p.locator(".pgrid .piece:not(.soon)").first(); await card.scrollIntoViewIfNeeded();
   if (mob) await card.locator(".q").tap(); else await card.locator(".q").click(); await p.waitForTimeout(1200);

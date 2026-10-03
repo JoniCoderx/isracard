@@ -375,7 +375,7 @@ ${markDefs()}
             <p class="cselact k" id="cselAct"></p>
             <p class="cseltxt" id="cselTxt"></p>
           </div>
-          <div class="field fmsg"><textarea id="fMsg" rows="4" dir="auto"></textarea><label for="fMsg" data-en="Your message" data-he="ההודעה שלכם">Your message</label></div>
+          <div class="field fmsg"><textarea id="fMsg" rows="1" dir="auto"></textarea><label for="fMsg" data-en="Your message" data-he="ההודעה שלכם">Your message</label></div>
           <div class="chan" hidden><span class="k" data-en="How should we reach you?" data-he="איך נחזור אליכם?">How should we reach you?</span>
             <button type="button" class="chip" data-ch="WhatsApp" hidden>WhatsApp</button>
             <button type="button" class="chip" data-ch="Call" data-en="Call the house" data-he="התקשרו אלינו" hidden>Call the house</button>

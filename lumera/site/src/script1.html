@@ -860,6 +860,7 @@
      cut the specification off at the price */
   function fit() { msgEl.style.height = "auto"; msgEl.style.height = Math.min(msgEl.scrollHeight + 2, 260) + "px"; }
   msgEl.addEventListener("input", fit);
+  msgEl.addEventListener("blur", function () { if (!msgEl.value) msgEl.style.height = ""; });
   /* the Line as one sentence: the cut, the stones and their total, origin,
      metal, wrist and estimate. In Hebrew and Arabic every measure is isolated
      left to right, or "44 × 0.14 ct" comes out as "ct 0.14 × 44". */

@@ -5469,3 +5469,9 @@
   #pmodal .t .nm { white-space:nowrap; }
   #pmodal .t .nm em { display:inline; margin:0; margin-inline-start:.22em; font-family:var(--word, inherit) !important; font-style:normal !important;
     font-weight:500; letter-spacing:.05em; text-transform:uppercase; font-size:1em; }
+  /* the message is one line like the others until you go to write in it; then
+     it opens, and keeps growing with what you write */
+  #enquire .field.fmsg textarea, #enquire .field.fmsg textarea[style] { min-height:0; transition:min-height .45s var(--ease); }
+  #enquire .field.fmsg:focus-within textarea, #enquire .field.fmsg.filled textarea { min-height:132px; }
+  @media (max-width:759px) { #enquire .field.fmsg:focus-within textarea, #enquire .field.fmsg.filled textarea { min-height:120px; } }
+  @media (prefers-reduced-motion:reduce) { #enquire .field.fmsg textarea { transition:none; } }
