@@ -215,22 +215,28 @@ ${markDefs()}
     </div>
   </section>
 
-  <section id="craft" data-n="" data-title-en="The Line" data-title-he="הקו" aria-label="The Line, drawn and then made">
-    <!-- the Line drawn as you scroll: a hairline, then every facet, then the metal and the light -->
-    <div class="drawpin" id="drawpin">
-      <div class="drawin">
-        <canvas id="drawcv" role="img" aria-label="A diamond tennis bracelet drawn in white line on black, facet by facet, that becomes the real piece"></canvas>
-        <div class="drawcap" aria-live="off">
-          <div class="k gold" data-en="The Line" data-he="הקו">The Line</div>
-          <div class="dcs">
-            <h2 class="h2 dc on" data-en="It begins as <em>a line.</em>" data-he="זה מתחיל <em>בקו אחד.</em>">It begins as <em>a line.</em></h2>
-            <h2 class="h2 dc" data-en="Then every facet <em>is drawn.</em>" data-he="אחר כך משורטטת <em>כל פאה.</em>">Then every facet <em>is drawn.</em></h2>
-            <h2 class="h2 dc" data-en="Then the metal <em>takes its shape.</em>" data-he="אחר כך המתכת <em>מקבלת את צורתה.</em>">Then the metal <em>takes its shape.</em></h2>
-            <h2 class="h2 dc" data-en="Then the stones <em>are set.</em>" data-he="ולבסוף משובצות <em>האבנים.</em>">Then the stones <em>are set.</em></h2>
-          </div>
-          <a class="lnk dgo" href="#build" data-en="Design yours" data-he="עצבו את שלכם">Design yours</a>
-        </div>
-        <div class="drawbar" aria-hidden="true"><i id="drawbar"></i></div>
+  <section id="craft" data-n="" data-title-en="The mark" data-title-he="הסמל" aria-label="The SILAVU mark, drawn by hand">
+    <!-- the signature: a hand makes the first stroke, the line goes on and becomes the mark -->
+    <div class="sgstage">
+      <img class="sghand" src="/img/atelier-hand-1200.jpg" srcset="/img/atelier-hand-700.jpg 700w, /img/atelier-hand-1200.jpg 1200w" sizes="(max-width:759px) 66vw, 40vw" alt="" aria-hidden="true" decoding="async" loading="lazy" width="1200" height="1282">
+      <div class="sgfig">
+        <svg class="sgsvg" viewBox="-130 -130 ${(MARK_BW + 260).toFixed(1)} 1260" role="img" aria-label="The SILAVU mark" overflow="visible">
+          <defs><linearGradient id="sgmetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f4ee"/><stop offset=".46" stop-color="#d8d4cb"/><stop offset=".7" stop-color="#f3f0e9"/><stop offset="1" stop-color="#c9c4ba"/></linearGradient></defs>
+          <g class="sgguides" fill="none">
+            <circle cx="437" cy="500" r="590" pathLength="1"/><circle cx="128" cy="470" r="200" pathLength="1"/><circle cx="746" cy="470" r="200" pathLength="1"/>
+            <path d="M 437 -110 V 1110" pathLength="1"/><path d="M -110 470 H 985" pathLength="1"/>
+          </g>
+          <path class="sglead sgd" d="M -1250 690 C -980 760, -700 650, -470 540 C -230 420, 150 40, 433 0.2" fill="none"/>
+          <path class="sglead sgm" d="M -250 1120 C -330 880, -330 520, -170 260 C -40 60, 220 -20, 433 0.2" fill="none"/>
+          <use class="sgfill" href="#symb" x="0" y="0" width="${Math.ceil(MARK_BW)}" height="1000"/>
+          <g class="sgline">${(() => { const sp = MARK_B.split(/(?=M )/).map(d => d.trim()); return [0, 3, 2, 1, 4, 5].map(i => `<path d="${sp[i]}"/>`).join(""); })()}</g>
+          <g class="sgpts"><circle cx="433" cy="1" r="7"/><circle cx="438" cy="999" r="7"/><circle cx="1" cy="470" r="7"/><circle cx="874" cy="470" r="7"/></g>
+          <circle class="sghead" r="5" cx="0" cy="0"/>
+        </svg>
+      </div>
+      <div class="sgcopy">
+        <p class="sgc1" data-en="Every line is drawn." data-he="כל קו משורטט.">Every line is drawn.</p>
+        <p class="sgc2" data-en="Every stone is chosen." data-he="כל אבן נבחרת.">Every stone is chosen.</p>
       </div>
     </div>
   </section>

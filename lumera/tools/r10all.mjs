@@ -17,7 +17,7 @@ const r=await p.evaluate(()=>{ const q=s=>document.querySelector(s), t=s=>(q(s)|
     lines:[...document.querySelectorAll(".pgrid .piece:not(.soon) .bd > .p")].map(e=>e.textContent.trim()),
     bespokeBg:cs("#bespoke","backgroundImage"), jpin:!!q("#jpin"), jsteps:document.querySelectorAll(".jstep").length,
     macro:[...document.querySelectorAll("h2,h3")].map(e=>e.textContent).filter(x=>/Light goes in|Fifty-seven/.test(x)),
-    drawcv:!!q("#drawcv"), benchcv:!!q("#benchcv"),
+    drawcv:!!q("#craft .sgsvg") && !q("#drawcv"), benchcv:!!q("#benchcv"),
     caratShown:(q("#build .sdet")&&!q("#build .sdet").open)?"none":"shown", cacts:[...document.querySelectorAll("#configure .cacts button")].map(e=>e.id), buildActs:!!q("#build .copy .acts"),
     filmcv:!!q("#filmcv"), emb:!!q("#emb"), embStop:q("#embGold stop")?q("#embGold stop").getAttribute("stop-color"):null,
     fbig:!!q(".fbig"), fbrand:!!q("#end .fbrand"), seam:!!q("#hero .hseam"),
@@ -30,7 +30,7 @@ ok(JSON.stringify(r.names)===JSON.stringify(["SILAVU MOMENTBracelet","SILAVU ICO
 ok(r.lines[0]==="A delicate 18k white-gold chain, finished with the SILAVU signature in a polished sculptural form." && r.lines[1]==="A sculptural 18k white-gold ring with the SILAVU signature set in pavé diamonds." && r.lines[2]==="A fine 18k white-gold chain with a pavé SILAVU signature pendant at its center.", `${dv} card descriptions exactly as given`);
 ok(true, `${dv} journey checks retired`);
 ok(r.macro.some(x=>/Light goes in/.test(x)) && !r.macro.some(x=>/Fifty-seven/.test(x)), `${dv} macro heading rewritten`);
-ok(r.drawcv && !r.benchcv, `${dv} The Line is the drawing, car film gone`);
+ok(r.drawcv && !r.benchcv, `${dv} the drawn mark replaces the old Line, car film gone`);
 ok(r.caratShown==="none" && r.cacts.join()==="saveImg,sendSpec,tryonBtn2" && !r.buildActs, `${dv} builder trimmed; save / send / try on present`);
 ok(!r.filmcv && r.emb && r.embStop==="#ffffff", `${dv} enquiry: bags film gone, white-gold mark`);
 ok(!r.fbig && r.fbrand, `${dv} footer lockup small in the row`);
