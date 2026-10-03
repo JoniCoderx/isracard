@@ -5379,3 +5379,8 @@
     #collection .pgrid .piece.soon { margin-top:-10px; }
     .drawpin { height:170svh; }
   }
+
+  /* the summary card fills its width; the shekel sign, which the display face
+     does not carry, is set light and small so it sits like the other symbols */
+  #build #configure .total { justify-content:stretch; grid-template-columns:minmax(0,1fr); }
+  .shk { font-family:"Segoe UI", "Noto Sans Hebrew", Arial, sans-serif; font-weight:300; font-size:.74em; opacity:.92; }

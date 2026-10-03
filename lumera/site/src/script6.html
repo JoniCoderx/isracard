@@ -40,8 +40,9 @@
   var RATES = { AED: 1, USD: 0.2723, EUR: 0.2510, ILS: 1.005 }, SYM = { AED: "AED ", USD: "US$ ", EUR: "€ ", ILS: "₪ " }, cur = "AED";
   try { cur = localStorage.getItem("silavu-cur") || "AED"; if (!RATES[cur]) cur = "AED"; } catch (e) {}
   function fmt(aed) { var v = aed * RATES[cur], r = cur === "AED" ? 500 : 100; v = Math.round(v / r) * r; return (cur === "AED" ? "" : "≈ ") + SYM[cur] + v.toLocaleString("en-US"); }
+  function fmtH(aed) { return fmt(aed).replace("₪ ", '<span class="shk">₪</span>\u2009'); }
   function money() {
-    document.querySelectorAll("[data-aed]").forEach(function (el) { var a = +el.getAttribute("data-aed"); if (a > 0) el.textContent = fmt(a); });
+    document.querySelectorAll("[data-aed]").forEach(function (el) { var a = +el.getAttribute("data-aed"); if (a > 0) el.innerHTML = fmtH(a); });
     document.querySelectorAll("[data-cur] .chip").forEach(function (c) { c.classList.toggle("on", c.getAttribute("data-c") === cur); });
   }
   document.addEventListener("click", function (e) { var c = e.target.closest("[data-cur] .chip"); if (!c) return; cur = c.getAttribute("data-c"); try { localStorage.setItem("silavu-cur", cur); } catch (err) {} money(); });

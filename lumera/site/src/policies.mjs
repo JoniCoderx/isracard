@@ -143,5 +143,27 @@ export const POLICIES = [
        S("Tell the house within forty-eight hours and do not sign for a package whose seal is broken. A piece that arrives damaged is replaced or remade, carried both ways at the house's cost.",
          "הודיעו לנו תוך 48 שעות, ואל תחתמו על חבילה שהחותם שלה פגום. תכשיט שהגיע פגום יוחלף או ייוצר מחדש, והמשלוח לשני הכיוונים על חשבוננו.")]
     ]
+  },
+  {
+    slug: "accessibility",
+    title: S("Accessibility", "הצהרת נגישות"),
+    lede: S("The site is meant for everyone who wants to see the pieces.",
+            "האתר נועד לכל מי שרוצה להכיר את התכשיטים."),
+    body: [
+      [S("The standard we work to", "התקן שלפיו אנו פועלים"),
+       S("The site is built to the Web Content Accessibility Guidelines (WCAG 2.1) at level AA, the level Israeli Standard 5568 requires, and is checked against them with automated tests and by hand.",
+         "האתר נבנה לפי הנחיות הנגישות לתוכן אינטרנט (WCAG 2.1) ברמה AA, הרמה שנדרשת בתקן הישראלי 5568, ונבדק מולן בבדיקות אוטומטיות ובבדיקה ידנית.")],
+      [S("What has been done", "מה נעשה באתר"),
+       S("Every part of the site can be reached and used with a keyboard, with a visible focus. Pages have headings and landmarks for screen readers, every photograph is described, and every form field is labelled. Hebrew and Arabic read from right to left. When your device asks for reduced motion, the site stops its animation and films.",
+         "אפשר להגיע לכל חלקי האתר ולהפעיל אותם במקלדת, עם סימון פוקוס גלוי. בעמודים יש כותרות ואזורים מוגדרים לקוראי מסך, לכל תמונה יש תיאור, ולכל שדה בטופס יש תווית. עברית וערבית מוצגות מימין לשמאל. כשהמכשיר שלכם מוגדר להפחתת תנועה, האתר עוצר את האנימציות והסרטונים.")],
+      [S("What is known", "מגבלות ידועות"),
+       S("The bracelet you design is shown as an image you can turn. Everything it shows, the cut, the weight, the length, the metal and the estimate, is also written out in text beside it. The films on the site are silent and carry no information that is not also in words.",
+         "הצמיד שאתם מעצבים מוצג כתמונה שאפשר לסובב. כל מה שהיא מציגה, הליטוש, המשקל, האורך, המתכת וההערכה, כתוב גם כטקסט לצידה. הסרטונים באתר שקטים ואין בהם מידע שאינו מופיע גם במילים.")],
+      [S("If something does not work for you", "אם משהו לא עובד עבורכם"),
+       S("Write to concierge@silavu.com with the word Accessibility, the page, and what happened. You will have an answer, and the problem will be fixed. If you are coming to a private viewing, tell us what would help and we will tell you what can be arranged.",
+         "כתבו אל concierge@silavu.com, ציינו בנושא \"נגישות\", באיזה עמוד ומה קרה. נשיב לכם, והתקלה תתוקן. אם אתם מגיעים לפגישה אישית, ספרו לנו מה יעזור לכם ונאמר לכם מה ניתן להסדיר.")],
+      [S("Last reviewed", "עדכון אחרון"),
+       S("October 2026.", "אוקטובר 2026.")]
+    ]
   }
 ];

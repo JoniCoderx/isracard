@@ -313,5 +313,17 @@
  "Book a private viewing": "احجزوا موعدًا خاصًا",
  "About": "عن الدار",
  "Client care": "خدمة العملاء",
- "Dubai": "دبي"
+ "Dubai": "دبي",
+ "Accessibility": "إمكانية الوصول",
+ "The site is meant for everyone who wants to see the pieces.": "هذا الموقع لكل من يرغب في التعرّف إلى القطع.",
+ "The standard we work to": "المعيار الذي نعمل به",
+ "The site is built to the Web Content Accessibility Guidelines (WCAG 2.1) at level AA, the level Israeli Standard 5568 requires, and is checked against them with automated tests and by hand.": "بُني الموقع وفق إرشادات إمكانية الوصول إلى محتوى الويب (WCAG 2.1) بالمستوى AA، وهو المستوى الذي يشترطه المعيار الإسرائيلي 5568، ويُفحص وفقها باختبارات آلية ويدوية.",
+ "What has been done": "ما الذي أُنجز",
+ "Every part of the site can be reached and used with a keyboard, with a visible focus. Pages have headings and landmarks for screen readers, every photograph is described, and every form field is labelled. Hebrew and Arabic read from right to left. When your device asks for reduced motion, the site stops its animation and films.": "يمكن الوصول إلى كل أجزاء الموقع واستخدامها بلوحة المفاتيح مع تركيز ظاهر. في الصفحات عناوين ومعالم لقارئات الشاشة، ولكل صورة وصف، ولكل حقل في النموذج تسمية. تُقرأ العبرية والعربية من اليمين إلى اليسار. وعندما يطلب جهازك تقليل الحركة، يوقف الموقع الحركة والأفلام.",
+ "What is known": "قيود معروفة",
+ "The bracelet you design is shown as an image you can turn. Everything it shows, the cut, the weight, the length, the metal and the estimate, is also written out in text beside it. The films on the site are silent and carry no information that is not also in words.": "يظهر السوار الذي تصمّمه صورةً يمكن تدويرها. وكل ما تعرضه، القطع والوزن والطول والمعدن والتقدير، مكتوب أيضًا نصًا بجانبها. أفلام الموقع صامتة ولا تحمل معلومة غير مكتوبة بالكلمات.",
+ "If something does not work for you": "إذا لم يعمل شيء كما ينبغي",
+ "Write to concierge@silavu.com with the word Accessibility, the page, and what happened. You will have an answer, and the problem will be fixed. If you are coming to a private viewing, tell us what would help and we will tell you what can be arranged.": "اكتب إلى concierge@silavu.com مع كلمة «إمكانية الوصول» والصفحة وما حدث. ستتلقى ردًا وستُصلح المشكلة. وإن كنت قادمًا لموعد خاص، أخبرنا بما يساعدك وسنخبرك بما يمكن ترتيبه.",
+ "Last reviewed": "آخر مراجعة",
+ "October 2026.": "أكتوبر 2026."
 }
