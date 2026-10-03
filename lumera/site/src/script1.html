@@ -178,7 +178,9 @@
      stops. */
   (function () {
     var w = $("where"), t = 0; if (!w) return;
-    addEventListener("scroll", function () { w.classList.add("live"); clearTimeout(t); t = setTimeout(function () { w.classList.remove("live"); }, 1600); }, { passive: true });
+    var foot = $("end");
+    /* and it steps aside once the footer is up, so it never sits on the copyright line */
+    addEventListener("scroll", function () { w.classList.add("live"); if (foot) w.classList.toggle("atend", foot.getBoundingClientRect().top < innerHeight - 60); clearTimeout(t); t = setTimeout(function () { w.classList.remove("live"); }, 1600); }, { passive: true });
   })();
   function compass() {
     var mid = innerHeight * 0.45, best = secs[0];
@@ -575,6 +577,8 @@
   /* inside a right-to-left line, "6 ct" would split into "ct 6": a number
      followed by a Latin unit is kept as one left-to-right run */
   function ltrU(s) { return s.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>'); }
+  /* the copyright year is this year, whenever the page is read */
+  document.querySelectorAll(".fyr").forEach(function (e) { e.textContent = new Date().getFullYear(); });
   var isleRe = /[\u0590-\u06ff]/, isleOn = false, isleRaf = 0;
   function isle(root) {
     if (!isleOn) return;

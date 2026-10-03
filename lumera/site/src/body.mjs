@@ -103,7 +103,7 @@ function soonCard(x) {
 const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
-    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<div class="k soonh"><span data-en="In the workshop" data-he="בסדנה">In the workshop</span><i></i></div>${SOON.map(soonCard).join("\n")}</div>
+    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<div class="k soonh"><span data-en="SILAVU · Coming soon" data-he="SILAVU · בקרוב">SILAVU · Coming soon</span><i></i></div>${SOON.map(soonCard).join("\n")}</div>
 `;
 
 const SIZES_JRN = "(min-width:1000px) 56vw, 92vw", SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
@@ -142,7 +142,7 @@ ${markDefs()}
   <a class="mark" href="#hero" aria-label="SILAVU">${lockup()}</a>
   <div class="hr">
     <button class="lang" id="langBtn" aria-label="English">EN</button>
-    <a class="btn hbook" href="#concierge" data-en="Book a viewing" data-he="פגישה פרטית">Book a viewing</a>
+    <a class="btn hbook" href="#concierge" data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>
   </div>
 </header>
 
@@ -210,16 +210,6 @@ ${markDefs()}
         <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>
         <div class="cue k pcue"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
       </div>
-    </div>
-    <div class="wrap">
-    <div class="certs rv d2" id="certs">
-      <div class="k gold" data-en="Graded by" data-he="בדירוג">Graded by</div>
-      <div class="certrow">
-        <a class="cert" href="https://www.gia.edu/report-check-landing" target="_blank" rel="noopener"><b>GIA</b></a>
-        <a class="cert" href="https://www.igi.org/verify-your-report/" target="_blank" rel="noopener"><b>IGI</b></a>
-      </div>
-      <p class="k certnote" data-en="Independent laboratories. Every report is yours to check." data-he="מעבדות בלתי תלויות. אפשר לאמת כל תעודה בעצמכם.">Independent laboratories. Every report is yours to check.</p>
-    </div>
     </div>
   </section>
 
@@ -408,14 +398,13 @@ ${markDefs()}
     <div class="wrap">
     <div class="fgrid">
       <div class="fcol fexp rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="about/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
-      <div class="fcol fvis rv d1"><div class="k" data-en="Visit" data-he="ביקור">Visit</div><span data-en="Dubai" data-he="דובאי">Dubai</span><span data-en="Tel Aviv" data-he="תל אביב">Tel Aviv</span><span data-en="By appointment" data-he="בתיאום מראש">By appointment</span><a href="#concierge" class="gold" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
-      <div class="fcol fcon rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a class="fwr" href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+      <div class="fcol fcon rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a class="fwr" href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a><a href="#concierge" class="gold fbook" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
       <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="The Line of Desire" data-he="The Line of Desire">The Line of Desire</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol ffol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
       `<a href="${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div>
-    <div class="fbot k rv"><span>© SILAVU MMXXVI</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
+    <div class="fbot k rv"><span>© SILAVU <span class="fyr">${new Date().getFullYear()}</span></span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>
 </main>

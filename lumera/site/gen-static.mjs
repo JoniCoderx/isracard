@@ -262,12 +262,13 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 <div><div class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</div>${POLICIES.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div>
 <div><div class="k" ${A(S("Visit", "ביקור"))}>Visit</div><span ${A(S("Dubai", "דובאי"))}>Dubai</span><span ${A(S("Tel Aviv", "תל אביב"))}>Tel Aviv</span><span ${A(S("By appointment", "בתיאום מראש"))}>By appointment</span><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
 </div>
-<div class="dfbot k"><span>© SILAVU MMXXVI</span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
+<div class="dfbot k"><span>© SILAVU <span class="fyr">${new Date().getFullYear()}</span></span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
 </footer>`;
   /* the reader's language, applied before the first paint where it can be:
      Hebrew is in the page, the others come from the site's dictionaries */
   const langScript = titleOf => `<script>(function () {
   var h = document.documentElement, cache = {}, orig = document.title;
+  document.querySelectorAll(".fyr").forEach(function (e) { e.textContent = new Date().getFullYear(); });
   function apply(l, dict) {
     var rtl = l === "he" || l === "ar";
     h.lang = l; h.dir = "ltr";

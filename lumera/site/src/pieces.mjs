@@ -180,10 +180,10 @@ export const PIECES = [
    shape of the collection is visible before the photography exists — and so
    the grid never reflows when a piece lands. */
 export const SOON = [
-  { cat: "necklaces", ref: "SLV·N·002", when: S("Spring", "אביב"),
+  { cat: "necklaces", ref: "SLV·N·002", when: S("Soon", "בקרוב"),
     name: S("The Knot <em>Pendant</em>", "<em>תליון</em> Knot"),
     line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, על שרשרת באורך 42 ס\"מ, בגובה עצם הבריח.") },
-  { cat: "earrings",  ref: "SLV·E·001", when: S("Spring", "אביב"),
+  { cat: "earrings",  ref: "SLV·E·001", when: S("Soon", "בקרוב"),
     name: S("The Knot <em>Earrings</em>", "<em>עגילי</em> Knot"),
     line: S("Close to the lobe. Nothing swings, nothing catches.", "צמודים לתנוך. שום דבר לא מתנדנד ושום דבר לא נתפס.") },];
 /* The Line is not in this list on purpose. It is the only piece in the house
