@@ -17,8 +17,8 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   await p.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
   const top = await p.evaluate(() => document.getElementById("macro").getBoundingClientRect().top + scrollY);
   const secH = await p.evaluate(() => document.getElementById("macro").offsetHeight);
-  const pinned = !mob && !rm;
-  ok(pinned ? secH > h * 2.1 && secH < h * 2.7 : secH <= h * 1.01, `${tag} section height ${secH}px (${(secH / h).toFixed(2)} screens)`);
+  const pinned = false;
+  ok(secH <= Math.max(680, h * 0.81) + 1, `${tag} section height ${secH}px (${(secH / h).toFixed(2)} screens)`);
   const probe = () => p.evaluate(() => { const q = s => document.querySelector("#macro " + s), R = e => e.getBoundingClientRect(), O = e => +getComputedStyle(e).opacity;
     const st = R(q(".mfilm")), v = R(q("video")), l1 = R(q(".ml1")), l2 = R(q(".ml2")), sig = R(q(".msig")), cue = q(".mcue");
     return { st: [st.top, st.height, st.width], vid: [v.left, v.top, v.width, v.height], l1: [l1.top, l1.bottom, O(q(".ml1"))], l2: [l2.top, l2.bottom, O(q(".ml2")), l2.left, l2.right],

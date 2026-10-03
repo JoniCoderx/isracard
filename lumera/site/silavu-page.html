@@ -5500,13 +5500,10 @@
   #macro .mcue i { display:block; width:1px; height:34px; background:linear-gradient(to bottom, currentColor, rgba(246,241,230,0)); transform-origin:50% 0;
     animation:mcueDrop 2.8s cubic-bezier(.45,0,.25,1) infinite; }
   @keyframes mcueDrop { 0% { transform:scaleY(0); opacity:0; } 30% { opacity:1; } 60% { transform:scaleY(1); opacity:1; } 100% { transform:scaleY(1); opacity:0; } }
-  @media (min-width:900px) and (prefers-reduced-motion:no-preference) {
-    #macro { height:240svh; }
-    #macro .mfilm { position:sticky; top:0; height:100svh; min-height:0; max-height:none; }
-  }
-  @media (min-width:900px) and (prefers-reduced-motion:reduce) { #macro .mfilm { height:100svh; max-height:none; } }
+  /* short: one screen's worth of stone at most, no hold */
+  @media (min-width:900px) { #macro .mfilm { height:64svh; min-height:440px; max-height:680px; } #macro .mcue { display:none; } }
   @media (max-width:899px) {
-    #macro .mfilm { height:78svh; min-height:460px; max-height:760px; }
+    #macro .mfilm { height:58svh; min-height:380px; max-height:540px; }
     #macro .mh { font-size:clamp(2.3rem,10.4vw,3rem); }
     html[data-ns] #macro .mh { font-size:clamp(2rem,9vw,2.6rem); }
     #macro .mcue { display:none; }
