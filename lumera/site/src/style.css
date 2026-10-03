@@ -5365,3 +5365,17 @@
   /* in a right-to-left page the next photograph is to the left, like the arrow key */
   html[dir="rtl"] .gprev { left:auto; right:12px; } html[dir="rtl"] .gprev::before { transform:rotate(45deg) translate(-2px,-2px); }
   html[dir="rtl"] .gnext { right:auto; left:12px; } html[dir="rtl"] .gnext::before { transform:rotate(-135deg) translate(-2px,-2px); }
+
+  /* ── v155 — the phone, tighter. A card is a photograph, a name and one line;
+     the specification waits in the window. The Line pins for less scroll. ── */
+  @media (max-width:759px) {
+    #collection .sechead { margin-bottom:22px !important; }
+    #collection .pgrid { row-gap:26px; }
+    #collection .pgrid .piece .bd { padding-top:12px; }
+    #collection .pgrid .piece .meta { display:none; }
+    #collection .pgrid .piece .kd { margin-top:4px; }
+    #collection .pgrid .piece .p { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-top:6px; }
+    #collection .pgrid .piece .acts { margin-top:4px; padding-top:8px; }
+    #collection .pgrid .piece.soon { margin-top:-10px; }
+    .drawpin { height:170svh; }
+  }
