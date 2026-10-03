@@ -5502,36 +5502,39 @@
   }
   @media (prefers-reduced-motion:reduce) { #macro .mcue i { animation:none; } #macro .mvid { transform:none; } }
 
-  /* ── v159 — the signature. Pure black; one fine line runs in from the left
-     edge of the screen, writes SILAVU on its way without lifting, in a hand
-     drawn for the house, and runs on out at the right edge. Through the
-     letters the line thickens into polished metal; three small set stones
-     sit in it (the dot of the i is one). As it finishes, a few points catch
-     the light and the two lines arrive underneath. Without the script, or
-     with reduced motion: the written name, its stones and its words. ── */
+  /* ── v159 — the signature. Pure black; one fine line comes in from the left
+     edge of the screen and writes SILAVU without lifting, in a hand drawn for
+     the house, and rises away from the last letter to a point of light.
+     Through the letters the line is polished metal; the dot of the i is a
+     point of light. As it finishes, a few points catch, briefly, and the two
+     lines arrive underneath. Without the script, or with reduced motion: the
+     written name and its words. ── */
   #craft { position:relative; background:#000; padding:0 !important; overflow-x:clip; }
-  #craft .sgstage { position:relative; display:grid; place-items:center; align-content:center; gap:clamp(34px,5.6svh,64px);
+  #craft .sgstage { position:relative; display:grid; place-items:center; align-content:center; gap:clamp(30px,5svh,56px);
     min-height:74svh; padding-block:12svh; background:#000; overflow-x:clip; }
-  #craft .sgfig { width:min(64vw, 900px); aspect-ratio:980 / 440; }
+  #craft .sgfig { width:min(66vw, 940px); aspect-ratio:1080 / 400; }
   #craft .sgsvg { display:block; width:100%; height:100%; overflow:visible; }
-  #craft .sgpath { stroke:#e9e5dd; stroke-opacity:.82; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; }
+  #craft .sgpath { stroke:#e9e5dd; stroke-opacity:.8; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; }
   #craft .sgbody { stroke:url(#sgmetal); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
   #craft .sghalo { stroke:#fff3df; stroke-opacity:.07; stroke-width:9; stroke-linecap:round; stroke-linejoin:round; }
+  #craft .sgdot { fill:#fbf8f2; }
   #craft .sgpen { opacity:0; }
   #craft .sgcore { fill:#fffdf7; }
   #craft .sgspark { opacity:0; }
   #craft .sgspark path { fill:#fffdf7; }
-  #craft .sgcopy { display:grid; justify-items:center; gap:clamp(8px,1.3svh,14px); text-align:center; padding-inline:var(--pad); }
-  #craft .sgc1 { margin:0; font-family:var(--serif); font-weight:400; text-transform:uppercase; letter-spacing:.3em; margin-inline-end:-.3em;
-    font-size:clamp(1.05rem,1.7vw,1.6rem); line-height:1.25; color:#f1ede5; }
-  #craft .sgc2 { margin:0; font-family:var(--serif); font-style:italic; font-weight:400; letter-spacing:.14em; margin-inline-end:-.14em;
-    font-size:clamp(1.05rem,1.5vw,1.42rem); line-height:1.3; color:#cfcac0; }
-  html[data-ns] #craft .sgc1 { letter-spacing:.04em; margin-inline-end:0; font-family:var(--sans); font-weight:300; }
-  html[data-ns] #craft .sgc2 { font-family:var(--sans); font-style:normal; font-weight:300; letter-spacing:.02em; margin-inline-end:0; }
-  @media (max-width:759px) { #craft .sgfig { width:84vw; } }
+  #craft .sgcopy { display:grid; justify-items:center; gap:clamp(9px,1.4svh,14px); text-align:center; padding-inline:var(--pad); }
+  #craft .sgc1 { margin:0; font-family:var(--word); font-weight:300; text-transform:uppercase; letter-spacing:.34em; margin-inline-end:-.34em;
+    font-size:clamp(.95rem,1.45vw,1.32rem); line-height:1.3; color:#ece8e0; }
+  #craft .sgc2 { margin:0; display:flex; align-items:center; gap:clamp(14px,1.6vw,22px); font-family:var(--serif); font-style:italic; font-weight:400;
+    font-size:clamp(1.1rem,1.55vw,1.46rem); line-height:1.3; color:#d2cdc3; }
+  #craft .sgc2 i { display:block; width:clamp(40px,7vw,110px); height:1px; background:linear-gradient(to left, rgba(236,232,224,.4), rgba(236,232,224,0)); }
+  #craft .sgc2 i:last-child { background:linear-gradient(to right, rgba(236,232,224,.4), rgba(236,232,224,0)); }
+  html[data-ns] #craft .sgc1 { letter-spacing:.04em; margin-inline-end:0; font-family:var(--sans); }
+  html[data-ns] #craft .sgc2 { font-family:var(--sans); font-style:normal; font-weight:300; }
+  @media (max-width:759px) { #craft .sgfig { width:86vw; } #craft .sgc2 i { width:26px; } }
 
   /* with the script: the held passage */
   #craft.sgjs { height:190svh; }
   #craft.sgjs .sgstage { position:sticky; top:0; height:100svh; min-height:0; padding-block:0; }
-  #craft.sgjs .sgstones use, #craft.sgjs .sgc1, #craft.sgjs .sgc2 { opacity:0; }
+  #craft.sgjs .sgdot, #craft.sgjs .sgc1, #craft.sgjs .sgc2 { opacity:0; }
   @media (max-width:759px) { #craft.sgjs { height:160svh; } }
