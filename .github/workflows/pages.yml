@@ -63,10 +63,15 @@ jobs:
       - name: The loops, cut for a phone
         run: |
           set -e
-          for v in hero-loop-v inside-v; do
+          # The hero loop sits behind a scrim: 640 across, but no longer crushed
+          # (crf 30, about 1.1MB). The stone loop is the picture itself and is
+          # only fetched when it is reached: 720 across, about 2.1MB. Both are
+          # cut from the 1080x1936 masters, so the extra detail is real.
+          for spec in "hero-loop-v 640 30" "inside-v 720 30"; do
+            set -- $spec; v=$1; W=$2; Q=$3
             [ -f "dist/v/$v.mp4" ] || continue
             before=$(stat -c%s "dist/v/$v.mp4")
-            ffmpeg -nostdin -v error -i "dist/v/$v.mp4" -an               -vf "scale='min(640,iw)':-2:flags=lanczos"               -c:v libx264 -preset slow -crf 34 -profile:v high -pix_fmt yuv420p               -movflags +faststart "dist/v/$v.tmp.mp4" -y
+            ffmpeg -nostdin -v error -i "dist/v/$v.mp4" -an               -vf "scale='min($W,iw)':-2:flags=lanczos"               -c:v libx264 -preset slow -crf $Q -profile:v high -pix_fmt yuv420p               -movflags +faststart "dist/v/$v.tmp.mp4" -y
             after=$(stat -c%s "dist/v/$v.tmp.mp4")
             if [ "$after" -gt 0 ] && [ "$after" -lt "$before" ]; then
               mv "dist/v/$v.tmp.mp4" "dist/v/$v.mp4"

@@ -22,8 +22,8 @@ for (const [dv,w,h,lang] of [["d-en",1440,900,"en"],["m-en",390,844,"en"],["d-he
   }
   // reserve from SOUL
   await p.click(`#p-pave .fig`); await p.waitForTimeout(1200); await p.click("#pmRes"); await p.waitForTimeout(2500);
-  const r=await p.evaluate(()=>({open:document.getElementById("pmodal").classList.contains("open"), msg:document.getElementById("fMsg").value, top:Math.round(document.getElementById("concierge").getBoundingClientRect().top)}));
-  ok(!r.open && /SILAVU SOUL/.test(r.msg), `${dv} reserve → form: ${r.msg}`);
+  const r=await p.evaluate(()=>({open:document.getElementById("pmodal").classList.contains("open"), msg:document.getElementById("cselTxt").textContent, free:document.getElementById("fMsg").value, top:Math.round(document.getElementById("concierge").getBoundingClientRect().top)}));
+  ok(!r.open && /SILAVU SOUL/.test(r.msg) && !/SILAVU SOUL/.test(r.free), `${dv} reserve → form selection: ${r.msg}`);
   ok(errs.length===0, `${dv} no errors ${errs.join("|")}`);
   await c.close();
 }

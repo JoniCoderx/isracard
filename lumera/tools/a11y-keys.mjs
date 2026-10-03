@@ -1,0 +1,22 @@
+import { chromium } from "playwright-core";
+let pass=0,fail=0; const ok=(c,m)=>{console.log((c?"PASS ":"FAIL ")+m); c?pass++:fail++;};
+const b=await chromium.launch({executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome",args:["--no-sandbox"]});
+const c=await b.newContext({viewport:{width:1366,height:900},reducedMotion:"reduce"}); const p=await c.newPage(); const errs=[]; p.on("pageerror",e=>errs.push(e.message));
+await p.goto("http://localhost:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500); await p.click("#enterBtn",{timeout:1500}).catch(()=>{});
+await p.evaluate(()=>document.documentElement.style.scrollBehavior="auto");
+const card=p.locator(".pgrid .piece:not(.soon)").first(); await card.scrollIntoViewIfNeeded(); await card.hover(); await p.waitForTimeout(4000);
+ok(await p.evaluate(()=>(document.querySelector(".pgrid .piece:not(.soon)").__at||0)===0), "reduced motion: the card does not walk through photographs on its own");
+/* keyboard: the card's arrows and View are reachable, Enter opens, Escape returns */
+await p.locator(".pgrid .piece:not(.soon) .cnext").first().focus(); await p.keyboard.press("Enter"); await p.waitForTimeout(500);
+ok(await p.evaluate(()=>(document.querySelector(".pgrid .piece:not(.soon)").__at||0)===1 && !document.getElementById("pmodal").classList.contains("open")), "keyboard: the card's next arrow changes the photograph");
+const fv=await p.evaluate(()=>{const e=document.activeElement; const cs=getComputedStyle(e); return cs.outlineStyle!=="none" && parseFloat(cs.outlineWidth)>0;});
+ok(fv, "keyboard: the focused arrow shows a focus ring");
+await p.locator(".pgrid .piece:not(.soon) .vw").first().focus(); await p.keyboard.press("Enter"); await p.waitForTimeout(600);
+const inside=await p.evaluate(()=>document.getElementById("pmodal").contains(document.activeElement));
+ok(inside, "keyboard: View the piece opens the window with focus inside");
+for (let i=0;i<25;i++) await p.keyboard.press("Tab");
+ok(await p.evaluate(()=>document.getElementById("pmodal").contains(document.activeElement)), "keyboard: Tab stays inside the open window");
+await p.keyboard.press("Escape"); await p.waitForTimeout(400);
+ok(await p.evaluate(()=>/vw/.test(document.activeElement.className)), "keyboard: Escape returns focus to View the piece");
+ok(!errs.length, "no page errors "+errs.join("|"));
+console.log(`${pass} pass, ${fail} fail`); await b.close();

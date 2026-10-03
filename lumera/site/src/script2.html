@@ -35,24 +35,53 @@
     var MET = { white: ["#f7f8fb", "#c3c6cf", "#6f727c"], yellow: ["#f8e7b0", "#d6b25a", "#8a6a22"], rose: ["#f7d6c6", "#d6a086", "#8c5a44"], platinum: ["#f1f3f6", "#c9cdd5", "#7a7e88"] };
     var pts0 = {};
     function shape(cut) { return pts0[cut] || (pts0[cut] = outline(cut)); }
+    /* one stone in its setting, seen from above: a metal basket a little
+       larger than the stone, four claws, then the stone itself, dark arrows
+       and bright facets under a lit table, the way a cut diamond reads from
+       a step away. Step cuts get their steps instead of arrows. */
+    function metalFill(x, m, ay) { var g = x.createLinearGradient(0, -ay * 1.4, 0, ay * 1.4); g.addColorStop(0, m[0]); g.addColorStop(0.45, m[1]); g.addColorStop(1, m[2]); return g; }
     function stone(x, cut, ax, ay, m, dim) {
       var P = shape(cut), j, V = [];
       for (j = 0; j < P.length; j++) V.push([P[j][0] * ax, P[j][1] * ay]);
       function path(q) { x.beginPath(); for (var k = 0; k < V.length; k++) x[k ? "lineTo" : "moveTo"](V[k][0] * q, V[k][1] * q); x.closePath(); }
-      var g = x.createLinearGradient(0, -ay * 1.3, 0, ay * 1.3); g.addColorStop(0, m[0]); g.addColorStop(0.5, m[1]); g.addColorStop(1, m[2]);
-      x.fillStyle = g; path(1.16); x.fill();
-      var sg = x.createLinearGradient(-ax, -ay, ax * 0.9, ay);
-      sg.addColorStop(0, "#ffffff"); sg.addColorStop(0.28, "#b8c0d0"); sg.addColorStop(0.5, "#fbfcff"); sg.addColorStop(0.7, "#5c6576"); sg.addColorStop(1, "#e3e8f1");
-      x.fillStyle = sg; path(1); x.fill();
-      x.strokeStyle = "rgba(255,255,255,.5)"; x.lineWidth = Math.max(0.5, Math.min(ax, ay) * 0.06);
-      if (cut === "emerald" || cut === "baguette") { for (var f = 1; f <= 3; f++) { path(1 - f * 0.17); x.stroke(); } x.fillStyle = "rgba(255,255,255,.2)"; path(0.49); x.fill(); }
-      else {
-        var T = [], E = [];
-        for (var n8 = 0; n8 < 8; n8++) { var an = n8 / 8 * 2 * Math.PI + Math.PI / 8, best = V[0], bd = 9; for (j = 0; j < V.length; j++) { var dd = Math.abs(((Math.atan2(V[j][1] / ay, V[j][0] / ax) - an) + 3 * Math.PI) % (2 * Math.PI) - Math.PI); if (dd < bd) { bd = dd; best = V[j]; } } E.push(best); T.push([best[0] * 0.5, best[1] * 0.5]); }
-        x.beginPath(); for (j = 0; j < 8; j++) { x.moveTo(T[j][0], T[j][1]); x.lineTo(E[j][0], E[j][1]); } x.stroke();
-        x.beginPath(); for (j = 0; j < 8; j++) x[j ? "lineTo" : "moveTo"](T[j][0], T[j][1]); x.closePath(); x.fillStyle = "rgba(255,255,255,.16)"; x.fill(); x.stroke();
+      /* the basket */
+      x.fillStyle = metalFill(x, m, ay); path(1.2); x.fill();
+      x.strokeStyle = "rgba(0,0,0,.45)"; x.lineWidth = Math.max(0.5, Math.min(ax, ay) * 0.05); path(1.02); x.stroke();
+      /* the stone: a cool body, lit from the upper left */
+      var body = x.createLinearGradient(-ax, -ay, ax, ay);
+      body.addColorStop(0, "#f6f8fc"); body.addColorStop(0.45, "#aab2c2"); body.addColorStop(1, "#3c4352");
+      x.save(); path(1); x.fillStyle = body; x.fill(); x.clip();
+      var R = Math.max(ax, ay) * 1.1;
+      if (cut === "emerald" || cut === "baguette") {
+        /* step cut: concentric steps, alternately bright and dark, and a long table */
+        for (var f = 1; f <= 3; f++) { path(1 - f * 0.17); x.fillStyle = f % 2 ? "rgba(20,24,32,.30)" : "rgba(255,255,255,.22)"; x.fill(); }
+        path(0.46); x.fillStyle = "rgba(255,255,255,.28)"; x.fill();
+        x.strokeStyle = "rgba(255,255,255,.55)"; x.lineWidth = Math.max(0.4, Math.min(ax, ay) * 0.04);
+        for (f = 1; f <= 3; f++) { path(1 - f * 0.17); x.stroke(); }
+      } else {
+        /* brilliant: sixteen arrows from the centre, dark and bright in turn */
+        for (j = 0; j < 16; j++) {
+          var a0 = (j - 0.5) / 16 * 6.2832, a1 = (j + 0.5) / 16 * 6.2832;
+          x.beginPath(); x.moveTo(0, 0); x.lineTo(Math.cos(a0) * R, Math.sin(a0) * R); x.lineTo(Math.cos(a1) * R, Math.sin(a1) * R); x.closePath();
+          x.fillStyle = j % 2 ? "rgba(255,255,255,.30)" : "rgba(16,20,28," + (0.22 + 0.18 * Math.abs(Math.sin(j * 1.7))).toFixed(2) + ")"; x.fill();
+        }
+        /* the table, an octagon of light */
+        x.beginPath(); for (j = 0; j < 8; j++) { var at = (j + 0.5) / 8 * 6.2832; x[j ? "lineTo" : "moveTo"](Math.cos(at) * ax * 0.5, Math.sin(at) * ay * 0.5); } x.closePath();
+        x.fillStyle = "rgba(255,255,255,.26)"; x.fill(); x.strokeStyle = "rgba(255,255,255,.6)"; x.lineWidth = Math.max(0.4, Math.min(ax, ay) * 0.035); x.stroke();
       }
-      if (dim > 0) { x.fillStyle = "rgba(0,0,0," + dim.toFixed(2) + ")"; path(1.16); x.fill(); }
+      /* a highlight where the light lands */
+      var hl = x.createRadialGradient(-ax * 0.35, -ay * 0.4, 0, -ax * 0.35, -ay * 0.4, Math.max(ax, ay) * 0.55);
+      hl.addColorStop(0, "rgba(255,255,255,.9)"); hl.addColorStop(1, "rgba(255,255,255,0)"); x.fillStyle = hl; x.fillRect(-ax * 1.2, -ay * 1.2, ax * 2.4, ay * 2.4);
+      x.restore();
+      /* four claws at the corners */
+      var pr = Math.max(0.9, Math.min(ax, ay) * 0.17);
+      for (j = 0; j < 4; j++) {
+        var ca = (j * 90 + 45) * Math.PI / 180, px = Math.cos(ca) * ax * 0.93, py = Math.sin(ca) * ay * 0.93;
+        var cg = x.createRadialGradient(px - pr * 0.35, py - pr * 0.4, pr * 0.1, px, py, pr);
+        cg.addColorStop(0, m[0]); cg.addColorStop(0.6, m[1]); cg.addColorStop(1, m[2]);
+        x.fillStyle = cg; x.beginPath(); x.arc(px, py, pr, 0, 6.2832); x.fill();
+      }
+      if (dim > 0) { x.fillStyle = "rgba(0,0,0," + dim.toFixed(2) + ")"; path(1.22); x.fill(); }
     }
     function paint() {
       var sp = window.__lineSpec || { cut: "round", L: 3.6, W: 3.6, n: 36, orient: "along" }, b = window.__build || {}, cut = sp.cut || "round";
@@ -61,21 +90,38 @@
       cv.width = w * d; cv.height = h * d; var x = cv.getContext("2d"); x.setTransform(d, 0, 0, d, 0, 0); x.clearRect(0, 0, w, h);
       var m = MET[b.metal] || MET.white, n = Math.max(12, Math.min(60, sp.n || 36));
       var Lm = sp.L || sp.alongMm || 3.6, Wm = sp.W || sp.acrossMm || 3.6, along = sp.orient !== "across";
-      var rx = Math.min(w * 0.4, h * 1.05, 560), ry = rx * 0.36, cx = w / 2, cy = h * 0.5;
+      var rx = Math.min(w * 0.4, h * 1.05, 560), ry = rx * 0.36, cx = w / 2, cy = h * 0.47;
       /* the stones follow the oval at the spacing the line really has */
-      var per = 2 * Math.PI * Math.sqrt((rx * rx + ry * ry) / 2), s = per / n / Math.max(Lm, Wm) / 1.12;
-      var sx = (along ? Lm : Wm) * s / 2, sy = (along ? Wm : Lm) * s / 2;
-      var sh = x.createRadialGradient(cx, cy + ry * 0.35, 0, cx, cy + ry * 0.35, rx * 1.1);
-      sh.addColorStop(0, "rgba(0,0,0,.45)"); sh.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = sh;
-      x.beginPath(); x.ellipse(cx, cy + ry * 0.35, rx * 1.05, ry * 0.8, 0, 0, 6.283); x.fill();
-      var list = [];
-      for (var i = 0; i < n; i++) { var a = i / n * 2 * Math.PI; list.push(a); }
-      list.sort(function (p, q) { return Math.sin(p) - Math.sin(q); });   /* far side first */
+      var per = 2 * Math.PI * Math.sqrt((rx * rx + ry * ry) / 2), s = per / n / Math.max(Lm, Wm) / 1.18;
+      var sx = (along ? Lm : Wm) * s / 2, sy = (along ? Wm : Lm) * s / 2, band = Math.min(sx, sy) * 0.9, thick = Math.max(2, ry * 0.07);
+      /* a soft shadow on the table under it */
+      var sh = x.createRadialGradient(cx, cy + ry * 0.5, 0, cx, cy + ry * 0.5, rx * 1.1);
+      sh.addColorStop(0, "rgba(0,0,0,.5)"); sh.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = sh;
+      x.beginPath(); x.ellipse(cx, cy + ry * 0.5, rx * 1.05, ry * 0.8, 0, 0, 6.283); x.fill();
+      /* the band the stones sit in: far half first, dimmer */
+      function rail(a0, a1, dy, alpha, col) { x.save(); x.globalAlpha = alpha; x.strokeStyle = col; x.lineWidth = band; x.lineCap = "round"; x.beginPath(); x.ellipse(cx, cy + dy, rx, ry, 0, a0, a1); x.stroke(); x.restore(); }
+      rail(Math.PI, 2 * Math.PI, 0, 0.55, m[2]);
+      /* the clasp takes one place at the front, where the line closes */
+      var claspAt = Math.round(n * 0.12), list = [];
+      for (var i = 0; i < n; i++) list.push({ t: i / n * 2 * Math.PI + Math.PI * 0.02, clasp: i === claspAt });
+      list.sort(function (p, q) { return Math.sin(p.t) - Math.sin(q.t); });   /* far side first */
+      var nearDone = false;
       for (var k = 0; k < list.length; k++) {
-        var t = list[k], px = cx + rx * Math.cos(t), py = cy + ry * Math.sin(t), depth = (Math.sin(t) + 1) / 2;
-        var sc = 0.72 + 0.28 * depth, ang = Math.atan2(ry * Math.cos(t), -rx * Math.sin(t));
+        var it = list[k], t = it.t;
+        if (!nearDone && Math.sin(t) >= 0) {
+          /* the near half of the band, with its edge showing below */
+          rail(0, Math.PI, thick, 1, m[2]); rail(0, Math.PI, 0, 1, m[1]); nearDone = true;
+        }
+        var px = cx + rx * Math.cos(t), py = cy + ry * Math.sin(t), depth = (Math.sin(t) + 1) / 2;
+        var sc = 0.74 + 0.26 * depth, ang = Math.atan2(ry * Math.cos(t), -rx * Math.sin(t));
         x.save(); x.translate(px, py); x.rotate(ang); x.scale(1, 0.62 + 0.38 * depth);
-        stone(x, cut, sx * sc, sy * sc, m, (1 - depth) * 0.38); x.restore();
+        if (it.clasp) {
+          var cw = sx * sc * 1.5, chh = sy * sc * 1.05;
+          x.fillStyle = metalFill(x, m, chh); x.beginPath(); if (x.roundRect) x.roundRect(-cw, -chh, cw * 2, chh * 2, chh * 0.35); else x.rect(-cw, -chh, cw * 2, chh * 2); x.fill();
+          x.strokeStyle = "rgba(0,0,0,.35)"; x.lineWidth = 0.8; x.beginPath(); x.moveTo(-cw * 0.2, -chh * 0.8); x.lineTo(-cw * 0.2, chh * 0.8); x.stroke();
+          if (depth < 1) { x.fillStyle = "rgba(0,0,0," + ((1 - depth) * 0.38).toFixed(2) + ")"; x.fillRect(-cw, -chh, cw * 2, chh * 2); }
+        } else stone(x, cut, sx * sc, sy * sc, m, (1 - depth) * 0.38);
+        x.restore();
       }
       cv.setAttribute("aria-label", tag.textContent);
     }

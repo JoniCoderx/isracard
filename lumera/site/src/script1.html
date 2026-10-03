@@ -135,16 +135,12 @@
     if (a.hasAttribute("data-piece")) {
       /* a reservation is a different sentence from a viewing */
       var res = a.id === "pmRes" || a.getAttribute("data-en") === "Reserve";
-      var lead = res
-        ? (lang === "he" ? "אשמח לשריין: " : T("I would like to reserve: "))
-        : (lang === "he" ? "אשמח לקבוע פגישה פרטית לצפייה ב: " : T("I would like a private viewing of: "));
       var pn = a.getAttribute("data-piece");
       if (pn === "A bespoke piece") {
         /* a commission is not a viewing of something that exists: say so, and
            mark it as such in the form */
-        prefill(lang === "he" ? "אשמח להתחיל תכשיט בהתאמה אישית." : T("I would like to begin a bespoke piece."));
-        var bc = document.querySelector('#cform .want .chip[data-en="Bespoke commission"]'); if (bc) bc.click();
-      } else prefill(lead + ((lang === "he" && a.getAttribute("data-piece-he")) || T(pn) || pn));
+        setSel({ k: "bespoke", a: "bespoke" });
+      } else setSel({ k: "piece", a: res ? "reserve" : "viewing", p: pn, ph: a.getAttribute("data-piece-he") || "" });
     }
     /* a long way is travelled at once: gliding through the film and the box
        on the way made every chapter between render, and the page took three
@@ -286,6 +282,8 @@
     var was = document.querySelector(".modal.open");
     if (pageTitle != null) { document.title = pageTitle; pageTitle = null; }
     document.querySelectorAll(".modal.open").forEach(function (m) { m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); });
+    /* the card is left on the photograph last looked at in the window */
+    if (was && was.id === "pmodal" && gCard && gCard.__show) { gCard.__show(gAt); gCard = null; }
     if (!menu.classList.contains("open")) window.__unlock();
     if (was && mReturn && document.contains(mReturn)) { try { mReturn.focus({ preventScroll: true }); } catch (e) { mReturn.focus(); } }
     mReturn = null;
@@ -305,7 +303,7 @@
      A card carries its photographs and its specification table as JSON, so
      the window is built from the catalogue rather than scraped out of the
      card's own markup. Cards that carry neither still work the old way. */
-  var gShots = [], gAt = 0, gPiece = "";
+  var gShots = [], gAt = 0, gPiece = "", gCard = null;
   function gPaint() {
     var sh = gShots[gAt]; if (!sh) return;
     var wide = sh.w && sh.w.length ? sh.w : [800, 1200, 1600, 2000];
@@ -358,7 +356,8 @@
     gPiece = pmPiece;
 
     if (shots) {
-      gShots = JSON.parse(shots); gAt = 0;
+      /* the window opens on the photograph the card was showing */
+      gShots = JSON.parse(shots); gAt = Math.min(gShots.length - 1, Math.max(0, pc.__at || 0)); gCard = pc;
       $("pmThumbs").innerHTML = gShots.map(function (sh, i) {
         var w = sh.w && sh.w.length ? sh.w[0] : 800;
         return '<button type="button" role="tab" data-i="' + i + '" aria-label="Photograph ' + (i + 1) + '">'
@@ -442,11 +441,13 @@
     /* a piece without stones does not promise stone reports */
     pmodal.querySelectorAll("[data-stones]").forEach(function (li) { li.hidden = pc.hasAttribute("data-nostones"); });
     openModal(pmodal, pc);
+    /* a click on the photograph leaves focus nowhere; closing returns it to the card's own button */
+    if (!mReturn || mReturn === document.body || !pc.contains(mReturn)) mReturn = pc.querySelector(".vw") || mReturn;
   }
 
   document.querySelectorAll(".piece").forEach(function (pc) {
     if (pc.classList.contains("soon")) return;
-    pc.addEventListener("click", function (e) { if (e.target.closest("a")) return; openPiece(pc); });
+    pc.addEventListener("click", function (e) { if (e.target.closest("a, .cnav")) return; openPiece(pc); });
   });
 
   /* ── the category row ── */
@@ -484,11 +485,25 @@
   })();
 
   /* pmReq and pmRes are closed by the anchor handler, which leaves the window before it scrolls */
-  $("pmIm").addEventListener("click", function () { if (this.classList.contains("two")) this.classList.toggle("flip"); });
+  /* in the window, a finger swipes through the photographs too; the click
+     that follows a swipe is not a tap on the photograph */
+  var pmSwiped = false;
+  (function () {
+    var im = $("pmIm"), sx = 0, sy = 0, down = false;
+    im.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse") return; sx = e.clientX; sy = e.clientY; down = true; pmSwiped = false; });
+    im.addEventListener("pointermove", function (e) {
+      if (!down) return; var dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) { down = false; return; }
+      if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) * 1.2) { down = false; pmSwiped = true; gGo((dx < 0) !== (document.documentElement.dir === "rtl") ? 1 : -1); }
+    });
+    im.addEventListener("pointerup", function () { down = false; });
+    im.addEventListener("pointercancel", function () { down = false; });
+  })();
+  $("pmIm").addEventListener("click", function (e) { if (pmSwiped) { pmSwiped = false; return; } if (e.target.closest(".gnav")) return; if (this.classList.contains("two")) this.classList.toggle("flip"); });
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });
   var vposHome = $("stripwrap"); if (vposHome) {}
   if ($("tryonBtn")) $("tryonBtn").addEventListener("click", function () { if (window.__stripView) { window.__stripView("wrist"); var cw = $("configure"); if (cw) window.scrollTo({ top: scrollY + cw.getBoundingClientRect().top - 72, behavior: "smooth" }); } else if (window.__tryon) window.__tryon.open(); });
-  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = lineSpecText(); void sp; void b; prefill((lang === "he" ? "ניסיתי את הצמיד על תמונה שלי ואשמח לקבוע פגישה פרטית. הצמיד שלי: " : T("I tried the Line on my wrist. I would like a private viewing. My line: ")) + cfg); });
+  $("tsend").addEventListener("click", function () { closeModals(); var b = window.__build || {}, sp = window.__lineSpec || {}, cfg = lineSpecText(); void sp; void b; setSel({ k: "line", a: "tryon", b: buildNow(), est: $("est").textContent }); });
 
   /* ── parallax on the atelier chapter ── */
   var pxs = Array.prototype.slice.call(document.querySelectorAll("[data-px]"));
@@ -545,10 +560,11 @@
   function paint() {
     var def = langDef(lang), d = dicts[lang];
     document.documentElement.setAttribute("data-lang", lang);
-    /* the page keeps its layout in every language: Hebrew and Arabic change
-       the words and the direction each line is written in, not where things
-       sit. Mirroring the whole page moved the header and every section */
-    document.documentElement.setAttribute("dir", "ltr");
+    /* Hebrew and Arabic read right to left: the text, the fields and the
+       order of things in a row follow. The header and the bars fixed to the
+       screen keep their places (style.css pins them), so changing language
+       never moves the frame of the page */
+    document.documentElement.setAttribute("dir", def.rtl ? "rtl" : "ltr");
     document.documentElement.setAttribute("lang", lang);
     /* Hebrew and Arabic have no italic and no upper case, so the typography
        rules that drop both hang off this rather than off one language */
@@ -560,7 +576,9 @@
     document.querySelectorAll("[data-en]").forEach(function (el) {
       var v = say(el); if (v == null) return;
       if (el.tagName === "TITLE") { el.textContent = v; return; }
-      el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + ltrU(v) + "</bdi>" : v;
+      /* in a right-to-left page a line that is all Latin (the slogan, a name)
+         keeps its own word order */
+      el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + ltrU(v) + "</bdi>" : (island && /[A-Za-z]/.test(v) ? '<bdi dir="ltr">' + v + "</bdi>" : v);
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
     setTimeout(function () { isle(document.body); }, 0);
@@ -569,6 +587,7 @@
       im.alt = lang === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en");
     });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
+    try { selPaint(); } catch (e) {}
   }
   /* Text the page writes for itself after load (the piece window's details,
      the story, the summaries) gets the same right-to-left island as the
@@ -576,7 +595,7 @@
      reads in the right order without the page itself being mirrored. */
   /* inside a right-to-left line, "6 ct" would split into "ct 6": a number
      followed by a Latin unit is kept as one left-to-right run */
-  function ltrU(s) { return s.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>'); }
+  function ltrU(s) { return s.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>'); }
   /* the copyright year is this year, whenever the page is read */
   document.querySelectorAll(".fyr").forEach(function (e) { e.textContent = new Date().getFullYear(); });
   var isleRe = /[\u0590-\u06ff]/, isleOn = false, isleRaf = 0;
@@ -687,7 +706,7 @@
      software read were otherwise only set once somebody switched away and back */
   document.documentElement.setAttribute("data-lang", lang);
   document.documentElement.setAttribute("lang", lang);
-  document.documentElement.setAttribute("dir", "ltr");
+  document.documentElement.setAttribute("dir", langDef(lang).rtl ? "rtl" : "ltr");
   if (langDef(lang).rtl) document.documentElement.setAttribute("data-ns", "1");
   if (lang !== "en") setTimeout(applyLang, 0);   /* a remembered choice, applied once every definition in this script exists */
   var NAMES = { white: { en: "18K white gold", he: "זהב לבן 18K" }, yellow: { en: "18K yellow gold", he: "זהב צהוב 18K" }, rose: { en: "18K rose gold", he: "זהב ורוד 18K" }, platinum: { en: "Platinum", he: "פלטינה" } };
@@ -852,7 +871,56 @@
     var ss = $("sumStones").textContent.split(" · ");
     return (ss[1] ? ss[1] + " · " : "") + L(ss[0] + " = " + b.ct + " ct") + " · " + oname(b.origin) + " · " + mname(b.metal) + " · " + L(b.wrist + " cm") + " · " + L($("est").textContent);
   }
-  function prefill(text) { msgEl.value = text; msgEl.parentElement.classList.add("filled"); fit(); }
+  /* ── the selection ──────────────────────────────────────────────────────
+     What a reader chose — a piece, their Line, a commission — is kept apart
+     from what they write. It shows above their message as its own summary,
+     sets the kind of enquiry, survives a visit to another page of the site
+     and back, and is written in whichever language the page is in. Their
+     own message is never touched. */
+  var SELK = "silavu-sel", sel = null;
+  try { sel = JSON.parse(sessionStorage.getItem(SELK) || "null"); } catch (e) { sel = null; }
+  function L2(en, he) { return lang === "he" ? he : (T(en) || en); }
+  function chipName(k, v) {
+    var c = document.querySelector('#opts .chip[data-k="' + k + '"][data-v="' + v + '"]'); if (!c) return String(v);
+    var t = c.querySelector("[data-en]") || c; var en = t.getAttribute("data-en") || t.textContent;
+    return lang === "he" ? (t.getAttribute("data-he") || en) : (T(en) || en);
+  }
+  function lineText(b, est) {
+    var iso = function (x) { return (lang === "he" || lang === "ar") ? "\u2066" + x + "\u2069" : x; };
+    return ["SILAVU The Line", b.cut ? chipName("cut", b.cut) : "", oname(b.origin), iso(b.ct + " ct"), iso((b.wrist || 17) + " cm"), mname(b.metal), est ? iso(est) : ""].filter(Boolean).join(" · ");
+  }
+  var SELACT = {
+    reserve: ["Reservation", "שריון"], viewing: ["Private viewing", "פגישה פרטית"], bespoke: ["Bespoke commission", "תכשיט בהתאמה אישית"],
+    design: ["My design", "העיצוב שלי"], tryon: ["Tried on my wrist", "ניסיתי על פרק היד"]
+  };
+  var SELWANT = { reserve: "A piece from the collection", viewing: "Private viewing", bespoke: "Bespoke commission", design: "A piece from the collection", tryon: "Private viewing" };
+  function selText() {
+    if (!sel) return "";
+    if (sel.k === "piece") return lang === "he" ? (sel.ph || sel.p) : (T(sel.p) || sel.p);
+    if (sel.k === "line") return lineText(sel.b || {}, sel.est) + (sel.img ? " · " + L2("picture saved, to attach", "התמונה נשמרה לצירוף") : "");
+    if (sel.k === "note") return sel.t || "";
+    return L2("A bespoke piece, from a conversation", "תכשיט בהתאמה אישית, שמתחיל משיחה");
+  }
+  function selPaint() {
+    var box = $("csel"); if (!box) return;
+    box.hidden = !sel;
+    if (!sel) return;
+    var a = SELACT[sel.a] || SELACT.viewing;
+    $("cselAct").textContent = L2(a[0], a[1]);
+    $("cselTxt").textContent = selText();
+    $("cselEdit").hidden = sel.k === "bespoke";
+  }
+  function setWant(en) {
+    form.querySelectorAll(".want .chip").forEach(function (x) { var on = x.getAttribute("data-en") === en; x.classList.toggle("on", on); x.setAttribute("aria-checked", on ? "true" : "false"); });
+  }
+  function setSel(v) {
+    sel = v; try { v ? sessionStorage.setItem(SELK, JSON.stringify(v)) : sessionStorage.removeItem(SELK); } catch (e) {}
+    if (v) setWant(SELWANT[v.a] || "A piece from the collection");
+    selPaint();
+  }
+  /* kept for the few callers that only have words: they become the selection's line */
+  function prefill(text) { setSel({ k: "note", a: "viewing", t: text }); }
+  function buildNow() { var b = window.__build || {}; return { cut: b.cut, origin: b.origin, ct: b.ct, metal: b.metal, wrist: b.wrist }; }
 
   /* ── the design as a picture: what is on screen, with what was chosen
        written under it and the house mark at the foot — to keep, or to send
@@ -930,14 +998,14 @@
       }
       /* elsewhere the picture is kept, and the enquiry is written for them */
       keep(b);
-      prefill(text + "\n" + (he ? "שמרתי את התמונה של העיצוב ואצרף אותה." : T("I have saved the picture of my design and will attach it.")));
+      setSel({ k: "line", a: "design", b: buildNow(), est: $("est").textContent, img: true });
       var a = document.createElement("a"); a.href = "#concierge"; a.style.display = "none"; document.body.appendChild(a); a.click(); a.remove();
     });
   });
   window.__silavu = { prefill: prefill, lang: function () { return lang; }, build: function () { return window.__build; } };
   $("reserve").addEventListener("click", function () {
     var b = window.__build;
-    prefill((lang === "he" ? "אשמח לשריין צמיד SILAVU Line: " : T("I would like to reserve a SILAVU Line: ")) + b.ct + " ct · " + oname(b.origin) + " · " + mname(b.metal) + " · " + estEl.textContent);
+    void b; setSel({ k: "line", a: "reserve", b: buildNow(), est: estEl.textContent });
   });
 
   /* ── concierge ── */
@@ -989,8 +1057,8 @@
      those two elements again, so a change of language keeps them. */
   var CHAN = {
     Email:    { en: "Send enquiry",   he: "שליחת הפנייה",
-                doneEn: "Your message is ready in your mail app. If not, write to concierge@silavu.com.",
-                doneHe: "ההודעה מוכנה באפליקציית הדואר שלכם. אם היא לא נפתחה, כתבו אל concierge@silavu.com." },
+                doneEn: "Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com.",
+                doneHe: "אפליקציית הדואר אמורה להיפתח עכשיו עם ההודעה מוכנה. לחצו שם על שליחה כדי שהפנייה תגיע לקונסיירז׳. אם היא לא נפתחה, העתיקו את הפרטים וכתבו אל concierge@silavu.com." },
     WhatsApp: { en: "Continue on WhatsApp", he: "המשיכו בוואטסאפ",
                 doneEn: "Your message is ready in WhatsApp. If it did not open, write to concierge@silavu.com.",
                 doneHe: "ההודעה שלכם מוכנה בוואטסאפ. אם הוא לא נפתח, כתבו ל־concierge@silavu.com." },
@@ -1014,13 +1082,54 @@
     form.querySelectorAll(".want .chip").forEach(function (x) { x.classList.remove("on"); x.setAttribute("aria-checked", "false"); });
     if (!was) { w.classList.add("on"); w.setAttribute("aria-checked", "true"); }
   });
+  /* the enquiry as words: who, what they want, what they chose, and their message */
+  function compose() {
+    var want = form.querySelector(".want .chip.on"), wantTxt = want ? (want.getAttribute("data-en") || want.textContent) : "";
+    var a = sel ? (SELACT[sel.a] || SELACT.viewing) : null;
+    var lines = [$("fName").value, $("fCity").value, $("fContact").value, wantTxt ? "Looking for: " + wantTxt : "",
+      a ? L2(a[0], a[1]) + ": " + selText().replace(/[\u2066\u2069]/g, "") : "", chan !== "Email" ? "Reply by " + chan : ""];
+    return lines.filter(Boolean).join("\n") + (msgEl.value.trim() ? "\n\n" + msgEl.value.trim() : "");
+  }
+  /* a way to take the enquiry anywhere: the details, copied */
+  $("ccopy").addEventListener("click", function () {
+    var b = this, t = "To: " + mail + "\nSILAVU · " + ($("fName").value || "") + "\n\n" + compose();
+    var done = function () { b.textContent = L2("Copied", "הועתק"); b.classList.add("ok"); setTimeout(function () { b.innerHTML = window.__say ? window.__say(b) : b.getAttribute("data-en"); b.classList.remove("ok"); }, 2400); };
+    var slow = function () { var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;opacity:0;top:0"; document.body.appendChild(ta); ta.select(); try { if (document.execCommand("copy")) done(); } catch (e) {} ta.remove(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, slow); else slow();
+  });
+  /* what has been typed is kept for this visit, so going to About and back loses nothing */
+  (function () {
+    var DRK = "silavu-draft", ids = ["fName", "fCity", "fContact", "fMsg"], d = null;
+    try { d = JSON.parse(sessionStorage.getItem(DRK) || "null"); } catch (e) {}
+    if (d) { ids.forEach(function (id) { var el = $(id); if (el && d[id]) { el.value = d[id]; el.parentElement.classList.add("filled"); } }); if (d.want) setWant(d.want); fit(); }
+    function save() { var o = {}; ids.forEach(function (id) { o[id] = $(id).value; }); var w = form.querySelector(".want .chip.on"); o.want = w ? w.getAttribute("data-en") : ""; try { sessionStorage.setItem(DRK, JSON.stringify(o)); } catch (e) {} }
+    form.addEventListener("input", save); form.addEventListener("click", function () { setTimeout(save, 0); });
+  })();
+  $("cselClear").addEventListener("click", function () { setSel(null); });
+  $("cselEdit").addEventListener("click", function () {
+    if (!sel) return;
+    if (sel.k === "piece") {
+      var pc = [].slice.call(document.querySelectorAll(".pgrid .piece")).filter(function (c) { var q = c.querySelector("[data-piece]"); return q && q.getAttribute("data-piece") === sel.p; })[0];
+      if (pc) { window.scrollTo({ top: scrollY + pc.getBoundingClientRect().top - 90, behavior: "instant" }); openPiece(pc); }
+      return;
+    }
+    if (sel.k === "line" && sel.b) {
+      /* back to the builder, with the choices that were made */
+      ["cut", "origin", "ct", "wrist", "metal"].forEach(function (k) { var v = sel.b[k]; if (v == null) return; var c = document.querySelector('#opts .chip[data-k="' + k + '"][data-v="' + v + '"]'); if (c && !c.classList.contains("on")) c.click(); });
+      var bd = $("build"); if (bd) window.scrollTo({ top: scrollY + bd.getBoundingClientRect().top - 60, behavior: "instant" });
+    }
+  });
+  selPaint();
+  form.addEventListener("focusin", function (e) { if (e.target.matches("input, textarea")) document.body.classList.add("typing"); });
+  form.addEventListener("focusout", function () { setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) document.body.classList.remove("typing"); }, 60); });
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     var name = $("fName"), contact = $("fContact"), bad = null;
     [contact, name].forEach(function (el) { if (!el.value.trim()) { el.parentElement.classList.remove("err"); void el.offsetWidth; el.parentElement.classList.add("err"); bad = el; } });
     if (bad) { bad.focus(); return; }
-    var want = form.querySelector(".want .chip.on"), wantTxt = want ? (want.getAttribute("data-en") || want.textContent) : "";
-    var body = [name.value, $("fCity").value, contact.value, wantTxt ? "Looking for: " + wantTxt : "", "Reply by " + chan, "", msgEl.value].filter(function (x, i) { return x !== "" || i === 5; }).join("\n");
+    var body = compose();
+    /* the app opens with the message written; nothing is sent from here, and
+       the page says so rather than claiming it went */
     form.classList.add("sent");
     if (chan === "WhatsApp" && wa) { try { window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(body), "_blank", "noopener"); } catch (err) {} }
     else if (chan === "Call" && tel) { try { location.href = "tel:" + tel; } catch (err) {} }

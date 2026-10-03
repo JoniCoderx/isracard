@@ -202,11 +202,11 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   let out = "", at = 0, end = -1;
   for (const [from, to, he] of cuts) {
     if (from < end) continue;
-    out += html.slice(at, from) + (/[\u0590-\u05ff]/.test(he) ? '<bdi dir="rtl">' + he.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : he); at = to; end = to;
+    out += html.slice(at, from) + (/[\u0590-\u05ff]/.test(he) ? '<bdi dir="rtl">' + he.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : (/[A-Za-z]/.test(he) ? '<bdi dir="ltr">' + he + "</bdi>" : he)); at = to; end = to;
   }
   const heHtml = (out + html.slice(at)).replace(/alt="([^"]*)" data-alt-he="([^"]*)"/g, 'alt="$2" data-alt-en="$1" data-alt-he="$2"');
   const heHead = head
-    .replace('<html lang="en">', '<html lang="he" dir="ltr" data-lang="he" data-ns="1">')
+    .replace('<html lang="en">', '<html lang="he" dir="rtl" data-lang="he" data-ns="1">')
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
     .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">" + TITLE.he + "<"))
     .replace(/(<meta name="description" content=")[^"]*/, "$1" + DESC.he)
@@ -258,11 +258,11 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   const footer = here => `<footer class="dft">
 <a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
 <div class="dfcols">
-<div><div class="k" ${A(S("The house", "בית התכשיטים"))}>The house</div>${NAV.map(([h, t]) => `<a href="${h}" ${A(t)}>${t.en}</a>`).join("")}<a href="./#concierge" ${A(S("Book a private viewing", "קביעת פגישה פרטית"))}>Book a private viewing</a></div>
+<div><div class="k" ${A(S("The house", "בית התכשיטים"))}>The house</div>${NAV.map(([h, t]) => `<a href="${h}" ${A(t)}>${t.en}</a>`).join("")}</div>
 <div><div class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</div>${POLICIES.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div>
-<div><div class="k" ${A(S("Visit", "ביקור"))}>Visit</div><span ${A(S("Dubai", "דובאי"))}>Dubai</span><span ${A(S("Tel Aviv", "תל אביב"))}>Tel Aviv</span><span ${A(S("By appointment", "בתיאום מראש"))}>By appointment</span><a href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+<div><div class="k" ${A(S("Contact", "יצירת קשר"))}>Contact</div><a href="mailto:concierge@silavu.com" dir="ltr">concierge@silavu.com</a><a href="./#concierge" ${A(S("Book a private viewing", "קביעת פגישה פרטית"))}>Book a private viewing</a><span class="k dfwhere" ${A(S("Dubai · Tel Aviv · By appointment", "דובאי · תל אביב · בתיאום מראש"))}>Dubai · Tel Aviv · By appointment</span></div>
 </div>
-<div class="dfbot k"><span>© SILAVU <span class="fyr">${new Date().getFullYear()}</span></span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
+<div class="dfbot k"><span dir="ltr">© SILAVU&nbsp;<span class="fyr">${new Date().getFullYear()}</span></span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
 </footer>`;
   /* the reader's language, applied before the first paint where it can be:
      Hebrew is in the page, the others come from the site's dictionaries */
@@ -271,11 +271,11 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   document.querySelectorAll(".fyr").forEach(function (e) { e.textContent = new Date().getFullYear(); });
   function apply(l, dict) {
     var rtl = l === "he" || l === "ar";
-    h.lang = l; h.dir = "ltr";
+    h.lang = l; h.dir = rtl ? "rtl" : "ltr";
     if (rtl) h.setAttribute("data-ns", "1"); else h.removeAttribute("data-ns");
     document.querySelectorAll("[data-en]").forEach(function (el) {
       var en = el.getAttribute("data-en"), t = l === "en" ? en : l === "he" ? el.getAttribute("data-he") : dict && dict[en];
-      el.innerHTML = rtl && t && /[\u0590-\u06ff]/.test(t) ? '<bdi dir="rtl">' + t.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : (t || en);
+      el.innerHTML = rtl && t && /[\u0590-\u06ff]/.test(t) ? '<bdi dir="rtl">' + t.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : (rtl && t && /[A-Za-z]/.test(t) ? '<bdi dir="ltr">' + t + "</bdi>" : (t || en));
     });
     document.querySelectorAll(".dlang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === l ? "true" : "false"); });
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) { if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt); im.alt = l === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en"); });
@@ -290,7 +290,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   }
   /* on a phone the switch is one button: the language you are in opens the
      others, any other choice switches and closes it */
-  var dl = document.querySelector(".dlang"), narrow = matchMedia("(max-width:899px)");
+  var dl = document.querySelector(".dlang"), narrow = { matches: true };
   document.querySelectorAll(".dlang button").forEach(function (b) { b.addEventListener("click", function (e) {
     if (narrow.matches && b.getAttribute("aria-pressed") === "true" && !dl.classList.contains("open")) { dl.classList.add("open"); e.stopPropagation(); return; }
     if (dl) dl.classList.remove("open"); go(b.getAttribute("data-lang")); }); });
@@ -336,25 +336,15 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
       : `<div class="aph" role="img" aria-label="${escA(a.name.en)}">${mark("aphmk", "b")}</div>`;
     const inner = `<main class="doc about">
 <span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
-<section class="ahero2">
+<section class="ahero2 aletterpage">
 <div class="ahtext">
+<div class="k gold" ${A(a.eyebrow)}>${a.eyebrow.en}</div>
 <h1 ${A(a.h1)}>${a.h1.en}</h1>
-<p class="lede" ${A(a.lede)}>${a.lede.en}</p>
-<dl class="afacts">${a.facts.map(([k, v]) => `<div>${T("dt", k)}${T("dd", v)}</div>`).join("")}</dl>
+<div class="aletter">${a.letter.map(p => T("p", p)).join("")}</div>
+<p class="asign"><b ${A(a.name)}>${a.name.en}</b></p>
+<div class="acta"><a class="btn solid" href="./#collection" ${A(a.cta1)}>${a.cta1.en}</a><a class="btn" href="./#concierge" ${A(a.cta2)}>${a.cta2.en}</a></div>
 </div>
 <figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
-</section>
-<section class="asplit">
-<div class="k gold" ${A(a.founderH)}>${a.founderH.en}</div>
-<div class="asplitb">${a.founder.map(p => T("p", p)).join("")}</div>
-</section>
-<section class="asplit">
-<div>${T("h2", a.atelierH)}${T("p", a.atelierP, "aint")}</div>
-<ul class="aroles2">${a.roles.map(([h, t]) => `<li>${T("h3", h)}${T("p", t)}</li>`).join("")}</ul>
-</section>
-<section class="ameet">
-${T("h2", a.meetH)}${T("p", a.meetP)}
-<a class="btn solid" href="./#concierge" ${A(a.cta)}>${a.cta.en}</a>
 </section>
 </main>`;
     /* the tab reads the same in every language; the heading carries markup */

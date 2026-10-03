@@ -5232,6 +5232,9 @@
   }
   @media (max-width:899px) {
     .dhd .dbook { display:none; }
+  }
+  /* one language button on every page and at every width, as on the home page */
+  @media (min-width:0px) {
     .dhd .dact { position:relative; }
     /* one button: the current language; tapping it opens the rest beneath */
     .dhd .dlang { position:relative; padding:0; border:0; }
@@ -5242,3 +5245,123 @@
     .dhd .dlang.open button[aria-pressed="true"] { background:var(--ink); color:#000; }
     .dhd .dnav a { font-size:.64rem; letter-spacing:.18em; }
   }
+
+  /* ── v151 — the card: a visible way in, and its own gallery ─────────────
+     "View the piece" is back on every card, first and plain, so the button
+     and the photograph open the same window; Reserve stays beside it. The
+     photograph swipes on a phone (dots below), and on a desktop shows two
+     quiet arrows while the pointer is on it. A sideways swipe is the card's,
+     an upright one is the page's. ─────────────────────────────────────── */
+  .piece .acts .lnk.vw { position:static; width:auto; height:auto; overflow:visible; clip-path:none; white-space:nowrap; }
+  .pgrid .piece .acts { display:flex; flex-wrap:wrap; align-items:center; gap:10px 26px; }
+  .pgrid .piece .acts .lnk.vw { color:var(--ink); }
+  .pgrid .piece .acts .lnk.q { color:var(--ink3); }
+  .ivory .pgrid .piece .acts .lnk.vw, .paper .pgrid .piece .acts .lnk.vw { color:#14130f; }
+  .ivory .pgrid .piece .acts .lnk.q, .paper .pgrid .piece .acts .lnk.q { color:#6b655a; }
+  #collection .piece .acts { justify-content:flex-start !important; }
+  .pgrid .fig.swp { touch-action:pan-y; -webkit-user-select:none; user-select:none; }
+  .pgrid .fig.swp .cnav { position:absolute; z-index:5; top:50%; width:40px; height:40px; margin-top:-20px; padding:0; border-radius:50%;
+    border:1px solid rgba(20,19,15,.12); background:rgba(255,255,255,.82); color:#14130f; cursor:pointer;
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); box-shadow:0 8px 20px -12px rgba(0,0,0,.35);
+    opacity:0; transform:scale(.92); transition:opacity .35s var(--ease), transform .35s var(--ease), background .3s; display:none; }
+  .pgrid .fig.swp .cnav::before { content:""; position:absolute; left:50%; top:50%; width:8px; height:8px; border:solid currentColor; border-width:0 1.2px 1.2px 0;
+    transform:translate(-65%,-50%) rotate(-45deg); }
+  .pgrid .fig.swp .cprev::before { transform:translate(-35%,-50%) rotate(135deg); }
+  .pgrid .fig.swp .cprev { inset-inline-start:12px; }
+  .pgrid .fig.swp .cnext { inset-inline-end:12px; }
+  html[dir="rtl"] .pgrid .fig.swp .cnav::before { scale:-1 1; }
+  .pgrid .fig.swp .cnav:hover { background:#fff; }
+  .pgrid .fig.swp .cnav:focus-visible { opacity:1; transform:none; outline:1px solid #8a6d3b; outline-offset:2px; }
+  @media (hover:hover) and (pointer:fine) {
+    .pgrid .fig.swp .cnav { display:block; }
+    .pgrid .piece:hover .fig.swp .cnav { opacity:1; transform:none; }
+  }
+  .pgrid .fig.swp .swd { opacity:.85; bottom:12px; }
+  .pgrid .fig.swp .swd i { width:6px; height:6px; }
+  @media (hover:none) { .pgrid .fig.swp .swd { opacity:1; } }
+  #pmIm { touch-action:pan-y; }
+
+  /* ── v152 — the enquiry, composed as one piece ───────────────────────────
+     Heading, words, then the form: the details in a row, what you are after,
+     what you chose (its own summary, with a way back to it), your message
+     across the whole form and tall enough to write in, then send — with the
+     honest note of what sending does, and the details to copy. The mark
+     beside it is smaller, so the form leads. ───────────────────────────── */
+  #enquire .egrid { grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); align-items:center; }
+  @media (min-width:760px) { #enquire .embart { width:clamp(180px,17vw,300px); } }
+  @media (min-width:760px) { #enquire .emb { min-height:clamp(360px,52svh,620px); } }
+  #enquire .fields { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  #enquire .fields > * { grid-column:1 / -1; }
+  #enquire .fields > .field:nth-child(1), #enquire .fields > .field:nth-child(2) { grid-column:auto; }
+  @media (min-width:1100px) {
+    #enquire .fields { grid-template-columns:repeat(3, minmax(0,1fr)); }
+    #enquire .fields > .field:nth-child(3) { grid-column:auto; }
+  }
+  #enquire .fields > .fmsg { grid-column:1 / -1 !important; }
+  #enquire .field.fmsg textarea { min-height:132px; line-height:1.55; padding-top:28px; }
+  .cf .want { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .cf .want > .k { flex-basis:100%; margin-bottom:2px; }
+  .csel { border:1px solid rgba(214,186,128,.32); border-radius:14px; padding:14px 16px; background:rgba(214,186,128,.05); display:grid; gap:6px; }
+  .csel[hidden] { display:none !important; }
+  .cselhd { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .cselhd .k { color:#d6ba80; }
+  .cselacts { display:flex; gap:16px; }
+  .cselacts .lnk { font-size:.62rem; min-height:32px; color:var(--ink2); }
+  .cselacts .cselx { color:var(--ink3); }
+  .cselact { margin:2px 0 0; color:var(--ink3); font-size:.6rem; }
+  .cseltxt { margin:0; color:var(--ink); font-size:1rem; line-height:1.5; }
+  .csub { display:flex; align-items:center; flex-wrap:wrap; gap:14px 26px; margin-top:6px; }
+  .csub .ccopy { color:var(--ink2); }
+  .csub .ccopy.ok { color:#d6ba80; }
+  .cf .cnote { margin:0; max-width:56ch; font-size:.84rem; color:var(--ink3); }
+  /* sending never hides the form: the note changes, the details stay */
+  form.sent .fields, form.sent .btn, form.sent .csub { display:revert; }
+  form.sent .fields { display:grid; } form.sent .csub { display:flex; } form.sent .cnote { display:none; }
+  form.sent .done { display:block; color:var(--ink); border-inline-start:2px solid #d6ba80; padding-inline-start:14px; max-width:60ch; }
+  #enquire { padding-bottom:clamp(64px,7vw,110px) !important; }
+  @media (max-width:759px) {
+    #enquire .fields { grid-template-columns:1fr; }
+    #enquire .fields > .field:nth-child(1), #enquire .fields > .field:nth-child(2) { grid-column:1 / -1; }
+    #enquire .field.fmsg textarea { min-height:120px; }
+    .csub { flex-direction:column; align-items:stretch; }
+    .csub #csend { width:100%; }
+    .csub .ccopy { align-self:center; min-height:44px; }
+    .cf .cnote { text-align:center; margin-inline:auto; }
+  }
+  /* while a field has the keyboard, nothing fixed sits over the form */
+  body.typing #cbar, body.typing #fab, body.typing #where { opacity:0 !important; pointer-events:none !important; transform:translateY(120%); }
+
+  /* ── v153 — right to left, for real: in Hebrew and Arabic the text, the
+     fields and the order of each row follow the reader. The header and the
+     bars fixed to the screen keep their places, so changing language never
+     moves the frame of the page. ────────────────────────────────────────── */
+  html[dir="rtl"] #header, html[dir="rtl"] .dhd, html[dir="rtl"] #cbar, html[dir="rtl"] #fab, html[dir="rtl"] #where, html[dir="rtl"] #pbar { direction:ltr; }
+  html[dir="rtl"] #header .dnav, html[dir="rtl"] #header nav { direction:rtl; }
+  html[dir="rtl"] input[dir="ltr"] { text-align:right; }
+  /* the mark and the name are one lockup: in every language the mark stands
+     before SILAVU, exactly as drawn */
+  html[dir="rtl"] .fbl, html[dir="rtl"] .dhome, html[dir="rtl"] #header .mark { direction:ltr; }
+  html[dir="rtl"] .pgrid .piece .t, html[dir="rtl"] #pmodal #pmT { direction:ltr; text-align:right; }
+  html[dir="rtl"] .pgrid .piece .t .kd, html[dir="rtl"] #pmodal #pmT .kd { direction:rtl; }
+  html[dir="rtl"] .pgrid .piece .t svg.sy.nmk, html[dir="rtl"] #pmodal .t svg.sy.nmk { margin-inline-start:0; margin-inline-end:.5em; }
+  #cform:focus, #cform:focus-visible { outline:none; }
+  .csel .cselact, .csel .cseltxt { text-align:start; }
+  html[dir="rtl"] .csel .k { direction:rtl; }
+
+  /* ── v154 — About: a letter. The words beside the portrait, his name under
+     them, and the two ways in. ──────────────────────────────────────────── */
+  .aletterpage { align-items:center; }
+  .aletterpage .ahtext { display:grid; gap:clamp(18px,2.4vw,28px); }
+  .aletter { display:grid; gap:1.1em; max-width:54ch; }
+  .aletter p { margin:0; color:var(--ink2); font-size:clamp(1.04rem,1.3vw,1.18rem); line-height:1.75; }
+  .asign { margin:4px 0 0; }
+  .asign b { font-family:var(--serif); font-style:italic; font-weight:400; font-size:clamp(1.3rem,1.8vw,1.6rem); color:var(--ink); }
+  html[data-ns] .asign b { font-family:inherit; font-style:normal; }
+  .acta { display:flex; flex-wrap:wrap; gap:12px; margin-top:6px; }
+  .acta .btn { min-height:48px; padding-inline:24px; }
+  @media (max-width:899px) { .acta .btn { flex:1 1 220px; justify-content:center; } }
+  /* the illustration cannot be turned, so it does not offer to */
+  html.no3d #stripwrap .stbtn { display:none !important; }
+  /* in a right-to-left page the next photograph is to the left, like the arrow key */
+  html[dir="rtl"] .gprev { left:auto; right:12px; } html[dir="rtl"] .gprev::before { transform:rotate(45deg) translate(-2px,-2px); }
+  html[dir="rtl"] .gnext { right:auto; left:12px; } html[dir="rtl"] .gnext::before { transform:rotate(-135deg) translate(-2px,-2px); }

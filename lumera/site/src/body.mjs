@@ -62,7 +62,9 @@ const T = (tag, cls, en, he, extra = "") => `<${tag} class="${cls}" data-en="${e
 /* the pieces are two across on a desktop now, not four, so the frame is about
    half the content width rather than a quarter — the old figure had the
    browser choosing a 900px file for a slot wanting 1478 */
-const SIZES_PC = "(min-width:900px) 46vw, (min-width:480px) 92vw, 88vw";
+/* measured: two cards across stop growing at 611px once the page reaches
+   its 1320px measure, so a big screen asks for that, not for 46% of itself */
+const SIZES_PC = "(min-width:1330px) 612px, (min-width:900px) 46vw, (min-width:480px) 92vw, 88vw";
 const esc = (x) => String(x).replace(/"/g, "&quot;");
 
 function pieceCard(p) {
@@ -80,7 +82,7 @@ function pieceCard(p) {
   const keys = JSON.stringify((p.key || []).map(r => [r[0].en, r[0].he, r[1].en, r[1].he]));
   const prose = JSON.stringify({ story: p.story || null, stones: p.stones || null, care: p.care || null });
   return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.stonesInside === false ? ' data-nostones=""' : ""}${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""}${p.title ? ` data-title="${esc(p.title.en)}" data-title-he="${esc(p.title.he)}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
-        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i><div class="swd" aria-hidden="true">${p.shots.map((x, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div></div>
+        <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i>${p.shots.length > 1 ? `<button type="button" class="cnav cprev" aria-label="Previous photograph" data-l-en="Previous photograph" data-l-he="התמונה הקודמת"></button><button type="button" class="cnav cnext" aria-label="Next photograph" data-l-en="Next photograph" data-l-he="התמונה הבאה"></button>` : ""}<div class="swd" aria-hidden="true">${p.shots.map((x, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div></div>
         <div class="bd">
           <div class="t">${mark("nmk", "b")}${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
@@ -180,7 +182,7 @@ ${markDefs()}
       <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
       <h1 class="h sp rv" data-en="The Line of <em>Desire</em>" data-he="The Line of <em>Desire</em>">The Line of <em>Desire</em></h1>
       <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד בדובאי ומלוטשים כדי ללוות אתכם כל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
-      <div class="hacts rv d3"><a class="btn solid" href="#concierge" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a><a class="lnk hsec" href="#concierge" data-piece="A bespoke piece" data-piece-he="תכשיט בהתאמה אישית" data-en="Begin a bespoke piece" data-he="ליצירת תכשיט בהתאמה אישית">Begin a bespoke piece</a></div>
+      <div class="hacts rv d3"><a class="btn solid" href="#collection" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</a><a class="lnk hsec" href="#concierge" data-en="Book a private viewing" data-he="קביעת פגישה פרטית">Book a private viewing</a></div>
     </div>
     <div class="hfacts rv d4">
       <div class="cue k"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
@@ -359,22 +361,32 @@ ${markDefs()}
       </div>
       <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="">
         <div class="fields">
-          <div class="field"><input id="fName" type="text" autocomplete="name" required><label for="fName" data-en="Name" data-he="שם">Name</label></div>
-          <div class="field"><input id="fCity" type="text" autocomplete="address-level2"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
-          <div class="field"><input id="fContact" type="text" autocomplete="tel" required inputmode="email" placeholder="+971 · +972 · email"><label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label></div>
+          <div class="field"><input id="fName" type="text" autocomplete="name" required dir="auto"><label for="fName" data-en="Name" data-he="שם">Name</label></div>
+          <div class="field"><input id="fCity" type="text" autocomplete="address-level2" dir="auto"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
+          <div class="field"><input id="fContact" type="text" autocomplete="tel" required inputmode="email" dir="ltr" placeholder="+971 · +972 · email"><label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label></div>
           <div class="want" role="radiogroup" aria-labelledby="wantK"><span class="k" id="wantK" data-en="What are you looking for?" data-he="מה אתם מחפשים?">What are you looking for?</span>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Private viewing" data-he="פגישה פרטית">Private viewing</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="A piece from the collection" data-he="תכשיט מהקולקציה">A piece from the collection</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Bespoke commission" data-he="תכשיט בהתאמה אישית">Bespoke commission</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Something else" data-he="משהו אחר">Something else</button></div>
-          <div class="field"><textarea id="fMsg" rows="2"></textarea><label for="fMsg" data-en="How can we help" data-he="איך נוכל לעזור">How can we help</label></div>
+          <div class="csel" id="csel" hidden aria-live="polite">
+            <div class="cselhd"><span class="k" data-en="Your selection" data-he="הבחירה שלכם">Your selection</span>
+              <span class="cselacts"><button type="button" class="lnk cseled" id="cselEdit" data-en="Edit selection" data-he="עריכת הבחירה">Edit selection</button><button type="button" class="lnk cselx" id="cselClear" data-en="Remove" data-he="הסרה">Remove</button></span></div>
+            <p class="cselact k" id="cselAct"></p>
+            <p class="cseltxt" id="cselTxt"></p>
+          </div>
+          <div class="field fmsg"><textarea id="fMsg" rows="4" dir="auto"></textarea><label for="fMsg" data-en="Your message" data-he="ההודעה שלכם">Your message</label></div>
           <div class="chan" hidden><span class="k" data-en="How should we reach you?" data-he="איך נחזור אליכם?">How should we reach you?</span>
             <button type="button" class="chip" data-ch="WhatsApp" hidden>WhatsApp</button>
             <button type="button" class="chip" data-ch="Call" data-en="Call the house" data-he="התקשרו אלינו" hidden>Call the house</button>
             <button type="button" class="chip on" data-ch="Email" data-en="Email" data-he="אימייל">Email</button></div>
         </div>
-        <button class="btn solid" id="csend" type="submit" style="justify-self:start" data-en="Send enquiry" data-he="שליחת הפנייה">Send enquiry</button>
-        <p class="done" id="cdone" data-en="Your message is ready in your mail app. If not, write to concierge@silavu.com." data-he="ההודעה מוכנה באפליקציית הדואר שלכם. אם היא לא נפתחה, כתבו אל concierge@silavu.com.">Your message is ready in your mail app. If not, write to concierge@silavu.com.</p>
+        <div class="csub">
+          <button class="btn solid" id="csend" type="submit" data-en="Send enquiry" data-he="שליחת הפנייה">Send enquiry</button>
+          <button type="button" class="lnk ccopy" id="ccopy" data-en="Copy the details" data-he="העתקת הפרטים">Copy the details</button>
+        </div>
+        <p class="fine cnote" id="cnote" data-en="Sending opens your email app with everything written in. Nothing reaches us until you press send there." data-he="השליחה פותחת את אפליקציית הדואר שלכם עם כל הפרטים. הפנייה תגיע אלינו רק אחרי שתלחצו שם על שליחה.">Sending opens your email app with everything written in. Nothing reaches us until you press send there.</p>
+        <p class="done" id="cdone" data-en="Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com." data-he="אפליקציית הדואר אמורה להיפתח עכשיו עם ההודעה מוכנה. לחצו שם על שליחה כדי שהפנייה תגיע לקונסיירז׳. אם היא לא נפתחה, העתיקו את הפרטים וכתבו אל concierge@silavu.com.">Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com.</p>
       </form>
       <div class="soc rv d3" data-socials></div>
     </div>
@@ -404,7 +416,7 @@ ${markDefs()}
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
       `<a href="${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div>
-    <div class="fbot k rv"><span>© SILAVU <span class="fyr">${new Date().getFullYear()}</span></span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
+    <div class="fbot k rv"><span dir="ltr">© SILAVU&nbsp;<span class="fyr">${new Date().getFullYear()}</span></span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>
 </main>

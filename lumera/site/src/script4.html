@@ -114,22 +114,26 @@
   /* Headings used to lean toward the pointer and part their words around
      it. Scrolling with the hand resting on a heading made the words shift
      under it, which read as the page twitching, so headings stay still. */
-  /* ── the picture that changes, only when asked ─────────────────────────
+  /* ── the card's own gallery ──────────────────────────────────────────
      Each card rests on its first photograph, the piece clean on white, so the
-     three sit together as one set. A pointer resting on a card walks through
-     the rest of that piece's photographs; leaving puts the first one back.
-     The extra frames are fetched on the first visit, not with the page. */
+     set reads as one. Its other photographs are there without opening it:
+     a finger swipes through them, a mouse gets two arrows and a slow walk
+     while it rests on the card, and the dots say where you are. A swipe only
+     changes the photograph — it never opens the piece, and a vertical drag
+     is left to the page. A tap or a click opens the piece at the photograph
+     on show. The extra frames are fetched on first use, not with the page. */
   (function () {
-    if (!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+    var fine = matchMedia("(hover:hover) and (pointer:fine)").matches;
     var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function rtl() { return document.documentElement.dir === "rtl"; }
     [].slice.call(document.querySelectorAll(".pgrid .piece[data-shots]")).forEach(function (pc) {
       var fig = pc.querySelector(".fig.swp"); if (!fig) return;
       var shots; try { shots = JSON.parse(pc.getAttribute("data-shots")); } catch (e) { return; }
-      if (!shots || shots.length < 2) return;
+      if (!shots || shots.length < 2) { fig.classList.add("one"); return; }
       var base = fig.querySelector(".im img"), sizes = base ? base.getAttribute("sizes") : "100vw";
-      var dots = [].slice.call(fig.querySelectorAll(".swd i")), layers = null, at = 0, t = 0, over = false;
+      var dots = [].slice.call(fig.querySelectorAll(".swd i")), layers = null, at = 0, t = 0, manual = false, wasT = 0;
       function build() {
-        layers = [null];
+        if (layers) return; layers = [null];
         for (var i = 1; i < shots.length; i++) {
           var sh = shots[i], w = sh.w && sh.w.length ? sh.w : [800, 1200, 1600, 2000];
           var d = document.createElement("div"); d.className = "im hx";
@@ -140,10 +144,9 @@
         }
       }
       function ready(i) { var im = layers[i] && layers[i].firstChild; return !im || (im.complete && im.naturalWidth > 0); }
-      var wasT = 0;
       function show(i) {
-        var prev = layers[at];
-        at = i;
+        if (!layers) build();
+        var prev = layers[at]; at = i; pc.__at = i;
         /* the outgoing frame holds still underneath while the next fades in over it */
         clearTimeout(wasT);
         layers.forEach(function (l) { if (l) l.classList.remove("was"); });
@@ -151,15 +154,38 @@
         layers.forEach(function (l, k) { if (l) l.classList.toggle("on", k === i); });
         dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
       }
-      function next() {
-        var n = at + 1 >= shots.length ? 1 : at + 1;
-        if (ready(n)) show(n); else layers[n].firstChild.addEventListener("load", function () { if (over) show(n); }, { once: true });
+      function go(n) {
+        build(); n = (n + shots.length) % shots.length;
+        if (ready(n)) show(n); else layers[n].firstChild.addEventListener("load", function () { show(n); }, { once: true });
       }
-      pc.addEventListener("pointerenter", function () {
-        over = true; if (!layers) build(); clearInterval(t);
-        next(); if (!still) t = setInterval(next, 1600);
+      pc.__at = 0; pc.__show = function (i) { manual = true; go(i); };
+      /* two arrows, for a mouse */
+      fig.querySelectorAll(".cnav").forEach(function (b) {
+        b.addEventListener("click", function (e) { e.stopPropagation(); e.preventDefault(); manual = true; clearInterval(t); go(at + (b.classList.contains("cnext") ? 1 : -1)); });
       });
-      pc.addEventListener("pointerleave", function () { over = false; clearInterval(t); show(0); });
+      /* a slow walk while a mouse rests on the card, until the arrows are used */
+      if (fine) {
+        pc.addEventListener("pointerenter", function (e) {
+          if (e.pointerType !== "mouse") return; build(); clearInterval(t);
+          if (!still && !manual) t = setInterval(function () { go(at + 1 >= shots.length ? 1 : at + 1); }, 1700);
+        });
+        pc.addEventListener("pointerleave", function (e) {
+          if (e.pointerType !== "mouse") return; clearInterval(t);
+          if (!document.querySelector(".modal.open")) { manual = false; show(0); }
+        });
+      }
+      /* a swipe, for a finger: sideways changes the photograph, upright is the page's */
+      var sx = 0, sy = 0, down = false, swiped = false;
+      fig.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse") return; sx = e.clientX; sy = e.clientY; down = true; swiped = false; build(); });
+      fig.addEventListener("pointermove", function (e) {
+        if (!down) return; var dx = e.clientX - sx, dy = e.clientY - sy;
+        if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) { down = false; return; }
+        if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) * 1.2) { down = false; swiped = true; manual = true; go(at + ((dx < 0) !== rtl() ? 1 : -1)); }
+      });
+      fig.addEventListener("pointerup", function () { down = false; });
+      fig.addEventListener("pointercancel", function () { down = false; });
+      /* the click a finger sends after a swipe is not a tap */
+      pc.addEventListener("click", function (e) { if (swiped) { swiped = false; e.stopImmediatePropagation(); e.preventDefault(); } }, true);
     });
   })();
 
