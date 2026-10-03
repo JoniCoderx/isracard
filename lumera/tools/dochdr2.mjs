@@ -1,0 +1,12 @@
+import { chromium } from "playwright-core";
+const O="/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/m/";
+const b=await chromium.launch({executablePath:"/opt/pw-browsers/chromium-1194/chrome-linux/chrome",args:["--no-sandbox"]});
+const p=await (await b.newContext({viewport:{width:390,height:300},deviceScaleFactor:2,hasTouch:true,isMobile:true})).newPage();
+await p.goto("http://localhost:8777/care/",{waitUntil:"load"}); await p.waitForTimeout(600);
+await p.screenshot({path:O+"dm1.png",clip:{x:0,y:0,width:390,height:120}});
+await p.tap('.dlang button[aria-pressed="true"]'); await p.waitForTimeout(300);
+await p.screenshot({path:O+"dm2.png",clip:{x:190,y:0,width:200,height:280}});
+await p.tap('.dlang button[data-lang="he"]'); await p.waitForTimeout(500);
+await p.screenshot({path:O+"dm3.png",clip:{x:0,y:0,width:390,height:300}});
+console.log(await p.evaluate(()=>[document.documentElement.lang, document.querySelector(".dlang").className, document.querySelector(".dnav").scrollWidth, document.querySelector(".dnav").clientWidth]));
+await b.close();

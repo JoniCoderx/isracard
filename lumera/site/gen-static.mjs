@@ -253,7 +253,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 <a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
 <nav class="dnav" aria-label="Site">${NAV.map(([h, t]) => `<a href="${h}"${h === here + "/" ? ' aria-current="page"' : ""} ${A(t)}>${t.en}</a>`).join("")}</nav>
 <div class="dact"><div class="dlang" role="group" aria-label="Language">${LANGS.map(([c, l]) => `<button type="button" data-lang="${c}" lang="${c}">${l}</button>`).join("")}</div>
-<a class="dbook" href="./#concierge" ${A(S("Book a viewing", "פגישה פרטית"))}>Book a viewing</a></div>
+<a class="dbook" href="./#concierge" ${A(S("Private appointment", "פגישה פרטית"))}>Private appointment</a></div>
 </header>`;
   const footer = here => `<footer class="dft">
 <a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
@@ -288,7 +288,13 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     fetch("lang/" + l + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); })
       .then(function (d) { cache[l] = d; apply(l, d); }).catch(function () { apply("en"); });
   }
-  document.querySelectorAll(".dlang button").forEach(function (b) { b.addEventListener("click", function () { go(b.getAttribute("data-lang")); }); });
+  /* on a phone the switch is one button: the language you are in opens the
+     others, any other choice switches and closes it */
+  var dl = document.querySelector(".dlang"), narrow = matchMedia("(max-width:899px)");
+  document.querySelectorAll(".dlang button").forEach(function (b) { b.addEventListener("click", function (e) {
+    if (narrow.matches && b.getAttribute("aria-pressed") === "true" && !dl.classList.contains("open")) { dl.classList.add("open"); e.stopPropagation(); return; }
+    if (dl) dl.classList.remove("open"); go(b.getAttribute("data-lang")); }); });
+  document.addEventListener("click", function (e) { if (dl && !dl.contains(e.target)) dl.classList.remove("open"); });
   var l = "en"; try { l = localStorage.getItem("silavu-lang") || "en"; } catch (e) {}
   go(l);
 })();</script>`;

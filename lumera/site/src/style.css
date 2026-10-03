@@ -5211,3 +5211,34 @@
     body.onivory header.sh .btn.hbook { color:#5b4520; border-color:rgba(150,112,48,.55); background:rgba(214,186,128,.10); box-shadow:none; }
   }
   #where.atend { opacity:0 !important; pointer-events:none; }
+
+  /* ── v150 — the house pages wear the same header as the home page: the
+     mark and name in the centre, the way back on the left, language and the
+     appointment on the right, so every page reads as one site. ─────────── */
+  .dhd { grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); grid-template-areas:"nav logo act"; min-height:72px; }
+  .dhd .dhome { grid-area:logo; justify-self:center; }
+  .dhd .dnav { grid-area:nav; justify-content:flex-start; }
+  .dhd .dact { grid-area:act; justify-self:end; gap:10px; }
+  .dhd .dhome svg.sy.dmk { height:32px; }
+  .dhd .dlang { padding:3px; border-radius:12px; }
+  .dhd .dlang button { min-height:36px; border-radius:9px; }
+  .dhd .dbook { box-sizing:border-box; height:44px; display:inline-flex; align-items:center; padding:0 22px; border-radius:12px;
+    font-size:.64rem; letter-spacing:.26em; color:#f1e4c6; border:1px solid rgba(214,186,128,.55);
+    background:linear-gradient(180deg, rgba(214,186,128,.12), rgba(214,186,128,.03)); }
+  .dhd .dbook:hover { color:#fff7e4; border-color:rgba(232,206,150,.95); }
+  @media (max-width:899px) {
+    .dhd { grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); grid-template-areas:". logo act" "nav nav nav"; gap:10px 12px; padding-bottom:8px; }
+    .dhd .dnav { grid-column:1 / -1; justify-content:center; margin:0; padding:2px 0 0; gap:24px; }
+  }
+  @media (max-width:899px) {
+    .dhd .dbook { display:none; }
+    .dhd .dact { position:relative; }
+    /* one button: the current language; tapping it opens the rest beneath */
+    .dhd .dlang { position:relative; padding:0; border:0; }
+    .dhd .dlang button { display:none; min-width:44px; height:42px; min-height:42px; border:1px solid var(--line); border-radius:12px; color:var(--ink); font-size:.66rem; letter-spacing:.14em; }
+    .dhd .dlang button[aria-pressed="true"] { display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,.04); color:var(--ink); }
+    .dhd .dlang.open { position:absolute; top:0; right:0; z-index:5; display:grid; gap:4px; padding:4px; border:1px solid var(--line); border-radius:14px; background:rgba(8,8,8,.96); box-shadow:0 20px 40px -20px #000; }
+    .dhd .dlang.open button { display:inline-flex; align-items:center; justify-content:center; border-color:transparent; }
+    .dhd .dlang.open button[aria-pressed="true"] { background:var(--ink); color:#000; }
+    .dhd .dnav a { font-size:.64rem; letter-spacing:.18em; }
+  }
