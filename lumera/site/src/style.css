@@ -5464,3 +5464,8 @@
   }
   @media (min-width:900px) { html[dir="rtl"] #pmodal .t { padding-right:0; padding-left:84px; } }
   html[data-ns] body #pmodal .mclose2 { letter-spacing:.02em; font-size:.84rem; }
+  /* the piece name sits beside SILAVU, as on the cards: the same face, a step
+     heavier, in the piece's colour */
+  #pmodal .t .nm { white-space:nowrap; }
+  #pmodal .t .nm em { display:inline; margin:0; margin-inline-start:.22em; font-family:var(--word, inherit) !important; font-style:normal !important;
+    font-weight:500; letter-spacing:.05em; text-transform:uppercase; font-size:1em; }
