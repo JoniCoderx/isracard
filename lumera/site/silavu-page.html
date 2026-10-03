@@ -5510,39 +5510,38 @@
   }
   @media (prefers-reduced-motion:reduce) { #macro .mcue i { animation:none; } #macro .mvid { transform:none; } }
 
-  /* ── v159 — the signature. Pure black; one fine line of light comes in from
-     the left and writes SILAVU without lifting, in a hand drawn for the
-     house. As it finishes, a few small points of light catch (the dot of the
-     i is one of them) and the two lines arrive underneath. Without the
-     script, or with reduced motion: the written name and its words. ── */
+  /* ── v159 — the signature. Pure black; one fine line runs in from the left
+     edge of the screen, writes SILAVU on its way without lifting, in a hand
+     drawn for the house, and runs on out at the right edge. Through the
+     letters the line thickens into polished metal; three small set stones
+     sit in it (the dot of the i is one). As it finishes, a few points catch
+     the light and the two lines arrive underneath. Without the script, or
+     with reduced motion: the written name, its stones and its words. ── */
   #craft { position:relative; background:#000; padding:0 !important; overflow-x:clip; }
-  #craft .sgstage { position:relative; display:grid; place-items:center; align-content:center; gap:clamp(30px,5svh,56px);
-    min-height:74svh; padding-block:12svh; background:#000; }
-  #craft .sgfig { width:min(78vw, 1060px); aspect-ratio:1060 / 360; }
+  #craft .sgstage { position:relative; display:grid; place-items:center; align-content:center; gap:clamp(34px,5.6svh,64px);
+    min-height:74svh; padding-block:12svh; background:#000; overflow-x:clip; }
+  #craft .sgfig { width:min(64vw, 900px); aspect-ratio:980 / 440; }
   #craft .sgsvg { display:block; width:100%; height:100%; overflow:visible; }
-  #craft .sgpath { stroke:url(#sgfade); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
-  #craft .sghalo { stroke:#fff3df; stroke-opacity:.09; stroke-width:9; stroke-linecap:round; stroke-linejoin:round; }
-  #craft .sgdot { fill:#f6f2ea; }
+  #craft .sgpath { stroke:#e9e5dd; stroke-opacity:.82; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; }
+  #craft .sgbody { stroke:url(#sgmetal); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  #craft .sghalo { stroke:#fff3df; stroke-opacity:.07; stroke-width:9; stroke-linecap:round; stroke-linejoin:round; }
   #craft .sgpen { opacity:0; }
   #craft .sgcore { fill:#fffdf7; }
   #craft .sgspark { opacity:0; }
   #craft .sgspark path { fill:#fffdf7; }
-  #craft .sgspark > g > g, #craft .sgspark > g { transform-box:fill-box; }
-  #craft .sgcopy { display:grid; justify-items:center; gap:clamp(10px,1.5svh,16px); text-align:center; padding-inline:var(--pad); }
-  #craft .sgc1 { margin:0; font-family:var(--word); font-weight:400; text-transform:uppercase; letter-spacing:.36em; margin-inline-end:-.36em;
-    font-size:clamp(.9rem,1.35vw,1.24rem); line-height:1.3; color:#efebe3; }
-  #craft .sgc2 { margin:0; display:flex; align-items:center; gap:clamp(14px,1.6vw,22px); font-family:var(--serif); font-style:italic; font-weight:400;
-    font-size:clamp(1.1rem,1.5vw,1.42rem); line-height:1.3; color:#bab5ab; }
-  #craft .sgc2 i { display:block; width:clamp(40px,7vw,110px); height:1px; background:linear-gradient(to var(--to, left), rgba(239,235,227,.4), rgba(239,235,227,0)); }
-  #craft .sgc2 i:last-child { --to:right; }
-  html[data-ns] #craft .sgc1 { letter-spacing:.04em; margin-inline-end:0; font-family:var(--sans); }
-  html[data-ns] #craft .sgc2 { font-family:var(--sans); font-style:normal; font-weight:300; }
-  @media (max-width:759px) { #craft .sgfig { width:90vw; } #craft .sgc2 i { width:28px; } }
+  #craft .sgcopy { display:grid; justify-items:center; gap:clamp(8px,1.3svh,14px); text-align:center; padding-inline:var(--pad); }
+  #craft .sgc1 { margin:0; font-family:var(--serif); font-weight:400; text-transform:uppercase; letter-spacing:.3em; margin-inline-end:-.3em;
+    font-size:clamp(1.05rem,1.7vw,1.6rem); line-height:1.25; color:#f1ede5; }
+  #craft .sgc2 { margin:0; font-family:var(--serif); font-style:italic; font-weight:400; letter-spacing:.14em; margin-inline-end:-.14em;
+    font-size:clamp(1.05rem,1.5vw,1.42rem); line-height:1.3; color:#cfcac0; }
+  html[data-ns] #craft .sgc1 { letter-spacing:.04em; margin-inline-end:0; font-family:var(--sans); font-weight:300; }
+  html[data-ns] #craft .sgc2 { font-family:var(--sans); font-style:normal; font-weight:300; letter-spacing:.02em; margin-inline-end:0; }
+  @media (max-width:759px) { #craft .sgfig { width:84vw; } }
 
   /* with the script: the held passage */
   #craft.sgjs { height:190svh; }
   #craft.sgjs .sgstage { position:sticky; top:0; height:100svh; min-height:0; padding-block:0; }
-  #craft.sgjs .sgdot, #craft.sgjs .sgc1, #craft.sgjs .sgc2 { opacity:0; }
+  #craft.sgjs .sgstones use, #craft.sgjs .sgc1, #craft.sgjs .sgc2 { opacity:0; }
   @media (max-width:759px) { #craft.sgjs { height:160svh; } }
 </style>
 
@@ -5643,29 +5642,38 @@
   </section>
 
   <section id="craft" data-n="" data-title-en="The signature" data-title-he="החתימה" aria-label="SILAVU, written in one line">
-    <!-- one line comes in from the left and writes the name, without lifting -->
+    <!-- one line runs across the black and writes the name on its way, without lifting -->
     <div class="sgstage">
       <div class="sgfig">
-        <svg class="sgsvg" viewBox="150 30 1060 360" role="img" aria-label="SILAVU, written by hand in a single line" overflow="visible">
+        <svg class="sgsvg" viewBox="97 -40 980 440" role="img" aria-label="SILAVU, written by hand in a single line" overflow="visible">
           <defs>
-            <linearGradient id="sgfade" gradientUnits="userSpaceOnUse" x1="-560" y1="0" x2="260" y2="0"><stop offset="0" stop-color="#f2eee6" stop-opacity="0"/><stop offset=".72" stop-color="#f2eee6" stop-opacity=".82"/><stop offset="1" stop-color="#f6f2ea"/></linearGradient>
-            <radialGradient id="sgglow"><stop offset="0" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".25" stop-color="#fff6e6" stop-opacity=".45"/><stop offset="1" stop-color="#fff6e6" stop-opacity="0"/></radialGradient>
+            <linearGradient id="sgmetal" gradientUnits="userSpaceOnUse" x1="0" y1="-20" x2="0" y2="380"><stop offset="0" stop-color="#ffffff"/><stop offset=".34" stop-color="#d9d4cb"/><stop offset=".5" stop-color="#fbf8f2"/><stop offset=".68" stop-color="#a7a29a"/><stop offset=".84" stop-color="#efebe4"/><stop offset="1" stop-color="#9c978f"/></linearGradient>
+            <linearGradient id="sgword" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="1240" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".14" stop-color="#fff"/><stop offset=".86" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <mask id="sgmask" maskUnits="userSpaceOnUse" x="-3000" y="-400" width="7000" height="1200"><rect x="-3000" y="-400" width="7000" height="1200" fill="url(#sgword)"/></mask>
+            <radialGradient id="sgglow"><stop offset="0" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".25" stop-color="#fff6e6" stop-opacity=".4"/><stop offset="1" stop-color="#fff6e6" stop-opacity="0"/></radialGradient>
+            <linearGradient id="sgstone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e9edf2"/><stop offset=".52" stop-color="#b9bec6"/><stop offset="1" stop-color="#f4f6f9"/></linearGradient>
+            <symbol id="sgdia" viewBox="-10 -10 20 20" overflow="visible"><circle r="7.4" fill="none" stroke="#d6d1c8" stroke-width="1.1"/><path d="M 0 -6 L 6 0 L 0 6 L -6 0 Z" fill="url(#sgstone)"/><path d="M -6 0 H 6 M 0 -6 V 6" stroke="#fff" stroke-width=".5" opacity=".7"/></symbol>
           </defs>
-          <path class="sghalo" d="M -760 378 C -620 390, -460 362, -300 360 C -190 378, -80 318, 30 318 C 110 318, 160 330, 205 318 C 262 300, 312 170, 350 98 C 362 76, 390 52, 394 66 C 398 82, 360 92, 318 84 C 278 78, 236 100, 236 132 C 236 164, 272 178, 306 194 C 346 214, 362 244, 356 278 C 350 318, 308 340, 262 338 C 222 336, 188 330, 176 344 C 166 360, 230 364, 300 360 C 370 356, 420 330, 446 240 C 440 292, 432 330, 462 332 C 498 334, 528 270, 548 200 C 562 150, 568 96, 552 84 C 534 72, 518 112, 518 180 C 518 250, 516 330, 548 332 C 574 334, 600 300, 626 262 C 640 242, 664 234, 680 242 C 652 232, 616 254, 612 290 C 608 320, 628 336, 650 326 C 672 316, 684 280, 690 244 C 684 290, 680 330, 708 332 C 734 334, 748 300, 760 270 C 768 250, 770 238, 782 240 C 790 270, 794 316, 808 330 C 830 300, 856 262, 868 240 C 880 222, 900 232, 892 244 C 880 270, 872 306, 884 326 C 900 344, 930 326, 946 290 C 956 266, 960 250, 964 240 C 958 280, 952 330, 980 332 C 1040 334, 1110 220, 1170 110" fill="none"/>
-          <path class="sgpath" d="M -760 378 C -620 390, -460 362, -300 360 C -190 378, -80 318, 30 318 C 110 318, 160 330, 205 318 C 262 300, 312 170, 350 98 C 362 76, 390 52, 394 66 C 398 82, 360 92, 318 84 C 278 78, 236 100, 236 132 C 236 164, 272 178, 306 194 C 346 214, 362 244, 356 278 C 350 318, 308 340, 262 338 C 222 336, 188 330, 176 344 C 166 360, 230 364, 300 360 C 370 356, 420 330, 446 240 C 440 292, 432 330, 462 332 C 498 334, 528 270, 548 200 C 562 150, 568 96, 552 84 C 534 72, 518 112, 518 180 C 518 250, 516 330, 548 332 C 574 334, 600 300, 626 262 C 640 242, 664 234, 680 242 C 652 232, 616 254, 612 290 C 608 320, 628 336, 650 326 C 672 316, 684 280, 690 244 C 684 290, 680 330, 708 332 C 734 334, 748 300, 760 270 C 768 250, 770 238, 782 240 C 790 270, 794 316, 808 330 C 830 300, 856 262, 868 240 C 880 222, 900 232, 892 244 C 880 270, 872 306, 884 326 C 900 344, 930 326, 946 290 C 956 266, 960 250, 964 240 C 958 280, 952 330, 980 332 C 1040 334, 1110 220, 1170 110" fill="none"/>
-          <circle class="sgdot" cx="457" cy="197" r="5"/>
+          <path class="sghalo" d="M -1894.0 296.0 C -1290.4 271.6, -768.4 393.6, -304.8 369.2 C -198.0 391.2, -77.2 318.0, 32.8 318.0 C 112.8 318.0, 160.6 332.6, 207.8 318.0 C 268.0 296.0, 341.4 137.4, 392.4 49.6 C 421.6 0.8, 499.9 -28.5, 537.0 -9.0 C 560.8 5.6, 514.2 37.4, 444.2 37.4 C 404.2 37.4, 381.2 30.0, 362.9 32.5 C 324.0 25.2, 278.0 52.0, 272.2 91.0 C 266.5 130.1, 300.0 147.2, 331.1 166.7 C 367.5 191.1, 378.1 227.7, 366.0 269.2 C 352.8 318.0, 306.8 344.8, 261.2 342.4 C 221.5 339.9, 188.6 332.6, 174.1 349.7 C 161.2 369.2, 224.5 374.1, 295.2 369.2 C 365.9 364.3, 420.6 332.6, 462.8 222.8 C 447.4 286.2, 432.6 332.6, 462.2 335.0 C 497.9 337.5, 539.4 259.4, 572.0 174.0 C 595.0 113.0, 610.7 47.1, 596.9 32.5 C 581.0 17.8, 557.8 66.6, 545.6 149.6 C 533.0 235.0, 516.6 332.6, 548.2 335.0 C 573.9 337.5, 606.0 296.0, 638.8 249.6 C 656.4 225.2, 681.9 215.5, 696.4 225.2 C 670.2 213.0, 630.3 239.9, 619.8 283.8 C 610.4 320.4, 627.5 339.9, 651.3 327.7 C 675.1 315.5, 693.6 271.6, 706.1 227.7 C 691.8 283.8, 680.6 332.6, 708.2 335.0 C 733.9 337.5, 754.0 296.0, 771.4 259.4 C 783.0 235.0, 787.2 220.4, 798.8 222.8 C 801.4 259.4, 797.1 315.5, 808.6 332.6 C 836.0 296.0, 868.8 249.6, 884.8 222.8 C 900.0 200.8, 918.2 213.0, 908.1 227.7 C 891.4 259.4, 876.9 303.3, 885.3 327.7 C 898.1 349.7, 931.3 327.7, 953.8 283.8 C 968.1 254.5, 975.0 235.0, 980.8 222.8 C 967.6 271.6, 952.6 332.6, 980.2 335.0 C 1019.9 337.5, 1057.8 283.8, 1101.0 261.8 C 1176.4 225.2, 1246.0 296.0, 1365.6 298.4 C 1564.9 303.3, 1812.8 249.6, 2609.6 271.6" fill="none"/>
+          <path class="sgpath" d="M -1894.0 296.0 C -1290.4 271.6, -768.4 393.6, -304.8 369.2 C -198.0 391.2, -77.2 318.0, 32.8 318.0 C 112.8 318.0, 160.6 332.6, 207.8 318.0 C 268.0 296.0, 341.4 137.4, 392.4 49.6 C 421.6 0.8, 499.9 -28.5, 537.0 -9.0 C 560.8 5.6, 514.2 37.4, 444.2 37.4 C 404.2 37.4, 381.2 30.0, 362.9 32.5 C 324.0 25.2, 278.0 52.0, 272.2 91.0 C 266.5 130.1, 300.0 147.2, 331.1 166.7 C 367.5 191.1, 378.1 227.7, 366.0 269.2 C 352.8 318.0, 306.8 344.8, 261.2 342.4 C 221.5 339.9, 188.6 332.6, 174.1 349.7 C 161.2 369.2, 224.5 374.1, 295.2 369.2 C 365.9 364.3, 420.6 332.6, 462.8 222.8 C 447.4 286.2, 432.6 332.6, 462.2 335.0 C 497.9 337.5, 539.4 259.4, 572.0 174.0 C 595.0 113.0, 610.7 47.1, 596.9 32.5 C 581.0 17.8, 557.8 66.6, 545.6 149.6 C 533.0 235.0, 516.6 332.6, 548.2 335.0 C 573.9 337.5, 606.0 296.0, 638.8 249.6 C 656.4 225.2, 681.9 215.5, 696.4 225.2 C 670.2 213.0, 630.3 239.9, 619.8 283.8 C 610.4 320.4, 627.5 339.9, 651.3 327.7 C 675.1 315.5, 693.6 271.6, 706.1 227.7 C 691.8 283.8, 680.6 332.6, 708.2 335.0 C 733.9 337.5, 754.0 296.0, 771.4 259.4 C 783.0 235.0, 787.2 220.4, 798.8 222.8 C 801.4 259.4, 797.1 315.5, 808.6 332.6 C 836.0 296.0, 868.8 249.6, 884.8 222.8 C 900.0 200.8, 918.2 213.0, 908.1 227.7 C 891.4 259.4, 876.9 303.3, 885.3 327.7 C 898.1 349.7, 931.3 327.7, 953.8 283.8 C 968.1 254.5, 975.0 235.0, 980.8 222.8 C 967.6 271.6, 952.6 332.6, 980.2 335.0 C 1019.9 337.5, 1057.8 283.8, 1101.0 261.8 C 1176.4 225.2, 1246.0 296.0, 1365.6 298.4 C 1564.9 303.3, 1812.8 249.6, 2609.6 271.6" fill="none"/>
+          <path class="sgbody" d="M -1894.0 296.0 C -1290.4 271.6, -768.4 393.6, -304.8 369.2 C -198.0 391.2, -77.2 318.0, 32.8 318.0 C 112.8 318.0, 160.6 332.6, 207.8 318.0 C 268.0 296.0, 341.4 137.4, 392.4 49.6 C 421.6 0.8, 499.9 -28.5, 537.0 -9.0 C 560.8 5.6, 514.2 37.4, 444.2 37.4 C 404.2 37.4, 381.2 30.0, 362.9 32.5 C 324.0 25.2, 278.0 52.0, 272.2 91.0 C 266.5 130.1, 300.0 147.2, 331.1 166.7 C 367.5 191.1, 378.1 227.7, 366.0 269.2 C 352.8 318.0, 306.8 344.8, 261.2 342.4 C 221.5 339.9, 188.6 332.6, 174.1 349.7 C 161.2 369.2, 224.5 374.1, 295.2 369.2 C 365.9 364.3, 420.6 332.6, 462.8 222.8 C 447.4 286.2, 432.6 332.6, 462.2 335.0 C 497.9 337.5, 539.4 259.4, 572.0 174.0 C 595.0 113.0, 610.7 47.1, 596.9 32.5 C 581.0 17.8, 557.8 66.6, 545.6 149.6 C 533.0 235.0, 516.6 332.6, 548.2 335.0 C 573.9 337.5, 606.0 296.0, 638.8 249.6 C 656.4 225.2, 681.9 215.5, 696.4 225.2 C 670.2 213.0, 630.3 239.9, 619.8 283.8 C 610.4 320.4, 627.5 339.9, 651.3 327.7 C 675.1 315.5, 693.6 271.6, 706.1 227.7 C 691.8 283.8, 680.6 332.6, 708.2 335.0 C 733.9 337.5, 754.0 296.0, 771.4 259.4 C 783.0 235.0, 787.2 220.4, 798.8 222.8 C 801.4 259.4, 797.1 315.5, 808.6 332.6 C 836.0 296.0, 868.8 249.6, 884.8 222.8 C 900.0 200.8, 918.2 213.0, 908.1 227.7 C 891.4 259.4, 876.9 303.3, 885.3 327.7 C 898.1 349.7, 931.3 327.7, 953.8 283.8 C 968.1 254.5, 975.0 235.0, 980.8 222.8 C 967.6 271.6, 952.6 332.6, 980.2 335.0 C 1019.9 337.5, 1057.8 283.8, 1101.0 261.8 C 1176.4 225.2, 1246.0 296.0, 1365.6 298.4 C 1564.9 303.3, 1812.8 249.6, 2609.6 271.6" fill="none" mask="url(#sgmask)"/>
+          <g class="sgstones">
+            <use class="sgdot" href="#sgdia" x="-10" y="-10" width="20" height="20" transform="translate(482 172)"/>
+            <use href="#sgdia" x="-10" y="-10" width="20" height="20" transform="translate(809 336)"/>
+            <use href="#sgdia" x="-10" y="-10" width="20" height="20" transform="translate(981 220)"/>
+          </g>
           <g class="sgpen"><circle r="22" fill="url(#sgglow)"/><circle class="sgcore" r="2.2"/></g>
           <g class="sgspark">
-            <g transform="translate(457 197)"><circle r="26" fill="url(#sgglow)"/><path d="M 0 -26 L 1.6 -1.6 L 26 0 L 1.6 1.6 L 0 26 L -1.6 1.6 L -26 0 L -1.6 -1.6 Z"/></g>
-            <g transform="translate(392 60)"><circle r="20" fill="url(#sgglow)"/><path d="M 0 -20 L 1.3 -1.3 L 20 0 L 1.3 1.3 L 0 20 L -1.3 1.3 L -20 0 L -1.3 -1.3 Z"/></g>
-            <g transform="translate(552 82)"><circle r="16" fill="url(#sgglow)"/><path d="M 0 -16 L 1.1 -1.1 L 16 0 L 1.1 1.1 L 0 16 L -1.1 1.1 L -16 0 L -1.1 -1.1 Z"/></g>
-            <g transform="translate(1170 110)"><circle r="30" fill="url(#sgglow)"/><path d="M 0 -32 L 1.8 -1.8 L 32 0 L 1.8 1.8 L 0 32 L -1.8 1.8 L -32 0 L -1.8 -1.8 Z"/></g>
+            <g data-at="482 172"><circle r="24" fill="url(#sgglow)"/><path d="M 0 -26 L 1.4 -1.4 L 26 0 L 1.4 1.4 L 0 26 L -1.4 1.4 L -26 0 L -1.4 -1.4 Z"/></g>
+            <g data-at="537 -9"><circle r="20" fill="url(#sgglow)"/><path d="M 0 -22 L 1.2 -1.2 L 22 0 L 1.2 1.2 L 0 22 L -1.2 1.2 L -22 0 L -1.2 -1.2 Z"/></g>
+            <g data-at="809 336"><circle r="16" fill="url(#sgglow)"/><path d="M 0 -18 L 1.1 -1.1 L 18 0 L 1.1 1.1 L 0 18 L -1.1 1.1 L -18 0 L -1.1 -1.1 Z"/></g>
+            <g data-at="981 220"><circle r="18" fill="url(#sgglow)"/><path d="M 0 -20 L 1.1 -1.1 L 20 0 L 1.1 1.1 L 0 20 L -1.1 1.1 L -20 0 L -1.1 -1.1 Z"/></g>
           </g>
         </svg>
       </div>
       <div class="sgcopy">
         <p class="sgc1" data-en="Every line is drawn." data-he="כל קו משורטט.">Every line is drawn.</p>
-        <p class="sgc2"><i aria-hidden="true"></i><span data-en="Every stone is chosen." data-he="כל אבן נבחרת.">Every stone is chosen.</span><i aria-hidden="true"></i></p>
+        <p class="sgc2" data-en="Every stone is chosen." data-he="כל אבן נבחרת.">Every stone is chosen.</p>
       </div>
     </div>
   </section>
@@ -10037,77 +10045,81 @@
 </script>
 
 <script>
-/* The signature. The section holds while the page moves, and one line of
-   light comes in from the left edge of the screen and writes SILAVU without
-   lifting: the S from its rising stroke and top loop, the swash under it
-   into the i, the loop of the l, the a, the v, the u and the long rising
-   finish. A small point of light travels with the end of the line. As it
-   finishes, four points catch, briefly (the dot of the i stays), and the two
-   lines arrive under the name. Scrubbed to the scroll, softly; only dash
-   offsets, transforms and opacity change. With reduced motion, the written
-   name and its words, and no hold. */
+/* The signature. The section holds while the page moves, and one line runs
+   in from the left edge of the screen, writes SILAVU on its way without
+   lifting, and runs on out at the right edge: the rising stroke and top
+   flourish of the S, the swash under it into the i, the loop of the l, the
+   a, the v, the u. Through the letters it is polished metal; a point of
+   light travels with its end. Three small stones are set as the line
+   reaches them (the dot of the i first). As it finishes, a few points catch
+   the light, briefly, and the two lines arrive under the name. Scrubbed to
+   the scroll, softly; only dash offsets, transforms and opacity change. With
+   reduced motion, the written name, its stones and its words, and no hold. */
 (function () {
   "use strict";
   var sec = document.getElementById("craft"); if (!sec) return;
   var stage = sec.querySelector(".sgstage"), svg = sec.querySelector(".sgsvg"), path = sec.querySelector(".sgpath"),
-      halo = sec.querySelector(".sghalo"), pen = sec.querySelector(".sgpen"), dot = sec.querySelector(".sgdot"),
-      sparks = [].slice.call(sec.querySelectorAll(".sgspark > g")), sparkG = sec.querySelector(".sgspark"),
-      c1 = sec.querySelector(".sgc1"), c2 = sec.querySelector(".sgc2");
+      body = sec.querySelector(".sgbody"), halo = sec.querySelector(".sghalo"), pen = sec.querySelector(".sgpen"),
+      stones = [].slice.call(sec.querySelectorAll(".sgstones use")), sparks = [].slice.call(sec.querySelectorAll(".sgspark > g")),
+      sparkG = sec.querySelector(".sgspark"), c1 = sec.querySelector(".sgc1"), c2 = sec.querySelector(".sgc2");
   if (!stage || !svg || !path) return;
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var layers = [path, body, halo];
+  /* where each stone sits on the line: the top of the i, the foot of the v, the top of the u */
+  var ANCH = [[463, 223], [809, 333], [981, 222]];
+  function at(e) { return (e.getAttribute("transform") || "").match(/-?[\d.]+/g).map(Number); }
+  var stoneAt = stones.map(at);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { place(0.75); return; }
   sec.classList.add("sgjs");
 
-  var L = path.getTotalLength(), L0 = 0, Li = 0, scale = 1, p = -1, last = -2, dirty = true;
+  var L = path.getTotalLength(), L0 = 0, L1 = L, Ls = [], scale = 1, p = -1, last = -2, dirty = true;
   function c01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
   function sm(a, b, x) { x = c01((x - a) / (b - a)); return x * x * (3 - 2 * x); }
-  /* a hand writes at an even pace, easing only at the start and the finish */
-  function write(a, b, x) { x = c01((x - a) / (b - a)); var e = 0.12;
+  /* a hand writes at an even pace, easing only as it starts and as it ends */
+  function write(a, b, x) { x = c01((x - a) / (b - a)); var e = 0.1;
     return x < e ? x * x / (2 * e) / (1 - e) : x > 1 - e ? 1 - (1 - x) * (1 - x) / (2 * e) / (1 - e) : (x - e / 2) / (1 - e); }
+  layers.forEach(function (e) { e.style.strokeDasharray = L + " " + (L + 2); });
+  /* the length along the line nearest each stone, found once */
+  (function () { var N = 1600, best = ANCH.map(function () { return [1e9, 0]; });
+    for (var i = 0; i <= N; i++) { var l = L * i / N, q = path.getPointAtLength(l);
+      ANCH.forEach(function (a, k) { var d = (q.x - a[0]) * (q.x - a[0]) + (q.y - a[1]) * (q.y - a[1]); if (d < best[k][0]) best[k] = [d, l]; }); }
+    Ls = best.map(function (b) { return b[1]; }); })();
 
-  path.style.strokeDasharray = halo.style.strokeDasharray = L + " " + (L + 2);
+  function place(s) { stones.forEach(function (u, i) { var a = stoneAt[i]; u.setAttribute("transform", "translate(" + a[0] + " " + a[1] + ") scale(" + s.toFixed(3) + ")"); }); }
 
   function measure() {
     var m = svg.getScreenCTM(); scale = m ? m.a : 1;
-    /* a fine line at any size: about 1.5px on screen, its halo a little wider */
-    path.style.strokeWidth = (1.5 / scale).toFixed(2);
-    halo.style.strokeWidth = (6 / scale).toFixed(2);
-    dot.setAttribute("r", (2.6 / scale).toFixed(2));
-    /* the line enters at the left edge of the screen: start from there, so no
-       scroll is spent drawing what nobody can see */
-    var sr = stage.getBoundingClientRect(), lo = 0, hi = L * 0.4;
-    for (var k = 0; k < 18; k++) { var mid = (lo + hi) / 2, pt = path.getPointAtLength(mid);
-      if (m.a * pt.x + m.e < sr.left - 4) lo = mid; else hi = mid; }
-    L0 = lo;
-    /* where the line reaches the top of the i, for its dot */
-    lo = L0; hi = L;
-    for (k = 0; k < 22; k++) { mid = (lo + hi) / 2; if (path.getPointAtLength(mid).x < 446) lo = mid; else hi = mid; }
-    Li = lo;
-    pen.firstElementChild.setAttribute("r", (14 / scale).toFixed(1));
-    pen.lastElementChild.setAttribute("r", (1.6 / scale).toFixed(2));
-    var ss = Math.min(1.25, Math.max(0.55, 1 / scale));
+    /* fine at any size: the hairline about 1.1px on screen, the metal 2.4px */
+    path.style.strokeWidth = (1.1 / scale).toFixed(2);
+    body.style.strokeWidth = (2.4 / scale).toFixed(2);
+    halo.style.strokeWidth = (7 / scale).toFixed(2);
+    place(Math.min(1.4, Math.max(0.5, 10.5 / (15 * scale))));
+    /* the line is drawn from where it enters the screen to where it leaves */
+    var sr = stage.getBoundingClientRect(), lo = 0, hi = L * 0.5, k, mid, pt;
+    for (k = 0; k < 20; k++) { mid = (lo + hi) / 2; pt = path.getPointAtLength(mid); if (m.a * pt.x + m.c * pt.y + m.e < sr.left - 4) lo = mid; else hi = mid; }
+    L0 = lo; lo = L * 0.5; hi = L;
+    for (k = 0; k < 20; k++) { mid = (lo + hi) / 2; pt = path.getPointAtLength(mid); if (m.a * pt.x + m.c * pt.y + m.e < sr.right + 4) lo = mid; else hi = mid; }
+    L1 = hi;
+    pen.firstElementChild.setAttribute("r", (13 / scale).toFixed(1));
+    pen.lastElementChild.setAttribute("r", (1.5 / scale).toFixed(2));
+    var ss = Math.min(1.3, Math.max(0.5, 1 / scale));
     sparks.forEach(function (g) { g.dataset.s = ss; });
     dirty = false; last = -2;
   }
   addEventListener("resize", function () { dirty = true; });
 
   function frame(q) {
-    var w = write(0.04, 0.8, q), len = L0 + (L - L0) * w;
-    path.style.strokeDashoffset = (L - len).toFixed(1);
-    halo.style.strokeDashoffset = (L - len).toFixed(1);
-    /* the point of light at the end of the line, while it writes */
-    var writing = q > 0.02 && w < 1;
+    var w = write(0.03, 0.8, q), len = L0 + (L1 - L0) * w, off = (L - len).toFixed(1);
+    layers.forEach(function (e) { e.style.strokeDashoffset = off; });
+    var writing = q > 0.015 && w < 1;
     if (writing) { var pt = path.getPointAtLength(len); pen.setAttribute("transform", "translate(" + pt.x.toFixed(1) + " " + pt.y.toFixed(1) + ")"); }
-    pen.style.opacity = writing ? (sm(0.02, 0.06, q) * (1 - sm(0.76, 0.81, q))).toFixed(3) : "0";
-    /* the dot of the i, placed as the line passes the top of the letter */
-    var dp = c01((len - Li) / 260);
-    dot.style.opacity = sm(0, 1, dp).toFixed(3);
-    /* four points catch the light, one after another, and go again; the dot
-       of the i keeps a little of it */
+    pen.style.opacity = writing ? (sm(0.015, 0.05, q) * (1 - sm(0.76, 0.8, q))).toFixed(3) : "0";
+    /* each stone is set as the line reaches it */
+    stones.forEach(function (u, i) { u.style.opacity = sm(0, 1, c01((len - Ls[i]) / 220)).toFixed(3); });
+    /* a few points catch the light, one after another, and go again */
     sparkG.style.opacity = "1";
     sparks.forEach(function (g, i) {
-      var a = 0.8 + i * 0.03, k = sm(a, a + 0.035, q) * (1 - sm(a + 0.05, a + 0.1, q) * (i === 0 ? 0.75 : 1)), s = +(g.dataset.s || 1);
-      var base = g.getAttribute("data-t") || g.getAttribute("transform"); g.setAttribute("data-t", base);
-      g.setAttribute("transform", base + " scale(" + (s * (0.35 + 0.65 * k)).toFixed(3) + ") rotate(" + (8 * k).toFixed(1) + ")");
+      var a = 0.8 + i * 0.028, k = sm(a, a + 0.03, q) * (1 - sm(a + 0.045, a + 0.09, q)), s = +(g.dataset.s || 1), xy = g.getAttribute("data-at");
+      g.setAttribute("transform", "translate(" + xy + ") scale(" + (s * (0.3 + 0.7 * k)).toFixed(3) + ") rotate(" + (10 * k).toFixed(1) + ")");
       g.style.opacity = k.toFixed(3);
     });
     var a1 = sm(0.82, 0.92, q), a2 = sm(0.86, 0.96, q);

@@ -21,7 +21,8 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
     const st = R(q(".sgstage")), fig = R(q(".sgfig")), cp = R(q(".sgcopy"));
     return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, O(q(".sgc1")), O(q(".sgc2"))],
       dot: O(q(".sgdot")), spark: Math.max(...[...document.querySelectorAll("#craft .sgspark > g")].map(O)) * O(q(".sgspark")),
-      line: (() => { const e = q(".sgpath"); return (parseFloat(getComputedStyle(e).strokeDashoffset) || 0) / e.getTotalLength(); })(), pen: O(q(".sgpen")),
+      line: (() => { const e = q(".sgpath"), L = e.getTotalLength(), off = parseFloat(getComputedStyle(e).strokeDashoffset) || 0, pt = e.getPointAtLength(L - off), m = e.getScreenCTM();
+        const x = m.a * pt.x + m.c * pt.y + m.e; return off < 0.5 ? 0 : Math.max(0, 1 - x / innerWidth); })(), pen: O(q(".sgpen")),
       over: document.documentElement.scrollWidth - innerWidth, vw: innerWidth }; });
   const fs = rm ? [0.5] : [0, 0.1, 0.2, 0.35, 0.6, 0.83, 0.88, 1];
   for (const f of fs) {
@@ -30,12 +31,12 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
     ok(r.over <= 0, `${tag} @${f} no sideways overflow`);
     ok(Math.abs((r.fig[0] + r.fig[2]) / 2 - r.vw / 2) < 2, `${tag} @${f} mark centred`);
     ok(r.copy[0] >= r.fig[3] - 2, `${tag} @${f} words below the mark`);
-    if (rm) { ok(r.line < 0.001 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.99 && r.spark === 0, `${tag} written name and words, no sparks`); }
+    if (rm) { ok(r.line < 0.01 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.99 && r.spark === 0, `${tag} written name and words, no sparks`); }
     else {
       if (f > 0 && f < 1) ok(Math.abs(r.st) < 1, `${tag} @${f} stage held`);
-      if (f === 0.2 || f === 0.35 || f === 0.6) ok(r.line > 0.05 && r.line < 0.95 && r.pen > 0.5, `${tag} @${f} writing, pen light on (${r.line.toFixed(2)})`);
+      if (f === 0.35 || f === 0.6) ok(r.line > 0.05 && r.line < 0.95 && r.pen > 0.5, `${tag} @${f} writing, pen light on (${r.line.toFixed(2)})`);
       if (f <= 0.6) ok(r.copy[2] < 0.02 && r.spark < 0.02, `${tag} @${f} no words, no sparks yet`);
-      if (f === 1) ok(r.line < 0.001 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.98 && r.pen < 0.01, `${tag} end: written, dotted, words shown`);
+      if (f === 1) ok(r.line < 0.01 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.98 && r.pen < 0.01, `${tag} end: written, dotted, words shown`);
       if (f === 1) ok(r.spark < 0.35, `${tag} end: sparks settled (${r.spark.toFixed(2)})`);
       if (f === 1) ok(r.copy[1] < h - 8, `${tag} words inside the screen (${Math.round(r.copy[1])})`);
     }
