@@ -5172,24 +5172,6 @@
     #end .fbot { justify-content:center; gap:22px; margin-top:4px; }
   }
 
-  /* ── v148 — inside the stone: a shorter film, and the words in the middle
-     of it on a soft frosted pane, so they read over the brightest facets on
-     a desktop and on a phone. ───────────────────────────────────────────── */
-  #macro .mfilm { height:62svh; min-height:400px; }
-  #macro .mveil { background:radial-gradient(70% 60% at 50% 50%, rgba(0,0,0,.30), rgba(0,0,0,0) 72%), linear-gradient(to bottom, rgba(0,0,0,.55), transparent 16%, transparent 84%, rgba(0,0,0,.55)); }
-  #macro .mtxt { left:50%; right:auto; top:50%; bottom:auto; transform:translate(-50%,-50%);
-    width:max-content; max-width:calc(100% - 2 * var(--pad)); gap:12px;
-    padding:clamp(22px,3vw,40px) clamp(28px,4.4vw,64px); border-radius:clamp(20px,2.4vw,32px);
-    background:rgba(8,8,8,.34); border:1px solid rgba(255,255,255,.10);
-    -webkit-backdrop-filter:blur(18px) saturate(1.15); backdrop-filter:blur(18px) saturate(1.15);
-    box-shadow:0 30px 80px -40px rgba(0,0,0,.8); }
-  #macro .mtxt .k { color:#e9dcc0; }
-  #macro .mtxt .h { color:#fbf8f2; text-shadow:0 2px 24px rgba(0,0,0,.35); }
-  @media (max-width:759px) {
-    #macro .mfilm { height:52svh; min-height:340px; }
-    #macro .mtxt { padding:20px 24px; border-radius:20px; }
-    #macro .mtxt .h { font-size:clamp(1.9rem,8.6vw,2.6rem); }
-  }
   /* the footer without its Visit column (the brand line says where and how):
      four columns, spread across the width */
   @media (min-width:900px) { #end .fgrid { grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,.9fr); gap:48px; } }
@@ -5475,3 +5457,50 @@
   #enquire .field.fmsg:focus-within textarea, #enquire .field.fmsg.filled textarea { min-height:132px; }
   @media (max-width:759px) { #enquire .field.fmsg:focus-within textarea, #enquire .field.fmsg.filled textarea { min-height:120px; } }
   @media (prefers-reduced-motion:reduce) { #enquire .field.fmsg textarea { transition:none; } }
+
+  /* ── v157 — inside the stone. The film is the whole section, edge to edge,
+     sharp, and the words sit in the centre of the stone with nothing round
+     them: the mark, the name, a hairline, two lines. On a desktop the stage
+     holds for one slow passage of scroll: the film eases in a few percent,
+     the first line steps back, the second settles on the star at the centre
+     of the stone, the brightest place in the film, and then the words leave
+     the stone on its own. On a phone, a short section and a small drift. ── */
+  #macro { position:relative; background:#000; }
+  #macro .mfilm { position:relative; height:80svh; min-height:480px; max-height:860px; overflow:hidden; background:#000; }
+  #macro .mvid { position:absolute; inset:0; transform:scale(1.04); transform-origin:50% 50%; will-change:transform; }
+  #macro .mvid video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; }
+  #macro .mveil { position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0) 16%, rgba(0,0,0,0) 84%, rgba(0,0,0,.55)); }
+  #macro .mveil::before { content:""; position:absolute; left:50%; top:50%; width:min(96vw,1180px); height:min(78%,720px); transform:translate(-50%,-50%);
+    background:radial-gradient(closest-side, rgba(0,0,0,.36), rgba(0,0,0,.2) 46%, rgba(0,0,0,.07) 74%, rgba(0,0,0,0)); }
+  #macro .mtxt { position:absolute; inset:0; left:0; right:0; top:0; bottom:0; width:auto; max-width:none; transform:none;
+    display:grid; place-content:center; justify-items:center; text-align:center; gap:0; padding:0 var(--pad);
+    background:none; border:0; border-radius:0; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; pointer-events:none; }
+  #macro .msig { display:grid; justify-items:center; gap:clamp(12px,1.3vw,18px); font-size:clamp(17px,1.5vw,23px); color:#f6f1e6; }
+  #macro .msig svg.sy.mmk { height:clamp(42px,4.4vw,64px); width:auto; color:#f6f1e6; filter:drop-shadow(0 1px 14px rgba(0,0,0,.35)); }
+  #macro .msig .mwm { text-shadow:0 1px 14px rgba(0,0,0,.4); }
+  #macro .mrule { display:block; width:46px; height:1px; margin:clamp(18px,2.2vw,28px) auto clamp(20px,2.4vw,30px); background:rgba(246,241,230,.55); }
+  #macro .mh { margin:0; font-family:var(--serif); font-weight:300; font-size:clamp(2.7rem,5.5vw,5.6rem); line-height:1.02; letter-spacing:-.012em;
+    color:#fbf8f2; text-shadow:0 1px 2px rgba(0,0,0,.18), 0 2px 34px rgba(0,0,0,.42); }
+  #macro .mh .ml1, #macro .mh .ml2 { display:block; will-change:transform, opacity; }
+  #macro .mh .ml2 { font-style:italic; font-weight:400; color:#f1e4c8; background:none; -webkit-text-fill-color:currentColor; padding-inline:.06em; }
+  html[data-ns] #macro .mh { font-family:var(--sans); font-weight:300; font-size:clamp(2.3rem,4.6vw,4.6rem); line-height:1.12; }
+  html[data-ns] #macro .mh .ml2 { font-style:normal; }
+  #macro .mcue { position:absolute; left:50%; bottom:max(4.5svh, 26px); transform:translateX(-50%); display:grid; justify-items:center; gap:10px;
+    color:rgba(246,241,230,.72); font-size:.6rem; letter-spacing:.3em; pointer-events:none; }
+  html[data-ns] #macro .mcue { letter-spacing:.06em; font-size:.75rem; }
+  #macro .mcue i { display:block; width:1px; height:34px; background:linear-gradient(to bottom, currentColor, rgba(246,241,230,0)); transform-origin:50% 0;
+    animation:mcueDrop 2.8s cubic-bezier(.45,0,.25,1) infinite; }
+  @keyframes mcueDrop { 0% { transform:scaleY(0); opacity:0; } 30% { opacity:1; } 60% { transform:scaleY(1); opacity:1; } 100% { transform:scaleY(1); opacity:0; } }
+  @media (min-width:900px) and (prefers-reduced-motion:no-preference) {
+    #macro { height:240svh; }
+    #macro .mfilm { position:sticky; top:0; height:100svh; min-height:0; max-height:none; }
+  }
+  @media (min-width:900px) and (prefers-reduced-motion:reduce) { #macro .mfilm { height:100svh; max-height:none; } }
+  @media (max-width:899px) {
+    #macro .mfilm { height:78svh; min-height:460px; max-height:760px; }
+    #macro .mh { font-size:clamp(2.3rem,10.4vw,3rem); }
+    html[data-ns] #macro .mh { font-size:clamp(2rem,9vw,2.6rem); }
+    #macro .mcue { display:none; }
+  }
+  @media (prefers-reduced-motion:reduce) { #macro .mcue i { animation:none; } #macro .mvid { transform:none; } }

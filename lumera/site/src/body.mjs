@@ -248,8 +248,13 @@ ${markDefs()}
 
 
   <section id="macro" data-n="" data-title-en="The stone" data-title-he="האבן" aria-label="Inside the stone">
-    <div class="mfilm"><video id="insidevid" muted playsinline loop preload="none" poster="/img/one-2000.jpg" aria-hidden="true"></video><div class="mveil"></div>
-      <div class="mtxt"><div class="k gold" data-en="Inside the stone" data-he="בתוך האבן">Inside the stone</div><h2 class="h" data-en="Light goes in. <em>Fire comes out.</em>" data-he="האור נכנס. <em>האש יוצאת.</em>">Light goes in. <em>Fire comes out.</em></h2></div>
+    <div class="mfilm"><div class="mvid"><video id="insidevid" muted playsinline loop preload="none" poster="/img/one-2000.jpg" aria-hidden="true"></video></div><div class="mveil"></div>
+      <div class="mtxt">
+        <div class="msig" aria-hidden="true">${markUse("mmk")}${logo("mwm")}</div>
+        <i class="mrule" aria-hidden="true"></i>
+        <h2 class="mh"><span class="ml1" data-en="Light goes in." data-he="האור נכנס.">Light goes in.</span> <em class="ml2" data-en="Fire comes out." data-he="האש יוצאת.">Fire comes out.</em></h2>
+      </div>
+      <div class="mcue k" aria-hidden="true"><span data-en="Scroll" data-he="גללו">Scroll</span><i></i></div>
     </div>
   </section>
 
