@@ -5472,18 +5472,18 @@
   #macro .mveil { position:absolute; inset:0; pointer-events:none;
     background:linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0) 16%, rgba(0,0,0,0) 84%, rgba(0,0,0,.55)); }
   #macro .mveil::before { content:""; position:absolute; left:50%; top:50%; width:min(96vw,1180px); height:min(78%,720px); transform:translate(-50%,-50%);
-    background:radial-gradient(closest-side, rgba(0,0,0,.36), rgba(0,0,0,.2) 46%, rgba(0,0,0,.07) 74%, rgba(0,0,0,0)); }
+    background:radial-gradient(closest-side, rgba(0,0,0,.5), rgba(0,0,0,.34) 38%, rgba(0,0,0,.14) 68%, rgba(0,0,0,.04) 86%, rgba(0,0,0,0)); }
   #macro .mtxt { position:absolute; inset:0; left:0; right:0; top:0; bottom:0; width:auto; max-width:none; transform:none;
     display:grid; place-content:center; justify-items:center; text-align:center; gap:0; padding:0 var(--pad);
     background:none; border:0; border-radius:0; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; pointer-events:none; }
   #macro .msig { display:grid; justify-items:center; gap:clamp(12px,1.3vw,18px); font-size:clamp(17px,1.5vw,23px); color:#f6f1e6; }
-  #macro .msig svg.sy.mmk { height:clamp(42px,4.4vw,64px); width:auto; color:#f6f1e6; filter:drop-shadow(0 1px 14px rgba(0,0,0,.35)); }
-  #macro .msig .mwm { text-shadow:0 1px 14px rgba(0,0,0,.4); }
-  #macro .mrule { display:block; width:46px; height:1px; margin:clamp(18px,2.2vw,28px) auto clamp(20px,2.4vw,30px); background:rgba(246,241,230,.55); }
-  #macro .mh { margin:0; font-family:var(--serif); font-weight:300; font-size:clamp(2.7rem,5.5vw,5.6rem); line-height:1.02; letter-spacing:-.012em;
-    color:#fbf8f2; text-shadow:0 1px 2px rgba(0,0,0,.18), 0 2px 34px rgba(0,0,0,.42); }
+  #macro .msig svg.sy.mmk { height:clamp(42px,4.4vw,64px); width:auto; color:#f6f1e6; filter:drop-shadow(0 1px 2px rgba(0,0,0,.45)) drop-shadow(0 2px 16px rgba(0,0,0,.45)); }
+  #macro .msig .mwm { font-weight:500; text-shadow:0 0 1px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.55), 0 2px 16px rgba(0,0,0,.5); }
+  #macro .mrule { display:block; width:46px; height:1px; margin:clamp(18px,2.2vw,28px) auto clamp(20px,2.4vw,30px); background:rgba(246,241,230,.7); box-shadow:0 1px 6px rgba(0,0,0,.45); }
+  #macro .mh { margin:0; font-family:var(--serif); font-weight:400; font-size:clamp(2.7rem,5.5vw,5.6rem); line-height:1.02; letter-spacing:-.012em;
+    color:#fffdf8; text-shadow:0 0 1px rgba(0,0,0,.4), 0 1px 3px rgba(0,0,0,.5), 0 3px 16px rgba(0,0,0,.5), 0 6px 44px rgba(0,0,0,.45); }
   #macro .mh .ml1, #macro .mh .ml2 { display:block; will-change:transform, opacity; }
-  #macro .mh .ml2 { font-style:italic; font-weight:400; color:#f1e4c8; background:none; -webkit-text-fill-color:currentColor; padding-inline:.06em; }
+  #macro .mh .ml2 { font-style:italic; font-weight:500; color:#f4e6c6; background:none; -webkit-text-fill-color:currentColor; padding-inline:.06em; }
   html[data-ns] #macro .mh { font-family:var(--sans); font-weight:300; font-size:clamp(2.3rem,4.6vw,4.6rem); line-height:1.12; }
   html[data-ns] #macro .mh .ml2 { font-style:normal; }
   #macro .mcue { position:absolute; left:50%; bottom:max(4.5svh, 26px); transform:translateX(-50%); display:grid; justify-items:center; gap:10px;
