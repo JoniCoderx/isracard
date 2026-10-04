@@ -15,7 +15,7 @@
   var stage = sec.querySelector(".sgstage"), svg = sec.querySelector(".sgsvg"), path = sec.querySelector(".sgpath"),
       body = sec.querySelector(".sgbody"), halo = sec.querySelector(".sghalo"), pen = sec.querySelector(".sgpen"),
       dot = sec.querySelector(".sgdot"), sparks = [].slice.call(sec.querySelectorAll(".sgspark > g")),
-      sparkG = sec.querySelector(".sgspark"), c1 = sec.querySelector(".sgc1"), c2 = sec.querySelector(".sgc2");
+      sparkG = sec.querySelector(".sgspark"), c1 = sec.querySelector(".sgc1"), c2 = sec.querySelector(".sgc2"), split = sec.querySelector(".sgsplit");
   if (!stage || !svg || !path) return;
   var layers = [path, body, halo];
   /* the top of the i, where its dot is placed */
@@ -73,6 +73,9 @@
       g.setAttribute("transform", "translate(" + xy + ") scale(" + (s * (0.3 + 0.7 * k)).toFixed(3) + ") rotate(" + (10 * k).toFixed(1) + ")");
       g.style.opacity = k.toFixed(3);
     });
+    /* the white rises under the name as it is written, to where it meets the
+       collection below */
+    if (split) split.style.transform = "translate3d(0," + ((1 - sm(0, 0.85, q)) * 26).toFixed(2) + "%,0)";
     var a1 = sm(0.82, 0.92, q), a2 = sm(0.86, 0.96, q);
     c1.style.opacity = a1.toFixed(3); c1.style.transform = "translate3d(0," + (10 * (1 - a1)).toFixed(1) + "px,0)";
     c2.style.opacity = a2.toFixed(3); c2.style.transform = "translate3d(0," + (10 * (1 - a2)).toFixed(1) + "px,0)";

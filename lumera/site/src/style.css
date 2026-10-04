@@ -5740,3 +5740,35 @@
     html[dir="rtl"] #enquire .embtilt { transform-origin:0% 40%; }
     #enquire .emb.hov .embword { letter-spacing:.66em; margin-inline-end:-.66em; }
   }
+
+  /* ══ v170 — the appointment button, white rather than gold ════════════════
+     The champagne fill, the tan border and the brown lettering read as orange
+     on the ivory chapters. The button is now neutral: on dark, white
+     lettering in a fine white line over a breath of white; on ivory, ink
+     lettering on white in a soft grey line. Its hover fill is white, then
+     ink on the light chapters. ─────────────────────────────────────────── */
+  @media (min-width:1000px) {
+    html body header.sh .btn.hbook { color:#f7f5f0; border-color:rgba(255,255,255,.42); background:rgba(255,255,255,.06); box-shadow:none; }
+    html body header.sh .btn.hbook:not(.solid):not(.mclose2):not(.mclose):not(.stbtn)::before { background:linear-gradient(100deg, #ffffff 0%, #eeece7 50%, #ffffff 100%); }
+    html body header.sh .btn.hbook:not(.solid):hover { color:#111 !important; border-color:#ffffff !important; }
+    html body.onivory header.sh .btn.hbook { color:#1a1916; border-color:rgba(20,19,15,.2); background:rgba(255,255,255,.72); }
+    html body.onivory header.sh .btn.hbook:not(.solid):not(.mclose2):not(.mclose):not(.stbtn)::before { background:#14130f; }
+    html body.onivory header.sh .btn.hbook:not(.solid):hover { color:#f6f3ed !important; border-color:#14130f !important; }
+  }
+  html body .dhd .dbook { color:#f7f5f0; border-color:rgba(255,255,255,.42); background:rgba(255,255,255,.06); }
+  html body .dhd .dbook:hover { color:#ffffff; border-color:#ffffff; background:rgba(255,255,255,.12); }
+
+  /* ══ v171 — the signature, half black and half white ══════════════════════
+     The chapter is no longer all black. A white field sweeps in from the
+     lower left, its edge passing under the name and its words, and rises as
+     the line is written until it reaches the white collection below; the
+     black keeps the upper left and falls away down the right, and fades to
+     white at the foot so the two chapters join. The name, the line and the
+     words are drawn in difference against it, so every letter is white on
+     the black and ink on the white, splitting where the edge crosses it. ── */
+  #craft .sgstage { isolation:isolate; overflow:hidden; }
+  #craft .sgsplit { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:visible; will-change:transform; }
+  #craft .sgsplit path { fill:#ffffff; }
+  #craft .sgstage::after { content:""; position:absolute; left:0; right:0; bottom:0; height:30%; z-index:0; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 22%, rgba(255,255,255,.3) 46%, rgba(255,255,255,.66) 70%, rgba(255,255,255,.92) 88%, #ffffff 100%); }
+  #craft .sgfig, #craft .sgcopy { position:relative; z-index:1; mix-blend-mode:difference; }
