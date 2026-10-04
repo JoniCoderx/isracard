@@ -5874,3 +5874,48 @@
   }
   html body #collection { padding-top:clamp(14px, 2.4vw, 30px) !important; }
   html body #collection .chap { margin-block:0 clamp(16px, 2vw, 26px); }
+  /* frames waiting beside a card are not drawn at all until they slide in */
+  html body .pgrid .fig.swp .im.hx { visibility:hidden; }
+
+  /* ══ v178 — a larger name, and the collection right under it ══════════════
+     The name is set larger, and sits at the foot of its stage rather than in
+     the middle of it, so the white under it is no wider than a breath before
+     the collection begins. ─────────────────────────────────────────────── */
+  #craft .sgfig { width:min(80vw, 1160px); }
+  @media (max-width:759px) { #craft .sgfig { width:100vw; } }
+  #craft .sgstage { align-content:end; padding-block:4svh 3svh; }
+  #craft.sgjs .sgstage { padding-block:0 3svh; }
+  html body #collection { padding-top:6px !important; }
+  html body #collection .chap { margin-block:0 clamp(10px, 1.4vw, 18px); }
+  /* the stage grows with the name, so the larger name never runs under the header */
+  #craft { --sgw:min(80vw, 1160px); --sgS:max(56svh, calc(var(--sgw) * .3704 + 118px)); }
+  #craft .sgfig { width:var(--sgw); }
+  #craft.sgjs .sgstage { height:var(--sgS); }
+  #craft.sgjs { height:calc(var(--sgS) + 28svh); }
+  @media (max-width:759px) {
+    #craft { --sgw:100vw; --sgS:max(46svh, calc(100vw * .3704 + 104px)); }
+    #craft.sgjs { height:calc(var(--sgS) + 26svh); }
+  }
+
+  /* ══ v179 — the box, captioned like a film ════════════════════════════════
+     One line at a time, centred low over the picture, in the display face:
+     no labels, no paragraphs, no emblem. Each line rises out of a soft blur
+     as its stage arrives and leaves quickly; the last carries the one action.
+     A low vignette keeps it legible over the brightest diamonds. ───────── */
+  #beats .beat { left:50% !important; right:auto !important; top:auto !important; bottom:clamp(72px, 14svh, 150px) !important;
+    transform:translateX(-50%) !important; width:min(92vw, 980px); max-width:none !important; display:grid; justify-items:center; gap:22px; text-align:center; }
+  html[dir="rtl"] #beats .beat { transform:translateX(50%) !important; left:auto !important; right:50% !important; }
+  #beats .beat .bt { margin:0; max-width:22ch; font-size:clamp(2.1rem, 4.6vw, 4.1rem) !important; line-height:1.04; letter-spacing:-.016em;
+    color:#f7f4ee; text-shadow:0 2px 28px rgba(0,0,0,.55), 0 0 2px rgba(0,0,0,.35); text-wrap:balance;
+    opacity:0; filter:blur(10px); transform:translateY(22px); transition:opacity .35s var(--ease), filter .35s var(--ease), transform .35s var(--ease); }
+  #beats .beat.on .bt { opacity:1; filter:none; transform:none; transition:opacity 1s cubic-bezier(.2,.7,.2,1) .18s, filter 1.1s cubic-bezier(.2,.7,.2,1) .18s, transform 1.1s cubic-bezier(.2,.7,.2,1) .18s; }
+  #beats .beat .acts { margin:0; opacity:0; transform:translateY(10px); transition:opacity .3s, transform .3s; }
+  #beats .beat.on .acts { opacity:1; transform:none; transition:opacity .8s ease .7s, transform .8s ease .7s; }
+  #beats .beat .acts .btn { pointer-events:auto; }
+  #stonepin .veil2 { background:linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.42) 22%, rgba(0,0,0,0) 48%) !important; }
+  #stonepin .pprog { display:none; }
+  @media (max-width:759px) {
+    #beats .beat { bottom:max(96px, calc(env(safe-area-inset-bottom) + 84px)) !important; width:90vw; gap:16px; }
+    #beats .beat .bt { font-size:clamp(1.9rem, 8.4vw, 2.5rem) !important; }
+  }
+  @media (prefers-reduced-motion:reduce) { #beats .beat .bt, #beats .beat.on .bt, #beats .beat .acts, #beats .beat.on .acts { transition:none; filter:none; transform:none; } }

@@ -152,7 +152,15 @@
       /* the position goes through custom properties: the house rule that holds
          every photograph still (.fig .im, transform:none !important) would
          otherwise win over an inline transform, and the frames never moved */
-      function place(el, x, anim) { if (!el) return; el.style.setProperty("--st", anim ? "transform .62s cubic-bezier(.22,.72,.2,1)" : "none"); el.style.setProperty("--sx", "translate3d(" + x + "%,0,0)"); }
+      /* a frame that is waiting beside the card is hidden outright, not just
+         pushed out of it: at some card widths a sliver of the next photograph
+         showed along the edge. It is shown while it slides, and hidden again
+         once it has slid out. */
+      function place(el, x, anim) { if (!el) return;
+        el.style.setProperty("--st", anim ? "transform .62s cubic-bezier(.22,.72,.2,1)" : "none"); el.style.setProperty("--sx", "translate3d(" + x + "%,0,0)");
+        clearTimeout(el.__hide);
+        if (x === 0 || anim) el.style.visibility = "visible"; else el.style.visibility = "hidden";
+        if (x !== 0 && anim) el.__hide = setTimeout(function () { el.style.visibility = "hidden"; }, 680); }
       function show(i, dir) {
         if (!layers) build();
         var all = frames(), prev = at; if (i === prev) return; at = i; pc.__at = i;

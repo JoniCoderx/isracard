@@ -204,9 +204,9 @@ ${markDefs()}
         <canvas id="boxcv" aria-label="The SILAVU box opening, diamonds rising out of it" role="img"></canvas>
         <div class="veil2"></div>
         <div class="beats" id="beats">
-          <div class="beat"><div class="k gold ol" data-en="The box" data-he="הקופסה">The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="היא מגיעה <em>סגורה.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט, התעודות שלו והערכת שווי לחברת הביטוח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Loose, <em>under a loupe.</em>" data-he="אבנים לא משובצות, <em>תחת זכוכית מגדלת.</em>">Loose, <em>under a loupe.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות ב־GIA או ב־IGI. אתם רואים אותן לפני השיבוץ.">Graded by GIA or IGI. You see them before we set them.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made to <em>your measure.</em>" data-he="נעשה <em>לפי המידה שלכם.</em>">Made to <em>your measure.</em></h2><p class="p" data-en="Set by hand, to the measure of your wrist." data-he="משובץ ביד, לפי מידת פרק היד שלכם.">Set by hand, to the measure of your wrist.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
+          <div class="beat"><h2 class="h2 bt" data-en="It begins <em>with the box.</em>" data-he="הכול מתחיל <em>בקופסה.</em>">It begins <em>with the box.</em></h2></div>
+          <div class="beat"><h2 class="h2 bt" data-en="Each stone, <em>chosen by eye.</em>" data-he="כל אבן <em>נבחרת בעין.</em>">Each stone, <em>chosen by eye.</em></h2></div>
+          <div class="beat"><h2 class="h2 bt" data-en="Then made <em>to your measure.</em>" data-he="ואז נעשה <em>לפי המידה שלכם.</em>">Then made <em>to your measure.</em></h2><div class="acts"><a class="btn" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
         <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>
