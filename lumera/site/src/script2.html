@@ -316,7 +316,10 @@
     im.src = (window.__imgBase || "") + plateSrc(wide);
   }
   function setView(v) { if (v !== "wrist") { zoomT = 1; zoom = 1; wrap.classList.remove("zoomed"); } view = v; wrap.classList.toggle("wrist", v === "wrist"); wrap.querySelectorAll(".vtb").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-view") === v); b.setAttribute("aria-selected", b.getAttribute("data-view") === v ? "true" : "false"); });
-    if (v === "wrist") { resize(); loadPhoto(); } }
+    /* the wrist opens close: the line at the size of a hand across the frame
+       is a thread of points, and the cut and the metal chosen cannot be read.
+       A tap steps back to the whole hand. */
+    if (v === "wrist") { zoomT = 2.0; wrap.classList.add("zoomed"); resize(); loadPhoto(); } }
   window.__stripView = setView;
   /* whose hand, and what colour — the bar in the corner calls this */
   window.__wristPlate = function (o) {
@@ -339,6 +342,27 @@
       zoomT = zoomT > 1.2 ? 1 : 2.2; wrap.classList.toggle("zoomed", zoomT > 1.2); if (zoomT > 1.2) loadPhoto();
     }
   });
+  /* the Line on the wrist, drawn once off screen for the design sheet: the
+     reader's chosen arm and tone, close, and the view put back as it was */
+  window.__wristShot = function (cb) {
+    if (lost) { cb(null); return; }
+    var was = view, wz = zoom, wzt = zoomT, wp = { x: par.x, y: par.y }, done = false;
+    function restore() { view = was; zoom = wz; zoomT = wzt; par.x = wp.x; par.y = wp.y; texOnce = false; }
+    function go() {
+      if (done) return; done = true; var c = null;
+      try {
+        var b = window.__build || { metal: "white", wrist: 17 }, metal = METAL[b.metal] || METAL.white,
+            spec = window.__lineSpec || { cut: "round", n: 36, alongMm: 3.6, acrossMm: 3.6, pitchMm: 4.0, orient: "along", set: "prong", L: 3.6, W: 3.6 };
+        useCut(spec.cut || "round"); renderStoneTex(spec.cut === "round" ? 0.4 : 0, -0.52, 0);
+        gl.viewport(0, 0, W, H); gl.disable(gl.BLEND); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        beginSprites(); drawWrist(1.3, b, metal, spec);
+        c = document.createElement("canvas"); c.width = W; c.height = H; c.getContext("2d").drawImage(canvas, 0, 0);
+      } catch (e) { c = null; }
+      restore(); cb(c);
+    }
+    view = "wrist"; zoom = zoomT = 2.0; par.x = par.y = 0; loadPhoto();
+    var n = 0; (function wait() { if (photo.img && photo.geo) go(); else if (n++ < 80) setTimeout(wait, 50); else { done = true; restore(); cb(null); } })();
+  };
   window.__wristZoom = function (v) { if (typeof v === "number") { zoomT = v; wrap.classList.toggle("zoomed", v > 1.2); if (v > 1.2) loadPhoto(); } return { zoom: zoom, target: zoomT }; };
   wrap.addEventListener("pointerup", endDrag); wrap.addEventListener("pointercancel", endDrag); wrap.addEventListener("pointerleave", function () { ptr.on = false; });
   function norm(a) { var l = Math.hypot(a[0], a[1]) || 1; return [a[0] / l, a[1] / l]; }

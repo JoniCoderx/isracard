@@ -85,7 +85,12 @@
     if (dirty) measure();
     /* progress through the hold, against the stage's own height (a fixed
        100svh) rather than the window's, which changes as the address bar does */
-    var t = c01(-r.top / Math.max(1, sec.offsetHeight - stage.offsetHeight));
+    /* it starts writing as soon as the stone above has gone, while the
+       section is still rising into view, so there is no blank black screen:
+       from the moment the line itself comes up over the bottom of the screen,
+       to the end of the hold */
+    var hold = Math.max(1, sec.offsetHeight - stage.offsetHeight), lead = stage.offsetHeight * 0.52;
+    var t = c01((lead - r.top) / (lead + hold));
     /* the line follows the scroll with a little weight: eased per frame, the
        same at 60 and 120 frames a second */
     var now = performance.now(), dt = Math.min(64, now - (tick.t || now)); tick.t = now;

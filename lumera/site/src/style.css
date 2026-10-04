@@ -5534,10 +5534,10 @@
   @media (max-width:759px) { #craft .sgfig { width:94vw; } #craft .sgc2 i { width:26px; } }
 
   /* with the script: the held passage */
-  #craft.sgjs { height:190svh; }
+  #craft.sgjs { height:150svh; }
   #craft.sgjs .sgstage { position:sticky; top:0; height:100svh; min-height:0; padding-block:0; }
   #craft.sgjs .sgdot, #craft.sgjs .sgc1, #craft.sgjs .sgc2 { opacity:0; }
-  @media (max-width:759px) { #craft.sgjs { height:160svh; } }
+  @media (max-width:759px) { #craft.sgjs { height:135svh; } }
 
   /* ── v160 — steady. Nothing moves with the scroll from script: the house
      mark in the dark chapters no longer rises and shrinks as it passes (its
@@ -5546,3 +5546,29 @@
   .hsig svg.sy, .fbig svg.sy.huge { transform:none !important; transition:none !important; will-change:auto; }
   #macro .mvid { transform:none !important; will-change:auto; }
   #macro .mtxt { transform:none !important; }
+
+  /* ── v161 — the summary, compact, and plainly an estimate. One line for the
+     choices; the figure smaller, always marked ≈ and labelled as an estimated
+     price; tighter chips, button and note. ── */
+  #build #configure .total { gap:10px; padding:16px 18px 12px; }
+  #build #configure .total .tot { gap:8px; }
+  #build #configure .total .lsum { display:block; font-size:1rem; line-height:1.4; }
+  html[data-ns] #build #configure .total .lsum { font-size:.92rem; }
+  #build #configure .total .pricerow { margin-top:2px; gap:10px; align-items:center; }
+  #build #configure .total .sealsm { width:30px; height:30px; }
+  #build #configure .total .pwrap { display:grid; gap:2px; }
+  #build #configure .total .estk { font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink3); }
+  html[data-ns] #build #configure .total .estk { letter-spacing:.04em; font-size:.74rem; }
+  #build #configure .total .price { font-size:clamp(1.5rem, 2vw, 1.85rem) !important; line-height:1.1; font-weight:300; }
+  #build #configure .total .cur { gap:6px; }
+  #build #configure .total .cur .chip { min-height:30px; height:30px; padding:0 10px; font-size:.62rem; }
+  #build #configure .total .estnote { font-size:.74rem; line-height:1.45; }
+  #build #configure .total .btn.solid { min-height:44px; }
+  #build #configure .total .trustline { font-size:.66rem; }
+  #build #configure .total .sdet.carat > summary { padding-block:10px; min-height:0; }
+  @media (max-width:759px) {
+    #build #configure .total { padding:14px 14px 10px; gap:9px; }
+    #build #configure .total .price { font-size:1.5rem !important; }
+    #build #configure .total .cur .chip { min-height:34px; height:34px; }
+    #build #configure .total .btn.solid { min-height:46px; }
+  }

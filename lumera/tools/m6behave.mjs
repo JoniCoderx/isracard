@@ -19,9 +19,9 @@ await p.tap("#menuBtn"); await p.waitForTimeout(600); await p.tap('#mlist a[href
 const cTop=await p.evaluate(()=>Math.round(document.getElementById("collection").getBoundingClientRect().top));
 ok(cTop>-40 && cTop<120 && !(await p.evaluate(()=>document.documentElement.classList.contains("locked"))), `${w} menu link lands on the collection (top ${cTop})`);
 // summary bar
-await p.evaluate(()=>{const e=document.getElementById("stripwrap"); scrollTo(0,e.getBoundingClientRect().top+scrollY-80);}); await p.waitForTimeout(1200);
+await p.evaluate(()=>{const e=document.getElementById("stripwrap"); scrollTo(0,e.getBoundingClientRect().top+scrollY-80);}); await p.waitForTimeout(2400);
 await p.evaluate(()=>{const t=document.querySelector("#configure .total"); /* scroll so viewer+tabs fill, total below */ });
-const bar1=await p.evaluate(()=>{ const r=document.querySelector("#configure .total").getBoundingClientRect(), vis=Math.max(0,Math.min(innerHeight,r.bottom)-Math.max(0,r.top))/r.height; return {on:document.getElementById("cbar").classList.contains("on"), want:vis<0.35, txt:document.querySelector("#cbar .cbs").textContent}; });
+const bar1=await p.evaluate(()=>{ const r=document.querySelector("#configure .total").getBoundingClientRect(), vis=Math.max(0,Math.min(innerHeight,r.bottom)-Math.max(0,r.top)); return {on:document.getElementById("cbar").classList.contains("on"), want:vis<Math.min(r.height*0.35,innerHeight*0.3), txt:document.querySelector("#cbar .cbs").textContent}; });
 await p.evaluate(()=>document.querySelector("#configure .total").scrollIntoView({block:"center"})); await p.waitForTimeout(900);
 const bar2=await p.evaluate(()=>document.getElementById("cbar").classList.contains("on"));
 await p.evaluate(()=>document.getElementById("enquire").scrollIntoView()); await p.waitForTimeout(900);

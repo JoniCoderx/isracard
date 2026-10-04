@@ -39,7 +39,7 @@
   /* ── currency: prices are set in AED and shown in the currency you choose ── */
   var RATES = { AED: 1, USD: 0.2723, EUR: 0.2510, ILS: 1.005 }, SYM = { AED: "AED ", USD: "US$ ", EUR: "€ ", ILS: "₪ " }, cur = "AED";
   try { cur = localStorage.getItem("silavu-cur") || "AED"; if (!RATES[cur]) cur = "AED"; } catch (e) {}
-  function fmt(aed) { var v = aed * RATES[cur], r = cur === "AED" ? 500 : 100; v = Math.round(v / r) * r; return (cur === "AED" ? "" : "≈ ") + SYM[cur] + v.toLocaleString("en-US"); }
+  function fmt(aed) { var v = aed * RATES[cur], r = cur === "AED" ? 500 : 100; v = Math.round(v / r) * r; return "≈ " + SYM[cur] + v.toLocaleString("en-US"); }   /* always marked as approximate: an estimate, never a price */
   function fmtH(aed) { return fmt(aed).replace("₪ ", '<span class="shk">₪</span>\u2009'); }
   function money() {
     document.querySelectorAll("[data-aed]").forEach(function (el) { var a = +el.getAttribute("data-aed"); if (a > 0) el.innerHTML = fmtH(a); });

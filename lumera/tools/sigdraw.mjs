@@ -16,7 +16,7 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   await p.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
   const top = await p.evaluate(() => document.getElementById("craft").getBoundingClientRect().top + scrollY);
   const H = await p.evaluate(() => document.getElementById("craft").offsetHeight);
-  ok(rm ? H < h * 1.2 : H > h * (mob ? 1.5 : 1.8) && H < h * 2, `${tag} section ${(H / h).toFixed(2)} screens`);
+  ok(rm ? H < h * 1.2 : H > h * (mob ? 1.3 : 1.45) && H < h * (mob ? 1.4 : 1.55), `${tag} section ${(H / h).toFixed(2)} screens`);
   const probe = () => p.evaluate(() => { const q = s => document.querySelector("#craft " + s), O = e => +getComputedStyle(e).opacity, R = e => e.getBoundingClientRect();
     const st = R(q(".sgstage")), fig = R(q(".sgfig")), cp = R(q(".sgcopy"));
     return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, O(q(".sgc1")), O(q(".sgc2"))],
@@ -26,14 +26,17 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
       over: document.documentElement.scrollWidth - innerWidth, vw: innerWidth }; });
   const fs = rm ? [0.5] : [0, 0.1, 0.2, 0.35, 0.6, 0.83, 0.88, 1];
   for (const f of fs) {
-    await p.evaluate(y => scrollTo(0, y), Math.round(rm ? top - (h - H) / 2 : top + f * (H - h))); await p.waitForTimeout(rm ? 500 : 1400);
+    /* the writing runs from when the line comes up over the bottom of the screen to the end of the hold */
+    const lead = h * 0.52, hold = H - h;
+    await p.evaluate(y => scrollTo(0, y), Math.round(rm ? top - (h - H) / 2 : top - lead + f * (lead + hold))); await p.waitForTimeout(rm ? 500 : 1400);
     const r = await probe();
     ok(r.over <= 0, `${tag} @${f} no sideways overflow`);
     ok(Math.abs((r.fig[0] + r.fig[2]) / 2 - r.vw / 2) < 2, `${tag} @${f} mark centred`);
     ok(r.copy[0] >= r.fig[3] - 2, `${tag} @${f} words below the mark`);
     if (rm) { ok(r.line < 0.01 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.99 && r.spark === 0, `${tag} written name and words, no sparks`); }
     else {
-      if (f > 0 && f < 1) ok(Math.abs(r.st) < 1, `${tag} @${f} stage held`);
+      if (f * (lead + hold) > lead + 2 && f < 1) ok(Math.abs(r.st) < 1, `${tag} @${f} stage held`);
+      if (f === 0.1) ok(r.line < 0.97 && r.pen > 0.3, `${tag} already writing as the section rises (${r.line.toFixed(2)})`);
       if (f === 0.35 || f === 0.6) ok(r.line > 0.05 && r.line < 0.95 && r.pen > 0.5, `${tag} @${f} writing, pen light on (${r.line.toFixed(2)})`);
       if (f <= 0.6) ok(r.copy[2] < 0.02 && r.spark < 0.02, `${tag} @${f} no words, no sparks yet`);
       if (f === 1) ok(r.line < 0.01 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.98 && r.pen < 0.01, `${tag} end: written, dotted, words shown`);

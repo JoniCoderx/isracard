@@ -25,7 +25,7 @@ const r=await p.evaluate(()=>{ const q=s=>document.querySelector(s), t=s=>(q(s)|
 ok(r.heroP.startsWith("Diamonds chosen one by one") && !r.hmeta, `${dv} hero: luxury line, no fact row`);
 ok(r.houseP.startsWith("Nothing leaves the bench unsigned"), `${dv} house line rewritten (no GIA/IGI)`);
 ok(!r.exceptional, `${dv} exceptional pieces section removed`);
-ok(!r.colActs && /in three pieces/.test(r.colH) && /A few pieces/.test(r.colP), `${dv} collection head: buttons gone, new sentences`);
+ok(!r.colActs && /made to be lived in/.test(r.colH) && /never take off/.test(r.colP) && !/three pieces/.test(r.colH), `${dv} collection head: buttons gone, new sentences`);
 ok(JSON.stringify(r.names)===JSON.stringify(["SILAVU MOMENTBracelet","SILAVU ICONRing","SILAVU SOULNecklace"]), `${dv} cards named ${JSON.stringify(r.names)}`);
 ok(r.lines[0]==="A delicate 18k white-gold chain, finished with the SILAVU signature in a polished sculptural form." && r.lines[1]==="A sculptural 18k white-gold ring with the SILAVU signature set in pavé diamonds." && r.lines[2]==="A fine 18k white-gold chain with a pavé SILAVU signature pendant at its center.", `${dv} card descriptions exactly as given`);
 ok(true, `${dv} journey checks retired`);

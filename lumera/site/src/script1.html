@@ -831,7 +831,7 @@
       var pick = function (k) { var c = document.querySelector('#opts .chip.on[data-k="' + k + '"]'); return c ? c.textContent.trim() : ""; };
       sumEl.textContent = [pick("cut"), pick("ct"), pick("metal")].filter(Boolean).join(" · ");
       prEl.textContent = est.textContent;
-      var ls = $("lsum"); if (ls) ls.innerHTML = '<span dir="auto">' + [pick("cut"), pick("origin"), pick("ct")].filter(Boolean).join(" · ") + '</span><span dir="auto">' + [pick("wrist"), pick("metal")].filter(Boolean).join(" · ") + "</span>";
+      var ls = $("lsum"); if (ls) ls.innerHTML = '<span dir="auto">' + [pick("cut"), pick("origin"), pick("ct"), pick("wrist"), pick("metal")].filter(Boolean).join(" · ") + "</span>";
     }
     function show() {
       var on = phoneQ.matches && inBuild && !totalSeen && !document.documentElement.classList.contains("locked");
@@ -849,8 +849,14 @@
         totalSeen = vis >= Math.min(t.height * 0.35, h * 0.3); }
       show();
     }
-    var mt = 0; addEventListener("scroll", function () { if (!mt) mt = requestAnimationFrame(function () { mt = 0; measure(); }); }, { passive: true });
+    /* and again once the page has come to rest, and whenever the card or the
+       builder changes size: the layout can settle after the last scroll event */
+    var mt = 0, rest = 0; addEventListener("scroll", function () { if (!mt) mt = requestAnimationFrame(function () { mt = 0; measure(); }); clearTimeout(rest); rest = setTimeout(measure, 160); }, { passive: true });
     addEventListener("resize", measure); setTimeout(measure, 0);
+    if (window.ResizeObserver) { var ro = new ResizeObserver(function () { measure(); }); ro.observe(build); if (total) ro.observe(total); }
+    /* the panel rises into place as it is revealed; measured mid-rise, the
+       card read as further down than it settles */
+    build.addEventListener("transitionend", function () { measure(); });
     opts.addEventListener("click", function () { setTimeout(words, 30); });
     addEventListener("silavu:build", words);
     if (window.MutationObserver) { new MutationObserver(words).observe(est, { childList: true, characterData: true, subtree: true });
@@ -938,59 +944,90 @@
   function prefill(text) { setSel({ k: "note", a: "viewing", t: text }); }
   function buildNow() { var b = window.__build || {}; return { cut: b.cut, origin: b.origin, ct: b.ct, metal: b.metal, wrist: b.wrist }; }
 
-  /* ── the design as a picture: what is on screen, with what was chosen
-       written under it and the house mark at the foot — to keep, or to send
-       to the jeweller. The mark is the page's own path, never redrawn. ── */
+  /* ── the design as a picture, to keep or to send to the jeweller: the
+       bracelet large, then from the side, close, and on a wrist; what was
+       chosen; the estimate, said plainly to be one; and the house mark at the
+       foot. The mark is the page's own path, never redrawn. ── */
+  function cropTo(src) {
+    /* the drawn piece only, with a little air: the renders are mostly empty frame */
+    var t = document.createElement("canvas"); t.width = src.width; t.height = src.height; var tx = t.getContext("2d"); tx.drawImage(src, 0, 0);
+    var r = { c: t, sx: 0, sy: 0, sw: t.width, sh: t.height };
+    try {
+      var px = tx.getImageData(0, 0, t.width, t.height).data, x1 = t.width, y1 = t.height, x2 = -1, y2 = -1, ix, iy;
+      for (iy = 0; iy < t.height; iy += 2) for (ix = 0; ix < t.width; ix += 2) if (px[(iy * t.width + ix) * 4 + 3] > 24) { if (ix < x1) x1 = ix; if (ix > x2) x2 = ix; if (iy < y1) y1 = iy; if (iy > y2) y2 = iy; }
+      if (x2 > x1 && y2 > y1) { var pad = Math.round(Math.max(x2 - x1, y2 - y1) * 0.05); r.sx = Math.max(0, x1 - pad); r.sy = Math.max(0, y1 - pad); r.sw = Math.min(t.width, x2 + pad) - r.sx; r.sh = Math.min(t.height, y2 + pad) - r.sy; }
+    } catch (e) {}
+    return r;
+  }
+  function fitIn(x, r, bx, by, bw, bh) { var k = Math.min(bw / r.sw, bh / r.sh), dw = r.sw * k, dh = r.sh * k; try { x.drawImage(r.c, r.sx, r.sy, r.sw, r.sh, bx + (bw - dw) / 2, by + (bh - dh) / 2, dw, dh); } catch (e) {} }
+  function coverIn(x, src, bx, by, bw, bh) { var k = Math.max(bw / src.width, bh / src.height), sw = bw / k, sh = bh / k; try { x.drawImage(src, (src.width - sw) / 2, (src.height - sh) / 2, sw, sh, bx, by, bw, bh); } catch (e) {} }
   function designImage(cb) {
-    var W = 1200, H = 1500, c = document.createElement("canvas"); c.width = W; c.height = H;
-    var x = c.getContext("2d"), rtl = lang === "he" || lang === "ar";
-    var g = x.createRadialGradient(W / 2, 470, 60, W / 2, 470, 900); g.addColorStop(0, "#1d1d20"); g.addColorStop(1, "#050505");
+    var B = window.__bracelet, has3d = !document.documentElement.classList.contains("no3d") && B && B.snap;
+    var main = null, side = null, close = null;
+    try { if (has3d) { main = B.shot ? B.shot({ th: -0.62, ph: 0.42, d: 1 }) : B.snap(); if (B.shot) { side = B.shot({ th: -1.57, ph: 0.05, d: 1 }); close = B.shot({ th: -0.30, ph: 0.34, d: 0.34, f: 1 }); } } } catch (e) {}
+    if (!main || !main.width) main = $("stripcv");
+    var go = function (wrist) { composeSheet(main, side, close, wrist, cb); };
+    if (has3d && window.__wristShot) window.__wristShot(go); else go(null);
+  }
+  function composeSheet(main, side, close, wrist, cb) {
+    var W = 1200, H = 1720, c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d"), rtl = lang === "he" || lang === "ar", he = lang === "he";
+    var g = x.createRadialGradient(W / 2, 420, 60, W / 2, 420, 900); g.addColorStop(0, "#1c1c1f"); g.addColorStop(1, "#050505");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
-    var src = null;
-    try { if (!document.documentElement.classList.contains("no3d") && window.__bracelet && window.__bracelet.snap) src = window.__bracelet.snap(); } catch (e) { src = null; }
-    if (!src || !src.width) src = $("stripcv");
-    if (src && src.width) {
-      /* cropped to the piece itself, so the bracelet fills the picture rather
-         than floating in the empty frame around it */
-      var sx = 0, sy = 0, sw = src.width, shh = src.height;
-      try {
-        var t = document.createElement("canvas"); t.width = src.width; t.height = src.height; var tx = t.getContext("2d"); tx.drawImage(src, 0, 0);
-        var px = tx.getImageData(0, 0, t.width, t.height).data, x1 = t.width, y1 = t.height, x2 = -1, y2 = -1, ix, iy;
-        for (iy = 0; iy < t.height; iy += 2) for (ix = 0; ix < t.width; ix += 2) if (px[(iy * t.width + ix) * 4 + 3] > 24) { if (ix < x1) x1 = ix; if (ix > x2) x2 = ix; if (iy < y1) y1 = iy; if (iy > y2) y2 = iy; }
-        if (x2 > x1 && y2 > y1) { var pad = Math.round((x2 - x1) * 0.04); sx = Math.max(0, x1 - pad); sy = Math.max(0, y1 - pad); sw = Math.min(t.width, x2 + pad) - sx; shh = Math.min(t.height, y2 + pad) - sy; }
-        src = t;
-      } catch (e) {}
-      var bw = W - 120, bh = 780, k = Math.min(bw / sw, bh / shh), dw = sw * k, dh = shh * k;
-      try { x.drawImage(src, sx, sy, sw, shh, (W - dw) / 2, 110 + (bh - dh) / 2, dw, dh); } catch (e) {}
-    }
-    var face = "Jost, system-ui, sans-serif";
+    var face = "Jost, system-ui, sans-serif", serif = "'Cormorant Garamond', Georgia, serif";
     try { face = getComputedStyle(document.querySelector(".lg")).fontFamily || face; } catch (e) {}
-    var gold = "#d9b872", ink = "#f4efe4", mute = "rgba(244,239,228,.56)";
-    x.fillStyle = gold; x.fillRect(80, 960, W - 160, 1);
-    /* the chosen options, read from the page in the reader's own language */
+    var gold = "#d9b872", ink = "#f4efe4", mute = "rgba(244,239,228,.56)", line = "rgba(244,239,228,.14)";
+    var tr = function (en, hw) { return he ? hw : (T(en) || en); };
+    /* the piece, large */
+    if (main && main.width) fitIn(x, cropTo(main), 70, 70, W - 140, 600);
+    /* three more ways to see it */
+    var tiles = [[side, tr("From the side", "מהצד"), false], [close, tr("Close up", "מקרוב"), false], [wrist, tr("On a wrist", "על פרק היד"), true]].filter(function (t) { return t[0] && t[0].width; });
+    if (tiles.length) {
+      var gap = 24, tw = (W - 140 - gap * (tiles.length - 1)) / tiles.length, th = 300, ty = 700;
+      tiles.forEach(function (t, i) {
+        var tx0 = rtl ? W - 70 - tw - i * (tw + gap) : 70 + i * (tw + gap);
+        x.fillStyle = "rgba(255,255,255,.03)"; x.fillRect(tx0, ty, tw, th);
+        x.save(); x.beginPath(); x.rect(tx0, ty, tw, th); x.clip();
+        if (t[2]) coverIn(x, t[0], tx0, ty, tw, th); else fitIn(x, cropTo(t[0]), tx0 + 14, ty + 14, tw - 28, th - 28);
+        x.restore();
+        x.strokeStyle = line; x.lineWidth = 1; x.strokeRect(tx0 + 0.5, ty + 0.5, tw - 1, th - 1);
+        x.fillStyle = mute; x.font = "500 17px " + face; x.textAlign = "center"; x.direction = rtl ? "rtl" : "ltr";
+        x.fillText(t[1].toUpperCase(), tx0 + tw / 2, ty + th + 32);
+      });
+    }
+    x.fillStyle = gold; x.fillRect(70, 1080, W - 140, 1);
+    /* what was chosen, read from the page in the reader's own language */
     var rows = [].slice.call(document.querySelectorAll("#opts .opt")).map(function (o) {
       var k2 = o.querySelector(".k"), on = o.querySelector(".chip.on");
       return [k2 ? k2.textContent.trim() : "", on ? on.textContent.trim() : ""];
     }).filter(function (r) { return r[1]; });
-    var tk = document.querySelector(".tot .k"); rows.push([tk ? tk.textContent.trim() : "", $("est").textContent.trim()]);
     x.direction = rtl ? "rtl" : "ltr"; x.textAlign = rtl ? "right" : "left"; x.textBaseline = "alphabetic";
+    var iso = function (v) { return rtl && /[0-9A-Za-z]/.test(v) && !/[\u0590-\u05ff\u0600-\u06ff]/.test(v) ? "\u2066" + v + "\u2069" : v; };
     rows.forEach(function (r, i) {
-      var col = i % 2, row = Math.floor(i / 2), px = rtl ? W - 80 - col * 540 : 80 + col * 540, py = 1030 + row * 108;
-      x.fillStyle = gold; x.font = "500 20px " + face; x.fillText(r[0].toUpperCase(), px, py);
-      x.fillStyle = ink; x.font = "400 36px " + face; x.fillText(rtl && /[0-9A-Za-z]/.test(r[1]) && !/[\u0590-\u05ff\u0600-\u06ff]/.test(r[1]) ? "\u2066" + r[1] + "\u2069" : r[1], px, py + 46);
+      var col = i % 3, row = Math.floor(i / 3), px = rtl ? W - 70 - col * 360 : 70 + col * 360, py = 1140 + row * 100;
+      x.fillStyle = gold; x.font = "500 17px " + face; x.fillText(r[0].toUpperCase(), px, py);
+      x.fillStyle = ink; x.font = "400 31px " + face; x.fillText(iso(r[1]), px, py + 42);
     });
+    /* the estimate, and that it is one */
+    var ey = 1140 + Math.ceil(rows.length / 3) * 100 + 30;
+    x.fillStyle = line; x.fillRect(70, ey - 34, W - 140, 1);
+    x.fillStyle = gold; x.font = "500 17px " + face; x.fillText(tr("Estimated price", "מחיר משוער").toUpperCase(), rtl ? W - 70 : 70, ey);
+    x.fillStyle = ink; x.font = "300 44px " + face; x.fillText(iso($("est").textContent.trim()), rtl ? W - 70 : 70, ey + 52);
+    x.fillStyle = mute; x.font = "400 19px " + face;
+    x.fillText(tr("An estimate only, not a price. Your quotation is confirmed privately, once your stones are chosen.", "הערכה בלבד, לא מחיר. הצעת המחיר שלכם נמסרת באופן אישי, לאחר בחירת האבנים."), rtl ? W - 70 : 70, ey + 92);
     /* the foot: the mark, the word, the date */
     x.direction = "ltr"; x.textAlign = "center";
     x.fillStyle = ink; x.font = "300 38px " + face;
-    var word = "SILAVU", sp = 17, tw = 0, i2; for (i2 = 0; i2 < word.length; i2++) tw += x.measureText(word[i2]).width + (i2 < word.length - 1 ? sp : 0);
+    var word = "SILAVU", sp = 17, twd = 0, i2; for (i2 = 0; i2 < word.length; i2++) twd += x.measureText(word[i2]).width + (i2 < word.length - 1 ? sp : 0);
     var pth = document.querySelector("#symb path"), vb = (document.querySelector("#symb") || {}).viewBox;
-    var mw = vb && vb.baseVal && vb.baseVal.width ? vb.baseVal.width : 875, mh = 64, sc = mh / 1000, mwp = pth && window.Path2D ? mw * sc : 0, gap = mwp ? 24 : 0;
-    var x0 = W / 2 - (mwp + gap + tw) / 2;
-    if (mwp) { x.save(); x.translate(x0, 1385 - mh / 2); x.scale(sc, sc); x.fillStyle = gold; x.fill(new Path2D(pth.getAttribute("d"))); x.restore(); }
-    var cx = x0 + mwp + gap; x.textAlign = "left"; x.fillStyle = ink;
-    for (i2 = 0; i2 < word.length; i2++) { x.fillText(word[i2], cx, 1398); cx += x.measureText(word[i2]).width + sp; }
-    x.textAlign = "center"; x.fillStyle = mute; x.font = "400 18px " + face;
-    var d = new Date(); x.fillText("THE LINE · " + ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear() + " · DUBAI · TEL AVIV", W / 2, 1452);
+    var mw = vb && vb.baseVal && vb.baseVal.width ? vb.baseVal.width : 875, mh = 60, sc = mh / 1000, mwp = pth && window.Path2D ? mw * sc : 0, gp = mwp ? 22 : 0;
+    var x0 = W / 2 - (mwp + gp + twd) / 2, fy = H - 120;
+    if (mwp) { x.save(); x.translate(x0, fy - mh / 2); x.scale(sc, sc); x.fillStyle = gold; x.fill(new Path2D(pth.getAttribute("d"))); x.restore(); }
+    var cx = x0 + mwp + gp; x.textAlign = "left"; x.fillStyle = ink;
+    for (i2 = 0; i2 < word.length; i2++) { x.fillText(word[i2], cx, fy + 13); cx += x.measureText(word[i2]).width + sp; }
+    x.textAlign = "center"; x.fillStyle = mute; x.font = "400 17px " + face;
+    var d = new Date(); x.fillText("THE LINE · " + ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear() + " · DUBAI · TEL AVIV", W / 2, fy + 64);
+    void serif;
     c.toBlob(function (b) { cb(b, c); }, "image/png");
   }
   function designName() { var b = window.__build || {}; return "SILAVU-The-Line-" + (window.__lineSpec && window.__lineSpec.cut || "design") + "-" + (b.ct || "") + "ct.png"; }

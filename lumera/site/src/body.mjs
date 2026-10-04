@@ -250,8 +250,8 @@ ${markDefs()}
     <div class="wrap">
     <div class="sechead">
       <div class="k gold rv ol" data-en="Collection" data-he="הקולקציה">Collection</div>
-      <h2 class="h2 sp rv" data-en="The mark, <em>in three pieces.</em>" data-he="הסמל, <em>בשלושה תכשיטים.</em>">The mark, <em>in three pieces.</em></h2>
-      <p class="p rv d2" data-en="A few pieces, each made to be the one you reach for first." data-he="מעט תכשיטים, וכל אחד מהם נועד להיות הראשון שתבחרו.">A few pieces, each made to be the one you reach for first.</p>
+      <h2 class="h2 sp rv" data-en="Fine jewellery, <em>made to be lived in.</em>" data-he="תכשיטי יוקרה, <em>שנולדו להיענד.</em>">Fine jewellery, <em>made to be lived in.</em></h2>
+      <p class="p rv d2" data-en="Signed by SILAVU and set by hand, each piece is made to become the one you never take off." data-he="חתומים בידי SILAVU ומשובצים ביד, כל תכשיט נועד להפוך לזה שלא תורידו לעולם.">Signed by SILAVU and set by hand, each piece is made to become the one you never take off.</p>
     </div>
     ${COLLECTION}
     </div>
@@ -280,7 +280,7 @@ ${markDefs()}
       </div>
     </div>
     <div class="panel rv" id="configure">
-      <div id="stripwrap"><i class="bgmk" aria-hidden="true"></i><div class="glfb"><img data-src="/img/tennis-1200.jpg" data-srcset="/img/tennis-800.jpg 800w, /img/tennis-1200.jpg 1200w, /img/tennis-1600.jpg 1600w" sizes="(min-width:900px) 52vw, 92vw" alt="The SILAVU Line, thirty-six brilliants in a single row of white gold" data-alt-he="צמיד SILAVU Line, שלושים ושישה יהלומי בריליאנט בשורה אחת של זהב לבן" decoding="async"></div><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it. Tap to look closer." data-he="גררו כדי לסובב. הקישו כדי להתקרב.">Drag to turn it. Tap to look closer.</div><span class="vmark">${markUse("")}</span><button class="stbtn" type="button" data-stage="open" data-en="Turn it" data-he="סובבו אותו">Turn it</button><button class="stclose" type="button" data-stage="close" data-en="Done" data-he="סיום">Done</button><p class="sthint" data-en="Drag to turn, pinch to zoom, double tap to reset." data-he="גררו לסיבוב, צבטו להגדלה, הקישו פעמיים לאיפוס.">Drag to turn, pinch to zoom, double tap to reset.</p></div><div class="handbar" id="handbar" hidden>
+      <div id="stripwrap"><i class="bgmk" aria-hidden="true"></i><div class="glfb"><img data-src="/img/tennis-1200.jpg" data-srcset="/img/tennis-800.jpg 800w, /img/tennis-1200.jpg 1200w, /img/tennis-1600.jpg 1600w" sizes="(min-width:900px) 52vw, 92vw" alt="The SILAVU Line, thirty-six brilliants in a single row of white gold" data-alt-he="צמיד SILAVU Line, שלושים ושישה יהלומי בריליאנט בשורה אחת של זהב לבן" decoding="async"></div><canvas id="bcv" aria-label="Your bracelet, in three dimensions"></canvas><canvas id="stripcv" role="img" aria-label="Your line, drawn live"></canvas><div class="vt" role="tablist" aria-label="View"><button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button><button class="vtb" type="button" role="tab" aria-selected="false" data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist</button></div><div class="vhint k" data-en="Drag to turn it. Tap for the whole hand." data-he="גררו כדי לסובב. הקישו לכף היד כולה.">Drag to turn it. Tap for the whole hand.</div><span class="vmark">${markUse("")}</span><button class="stbtn" type="button" data-stage="open" data-en="Turn it" data-he="סובבו אותו">Turn it</button><button class="stclose" type="button" data-stage="close" data-en="Done" data-he="סיום">Done</button><p class="sthint" data-en="Drag to turn, pinch to zoom, double tap to reset." data-he="גררו לסיבוב, צבטו להגדלה, הקישו פעמיים לאיפוס.">Drag to turn, pinch to zoom, double tap to reset.</p></div><div class="handbar" id="handbar" hidden>
       <div class="hgrp" role="group" aria-label="Whose hand">
         <button class="vp on" type="button" data-hand="f" data-en="Her" data-he="אישה">Her</button>
         <button class="vp" type="button" data-hand="m" data-en="Him" data-he="גבר">Him</button>
@@ -314,9 +314,9 @@ ${markDefs()}
         <div class="tot">
           <div class="k ltk" data-en="Your line" data-he="הצמיד שלכם">Your line</div>
           <p class="lsum" id="lsum" aria-live="polite"></p>
-          <div class="pricerow">${seal("sealsm")}<div class="price" id="est" data-aed="28500">AED 28,500</div></div>
+          <div class="pricerow">${seal("sealsm")}<div class="pwrap"><span class="estk" data-en="Estimated price" data-he="מחיר משוער">Estimated price</span><div class="price" id="est" data-aed="28500">≈ AED 28,500</div></div></div>
           <div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div>
-          <p class="estnote" data-en="Indicative estimate. The final quotation is confirmed privately, once the stones are chosen." data-he="הערכה ראשונית בלבד. הצעת המחיר הסופית נמסרת באופן אישי, לאחר בחירת האבנים.">Indicative estimate. The final quotation is confirmed privately, once the stones are chosen.</p>
+          <p class="estnote" data-en="An estimate only, not a price. Your quotation is confirmed privately, once your stones are chosen." data-he="הערכה בלבד, לא מחיר. הצעת המחיר שלכם נמסרת באופן אישי, לאחר בחירת האבנים.">An estimate only, not a price. Your quotation is confirmed privately, once your stones are chosen.</p>
         </div>
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet</a>
         <p class="trustline" data-en="GIA or IGI certified · Insured delivery · Lifetime care" data-he="תעודת GIA או IGI · משלוח מבוטח · שירות לכל החיים">GIA or IGI certified · Insured delivery · Lifetime care</p>

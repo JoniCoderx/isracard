@@ -1731,6 +1731,17 @@
      drawn fresh and handed over in the same task, before the browser is free
      to clear the buffer */
   function snap() { size(); draw(); return cv; }
-  window.__bracelet = { play: snakeOpen, unplay: snakeClose, build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+  /* the bracelet from a given angle, for the design sheet: the camera is set,
+     one frame drawn and copied, and the reader's own view put back */
+  function shot(pose) {
+    var keep = { th: cam.th, ph: cam.ph, d: cam.d, td: cam.td, f: cam.f, fT: cam.fT, vth: cam.vth, vph: cam.vph }, k, c = null;
+    try {
+      cam.th = pose.th; cam.ph = pose.ph; cam.d = cam.td = pose.d || 1; cam.f = cam.fT = pose.f || 0; cam.vth = cam.vph = 0;
+      size(); draw();
+      c = document.createElement("canvas"); c.width = cv.width; c.height = cv.height; c.getContext("2d").drawImage(cv, 0, 0);
+    } catch (e) { c = null; }
+    for (k in keep) cam[k] = keep[k]; dirty = true; return c;
+  }
+  window.__bracelet = { play: snakeOpen, unplay: snakeClose, build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, shot: shot, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
 })();
 </script>
