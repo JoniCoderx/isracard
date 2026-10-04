@@ -93,7 +93,8 @@
      the middle at an ordinary size rather than guessed large. Everything
      stays adjustable by hand. */
   function autoPlace() {
-    var S = 128, fallback = function () { pos = { x: 0.5, y: 0.5 }; $("tang").value = 0; $("tsize").value = 0.11; };
+    tmodal.classList.remove("guide");
+    var S = 128, fallback = function () { pos = { x: 0.5, y: 0.5 }; $("tang").value = 0; $("tsize").value = 0.09; tmodal.classList.add("guide"); };
     try {
       var c = document.createElement("canvas"), x = c.getContext("2d"), sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight);
       c.width = S; c.height = Math.max(1, Math.round(S * th / tw)); var H = c.height, dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
@@ -114,7 +115,12 @@
           if (py < H - 1 && skin[j + S] && !lab[j + S]) { lab[j + S] = id; q[tail++] = j + S; } }
         comps.push(pts);
       }
-      var best = null;
+      var best = null, sizes = comps.map(function (p2) { return p2.length / 2; }).sort(function (a2, b2) { return b2 - a2; });
+      /* only a photograph that is plainly of an arm is placed by itself: one
+         piece of skin that fills a good part of the frame and outweighs every
+         other. A wider scene - a body, legs, two hands - is left to the
+         reader's finger rather than guessed at. */
+      if (!sizes.length || sizes[0] < N * 0.08 || (sizes[1] && sizes[0] < sizes[1] * 2.2)) { fallback(); return; }
       comps.forEach(function (pts) {
         var n = pts.length / 2; if (n < N * 0.004) return;
         var mx = 0, my = 0; for (k = 0; k < pts.length; k += 2) { mx += pts[k]; my += pts[k + 1]; } mx /= n; my /= n;
@@ -178,7 +184,7 @@
     tx.save(); tx.globalCompositeOperation = "soft-light"; tx.globalAlpha = 0.18 + 0.2 * Math.max(0, tone.warm); tx.fillStyle = "rgb(255,200,160)"; stones.forEach(function (p) { tx.beginPath(); tx.ellipse(p.x, p.y, aw * 1.4 * p.fore, ah * 1.4, uAng, 0, 6.283); tx.fill(); }); tx.restore();
     tx.globalAlpha = 1;
   }
-  $("tcv").addEventListener("pointerdown", function (e) { if (!img) return; dragging = true; dpx = e.clientX; dpy = e.clientY; $("tcv").setPointerCapture(e.pointerId); });
+  $("tcv").addEventListener("pointerdown", function (e) { if (!img) return; tmodal.classList.remove("guide"); dragging = true; dpx = e.clientX; dpy = e.clientY; $("tcv").setPointerCapture(e.pointerId); });
   $("tcv").addEventListener("pointermove", function (e) { if (!dragging) return; var dx = e.clientX - dpx, dy = e.clientY - dpy; dpx = e.clientX; dpy = e.clientY; if (tmode === "place") { pos.x += dx / tw; pos.y += dy / th; } else { var g = ringGeom(); tphase += (dx * g.u[0] + dy * g.u[1]) / Math.max(1, g.rb); } tdraw(); });
   $("tcv").addEventListener("pointerup", function () { dragging = false; }); $("tcv").addEventListener("pointercancel", function () { dragging = false; });
   /* two fingers: spread to resize, twist to turn */

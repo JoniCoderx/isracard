@@ -471,7 +471,7 @@ ${markDefs()}
 <div class="modal" id="tryon" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="mbox tbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
-    <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas>
+    <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas><p class="tguide" aria-live="polite" data-en="Drag the bracelet onto your wrist" data-he="גררו את הצמיד אל פרק היד">Drag the bracelet onto your wrist</p>
       <div class="tempty" id="tempty"><div><div class="k gold" data-en="On your wrist" data-he="על פרק היד שלכם">On your wrist</div><label class="btn solid"><input type="file" id="tfile" accept="image/*" hidden><span data-en="Choose a photo" data-he="בחרו תמונה">Choose a photo</span></label><p class="ttip" data-en="For best results, photograph your wrist from above in natural light." data-he="לתוצאה הטובה ביותר, צלמו את פרק היד מלמעלה, באור טבעי.">For best results, photograph your wrist from above in natural light.</p></div></div>
     </div>
     <div class="tctl">
