@@ -5572,3 +5572,29 @@
     #build #configure .total .cur .chip { min-height:34px; height:34px; }
     #build #configure .total .btn.solid { min-height:46px; }
   }
+
+  /* ── v162 — the card photographs slide rather than fade: every frame sits
+     in the card at full strength, those not shown wait beside it ── */
+  .pgrid .fig.swp .im.hx { opacity:1 !important; transform:translate3d(100%,0,0); transition:none; z-index:2; will-change:transform; }
+  .pgrid .fig.swp .im.hx.was { opacity:1; }
+  .pgrid .fig.swp { overflow:hidden; }
+
+  /* ── v163 — the enquiry, tighter: what you are looking for on one line, and
+     the house's channels beside the send button rather than a block of their
+     own under the form ── */
+  @media (min-width:760px) {
+    #enquire .want { display:grid; grid-template-columns:repeat(4, max-content); justify-content:start; gap:8px; }
+    #enquire .want > .k { grid-column:1 / -1; width:auto; }
+    #enquire .want .chip { min-height:38px; padding:0 13px; font-size:.6rem; letter-spacing:.1em; white-space:nowrap; }
+    html[data-ns] #enquire .want .chip { font-size:.8rem; letter-spacing:.01em; }
+  }
+  .csub .csoc { margin-inline-start:auto; display:flex; gap:8px; }
+  .csub .csoc a { width:36px; height:36px; }
+  @media (max-width:759px) { .csub .csoc { margin-inline-start:0; align-self:center; } }
+  @media (max-width:759px) {
+    #concierge .csub .csoc { display:flex; justify-content:center; }
+    #enquire .want { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    #enquire .want > .k { grid-column:1 / -1; }
+    #enquire .want .chip { height:auto !important; min-height:46px; padding:7px 10px; font-size:.6rem; letter-spacing:.06em; white-space:normal; line-height:1.3; text-align:center; justify-content:center; }
+    html[data-ns] #enquire .want .chip { font-size:.82rem; letter-spacing:0; }
+  }

@@ -85,29 +85,62 @@
   function tsize() { var r = $("tcv").getBoundingClientRect(); TD = Math.min(devicePixelRatio || 1, 2); tw = Math.round(r.width); th = Math.round(r.height); tc.width = Math.round(tw * TD); tc.height = Math.round(th * TD); tx.setTransform(TD, 0, 0, TD, 0, 0); tdraw(); }
   function sampleTone() { try { var c = document.createElement("canvas"); c.width = 24; c.height = 24; var x = c.getContext("2d"); x.drawImage(img, 0, 0, 24, 24); var d = x.getImageData(0, 0, 24, 24).data, r = 0, g = 0, b = 0, n = 0; for (var i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; } r /= n; g /= n; b /= n; tone = { b: (0.299 * r + 0.587 * g + 0.114 * b) / 255, warm: (r - b) / 255 }; } catch (e) { tone = { b: 0.5, warm: 0 }; } }
   /* A first guess, so the line is already on the wrist when the photograph
-     opens: the skin in the picture is found, its long axis is the arm, the
-     line goes across it at the middle, and its spread is the wrist's width.
-     Everything stays adjustable by hand. */
+     opens. The skin in the picture is found and split into separate pieces
+     (an arm, a hand, a leg are not one thing); the most arm-like piece is
+     kept - long and slender - and walked along its length to find where it
+     is narrowest, which is the wrist. The line goes across it there, as wide
+     as the wrist is. When nothing reads as an arm, it is placed modestly in
+     the middle at an ordinary size rather than guessed large. Everything
+     stays adjustable by hand. */
   function autoPlace() {
+    var S = 128, fallback = function () { pos = { x: 0.5, y: 0.5 }; $("tang").value = 0; $("tsize").value = 0.11; };
     try {
-      var S = 96, c = document.createElement("canvas"), x = c.getContext("2d"), sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight);
+      var c = document.createElement("canvas"), x = c.getContext("2d"), sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight);
       c.width = S; c.height = Math.max(1, Math.round(S * th / tw)); var H = c.height, dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
       x.drawImage(img, (tw - dw) / 2 * S / tw, (th - dh) / 2 * S / tw, dw * S / tw, dh * S / tw);
-      var d = x.getImageData(0, 0, S, H).data, n = 0, mx = 0, my = 0, pts = [];
-      for (var yy = 0; yy < H; yy++) for (var xx = 0; xx < S; xx++) { var i = (yy * S + xx) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
-        if (r > 90 && g > 40 && b > 20 && r > g && r > b && r - Math.min(g, b) > 15 && Math.abs(r - g) > 12) { pts.push(xx, yy); mx += xx; my += yy; n++; } }
-      if (n < S * H * 0.04) return;
-      mx /= n; my /= n; var sxx = 0, syy = 0, sxy = 0;
-      for (var k = 0; k < pts.length; k += 2) { var ax = pts[k] - mx, ay = pts[k + 1] - my; sxx += ax * ax; syy += ay * ay; sxy += ax * ay; }
-      sxx /= n; syy /= n; sxy /= n;
-      var arm = 0.5 * Math.atan2(2 * sxy, sxx - syy), across = arm + Math.PI / 2;
-      var ca = Math.cos(across), sa = Math.sin(across), spread = Math.sqrt(Math.max(1e-6, ((sxx + syy) - Math.sqrt((sxx - syy) * (sxx - syy) + 4 * sxy * sxy)) / 2));
-      pos = { x: Math.min(0.85, Math.max(0.15, mx / S)), y: Math.min(0.85, Math.max(0.15, my / H)) };
-      var ang = across * 180 / Math.PI; while (ang > 90) ang -= 180; while (ang < -90) ang += 180;
+      var d = x.getImageData(0, 0, S, H).data, N = S * H, skin = new Uint8Array(N), i, k;
+      for (i = 0; i < N; i++) { var r = d[i * 4], g = d[i * 4 + 1], bl = d[i * 4 + 2];
+        var y = 0.299 * r + 0.587 * g + 0.114 * bl, cb = 128 - 0.1687 * r - 0.3313 * g + 0.5 * bl, cr = 128 + 0.5 * r - 0.4187 * g - 0.0813 * bl;
+        skin[i] = (y > 45 && y < 245 && cb > 77 && cb < 127 && cr > 136 && cr < 173 && r > bl && r > g) ? 1 : 0; }
+      /* separate pieces of skin */
+      var lab = new Int32Array(N), comps = [], q = new Int32Array(N);
+      for (i = 0; i < N; i++) {
+        if (!skin[i] || lab[i]) continue;
+        var id = comps.length + 1, head = 0, tail = 0, pts = []; q[tail++] = i; lab[i] = id;
+        while (head < tail) { var j = q[head++], px = j % S, py = (j / S) | 0; pts.push(px, py);
+          if (px > 0 && skin[j - 1] && !lab[j - 1]) { lab[j - 1] = id; q[tail++] = j - 1; }
+          if (px < S - 1 && skin[j + 1] && !lab[j + 1]) { lab[j + 1] = id; q[tail++] = j + 1; }
+          if (py > 0 && skin[j - S] && !lab[j - S]) { lab[j - S] = id; q[tail++] = j - S; }
+          if (py < H - 1 && skin[j + S] && !lab[j + S]) { lab[j + S] = id; q[tail++] = j + S; } }
+        comps.push(pts);
+      }
+      var best = null;
+      comps.forEach(function (pts) {
+        var n = pts.length / 2; if (n < N * 0.004) return;
+        var mx = 0, my = 0; for (k = 0; k < pts.length; k += 2) { mx += pts[k]; my += pts[k + 1]; } mx /= n; my /= n;
+        var sxx = 0, syy = 0, sxy = 0; for (k = 0; k < pts.length; k += 2) { var ax = pts[k] - mx, ay = pts[k + 1] - my; sxx += ax * ax; syy += ay * ay; sxy += ax * ay; }
+        sxx /= n; syy /= n; sxy /= n;
+        var tr = sxx + syy, det = Math.sqrt(Math.max(0, (sxx - syy) * (sxx - syy) + 4 * sxy * sxy)), l1 = (tr + det) / 2, l2 = Math.max(1e-6, (tr - det) / 2);
+        var elong = Math.sqrt(l1 / l2), minor = Math.sqrt(l2);
+        if (elong < 1.5) return;
+        var score = elong * Math.sqrt(n) / (1 + minor);
+        if (!best || score > best.score) best = { score: score, pts: pts, n: n, mx: mx, my: my, arm: 0.5 * Math.atan2(2 * sxy, sxx - syy) };
+      });
+      if (!best) { fallback(); return; }
+      /* along the arm: where is it narrowest? */
+      var ca = Math.cos(best.arm), sa = Math.sin(best.arm), proj = [], lo = 1e9, hi = -1e9;
+      for (k = 0; k < best.pts.length; k += 2) { var ux = best.pts[k] - best.mx, uy = best.pts[k + 1] - best.my, t = ux * ca + uy * sa, v = -ux * sa + uy * ca; proj.push(t, v, best.pts[k], best.pts[k + 1]); if (t < lo) lo = t; if (t > hi) hi = t; }
+      var B = 14, bins = []; for (k = 0; k < B; k++) bins.push({ vs: [], x: 0, y: 0 });
+      for (k = 0; k < proj.length; k += 4) { var bi = Math.min(B - 1, Math.floor((proj[k] - lo) / Math.max(1e-6, hi - lo) * B)); bins[bi].vs.push(proj[k + 1]); bins[bi].x += proj[k + 2]; bins[bi].y += proj[k + 3]; }
+      var pick = null;
+      for (k = 1; k < B - 1; k++) { var bn = bins[k]; if (bn.vs.length < 6) continue; bn.vs.sort(function (a2, b2) { return a2 - b2; });
+        var w = bn.vs[Math.floor(bn.vs.length * 0.92)] - bn.vs[Math.floor(bn.vs.length * 0.08)]; if (!pick || w < pick.w) pick = { w: w, x: bn.x / bn.vs.length, y: bn.y / bn.vs.length }; }
+      if (!pick || pick.w < 2) { fallback(); return; }
+      pos = { x: Math.min(0.9, Math.max(0.1, pick.x / S)), y: Math.min(0.9, Math.max(0.1, pick.y / H)) };
+      var ang = (best.arm + Math.PI / 2) * 180 / Math.PI; while (ang > 90) ang -= 180; while (ang < -90) ang += 180;
       $("tang").value = ang.toFixed(0);
-      $("tsize").value = Math.max(0.08, Math.min(0.45, spread * 1.6 / S)).toFixed(3);
-      void ca; void sa;
-    } catch (e) {}
+      $("tsize").value = Math.max(0.04, Math.min(0.22, pick.w * 0.55 / S)).toFixed(3);
+    } catch (e) { fallback(); }
   }
   function setMode(m) { tmode = m; tmodal.classList.toggle("placing", m === "place"); tmodal.classList.toggle("seen", m === "view"); $("tcv").classList.toggle("turn", m === "view"); tsum(); }
   function load(file) {
@@ -151,10 +184,10 @@
   /* two fingers: spread to resize, twist to turn */
   function tAng(e) { return Math.atan2(e.touches[1].clientY - e.touches[0].clientY, e.touches[1].clientX - e.touches[0].clientX); }
   $("tcv").addEventListener("touchstart", function (e) { if (e.touches.length === 2) { pinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), s: +$("tsize").value, a: tAng(e), r: +$("tang").value }; dragging = false; } }, { passive: true });
-  $("tcv").addEventListener("touchmove", function (e) { if (pinch && e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); $("tsize").value = Math.max(0.08, Math.min(0.45, pinch.s * d / pinch.d));
+  $("tcv").addEventListener("touchmove", function (e) { if (pinch && e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); $("tsize").value = Math.max(0.04, Math.min(0.45, pinch.s * d / pinch.d));
     if (tmode === "place") { var da = (tAng(e) - pinch.a) * 180 / Math.PI; $("tang").value = Math.max(-90, Math.min(90, pinch.r + da)); } tdraw(); } }, { passive: true });
   /* a mouse wheel resizes */
-  $("tcv").addEventListener("wheel", function (e) { if (!img || tmode !== "place") return; e.preventDefault(); $("tsize").value = Math.max(0.08, Math.min(0.45, +$("tsize").value * (e.deltaY < 0 ? 1.04 : 0.96))); tdraw(); }, { passive: false });
+  $("tcv").addEventListener("wheel", function (e) { if (!img || tmode !== "place") return; e.preventDefault(); $("tsize").value = Math.max(0.04, Math.min(0.45, +$("tsize").value * (e.deltaY < 0 ? 1.04 : 0.96))); tdraw(); }, { passive: false });
   $("tcv").addEventListener("touchend", function () { pinch = null; });
   $("tsave").addEventListener("click", function () { tdraw(); tc.toBlob(function (b) { if (!b) return; var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "silavu-line.jpg"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }, "image/jpeg", 0.92); });
   window.addEventListener("silavu:build", tsum);

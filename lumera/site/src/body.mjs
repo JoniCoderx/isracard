@@ -400,11 +400,11 @@ ${markDefs()}
         <div class="csub">
           <button class="btn solid" id="csend" type="submit" data-en="Send enquiry" data-he="שליחת הפנייה">Send enquiry</button>
           <button type="button" class="lnk ccopy" id="ccopy" data-en="Copy the details" data-he="העתקת הפרטים">Copy the details</button>
+          <div class="soc csoc" data-socials></div>
         </div>
         <p class="fine cnote" id="cnote" data-en="Sending opens your email app with everything written in. Nothing reaches us until you press send there." data-he="השליחה פותחת את אפליקציית הדואר שלכם עם כל הפרטים. הפנייה תגיע אלינו רק אחרי שתלחצו שם על שליחה.">Sending opens your email app with everything written in. Nothing reaches us until you press send there.</p>
         <p class="done" id="cdone" data-en="Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com." data-he="אפליקציית הדואר אמורה להיפתח עכשיו עם ההודעה מוכנה. לחצו שם על שליחה כדי שהפנייה תגיע לקונסיירז׳. אם היא לא נפתחה, העתיקו את הפרטים וכתבו אל concierge@silavu.com.">Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com.</p>
       </form>
-      <div class="soc rv d3" data-socials></div>
     </div>
     </div>
     <div class="emb" id="emb" aria-hidden="true">
@@ -479,7 +479,7 @@ ${markDefs()}
       <div class="tplace">
         <p class="k thint" data-en="Drag to move it. Pinch to resize, twist to turn." data-he="גררו כדי להזיז. צבטו כדי לשנות גודל, סובבו בשתי אצבעות.">Drag to move it. Pinch to resize, twist to turn.</p>
         <details class="tfine"><summary><span data-en="Fine adjustments" data-he="כוונון עדין">Fine adjustments</span></summary>
-        <label><span class="k" data-en="Wrist width" data-he="רוחב פרק היד">Wrist width</span><input type="range" id="tsize" min="0.08" max="0.45" step="0.005" value="0.2"></label>
+        <label><span class="k" data-en="Wrist width" data-he="רוחב פרק היד">Wrist width</span><input type="range" id="tsize" min="0.04" max="0.45" step="0.005" value="0.2"></label>
         <label><span class="k" data-en="Angle" data-he="זווית">Angle</span><input type="range" id="tang" min="-90" max="90" step="1" value="0"></label>
         <label><span class="k" data-en="Tilt" data-he="הטיה">Tilt</span><input type="range" id="tcurve" min="0.08" max="0.5" step="0.01" value="0.26"></label>
         </details>

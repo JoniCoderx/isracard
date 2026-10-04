@@ -144,34 +144,40 @@
         }
       }
       function ready(i) { var im = layers[i] && layers[i].firstChild; return !im || (im.complete && im.naturalWidth > 0); }
-      function show(i) {
+      /* the photographs slide, like turning through a set of prints: the next
+         comes in from the side it was asked for and the last goes out the
+         other way. Only the frame's own transform moves, inside the card. */
+      var baseIm = fig.querySelector(".im:not(.hx):not(.dt)");
+      function frames() { return layers.map(function (l, k) { return k === 0 ? baseIm : l; }); }
+      function place(el, x, anim) { if (!el) return; el.style.transition = anim ? "transform .62s cubic-bezier(.22,.72,.2,1)" : "none"; el.style.transform = x ? "translate3d(" + x + "%,0,0)" : ""; }
+      function show(i, dir) {
         if (!layers) build();
-        var prev = layers[at]; at = i; pc.__at = i;
-        /* the outgoing frame holds still underneath while the next fades in over it */
-        clearTimeout(wasT);
-        layers.forEach(function (l) { if (l) l.classList.remove("was"); });
-        if (prev && i !== 0) { prev.classList.add("was"); wasT = setTimeout(function () { prev.classList.remove("was"); }, 700); }
+        var all = frames(), prev = at; if (i === prev) return; at = i; pc.__at = i;
+        dir = dir || (i > prev ? 1 : -1); if (rtl()) dir = -dir;
+        all.forEach(function (l, k) { if (l && k !== i && k !== prev) place(l, 100, false); });
+        if (still) { place(all[prev], 100, false); place(all[i], 0, false); }
+        else { place(all[i], dir * 100, false); void all[i].offsetWidth; place(all[i], 0, true); place(all[prev], -dir * 100, true); }
         layers.forEach(function (l, k) { if (l) l.classList.toggle("on", k === i); });
         dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
       }
-      function go(n) {
+      function go(n, dir) {
         build(); n = (n + shots.length) % shots.length;
-        if (ready(n)) show(n); else layers[n].firstChild.addEventListener("load", function () { show(n); }, { once: true });
+        if (ready(n)) show(n, dir); else layers[n].firstChild.addEventListener("load", function () { show(n, dir); }, { once: true });
       }
       pc.__at = 0; pc.__show = function (i) { manual = true; go(i); };
       /* two arrows, for a mouse */
       fig.querySelectorAll(".cnav").forEach(function (b) {
-        b.addEventListener("click", function (e) { e.stopPropagation(); e.preventDefault(); manual = true; clearInterval(t); go(at + (b.classList.contains("cnext") ? 1 : -1)); });
+        b.addEventListener("click", function (e) { e.stopPropagation(); e.preventDefault(); manual = true; clearInterval(t); var d = b.classList.contains("cnext") ? 1 : -1; go(at + d, d); });
       });
       /* a slow walk while a mouse rests on the card, until the arrows are used */
       if (fine) {
         pc.addEventListener("pointerenter", function (e) {
           if (e.pointerType !== "mouse") return; build(); clearInterval(t);
-          if (!still && !manual) t = setInterval(function () { go(at + 1 >= shots.length ? 1 : at + 1); }, 1700);
+          if (!still && !manual) t = setInterval(function () { go(at + 1 >= shots.length ? 1 : at + 1, 1); }, 1700);
         });
         pc.addEventListener("pointerleave", function (e) {
           if (e.pointerType !== "mouse") return; clearInterval(t);
-          if (!document.querySelector(".modal.open")) { manual = false; show(0); }
+          if (!document.querySelector(".modal.open")) { manual = false; if (at !== 0) show(0, -1); }
         });
       }
       /* a swipe, for a finger: sideways changes the photograph, upright is the page's */
@@ -180,7 +186,7 @@
       fig.addEventListener("pointermove", function (e) {
         if (!down) return; var dx = e.clientX - sx, dy = e.clientY - sy;
         if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) { down = false; return; }
-        if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) * 1.2) { down = false; swiped = true; manual = true; go(at + ((dx < 0) !== rtl() ? 1 : -1)); }
+        if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) * 1.2) { down = false; swiped = true; manual = true; var d = (dx < 0) !== rtl() ? 1 : -1; go(at + d, d); }
       });
       fig.addEventListener("pointerup", function () { down = false; });
       fig.addEventListener("pointercancel", function () { down = false; });
