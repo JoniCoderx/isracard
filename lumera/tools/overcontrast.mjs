@@ -17,7 +17,7 @@ for (const [w, h] of [[390, 844], [1366, 900]]) for (const lang of ["en", "he"])
     await el.scrollIntoViewIfNeeded().catch(() => {}); await p.waitForTimeout(700);
     const info = await el.evaluate(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return { r: { x: Math.max(0, r.x), y: Math.max(0, r.y), w: Math.min(innerWidth, r.right) - Math.max(0, r.x), h: Math.min(innerHeight, r.bottom) - Math.max(0, r.y) }, color: cs.color, fs: parseFloat(cs.fontSize), fw: +cs.fontWeight, op: +cs.opacity, vis: r.width > 0 && cs.visibility !== "hidden" }; });
     if (!info.vis || info.r.w < 4 || info.r.h < 4) continue;
-    const st = await p.addStyleTag({ content: s + ", " + s + " * { color: transparent !important; text-shadow: none !important; -webkit-text-fill-color: transparent !important; }" });
+    const st = await p.addStyleTag({ content: s + ", " + s + " * { color: transparent !important; text-shadow: none !important; -webkit-text-fill-color: transparent !important; background-image: none !important; }" });
     await p.waitForTimeout(250);
     const f = `${w}-${lang}-${s.replace(/[^a-z0-9]+/gi, "_")}.png`;
     await p.screenshot({ path: O + f, clip: { x: info.r.x, y: info.r.y, width: info.r.w, height: info.r.h } });

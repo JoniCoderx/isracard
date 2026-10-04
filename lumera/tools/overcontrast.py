@@ -7,7 +7,7 @@ def lum(c):
     return 0.2126*ch(c[0])+0.7152*ch(c[1])+0.0722*ch(c[2])
 for it in json.load(open(O+"items.json")):
     m=re.findall(r"[\d.]+", it["color"]); fg=[float(x) for x in m[:3]]; a=float(m[3]) if len(m)>3 else 1
-    im=Image.open(O+it["file"]).convert("RGB"); px=list(im.getdata())
+    im=Image.open(O+it["file"]).convert("RGB"); px=list(im.get_flattened_data()) if hasattr(im,"get_flattened_data") else list(im.getdata())
     px.sort(key=lum); worst=px[int(len(px)*0.95)-1] if px else (0,0,0); med=px[len(px)//2]
     fgc=[fg[i]*a+worst[i]*(1-a) for i in range(3)]
     L1,L2=lum(fgc),lum(worst); hi,lo=max(L1,L2),min(L1,L2); cr=(hi+0.05)/(lo+0.05)
