@@ -241,10 +241,6 @@ ${markDefs()}
           </g>
         </svg>
       </div>
-      <div class="sgcopy">
-        <p class="sgc1" data-en="Every line is drawn." data-he="כל קו משורטט.">Every line is drawn.</p>
-        <p class="sgc2"><i aria-hidden="true"></i><span data-en="Every stone is chosen." data-he="כל אבן נבחרת.">Every stone is chosen.</span><i aria-hidden="true"></i></p>
-      </div>
     </div>
   </section>
 <section id="collection" class="ivory paper" data-n="02" data-title-en="Collection" data-title-he="הקולקציה" aria-label="Collection">

@@ -5859,3 +5859,18 @@
      position from --sx / --st instead, under a rule that outranks it. ──── */
   html body .pgrid .fig.swp .im { transform:var(--sx, none) !important; transition:var(--st, none) !important; }
   html body .pgrid .fig.swp .im.hx { --sx:translate3d(100%,0,0); }
+
+  /* ══ v177 — straight from the signature into the collection ═══════════════
+     The two lines under the name are gone, the stage is only as tall as the
+     name and a little air, the hold is short (the writing already starts as
+     the chapter rises), and the collection's opening space is tightened, so
+     the collection's heading follows the name instead of a gap. ────────── */
+  #craft .sgstage { min-height:46svh; padding-block:5svh; }
+  #craft.sgjs { height:84svh; }
+  #craft.sgjs .sgstage { height:56svh; }
+  @media (max-width:759px) {
+    #craft.sgjs { height:72svh; }
+    #craft.sgjs .sgstage { height:46svh; }
+  }
+  html body #collection { padding-top:clamp(14px, 2.4vw, 30px) !important; }
+  html body #collection .chap { margin-block:0 clamp(16px, 2vw, 26px); }

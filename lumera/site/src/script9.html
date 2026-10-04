@@ -99,8 +99,8 @@
        across it is the line being written, white on the black and ink on
        the white. */
     var a1 = sm(0.82, 0.92, q), a2 = sm(0.86, 0.96, q);
-    c1.style.opacity = a1.toFixed(3); c1.style.transform = "translate3d(0," + (10 * (1 - a1)).toFixed(1) + "px,0)";
-    c2.style.opacity = a2.toFixed(3); c2.style.transform = "translate3d(0," + (10 * (1 - a2)).toFixed(1) + "px,0)";
+    if (c1) { c1.style.opacity = a1.toFixed(3); c1.style.transform = "translate3d(0," + (10 * (1 - a1)).toFixed(1) + "px,0)"; }
+    if (c2) { c2.style.opacity = a2.toFixed(3); c2.style.transform = "translate3d(0," + (10 * (1 - a2)).toFixed(1) + "px,0)"; }
   }
 
   function tick() {

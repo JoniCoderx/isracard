@@ -18,10 +18,10 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   const H = await p.evaluate(() => document.getElementById("craft").offsetHeight);
   const S = await p.evaluate(() => document.querySelector("#craft .sgstage").offsetHeight);
   /* a short passage: the stage about three quarters of a screen, the hold a little over one */
-  ok(rm ? H < h * 1.2 : H > h * (mob ? 0.95 : 1.07) && H < h * (mob ? 1.05 : 1.17) && S < h * 0.8, `${tag} section ${(H / h).toFixed(2)} screens, stage ${(S / h).toFixed(2)}`);
+  ok(rm ? H < h * 1.2 : H > h * (mob ? 0.68 : 0.8) && H < h * (mob ? 0.76 : 0.88) && S < h * 0.6, `${tag} section ${(H / h).toFixed(2)} screens, stage ${(S / h).toFixed(2)}`);
   const probe = () => p.evaluate(() => { const q = s => document.querySelector("#craft " + s), O = e => +getComputedStyle(e).opacity, R = e => e.getBoundingClientRect();
-    const st = R(q(".sgstage")), fig = R(q(".sgfig")), cp = R(q(".sgcopy"));
-    return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, O(q(".sgc1")), O(q(".sgc2"))],
+    const st = R(q(".sgstage")), fig = R(q(".sgfig")), cpe = q(".sgcopy"), cp = cpe ? R(cpe) : { top: 1e9, bottom: 0 };
+    return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, cpe ? O(q(".sgc1")) : 1, cpe ? O(q(".sgc2")) : 1], hasCopy: !!cpe,
       dot: O(q(".sgdot")), spark: Math.max(...[...document.querySelectorAll("#craft .sgspark > g")].map(O)) * O(q(".sgspark")),
       line: (() => { const e = q(".sgpath"), L = e.getTotalLength(), off = parseFloat(getComputedStyle(e).strokeDashoffset) || 0, pt = e.getPointAtLength(L - off), m = e.getScreenCTM();
         const x = m.a * pt.x + m.c * pt.y + m.e; return off / L; })(), pen: O(q(".sgpen")),
@@ -40,10 +40,11 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
       if (f * (lead + hold) > lead + 2 && f < 1) ok(Math.abs(r.st) < 1, `${tag} @${f} stage held`);
       if (f === 0.1) ok(r.line < 0.97 && r.pen > 0.3, `${tag} already writing as the section rises (${r.line.toFixed(2)})`);
       if (f === 0.35 || f === 0.6) ok(r.line > 0.05 && r.line < 0.95 && r.pen > 0.5, `${tag} @${f} writing, pen light on (${r.line.toFixed(2)})`);
-      if (f <= 0.6) ok(r.copy[2] < 0.02 && r.spark < 0.02, `${tag} @${f} no words, no sparks yet`);
+      if (f <= 0.6) ok((!r.hasCopy || r.copy[2] < 0.02) && r.spark < 0.02, `${tag} @${f} no sparks yet`);
       if (f === 1) ok(r.line < 0.01 && r.dot > 0.99 && r.copy[2] > 0.99 && r.copy[3] > 0.98 && r.pen < 0.01, `${tag} end: written, dotted, words shown`);
       if (f === 1) ok(r.spark < 0.6, `${tag} end: sparks settled (${r.spark.toFixed(2)})`);
-      if (f === 1) ok(r.copy[1] < h - 8, `${tag} words inside the screen (${Math.round(r.copy[1])})`);
+      if (f === 1) ok(r.fig[3] < h - 8, `${tag} the name inside the screen (${Math.round(r.fig[3])})`);
+      if (f === 1) ok(!r.hasCopy, `${tag} no lines under the name`);
     }
     if (process.env.SHOT) await p.screenshot({ path: `${OUT}sg-${w}${rm ? "r" : ""}-${f}.jpg`, type: "jpeg", quality: 60 });
   }
