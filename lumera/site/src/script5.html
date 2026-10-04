@@ -150,7 +150,10 @@
   function outFade() {
     var p = beatsAt.p || 0, a = c01((p - 0.9) / 0.1); a = a * a * (3 - 2 * a);
     var r = pinEl ? pinEl.getBoundingClientRect() : null, past = r ? c01((innerHeight - r.bottom) / (innerHeight * 0.7)) : 0;
-    var v = ((1 - 0.5 * a) * (1 - past)).toFixed(3);
+    /* and it rises out of the black as it comes up the screen, so the film is
+       never a lit rectangle arriving: the light gathers, then the box opens */
+    var into = r ? c01((innerHeight - r.top) / (innerHeight * 0.9)) : 1; into = into * into * (3 - 2 * into);
+    var v = ((1 - 0.5 * a) * (1 - past) * into).toFixed(3);
     if (v !== outFade.v) { outFade.v = v; outEls.forEach(function (e) { if (e) e.style.opacity = v; }); }
   }
   function beatsAt(p) {

@@ -49,14 +49,54 @@ rep(`var iv = $("insidevid"), ivLoaded = true;`, `var iv = $("insidevid"), ivLoa
 rep(`estEl.textContent = "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");`, `estEl.setAttribute("data-aed", Math.round(total / 500) * 500); estEl.textContent = window.__money ? window.__money.fmt(Math.round(total / 500) * 500) : "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");`);
 /* the language lives in the address: Hebrew has a page of its own, French,
    Russian and Arabic ride on ?lang=, so a link copied in one language opens
-   in it. Moving between the English and the Hebrew address is a page load. */
+   in it. Changing language never reloads and never moves the reader: the
+   words change where they stand, whatever was in view stays in view, and
+   the address is rewritten in place to the one for that language. */
 rep(`function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); }`, `function setLang(c) { if (c === lang) return; try { localStorage.setItem("silavu-lang", c); } catch (e) {}
-    var onHe = window.__pageLang === "he", root = new URL(".", document.baseURI);
-    if (c === "he" && !onHe) { location.href = new URL("he/", root).href + location.hash; return; }
-    if (c !== "he" && onHe) { location.href = root.href + (c === "en" ? "" : "?lang=" + c) + location.hash; return; }
-    langURL(c);
-    var h = document.documentElement; h.classList.add("langing"); setTimeout(function () { lang = c; applyLang(); if (window.__money) window.__money.refresh(); requestAnimationFrame(function () { h.classList.remove("langing"); }); }, entered ? 220 : 0); }
-  function langURL(c) { try { var u = new URL(location.href); if (c === "en" || c === "he") u.searchParams.delete("lang"); else u.searchParams.set("lang", c); if (u.href !== location.href) history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) {} }`);
+    var h = document.documentElement, at = langAnchor(); h.classList.add("langing");
+    setTimeout(function () { lang = c; window.__pageLang = c === "he" ? "he" : ""; applyLang(); if (window.__money) window.__money.refresh(); langURL(c); langLinks(c);
+      langHold(at); requestAnimationFrame(function () { h.classList.remove("langing"); }); }, entered ? 160 : 0); }
+  /* every relative address on the page resolves from the site's root, whatever
+     the address bar says after a language change */
+  (function () { try { var bs = document.querySelector("base"); if (!bs) { bs = document.createElement("base"); document.head.insertBefore(bs, document.head.firstChild); }
+    bs.href = new URL(".", document.baseURI).href; } catch (e) {} })();
+  function langURL(c) { try { var root = new URL(".", document.baseURI), u = new URL(c === "he" ? "he/" : "", root);
+    if (c !== "en" && c !== "he") u.searchParams.set("lang", c); u.hash = location.hash;
+    if (u.href !== location.href) history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) {} }
+  /* a piece's own page, from a Hebrew page, is its Hebrew page */
+  function langLinks(c) { document.querySelectorAll('a[href^="pieces/"], a[href^="he/pieces/"]').forEach(function (a) {
+    a.setAttribute("href", (c === "he" ? "he/" : "") + a.getAttribute("href").replace(/^he\\//, "")); }); }
+  /* what the reader is looking at: the element a third of the way down the
+     screen (not one pinned in place), or failing that the chapter and how far
+     into it they are */
+  function langAnchor() {
+    var ys = [0.34, 0.5, 0.22, 0.66], xs = [0.5, 0.3, 0.7, 0.15, 0.85];
+    for (var a = 0; a < ys.length; a++) for (var b = 0; b < xs.length; b++) {
+      var els = document.elementsFromPoint ? document.elementsFromPoint(innerWidth * xs[b], innerHeight * ys[a]) : [];
+      for (var i = 0; i < els.length; i++) { var e = els[i];
+        /* translated words are rewritten, so hold on to what holds them */
+        e = e.closest("[data-en]") || (e.closest("bdi") ? e.closest("bdi").parentElement : e);
+        var r = e.getBoundingClientRect();
+        if (e === document.body || e === document.documentElement || r.height > innerHeight * 0.7 || r.height < 8) continue;
+        if (e.closest("header, #header, #cbar, #fab, #pbar, #where, #langmenu, .modal, [aria-hidden=true]")) continue;
+        var p = e, pinned = false; while (p && p !== document.body) { var ps = getComputedStyle(p).position; if (ps === "fixed" || ps === "sticky") { pinned = true; break; } p = p.parentElement; }
+        if (!pinned) return { el: e, top: r.top }; } }
+    var y = innerHeight * 0.34, secs = document.querySelectorAll("main > section, body > section, section[id]");
+    for (var j = 0; j < secs.length; j++) { var q = secs[j].getBoundingClientRect(); if (q.top <= y && q.bottom > y) return { el: secs[j], top: q.top }; }
+    return null;
+  }
+  window.__langAnchor = langAnchor;
+  /* put it back where it was, and keep it there while the new letters load in
+     and the page settles; the reader's own scrolling takes over at once */
+  function langHold(at) {
+    if (!at) return; var t0 = performance.now(), quit = false;
+    function stop() { quit = true; } ["wheel", "touchstart", "keydown", "mousedown"].forEach(function (ev) { addEventListener(ev, stop, { once: true, passive: true }); });
+    function fix() { if (quit) return; var d;
+      if (!at.el.isConnected) return; d = at.el.getBoundingClientRect().top - at.top;
+      if (Math.abs(d) > 1) scrollTo({ top: scrollY + d, behavior: "instant" });
+      if (performance.now() - t0 < 900) requestAnimationFrame(fix); }
+    fix(); try { document.fonts.ready.then(function () { requestAnimationFrame(fix); }); } catch (e) {}
+  }`);
 rep(`var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`, `var alias = { macro: "collection", wrist: "build", voices: "clients", partners: "clients" }`);
 
 /* v12: the piece window opens from the piece */

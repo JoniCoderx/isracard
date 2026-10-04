@@ -320,10 +320,21 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
      documents, ride on ?lang= at the same address. */
   var qs = new URLSearchParams(location.search), qp = qs.get("lang"), fixed = window.__pageLang, alt = window.__alt;
   if (qp && !/^(en|he|fr|ar|ru)$/.test(qp)) qp = null;
+  /* every relative address resolves from the site's root whatever the
+     address bar says, so the address can change without the page reloading */
+  try { var bs = document.querySelector("base"); if (bs) bs.href = bs.href; } catch (e) {}
   function go(l, first) {
-    if (alt && !first) {
-      if (l === "he" && fixed !== "he") { location.href = new URL(alt.he, document.baseURI).href; return; }
-      if (l !== "he" && fixed === "he") { location.href = new URL(alt.en + (l === "en" ? "" : "?lang=" + l), document.baseURI).href; return; }
+    /* a piece moves between its two addresses in place: no reload, and the
+       reader stays exactly where they were */
+    if (alt && !first && (l === "he") !== (fixed === "he")) {
+      var y = scrollY; fixed = l === "he" ? "he" : "en";
+      try { var a = new URL(l === "he" ? alt.he : alt.en, document.baseURI); if (l !== "he" && l !== "en") a.searchParams.set("lang", l); a.hash = location.hash;
+        history.replaceState(null, "", a.pathname + a.search + a.hash); } catch (e) {}
+      /* and the links follow: home, its chapters and the other pieces open in
+         the language now showing */
+      document.querySelectorAll("a[href]").forEach(function (x) { var hr = x.getAttribute("href"), m = hr.match(/^(?:he\\/|\\.\\/)?(#.*)?$|^(?:he\\/)?(pieces\\/.*)$/); if (!m) return;
+        x.setAttribute("href", m[2] ? (l === "he" ? "he/" : "") + m[2] : (l === "he" ? "he/" : "./") + (m[1] || "")); });
+      requestAnimationFrame(function () { scrollTo({ top: y, behavior: "instant" }); });
     }
     try { localStorage.setItem("silavu-lang", l); } catch (e) {}
     try { var u = new URL(location.href); if (l === "en" || (alt && l === "he")) u.searchParams.delete("lang"); else u.searchParams.set("lang", l);

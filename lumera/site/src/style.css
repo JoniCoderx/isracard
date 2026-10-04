@@ -5969,3 +5969,42 @@ html body #collection .sechead { gap:12px; }
 html body #collection .chap { margin-block:0 clamp(8px, 1vw, 14px); }
 #craft.sgjs .sgstage { padding-block:0 1svh; }
 #craft .sgstage { padding-block:4svh 1svh; }
+
+/* ══ v183 — the social marks: soft corners, and a hover that answers ══════
+   Rounded tiles on a faint warm glass. On hover a pale light rises from the
+   bottom of the tile, the mark turns dark on it and the tile lifts a little;
+   keyboard focus gets the same. ─────────────────────────────────────────── */
+html body .soc { gap:10px; }
+html body .soc a { position:relative; overflow:hidden; isolation:isolate; border-radius:14px; width:44px; height:44px;
+  border:1px solid rgba(242,239,233,.14); background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+  color:rgba(242,239,233,.78); box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  transition:color .35s ease, border-color .35s ease, transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease; }
+html body .soc a::before { content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit;
+  background:radial-gradient(120% 90% at 50% 110%, #fffaf0 0%, #ece3cf 55%, #d9c9a3 100%);
+  transform:translateY(101%); transition:transform .45s cubic-bezier(.2,.8,.2,1); }
+html body .soc a svg { width:18px; height:18px; transition:transform .45s cubic-bezier(.2,.8,.2,1); }
+html body .soc a:is(:hover, :focus-visible) { color:#14130f; border-color:rgba(236,227,207,.7); transform:translateY(-3px);
+  box-shadow:0 10px 24px -10px rgba(217,201,163,.55), inset 0 1px 0 rgba(255,255,255,.4); }
+html body .soc a:is(:hover, :focus-visible)::before { transform:translateY(0); }
+html body .soc a:is(:hover, :focus-visible) svg { transform:scale(1.08); }
+html body .soc a:active { transform:translateY(-1px) scale(.97); }
+html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline-offset:3px; }
+@media (hover:none) { html body .soc a:hover { transform:none; } }
+@media (prefers-reduced-motion:reduce) { html body .soc a, html body .soc a::before, html body .soc a svg { transition:none; } }
+
+/* ══ v184 — the box sits on the black ═════════════════════════════════════
+   The film's spotlight reaches the top of its frame, so the chapter used to
+   begin with a lit cone cut off by a straight edge. The top of the film now
+   dissolves into black, the sides fall away into a soft vignette, and (in
+   script5) the whole film rises out of the black as it comes up the screen.
+   The frames themselves are not touched. ─────────────────────────────────── */
+#stonepin .veil2 { background:
+    linear-gradient(to bottom, #000 0%, rgba(0,0,0,.92) 5%, rgba(0,0,0,.55) 14%, rgba(0,0,0,0) 30%),
+    radial-gradient(120% 92% at 50% 58%, rgba(0,0,0,0) 58%, rgba(0,0,0,.55) 84%, #000 100%),
+    linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.42) 22%, rgba(0,0,0,0) 48%) !important; }
+@media (max-width:759px) {
+  #stonepin .veil2 { background:
+      linear-gradient(to bottom, #000 0%, rgba(0,0,0,.9) 4%, rgba(0,0,0,.5) 11%, rgba(0,0,0,0) 24%),
+      radial-gradient(140% 90% at 50% 55%, rgba(0,0,0,0) 62%, rgba(0,0,0,.5) 86%, #000 100%),
+      linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.42) 22%, rgba(0,0,0,0) 48%) !important; }
+}
