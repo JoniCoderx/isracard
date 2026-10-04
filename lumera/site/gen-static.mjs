@@ -332,7 +332,7 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
   {
     const a = ABOUT;
     const portrait = a.portrait
-      ? `<img src="${a.portrait}-1100.jpg" srcset="${a.portrait}-800.jpg 800w, ${a.portrait}-1100.jpg 1100w" sizes="(min-width:900px) 38vw, 92vw" width="1100" height="1375" fetchpriority="high" alt="${escA(a.name.en)}, ${escA(a.role.en)} of SILAVU, at a table with three Line bracelets in a black tray" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)} של SILAVU, ליד שולחן ועליו שלושה צמידי Line במגש שחור">`
+      ? `<img src="${a.portrait}-1100.jpg" srcset="${a.portrait}-800.jpg 800w, ${a.portrait}-1100.jpg 1100w" sizes="(min-width:900px) 38vw, 92vw" width="1100" height="1375" fetchpriority="high" alt="${escA(a.name.en)}, ${escA(a.role.en)} of SILAVU, on a terrace in Downtown Dubai at dusk" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)} של SILAVU, ליד שולחן ועליו שלושה צמידי Line במגש שחור">`
       : `<div class="aph" role="img" aria-label="${escA(a.name.en)}">${mark("aphmk", "b")}</div>`;
     const inner = `<main class="doc about">
 <span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
