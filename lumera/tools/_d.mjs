@@ -1,0 +1,11 @@
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox"] });
+const [w, h, pth, root] = (process.env.Q || "1366,900,/he/,#collection").split(",");
+const get = async port => { const c = await b.newContext({ viewport: { width: +w, height: +h }, isMobile: +w < 760, hasTouch: +w < 760, reducedMotion: "reduce" }); const p = await c.newPage();
+  await p.goto(`http://localhost:${port}${pth}`, { waitUntil: "load" }); await p.waitForTimeout(700); await p.click("#enterBtn", { timeout: 700 }).catch(() => {});
+  await p.evaluate(async () => { document.querySelectorAll(".rv").forEach(e => e.classList.add("in")); await document.fonts.ready; }); await p.waitForTimeout(500);
+  const r = await p.evaluate(root => [...document.querySelectorAll(root + " *")].filter(e => e.getBoundingClientRect().height > 0).map(e => { const cs = getComputedStyle(e); return [e.tagName + "." + e.className.toString().split(" ")[0] + ":" + e.textContent.trim().slice(0, 18), Math.round(e.getBoundingClientRect().height), cs.fontFamily.split(",")[0], cs.lineHeight, cs.fontSize]; }), root);
+  await c.close(); return r; };
+const A = await get(8779), B = await get(8777);
+const d = A.map((a, i) => [a, B[i]]).filter(([a, bb]) => bb && Math.abs(a[1] - bb[1]) > 2).map(([a, bb]) => `${a[0]} | ${a[1]}→${bb[1]} | ${a[2]} ${a[3]} ${a[4]} → ${bb[2]} ${bb[3]} ${bb[4]}`);
+console.log(d.slice(0, 25).join("\n")); await b.close();

@@ -24,7 +24,7 @@ export const markUse = (cls) => `<svg class="sy${cls ? " " + cls : ""}" viewBox=
 export const mark = (cls, cut) => { const d = cut === "b" ? MARK_B : cut === "xs" ? MARK_XS : MARK, w = cut === "b" ? MARK_BW : cut === "xs" ? MARK_XSW : MARK_W; return `<svg class="sy${cls ? " " + cls : ""}" viewBox="0 0 ${Math.ceil(w)} 1000" aria-hidden="true"><path d="${d}" pathLength="1"/></svg>`; };
 /* 02 — the wordmark: six letters drawn as one weight of line, terminals cut square; A and V cut like facets */
 export const LOGO = ["M54,16 A24,24 0 1 0 28,50 A24,24 0 1 1 2,84", "M118,0 V100", "M178,0 V100 H228", "M286,100 L318,0 L350,100", "M356,0 L388,100 L420,0", "M480,0 V66 A32,32 0 0 0 544,66 V0"];
-/* the wordmark is set in type, not drawn: Jost, capitals, wide tracking. The symbol is the distinctive element; the word supports it. */
+/* the wordmark is set in type, not drawn: Urbanist, capitals, wide tracking. The symbol is the distinctive element; the word supports it. */
 export const logo = (cls) => `<span class="lg${cls ? " " + cls : ""}" role="img" aria-label="SILAVU" dir="ltr">SILAVU</span>`;
 /* 03 — the lockup */
 export const lockup = (cls) => `<span class="lk${cls ? " " + cls : ""}">${markUse("")}${logo()}</span>`;
@@ -181,7 +181,7 @@ ${markDefs()}
     <div class="hcap" id="hcap">
       <div class="k gold rv" data-en="High jewellery · Made by hand" data-he="תכשיטי יוקרה · עבודת יד">High jewellery · Made by hand</div>
       <h1 class="h sp rv" data-en="The Line of <em>Desire</em>" data-he="The Line of <em>Desire</em>">The Line of <em>Desire</em></h1>
-      <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand, and finished to be worn every day." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד ומלוטשים כדי להיענד בכל יום.">Diamonds chosen one by one, set by hand, and finished to be worn every day.</p>
+      <p class="p rv d2" data-en="Crafted with intention. Made to leave an impression." data-he="נוצר מתוך כוונה. נעשה כדי להשאיר רושם.">Crafted with intention. Made to leave an impression.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#collection" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</a><a class="lnk hsec" href="#concierge" data-en="Book a private viewing" data-he="קביעת פגישה פרטית">Book a private viewing</a></div>
     </div>
     <div class="hfacts rv d4">

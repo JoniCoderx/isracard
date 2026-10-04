@@ -1048,8 +1048,8 @@
     var x = c.getContext("2d"), rtl = lang === "he" || lang === "ar", he = lang === "he";
     var g = x.createRadialGradient(W / 2, 420, 60, W / 2, 420, 900); g.addColorStop(0, "#1c1c1f"); g.addColorStop(1, "#050505");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
-    var face = "Jost, system-ui, sans-serif", serif = "'Cormorant Garamond', Georgia, serif";
-    try { face = getComputedStyle(document.querySelector(".lg")).fontFamily || face; } catch (e) {}
+    var face = "Manrope, system-ui, sans-serif", serif = "Fraunces, Georgia, serif";
+    try { face = getComputedStyle(document.body).fontFamily || face; } catch (e) {}
     var gold = "#d9b872", ink = "#f4efe4", mute = "rgba(244,239,228,.56)", line = "rgba(244,239,228,.14)";
     var tr = function (en, hw) { return he ? hw : (T(en) || en); };
     /* the piece, large */

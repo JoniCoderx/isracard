@@ -55,8 +55,8 @@
   }
   /* a phone's address bar coming and going resizes the window on every
      scroll; only a change of width moves the drawing */
-  var lastW = innerWidth;
-  addEventListener("resize", function () { if (innerWidth !== lastW) { lastW = innerWidth; dirty = true; } });
+  var lastW = innerWidth, vh0 = innerHeight;
+  addEventListener("resize", function () { if (innerWidth !== lastW) { lastW = innerWidth; vh0 = innerHeight; dirty = true; } });
 
   function frame(q) {
     var w = write(0.03, 0.8, q), len = L0 + (L1 - L0) * w, off = (L - len).toFixed(1);
@@ -92,7 +92,9 @@
        section is still rising into view, so there is no blank black screen:
        from the moment the line itself comes up over the bottom of the screen,
        to the end of the hold */
-    var hold = Math.max(1, sec.offsetHeight - stage.offsetHeight), lead = stage.offsetHeight * 0.52;
+    /* the writing begins the moment the chapter shows at the foot of the
+       screen, so nobody waits in front of an empty black field */
+    var hold = Math.max(1, sec.offsetHeight - stage.offsetHeight), lead = vh0;
     var t = c01((lead - r.top) / (lead + hold));
     /* the line follows the scroll with a little weight: eased per frame, the
        same at 60 and 120 frames a second */

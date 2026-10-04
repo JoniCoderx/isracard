@@ -29,7 +29,7 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   const fs = rm ? [0.5] : [0, 0.1, 0.2, 0.35, 0.6, 0.83, 0.88, 1];
   for (const f of fs) {
     /* the writing runs from when the line comes up over the bottom of the screen to the end of the hold */
-    const lead = S * 0.52, hold = H - S;
+    const lead = h, hold = H - S;
     await p.evaluate(y => scrollTo(0, y), Math.round(rm ? top - (h - H) / 2 : top - lead + f * (lead + hold))); await p.waitForTimeout(rm ? 500 : 1400);
     const r = await probe();
     ok(r.over <= 0, `${tag} @${f} no sideways overflow`);

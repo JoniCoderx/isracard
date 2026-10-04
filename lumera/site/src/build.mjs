@@ -1,8 +1,27 @@
 import fs from "node:fs";
 import { body, MARK, MARK_W } from "./body.mjs";
 const S = new URL(".", import.meta.url).pathname;
-const css = fs.readFileSync(S + "style.css", "utf8");
-const FONT_HREF = "https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Assistant:wght@200;300;400;500&family=Noto+Sans+Arabic:wght@200;300;400;500&display=swap";
+/* Measures in ch follow the width of the "0" of whatever face is in use, so
+   changing the type would have widened or narrowed every column set in ch
+   (61 of them) and moved the line breaks. They are pinned to the width the
+   house's "0" had when those columns were drawn: .593em in Latin (Urbanist),
+   .482em in Hebrew (Assistant). See --ch in style.css. */
+const css = fs.readFileSync(S + "style.css", "utf8").replace(/(\d*\.?\d+)ch\b/g, "calc($1 * var(--ch))");
+/* The house type is served with the site (public/fonts): Fraunces for the
+   display and the italic voice, Manrope for everything read and pressed,
+   Rubik and Assistant for Hebrew, and the six letters of the wordmark in
+   Urbanist. Only Arabic is still fetched from Google, and only by a page
+   that has Arabic on it (the files are split by unicode range). */
+const FONT_HREF = "https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500&display=swap";
+/* each face is matched to the one it replaces, so lines break where they did:
+   Manrope runs about 4% wider than Urbanist, Fraunces upright about 15%
+   narrower and lower in the x-height than the light Urbanist headlines it
+   takes over, Rubik about 6% wider than Assistant */
+const SIZE_ADJUST = { Manrope: { normal: "96%" }, Fraunces: { normal: "108%" }, Rubik: { normal: "95%" } };
+const FONT_FACES = ["fraunces", "manrope", "rubik", "assistant", "wordmark"].map(n => fs.readFileSync(S + "../public/fonts/" + n + ".css", "utf8")).join("\n")
+  .replace(/url\(([^)]+\.woff2)\)/g, "url(fonts/$1)")
+  .replace(/@font-face \{([^}]*)\}/g, (m, body) => { const fam = (body.match(/font-family: '([^']+)'/) || [])[1], st = (body.match(/font-style: (\w+)/) || [])[1];
+    const sa = SIZE_ADJUST[fam] && SIZE_ADJUST[fam][st]; return sa ? "@font-face {" + body.replace(/\s*$/, "") + "\n  size-adjust: " + sa + ";\n}" : m; });
 let s1 = fs.readFileSync(S + "script1.html", "utf8");
 const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S + "script2.html", "utf8"), s3 = fs.readFileSync(S + "script3.html", "utf8"), s4 = fs.readFileSync(S + "script4.html", "utf8"), s5 = fs.readFileSync(S + "script5.html", "utf8"), s6 = fs.readFileSync(S + "script6.html", "utf8");
 const s9 = fs.readFileSync(S + "script9.html", "utf8");
@@ -147,7 +166,7 @@ const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
 /* the price list the estimate reads, without its note to the editor */
 const PRICING = JSON.parse(fs.readFileSync(S + "pricing.json", "utf8")); delete PRICING._read_me;
 const pricingTag = `<script>window.SILAVU_PRICING = ${JSON.stringify(PRICING)};</script>`;
-const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}`;
+const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}`;
 /* lighter on the wire: dead rules out, the sheet and the scripts minified (see slim.mjs) */
 const { slim } = await import("./slim.mjs");
 const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"]);

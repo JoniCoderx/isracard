@@ -26,7 +26,7 @@ jobs:
       - name: Static index
         run: node lumera/site/gen-static.mjs lumera/site/silavu-page.html dist "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
       - name: Icons, manifest, OG image
-        run: cp -v lumera/site/public/* dist/
+        run: cp -rv lumera/site/public/* dist/
       # Fifty-six photographs and four videos that are not in the repository.
       # They came from one preview host, and when that host answered 503 for six
       # minutes the whole deploy died on a single missing file — the site that

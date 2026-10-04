@@ -1,10 +1,11 @@
-  /* The typefaces are linked from the document head, not imported here: an
-     @import is only honoured as the first rule of a sheet, and build.mjs puts
-     the mark variable above this one. See FONT_HREF in build.mjs. */
+  /* The typefaces are served with the site; their @font-face rules are put
+     at the head of this sheet by build.mjs (from public/fonts). See FONT_HREF
+     and SIZE_ADJUST there. */
   :root { --bg:#000; --ink:#f6f3ed; --ink2:#dcd9d2; --ink3:#b3b0a8; --gold:#e6e0d2; --house:#0b2327; --house-lit:#1a4a50; --house-tint:rgba(26,74,80,.22); --house-line:rgba(56,122,130,.45); --line:rgba(242,239,233,.14); --ease:cubic-bezier(.16,1,.3,1); --pad:clamp(20px,5vw,80px); --r:16px;
-    --sans:"Urbanist","Inter Tight",system-ui,-apple-system,sans-serif; --serif:"Cormorant Garamond",Georgia,serif; --word:"Urbanist",system-ui,sans-serif; color-scheme:dark; }
-  html[data-lang="he"] { --sans:"Assistant","Inter Tight",system-ui,sans-serif; }
-  html[data-lang="ar"] { --sans:"Noto Sans Arabic","Assistant",system-ui,sans-serif; }
+    --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --serif:"Fraunces",Georgia,serif; --display:"Fraunces",Georgia,serif;
+    --word:"Urbanist","Manrope",system-ui,sans-serif; --ch:.593em; color-scheme:dark; }
+  html[data-lang="he"] { --sans:"Assistant","Manrope",system-ui,sans-serif; --display:"Rubik","Fraunces",system-ui,sans-serif; --ch:.482em; }
+  html[data-lang="ar"] { --sans:"Noto Sans Arabic","Manrope",system-ui,sans-serif; --display:"Noto Sans Arabic","Fraunces",system-ui,sans-serif; --ch:.482em; }
   :where(#silavu, #silavu *) { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; background:#000; }
   html, body { overflow-x:clip; }
@@ -5807,3 +5808,37 @@
   .csel .cselimg.dark { background:#121110; object-fit:contain; }
   .csel .cselimg[hidden] { display:none; }
   @media (max-width:759px) { .csel.hasimg { grid-template-columns:56px minmax(0, 1fr); column-gap:12px; } .csel .cselimg { width:56px; height:56px; } }
+
+  /* ══ v174 — the type of a new house ═══════════════════════════════════════
+     One system, everywhere. Fraunces, its corners softened, is the display:
+     the headlines, upright and light, and the italic voice that used to be
+     Cormorant Garamond (the accents in a headline, the names of the pieces,
+     the prices said in words). Manrope is everything that is read or pressed:
+     text, navigation, buttons, labels, figures. Hebrew sets its headlines in
+     Rubik and its text in Assistant; Arabic keeps Noto Sans Arabic. The
+     wordmark keeps its own letters. Each face is matched in size to the one it
+     replaces (SIZE_ADJUST in build.mjs), so lines fall where they did and
+     nothing else on the page moves. ─────────────────────────────────────── */
+  .h, .h2, .h3, .dpage .doc h1, .ppage h1 { font-family:var(--display); font-weight:300; font-optical-sizing:auto; }
+  .h { letter-spacing:-.018em; }
+  .h2, .h3, .dpage .doc h1, .ppage h1 { letter-spacing:-.014em; }
+  /* the accent is the same family in italic now, so it no longer needs
+     enlarging to stand beside the upright */
+  .h em, .h2 em, .h3 em, .t em { font-size:1em; font-weight:300; letter-spacing:-.008em; }
+  html[data-ns] .h, html[data-ns] .h2, html[data-ns] .h3, html[data-ns] .dpage .doc h1, html[data-ns] .ppage h1 { letter-spacing:0; }
+  /* labels and small lines that were set in the wordmark's face */
+  .mdt > summary, #craft .sgc1 { font-family:var(--sans); }
+  /* reading weight: light only where the text is large */
+  body { font-weight:400; letter-spacing:0; }
+  .p, p { font-weight:400; }
+  .lead, .p.lead { font-weight:300; }
+  /* figures line up */
+  .c, .price, .clock .c, #est, .spec .v, .carat .big { font-variant-numeric:tabular-nums lining-nums; }
+  /* Hebrew and Arabic set their accents upright in the headline face, at the
+     size they have always had */
+  html[data-ns] .h em, html[data-ns] .h2 em, html[data-ns] .h3 em, html[data-ns] .t em { font-size:1.1em; }
+  /* two lines that the new faces set a little wider, held to the lines they had */
+  #build #configure .total .lsum { letter-spacing:-.012em; }
+  @media (max-width:759px) { #build #configure .total .lsum { font-size:.94rem; } }
+  html[data-ns] #configure .cacts .clink { font-weight:300; }
+  @media (max-width:759px) { .ahtext h1 { font-size:2.16rem !important; } }

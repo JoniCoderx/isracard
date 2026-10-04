@@ -48,7 +48,10 @@ const ASSETS = path.join(outDir, "assets");
 fs.rmSync(ASSETS, { recursive: true, force: true }); fs.mkdirSync(ASSETS, { recursive: true });
 const hashOf = t => crypto.createHash("sha1").update(t).digest("hex").slice(0, 10);
 let cssLink = "";
-html = html.replace(/<style>([\s\S]*?)<\/style>\s*/, (m0, css) => { const n = "silavu." + hashOf(css) + ".css"; fs.writeFileSync(path.join(ASSETS, n), css); cssLink = '<link rel="stylesheet" href="assets/' + n + '">'; return ""; });
+/* the two faces every page sets first, asked for before the stylesheet is read */
+const fontPreload = ["manrope-normal-latin", "fraunces-normal-latin"].map(k => { const f = fs.readdirSync(path.join(path.dirname(path.resolve(src)), "public/fonts")).find(x => x.startsWith(k + "-") && x.endsWith(".woff2"));
+  return f ? `<link rel="preload" as="font" type="font/woff2" href="fonts/${f}" crossorigin>` : ""; }).filter(Boolean).join("\n");
+html = html.replace(/<style>([\s\S]*?)<\/style>\s*/, (m0, css) => { css = css.replace(/url\(fonts\//g, "url(../fonts/"); const n = "silavu." + hashOf(css) + ".css"; fs.writeFileSync(path.join(ASSETS, n), css); cssLink = '<link rel="stylesheet" href="assets/' + n + '">'; return ""; });
 let jsN = 0;
 html = html.replace(/<script>([\s\S]*?)<\/script>/g, (m0, code) => {
   if (code.length < 4000) return m0;
@@ -109,6 +112,7 @@ const head = `<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 ${fontLinks}
+${fontPreload}
 ${cssLink}
 <link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/hero-1600.jpg" imagesrcset="img/hero-1600.jpg 1600w, img/hero-2560.jpg 2560w, img/hero-3840.jpg 3840w" imagesizes="100vw">
 <link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/herov-1080.jpg" imagesrcset="img/herov-1080.jpg 1080w, img/herov-1440.jpg 1440w" imagesizes="100vw">
