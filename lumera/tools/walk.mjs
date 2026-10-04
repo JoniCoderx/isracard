@@ -1,32 +1,14 @@
-/* Every screen of the phone, in order, so they can be looked at. */
+// Walks the whole page at one size, a screen at a time, and makes contact sheets.
 import { chromium } from "playwright-core";
-const OUT = "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/walk";
-import { mkdirSync } from "node:fs";
-mkdirSync(OUT, { recursive: true });
-const lang = process.argv[2] || "en";
-const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
-  args: ["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
-const p = await b.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, reducedMotion: "reduce" });
-const errs = []; p.on("pageerror", e => errs.push(String(e).slice(0, 160)));
-await p.goto("http://127.0.0.1:8777/", { waitUntil: "domcontentloaded" });
-await p.waitForTimeout(2800); await p.click("#enterBtn", { timeout: 6000 }).catch(() => {});
-await p.waitForTimeout(1000);
-if (lang !== "en") { await p.click("#langBtn", { timeout: 4000 }).catch(()=>{}); await p.waitForTimeout(400);
-  await p.click(`[data-lang="${lang}"]`, { timeout: 4000 }).catch(()=>{}); await p.waitForTimeout(1200); }
-await p.evaluate(async () => { const s = Math.round(innerHeight * 0.7); for (let y = 0; y < document.body.scrollHeight; y += s) { scrollTo({ top: y, behavior: "instant" }); await new Promise(r => setTimeout(r, 150)); } });
-const total = await p.evaluate(() => document.body.scrollHeight);
-let n = 0;
-for (let y = 0; y + 200 < total; y += 760) {
-  await p.evaluate(v => scrollTo({ top: v, behavior: "instant" }), y);
-  await p.waitForTimeout(750);
-  const where = await p.evaluate(() => {
-    let best = "", bt = -1e9;
-    for (const s of document.querySelectorAll("section[id], div[id].cwrap"))
-      { const t = s.getBoundingClientRect().top; if (t <= innerHeight * 0.5 && t > bt) { bt = t; best = s.id; } }
-    return best;
-  });
-  await p.screenshot({ path: `${OUT}/${String(n).padStart(2,"0")}-${where || "x"}.png` });
-  n++;
-}
-console.log(`${n} screens, ${total}px, errors ${errs.length}` + (errs.length ? " :: " + errs[0] : ""));
+const [W, H, tag] = [+(process.argv[2] || 390), +(process.argv[3] || 844), process.argv[4] || "m"];
+const O = "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/walk/";
+import fs from "fs"; fs.mkdirSync(O, { recursive: true });
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox"] });
+const mob = W < 760; const c = await b.newContext({ viewport: { width: W, height: H }, isMobile: mob, hasTouch: mob, deviceScaleFactor: 1 });
+const p = await c.newPage(); await p.goto("http://localhost:8777/", { waitUntil: "load" }); await p.waitForTimeout(1000);
+await p.click("#enterBtn", { timeout: 1500 }).catch(() => {}); await p.waitForTimeout(500);
+await p.evaluate(() => document.documentElement.style.scrollBehavior = "auto");
+const total = await p.evaluate(() => document.documentElement.scrollHeight);
+let i = 0; for (let y = 0; y < total; y += Math.round(H * 0.9)) { await p.evaluate(y => scrollTo(0, y), y); await p.waitForTimeout(1300); await p.screenshot({ path: `${O}${tag}-${String(i++).padStart(2, "0")}.png` }); }
+console.log(tag, i, "screens");
 await b.close();

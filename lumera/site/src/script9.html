@@ -53,7 +53,10 @@
     sparks.forEach(function (g) { g.dataset.s = ss; });
     dirty = false; last = -2;
   }
-  addEventListener("resize", function () { dirty = true; });
+  /* a phone's address bar coming and going resizes the window on every
+     scroll; only a change of width moves the drawing */
+  var lastW = innerWidth;
+  addEventListener("resize", function () { if (innerWidth !== lastW) { lastW = innerWidth; dirty = true; } });
 
   function frame(q) {
     var w = write(0.03, 0.8, q), len = L0 + (L1 - L0) * w, off = (L - len).toFixed(1);
@@ -80,8 +83,14 @@
     var r = sec.getBoundingClientRect(), vh = innerHeight;
     if (r.bottom < -60 || r.top > vh + 60) return;
     if (dirty) measure();
-    var t = c01(-r.top / Math.max(1, r.height - vh));
-    if (p < 0) p = t; else { p += (t - p) * 0.1; if (Math.abs(t - p) < 0.0003) p = t; }
+    /* progress through the hold, against the stage's own height (a fixed
+       100svh) rather than the window's, which changes as the address bar does */
+    var t = c01(-r.top / Math.max(1, sec.offsetHeight - stage.offsetHeight));
+    /* the line follows the scroll with a little weight: eased per frame, the
+       same at 60 and 120 frames a second */
+    var now = performance.now(), dt = Math.min(64, now - (tick.t || now)); tick.t = now;
+    var k = 1 - Math.pow(0.88, dt / 16.7);
+    if (p < 0) p = t; else { p += (t - p) * k; if (Math.abs(t - p) < 0.0002) p = t; }
     if (p === last) return; last = p;
     frame(p);
   }

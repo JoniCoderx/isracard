@@ -5531,10 +5531,18 @@
   #craft .sgc2 i:last-child { background:linear-gradient(to right, rgba(236,232,224,.4), rgba(236,232,224,0)); }
   html[data-ns] #craft .sgc1 { letter-spacing:.04em; margin-inline-end:0; font-family:var(--sans); }
   html[data-ns] #craft .sgc2 { font-family:var(--sans); font-style:normal; font-weight:300; }
-  @media (max-width:759px) { #craft .sgfig { width:86vw; } #craft .sgc2 i { width:26px; } }
+  @media (max-width:759px) { #craft .sgfig { width:94vw; } #craft .sgc2 i { width:26px; } }
 
   /* with the script: the held passage */
   #craft.sgjs { height:190svh; }
   #craft.sgjs .sgstage { position:sticky; top:0; height:100svh; min-height:0; padding-block:0; }
   #craft.sgjs .sgdot, #craft.sgjs .sgc1, #craft.sgjs .sgc2 { opacity:0; }
   @media (max-width:759px) { #craft.sgjs { height:160svh; } }
+
+  /* ── v160 — steady. Nothing moves with the scroll from script: the house
+     mark in the dark chapters no longer rises and shrinks as it passes (its
+     light still travels across it), the stone and its words hold still, and
+     the card photographs sit where they are in their frames. ── */
+  .hsig svg.sy, .fbig svg.sy.huge { transform:none !important; transition:none !important; will-change:auto; }
+  #macro .mvid { transform:none !important; will-change:auto; }
+  #macro .mtxt { transform:none !important; }
