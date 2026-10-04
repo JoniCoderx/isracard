@@ -68,7 +68,7 @@ await p.tap("#fName"); await p.waitForTimeout(300);
 await p.setViewportSize({ width: W, height: Math.round(H*0.52) }); await p.waitForTimeout(700);
 await p.evaluate(()=>document.activeElement.scrollIntoView({block:"nearest"})); await p.waitForTimeout(400);
 for (const id of ["fName","fContact","fMsg"]) {
-  await p.focus("#"+id); await p.evaluate(id=>document.getElementById(id).scrollIntoView({block:"nearest"}), id); await p.waitForTimeout(300);
+  await p.focus("#"+id); await p.evaluate(id=>document.getElementById(id).scrollIntoView({block:"nearest"}), id); await p.waitForTimeout(700);   /* the page brings a focused message field into view after 480ms, once the keyboard has settled */
   const k = await p.evaluate(id=>{ const e=document.getElementById(id), r=e.getBoundingClientRect(), t=document.elementFromPoint(r.left+r.width/2, r.top+Math.min(r.height/2, 12)); const fab=document.getElementById("fab"), fr=fab.getBoundingClientRect(); return { inView: r.top>=0 && r.bottom<=innerHeight+1, hit: !!t && (t===e || e.contains(t) || t.closest(".field")===e.closest(".field")), fabOver: getComputedStyle(fab).opacity>0.1 && fr.top < r.bottom && fr.bottom > r.top }; }, id);
   ok(k.inView && k.hit && !k.fabOver, `${T} keyboard up (${Math.round(H*0.52)}px tall): #${id} visible and not covered ${JSON.stringify(k)}`);
 }
