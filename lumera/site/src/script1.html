@@ -1225,8 +1225,11 @@
   (function () {
     var DRK = "silavu-draft", ids = ["fName", "fCity", "fContact", "fMsg"], d = null;
     try { d = JSON.parse(sessionStorage.getItem(DRK) || "null"); } catch (e) {}
-    if (d) { ids.forEach(function (id) { var el = $(id); if (el && d[id]) { el.value = d[id]; el.parentElement.classList.add("filled"); } }); if (d.want) setWant(d.want); fit(); }
-    function save() { var o = {}; ids.forEach(function (id) { o[id] = $(id).value; }); var w = form.querySelector(".want .chip.on"); o.want = w ? w.getAttribute("data-en") : ""; try { sessionStorage.setItem(DRK, JSON.stringify(o)); } catch (e) {} }
+    if (d) { ids.forEach(function (id) { var el = $(id); if (el && d[id]) { el.value = d[id]; el.parentElement.classList.add("filled"); } }); if (d.want) setWant(d.want); fit();
+      /* the way they asked to be answered survives the move to the Hebrew address too */
+      var cc = d.ch && form.querySelector('.chip[data-ch="' + d.ch + '"]');
+      if (cc && !cc.hidden) { form.querySelectorAll(".chip[data-ch]").forEach(function (x) { x.classList.toggle("on", x === cc); }); chan = d.ch; chanLabel(); } }
+    function save() { var o = {}; ids.forEach(function (id) { o[id] = $(id).value; }); var w = form.querySelector(".want .chip.on"); o.want = w ? w.getAttribute("data-en") : ""; o.ch = chan; try { sessionStorage.setItem(DRK, JSON.stringify(o)); } catch (e) {} }
     form.addEventListener("input", save); form.addEventListener("click", function () { setTimeout(save, 0); });
   })();
   $("cselClear").addEventListener("click", function () { setSel(null); });

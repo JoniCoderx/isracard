@@ -25,7 +25,7 @@ await p.waitForTimeout(700);
 /* the two channels a house has not published a number for are hidden; unhide
    them so the label logic can be read */
 await p.evaluate(() => { document.querySelectorAll("#cform .chip[data-ch]").forEach(c => c.hidden = false); document.querySelector("#cform .chan").hidden = false; });
-const want = { Email: "Send enquiry", WhatsApp: "Continue on WhatsApp", Call: "Call SILAVU" };
+const want = { Email: "Continue in email", WhatsApp: "Continue on WhatsApp", Call: "Call SILAVU" };
 for (const ch of ["WhatsApp", "Call", "Email"]) {
   await p.click(`#cform .chip[data-ch="${ch}"]`);
   await p.waitForTimeout(150);
@@ -38,10 +38,12 @@ for (const ch of ["WhatsApp", "Call", "Email"]) {
 /* a change of language must not undo it */
 await p.click("#cform .chip[data-ch=\"WhatsApp\"]"); await p.waitForTimeout(120);
 await p.click("#langBtn", { timeout: 4000 }).catch(() => {});
-await p.waitForTimeout(350); await p.click('[data-lang="he"]', { timeout: 4000 }).catch(() => {});
-await p.waitForTimeout(1300);
+/* Hebrew is its own address now (a page load); French changes in place, which
+   is where the label has to survive being repainted */
+await p.waitForTimeout(350); await p.click('#langmenu [data-lang="fr"]', { timeout: 4000 }).catch(() => {});
+await p.waitForTimeout(1600);
 const he = await p.evaluate(() => document.getElementById("csend").textContent.trim());
-ok(/וואטסאפ/.test(he), `the channel survives a change of language (Hebrew reads "${he}")`);
+ok(/WhatsApp/.test(he) && he !== "Continue on WhatsApp", `the channel survives a change of language (French reads "${he}")`);
 const note = await p.evaluate(() => { const n = document.querySelector(".estnote"); return n ? { text: n.textContent.trim().length, vis: n.getBoundingClientRect().height > 0 } : null; });
 ok(note && note.vis && note.text > 40, `the estimate carries its condition (${note ? note.text : 0} characters, shown: ${note && note.vis})`);
 ok(errs.length === 0, `no script errors (${errs[0] || ""})`);
