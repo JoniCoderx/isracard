@@ -383,12 +383,11 @@ ${markDefs()}
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="A piece from the collection" data-he="תכשיט מהקולקציה">A piece from the collection</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Bespoke commission" data-he="תכשיט בהתאמה אישית">Bespoke commission</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Something else" data-he="משהו אחר">Something else</button></div>
-          <div class="csel" id="csel" hidden aria-live="polite">
+          <div class="csel" id="csel" hidden aria-live="polite" role="group" aria-labelledby="cselK">
             <img class="cselimg" id="cselImg" alt="" width="64" height="64" hidden>
-            <div class="cselhd"><span class="k" data-en="Your selection" data-he="הבחירה שלכם">Your selection</span>
-              <span class="cselacts"><button type="button" class="lnk cseled" id="cselEdit" data-en="Edit selection" data-he="עריכת הבחירה">Edit selection</button><button type="button" class="lnk cselx" id="cselClear" data-en="Remove" data-he="הסרה">Remove</button></span></div>
-            <p class="cselact k" id="cselAct"></p>
-            <p class="cseltxt" id="cselTxt"></p>
+            <div class="cselmain"><span class="k cselk" id="cselK" data-en="Your selection" data-he="הבחירה שלכם">Your selection</span>
+              <p class="cseltxt" id="cselTxt"></p><p class="cselact" id="cselAct"></p></div>
+            <span class="cselacts"><button type="button" class="lnk cseled" id="cselEdit" data-en="Edit selection" data-he="עריכת הבחירה">Edit selection</button><button type="button" class="lnk cselx" id="cselClear" data-en="Remove" data-he="הסרה">Remove</button></span>
           </div>
           <div class="field fmsg"><textarea id="fMsg" rows="1" dir="auto"></textarea><label for="fMsg" data-en="Your message" data-he="ההודעה שלכם">Your message</label></div>
           <div class="chan" hidden><span class="k" data-en="How should we reach you?" data-he="איך נחזור אליכם?">How should we reach you?</span>

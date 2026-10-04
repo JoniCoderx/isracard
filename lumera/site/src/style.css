@@ -5923,3 +5923,49 @@
     #beats .beat .bt { font-size:clamp(1.9rem, 8.4vw, 2.5rem) !important; }
   }
   @media (prefers-reduced-motion:reduce) { #beats .beat .bt, #beats .beat.on .bt, #beats .beat .acts, #beats .beat.on .acts { transition:none; filter:none; transform:none; } }
+
+/* ──── v180 · Hebrew and Arabic paragraphs wrap from the right ────
+   Hebrew text is wrapped in an isolated <bdi dir="rtl">. A paragraph set to
+   unicode-bidi:plaintext takes its direction from its first letter, but it
+   cannot see a letter inside an isolate, so it fell back to left-to-right and
+   every wrapped line after the first sat on the left. A paragraph that holds
+   right-to-left text now keeps the page's direction. ──── */
+html[dir="rtl"] :has(> bdi[dir="rtl"]:first-child) { unicode-bidi:isolate !important; direction:rtl; }
+
+/* ──── v181 · the selection on one line, beside its picture ────
+   The picture, then the piece's name with a small tag for what it is for
+   (Reservation, Private viewing…), and Edit / Remove at the far end. "Your
+   selection" stays as the accessible name of the group, not a third line. ──── */
+.csel, .csel.hasimg { display:flex !important; align-items:center; gap:14px; padding:10px 14px 10px 10px; border-radius:16px;
+  background:linear-gradient(180deg, rgba(214,186,128,.07), rgba(214,186,128,.025)); border-color:rgba(214,186,128,.26); }
+.csel[hidden] { display:none !important; }
+html[dir="rtl"] .csel, html[dir="rtl"] .csel.hasimg { padding:10px 10px 10px 14px; }
+.csel .cselimg { flex:none; width:52px; height:52px; border-radius:12px; grid-row:auto; }
+.cselmain { flex:1 1 auto; min-width:0; display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; }
+.cselk { position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.csel .cseltxt { margin:0; font-family:var(--serif, "Fraunces", serif); font-size:1.06rem; line-height:1.3; letter-spacing:.005em; color:var(--ink); }
+.csel .cselact { margin:0; flex:none; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; line-height:1; color:#d6ba80;
+  padding:6px 9px 5px; border:1px solid rgba(214,186,128,.38); border-radius:999px; }
+html[data-ns] .csel .cselact { letter-spacing:.04em; font-size:.7rem; }
+.csel .cselacts { flex:none; display:flex; gap:2px; margin-inline-start:auto; }
+.csel .cselacts .lnk { font-size:.6rem; min-height:36px; padding:0 8px; color:var(--ink2); }
+.csel .cselacts .cselx { color:var(--ink3); }
+@media (max-width:759px) {
+  .csel, .csel.hasimg { flex-wrap:wrap; gap:10px 12px; }
+  .csel .cselimg { width:48px; height:48px; }
+  .cselmain { flex-basis:calc(100% - 60px); }
+  .csel .cselacts { flex-basis:100%; justify-content:flex-end; margin-top:-6px; }
+}
+html[data-ns] .csel .cseltxt { font-family:inherit; font-size:1.02rem; }
+
+/* ══ v182 — the collection's opening: one emblem, a larger label, closer ═══
+   The emblem between the hairlines is the only mark; the small one beside the
+   label is not repeated. "Collection" is set larger, and the heading sits
+   closer under the name. ─────────────────────────────────────────────── */
+html body #collection .sechead .k.ol::before { display:none; }
+html body #collection .sechead .k.gold { font-size:clamp(14px, 1.15vw, 17px) !important; letter-spacing:.32em; font-weight:500; }
+html[data-ns] body #collection .sechead .k.gold { font-size:clamp(16px, 1.35vw, 19px) !important; letter-spacing:.06em; }
+html body #collection .sechead { gap:12px; }
+html body #collection .chap { margin-block:0 clamp(8px, 1vw, 14px); }
+#craft.sgjs .sgstage { padding-block:0 1svh; }
+#craft .sgstage { padding-block:4svh 1svh; }
