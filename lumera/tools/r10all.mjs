@@ -22,7 +22,7 @@ const r=await p.evaluate(()=>{ const q=s=>document.querySelector(s), t=s=>(q(s)|
     filmcv:!!q("#filmcv"), emb:!!q("#emb"), embStop:q("#embGold stop")?q("#embGold stop").getAttribute("stop-color"):null,
     fbig:!!q(".fbig"), fbrand:!!q("#end .fbrand"), seam:!!q("#hero .hseam"),
   };});
-ok(r.heroP.startsWith("Diamonds chosen one by one") && !r.hmeta, `${dv} hero: luxury line, no fact row`);
+ok(r.heroP.startsWith("Crafted with intention.") && !r.hmeta, `${dv} hero: luxury line, no fact row`);
 ok(r.houseP.startsWith("Nothing leaves the bench unsigned"), `${dv} house line rewritten (no GIA/IGI)`);
 ok(!r.exceptional, `${dv} exceptional pieces section removed`);
 ok(!r.colActs && /made to be lived in/.test(r.colH) && /never take off/.test(r.colP) && !/three pieces/.test(r.colH), `${dv} collection head: buttons gone, new sentences`);
