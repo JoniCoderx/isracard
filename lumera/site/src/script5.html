@@ -13,6 +13,15 @@
     var pin = $(o.pin), cv = $(o.canvas), ctx = cv && cv.getContext("2d");
     if (!pin || !ctx) return null;
     var SET = o.set(), N = typeof o.n === "function" ? o.n(SET) : o.n, frames = new Array(N), asked = new Array(N), loaded = 0, requested = 0, cur = -1;
+    /* What is held is a window around the frame on screen, not the strip. A
+       decoded 1080x1920 frame is about 8MB of bitmap; ninety-six of them is
+       more memory than many phones give a tab. Frames that fall outside the
+       window are let go (they come back from the HTTP cache when the scroll
+       returns), and on a weak device only every third frame is used at all.
+       With reduced motion there is one frame, and it does not follow the
+       scroll. */
+    var STEP = o.step || 1, WIN = o.win || N, STILL = o.still == null ? 0.5 : o.still;
+    var held = 0, peak = 0;
     var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
     function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + (o.ext || ".jpg"); }
     /* Letting go has to mean the ones already on their way as well. A frame
@@ -25,7 +34,7 @@
     function load(i, cb) {
       if (frames[i] || requested > N + 2) return;
       var im = new Image(), g = gen; im.decoding = "async"; requested++;
-      im.onload = function () { if (g !== gen) return; frames[i] = im; loaded++; if (cb) cb(); };
+      im.onload = function () { if (g !== gen || !asked[i]) return; frames[i] = im; loaded++; held++; if (held > peak) peak = held; if (cb) cb(); if (window.__awake) window.__awake.wake(); };
       im.src = src(i);
     }
     /* Fetch from where the eye is, not from the top. A fixed order fills the far
@@ -33,21 +42,28 @@
        missing, and that is what a scrub feels as a hold and then a catch-up.
        Asking for the nearest missing frame first closes the gap you are looking
        through before any other. */
+    function at(q) { var i = Math.max(0, Math.min(N - 1, Math.round(q * (N - 1)))); return STEP > 1 ? Math.min(N - 1, Math.round(i / STEP) * STEP) : i; }
+    var timer = 0;
     function loadAll() {
       if (started) return; started = true;
-      asked[0] = 1; load(0, function () { draw(true); });
+      var first = reduce ? at(STILL) : at(Math.max(0, cur));
+      asked[first] = 1; load(first, function () { draw(true); });
+      if (reduce) return;
       (function next() {
-        var batch = 0;
+        timer = 0; if (!started) return;
+        var want = at(Math.max(0, cur)), batch = 0;
+        /* let go of what has fallen out of the window */
+        for (var j = 0; j < N; j++) if (asked[j] && Math.abs(j - want) > WIN) { if (frames[j]) { frames[j].src = ""; held--; } frames[j] = null; asked[j] = 0; requested = Math.max(0, requested - 1); }
         while (batch < 6) {
-          var want = Math.max(0, Math.min(N - 1, Math.round(Math.max(0, cur) * (N - 1)))), pick = -1;
-          for (var d = 0; d < N; d++) {
+          var pick = -1;
+          for (var d = 0; d <= WIN; d += STEP) {
             if (want - d >= 0 && !asked[want - d]) { pick = want - d; break; }
             if (want + d < N && !asked[want + d]) { pick = want + d; break; }
           }
-          if (pick < 0) return;
+          if (pick < 0) break;
           asked[pick] = 1; load(pick); batch++;
         }
-        setTimeout(next, 60);
+        timer = setTimeout(next, batch ? 60 : 250);
       })();
     }
     /* There is no point owning more canvas than the strip can fill. A frame is
@@ -58,7 +74,10 @@
     function size() {
       var r = cv.getBoundingClientRect();
       DPR = Math.min(devicePixelRatio || 1, 2);
-      var sw = typeof o.src === "function" ? o.src(SET) : o.src;
+      /* the width the frames really are, once one has arrived: the published
+         tiers have not always been what their names promise */
+      var f0 = null; for (var q = 0; q < N && !f0; q++) f0 = frames[q];
+      var sw = f0 ? f0.naturalWidth : typeof o.src === "function" ? o.src(SET) : o.src;
       if (sw) DPR = Math.min(DPR, Math.max(1, sw / Math.max(1, r.width)));
       W = Math.round(r.width * DPR); H = Math.round(r.height * DPR);
       if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; drawn = -1; }
@@ -69,9 +88,11 @@
        frame that is nowhere near: a hold reads as a held shot, a jump reads as
        broken. Before the first draw, anything is better than nothing. */
     function nearest(i, max) { for (var d = 0; d <= (max || N); d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
+    var sized = false;
     function draw(force) {
-      var want = Math.max(0, Math.min(N - 1, Math.round(cur * (N - 1))));
-      var have = nearest(want, drawn < 0 ? N : 2); if (have < 0) return;
+      var want = reduce ? at(STILL) : at(cur);
+      var have = nearest(want, drawn < 0 ? N : 2 * STEP); if (have < 0) return;
+      if (!sized) { sized = true; size(); }
       /* the cinematic push: a very small scale and drift on top of the camera's own move */
       var z = o.zoom ? o.zoom(cur) : null;
       var zk = z ? z.s : 1, zy = z ? z.y : 0;
@@ -91,10 +112,10 @@
          direction: a reader who scrolls back up above a chapter has left it
          just as surely as one who scrolled down past it. */
       var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
-      if (o.release && started && gone) { gen++; frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; started = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
-      if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return;
+      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(function (f) { if (f) f.src = ""; }); frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+      if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return false;
       if (!started) { size(); loadAll(); }
-      var target = c01(-r.top / (r.height - innerHeight)); if (reduce) target = Math.max(target, o.still || 0.5);
+      var target = c01(-r.top / (r.height - innerHeight));
       /* The catch-up is per unit of time, not per animation frame. Written the
          obvious way — p += (target - p) * 0.2 every frame — the scrub tracks the
          finger at sixty frames a second and drags visibly behind it on anything
@@ -103,15 +124,18 @@
       var now = performance.now(), dt = lastT ? Math.min(100, now - lastT) : 16.7; lastT = now;
       var k = 1 - Math.pow(0.8, dt / 16.667);
       var p = reduce ? target : (lastP < 0 ? target : lastP + (target - lastP) * k); if (Math.abs(target - p) < 0.0008) p = target;
-      if (p !== lastP) { lastP = p; cur = p; draw(p < 0.16); if (o.at) o.at(p); }
-      else if (loaded < N) draw(false);
+      if (p !== lastP) { lastP = p; cur = p; if (!reduce || drawn < 0) draw(p < 0.16); if (o.at) o.at(p); }
+      else if (drawn < 0 || (!reduce && nearest(at(cur), 0) !== drawn)) draw(false);
+      return p !== target;
     }
     addEventListener("resize", function () { size(); draw(true); });
     return { tick: tick, size: size, redraw: function () { draw(true); },
-      get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; } };
+      get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; },
+      get held() { return held; }, get peak() { return peak; }, get step() { return STEP; }, get win() { return WIN; }, get width() { var f = frames[drawn]; return f ? f.naturalWidth : 0; } };
   }
 
   /* ── the box ── */
+  var conn = navigator.connection || {}, weak = (navigator.deviceMemory && navigator.deviceMemory <= 2) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) || !!conn.saveData || /(^|[^0-9])2g$/.test(conn.effectiveType || "");
   var beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
   function beatsAt(p) {
     var n = beats.length;
@@ -125,7 +149,7 @@
     var k0 = Math.max(0, Math.min(n - 1, Math.floor(p * n)));
     for (var i = 0; i < n; i++) { var c = (i + 0.5) / n, on = i === k0;
       beats[i].classList.toggle("on", on); beats[i].style.opacity = "";
-      beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + ((p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = on ? "auto" : "none"; }
+      beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + (reduce ? 0 : (p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = on ? "auto" : "none"; }
     pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
@@ -140,6 +164,9 @@
        HTTP cache the moment the chapter is approached again, so the scroll
        through it is unchanged; only what happens after it is. */
     release: true,
+    /* how much of the strip is held at once, and how much of it is used on a
+       device with little memory or a data saver on */
+    step: weak ? 3 : 1, win: phone ? 12 : 24, still: 0.5,
     /* Four tiers now. The frames are cut from a 4K restoration rather than
        fetched as 2560 JPEGs that had themselves been upscaled from something
        smaller — which is why the box went soft on a wide screen: the canvas
@@ -162,12 +189,12 @@
     if (!hpin || mobile) return; var r = hpin.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
     var pt = c01(-r.top / Math.max(1, range)), p = reduce || lastP2 < 0 ? pt : lastP2 + (pt - lastP2) * 0.2; if (Math.abs(pt - p) < 0.0005) p = pt; lastP2 = p; var x = p * range * (rtl() ? 1 : -1);
     if (x !== lastX) { lastX = x; track.style.transform = "translate3d(" + x.toFixed(1) + "px,0,0)"; if (rprog) rprog.style.width = (p * 100).toFixed(2) + "%"; if (rcue) rcue.style.opacity = p > 0.85 ? "0" : "1"; }
+    return p !== pt;
   }
   railSize(); addEventListener("resize", function () { mobile = matchMedia("(max-width:999px)").matches; railSize(); });
   setTimeout(railSize, 800); addEventListener("load", railSize);
 
-  function tick() { requestAnimationFrame(tick); if (document.hidden) return; if (box) box.tick(); railTick(); }
-  tick();
+  window.__awake(function () { var a = box ? box.tick() : false, b = railTick(); return a || b; });
   window.__box = box || { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };
   window.__stone = window.__box;
   window.__film = { p: -1, loaded: 0, requested: 0, frame: -1, ok: false };

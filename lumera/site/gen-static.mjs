@@ -14,6 +14,15 @@ const ORIGIN = "https://jonicoderx.github.io";
 let base = String(baseArg || "").trim().replace(/\/+$/, "");
 if (!/^https?:\/\//i.test(base)) base = ORIGIN + "/" + base.replace(/^\/+/, "");
 base = base.replace(/^(https?:\/\/)([^/]+)/i, (m, p, h) => p + h.toLowerCase()).replace(/\/+$/, "");
+/* The address is set in one place. When the house's own domain is written
+   into lumera/site/CNAME, it becomes the base for everything absolute — the
+   canonical links, hreflang, og:url, the sitemap, robots.txt and the
+   structured data — whatever the workflow passes, so a move to the domain is
+   one file and one deploy rather than a search through the generator. */
+{
+  const cn = path.join(path.dirname(path.resolve(src)), "CNAME");
+  if (fs.existsSync(cn)) { const d = fs.readFileSync(cn, "utf8").trim().split(/\s+/)[0]; if (d) base = "https://" + d.toLowerCase().replace(/^https?:\/\//, "").replace(/\/+$/, ""); }
+}
 /* the social profiles live in one place, the page itself, so the ones the
    schema claims are the ones a reader can click */
 const pageSrc = fs.readFileSync(src, "utf8");
@@ -27,6 +36,25 @@ html = html.replace(/<link rel="preconnect" href="https:\/\/fonts\.[^>]*>\s*/g, 
            .replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g, m => { fontLinks = m.trim(); return ""; });
 /* every asset path becomes relative, so the page works under a sub-path such as /isracard/ */
 html = html.replace(/(["'(=,\s])\/(img\/|f\/|v\/|icon-|favicon\.|og\.jpg|site\.webmanifest)/g, "$1$2");
+/* The stylesheet and the large scripts leave the page and become files with
+   their content's hash in the name. The home page, the Hebrew page and every
+   document then share one cached copy instead of each carrying half a
+   megabyte inline, and a returning reader downloads only what changed. The
+   scripts keep their order and stay synchronous at the end of the body, so
+   they run exactly as they did inline. */
+
+const crypto = await import("node:crypto");
+const ASSETS = path.join(outDir, "assets");
+fs.rmSync(ASSETS, { recursive: true, force: true }); fs.mkdirSync(ASSETS, { recursive: true });
+const hashOf = t => crypto.createHash("sha1").update(t).digest("hex").slice(0, 10);
+let cssLink = "";
+html = html.replace(/<style>([\s\S]*?)<\/style>\s*/, (m0, css) => { const n = "silavu." + hashOf(css) + ".css"; fs.writeFileSync(path.join(ASSETS, n), css); cssLink = '<link rel="stylesheet" href="assets/' + n + '">'; return ""; });
+let jsN = 0;
+html = html.replace(/<script>([\s\S]*?)<\/script>/g, (m0, code) => {
+  if (code.length < 4000) return m0;
+  const n = "s" + (++jsN) + "." + hashOf(code) + ".js"; fs.writeFileSync(path.join(ASSETS, n), code);
+  return '<script src="assets/' + n + '"></script>';
+});
 const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
 /* What the tab and a search result say. Short, in the form the established
    houses use: the name, then what it is. The Hebrew page has its own. */
@@ -81,6 +109,7 @@ const head = `<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 ${fontLinks}
+${cssLink}
 <link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/hero-1600.jpg" imagesrcset="img/hero-1600.jpg 1600w, img/hero-2560.jpg 2560w, img/hero-3840.jpg 3840w" imagesizes="100vw">
 <link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/herov-1080.jpg" imagesrcset="img/herov-1080.jpg 1080w, img/herov-1440.jpg 1440w" imagesizes="100vw">
 <script type="application/ld+json">${JSON.stringify({
@@ -137,7 +166,8 @@ ${fontLinks}
           "@type": "ListItem", "position": i + 1,
           "item": {
             "@type": "Product",
-            "@id": base + "/#" + p.id,
+            "@id": base + "/pieces/" + p.id + "/#product",
+            "url": base + "/pieces/" + p.id + "/",
             "name": plain(p.name.en),
             "sku": p.ref.replace(/·/g, "-"),
             "description": plain(p.line.en) + (p.story ? " " + plain(p.story.en) : ""),
@@ -147,15 +177,10 @@ ${fontLinks}
             "category": p.cat,
             "additionalProperty": p.specs.map(function (r) {
               return { "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) };
-            }),
-            "offers": {
-              "@type": "Offer",
-              "availability": "https://schema.org/MadeToOrder",
-              "itemCondition": "https://schema.org/NewCondition",
-              "availableAtOrFrom": { "@type": "Place", "name": "SILAVU Dubai" },
-              "seller": { "@id": base + "/#house" },
-              "description": "Price on request. Every piece is made to order and quoted personally."
-            }
+            })
+            /* no "offers": an Offer without a price is not valid for product
+               results, and the house does not publish prices; the pieces are
+               quoted on request, which the page itself says in words */
           }
         };
       })
@@ -204,7 +229,9 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
     if (from < end) continue;
     out += html.slice(at, from) + (/[\u0590-\u05ff]/.test(he) ? '<bdi dir="rtl">' + he.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : (/[A-Za-z]/.test(he) ? '<bdi dir="ltr">' + he + "</bdi>" : he)); at = to; end = to;
   }
-  const heHtml = (out + html.slice(at)).replace(/alt="([^"]*)" data-alt-he="([^"]*)"/g, 'alt="$2" data-alt-en="$1" data-alt-he="$2"');
+  const heHtml = (out + html.slice(at)).replace(/alt="([^"]*)" data-alt-he="([^"]*)"/g, 'alt="$2" data-alt-en="$1" data-alt-he="$2"')
+    /* a piece's own page, from the Hebrew page, is its Hebrew page */
+    .replace(/href="pieces\//g, 'href="he/pieces/');
   const heHead = head
     .replace('<html lang="en">', '<html lang="he" dir="rtl" data-lang="he" data-ns="1">')
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
@@ -223,7 +250,7 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   fs.writeFileSync(path.join(outDir, "he", "index.html"), heHead + heHtml + "\n</body>\n</html>\n");
   console.log("hebrew page:", cuts.length, "strings written in");
 }
-let POLICY_SLUGS = [];
+let POLICY_SLUGS = [], PIECE_URLS = [];
 const escA = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 
@@ -242,7 +269,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   const S = (en, he) => ({ en, he });
   /* the documents get the site's own type and palette: the stylesheet lives
      in a <style> block inside the page body, not in the shared head */
-  const styleBlock = (html.match(/<style>[\s\S]*?<\/style>/) || [""])[0];
+  const styleBlock = ""; /* the documents load the shared stylesheet from the head */
   const NAV = [
     ["./#collection", S("Collection", "הקולקציה")],
     ["./#build", S("The Line", "הקו")],
@@ -280,10 +307,23 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     document.querySelectorAll(".dlang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === l ? "true" : "false"); });
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) { if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt); im.alt = l === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en"); });
     var t1 = document.querySelector("[data-doc-title]");
-    document.title = l === "en" ? orig : (t1 ? t1.textContent : "") ${titleOf};
+    /* a page without a document title of its own (a piece) keeps the title it was written with */
+    document.title = l === "en" || !t1 ? orig : t1.textContent ${titleOf};
   }
-  function go(l) {
+  /* The address says which language a page is in, so a copied link opens in
+     the same one. A page with a Hebrew address of its own (a piece) moves
+     between its two addresses; French, Russian and Arabic, and Hebrew on the
+     documents, ride on ?lang= at the same address. */
+  var qs = new URLSearchParams(location.search), qp = qs.get("lang"), fixed = window.__pageLang, alt = window.__alt;
+  if (qp && !/^(en|he|fr|ar|ru)$/.test(qp)) qp = null;
+  function go(l, first) {
+    if (alt && !first) {
+      if (l === "he" && fixed !== "he") { location.href = new URL(alt.he, document.baseURI).href; return; }
+      if (l !== "he" && fixed === "he") { location.href = new URL(alt.en + (l === "en" ? "" : "?lang=" + l), document.baseURI).href; return; }
+    }
     try { localStorage.setItem("silavu-lang", l); } catch (e) {}
+    try { var u = new URL(location.href); if (l === "en" || (alt && l === "he")) u.searchParams.delete("lang"); else u.searchParams.set("lang", l);
+      if (u.href !== location.href) history.replaceState(null, "", u.pathname + u.search + u.hash); } catch (e) {}
     if (l === "en" || l === "he" || cache[l]) return apply(l, cache[l]);
     fetch("lang/" + l + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); })
       .then(function (d) { cache[l] = d; apply(l, d); }).catch(function () { apply("en"); });
@@ -296,18 +336,20 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     if (dl) dl.classList.remove("open"); go(b.getAttribute("data-lang")); }); });
   document.addEventListener("click", function (e) { if (dl && !dl.contains(e.target)) dl.classList.remove("open"); });
   var l = "en"; try { l = localStorage.getItem("silavu-lang") || "en"; } catch (e) {}
-  go(l);
+  if (fixed === "he") l = "he"; else if (alt) l = qp && qp !== "he" ? qp : "en"; else if (qp) l = qp;
+  go(l, true);
 })();</script>`;
-  const page = (slug, title, desc, inner, titleOf) => {
+  const page = (slug, title, desc, inner, titleOf, o = {}) => {
     const dir = path.join(outDir, slug);
     fs.mkdirSync(dir, { recursive: true });
-    const dhead = head
+    const up = "../".repeat(slug.split("/").length);
+    let dhead = head
       .replace(/<title[^>]*>[^<]*<\/title>/, `<title>${title}</title>`)
       .replace(/(<meta name="description" content=")[^"]*/, `$1${escA(desc)}`)
       .replace(`<link rel="canonical" href="${base}/">`, `<link rel="canonical" href="${base}/${slug}/">`)
       /* the site lives under a sub-path on Pages: every relative address in
          the shared head and in the documents resolves from the site root */
-      .replace(/<head>\n/, `<head>\n<base href="../">\n`)
+      .replace(/<head>\n/, `<head>\n<base href="${up}">\n`)
       /* the documents never show the opening photograph */
       .replace(/<link rel="preload" as="image"[^>]*>\n/g, "")
       .replace(/<link rel="alternate" hreflang[^>]*>\n/g, "")
@@ -316,7 +358,15 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
       .replace(/(<meta property="og:description" content=")[^"]*/, `$1${escA(desc)}`)
       .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${title}`)
       .replace(/(<meta name="twitter:description" content=")[^"]*/, `$1${escA(desc)}`);
-    const body = styleBlock + `<div class="dpage" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n` + langScript(titleOf);
+    if (o.he) dhead = dhead.replace('<html lang="en">', '<html lang="he" dir="rtl" data-lang="he" data-ns="1">');
+    if (o.alt) dhead = dhead.replace(/(<meta property="og:locale")/, `<link rel="alternate" hreflang="en" href="${base}/${o.alt.en}">\n<link rel="alternate" hreflang="he" href="${base}/${o.alt.he}">\n<link rel="alternate" hreflang="x-default" href="${base}/${o.alt.en}">\n$1`);
+    if (o.image) dhead = dhead.replace(/(<meta property="og:image" content=")[^"]*/, `$1${o.image}`).replace(/(<meta name="twitter:image" content=")[^"]*/, `$1${o.image}`);
+    if (o.schema) dhead = dhead.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => `<script type="application/ld+json">${JSON.stringify(o.schema)}</script>`);
+    let chrome = `<div class="dpage" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n`;
+    /* the Hebrew address keeps a reader on Hebrew addresses */
+    if (o.he) chrome = chrome.replace(/href="\.\/(#[^"]*)?"/g, (m, h) => `href="he/${h || ""}"`).replace(/href="(pieces\/[^"]*)"/g, 'href="he/$1"');
+    const pre = o.alt ? `<script>window.__alt=${JSON.stringify(o.alt)};${o.he ? 'window.__pageLang="he";' : 'window.__pageLang="en";'}</script>` : "";
+    const body = styleBlock + chrome + pre + langScript(titleOf);
     fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
   };
   for (const d of POLICIES) {
@@ -332,7 +382,7 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
   {
     const a = ABOUT;
     const portrait = a.portrait
-      ? `<img src="${a.portrait}-1100.jpg" srcset="${a.portrait}-800.jpg 800w, ${a.portrait}-1100.jpg 1100w" sizes="(min-width:900px) 38vw, 92vw" width="1100" height="1375" fetchpriority="high" alt="${escA(a.name.en)}, ${escA(a.role.en)} of SILAVU, on a terrace in Downtown Dubai at dusk" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)} של SILAVU, ליד שולחן ועליו שלושה צמידי Line במגש שחור">`
+      ? `<img src="${a.portrait}-1100.jpg" srcset="${a.portrait}-800.jpg 800w, ${a.portrait}-1100.jpg 1100w" sizes="(min-width:900px) 38vw, 92vw" width="1100" height="1375" fetchpriority="high" alt="${escA(a.name.en)}, ${escA(a.role.en)} of SILAVU" data-alt-he="${escA(a.name.he)}, ${escA(a.role.he)} SILAVU">`
       : `<div class="aph" role="img" aria-label="${escA(a.name.en)}">${mark("aphmk", "b")}</div>`;
     const inner = `<main class="doc about">
 <span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
@@ -341,7 +391,6 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
 <div class="k gold" ${A(a.eyebrow)}>${a.eyebrow.en}</div>
 <h1 ${A(a.h1)}>${a.h1.en}</h1>
 <div class="aletter">${a.letter.map(p => T("p", p)).join("")}</div>
-<p class="asign"><b ${A(a.name)}>${a.name.en}</b></p>
 <div class="acta"><a class="btn solid" href="./#collection" ${A(a.cta1)}>${a.cta1.en}</a><a class="btn" href="./#concierge" ${A(a.cta2)}>${a.cta2.en}</a></div>
 </div>
 <figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
@@ -349,6 +398,53 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
 </main>`;
     /* the tab reads the same in every language; the heading carries markup */
     page(a.slug, a.seo.en, a.desc.en, inner, "");
+  }
+  /* Every piece has its own address, in English and in Hebrew: the whole
+     piece written into the page (name, description, story, specification,
+     every photograph described), its own title and description, and its own
+     structured data. The window on the home page stays as the quick view. */
+  {
+    const plain = x => String(x).replace(/<[^>]+>/g, "");
+    const shown = PIECES.filter(p => p.id && !p.exceptional);
+    const img = (sh, p, i) => { const w = p.widths || [800, 1200]; return `<img src="img/${sh.img}-${w[Math.min(1, w.length - 1)]}.jpg" srcset="${w.map(x => `img/${sh.img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:900px) 52vw, 100vw" alt="${escA(sh.alt.en)}" data-alt-he="${escA(sh.alt.he)}"${i ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`; };
+    const pick = (x, he) => he ? x.he : x.en;
+    const AT = (x, he) => `${A(x)}>${pick(x, he)}`;
+    for (const he of [false, true]) for (const p of shown) {
+      const slug = (he ? "he/" : "") + "pieces/" + p.id;
+      const alt = { en: "pieces/" + p.id + "/", he: "he/pieces/" + p.id + "/" };
+      const others = shown.filter(q => q !== p);
+      const inner = `<main class="doc ppage">
+<nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}"><a href="./#collection" ${AT(S("The collection", "הקולקציה"), he)}</a><i aria-hidden="true">/</i><span aria-current="page">${plain(pick(p.name, he))}</span></nav>
+<div class="ppgrid">
+<div class="ppgal">${p.shots.map((sh, i) => `<figure>${img(sh, p, i)}</figure>`).join("")}</div>
+<div class="pptext">
+<div class="k gold" ${AT(p.kind || S("", ""), he)}</div>
+<h1 ${AT(p.name, he)}</h1>
+<p class="lede" ${AT(p.line, he)}</p>
+${p.story ? `<p class="p" ${AT(p.story, he)}</p>` : ""}
+<dl class="ppspecs">${p.specs.map(r => `<div><dt ${AT(r[0], he)}</dt><dd ${AT(r[1], he)}</dd></div>`).join("")}</dl>
+<p class="pprice"><span ${AT(S("Price on request", "מחיר לפי בקשה"), he)}</span> · <span ${AT(S("Quoted personally, on enquiry", "הצעת מחיר אישית, לפי פנייה"), he)}</span></p>
+<div class="acta"><a class="btn solid" href="./#concierge" ${AT(S("Book a private viewing", "קביעת פגישה פרטית"), he)}</a><a class="btn" href="./#collection" ${AT(S("Back to the collection", "חזרה לקולקציה"), he)}</a></div>
+</div>
+</div>
+${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the collection", "עוד בקולקציה"), he)}</h2><ul>${others.map(q => `<li><a href="pieces/${q.id}/"><img src="img/${q.shots[0].img}-${(q.widths || [800])[0]}.jpg" alt="" loading="lazy" decoding="async"><span ${AT(q.name, he)}</span></a></li>`).join("")}</ul></section>` : ""}
+</main>`;
+      const title = (he ? (p.title && p.title.he) : (p.title && p.title.en)) || (plain(pick(p.name, he)) + " | SILAVU");
+      const desc = plain(pick(p.line, he)) + (he ? " מחיר לפי בקשה." : " Price on request.");
+      const image = base + "/img/" + p.shots[0].img + "-" + (p.widths || [1200]).slice(-1)[0] + ".jpg";
+      const schema = { "@context": "https://schema.org", "@graph": [
+        { "@type": "Product", "@id": base + "/pieces/" + p.id + "/#product", "url": base + "/" + alt.en, "name": p.plain || plain(p.name.en),
+          "sku": p.ref.replace(/·/g, "-"), "description": plain(p.line.en) + (p.story ? " " + plain(p.story.en) : ""), "category": p.cat,
+          "image": p.shots.map(sh => base + "/img/" + sh.img + "-" + (p.widths || [1200]).slice(-1)[0] + ".jpg"),
+          "brand": { "@type": "Brand", "name": "SILAVU" },
+          "additionalProperty": p.specs.filter(r => !/^Price$/.test(r[0].en)).map(r => ({ "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) })) },
+        { "@type": "BreadcrumbList", "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" + (he ? "he/" : "") },
+          { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
+      page(slug, title, desc, inner, "", { he, alt, image, schema });
+    }
+    PIECE_URLS = shown.map(p => p.id);
+    console.log("pieces:", PIECE_URLS.join(" "), "(en + he)");
   }
   console.log("documents:", POLICY_SLUGS.join(" "));
 }
@@ -376,6 +472,12 @@ fs.writeFileSync(path.join(outDir, "sitemap.xml"),
       + "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" + base + "/\"/>\n"
       + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
       + "    <changefreq>weekly</changefreq>\n    <priority>" + (u === "/" ? "1.0" : "0.9") + "</priority>\n  </url>\n").join("")
+  + PIECE_URLS.flatMap(id => ["/pieces/" + id + "/", "/he/pieces/" + id + "/"].map(u => "  <url>\n    <loc>" + base + u + "</loc>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"" + base + "/pieces/" + id + "/\"/>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"he\" href=\"" + base + "/he/pieces/" + id + "/\"/>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" + base + "/pieces/" + id + "/\"/>\n"
+      + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
+      + "    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n")).join("")
   + POLICY_SLUGS.map(sl => "  <url>\n    <loc>" + base + "/" + sl + "/</loc>\n"
       + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
       + "    <changefreq>yearly</changefreq>\n    <priority>0.3</priority>\n  </url>\n").join("")

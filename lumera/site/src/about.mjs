@@ -1,8 +1,7 @@
-/* About SILAVU: Ariel Silas, in his own words.
+/* About SILAVU: Ariel Silas, in the third person.
 
    Only what the house has said about itself is written here. No team size,
-   no workshop inventory, no other houses: a short letter from the person who
-   made it, the mark the collection grows from, and two ways in. The name is
+   no workshop inventory: two short paragraphs about the person who made it, the mark the collection grows from, and two ways in. The name is
    Ariel Silas in English and אריאל סיילס in Hebrew. The portrait lives in
    public/ as <portrait>-800.jpg and <portrait>-1100.jpg. */
 
@@ -19,14 +18,16 @@ export const ABOUT = {
   portrait: "ariel-silas",
   name: S("Ariel Silas", "אריאל סיילס"),
   role: S("Founder", "מייסד"),
+  /* written about him, not by him: the two paragraphs as the house gave
+     them, word for word in Hebrew. No number of years, no title at another
+     house, no awards and no tie between the two names is added. */
   letter: [
-    S("I’m Ariel Silas. I created SILAVU out of a love for flowing lines, for light, and for the details you only discover up close. I like a piece that has presence, and still feels natural on the person wearing it.",
-      "אני אריאל סיילס. את SILAVU יצרתי מתוך משיכה לקווים זורמים, לאור ולפרטים שמגלים רק מקרוב. אני אוהב תכשיט שיש לו נוכחות, ועדיין מרגיש טבעי על מי שעונד אותו."),
-    S("The SILAVU mark is where the collection begins: a line that meets itself, and finds a different expression in every piece. From it come MOMENT, ICON and SOUL, three ways to wear the same signature.",
-      "סמל SILAVU הוא נקודת המוצא של הקולקציה — קו שנפגש עם עצמו ומקבל בכל תכשיט ביטוי אחר. ממנו נולדים MOMENT, ICON ו־SOUL, שלוש דרכים לענוד את אותה חתימה."),
-    S("I invite you to discover the pieces at your own pace. And if you have an idea of your own, I’d be glad to begin with a conversation.",
-      "אני מזמין אתכם להכיר את התכשיטים בקצב שלכם. ואם יש לכם רעיון משלכם, אשמח להתחיל משיחה.")
+    S("Behind SILAVU is Ariel Silas, a designer with years of experience in 3D modelling and design. In his work at Jacob & Co. he designed watches and watch dials — a world in which proportion, depth and finish carry meaning in every detail.",
+      "מאחורי SILAVU עומד אריאל סיילס, מעצב בעל שנות ניסיון במידול תלת־ממדי ובעיצוב. במסגרת עבודתו ב־Jacob & Co. עסק בעיצוב שעונים ולוחות שעון — עולם שבו פרופורציות, עומק וגימור מקבלים משמעות בכל פרט."),
+    S("Ariel brings the same attention to SILAVU: sculptural lines, the play of light, and jewellery with presence that feels natural on the body. The SILAVU signature connects MOMENT, ICON and SOUL, each giving it an expression of its own.",
+      "את אותה תשומת לב מביא אריאל אל SILAVU: קווים פיסוליים, משחקי אור ותכשיטים בעלי נוכחות שמרגישים טבעיים על הגוף. חתימת המותג מחברת בין MOMENT, ICON ו־SOUL, כשכל אחד מעניק לה ביטוי משלו.")
   ],
+
   cta1: S("Discover the collection", "לגלות את הקולקציה"),
   cta2: S("Start a conversation", "לשיחה אישית")
 };

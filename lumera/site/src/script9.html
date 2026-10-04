@@ -79,7 +79,6 @@
   }
 
   function tick() {
-    requestAnimationFrame(tick);
     var r = sec.getBoundingClientRect(), vh = innerHeight;
     if (r.bottom < -60 || r.top > vh + 60) return;
     if (dirty) measure();
@@ -96,10 +95,11 @@
     var now = performance.now(), dt = Math.min(64, now - (tick.t || now)); tick.t = now;
     var k = 1 - Math.pow(0.88, dt / 16.7);
     if (p < 0) p = t; else { p += (t - p) * k; if (Math.abs(t - p) < 0.0002) p = t; }
-    if (p === last) return; last = p;
+    if (p === last) return p !== t; last = p;
     frame(p);
+    return p !== t;
   }
-  requestAnimationFrame(tick);
+  (window.__awake || function (f) { (function l() { f(); requestAnimationFrame(l); })(); })(tick);
   window.__sig = { get p() { return p; } };
 })();
 </script>

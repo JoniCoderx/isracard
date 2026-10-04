@@ -385,9 +385,14 @@
   var t0 = performance.now(), lost = false, fc = 0, texOnce = false, envA = 0, lastSpec = null;
   window.__renderStone = function (cut) { var was = curCut; useCut(cut || "round"); renderStoneTex(cut === "round" ? 0.4 : 0, -0.52, 0); exportSprite(); if (was && was !== curCut) { useCut(was); texOnce = false; } };
   canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); lost = true; wrap.style.opacity = "0"; });
+  /* off screen the viewer stops asking for frames altogether, and the page's
+     shared loop wakes it when a scroll or a touch could have brought it back */
+  var asleep = false;
+  if (window.__awake) window.__awake(function () { if (asleep && !lost) { asleep = false; requestAnimationFrame(frame); } });
   function frame() {
-    requestAnimationFrame(frame); if (lost) return;
-    var r = wrap.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    if (lost) return;
+    var r = wrap.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight || document.hidden) { if (window.__awake) { asleep = true; return; } requestAnimationFrame(frame); return; }
+    requestAnimationFrame(frame);
     if (Math.abs(r.width - cssW) > 0.5 || Math.abs(r.height - cssH) > 0.5) resize();
     var t = (performance.now() - t0) / 1000, b = window.__build, metal = METAL[window.__preview || b.metal] || METAL.white;
     var spec = window.__lineSpec || { cut: "round", n: 36, alongMm: 3.6, acrossMm: 3.6, pitchMm: 4.0, orient: "along", set: "prong", L: 3.6, W: 3.6 };

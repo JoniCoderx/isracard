@@ -29,7 +29,7 @@ export const logo = (cls) => `<span class="lg${cls ? " " + cls : ""}" role="img"
 /* 03 — the lockup */
 export const lockup = (cls) => `<span class="lk${cls ? " " + cls : ""}">${markUse("")}${logo()}</span>`;
 /* the seal: the symbol in a thin ring, for the certificate, the valuation and the commissioned piece */
-export const seal = (cls) => `<svg class="seal${cls ? " " + cls : ""}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47"/><path class="sm" d="${MARK_B}" transform="translate(${(50 - MARK_BW * 0.06 / 2).toFixed(2)} 20) scale(.06)"/></svg>`;
+export const seal = (cls) => `<svg class="seal${cls ? " " + cls : ""}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47"/><use class="sm" href="#symb" x="${(50 - Math.ceil(MARK_BW) * 0.06 / 2).toFixed(2)}" y="20" width="${(Math.ceil(MARK_BW) * 0.06).toFixed(2)}" height="60"/></svg>`;
 export const emblem = (cls) => mark(cls);
 export const gemUse = () => mark("sm", "b");
 import { PIECES, CATS, SOON } from "./pieces.mjs";
@@ -84,10 +84,10 @@ function pieceCard(p) {
   return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.stonesInside === false ? ' data-nostones=""' : ""}${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""}${p.title ? ` data-title="${esc(p.title.en)}" data-title-he="${esc(p.title.he)}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
         <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i>${p.shots.length > 1 ? `<button type="button" class="cnav cprev" aria-label="Previous photograph" data-l-en="Previous photograph" data-l-he="התמונה הקודמת"></button><button type="button" class="cnav cnext" aria-label="Next photograph" data-l-en="Next photograph" data-l-he="התמונה הבאה"></button>` : ""}<div class="swd" aria-hidden="true">${p.shots.map((x, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div></div>
         <div class="bd">
-          <div class="t">${mark("nmk", "b")}${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
+          <div class="t">${markUse("nmk")}${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
           <div class="row k meta">${meta}</div>
-          <div class="acts"><button type="button" class="lnk vw" data-en="View the piece" data-he="ראו את התכשיט">View the piece</button><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.plainHe || p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריינו">Reserve</a></div></div>
+          <div class="acts"><a class="lnk vw" href="pieces/${p.id}/" data-en="View the piece" data-he="ראו את התכשיט">View the piece</a><a class="lnk q" href="#concierge" data-piece="${esc(p.plain)}" data-piece-he="${esc(p.plainHe || p.name.he.replace(/<[^>]+>/g, ""))}" data-en="Reserve" data-he="שריינו">Reserve</a></div></div>
       </article>`;
 }
 
@@ -110,7 +110,7 @@ const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection ca
 
 const SIZES_JRN = "(min-width:1000px) 56vw, 92vw", SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
-const bandItems = [["SILAVU", "SILAVU"], ["Dubai", "דובאי"], ["Tel Aviv", "תל אביב"], ["High jewellery", "תכשיטי יוקרה"], ["Made by hand", "נעשה ביד"], ["GIA · IGI certified", "מאושר GIA · IGI"], ["By appointment", "בתיאום מראש"]];
+const bandItems = [["SILAVU", "SILAVU"], ["High jewellery", "תכשיטי יוקרה"], ["Made by hand", "נעשה ביד"], ["GIA · IGI certified", "מאושר GIA · IGI"], ["By appointment", "בתיאום מראש"]];
 const band = bandItems.concat(bandItems).map(([en, he]) => `<span><em data-en="${en}" data-he="${he}">${en}</em><i class="dot"></i></span>`).join("");
 
 /* The Signature Chain is not here on purpose. It was written in full and left
@@ -149,7 +149,7 @@ ${markDefs()}
 </header>
 
 
-<div id="menu" aria-hidden="true">
+<div id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <button class="btn mclose" id="menuClose" data-en="Close" data-he="סגירה">Close</button>
   <div class="mbrand" aria-hidden="true">${markUse("")}</div>
   <div class="mlist" id="mlist">
@@ -179,9 +179,9 @@ ${markDefs()}
     <i class="hlight" aria-hidden="true"></i>
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
-      <div class="k gold rv" data-en="Dubai · Tel Aviv" data-he="דובאי · תל אביב">Dubai · Tel Aviv</div>
+      <div class="k gold rv" data-en="High jewellery · Made by hand" data-he="תכשיטי יוקרה · עבודת יד">High jewellery · Made by hand</div>
       <h1 class="h sp rv" data-en="The Line of <em>Desire</em>" data-he="The Line of <em>Desire</em>">The Line of <em>Desire</em></h1>
-      <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד בדובאי ומלוטשים כדי ללוות אתכם כל החיים.">Diamonds chosen one by one, set by hand in Dubai, and finished to be worn for a lifetime.</p>
+      <p class="p rv d2" data-en="Diamonds chosen one by one, set by hand, and finished to be worn every day." data-he="יהלומים שנבחרים אחד אחד, משובצים ביד ומלוטשים כדי להיענד בכל יום.">Diamonds chosen one by one, set by hand, and finished to be worn every day.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#collection" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</a><a class="lnk hsec" href="#concierge" data-en="Book a private viewing" data-he="קביעת פגישה פרטית">Book a private viewing</a></div>
     </div>
     <div class="hfacts rv d4">
@@ -206,7 +206,7 @@ ${markDefs()}
         <div class="beats" id="beats">
           <div class="beat"><div class="k gold ol" data-en="The box" data-he="הקופסה">The box</div><h2 class="h2" data-en="It arrives <em>closed.</em>" data-he="היא מגיעה <em>סגורה.</em>">It arrives <em>closed.</em></h2><p class="p" data-en="Your piece, its certificates, and a valuation for your insurer." data-he="התכשיט, התעודות שלו והערכת שווי לחברת הביטוח.">Your piece, its certificates, and a valuation for your insurer.</p></div>
           <div class="beat"><div class="k gold ol" data-en="The stones" data-he="האבנים">The stones</div><h2 class="h2" data-en="Loose, <em>under a loupe.</em>" data-he="אבנים לא משובצות, <em>תחת זכוכית מגדלת.</em>">Loose, <em>under a loupe.</em></h2><p class="p" data-en="Graded by GIA or IGI. You see them before we set them." data-he="מדורגות ב־GIA או ב־IGI. אתם רואים אותן לפני השיבוץ.">Graded by GIA or IGI. You see them before we set them.</p></div>
-          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made to <em>your measure.</em>" data-he="נעשה <em>לפי המידה שלכם.</em>">Made to <em>your measure.</em></h2><p class="p" data-en="Set by hand in Dubai. Brought to you, anywhere." data-he="משובץ ביד בדובאי. נמסר לכם בכל מקום בעולם.">Set by hand in Dubai. Brought to you, anywhere.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
+          <div class="beat"><div class="k gold ol" data-en="The piece" data-he="התכשיט">The piece</div><h2 class="h2" data-en="Made to <em>your measure.</em>" data-he="נעשה <em>לפי המידה שלכם.</em>">Made to <em>your measure.</em></h2><p class="p" data-en="Set by hand, to the measure of your wrist." data-he="משובץ ביד, לפי מידת פרק היד שלכם.">Set by hand, to the measure of your wrist.</p><div class="engraved">${markUse("eng")}</div><div class="acts"><a class="btn solid" href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div></div>
         </div>
         <div class="pprog" aria-hidden="true"><i id="pprog"></i></div>
         <div class="pdots" id="pdots" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -285,7 +285,7 @@ ${markDefs()}
         <button class="vp on" type="button" data-hand="f" data-en="Her" data-he="אישה">Her</button>
         <button class="vp" type="button" data-hand="m" data-en="Him" data-he="גבר">Him</button>
       </div>
-      <div class="hgrp skins" role="group" aria-label="Skin tone"><button class="sk" type="button" data-skin="0" style="--s:#f0cdb6" aria-label="Skin tone 1"></button><button class="sk on" type="button" data-skin="1" style="--s:#e4b394" aria-label="Skin tone 2"></button><button class="sk" type="button" data-skin="2" style="--s:#cf9468" aria-label="Skin tone 3"></button><button class="sk" type="button" data-skin="3" style="--s:#a9713f" aria-label="Skin tone 4"></button><button class="sk" type="button" data-skin="4" style="--s:#7a4d29" aria-label="Skin tone 5"></button><button class="sk" type="button" data-skin="5" style="--s:#4e3019" aria-label="Skin tone 6"></button></div>
+      <div class="hgrp skins" role="group" aria-label="Skin tone"><button class="sk" type="button" data-skin="0" style="--s:#f0cdb6" aria-label="Skin tone 1" data-al="Skin tone" data-n="1"></button><button class="sk on" type="button" data-skin="1" style="--s:#e4b394" aria-label="Skin tone 2" data-al="Skin tone" data-n="2"></button><button class="sk" type="button" data-skin="2" style="--s:#cf9468" aria-label="Skin tone 3" data-al="Skin tone" data-n="3"></button><button class="sk" type="button" data-skin="3" style="--s:#a9713f" aria-label="Skin tone 4" data-al="Skin tone" data-n="4"></button><button class="sk" type="button" data-skin="4" style="--s:#7a4d29" aria-label="Skin tone 5" data-al="Skin tone" data-n="5"></button><button class="sk" type="button" data-skin="5" style="--s:#4e3019" aria-label="Skin tone 6" data-al="Skin tone" data-n="6"></button></div>
     </div><div class="vposwrap"><div class="vpos"><button class="vp on" type="button" data-vpos="front" data-en="Front" data-he="חזית">Front</button><button class="vp" type="button" data-vpos="side" data-en="Side" data-he="צד">Side</button><button class="vp" type="button" data-vpos="detail" data-en="Detail" data-he="תקריב">Detail</button><i class="vsep"></i><button class="vp" type="button" data-toy="up" data-en="Inspect" data-he="התבוננות">Inspect</button><button class="vp" type="button" data-toy="down" data-en="Return to stand" data-he="החזרה למעמד">Return to stand</button></div></div>
       <div class="opts" id="opts">
         <div class="opt"><div class="k" data-en="Diamond shape" data-he="צורת היהלום">Diamond shape</div><div class="chips cuts">
@@ -314,12 +314,12 @@ ${markDefs()}
         <div class="tot">
           <div class="k ltk" data-en="Your line" data-he="הצמיד שלכם">Your line</div>
           <p class="lsum" id="lsum" aria-live="polite"></p>
-          <div class="pricerow">${seal("sealsm")}<div class="pwrap"><span class="estk" data-en="Estimated price" data-he="מחיר משוער">Estimated price</span><div class="price" id="est" data-aed="28500">≈ AED 28,500</div></div></div>
+          <div class="pricerow">${seal("sealsm")}<div class="pwrap"><span class="estk" data-en="Price" data-he="מחיר">Price</span><div class="price" id="est" data-aed="0" data-en="Price on request" data-he="מחיר לפי פנייה">Price on request</div></div></div>
           <div class="cur" data-cur><button class="chip on" data-c="AED">AED</button><button class="chip" data-c="USD">USD</button><button class="chip" data-c="EUR">EUR</button><button class="chip" data-c="ILS">₪ ILS</button></div>
-          <p class="estnote" data-en="An estimate only, not a price. Your quotation is confirmed privately, once your stones are chosen." data-he="הערכה בלבד, לא מחיר. הצעת המחיר שלכם נמסרת באופן אישי, לאחר בחירת האבנים.">An estimate only, not a price. Your quotation is confirmed privately, once your stones are chosen.</p>
+          <p class="estnote" data-en="Priced personally, for the stones and the specification you choose." data-he="המחיר נקבע באופן אישי, לפי האבנים והמפרט שתבחרו.">Priced personally, for the stones and the specification you choose.</p>
         </div>
         <a class="btn solid" href="#concierge" id="reserve" data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet</a>
-        <p class="trustline" data-en="GIA or IGI certified · Insured delivery · Lifetime care" data-he="תעודת GIA או IGI · משלוח מבוטח · שירות לכל החיים">GIA or IGI certified · Insured delivery · Lifetime care</p>
+        <p class="trustline" data-en="GIA or IGI certified · Insured delivery · Care and resizing" data-he="תעודת GIA או IGI · משלוח מבוטח · ניקוי ושינוי מידה">GIA or IGI certified · Insured delivery · Care and resizing</p>
         <details class="sdet carat" id="carat"><summary><span data-en="Stone details" data-he="פרטי האבנים">Stone details</span></summary>
           <div class="row k sdrow"><span id="sumStones"></span><i></i><span id="sumOrigin">Lab-grown</span><i></i><span id="sumMetal">18K white gold</span><i></i><span id="sumWrist">17 cm</span></div>
 
@@ -375,11 +375,11 @@ ${markDefs()}
         </script>
         <p class="fine rv d3" style="margin-top:22px" data-en="Every message is read and answered personally by the SILAVU concierge." data-he="כל פנייה נקראת ונענית באופן אישי על ידי הקונסיירז' של SILAVU.">Every message is read and answered personally by the SILAVU concierge.</p>
       </div>
-      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="">
+      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="" data-endpoint="">
         <div class="fields">
-          <div class="field"><input id="fName" type="text" autocomplete="name" required dir="auto"><label for="fName" data-en="Name" data-he="שם">Name</label></div>
+          <div class="field"><input id="fName" type="text" autocomplete="name" required aria-required="true" aria-describedby="fNameErr" dir="auto"><label for="fName" data-en="Name" data-he="שם">Name</label><p class="ferr" id="fNameErr" hidden></p></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2" dir="auto"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
-          <div class="field"><input id="fContact" type="text" autocomplete="tel" required inputmode="email" dir="ltr" placeholder="+971 · +972 · email"><label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label></div>
+          <div class="field"><input id="fContact" type="text" autocomplete="tel" required aria-required="true" aria-describedby="fContactErr" inputmode="email" dir="ltr" placeholder="+971 · +972 · email"><label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label><p class="ferr" id="fContactErr" hidden></p></div>
           <div class="want" role="radiogroup" aria-labelledby="wantK"><span class="k" id="wantK" data-en="What are you looking for?" data-he="מה אתם מחפשים?">What are you looking for?</span>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Private viewing" data-he="פגישה פרטית">Private viewing</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="A piece from the collection" data-he="תכשיט מהקולקציה">A piece from the collection</button>
@@ -398,11 +398,12 @@ ${markDefs()}
             <button type="button" class="chip on" data-ch="Email" data-en="Email" data-he="אימייל">Email</button></div>
         </div>
         <div class="csub">
-          <button class="btn solid" id="csend" type="submit" data-en="Send enquiry" data-he="שליחת הפנייה">Send enquiry</button>
+          <button class="btn solid" id="csend" type="submit" data-en="Continue in email" data-he="המשך באימייל">Continue in email</button>
           <button type="button" class="lnk ccopy" id="ccopy" data-en="Copy the details" data-he="העתקת הפרטים">Copy the details</button>
           <div class="soc csoc" data-socials></div>
         </div>
-        <p class="fine cnote" id="cnote" data-en="Sending opens your email app with everything written in. Nothing reaches us until you press send there." data-he="השליחה פותחת את אפליקציית הדואר שלכם עם כל הפרטים. הפנייה תגיע אלינו רק אחרי שתלחצו שם על שליחה.">Sending opens your email app with everything written in. Nothing reaches us until you press send there.</p>
+        <p class="fine cnote" id="cnote" data-en="This opens your email app with everything written in. Nothing reaches us until you press send there." data-he="הכפתור פותח את אפליקציית הדואר שלכם עם כל הפרטים. הפנייה תגיע אלינו רק אחרי שתלחצו שם על שליחה.">This opens your email app with everything written in. Nothing reaches us until you press send there.</p>
+        <p class="cerr" id="cerr" role="alert" hidden></p>
         <p class="done" id="cdone" data-en="Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com." data-he="אפליקציית הדואר אמורה להיפתח עכשיו עם ההודעה מוכנה. לחצו שם על שליחה כדי שהפנייה תגיע לקונסיירז׳. אם היא לא נפתחה, העתיקו את הפרטים וכתבו אל concierge@silavu.com.">Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com.</p>
       </form>
     </div>
@@ -427,7 +428,7 @@ ${markDefs()}
     <div class="fgrid">
       <div class="fcol fexp rv"><div class="k" data-en="Explore" data-he="גלו">Explore</div><a href="about/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a><a href="#inside" data-en="The box and the stones" data-he="הקופסה והאבנים">The box and the stones</a><a href="#collection" data-en="Collection" data-he="הקולקציה">Collection</a><a href="#build" data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</a></div>
       <div class="fcol fcon rv d2"><div class="k" data-en="Contact" data-he="יצירת קשר">Contact</div><a class="fwr" href="#concierge" data-en="Write to the house" data-he="כתבו לנו">Write to the house</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a><a href="#concierge" class="gold fbook" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a></div>
-      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${mark("fsm", "b")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="The Line of Desire" data-he="The Line of Desire">The Line of Desire</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
+      <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${markUse("fsm")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="The Line of Desire" data-he="The Line of Desire">The Line of Desire</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol ffol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
     <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
@@ -439,7 +440,7 @@ ${markDefs()}
 
 
 
-<div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-hidden="true">
+<div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-labelledby="pmT" aria-hidden="true">
   <div class="mbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
     <div class="mgal"><div class="mim" id="pmIm"><img id="pmImg" alt=""><img id="pmImg2" class="dt" alt=""><span class="k dtag" data-en="Detail" data-he="תקריב">Detail</span><button class="gnav gprev" type="button" id="pmPrev" aria-label="Previous photograph"></button><button class="gnav gnext" type="button" id="pmNext" aria-label="Next photograph"></button></div><div class="gthumbs" id="pmThumbs" role="tablist" aria-label="Photographs"></div></div>
@@ -460,15 +461,15 @@ ${markDefs()}
       <div class="macc">
         <details class="mdt" id="pmSpecWrap"><summary><span data-en="Metal, size and reference" data-he="מתכת, מידה ומק״ט">Metal, size and reference</span></summary><div class="mspecs" id="pmSpecs"></div></details>
         <details class="mdt" id="pmStoneWrap"><summary><span data-en="The diamonds" data-he="היהלומים">The diamonds</span></summary><p class="p" id="pmStones"></p></details>
-        <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-stones="" data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי לחברת הביטוח">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת לכה שחורה">The black lacquer box</li><li data-en="Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere" data-he="מסירה אישית בדובאי ובתל אביב, משלוח מבוטח לכל מקום אחר">Brought by hand in Dubai and Tel Aviv, insured carriage elsewhere</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
-        <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and lifetime care" data-he="מסירה ושירות לכל החיים">Delivery and lifetime care</span></summary><p class="p" id="pmCare"></p></details>
+        <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-stones="" data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי לחברת הביטוח">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת לכה שחורה">The black lacquer box</li><li data-en="Brought by hand by appointment, or sent by insured delivery" data-he="מסירה אישית בתיאום מראש, או משלוח מבוטח">Brought by hand by appointment, or sent by insured delivery</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
+        <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and care" data-he="מסירה ושירות">Delivery and care</span></summary><p class="p" id="pmCare"></p></details>
       </div>
-      <p class="k mfoot" data-en="Viewed privately, by appointment" data-he="לצפייה בפגישה פרטית, בתיאום מראש">Viewed privately, by appointment</p>
+      <p class="k mfoot"><span data-en="Viewed privately, by appointment" data-he="לצפייה בפגישה פרטית, בתיאום מראש">Viewed privately, by appointment</span> · <a class="lnk mpage" id="pmPage" href="./" data-en="The full page" data-he="לעמוד התכשיט">The full page</a></p>
     </div>
   </div>
 </div>
 
-<div class="modal" id="tryon" role="dialog" aria-modal="true" aria-hidden="true">
+<div class="modal" id="tryon" role="dialog" aria-modal="true" aria-label="See it on your wrist" aria-hidden="true">
   <div class="mbox tbox">
     <button class="btn mclose2" type="button" data-close data-en="Close" data-he="סגירה">Close</button>
     <div class="tcv" id="tcv"><canvas id="tcanvas"></canvas><p class="tguide" aria-live="polite" data-en="Drag the bracelet onto your wrist" data-he="גררו את הצמיד אל פרק היד">Drag the bracelet onto your wrist</p>

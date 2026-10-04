@@ -3,6 +3,22 @@
   "use strict";
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, desk = function () { return matchMedia("(min-width:900px)").matches; };
   var c01 = function (v) { return Math.max(0, Math.min(1, v)); }, ss = function (t) { return t * t * (3 - 2 * t); }, lerp = function (a, b, t) { return a + (b - a) * t; };
+  /* One frame loop for everything that follows the scroll, and it sleeps.
+     Each chapter used to keep its own requestAnimationFrame running from load
+     to close, measuring the page sixty times a second while nothing moved. Now
+     a scroll, a resize, a touch or a key wakes the loop; it runs while any
+     chapter says it is still settling (returns true) and for a moment after the
+     last event, and then stops asking for frames at all. */
+  window.__awake = (function () {
+    var fns = [], until = 0, raf = 0;
+    function run() { raf = 0; if (document.hidden) return; var busy = false;
+      for (var i = 0; i < fns.length; i++) { try { if (fns[i]()) busy = true; } catch (e) {} }
+      if (busy || performance.now() < until) raf = requestAnimationFrame(run); }
+    function wake() { until = performance.now() + 1200; if (!raf && !document.hidden) raf = requestAnimationFrame(run); }
+    ["scroll", "resize", "wheel", "touchstart", "touchmove", "pointerdown", "pointermove", "keydown", "load"].forEach(function (e) { addEventListener(e, wake, { passive: true }); });
+    document.addEventListener("visibilitychange", wake);
+    var add = function (fn) { fns.push(fn); wake(); }; add.wake = wake; return add;
+  })();
   var $ = function (id) { return document.getElementById(id); }, seg = function (u, a, b) { return c01((u - a) / (b - a)); };
 
   /* ── socials ── */
@@ -267,7 +283,7 @@
      and hands it back to whatever opened it. Without this, Tab walks off into
      the page behind the overlay and the reader has no way back. */
   var mReturn = null;
-  function mFocusables(m) { return Array.prototype.filter.call(m.querySelectorAll('a[href], button:not([disabled]), input:not([type="hidden"]), textarea, select, [tabindex]:not([tabindex="-1"])'), function (e) { return !e.hidden && e.offsetParent !== null; }); }
+  function mFocusables(m) { return Array.prototype.filter.call(m.querySelectorAll('a[href], button:not([disabled]), input:not([type="hidden"]), textarea, select, summary, [tabindex]:not([tabindex="-1"])'), function (e) { return !e.hidden && e.offsetParent !== null; }); }
   function openModal(m, from) {
     mReturn = document.activeElement;
     /* the window grows out of the card that was clicked */
@@ -354,6 +370,7 @@
     var shots = pc.getAttribute("data-shots"), specs = pc.getAttribute("data-specs");
     var btn = pc.querySelector("[data-piece]");
     pmPiece = btn ? btn.getAttribute("data-piece") : "";
+    var vw = pc.querySelector("a.vw"); if ($("pmPage")) { $("pmPage").hidden = !vw; if (vw) $("pmPage").href = vw.getAttribute("href"); }
     gPiece = pmPiece;
 
     if (shots) {
@@ -361,7 +378,7 @@
       gShots = JSON.parse(shots); gAt = Math.min(gShots.length - 1, Math.max(0, pc.__at || 0)); gCard = pc;
       $("pmThumbs").innerHTML = gShots.map(function (sh, i) {
         var w = sh.w && sh.w.length ? sh.w[0] : 800;
-        return '<button type="button" role="tab" data-i="' + i + '" aria-label="Photograph ' + (i + 1) + '">'
+        return '<button type="button" role="tab" data-i="' + i + '" data-al="Photograph" data-n="' + (i + 1) + '" aria-label="' + (lang === "he" ? "תמונה" : (T("Photograph") || "Photograph")) + ' ' + (i + 1) + '">'
           + '<img src="img/' + sh.i + '-' + w + '.jpg" alt="" loading="lazy" decoding="async"></button>';
       }).join("");
       gPaint();
@@ -448,7 +465,11 @@
 
   document.querySelectorAll(".piece").forEach(function (pc) {
     if (pc.classList.contains("soon")) return;
-    pc.addEventListener("click", function (e) { if (e.target.closest("a, .cnav")) return; openPiece(pc); });
+    /* "View the piece" is a real link to the piece's own page, so it can be
+       opened in a new tab, shared and crawled; a plain click opens the quick
+       view here instead */
+    pc.addEventListener("click", function (e) { var a = e.target.closest("a, .cnav"); if (a && !a.matches("a.vw")) return;
+      if (a && (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) return; if (a) e.preventDefault(); openPiece(pc); });
   });
 
   /* ── the category row ── */
@@ -521,9 +542,11 @@
      photographs carry a long transform transition that turned every small
      update into a wobble. What is left of the motion is either held still in
      a sticky stage or done by the browser itself. */
-  function tick() { requestAnimationFrame(tick); if (hidden) return; insideTick(); compass(); rulerTick(); }
-  var dustFc = 0;
-  tick(); addEventListener("scroll", compass, { passive: true });
+  /* the opening film loops only while it can be seen */
+  function heroTick() { if (!hv.src || reduce) return; var r = hv.getBoundingClientRect(), vis = r.bottom > 0 && r.top < innerHeight && !document.hidden;
+    if (vis && hv.paused && entered) { var pr = hv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !hv.paused) hv.pause(); }
+  window.__awake(function () { if (hidden) return; insideTick(); heroTick(); compass(); rulerTick(); });
+  addEventListener("scroll", compass, { passive: true });
 
   /* ── language ───────────────────────────────────────────────────────────
      Five languages, and only two of them live in the page. English and
@@ -545,6 +568,15 @@
   /* the Hebrew address is Hebrew whatever was chosen before, and remembers it
      so the house documents open in Hebrew too */
   if (window.__pageLang) { lang = window.__pageLang; try { localStorage.setItem("silavu-lang", lang); } catch (e) {} }
+  /* the address wins over what was remembered: ?lang= on the English address
+     (French, Russian, Arabic), and a remembered Hebrew goes to the Hebrew
+     address rather than turning the English one Hebrew */
+  else {
+    var qLang = (location.search.match(/[?&]lang=(en|fr|ar|ru)\b/) || [])[1];
+    if (qLang) lang = qLang;
+    else if (lang === "he") { try { location.replace(new URL("he/", document.baseURI).href + location.hash); } catch (e) {} }
+    else if (lang !== "en") { try { var u0 = new URL(location.href); u0.searchParams.set("lang", lang); history.replaceState(null, "", u0.pathname + u0.search + u0.hash); } catch (e) {} }
+  }
 
   /* the one string table the scripts themselves read, so a metal name or a
      prefilled message follows the language too */
@@ -565,6 +597,14 @@
   }
   window.__say = say;
 
+  var AL_HE = { "Previous photograph": "התמונה הקודמת", "Next photograph": "התמונה הבאה", "Photograph": "תמונה", "Photographs": "תמונות",
+    "Enquire": "פנייה", "Your line, drawn live": "הצמיד שלכם, מצויר בזמן אמת", "Your bracelet, in three dimensions": "הצמיד שלכם, בתלת־ממד",
+    "Whose hand": "איזו יד", "View": "תצוגה", "The house": "הבית", "The box": "הקופסה", "The Line": "הקו", "Skin tone": "גוון עור",
+    "The SILAVU box opening, diamonds rising out of it": "קופסת SILAVU נפתחת, ויהלומים עולים ממנה",
+    "SILAVU, written in one line": "SILAVU, כתוב בקו אחד", "SILAVU, written by hand in a single line": "SILAVU, כתוב ביד בקו אחד",
+    "SILAVU, back to the top": "SILAVU, חזרה לראש העמוד", "Inside the stone": "בתוך האבן", "House documents": "מסמכי הבית",
+    "Footer": "תחתית העמוד", "Enter": "כניסה", "Collection": "הקולקציה", "Collection categories": "קטגוריות בקולקציה",
+    "Menu": "תפריט", "The piece": "התכשיט", "See it on your wrist": "ראו על פרק היד שלכם", "The bracelet": "הצמיד" };
   function paint() {
     var def = langDef(lang), d = dicts[lang];
     document.documentElement.setAttribute("data-lang", lang);
@@ -587,6 +627,14 @@
       /* in a right-to-left page a line that is all Latin (the slogan, a name)
          keeps its own word order */
       el.innerHTML = island && island.test(v) ? '<bdi dir="rtl">' + ltrU(v) + "</bdi>" : (island && /[A-Za-z]/.test(v) ? '<bdi dir="ltr">' + v + "</bdi>" : v);
+    });
+    /* names read out by a screen reader follow the language too: the English
+       is kept once on the element, and a number (a photograph's) is added back */
+    document.querySelectorAll("[aria-label]").forEach(function (el) {
+      if (btns.indexOf(el) >= 0 || el.closest("#langmenu")) return;
+      var en = el.getAttribute("data-al"); if (en == null) { en = el.getAttribute("aria-label"); el.setAttribute("data-al", en); }
+      var n = el.getAttribute("data-n"), v = lang === "he" ? (el.getAttribute("data-l-he") || AL_HE[en] || en) : (T(en) || en);
+      el.setAttribute("aria-label", n ? v + " " + n : v);
     });
     btns.forEach(function (b) { b.textContent = def.label; b.setAttribute("aria-label", def.name); });
     setTimeout(function () { isle(document.body); }, 0);
@@ -937,7 +985,10 @@
   }
   function setSel(v) {
     sel = v; try { v ? sessionStorage.setItem(SELK, JSON.stringify(v)) : sessionStorage.removeItem(SELK); } catch (e) {}
-    if (v) setWant(SELWANT[v.a] || "A piece from the collection");
+    /* what they are asking about follows what they chose, and replaces
+       whatever an earlier choice had set: anything from the builder is a
+       commission, a piece from the collection is that piece */
+    if (v) setWant(v.k === "line" || v.k === "bespoke" ? "Bespoke commission" : v.k === "piece" ? (v.a === "viewing" ? "Private viewing" : "A piece from the collection") : (SELWANT[v.a] || "Private viewing"));
     selPaint();
   }
   /* kept for the few callers that only have words: they become the selection's line */
@@ -1011,10 +1062,11 @@
     /* the estimate, and that it is one */
     var ey = 1140 + Math.ceil(rows.length / 3) * 100 + 30;
     x.fillStyle = line; x.fillRect(70, ey - 34, W - 140, 1);
-    x.fillStyle = gold; x.font = "500 17px " + face; x.fillText(tr("Estimated price", "מחיר משוער").toUpperCase(), rtl ? W - 70 : 70, ey);
+    var E = window.__est || { label: function () { return tr("Price", "מחיר"); }, note: function () { return ""; } };
+    x.fillStyle = gold; x.font = "500 17px " + face; x.fillText(E.label().toUpperCase(), rtl ? W - 70 : 70, ey);
     x.fillStyle = ink; x.font = "300 44px " + face; x.fillText(iso($("est").textContent.trim()), rtl ? W - 70 : 70, ey + 52);
     x.fillStyle = mute; x.font = "400 19px " + face;
-    x.fillText(tr("An estimate only, not a price. Your quotation is confirmed privately, once your stones are chosen.", "הערכה בלבד, לא מחיר. הצעת המחיר שלכם נמסרת באופן אישי, לאחר בחירת האבנים."), rtl ? W - 70 : 70, ey + 92);
+    x.fillText(E.note(), rtl ? W - 70 : 70, ey + 92);
     /* the foot: the mark, the word, the date */
     x.direction = "ltr"; x.textAlign = "center";
     x.fillStyle = ink; x.font = "300 38px " + face;
@@ -1092,6 +1144,10 @@
   }
   clocks(); setInterval(clocks, 15000);
   var form = $("cform"), chan = "Email", mail = form.getAttribute("data-mail") || "concierge@silavu.com",
+      /* a form endpoint (a form service, or the house's own) once one exists;
+         until then the enquiry is handed to the reader's email app, and every
+         word on the way says so */
+      endpoint = (form.getAttribute("data-endpoint") || "").trim(),
       wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, ""),
       tel = (form.getAttribute("data-tel") || "").replace(/[^0-9+]/g, "");
   (function () {
@@ -1109,7 +1165,7 @@
      is written onto data-en/data-he and the language pass is asked to run over
      those two elements again, so a change of language keeps them. */
   var CHAN = {
-    Email:    { en: "Send enquiry",   he: "שליחת הפנייה",
+    Email:    { en: endpoint ? "Send enquiry" : "Continue in email", he: endpoint ? "שליחת הפנייה" : "המשך באימייל",
                 doneEn: "Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com.",
                 doneHe: "אפליקציית הדואר אמורה להיפתח עכשיו עם ההודעה מוכנה. לחצו שם על שליחה כדי שהפנייה תגיע לקונסיירז׳. אם היא לא נפתחה, העתיקו את הפרטים וכתבו אל concierge@silavu.com." },
     WhatsApp: { en: "Continue on WhatsApp", he: "המשיכו בוואטסאפ",
@@ -1125,7 +1181,22 @@
     if (d) { d.setAttribute("data-en", c.doneEn); d.setAttribute("data-he", c.doneHe); }
     [b, d].forEach(function (el) { if (el && window.__say) el.innerHTML = window.__say(el); });
   }
-  form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); el.parentElement.classList.remove("err"); }); el.addEventListener("blur", f); });
+  form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); fieldErr(el, null); }); el.addEventListener("blur", f); });
+  /* a field that is missing or wrong says so in words, next to it, and the
+     words are what a screen reader hears when it lands there */
+  var ERR = {
+    name: ["Please write your name.", "נא לכתוב את שמכם."],
+    contact: ["Please add a phone number or an email address, so we can answer you.", "נא להוסיף טלפון או אימייל, כדי שנוכל לחזור אליכם."],
+    contactBad: ["This does not look like a phone number or an email address.", "זה לא נראה כמו מספר טלפון או כתובת אימייל."]
+  };
+  function fieldErr(el, key) {
+    var box = el.parentElement, msg = $(el.id + "Err");
+    box.classList.remove("err");
+    if (!key) { el.removeAttribute("aria-invalid"); if (msg) { msg.hidden = true; msg.textContent = ""; } return; }
+    void box.offsetWidth; box.classList.add("err"); el.setAttribute("aria-invalid", "true");
+    if (msg) { msg.textContent = L2(ERR[key][0], ERR[key][1]); msg.hidden = false; }
+  }
+  function contactOk(v) { v = v.trim(); return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || (v.replace(/[^0-9]/g, "").length >= 7 && /^[0-9+()\-.\s]+$/.test(v)); }
   form.addEventListener("click", function (e) {
     var c = e.target.closest(".chip[data-ch]"); if (c) { form.querySelectorAll(".chip[data-ch]").forEach(function (x) { x.classList.remove("on"); }); c.classList.add("on"); chan = c.getAttribute("data-ch"); chanLabel(); return; }
   });
@@ -1178,9 +1249,34 @@
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     var name = $("fName"), contact = $("fContact"), bad = null;
-    [contact, name].forEach(function (el) { if (!el.value.trim()) { el.parentElement.classList.remove("err"); void el.offsetWidth; el.parentElement.classList.add("err"); bad = el; } });
+    var cv = contact.value.trim(), ck = !cv ? "contact" : contactOk(cv) ? null : "contactBad";
+    fieldErr(contact, ck); if (ck) bad = contact;
+    fieldErr(name, name.value.trim() ? null : "name"); if (!name.value.trim()) bad = name;
     if (bad) { bad.focus(); return; }
-    var body = compose();
+    var body = compose(), err = $("cerr"), btn = $("csend");
+    if (err) err.hidden = true;
+    /* with an endpoint the enquiry is really sent, and the page only says it
+       arrived when the server says so; if it fails, nothing typed is lost and
+       the email app is offered instead */
+    if (endpoint && chan === "Email") {
+      var was = btn.innerHTML; btn.disabled = true; btn.setAttribute("aria-busy", "true"); btn.textContent = L2("Sending…", "שולחים…");
+      var want = form.querySelector(".want .chip.on");
+      fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ name: name.value.trim(), city: $("fCity").value.trim(), contact: cv, want: want ? want.getAttribute("data-en") : "",
+          selection: sel ? selText().replace(/[\u2066\u2069]/g, "") : "", message: msgEl.value.trim(), lang: lang, page: location.href, text: body }) })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r; })
+        .then(function () {
+          var d = $("cdone"); if (d) { d.setAttribute("data-en", "Thank you. Your enquiry has reached the concierge, and we will answer you personally."); d.setAttribute("data-he", "תודה. הפנייה שלכם הגיעה לקונסיירז׳, ונחזור אליכם באופן אישי."); d.innerHTML = window.__say(d); }
+          form.classList.add("sent"); try { sessionStorage.removeItem("silavu-draft"); } catch (e) {}
+        })
+        .catch(function () {
+          if (err) { err.textContent = L2("The enquiry could not be sent just now. Nothing you wrote is lost: press the button again, or continue in email.", "לא הצלחנו לשלוח את הפנייה כרגע. שום דבר ממה שכתבתם לא אבד: נסו שוב, או המשיכו באימייל."); err.hidden = false; }
+          var a = document.createElement("a"); a.className = "lnk"; a.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); a.textContent = L2("Continue in email", "המשך באימייל");
+          if (err) { err.appendChild(document.createTextNode(" ")); err.appendChild(a); }
+        })
+        .then(function () { btn.disabled = false; btn.removeAttribute("aria-busy"); btn.innerHTML = was; });
+      return;
+    }
     /* the app opens with the message written; nothing is sent from here, and
        the page says so rather than claiming it went */
     form.classList.add("sent");

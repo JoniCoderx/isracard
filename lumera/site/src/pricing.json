@@ -1,0 +1,22 @@
+{
+  "_read_me": "The figures the Line builder uses for its estimate. Nothing here is shown as a price until 'approved' is true, 'updated' is filled in, and the date is younger than 'maxAgeDays'. Until then the builder says 'Price on request'. Exchange rates follow the same rule on their own: without approved, dated rates, the estimate is shown in AED only. All amounts are AED. Rebuild the page after editing.",
+  "approved": false,
+  "source": "Working figures from the design stage. Not yet checked against the house price list.",
+  "updated": "",
+  "maxAgeDays": 120,
+  "currency": "AED",
+  "roundTo": 500,
+  "metal": { "gold18k": 6500, "platinum": 9500 },
+  "making": { "base": 9000, "channelSetting": 1500, "perStone": 40 },
+  "stones": {
+    "lab": { "perCtAtRef": 2200, "refCt": 0.17, "exponent": 0.6 },
+    "natural": { "perCtAtRef": 22000, "refCt": 0.17, "exponent": 0.9 }
+  },
+  "fx": {
+    "approved": false,
+    "source": "Not recorded.",
+    "updated": "",
+    "maxAgeDays": 14,
+    "perAED": { "USD": 0.2723, "EUR": 0.2510, "ILS": 1.005 }
+  }
+}

@@ -58,7 +58,7 @@
     wimg.style.transform = "scale(" + (1.04 + 0.12 * e + p * 0.03).toFixed(4) + ") translateY(" + ((p - 0.5) * -3).toFixed(2) + "%)";
     var t = Math.max(0, Math.min(1, (p - 0.55) / 0.3)); wtxt.style.opacity = t.toFixed(3); wtxt.style.transform = "translateY(" + ((1 - t) * 30).toFixed(1) + "px)"; wveil.style.opacity = Math.max(0, Math.min(1, (p - 0.4) / 0.3)).toFixed(3);
   }
-  (function loop() { requestAnimationFrame(loop); if (!document.hidden) wristTick(); })();
+  window.__awake(function () { var was = lastW; wristTick(); return lastW !== was; });
 
   /* Buttons no longer lean toward the hand either — it was the fourth thing on
      the page reacting to the cursor, and the least worth keeping. */

@@ -1347,16 +1347,21 @@
     gl.uniform1f(U.trace, onScreen > 26 ? 1 : 0);
     pStone.draw(1, [1, 1, 1], 0);
   }
+  /* asleep while the bracelet is off screen or the wrist view is showing;
+     the shared loop wakes it on the next scroll, touch or press */
+  var asleep8 = false;
+  if (window.__awake) window.__awake(function () { if (asleep8) { asleep8 = false; requestAnimationFrame(tick); } });
   function tick() {
-    requestAnimationFrame(tick);
+    var nap = function () { if (window.__awake) asleep8 = true; else requestAnimationFrame(tick); };
     /* the hand is a photograph now and lives in the other canvas; this one
        draws the bracelet alone, and never builds the mesh */
-    if (wrap.classList.contains("wrist")) return;
-    if (snake) { snakeStep(performance.now()); dirty = true; }
+    if (wrap.classList.contains("wrist") || document.hidden) return nap();
     if (!page) {
       var r = wrap.getBoundingClientRect();
-      if (r.bottom < -80 || r.top > innerHeight + 80) return;
+      if (r.bottom < -80 || r.top > innerHeight + 80) return nap();
     }
+    requestAnimationFrame(tick);
+    if (snake) { snakeStep(performance.now()); dirty = true; }
     if (!drag) {
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
         cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.90; cam.vph *= 0.90;

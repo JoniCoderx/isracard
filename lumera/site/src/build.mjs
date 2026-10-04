@@ -28,7 +28,16 @@ rep(`var n = desk() ? 110 : 55; motes = [];`, `var n = 0; motes = [];`);
 /* v11: a shorter intro, lazy macro film, prices in any currency, a crossfade on language change, compass aliases */
 rep(`var iv = $("insidevid"), ivLoaded = true;`, `var iv = $("insidevid"), ivLoaded = false;`);
 rep(`estEl.textContent = "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");`, `estEl.setAttribute("data-aed", Math.round(total / 500) * 500); estEl.textContent = window.__money ? window.__money.fmt(Math.round(total / 500) * 500) : "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");`);
-rep(`function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); }`, `function setLang(c) { if (c === lang) return; var h = document.documentElement; h.classList.add("langing"); setTimeout(function () { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); if (window.__money) window.__money.refresh(); requestAnimationFrame(function () { h.classList.remove("langing"); }); }, entered ? 220 : 0); }`);
+/* the language lives in the address: Hebrew has a page of its own, French,
+   Russian and Arabic ride on ?lang=, so a link copied in one language opens
+   in it. Moving between the English and the Hebrew address is a page load. */
+rep(`function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c); } catch (e) {} applyLang(); }`, `function setLang(c) { if (c === lang) return; try { localStorage.setItem("silavu-lang", c); } catch (e) {}
+    var onHe = window.__pageLang === "he", root = new URL(".", document.baseURI);
+    if (c === "he" && !onHe) { location.href = new URL("he/", root).href + location.hash; return; }
+    if (c !== "he" && onHe) { location.href = root.href + (c === "en" ? "" : "?lang=" + c) + location.hash; return; }
+    langURL(c);
+    var h = document.documentElement; h.classList.add("langing"); setTimeout(function () { lang = c; applyLang(); if (window.__money) window.__money.refresh(); requestAnimationFrame(function () { h.classList.remove("langing"); }); }, entered ? 220 : 0); }
+  function langURL(c) { try { var u = new URL(location.href); if (c === "en" || c === "he") u.searchParams.delete("lang"); else u.searchParams.set("lang", c); if (u.href !== location.href) history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) {} }`);
 rep(`var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`, `var alias = { macro: "collection", wrist: "build", voices: "clients", partners: "clients" }`);
 
 /* v12: the piece window opens from the piece */
@@ -75,12 +84,34 @@ const NEW_PRICE = `  var CUTS = {
     return { cut: b.cut || "round", n: n, each: each, L: L, W: Wd, alongMm: along, acrossMm: across,
              pitchMm: along + gap, gapMm: gap, orient: c.orient, set: c.set, ratio: c.ratio, lenMm: lenMm };
   }
+  /* The estimate comes from one place, src/pricing.json, and is shown only
+     when that list is marked approved, carries the date it was set, and is
+     not older than it says it may be. Otherwise the builder says the price
+     is given on request, and nothing on the page or in the saved picture
+     pretends to a number. */
+  var PR = window.SILAVU_PRICING || {};
+  function fresh(o) { if (!o || !o.approved || !o.updated) return false; var t = Date.parse(o.updated); return !isNaN(t) && (Date.now() - t) / 864e5 <= (o.maxAgeDays || 120); }
+  var EST = window.__est = {
+    get live() { return fresh(PR); },
+    label: function () { return EST.live ? L2("Estimated price", "מחיר משוער") : L2("Price", "מחיר"); },
+    note: function () { return EST.live
+      ? L2("An estimated price for the design you chose. The final price is confirmed once the stones and the specification are chosen.", "מחיר משוער לעיצוב שבחרתם. המחיר הסופי יאושר לאחר בחירת האבנים והמפרט.")
+      : L2("Priced personally, for the stones and the specification you choose.", "המחיר נקבע באופן אישי, לפי האבנים והמפרט שתבחרו."); }
+  };
   function price() {
     var b = window.__build, c = CUTS[b.cut] || CUTS.round, spec = lineSpec(b), each = spec.each, nat = b.origin === "natural";
-    var perCt = (nat ? 22000 * Math.pow(each / 0.17, 0.9) : 2200 * Math.pow(each / 0.17, 0.6)) * c.price;
-    var stones = perCt * b.ct, metal = b.metal === "platinum" ? 9500 : 6500, making = 9000 + (c.set === "channel" ? 1500 : 0) + spec.n * 40;
-    var total = stones + metal + making;
-    estEl.setAttribute("data-aed", Math.round(total / 500) * 500); estEl.textContent = window.__money ? window.__money.fmt(Math.round(total / 500) * 500) : "AED " + (Math.round(total / 500) * 500).toLocaleString("en-US");
+    var S = (PR.stones || {})[nat ? "natural" : "lab"] || {}, M = PR.metal || {}, K = PR.making || {}, R = PR.roundTo || 500;
+    var perCt = (S.perCtAtRef || 0) * Math.pow(each / (S.refCt || 0.17), S.exponent || 1) * c.price;
+    var stones = perCt * b.ct, metal = b.metal === "platinum" ? (M.platinum || 0) : (M.gold18k || 0), making = (K.base || 0) + (c.set === "channel" ? (K.channelSetting || 0) : 0) + spec.n * (K.perStone || 0);
+    var total = Math.round((stones + metal + making) / R) * R, live = EST.live && total > 0;
+    var tot = estEl.closest(".tot"); if (tot) tot.classList.toggle("onreq", !live);
+    var k = tot && tot.querySelector(".estk"), nt = tot && tot.querySelector(".estnote");
+    if (k) { k.setAttribute("data-en", live ? "Estimated price" : "Price"); k.setAttribute("data-he", live ? "מחיר משוער" : "מחיר"); k.textContent = EST.label(); }
+    if (nt) { nt.setAttribute("data-en", live ? "An estimated price for the design you chose. The final price is confirmed once the stones and the specification are chosen." : "Priced personally, for the stones and the specification you choose.");
+      nt.setAttribute("data-he", live ? "מחיר משוער לעיצוב שבחרתם. המחיר הסופי יאושר לאחר בחירת האבנים והמפרט." : "המחיר נקבע באופן אישי, לפי האבנים והמפרט שתבחרו."); nt.textContent = EST.note(); }
+    if (live) { estEl.setAttribute("data-aed", total); estEl.textContent = window.__money ? window.__money.fmt(total) : "≈ AED " + total.toLocaleString("en-US"); }
+    else { estEl.setAttribute("data-aed", "0"); estEl.setAttribute("data-en", "Price on request"); estEl.setAttribute("data-he", "מחיר לפי פנייה"); estEl.textContent = L2("Price on request", "מחיר לפי פנייה"); }
+    if (live) { estEl.removeAttribute("data-en"); estEl.removeAttribute("data-he"); }
     /* the weight of one stone is the total shared out and rounded, so it is
        marked as approximate: 44 × 0.14 is 6.16, not the 6 ct chosen */
     sumStones.textContent = spec.n + " × ≈" + each.toFixed(2) + " ct · " + (lang === "he" ? c.he : (T(c.en) || c.en)); sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";
@@ -113,6 +144,12 @@ const MKVAR = ":root{--mk:url('data:image/svg+xml;utf8," + encodeURIComponent('<
 const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
   + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
   + '<link rel="stylesheet" href="' + FONT_HREF + '">';
-const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${css}</style>\n${b}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}`;
-fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", page);
+/* the price list the estimate reads, without its note to the editor */
+const PRICING = JSON.parse(fs.readFileSync(S + "pricing.json", "utf8")); delete PRICING._read_me;
+const pricingTag = `<script>window.SILAVU_PRICING = ${JSON.stringify(PRICING)};</script>`;
+const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}`;
+/* lighter on the wire: dead rules out, the sheet and the scripts minified (see slim.mjs) */
+const { slim } = await import("./slim.mjs");
+const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"]);
+fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", slimmed);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

@@ -37,7 +37,14 @@
   window.__tray = trays;
 
   /* ── currency: prices are set in AED and shown in the currency you choose ── */
-  var RATES = { AED: 1, USD: 0.2723, EUR: 0.2510, ILS: 1.005 }, SYM = { AED: "AED ", USD: "US$ ", EUR: "€ ", ILS: "₪ " }, cur = "AED";
+  /* the rates come from src/pricing.json and are used only while they are
+     approved and dated within their own limit; otherwise AED alone is shown,
+     rather than a conversion nobody has checked */
+  var FX = (window.SILAVU_PRICING || {}).fx || {}, fxT = Date.parse(FX.updated || ""),
+      fxOk = !!FX.approved && !isNaN(fxT) && (Date.now() - fxT) / 864e5 <= (FX.maxAgeDays || 14);
+  var RATES = { AED: 1 }, SYM = { AED: "AED ", USD: "US$ ", EUR: "€ ", ILS: "₪ " }, cur = "AED";
+  if (fxOk) Object.keys(FX.perAED || {}).forEach(function (c) { if (SYM[c] && FX.perAED[c] > 0) RATES[c] = FX.perAED[c]; });
+  document.querySelectorAll("[data-cur]").forEach(function (box) { var n = 0; box.querySelectorAll(".chip").forEach(function (c) { var ok = !!RATES[c.getAttribute("data-c")]; c.hidden = !ok; if (ok) n++; }); box.hidden = n < 2; });
   try { cur = localStorage.getItem("silavu-cur") || "AED"; if (!RATES[cur]) cur = "AED"; } catch (e) {}
   function fmt(aed) { var v = aed * RATES[cur], r = cur === "AED" ? 500 : 100; v = Math.round(v / r) * r; return "≈ " + SYM[cur] + v.toLocaleString("en-US"); }   /* always marked as approximate: an estimate, never a price */
   function fmtH(aed) { return fmt(aed).replace("₪ ", '<span class="shk">₪</span>\u2009'); }

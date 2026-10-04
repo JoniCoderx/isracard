@@ -27,7 +27,7 @@
   svg.sy.huge { height:clamp(120px,16vw,200px); margin-bottom:26px; }
   svg.seal { display:block; width:1em; height:1em; fill:none; stroke:currentColor; stroke-width:6; stroke-linejoin:miter; stroke-miterlimit:3; overflow:visible; }
   svg.seal circle { stroke-width:2.5; }
-  svg.seal path.sm { fill:currentColor; stroke:none; }
+  svg.seal path.sm, svg.seal use.sm { fill:currentColor; stroke:none; }
   svg.seal.sealcert { width:44px; height:44px; color:var(--ink); margin:0 auto 16px; }
   svg.seal.sealsm { width:44px; height:44px; color:var(--gold); flex:none; }
   .pricerow { display:flex; align-items:center; gap:14px; margin-top:6px; }
@@ -5639,3 +5639,86 @@
     .btn.solid:hover::before { opacity:1; transform:translateX(430%) skewX(-20deg); transition:transform .9s cubic-bezier(.4,0,.2,1), opacity .2s; }
     .ivory .btn.solid::before, .paper .btn.solid::before, #pmodal .btn.solid::before { background:linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.22), rgba(255,255,255,0)); }
   }
+
+  /* ══ v165 — the enquiry says what is wrong, in words ══════════════════════
+     A missing or unusable field used to turn its line red and nudge it, and
+     nothing more: a reader who cannot see red, or who hears the page, was
+     told nothing. Each required field now carries one plain sentence under
+     its input, tied to it by aria-describedby; a send that fails says so
+     under the button, with the email app as the way on. ────────────────── */
+  .field .ferr { margin:0 0 9px; font-size:.875rem; line-height:1.45; color:#f2a594; font-weight:400; }
+  .cerr { margin:14px 0 0; font-size:.95rem; line-height:1.5; color:#f2a594; max-width:60ch; }
+  .cerr a { color:inherit; text-decoration:underline; text-underline-offset:3px; margin-inline-start:4px; }
+  #csend[aria-busy="true"] { opacity:.7; cursor:progress; }
+
+  /* ══ v166 — the price, said plainly ═══════════════════════════════════════
+     Until the house price list is approved and dated (src/pricing.json), the
+     builder gives no number: "Price on request", at reading size rather than
+     at the size of a figure, and the currency row is not shown. With an
+     approved list the estimate returns, still secondary to the design. ──── */
+  #build #configure .tot.onreq .price, .tot.onreq .price { font-size:clamp(1.15rem, 1.6vw, 1.35rem) !important; letter-spacing:.01em !important;
+    line-height:1.3 !important; font-weight:400; direction:inherit; unicode-bidi:plaintext; text-align:start; }
+  .tot.onreq .cur { display:none; }
+
+  /* ══ v167 — text to be read is set to be read ═════════════════════════════
+     Measured on the built page: the piece descriptions sat at 13.3px in weight
+     300, the story in the piece window at 15px/300, the notes under the
+     estimate and the form at 11.8–13.4px/300, and on a wide screen every
+     button, chip and link at 9.6–10.9px. Running text is now 16px in weight
+     400 (the light weight is kept for display sizes only), the small print
+     14–15px, and nothing that is pressed is below 12px at any width. Hebrew,
+     whose Assistant is thinner at the same weight, gets the same floor. ── */
+  html body :is(#collection, #pmodal, #build, #house, #hcap, #beats, #concierge, #tryon, .doc) p.p { font-weight:400 !important; }
+  html body #collection p.p, html body .pgrid .piece p.p { font-size:1rem !important; line-height:1.6 !important; }
+  html body #pmodal p.story, html body #pmodal .mdt p.p { font-size:1rem !important; line-height:1.65 !important; }
+  html body #pmodal p.lead { font-weight:400 !important; }
+  html body .estnote { font-size:.875rem !important; font-weight:400 !important; line-height:1.55 !important; }
+  html body .cnote, html body #concierge p.fine { font-size:.9375rem !important; font-weight:400 !important; }
+  html body .ttip { font-size:.9375rem !important; font-weight:400 !important; }
+  html body .trustline { font-size:.8125rem !important; font-weight:400 !important; }
+  html body :is(.tnote, .thint) { font-size:.8125rem !important; }
+  html body #pmodal .incl li { font-size:.9375rem; font-weight:400; }
+  @media (min-width:1000px) {
+    html body :is(.btn, .lnk, .cat, .chip, .menubtn) { font-size:max(12px, .75rem) !important; }
+  }
+  html[data-ns] body :is(p.p, .estnote, .cnote, .ttip, .fine) { font-weight:400 !important; }
+
+  /* ══ v168 — a piece at its own address ════════════════════════════════════
+     The piece pages (pieces/<id>/ and he/pieces/<id>/) are the quick view
+     written out as a page: the photographs down one side, the words and the
+     specification on the other, then the rest of the collection. Same black,
+     same type, the same calm as the documents. ─────────────────────────── */
+  main.doc.ppage { max-width:1240px; }
+  .ppage .crumbs { display:flex; gap:10px; align-items:center; margin:0 0 28px; color:var(--ink3); }
+  .ppage .crumbs a { color:var(--ink2); text-decoration:none; } .ppage .crumbs a:hover { color:var(--ink); }
+  .ppage .crumbs i { font-style:normal; opacity:.5; }
+  .ppgrid { display:grid; grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr); gap:clamp(28px, 5vw, 72px); align-items:start; }
+  /* the first photograph large, the rest in pairs beneath it */
+  .ppgal { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .ppgal figure:first-child { grid-column:1 / -1; }
+  .ppgal figure { margin:0; background:#f4f3f1; aspect-ratio:4 / 5; overflow:hidden; }
+  .ppgal img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pptext { position:sticky; top:96px; display:grid; gap:18px; }
+  .pptext h1 { margin:0; }
+  .pptext .lede { margin:0; }
+  .ppspecs { margin:8px 0 0; display:grid; border-top:1px solid rgba(242,239,233,.14); }
+  .ppspecs > div { display:grid; grid-template-columns:minmax(0, 11em) minmax(0, 1fr); gap:16px; padding:12px 0; border-bottom:1px solid rgba(242,239,233,.14); }
+  .ppspecs dt { color:var(--ink3); font-size:.875rem; letter-spacing:.04em; }
+  .ppspecs dd { margin:0; color:var(--ink); font-size:1rem; font-weight:400; }
+  .pprice { margin:4px 0 0; color:var(--ink2); font-size:.9375rem; }
+  .ppage .acta { display:flex; flex-wrap:wrap; gap:12px; margin-top:6px; }
+  .ppmore { margin-top:clamp(56px, 8vw, 110px); }
+  .ppmore h2 { margin:0 0 18px; }
+  .ppmore ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
+  .ppmore a { display:grid; gap:10px; color:var(--ink); text-decoration:none; }
+  .ppmore img { width:100%; aspect-ratio:4 / 5; object-fit:cover; background:#f4f3f1; display:block; }
+  .ppmore span { font-family:var(--serif, inherit); font-size:1.15rem; }
+  @media (max-width:899px) {
+    .ppgrid { grid-template-columns:minmax(0, 1fr); }
+    .pptext { position:static; }
+    .ppgal { grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:86%; overflow-x:auto; scroll-snap-type:x mandatory; gap:10px; }
+    .ppgal figure { scroll-snap-align:start; } .ppgal figure:first-child { grid-column:auto; }
+    .ppspecs > div { grid-template-columns:minmax(0, 9em) minmax(0, 1fr); }
+    .ppmore ul { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+  }
+  #pmodal .mfoot .mpage { margin-inline-start:4px; }
