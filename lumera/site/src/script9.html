@@ -58,7 +58,28 @@
   var lastW = innerWidth, vh0 = innerHeight;
   addEventListener("resize", function () { if (innerWidth !== lastW) { lastW = innerWidth; vh0 = innerHeight; dirty = true; } });
 
+  /* The black pours in. The chapter arrives white beneath the dark box, and
+     as it rises the black runs down into it from the top, the left side
+     first, its edge rippling like silk as it falls, until it settles into
+     the wave; a thread of light runs along the falling edge. Driven by the
+     scroll, not by time: it stops when the page stops. */
+  var fill = sec.querySelector(".sgfill"), edge = sec.querySelector(".sgedge");
+  var WAVE = [[0,30],[50,120],[110,270],[210,325],[250,345],[290,332],[330,334],[390,338],[425,380],[458,500],[478,575],[495,628],[540,628],[640,622],[690,622],[728,652],[765,735],[815,845],[900,955],[1000,1000]];
+  var lastF = -1;
+  function pour(f) {
+    if (!fill || f === lastF) return; lastF = f;
+    var P = WAVE.map(function (pt) {
+      var x = pt[0], k = sm(0, 1, f * 1.4 - x / 1000 * 0.4), live = k * (1 - k) * 4;
+      return [x, (pt[1] * k + 26 * Math.sin(x / 1000 * Math.PI * 3.2 + f * 5.5) * live).toFixed(1)];
+    });
+    var s = function (i) { return P[i][0] + " " + P[i][1]; };
+    var curve = "M" + s(0) + " C " + s(1) + ", " + s(2) + ", " + s(3) + " C " + s(4) + ", " + s(5) + ", " + s(6) + " C " + s(7) + ", " + s(8) + ", " + s(9)
+      + " C " + s(10) + ", " + s(11) + ", " + s(12) + " L " + s(13) + " C " + s(14) + ", " + s(15) + ", " + s(16) + " C " + s(17) + ", " + s(18) + ", " + s(19);
+    fill.setAttribute("d", curve + " L 1000 1300 L 0 1300 Z");
+    if (edge) { edge.setAttribute("d", curve); edge.style.opacity = (f > 0.001 && f < 0.999 ? Math.min(1, 6 * Math.min(f, 1 - f)) : 0).toFixed(3); }
+  }
   function frame(q) {
+    pour(sm(0, 0.5, q));
     var w = write(0.03, 0.8, q), len = L0 + (L1 - L0) * w, off = (L - len).toFixed(1);
     layers.forEach(function (e) { e.style.strokeDashoffset = off; });
     var writing = q > 0.015 && w < 1;

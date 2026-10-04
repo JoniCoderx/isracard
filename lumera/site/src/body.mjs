@@ -219,7 +219,7 @@ ${markDefs()}
     <!-- one line comes in from the left and writes the name, without lifting, and rises away -->
     <div class="sgstage">
       <!-- the white half: it sweeps in from the lower left under the name, and joins the white collection below -->
-      <svg class="sgsplit" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 30 C 50 120, 110 270, 210 325 C 250 345, 290 332, 330 334 C 390 338, 425 380, 458 500 C 478 575, 495 628, 540 628 L 640 622 C 690 622, 728 652, 765 735 C 815 845, 900 955, 1000 1000 L 1000 1300 L 0 1300 Z"/></svg>
+      <svg class="sgsplit" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="sgfill" d="M0 30 C 50 120, 110 270, 210 325 C 250 345, 290 332, 330 334 C 390 338, 425 380, 458 500 C 478 575, 495 628, 540 628 L 640 622 C 690 622, 728 652, 765 735 C 815 845, 900 955, 1000 1000 L 1000 1300 L 0 1300 Z"/><path class="sgedge" d=""/></svg>
       <div class="sgfig">
         <svg class="sgsvg" viewBox="146 0 1080 400" role="img" aria-label="SILAVU, written by hand in a single line" overflow="visible">
           <defs>

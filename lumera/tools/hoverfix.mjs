@@ -14,9 +14,14 @@ for (const lang of ["", "he/"]) {
     const seen = [];
     for (let t = 0; t < 6; t++) { await p.waitForTimeout(1000);
       seen.push(await fig.evaluate(f => { const r = f.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 3;
-        const shown = [...f.querySelectorAll(".im")].filter(im => { const q = im.getBoundingClientRect(); return q.left <= x && q.right >= x && q.top <= y && q.bottom >= y; });
-        const img = shown.length ? shown[shown.length - 1].querySelector("img") : null; return { n: shown.length, loaded: !!img && img.complete && img.naturalWidth > 0, at: f.closest(".piece").__at }; })); }
-    ok(seen.every(s => s.n >= 1 && s.loaded) && new Set(seen.map(s => s.at)).size > 1, `${lang || "en"} card ${k + 1}: a photograph is always on show while the mouse rests, and it walks`, seen);
+        /* the photograph really in the window: the frame whose computed
+           position is inside the card, not merely one the script says it moved */
+        const shown = [...f.querySelectorAll(".im")].filter(im => { const q = im.getBoundingClientRect(); return Math.abs(q.left - r.left) < 6 && q.top <= y && q.bottom >= y; });
+        const cover = [...f.querySelectorAll(".im")].some(im => { const q = im.getBoundingClientRect(); return q.left <= x && q.right >= x && q.top <= y && q.bottom >= y && im.querySelector("img").naturalWidth > 0; });
+        const img = shown.length ? shown[shown.length - 1].querySelector("img") : null; return { n: shown.length, cover, loaded: !img || (img.complete && img.naturalWidth > 0), src: img ? (img.currentSrc || img.src).split("/").pop() : "", at: f.closest(".piece").__at }; })); }
+    /* never an empty card (a sample mid-slide has two frames sharing it), and
+       at least three different photographs actually come into the window */
+    ok(seen.every(s => s.cover && s.n <= 1 && s.loaded) && new Set(seen.map(s => s.src).filter(Boolean)).size >= 3, `${lang || "en"} card ${k + 1}: exactly one photograph in the window at a time, and the photographs really change`, seen.map(s => s.n + ":" + s.src));
     await p.mouse.move(5, 5); await p.waitForTimeout(900);
   }
   await p.screenshot({ path: O + `cards-hover-${lang ? "he" : "en"}.png` });

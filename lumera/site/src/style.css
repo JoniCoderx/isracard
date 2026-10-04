@@ -5842,3 +5842,20 @@
   @media (max-width:759px) { #build #configure .total .lsum { font-size:.94rem; } }
   html[data-ns] #configure .cacts .clink { font-weight:300; }
   @media (max-width:759px) { .ahtext h1 { font-size:2.16rem !important; } }
+
+  /* ══ v175 — the black pours in ═══════════════════════════════════════════
+     The wave's fill is redrawn by script9 as the chapter rises (white, then
+     the black running down from the top until it settles); a thread of light
+     follows the edge while it moves. Without the script, or with reduced
+     motion, the wave is simply there. ──────────────────────────────────── */
+  #craft .sgsplit .sgfill { fill:#ffffff; }
+  #craft .sgsplit .sgedge { fill:none; stroke:rgba(255,255,255,.55); stroke-width:1.4; vector-effect:non-scaling-stroke; opacity:0;
+    filter:drop-shadow(0 0 6px rgba(255,255,255,.55)); }
+
+  /* ══ v176 — the card photographs really slide ════════════════════════════
+     ".fig .im { transform:none !important }" (the house rule that keeps
+     photographs still) beat the inline transforms the card gallery set, so
+     its frames never left their places. The gallery's frames take their
+     position from --sx / --st instead, under a rule that outranks it. ──── */
+  html body .pgrid .fig.swp .im { transform:var(--sx, none) !important; transition:var(--st, none) !important; }
+  html body .pgrid .fig.swp .im.hx { --sx:translate3d(100%,0,0); }
