@@ -929,7 +929,7 @@
   msgEl.addEventListener("focus", function () { setTimeout(function () {
     if (document.activeElement !== msgEl) return;
     var vv = window.visualViewport, vh = vv ? vv.height : innerHeight, r = msgEl.getBoundingClientRect();
-    if (r.bottom > vh - 12) scrollBy(0, r.bottom - vh + 24); }, 480); });
+    if (r.bottom > vh - 12) scrollBy(0, Math.min(r.bottom - vh + 24, Math.max(0, r.top - 70))); }, 480); });
   /* the Line as one sentence: the cut, the stones and their total, origin,
      metal, wrist and estimate. In Hebrew and Arabic every measure is isolated
      left to right, or "44 × 0.14 ct" comes out as "ct 0.14 × 44". */
@@ -1275,8 +1275,16 @@
      is brought back into view rather than left to the browser, which does
      not always do it */
   (function () { var kt = 0, vv = window.visualViewport;
-    function keep() { clearTimeout(kt); kt = setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) return;
-      var r = a.getBoundingClientRect(), h = vv ? vv.height : innerHeight; if (r.top < 70 || r.bottom > h - 12) a.scrollIntoView({ block: "center", behavior: "instant" }); }, 140); }
+    /* the keyboard, the browser's own scroll to the field and the page
+       settling to its new height all land at slightly different moments, so
+       one look is not enough: look again for a second and bring the field
+       back to the middle whenever it has drifted out of view */
+    /* the reader's own touch or scroll ends it at once: the page never pulls
+       them back to the field while they are looking at something else */
+    ["touchstart", "wheel"].forEach(function (ev) { addEventListener(ev, function () { clearTimeout(kt); }, { passive: true }); });
+    function keep() { clearTimeout(kt); var n = 0; (function look() { kt = setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) return;
+      var r = a.getBoundingClientRect(), h = vv ? vv.height : innerHeight; if (r.top < 70 || r.bottom > h - 12) a.scrollIntoView({ block: "center", behavior: "instant" });
+      if (++n < 8) look(); }, n ? 130 : 140); })(); }
     (vv || window).addEventListener("resize", keep); })();
   form.addEventListener("focusout", function () { setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) document.body.classList.remove("typing"); }, 60); });
   form.addEventListener("submit", function (e) {

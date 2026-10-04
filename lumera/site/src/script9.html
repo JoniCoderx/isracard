@@ -65,6 +65,9 @@
      scroll, not by time: it stops when the page stops. */
   var fill = sec.querySelector(".sgfill"), edge = sec.querySelector(".sgedge");
   var WAVE = [[0,30],[50,120],[110,270],[210,325],[250,345],[290,332],[330,334],[390,338],[425,380],[458,500],[478,575],[495,628],[540,628],[640,622],[690,622],[728,652],[765,735],[815,845],[900,955],[1000,1000]];
+  /* the black settles higher: the same wave, a third less of it, so the
+     name reads on white sooner and the chapter does not sit in the dark */
+  WAVE = WAVE.map(function (p) { return [p[0], 30 + (p[1] - 30) * 0.68]; });
   var lastF = -1;
   function pour(f) {
     if (!fill || f === lastF) return; lastF = f;

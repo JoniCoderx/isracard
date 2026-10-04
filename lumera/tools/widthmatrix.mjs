@@ -29,7 +29,8 @@ for (const w of [360, 390, 430, 768]) for (const lang of ["en", "he"]) {
         let sc = c.parentElement; while (sc && sc !== o) { if (sc.scrollWidth > sc.clientWidth + 2 && /auto|scroll/.test(getComputedStyle(sc).overflowX)) return false; sc = sc.parentElement; } return true; }); });
       ok(!chips, `${w} ${lang} builder choices fit the screen`);
       // keyboard: the window shrinks, the message field stays visible
-      await p.evaluate(() => document.getElementById("concierge").scrollIntoView()); await p.waitForTimeout(300);
+      /* a reader taps the field on a page at rest, not halfway through a smooth scroll */
+      await p.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; document.getElementById("concierge").scrollIntoView(); }); await p.waitForTimeout(600);
       await p.focus("#fMsg"); await p.setViewportSize({ width: w, height: 430 }); await p.waitForTimeout(900);
       const kb = await p.evaluate(() => { const r = document.getElementById("fMsg").getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), vh: innerHeight }; });
       ok(kb.top >= 0 && kb.top < kb.vh - 20, `${w} ${lang} message field visible with the keyboard up`, kb);

@@ -22,7 +22,11 @@ ok(cTop>-40 && cTop<120 && !(await p.evaluate(()=>document.documentElement.class
 await p.evaluate(()=>{const e=document.getElementById("stripwrap"); scrollTo(0,e.getBoundingClientRect().top+scrollY-80);}); await p.waitForTimeout(2400);
 await p.evaluate(()=>{const t=document.querySelector("#configure .total"); /* scroll so viewer+tabs fill, total below */ });
 const bar1=await p.evaluate(()=>{ const r=document.querySelector("#configure .total").getBoundingClientRect(), vis=Math.max(0,Math.min(innerHeight,r.bottom)-Math.max(0,r.top)); return {on:document.getElementById("cbar").classList.contains("on"), want:vis<Math.min(r.height*0.35,innerHeight*0.3), txt:document.querySelector("#cbar .cbs").textContent}; });
-await p.evaluate(()=>document.querySelector("#configure .total").scrollIntoView({block:"center"})); await p.waitForTimeout(900);
+await p.evaluate(()=>document.querySelector("#configure .total").scrollIntoView({block:"center"}));
+/* the bar is measured on scroll and again when the page comes to rest; with the
+   3D builder busy in a software renderer that rest can take a moment, so wait
+   for it (and still fail if the bar never leaves) */
+await p.waitForFunction(()=>!document.getElementById("cbar").classList.contains("on"),null,{timeout:4000}).catch(()=>{}); await p.waitForTimeout(300);
 const bar2=await p.evaluate(()=>document.getElementById("cbar").classList.contains("on"));
 await p.evaluate(()=>document.getElementById("enquire").scrollIntoView()); await p.waitForTimeout(900);
 const bar3=await p.evaluate(()=>document.getElementById("cbar").classList.contains("on"));
