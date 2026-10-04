@@ -651,7 +651,7 @@
      reads in the right order without the page itself being mirrored. */
   /* inside a right-to-left line, "6 ct" would split into "ct 6": a number
      followed by a Latin unit is kept as one left-to-right run */
-  function ltrU(s) { return s.replace(/[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>'); }
+  function ltrU(s) { return s.replace(/[0-9][0-9.,]*(?: *[–—-] *[0-9][0-9.,]*)+(?: +[A-Za-z]+)?|[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>'); }
   /* the copyright year is this year, whenever the page is read */
   document.querySelectorAll(".fyr").forEach(function (e) { e.textContent = new Date().getFullYear(); });
   var isleRe = /[\u0590-\u06ff]/, isleOn = false, isleRaf = 0;

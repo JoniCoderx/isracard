@@ -5318,7 +5318,11 @@
      fields and the order of each row follow the reader. The header and the
      bars fixed to the screen keep their places, so changing language never
      moves the frame of the page. ────────────────────────────────────────── */
-  html[dir="rtl"] #header, html[dir="rtl"] .dhd, html[dir="rtl"] #cbar, html[dir="rtl"] #fab, html[dir="rtl"] #where, html[dir="rtl"] #pbar { direction:ltr; }
+  html[dir="rtl"] #cbar, html[dir="rtl"] #fab, html[dir="rtl"] #where, html[dir="rtl"] #pbar { direction:ltr; }
+  /* the header reads the way the page does: in Hebrew and Arabic the menu is
+     on the right and the appointment and language on the left; the mark and
+     the name stay one lockup, exactly as drawn (below) */
+  html[dir="rtl"] #header, html[dir="rtl"] .dhd { direction:rtl; }
   html[dir="rtl"] #header .dnav, html[dir="rtl"] #header nav { direction:rtl; }
   html[dir="rtl"] input[dir="ltr"] { text-align:right; }
   /* the mark and the name are one lockup: in every language the mark stands
