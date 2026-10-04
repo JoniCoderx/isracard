@@ -1248,6 +1248,13 @@
   });
   selPaint();
   form.addEventListener("focusin", function (e) { if (e.target.matches("input, textarea")) document.body.classList.add("typing"); });
+  /* when the keyboard comes up the window shrinks; the field being typed in
+     is brought back into view rather than left to the browser, which does
+     not always do it */
+  (function () { var kt = 0, vv = window.visualViewport;
+    function keep() { clearTimeout(kt); kt = setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) return;
+      var r = a.getBoundingClientRect(), h = vv ? vv.height : innerHeight; if (r.top < 70 || r.bottom > h - 12) a.scrollIntoView({ block: "center", behavior: "instant" }); }, 140); }
+    (vv || window).addEventListener("resize", keep); })();
   form.addEventListener("focusout", function () { setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) document.body.classList.remove("typing"); }, 60); });
   form.addEventListener("submit", function (e) {
     e.preventDefault();

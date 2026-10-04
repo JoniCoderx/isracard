@@ -24,7 +24,9 @@ for (const w of [360, 390, 430, 768]) for (const lang of ["en", "he"]) {
         const last = m.querySelector(".mfoot").getBoundingClientRect(), cl = m.querySelector(".mclose2").getBoundingClientRect(); return { last: last.bottom <= innerHeight + 1 && last.top >= 0, close: cl.width > 0, wide: bx.scrollWidth - bx.clientWidth }; });
       ok(pm.last && pm.close && pm.wide <= 0, `${w} ${lang} piece window reaches its last line`, pm);
       await p.keyboard.press("Escape"); await p.waitForTimeout(500);
-      const chips = await p.evaluate(() => { const o = document.getElementById("opts"); o.scrollIntoView(); return [...o.querySelectorAll(".chip")].filter(c => c.offsetParent).some(c => { const r = c.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }); });
+      const chips = await p.evaluate(() => { const o = document.getElementById("opts"); o.scrollIntoView(); return [...o.querySelectorAll(".chip")].filter(c => c.offsetParent).some(c => { const r = c.getBoundingClientRect(); if (!(r.right > innerWidth + 1 || r.left < -1)) return false;
+        /* a chip in a row that swipes sideways is reachable by swiping */
+        let sc = c.parentElement; while (sc && sc !== o) { if (sc.scrollWidth > sc.clientWidth + 2 && /auto|scroll/.test(getComputedStyle(sc).overflowX)) return false; sc = sc.parentElement; } return true; }); });
       ok(!chips, `${w} ${lang} builder choices fit the screen`);
       // keyboard: the window shrinks, the message field stays visible
       await p.evaluate(() => document.getElementById("concierge").scrollIntoView()); await p.waitForTimeout(300);
