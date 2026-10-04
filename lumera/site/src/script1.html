@@ -957,7 +957,7 @@
   }
   function lineText(b, est) {
     var iso = function (x) { return (lang === "he" || lang === "ar") ? "\u2066" + x + "\u2069" : x; };
-    return ["SILAVU The Line", b.cut ? chipName("cut", b.cut) : "", oname(b.origin), iso(b.ct + " ct"), iso((b.wrist || 17) + " cm"), mname(b.metal), est ? iso(est) : ""].filter(Boolean).join(" · ");
+    return ["SILAVU The Line", b.cut ? chipName("cut", b.cut) : "", oname(b.origin), iso(b.ct + " ct"), iso((b.wrist || 17) + " cm"), mname(b.metal), est && window.__est && window.__est.live ? iso(est) : ""].filter(Boolean).join(" · ");
   }
   var SELACT = {
     reserve: ["Reservation", "שריון"], viewing: ["Private viewing", "פגישה פרטית"], bespoke: ["Bespoke commission", "תכשיט בהתאמה אישית"],
@@ -979,6 +979,29 @@
     $("cselAct").textContent = L2(a[0], a[1]);
     $("cselTxt").textContent = selText();
     $("cselEdit").hidden = sel.k === "bespoke";
+    selThumb();
+  }
+  /* a small picture of what was chosen, beside its name: the piece's own
+     photograph, or the bracelet as it was designed */
+  var thumbOf = null;
+  function selThumb() {
+    var im = $("cselImg"), box = $("csel"); if (!im || !box) return;
+    if (thumbOf === sel && im.getAttribute("src")) return;
+    var src = "";
+    try {
+      if (sel.k === "piece") {
+        var pc = [].slice.call(document.querySelectorAll(".pgrid .piece")).filter(function (c) { var q = c.querySelector("[data-piece]"); return q && q.getAttribute("data-piece") === sel.p; })[0];
+        var pi = pc && pc.querySelector(".im img"); if (pi) src = pi.currentSrc || pi.getAttribute("src");
+      } else if (sel.k === "line") {
+        var B = window.__bracelet, c = null;
+        if (B && B.shot && !document.documentElement.classList.contains("no3d")) c = B.shot({ th: -0.62, ph: 0.42, d: 1 });
+        if (!c || !c.width) c = $("stripcv");
+        if (c && c.width) { var r = cropTo(c), t = document.createElement("canvas"); t.width = t.height = 160; var x = t.getContext("2d");
+          x.fillStyle = "#121110"; x.fillRect(0, 0, 160, 160); fitIn(x, r, 10, 10, 140, 140); src = t.toDataURL("image/jpeg", 0.86); }
+      }
+    } catch (e) { src = ""; }
+    thumbOf = sel; im.hidden = !src; if (src) im.src = src; else im.removeAttribute("src");
+    im.classList.toggle("dark", sel.k === "line"); box.classList.toggle("hasimg", !!src);
   }
   function setWant(en) {
     form.querySelectorAll(".want .chip").forEach(function (x) { var on = x.getAttribute("data-en") === en; x.classList.toggle("on", on); x.setAttribute("aria-checked", on ? "true" : "false"); });

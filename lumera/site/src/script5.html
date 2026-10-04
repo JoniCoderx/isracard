@@ -137,6 +137,7 @@
   /* ── the box ── */
   var conn = navigator.connection || {}, weak = (navigator.deviceMemory && navigator.deviceMemory <= 2) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) || !!conn.saveData || /(^|[^0-9])2g$/.test(conn.effectiveType || "");
   var beats = Array.prototype.slice.call(document.querySelectorAll("#beats .beat")), pprog = $("pprog"), pcue = document.querySelector(".pcue"), dots = Array.prototype.slice.call(document.querySelectorAll("#pdots i"));
+  var outEls = [$("boxcv"), $("beats"), pprog && pprog.parentElement, $("pdots")];
   function beatsAt(p) {
     var n = beats.length;
     /* One stage at a time. The fades used to follow the scroll and cross, so
@@ -151,6 +152,11 @@
       beats[i].classList.toggle("on", on); beats[i].style.opacity = "";
       beats[i].style.transform = (mobile ? "" : "translateY(-50%) ") + "translateY(" + (reduce ? 0 : (p - c) * -60).toFixed(1) + "px)"; beats[i].style.pointerEvents = on ? "auto" : "none"; }
     pprog.style.width = (p * 100).toFixed(2) + "%"; if (pcue) pcue.style.opacity = p > 0.9 ? "0" : "1";
+    /* the chapter goes out to black rather than holding on its last frame:
+       over the last stretch the film, its words, the dots and the line all
+       fade together, so what scrolls away is already dark */
+    var o = c01((p - 0.84) / 0.16); o = o * o * (3 - 2 * o);
+    if (o !== beatsAt.o) { beatsAt.o = o; var v = (1 - o).toFixed(3); outEls.forEach(function (e) { if (e) e.style.opacity = v; }); }
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
   var box = sequence({

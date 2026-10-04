@@ -16,7 +16,9 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   await p.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
   const top = await p.evaluate(() => document.getElementById("craft").getBoundingClientRect().top + scrollY);
   const H = await p.evaluate(() => document.getElementById("craft").offsetHeight);
-  ok(rm ? H < h * 1.2 : H > h * (mob ? 1.3 : 1.45) && H < h * (mob ? 1.4 : 1.55), `${tag} section ${(H / h).toFixed(2)} screens`);
+  const S = await p.evaluate(() => document.querySelector("#craft .sgstage").offsetHeight);
+  /* a short passage: the stage about three quarters of a screen, the hold a little over one */
+  ok(rm ? H < h * 1.2 : H > h * (mob ? 0.95 : 1.07) && H < h * (mob ? 1.05 : 1.17) && S < h * 0.8, `${tag} section ${(H / h).toFixed(2)} screens, stage ${(S / h).toFixed(2)}`);
   const probe = () => p.evaluate(() => { const q = s => document.querySelector("#craft " + s), O = e => +getComputedStyle(e).opacity, R = e => e.getBoundingClientRect();
     const st = R(q(".sgstage")), fig = R(q(".sgfig")), cp = R(q(".sgcopy"));
     return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, O(q(".sgc1")), O(q(".sgc2"))],
@@ -27,7 +29,7 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   const fs = rm ? [0.5] : [0, 0.1, 0.2, 0.35, 0.6, 0.83, 0.88, 1];
   for (const f of fs) {
     /* the writing runs from when the line comes up over the bottom of the screen to the end of the hold */
-    const lead = h * 0.52, hold = H - h;
+    const lead = S * 0.52, hold = H - S;
     await p.evaluate(y => scrollTo(0, y), Math.round(rm ? top - (h - H) / 2 : top - lead + f * (lead + hold))); await p.waitForTimeout(rm ? 500 : 1400);
     const r = await probe();
     ok(r.over <= 0, `${tag} @${f} no sideways overflow`);

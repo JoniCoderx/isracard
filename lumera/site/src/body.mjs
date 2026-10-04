@@ -388,6 +388,7 @@ ${markDefs()}
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Bespoke commission" data-he="תכשיט בהתאמה אישית">Bespoke commission</button>
             <button type="button" class="chip" role="radio" aria-checked="false" data-en="Something else" data-he="משהו אחר">Something else</button></div>
           <div class="csel" id="csel" hidden aria-live="polite">
+            <img class="cselimg" id="cselImg" alt="" width="64" height="64" hidden>
             <div class="cselhd"><span class="k" data-en="Your selection" data-he="הבחירה שלכם">Your selection</span>
               <span class="cselacts"><button type="button" class="lnk cseled" id="cselEdit" data-en="Edit selection" data-he="עריכת הבחירה">Edit selection</button><button type="button" class="lnk cselx" id="cselClear" data-en="Remove" data-he="הסרה">Remove</button></span></div>
             <p class="cselact k" id="cselAct"></p>

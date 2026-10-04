@@ -5767,10 +5767,8 @@
      words are drawn in difference against it, so every letter is white on
      the black and ink on the white, splitting where the edge crosses it. ── */
   #craft .sgstage { isolation:isolate; overflow:hidden; }
-  #craft .sgsplit { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:visible; will-change:transform; }
+  #craft .sgsplit { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:visible; }
   #craft .sgsplit path { fill:#ffffff; }
-  #craft .sgstage::after { content:""; position:absolute; left:0; right:0; bottom:0; height:30%; z-index:0; pointer-events:none;
-    background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 22%, rgba(255,255,255,.3) 46%, rgba(255,255,255,.66) 70%, rgba(255,255,255,.92) 88%, #ffffff 100%); }
   #craft .sgfig, #craft .sgcopy { position:relative; z-index:1; mix-blend-mode:difference; }
 
   /* the mark centred in its column, level with the heading */
@@ -5779,3 +5777,33 @@
     #enquire .embtilt { transform-origin:50% 40%; }
     html[dir="rtl"] #enquire .embtilt { transform-origin:50% 40%; }
   }
+
+  /* ══ v172 — the signature, shorter ════════════════════════════════════════
+     The held stage is about three quarters of a screen rather than a whole
+     one, and the passage a little over one screen long rather than one and a
+     half: the name is written in less scroll, without the empty white under
+     the words. The chapter's own ground is white, so whatever shows below the
+     stage is already the white of the collection that follows; the black
+     needs no fade to meet it. ───────────────────────────────────────────── */
+  #craft { background:#ffffff; }
+  #craft .sgstage { min-height:60svh; padding-block:8svh; }
+  #craft.sgjs { height:112svh; }
+  #craft.sgjs .sgstage { height:72svh; padding-block:0; }
+  @media (max-width:759px) {
+    #craft.sgjs { height:100svh; }
+    #craft.sgjs .sgstage { height:64svh; }
+  }
+  /* the box chapter fades out onto black, not onto whatever is behind it */
+  #stonepin .pinin { background:#000; }
+  #boxcv, #beats, #stonepin .pprog, #pdots { will-change:opacity; }
+
+  /* ══ v173 — the selection shows what was chosen ═══════════════════════════
+     A small picture beside the name: the piece's photograph on its white, or
+     the bracelet as it was designed, on dark. ─────────────────────────────── */
+  .csel.hasimg { grid-template-columns:64px minmax(0, 1fr); column-gap:16px; align-items:center; }
+  .csel.hasimg > :not(.cselimg) { grid-column:2; }
+  .csel .cselimg { grid-column:1; grid-row:1 / span 3; width:64px; height:64px; object-fit:cover; border-radius:10px;
+    background:#f4f3f1; border:1px solid rgba(214,186,128,.28); display:block; align-self:center; }
+  .csel .cselimg.dark { background:#121110; object-fit:contain; }
+  .csel .cselimg[hidden] { display:none; }
+  @media (max-width:759px) { .csel.hasimg { grid-template-columns:56px minmax(0, 1fr); column-gap:12px; } .csel .cselimg { width:56px; height:56px; } }
