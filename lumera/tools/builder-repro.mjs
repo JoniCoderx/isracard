@@ -22,5 +22,9 @@ if (dl) { await dl.saveAs(O + "saved.png"); console.log("saved", dl.suggestedFil
 await p.click("#tryonBtn2"); await p.waitForTimeout(800);
 await p.setInputFiles("#tfile", "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/arm.jpg"); await p.waitForTimeout(1500);
 await (await p.$("#tryon .mbox")).screenshot({ path: O + "tryon.jpg", type: "jpeg", quality: 72 });
+await p.click("#tdone"); await p.waitForTimeout(900);
+await (await p.$("#tryon .mbox")).screenshot({ path: O + "tryon-seen.jpg", type: "jpeg", quality: 72 });
+const [dl2] = await Promise.all([p.waitForEvent("download", { timeout: 15000 }).catch(() => null), p.click("#tsave").catch(e => console.log("no tsave", e.message.slice(0, 80)))]);
+if (dl2) { await dl2.saveAs(O + "tryon-saved.jpg"); console.log("tryon saved", dl2.suggestedFilename()); } else console.log("no tryon download");
 console.log("errors", errs.slice(0, 5));
 await b.close();
