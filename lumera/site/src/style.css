@@ -5722,3 +5722,21 @@
     .ppmore ul { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
   }
   #pmodal .mfoot .mpage { margin-inline-start:4px; }
+
+  /* ══ v169 — the enquiry's choices keep to their column; the mark keeps its
+     distance ══════════════════════════════════════════════════════════════
+     With the labels at a readable 12px the four choices ran past the form
+     and into the floating SILAVU mark, and on hover the mark grows (a touch
+     larger, the letters of the word opening out) straight toward them. The
+     choices now stay inside the form's column, on one line where they fit
+     and on two where they do not; the mark sits up and to the outer side of
+     its column, and when it grows it grows away from the form. ────────── */
+  @media (min-width:1000px) {
+    #enquire .want { display:flex !important; flex-wrap:wrap; align-items:center; gap:8px; max-width:100%; }
+    #enquire .want > .k { flex-basis:100%; }
+    #enquire .want .chip { padding:0 12px; letter-spacing:.08em; }
+    #enquire .emb { justify-items:end; align-items:start; align-self:start; padding-inline-start:clamp(24px, 4vw, 72px); min-height:0; }
+    #enquire .embtilt { transform-origin:100% 40%; }
+    html[dir="rtl"] #enquire .embtilt { transform-origin:0% 40%; }
+    #enquire .emb.hov .embword { letter-spacing:.66em; margin-inline-end:-.66em; }
+  }

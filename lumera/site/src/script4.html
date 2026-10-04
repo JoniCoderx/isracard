@@ -149,7 +149,7 @@
          other way. Only the frame's own transform moves, inside the card. */
       var baseIm = fig.querySelector(".im:not(.hx):not(.dt)");
       function frames() { return layers.map(function (l, k) { return k === 0 ? baseIm : l; }); }
-      function place(el, x, anim) { if (!el) return; el.style.transition = anim ? "transform .62s cubic-bezier(.22,.72,.2,1)" : "none"; el.style.transform = x ? "translate3d(" + x + "%,0,0)" : ""; }
+      function place(el, x, anim) { if (!el) return; el.style.transition = anim ? "transform .62s cubic-bezier(.22,.72,.2,1)" : "none"; el.style.transform = "translate3d(" + x + "%,0,0)"; }   /* always explicit: an empty value would hand a waiting frame back to the stylesheet, which parks it outside the card */
       function show(i, dir) {
         if (!layers) build();
         var all = frames(), prev = at; if (i === prev) return; at = i; pc.__at = i;
