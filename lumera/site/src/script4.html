@@ -199,7 +199,8 @@
       }
       if (fine) {
         pc.addEventListener("pointerenter", function (e) {
-          if (e.pointerType !== "mouse" || manual || at !== 0) return; build();
+          /* with reduced motion the card changes only when asked: no turn on hover */
+          if (e.pointerType !== "mouse" || manual || at !== 0 || still) return; build();
           var el = hvLayer(), im = el && el.firstChild, me = ++hv; if (!el) return;
           function on() { if (me !== hv) return; el.classList.add("hvr"); void el.offsetWidth; el.classList.add("hvon"); hvOn = true; pc.__at = hvAt;
             dots.forEach(function (d, k) { d.classList.toggle("on", k === hvAt); }); }
