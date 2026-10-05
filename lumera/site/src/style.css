@@ -6091,3 +6091,30 @@ html body #langmenu button.on::after { content:""; width:5px; height:5px; border
   html body #langmenu button .ln { font-size:13.5px; }
 }
 @media (prefers-reduced-motion:reduce) { html body #langmenu.open { animation:none; } }
+
+/* ══ v189 — the footer on a phone: light, even, quiet ═════════════════════
+   A smaller mark and name, the line and the cities as two small lines set
+   close, the links in two even columns of small type, the address, the
+   marks, then the house documents and the year — all on one centre line
+   with one even step between them and hairlines between the groups. ──── */
+@media (max-width:759px) {
+  html body #end { padding-block:30px 18px !important; }
+  html body #end .fgrid { gap:16px !important; }
+  html body #end .fbrand { gap:8px !important; justify-items:center; }
+  html body #end .fbrand .fbl { padding:0 !important; gap:10px; min-height:0; }
+  html body #end .fbrand .fbl svg.sy.fsm { height:30px !important; width:auto !important; }
+  html body #end .fbrand .fbl .lg.fsm { font-size:13px !important; letter-spacing:.42em; }
+  html body #end .ftag { gap:4px !important; font-size:10.5px !important; letter-spacing:.24em; line-height:1.5; color:var(--ink3); }
+  html body #end .ftag > span { padding:0 !important; line-height:1.5 !important; min-height:0 !important; }
+  html body #end .ftag > span:first-child { color:var(--ink2); }
+  html body #end .fexp { display:grid !important; grid-template-columns:1fr 1fr; gap:0 12px !important; width:100%; max-width:320px; margin-inline:auto;
+    padding-top:16px; border-top:1px solid rgba(255,255,255,.08); }
+  html body #end .fexp a { justify-content:center; font-size:13px !important; letter-spacing:.01em; color:var(--ink2); padding:8px 0 !important; min-height:36px; }
+  html body #end .fcon a { font-size:13px !important; color:var(--ink2); padding:4px 0 !important; min-height:32px; }
+  html body #end .ffol .soc { gap:10px !important; }
+  html body #end .ffol .soc a { width:42px !important; height:42px !important; border-radius:13px !important; }
+  html body #end .ffol .soc a svg { width:16px !important; height:16px !important; }
+  html body #end .ftrust { margin-top:18px !important; padding-top:14px !important; border-top:1px solid rgba(255,255,255,.08); gap:2px 14px !important; justify-content:center; }
+  html body #end .ftrust a { font-size:10px !important; letter-spacing:.14em; padding:6px 0 !important; min-height:30px; color:var(--ink3); }
+  html body #end .fbot { margin-top:0 !important; padding-top:10px !important; font-size:10px !important; justify-content:center; gap:18px !important; color:var(--ink3); }
+}
