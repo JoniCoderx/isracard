@@ -81,6 +81,10 @@ const head = `<!doctype html>
 <meta name="description" content="${DESC.en}">
 <link rel="canonical" href="${base}/">
 <meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SILAVU">
 <meta name="silavu-build" content="${BUILD}">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="author" content="SILAVU">
