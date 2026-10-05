@@ -55,6 +55,33 @@ function purgePlugin(words, stats) {
 }
 purgePlugin.postcss = true;
 
+
+/* Hover is for a pointer that hovers. On a phone the browser applies :hover
+   to whatever a finger last touched and leaves it there, so a light button
+   touched on the way down the page stayed dark (or black) after the finger
+   had gone. Every selector that needs :hover, and is not already inside a
+   hover query, is moved into @media (hover: hover) and (pointer: fine); the
+   rest of its rule (:focus-visible and the like) stays where it was, so the
+   keyboard keeps every state it had. */
+function hoverOnlyPlugin(stats) {
+  return {
+    postcssPlugin: "silavu-hover-only",
+    Rule(rule) {
+      if (rule.__hov) return;
+      let p = rule.parent; while (p) { if (p.type === "atrule" && (/keyframes$/i.test(p.name) || (p.name === "media" && /hover\s*:\s*hover/.test(p.params)))) return; p = p.parent; }
+      const hov = rule.selectors.filter(x => /:hover\b/.test(x)); if (!hov.length) return;
+      const rest = rule.selectors.filter(x => !/:hover\b/.test(x));
+      const clone = rule.clone({ selectors: hov }); clone.__hov = true;
+      const m = postcss.atRule({ name: "media", params: "(hover: hover) and (pointer: fine)" });
+      m.append(clone);
+      rule.after(m);
+      if (rest.length) rule.selectors = rest; else rule.remove();
+      stats.hov = (stats.hov || 0) + hov.length;
+    }
+  };
+}
+hoverOnlyPlugin.postcss = true;
+
 export async function slim(page, extraFiles) {
   const before = page.length;
   if (!postcss || !cssnano || !terser) { console.warn("slim: postcss/cssnano/terser not found; page written unminified"); return page; }
@@ -68,11 +95,12 @@ export async function slim(page, extraFiles) {
   if (m) {
     const plugins = [];
     if (!process.env.NO_PURGE) plugins.push(purgePlugin(words, stats));
+    plugins.push(hoverOnlyPlugin(stats));
     if (!process.env.NO_NANO) plugins.push(cssnano());
     const out = await postcss(plugins).process(m[1], { from: undefined });
     page = page.replace(m[0], () => "<style>" + out.css + "</style>");
     if (stats.log) fs.writeFileSync(process.env.SLIM_LOG, stats.log.join("\n"));
-    console.log("slim: css", (m[1].length / 1024).toFixed(0), "KB ->", (out.css.length / 1024).toFixed(0), "KB;", stats.rules, "dead rules and", stats.sel, "dead selectors dropped");
+    console.log("slim: css", (m[1].length / 1024).toFixed(0), "KB ->", (out.css.length / 1024).toFixed(0), "KB;", stats.rules, "dead rules and", stats.sel, "dead selectors dropped;", stats.hov || 0, "hover selectors kept to pointers that hover");
   }
   /* the scripts, one at a time; JSON and anything that will not parse is left as it is */
   const parts = []; let at = 0; const re = /<script(\s[^>]*)?>([\s\S]*?)<\/script>/g; let sm;

@@ -125,9 +125,12 @@
        black against the foot of the stage in a straight edge. What moves
        across it is the line being written, white on the black and ink on
        the white. */
-    /* the collection answers the last of the line: its hairlines draw out
-       from the mark and its heading rises into place as the name is finished */
-    if (coll) { var cq = sm(0.5, 0.86, q).toFixed(3); if (cq !== frame.cq) { frame.cq = cq; coll.style.setProperty("--cq", cq); } }
+    /* the collection answers the last of the line: as the name is finished
+       its hairlines draw out from the mark and its heading settles into place.
+       It is a short movement in time, not tied to the finger: anything that
+       follows the scroll in script lags it on a phone and reads as shaking. */
+    /* once, like every reveal on the page: scrolling back does not undo it */
+    if (coll && !frame.cin && q > 0.58) { frame.cin = true; coll.classList.add("cqin"); }
     var a1 = sm(0.82, 0.92, q), a2 = sm(0.86, 0.96, q);
     if (c1) { c1.style.opacity = a1.toFixed(3); c1.style.transform = "translate3d(0," + (10 * (1 - a1)).toFixed(1) + "px,0)"; }
     if (c2) { c2.style.opacity = a2.toFixed(3); c2.style.transform = "translate3d(0," + (10 * (1 - a2)).toFixed(1) + "px,0)"; }
@@ -135,6 +138,9 @@
 
   function tick() {
     var r = sec.getBoundingClientRect(), vh = innerHeight;
+    /* a fast flick can carry the name off the screen before it was finished
+       here; the collection below is revealed regardless, never left waiting */
+    if (r.bottom < vh * 0.5 && coll && !frame.cin) { frame.cin = true; coll.classList.add("cqin"); }
     if (r.bottom < -60 || r.top > vh + 60) return;
     if (dirty) measure();
     /* progress through the hold, against the stage's own height (a fixed
