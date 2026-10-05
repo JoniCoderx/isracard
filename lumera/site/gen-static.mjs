@@ -397,8 +397,13 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     if (o.he) dhead = dhead.replace('<html lang="en">', '<html lang="he" dir="rtl" data-lang="he" data-ns="1">');
     if (o.alt) dhead = dhead.replace(/(<meta property="og:locale")/, `<link rel="alternate" hreflang="en" href="${base}/${o.alt.en}">\n<link rel="alternate" hreflang="he" href="${base}/${o.alt.he}">\n<link rel="alternate" hreflang="x-default" href="${base}/${o.alt.en}">\n$1`);
     if (o.image) dhead = dhead.replace(/(<meta property="og:image" content=")[^"]*/, `$1${o.image}`).replace(/(<meta name="twitter:image" content=")[^"]*/, `$1${o.image}`);
+    /* a piece shares as itself: its own photograph, its real size, its own words */
+    if (o.imageAlt) dhead = dhead.replace(/(<meta property="og:image:alt" content=")[^"]*/, `$1${escA(o.imageAlt)}`).replace(/(<meta name="twitter:image:alt" content=")[^"]*/, `$1${escA(o.imageAlt)}`);
+    if (o.imageSize) dhead = dhead.replace(/(<meta property="og:image:width" content=")[^"]*/, `$1${o.imageSize}`).replace(/(<meta property="og:image:height" content=")[^"]*/, `$1${o.imageSize}`);
+    if (o.product) dhead = dhead.replace(/(<meta property="og:type" content=")[^"]*/, "$1product");
+    if (o.light) dhead = dhead.replace(/(<meta name="theme-color" content=")[^"]*/, "$1#ffffff");
     if (o.schema) dhead = dhead.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => `<script type="application/ld+json">${JSON.stringify(o.schema)}</script>`);
-    let chrome = `<div class="dpage" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n`;
+    let chrome = `<div class="dpage${o.light ? " light" : ""}" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n`;
     /* the Hebrew address keeps a reader on Hebrew addresses */
     if (o.he) chrome = chrome.replace(/href="\.\/(\?[^"#]*)?(#[^"]*)?"/g, (m, q, h) => `href="he/${q || ""}${h || ""}"`).replace(/href="(pieces\/[^"]*)"/g, 'href="he/$1"');
     const pre = o.alt ? `<script>window.__alt=${JSON.stringify(o.alt)};${o.he ? 'window.__pageLang="he";' : 'window.__pageLang="en";'}</script>` : "";
@@ -523,6 +528,7 @@ ${n > 1 ? `<div class="ppthumbs">${p.shots.map(thumb).join("")}</div>` : ""}
 <div class="pptext">
 <div class="k gold" ${AT(p.kind || S("", ""), he)}</div>
 <h1 ${AT(p.name, he)}</h1>
+${p.sub ? `<p class="ppsub" ${AT(p.sub, he)}</p>` : ""}
 <p class="lede" ${AT(p.line, he)}</p>
 <dl class="ppkey">${(p.key || []).map(r => `<div><dt ${AT(r[0], he)}</dt><dd ${AT(r[1], he)}</dd></div>`).join("")}</dl>
 <p class="pprice"><span ${AT(S("Price on request", "מחיר לפי בקשה"), he)}</span></p>
@@ -537,19 +543,24 @@ ${p.story ? `<details><summary ${AT(S("The story", "הסיפור"), he)}</summar
 ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the collection", "עוד בקולקציה"), he)}</h2><ul>${others.map(q => `<li><a href="pieces/${q.id}/"><img src="img/${q.shots[0].img}-${(q.widths || [800])[0]}.jpg" alt="" loading="lazy" decoding="async"><span ${AT(q.name, he)}</span></a></li>`).join("")}</ul></section>` : ""}
 <div class="ppbox" id="ppbox" role="dialog" aria-modal="true" aria-label="${escA(nm)}" hidden><button type="button" class="ppx" aria-label="Close" data-aria-he="סגירה"></button><button type="button" class="ppnav ppprev" aria-label="Previous photograph" data-aria-he="התמונה הקודמת"></button><figure><img alt=""></figure><button type="button" class="ppnav ppnext" aria-label="Next photograph" data-aria-he="התמונה הבאה"></button><div class="ppcount k" aria-live="polite"></div></div>
 </main>`;
-      const title = (he ? (p.title && p.title.he) : (p.title && p.title.en)) || (plain(pick(p.name, he)) + " | SILAVU");
-      const desc = plain(pick(p.line, he)) + (he ? " מחיר לפי בקשה." : " Price on request.");
+      /* the search title names the model, the metal and what it is; the
+         description the piece in one sentence, its size, made to order */
+      const title = p.seo ? pick(p.seo, he) : ((he ? (p.title && p.title.he) : (p.title && p.title.en)) || (plain(pick(p.name, he)) + " | SILAVU"));
+      const size = (p.specs.find(r => /^(Length|Sizes?|Dimensions)$/.test(r[0].en)) || [])[1];
+      const desc = (plain(pick(p.line, he)) + (size ? (he ? " " + plain(size.he) + "." : " " + plain(size.en) + ".") : "") + (he ? " מיוצר לפי הזמנה. מחיר לפי בקשה." : " Made to order. Price on request.")).replace(/\s+/g, " ");
       const image = base + "/img/" + p.shots[0].img + "-" + (p.widths || [1200]).slice(-1)[0] + ".jpg";
       const schema = { "@context": "https://schema.org", "@graph": [
         { "@type": "Product", "@id": base + "/pieces/" + p.id + "/#product", "url": base + "/" + alt.en, "name": p.plain || plain(p.name.en),
           "sku": p.ref.replace(/·/g, "-"), "description": plain(p.line.en) + (p.story ? " " + plain(p.story.en) : ""), "category": p.cat,
           "image": p.shots.map(sh => base + "/img/" + sh.img + "-" + (p.widths || [1200]).slice(-1)[0] + ".jpg"),
           "brand": { "@type": "Brand", "name": "SILAVU" },
+          "material": plain(((p.specs.find(r => r[0].en === "Metal") || [])[1] || S("18K white gold", "")).en),
+          "alternateName": p.plainHe || undefined,
           "additionalProperty": p.specs.filter(r => !/^Price$/.test(r[0].en)).map(r => ({ "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) })) },
         { "@type": "BreadcrumbList", "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" + (he ? "he/" : "") },
           { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
-      page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript });
+      page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript, light: true, imageAlt: pick(p.shots[0].alt, he), imageSize: big, product: true });
     }
     PIECE_URLS = shown.map(p => p.id);
     console.log("pieces:", PIECE_URLS.join(" "), "(en + he)");

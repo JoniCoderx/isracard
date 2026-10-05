@@ -6501,3 +6501,62 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   html[dir="rtl"] #cform #fName, html[dir="rtl"] #cform #fCity, html[dir="rtl"] #cform #fMsg { direction:rtl; }
   html[dir="rtl"] #cform #fContact { direction:ltr; text-align:right; }
   html[dir="rtl"] #cform #fContact::placeholder { text-align:right; }
+
+  /* ── v211 — the piece pages, white. In the manner of the Paris houses: the
+     page white, the photograph on a pale grey stage, the name in black
+     capitals with a plain line beneath saying what the piece is, fine grey
+     rules, one square black button. The header and footer turn white with
+     it; the mark and the wordmark stay exactly as drawn, in black. ── */
+  html body .dpage.light { --bg:#ffffff; --ink:#111111; --ink2:#3d3d3d; --ink3:#767676; --line:rgba(0,0,0,.1); --gold:#8a6d3b;
+    background:#ffffff; color:#111111; color-scheme:light; }
+  html body .dpage.light .dhd { background:rgba(255,255,255,.92); border-bottom:1px solid rgba(0,0,0,.08); color:#111; }
+  html body .dpage.light .dhome, html body .dpage.light .dhome svg.sy.dmk { color:#111 !important; }
+  html body .dpage.light .dhome .lg { color:#111; }
+  html body .dpage.light .dnav a { color:#3d3d3d; } html body .dpage.light .dnav a:hover, html body .dpage.light .dnav a[aria-current] { color:#111; }
+  html body .dpage.light .dlang button { color:#3d3d3d; border-color:rgba(0,0,0,.14); background:transparent; }
+  html body .dpage.light .dlang button[aria-pressed="true"], html body .dpage.light .dlang button.on { color:#111; border-color:#111; }
+  html body .dpage.light .dbook { color:#111; border-color:#111; background:transparent; }
+  html body .dpage.light .dbook:hover { background:#111; color:#fff; }
+  html body .dpage.light .dft { background:#fafafa; border-top:1px solid rgba(0,0,0,.08); color:#111; }
+  html body .dpage.light .dft a { color:#3d3d3d; } html body .dpage.light .dft a:hover { color:#111; }
+  html body .dpage.light .dft .k, html body .dpage.light .dfwhere { color:#767676; }
+
+  html body .dpage.light .ppage .crumbs, html body .dpage.light .ppage .crumbs a { color:#767676; font-size:.72rem; letter-spacing:.12em; }
+  html body .dpage.light .ppage .crumbs a:hover { color:#111; }
+  html body .dpage.light .ppage .ppstage { background:#f5f5f3; border-radius:0; }
+  html body .dpage.light .ppage .ppzoom { background:#f5f5f3; }
+  html body .dpage.light .ppage .ppzoom img { mix-blend-mode:multiply; }
+  html body .dpage.light .ppage .ppnav { background:rgba(255,255,255,.9); color:#111; border:1px solid rgba(0,0,0,.08); }
+  html body .dpage.light .ppage .ppcount { color:#767676; }
+  html body .dpage.light .ppage .ppth { background:#f5f5f3; border-radius:0; border-color:transparent; opacity:.55; }
+  html body .dpage.light .ppage .ppth.on { opacity:1; border-color:#111; }
+  html body .dpage.light .ppage .pptext { gap:16px; }
+  html body .dpage.light .ppage .pptext > .k { color:#767676 !important; font-size:.72rem; letter-spacing:.16em; }
+  html body .dpage.light .ppage .pptext h1 { color:#111; font-weight:400; text-transform:uppercase; letter-spacing:.04em; font-size:clamp(2rem, 3.2vw, 2.9rem); line-height:1.05; }
+  html body .dpage.light .ppage .pptext h1 em { color:#111; font-style:normal; }
+  html body .dpage.light .ppage .ppsub { margin:-6px 0 0; color:#3d3d3d; font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; }
+  html[data-ns] body .dpage.light .ppage .ppsub, html[data-ns] body .dpage.light .ppage .pptext h1 { letter-spacing:0; text-transform:none; }
+  html body .dpage.light .ppage .pptext .lede { color:#3d3d3d; font-size:1rem; line-height:1.65; }
+  html body .dpage.light .ppage .ppkey, html body .dpage.light .ppage .ppspecs { border-top-color:rgba(0,0,0,.1); }
+  html body .dpage.light .ppage .ppkey > div, html body .dpage.light .ppage .ppspecs > div { border-bottom-color:rgba(0,0,0,.1); }
+  html body .dpage.light .ppage .ppkey dt, html body .dpage.light .ppage .ppspecs dt { color:#767676; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; }
+  html[data-ns] body .dpage.light .ppage .ppkey dt, html[data-ns] body .dpage.light .ppage .ppspecs dt { letter-spacing:0; text-transform:none; font-size:.875rem; }
+  html body .dpage.light .ppage .ppkey dd, html body .dpage.light .ppage .ppspecs dd { color:#111; }
+  html body .dpage.light .ppage .pprice { color:#111; font-size:.95rem; letter-spacing:.04em; }
+  html body .dpage.light .ppage .ppenq { background:#111 !important; color:#fff !important; border:1px solid #111 !important; border-radius:0 !important; min-height:52px; padding:0 34px; letter-spacing:.14em; }
+  html body .dpage.light .ppage .ppenq:hover { background:#fff !important; color:#111 !important; }
+  html body .dpage.light .ppage .ppback { color:#3d3d3d; border-bottom-color:rgba(0,0,0,.3); }
+  html body .dpage.light .ppage .ppback:hover { color:#111; border-color:#111; }
+  html body .dpage.light .ppage .ppacc { border-top-color:rgba(0,0,0,.1); }
+  html body .dpage.light .ppage .ppacc details { border-bottom-color:rgba(0,0,0,.1); }
+  html body .dpage.light .ppage .ppacc summary { color:#111; }
+  html body .dpage.light .ppage .ppacc .p, html body .dpage.light .ppage .ppcare a { color:#3d3d3d; }
+  html body .dpage.light .ppage .ppmore { border-top:1px solid rgba(0,0,0,.08); }
+  html body .dpage.light .ppage .ppmore h2 { color:#767676; }
+  html body .dpage.light .ppage .ppmore li a { color:#111; }
+  html body .dpage.light .ppage .ppmore img { background:#f5f5f3; border-radius:0; mix-blend-mode:multiply; }
+  html body .dpage.light .ppage .ppbox { background:rgba(255,255,255,.97); }
+  html body .dpage.light .ppage .ppbox .ppx, html body .dpage.light .ppage .ppbox .ppnav { color:#111; }
+  /* the client-care links in the document footer stand one under another on a
+     desktop, as the house's own links beside them do (they ran together) */
+  @media (min-width:900px) { html body .dft details.dfcare .dfcarel { display:grid; justify-items:start; gap:10px; } }

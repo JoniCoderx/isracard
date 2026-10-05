@@ -25,7 +25,7 @@ export const PIECES = [
   {
     /* SILAVU MOMENT. The figures below are the ones the house has confirmed:
        metal, finish, length, price on request. Nothing else is stated. */
-    id: "knot", cat: "bracelets", ref: "SLV·B·001", light: true,   /* shot on white */
+    id: "knot", seo: S("SILAVU MOMENT Bracelet · 18K White Gold Signature Chain Bracelet", "צמיד SILAVU MOMENT · צמיד שרשרת מזהב לבן 18K"), sub: S("18K white gold signature chain bracelet", "צמיד שרשרת עם חתימה, זהב לבן 18K"), cat: "bracelets", ref: "SLV·B·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],   /* what your photographs were actually shot at */
     theme: "moment", word: "MOMENT",
     title: S("SILAVU MOMENT | White Gold Bracelet", "SILAVU MOMENT | צמיד זהב לבן"),
@@ -63,7 +63,7 @@ export const PIECES = [
     reserve: true
   }  ,{
     /* SILAVU ICON: metal, setting and sizes as confirmed; no stone figures */
-    id: "ring", cat: "rings", ref: "SLV·R·001", light: true,   /* shot on white */
+    id: "ring", seo: S("SILAVU ICON Ring · 18K White Gold Pavé Diamond Signature Ring", "טבעת SILAVU ICON · טבעת יהלומי פאווה מזהב לבן 18K"), sub: S("18K white gold ring, pavé diamond signature", "טבעת זהב לבן 18K, חתימה ביהלומי פאווה"), cat: "rings", ref: "SLV·R·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     theme: "icon", word: "ICON",
     title: S("SILAVU ICON | Diamond Ring", "SILAVU ICON | טבעת יהלומים"),
@@ -101,7 +101,7 @@ export const PIECES = [
     reserve: true
   }  ,{
     /* SILAVU SOUL: metal, setting and length as confirmed; no stone figures */
-    id: "pave", cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
+    id: "pave", seo: S("SILAVU SOUL Necklace · 18K White Gold Pavé Diamond Pendant", "שרשרת SILAVU SOUL · תליון יהלומי פאווה מזהב לבן 18K"), sub: S("18K white gold necklace, pavé diamond signature pendant", "שרשרת זהב לבן 18K, תליון חתימה ביהלומי פאווה"), cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     theme: "soul", word: "SOUL",
     title: S("SILAVU SOUL | Diamond Necklace", "SILAVU SOUL | שרשרת יהלומים"),
