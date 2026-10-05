@@ -22,8 +22,8 @@ export const ABOUT = {
      founded it, the vision, where the pieces are made, and the three
      collections. Nothing is added to what the house wrote. */
   letter: [
-    S("SILAVU was founded by Ariel Silas, a designer with a background in 3D and visual design. His experience includes creative collaborations with Jacob & Co., where his eye for detail, proportion and precision continued to develop.",
-      "את SILAVU ייסד אריאל סיילס, מעצב עם רקע בעיצוב תלת־ממדי ובעיצוב חזותי. ניסיונו כולל שיתופי פעולה יצירתיים עם \u2066Jacob & Co.\u2069, שבמסגרתם המשיכה להתפתח עינו לפרטים, לפרופורציה ולדיוק."),
+    S("SILAVU was founded by Ariel Silas, a designer with a background in 3D and visual design. His experience includes creative collaborations with <span class=\"ajc\">Jacob & Co.</span>, where his eye for detail, proportion and precision continued to develop.",
+      "את SILAVU ייסד אריאל סיילס, מעצב עם רקע בעיצוב תלת־ממדי ובעיצוב חזותי. ניסיונו כולל שיתופי פעולה יצירתיים עם <span class=\"ajc\">\u2066Jacob & Co.\u2069</span>, שבמסגרתם המשיכה להתפתח עינו לפרטים, לפרופורציה ולדיוק."),
     S("Ariel created SILAVU with a clear vision: jewellery with a strong identity, designed to feel as good on the body as it looks. Every piece is considered down to the smallest detail, from its proportions and setting to the way it catches the light.",
       "אריאל יצר את SILAVU מתוך חזון ברור: תכשיטים בעלי זהות חזקה, שמעוצבים להרגיש על הגוף טוב כפי שהם נראים. כל תכשיט נשקל עד לפרט הקטן ביותר — מהפרופורציות והשיבוץ ועד לאופן שבו הוא תופס את האור."),
     S("SILAVU designs are brought to life by skilled craftsmen in Dubai, combining precise production with careful hand-finishing.",

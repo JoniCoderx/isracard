@@ -7,7 +7,7 @@ let pass = 0, fail = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL 
 for (const [w, mob] of [[1366, false], [390, true]]) for (const start of ["", "he/"]) for (const sec of ["#collection", "#build", "#concierge"]) {
   const c = await b.newContext({ viewport: { width: w, height: 800 }, hasTouch: mob, isMobile: mob });
   const p = await c.newPage(); let navs = 0; p.on("pageerror", e => console.log("PAGEERROR", w, start, sec, e.message)); p.on("console", m => { if (m.type() === "error") console.log("CONSOLE", w, start, sec, m.text().slice(0, 200)); });
-  await p.goto(base + start, { waitUntil: "load" }); await p.waitForTimeout(900);
+  await p.goto(base + start, { waitUntil: "load" }); await p.waitForTimeout(900); await p.waitForFunction(() => !document.documentElement.classList.contains("locked"), null, { timeout: 15000 }).catch(() => {});
   p.on("framenavigated", f => { if (f === p.mainFrame()) navs++; });
   await p.evaluate(() => { window.__mark = 1; document.documentElement.style.scrollBehavior = "auto"; });
   await p.evaluate(s => { const e = document.querySelector(s); scrollTo(0, e.getBoundingClientRect().top + scrollY + 120); }, sec);

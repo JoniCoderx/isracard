@@ -176,16 +176,11 @@ export const PIECES = [
   }
 ];
 
-/* What is still to come. These render as quiet, un-clickable cards so the
-   shape of the collection is visible before the photography exists — and so
-   the grid never reflows when a piece lands. */
-export const SOON = [
-  { cat: "necklaces", ref: "SLV·N·002", when: S("Soon", "בקרוב"),
-    name: S("The Knot <em>Pendant</em>", "<em>תליון</em> Knot"),
-    line: S("The same mark, hung at the collarbone on a 42 cm chain.", "אותו סמל, על שרשרת באורך 42 ס\"מ, בגובה עצם הבריח.") },
-  { cat: "earrings",  ref: "SLV·E·001", when: S("Soon", "בקרוב"),
-    name: S("The Knot <em>Earrings</em>", "<em>עגילי</em> Knot"),
-    line: S("Close to the lobe. Nothing swings, nothing catches.", "צמודים לתנוך. שום דבר לא מתנדנד ושום דבר לא נתפס.") },];
+/* What is still to come is shown as one quiet line, "Coming soon", and
+   nothing more: no names and no descriptions for pieces that are not yet
+   photographed or confirmed. It stands under "All" and under any category
+   that has no finished piece yet, so a filter never opens onto nothing. */
+export const SOON = [];
 /* The Line is not in this list on purpose. It is the only piece in the house
    you build rather than choose, and it has a chapter of its own further down
    the page — carrying it here as well made the catalogue six long and said the

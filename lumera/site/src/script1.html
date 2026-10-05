@@ -21,18 +21,28 @@
   })();
   var $ = function (id) { return document.getElementById(id); }, seg = function (u, a, b) { return c01((u - a) / (b - a)); };
 
-  /* ── socials ── */
+  /* on a phone the service documents fold under one heading; open everywhere else */
+  if (matchMedia("(max-width:899px)").matches) document.querySelectorAll("details[data-fold]").forEach(function (d) { d.open = false; });
+  /* ── socials ──
+     Only an account the house has confirmed is linked. Checked on 5 Oct 2026:
+     tiktok.com/@silavu is a private person's account, not the house's;
+     youtube.com/@silavu and pinterest.com/silavu do not exist; instagram.com/
+     silavu could not be confirmed. Their addresses are left empty, so nothing
+     is shown and nothing is claimed in the structured data (sameAs is read
+     from this list). Put a confirmed address back in its slot to show it. */
   var SOC = [
-    ["Instagram", "https://instagram.com/silavu", "M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1 0-1.7.2-2.1.4-.5.2-.9.4-1.2.8-.4.4-.6.7-.8 1.2-.2.4-.3 1-.4 2.1C2.8 8.5 2.8 8.9 2.8 12s0 3.5.1 4.7c0 1.1.2 1.7.4 2.1.2.5.4.9.8 1.2.4.4.7.6 1.2.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1 0 1.7-.2 2.1-.4.5-.2.9-.4 1.2-.8.4-.4.6-.7.8-1.2.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c0-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.2-.4-.4-.7-.6-1.2-.8-.4-.2-1-.3-2.1-.4C15.5 4 15.1 4 12 4zm0 3a5 5 0 110 10 5 5 0 010-10zm0 1.8a3.2 3.2 0 100 6.4 3.2 3.2 0 000-6.4zm5.2-3.2a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"],
-    ["TikTok", "https://tiktok.com/@silavu", "M16.6 3c.3 2.4 1.7 3.9 4.1 4.1v3.1c-1.5.1-2.9-.3-4.2-1.1v6.4c0 5.6-6.1 7.4-8.6 3.4-1.6-2.6-.6-7.1 4.5-7.3v3.3c-.4.1-.8.2-1.2.3-1.1.4-1.7 1.1-1.5 2.3.3 2.4 4.6 3.1 4.3-1.6V3h2.6z"],
+    ["Instagram", "", "M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1 0-1.7.2-2.1.4-.5.2-.9.4-1.2.8-.4.4-.6.7-.8 1.2-.2.4-.3 1-.4 2.1C2.8 8.5 2.8 8.9 2.8 12s0 3.5.1 4.7c0 1.1.2 1.7.4 2.1.2.5.4.9.8 1.2.4.4.7.6 1.2.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1 0 1.7-.2 2.1-.4.5-.2.9-.4 1.2-.8.4-.4.6-.7.8-1.2.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c0-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.2-.4-.4-.7-.6-1.2-.8-.4-.2-1-.3-2.1-.4C15.5 4 15.1 4 12 4zm0 3a5 5 0 110 10 5 5 0 010-10zm0 1.8a3.2 3.2 0 100 6.4 3.2 3.2 0 000-6.4zm5.2-3.2a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"],
+    ["TikTok", "", "M16.6 3c.3 2.4 1.7 3.9 4.1 4.1v3.1c-1.5.1-2.9-.3-4.2-1.1v6.4c0 5.6-6.1 7.4-8.6 3.4-1.6-2.6-.6-7.1 4.5-7.3v3.3c-.4.1-.8.2-1.2.3-1.1.4-1.7 1.1-1.5 2.3.3 2.4 4.6 3.1 4.3-1.6V3h2.6z"],
     ["WhatsApp", "https://wa.me/", "M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 1.8a8.2 8.2 0 017 12.5l-.2.3.7 2.7-2.8-.7-.3.2A8.2 8.2 0 1112 3.8zm-3 4.4c-.2 0-.5 0-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 5 4.4 2.5 1 3 .8 3.5.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5L9.8 8.6c-.2-.4-.4-.4-.5-.4H9z"],
-    ["YouTube", "https://youtube.com/@silavu", "M23 7.2c-.3-1-1-1.8-2-2.1C19.2 4.6 12 4.6 12 4.6s-7.2 0-9 .5c-1 .3-1.7 1.1-2 2.1C.5 9 .5 12 .5 12s0 3 .5 4.8c.3 1 1 1.8 2 2.1 1.8.5 9 .5 9 .5s7.2 0 9-.5c1-.3 1.7-1.1 2-2.1.5-1.8.5-4.8.5-4.8s0-3-.5-4.8zM9.7 15.1V8.9l6 3.1-6 3.1z"],
-    ["Pinterest", "https://pinterest.com/silavu", "M12 2a10 10 0 00-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.5 2.1-.8 3.3-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-1.9 3.1-4.6 0-2.4-1.7-4.1-4.2-4.1-2.9 0-4.5 2.1-4.5 4.4 0 .9.3 1.8.8 2.3.1.1.1.2.1.3l-.3 1.2c0 .2-.2.2-.4.1-1.2-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.2l-.6 2.4c-.2.9-.8 2-1.2 2.7A10 10 0 1012 2z"]
+    ["YouTube", "", "M23 7.2c-.3-1-1-1.8-2-2.1C19.2 4.6 12 4.6 12 4.6s-7.2 0-9 .5c-1 .3-1.7 1.1-2 2.1C.5 9 .5 12 .5 12s0 3 .5 4.8c.3 1 1 1.8 2 2.1 1.8.5 9 .5 9 .5s7.2 0 9-.5c1-.3 1.7-1.1 2-2.1.5-1.8.5-4.8.5-4.8s0-3-.5-4.8zM9.7 15.1V8.9l6 3.1-6 3.1z"],
+    ["Pinterest", "", "M12 2a10 10 0 00-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.5 2.1-.8 3.3-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-1.9 3.1-4.6 0-2.4-1.7-4.1-4.2-4.1-2.9 0-4.5 2.1-4.5 4.4 0 .9.3 1.8.8 2.3.1.1.1.2.1.3l-.3 1.2c0 .2-.2.2-.4.1-1.2-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.2l-.6 2.4c-.2.9-.8 2-1.2 2.7A10 10 0 1012 2z"]
   ];
   var WA = ($("cform").getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
   document.querySelectorAll("[data-socials]").forEach(function (box) {
-    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa && !WA) return; var a = document.createElement("a"); a.href = isWa ? "https://wa.me/" + WA : s[1]; if (!isWa || WA) { a.target = "_blank"; a.rel = "noopener"; } a.setAttribute("aria-label", s[0]); a.title = s[0];
+    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa ? !WA : !s[1]) return; var a = document.createElement("a"); a.href = isWa ? "https://wa.me/" + WA : s[1]; if (!isWa || WA) { a.target = "_blank"; a.rel = "noopener"; } a.setAttribute("aria-label", s[0]); a.title = s[0];
       a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + s[2] + '"/></svg>'; box.appendChild(a); });
+    /* no confirmed account, no "Follow" heading over an empty row */
+    if (!box.children.length) { var col = box.closest(".ffol") || box; col.hidden = true; }
   });
 
   /* ── the hero film, looping ── */
@@ -493,7 +503,10 @@
       b.addEventListener("click", function () {
         var c = b.getAttribute("data-cat");
         cats.forEach(function (o) { var on = o === b; o.classList.toggle("on", on); o.setAttribute("aria-selected", on); });
-        cards.forEach(function (card) { card.hidden = !(c === "all" || card.getAttribute("data-cat") === c); });
+        /* the one "Coming soon" stands under All, and under a category with
+           no finished piece yet, so a filter never opens onto nothing */
+        var has = cards.some(function (x) { return !x.classList.contains("soon") && x.getAttribute("data-cat") === c; });
+        cards.forEach(function (card) { card.hidden = card.classList.contains("soon") ? !(c === "all" || !has) : !(c === "all" || card.getAttribute("data-cat") === c); });
         lone();
       });
     });
@@ -652,7 +665,7 @@
     setTimeout(function () { isle(document.body); }, 0);
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) {
       if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt);
-      im.alt = lang === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en");
+      var en = im.getAttribute("data-alt-en"); im.alt = lang === "he" ? im.getAttribute("data-alt-he") : lang === "en" ? en : (T(en) || en);
     });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
     try { selPaint(); } catch (e) {}

@@ -105,7 +105,7 @@ function soonCard(x) {
 const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
-    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<div class="k soonh"><span data-en="SILAVU · Coming soon" data-he="SILAVU · בקרוב">SILAVU · Coming soon</span><i></i></div>${SOON.map(soonCard).join("\n")}</div>
+    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<article class="piece soon soon1" data-cat="soon"><div class="soonrow"><i aria-hidden="true"></i><span class="sm" aria-hidden="true">${markUse("")}</span><span class="k" data-en="Coming soon" data-he="בקרוב">Coming soon</span><i aria-hidden="true"></i></div></article>${SOON.map(soonCard).join("\n")}</div>
 `;
 
 const SIZES_JRN = "(min-width:1000px) 56vw, 92vw", SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
@@ -443,8 +443,8 @@ ${markDefs()}
       <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${markUse("fsm")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="The Line of Desire" data-he="The Line of Desire">The Line of Desire</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol ffol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
-    <div class="ftrust k rv" aria-label="House documents">${POLICIES.map(d =>
-      `<a href="${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div>
+    <details class="fcare rv" open data-fold><summary class="k" data-en="Client care" data-he="שירות לקוחות">Client care</summary><div class="ftrust k" aria-label="House documents">${POLICIES.map(d =>
+      `<a href="${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div></details>
     <div class="fbot k rv"><span dir="ltr">© SILAVU&nbsp;<span class="fyr">${new Date().getFullYear()}</span></span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>
   </section>

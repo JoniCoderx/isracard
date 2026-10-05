@@ -6309,3 +6309,80 @@ html.ppopen, html.ppopen body { overflow:hidden; }
 }
 @media (hover:none) { .ppage .ppstage .ppnav { display:none; } }
 html body .ppage .ppgal { grid-template-columns:minmax(0, 1fr); grid-auto-flow:row; grid-auto-columns:auto; overflow:visible; scroll-snap-type:none; }
+
+/* ══ v197 — one header, in every language ════════════════════════════════
+   The logo, the navigation, the language choice and the appointment keep
+   their places when the page turns right-to-left: the header's frame is laid
+   out left to right everywhere, and only the words inside each item run in
+   their own direction. The content of the page is what turns. ─────────── */
+html[dir="rtl"] #header, html[dir="rtl"] .dhd,
+html[dir="rtl"] #header .dnav, html[dir="rtl"] #header nav, html[dir="rtl"] .dhd .dnav, html[dir="rtl"] .dhd .dact, html[dir="rtl"] .dhd .dlang { direction:ltr; }
+html[dir="rtl"] #header nav a, html[dir="rtl"] #header button, html[dir="rtl"] #header .btn,
+html[dir="rtl"] .dhd .dnav a, html[dir="rtl"] .dhd .dbook, html[dir="rtl"] .dhd .dlang button { unicode-bidi:plaintext; }
+/* the appointment keeps one width whatever the language, so the language
+   choice beside it never slides when the words get shorter or longer */
+@media (min-width:900px) {
+  html body #header .hbook { min-width:233px; justify-content:center; text-align:center; }
+  html body .dhd .dbook { min-width:202px; justify-content:center; text-align:center; }
+}
+
+/* ══ v198 — About, quieter ════════════════════════════════════════════════
+   The opening paragraph is still the lead, but lighter: a size closer to the
+   body, more air between its lines. Jacob & Co. is marked once, with a fine
+   gold hairline under the name and nothing louder. Under the portrait, one
+   detail of the house's own work (desktop only, so the page is no longer). */
+.dpage .doc.about .aletter p:first-child { font-size:clamp(1.12rem,1.32vw,1.26rem) !important; line-height:1.68 !important; font-weight:300; color:rgba(242,239,233,.92); letter-spacing:0; }
+html[data-ns] .dpage .doc.about .aletter p:first-child { font-size:clamp(1.08rem,1.28vw,1.2rem) !important; }
+.dpage .doc.about .ajc { color:var(--ink); white-space:nowrap; background-image:linear-gradient(rgba(214,186,128,.62), rgba(214,186,128,.62)); background-size:100% 1px; background-repeat:no-repeat; background-position:0 100%; padding-bottom:1px; }
+.dpage .doc.about .acol { display:grid; gap:clamp(22px,2.4vw,34px); align-content:start; }
+.dpage .doc.about .adetail { margin:0; display:grid; gap:8px; max-width:64%; justify-self:end; }
+html[dir="rtl"] .dpage .doc.about .adetail { justify-self:start; }
+.dpage .doc.about .adetail img { width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; border-radius:var(--r, 14px); display:block; background:#fff; }
+.dpage .doc.about .adetail figcaption { color:var(--ink3); }
+@media (max-width:999px) {
+  .dpage .doc.about .acol { display:contents; }
+  .dpage .doc.about .adetail { display:none; }
+}
+
+/* ══ v199 — one "Coming soon" ═════════════════════════════════════════════
+   What is still to come is one quiet line across the grid: the mark between
+   two hairlines and the words, nothing else. ──────────────────────────── */
+html body .pgrid .piece.soon1 { grid-column:1 / -1; display:block; margin:clamp(18px,3vw,40px) 0 0 !important; padding:0; background:none; border:0; box-shadow:none; cursor:default; }
+html body .pgrid .piece.soon1 .soonrow { display:flex; align-items:center; justify-content:center; gap:clamp(12px,1.6vw,20px); color:#8a8275; }
+html body .pgrid .piece.soon1 .soonrow > i { flex:1 1 0; max-width:240px; height:1px; background:linear-gradient(90deg, rgba(20,19,15,0), rgba(20,19,15,.18)); }
+html body .pgrid .piece.soon1 .soonrow > i:last-child { background:linear-gradient(90deg, rgba(20,19,15,.18), rgba(20,19,15,0)); }
+html body .pgrid .piece.soon1 .sm svg { width:22px; height:22px; display:block; color:#b9ae9a; opacity:.9; }
+html body .pgrid .piece.soon1 .k { letter-spacing:.32em; font-size:.75rem; color:#6b655a; }
+html[data-ns] body .pgrid .piece.soon1 .k { letter-spacing:.04em; font-size:.9375rem; }
+html body .pgrid .piece.soon1:hover { transform:none; }
+html body .pgrid .piece.soon1, html body .pgrid .piece.soon1.lone { grid-column:1 / -1 !important; max-width:none !important; width:auto !important; justify-self:stretch !important;
+  border:0 !important; outline:0; box-shadow:none !important; background:none !important; border-radius:0 !important; }
+
+/* ══ v200 — the footer on a phone, folded ═════════════════════════════════
+   The seven service documents sit under one "Client care" heading that opens
+   and closes; contact and the house's channels stay in view. On a wide
+   screen the heading is not shown and the links stand open as before. ── */
+details.fcare, details.dfcare { margin:0; }
+details.fcare > summary, details.dfcare > summary { list-style:none; }
+details.fcare > summary::-webkit-details-marker, details.dfcare > summary::-webkit-details-marker { display:none; }
+@media (min-width:900px) {
+  details.fcare > summary { display:none; }
+  details.dfcare > summary { pointer-events:none; cursor:default; }
+  details.dfcare > summary::after { display:none; }
+}
+@media (max-width:899px) {
+  details.fcare, details.dfcare { border-top:1px solid rgba(242,239,233,.12); border-bottom:1px solid rgba(242,239,233,.12); width:100%; }
+  details.fcare > summary, details.dfcare > summary { display:flex; align-items:center; justify-content:center; gap:12px; padding:16px 0; min-height:48px; cursor:pointer; color:var(--ink2); }
+  details.fcare > summary::after, details.dfcare > summary::after { content:""; width:8px; height:8px; border:solid currentColor; border-width:0 1.2px 1.2px 0; transform:rotate(45deg) translate(-2px,-2px); transition:transform .3s ease; }
+  details.fcare[open] > summary::after, details.dfcare[open] > summary::after { transform:rotate(-135deg) translate(-2px,-2px); }
+  details.fcare > summary:focus-visible, details.dfcare > summary:focus-visible { outline:1px solid #8a6d3b; outline-offset:-3px; }
+  html body #end details.fcare .ftrust { display:grid !important; justify-items:center; gap:14px; padding:4px 0 20px; border:0 !important; margin:0 !important; }
+  html body .dft details.dfcare .dfcarel { display:grid; justify-items:center; gap:14px; padding:4px 0 20px; }
+  html body .dft details.dfcare { margin:6px 0; }
+}
+@media (max-width:899px) {
+  html body #end details.fcare { margin-top:26px; border-bottom:0; }
+  html body .dft details.dfcare { border:0; margin:0; }
+  html body .dft details.dfcare > summary { padding:6px 0; min-height:44px; }
+  html body .dft .dfcols > div:last-child { display:grid; justify-items:center; gap:12px; }
+}

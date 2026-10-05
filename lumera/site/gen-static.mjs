@@ -133,7 +133,7 @@ ${cssLink}
       "slogan": "The Line of Desire",
       "description": "A private high-jewellery house in Dubai and Tel Aviv. House collection, bespoke commissions and the SILAVU Line, by appointment.",
       "url": base + "/",
-      "sameAs": sameAs,
+      ...(sameAs.length ? { "sameAs": sameAs } : {}),
       "address": [
         { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" },
         { "@type": "PostalAddress", "addressLocality": "Tel Aviv", "addressCountry": "IL" }
@@ -287,16 +287,16 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   ];
   const LANGS = [["en", "EN"], ["he", "עב"], ["fr", "FR"], ["ar", "AR"], ["ru", "RU"]];
   const header = here => `<header class="dhd">
-<a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
-<nav class="dnav" aria-label="Site">${NAV.map(([h, t]) => `<a href="${h}"${h === here + "/" ? ' aria-current="page"' : ""} ${A(t)}>${t.en}</a>`).join("")}</nav>
-<div class="dact"><div class="dlang" role="group" aria-label="Language">${LANGS.map(([c, l]) => `<button type="button" data-lang="${c}" lang="${c}">${l}</button>`).join("")}</div>
+<a class="dhome" href="./" aria-label="SILAVU, home" data-aria-he="SILAVU, דף הבית">${mark("dmk", "b")}${logo("dlg")}</a>
+<nav class="dnav" aria-label="Site" data-aria-he="ניווט באתר">${NAV.map(([h, t]) => `<a href="${h}"${h === here + "/" ? ' aria-current="page"' : ""} ${A(t)}>${t.en}</a>`).join("")}</nav>
+<div class="dact"><div class="dlang" role="group" aria-label="Language" data-aria-he="שפה">${LANGS.map(([c, l]) => `<button type="button" data-lang="${c}" lang="${c}">${l}</button>`).join("")}</div>
 <a class="dbook" href="./#concierge" ${A(S("Private appointment", "פגישה פרטית"))}>Private appointment</a></div>
 </header>`;
   const footer = here => `<footer class="dft">
-<a class="dhome" href="./" aria-label="SILAVU, home">${mark("dmk", "b")}${logo("dlg")}</a>
+<a class="dhome" href="./" aria-label="SILAVU, home" data-aria-he="SILAVU, דף הבית">${mark("dmk", "b")}${logo("dlg")}</a>
 <div class="dfcols">
 <div><div class="k" ${A(S("The house", "בית התכשיטים"))}>The house</div>${NAV.map(([h, t]) => `<a href="${h}" ${A(t)}>${t.en}</a>`).join("")}</div>
-<div><div class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</div>${POLICIES.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div>
+<details class="dfcare" open data-fold><summary class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</summary><div class="dfcarel">${POLICIES.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div></details>
 <div><div class="k" ${A(S("Contact", "יצירת קשר"))}>Contact</div><a href="mailto:concierge@silavu.com" dir="ltr">concierge@silavu.com</a><a href="./#concierge" ${A(S("Book a private viewing", "קביעת פגישה פרטית"))}>Book a private viewing</a><span class="k dfwhere" ${A(S("Dubai · Tel Aviv · By appointment", "דובאי · תל אביב · בתיאום מראש"))}>Dubai · Tel Aviv · By appointment</span></div>
 </div>
 <div class="dfbot k"><span dir="ltr">© SILAVU&nbsp;<span class="fyr">${new Date().getFullYear()}</span></span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
@@ -305,6 +305,8 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
      Hebrew is in the page, the others come from the site's dictionaries */
   const langScript = titleOf => `<script>(function () {
   var h = document.documentElement, cache = {}, orig = document.title;
+  /* on a phone the service documents fold under one heading; open everywhere else */
+  if (matchMedia("(max-width:899px)").matches) document.querySelectorAll("details[data-fold]").forEach(function (d) { d.open = false; });
   document.querySelectorAll(".fyr").forEach(function (e) { e.textContent = new Date().getFullYear(); });
   function apply(l, dict) {
     var rtl = l === "he" || l === "ar";
@@ -423,7 +425,11 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
 <div class="aletter">${a.letter.map(p => T("p", p)).join("")}</div>
 <div class="acta"><a class="btn solid" href="./#collection" ${A(a.cta1)}>${a.cta1.en}</a><a class="btn" href="./#concierge" ${A(a.cta2)}>${a.cta2.en}</a></div>
 </div>
-<figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>
+<div class="acol"><figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>${(() => { const r = PIECES.find(x => x.id === "ring"), sh = r && r.shots.find(x => x.img === "ring-macro"); if (!sh) return "";
+  /* one detail of the house's own work, from the approved photography: the
+     pavé signature of ICON, close. It sits under the portrait on a wide
+     screen and is left out on a phone, so the page grows no longer. */
+  return `<figure class="adetail"><img src="img/${sh.img}-900.jpg" srcset="img/${sh.img}-640.jpg 640w, img/${sh.img}-900.jpg 900w, img/${sh.img}-1254.jpg 1254w" sizes="(min-width:1000px) 30vw, 1px" width="1254" height="1254" loading="lazy" decoding="async" alt="${escA(sh.alt.en)}" data-alt-he="${escA(sh.alt.he)}"><figcaption class="k" ${A(S("SILAVU ICON, the pavé signature", "SILAVU ICON, חתימת הפאווה"))}>SILAVU ICON, the pavé signature</figcaption></figure>`; })()}</div>
 </section>
 </main>`;
     /* the tab reads the same in every language; the heading carries markup */
@@ -495,7 +501,7 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
       const specs = p.specs.filter(r => !/^Price$/.test(r[0].en));
       const enq = `./?piece=${p.id}#concierge`;
       const inner = `<main class="doc ppage">
-<nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}"><a href="./#collection" ${AT(S("The collection", "הקולקציה"), he)}</a><i aria-hidden="true">/</i><span aria-current="page">${nm}</span></nav>
+<nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}" data-aria-he="מיקום"><a href="./#collection" ${AT(S("The collection", "הקולקציה"), he)}</a><i aria-hidden="true">/</i><span aria-current="page">${nm}</span></nav>
 <div class="ppgrid">
 <section class="ppgal" aria-roledescription="carousel" aria-label="${escA(nm)}" data-n="${n}">
 <div class="ppstage">
