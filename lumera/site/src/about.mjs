@@ -11,21 +11,25 @@ export const ABOUT = {
   slug: "about",
   title: S("About", "אודות"),
   seo: S("About SILAVU | Ariel Silas", "אודות SILAVU | אריאל סיילס"),
-  desc: S("SILAVU by Ariel Silas: flowing lines, light, and details you only discover up close. MOMENT, ICON and SOUL are three ways to wear one signature.",
-          "SILAVU של אריאל סיילס: קווים זורמים, אור ופרטים שמתגלים רק מקרוב. MOMENT, ICON ו־SOUL הם שלוש דרכים לענוד את אותה חתימה."),
+  desc: S("SILAVU was founded by designer Ariel Silas: jewellery with a strong identity, brought to life by skilled craftsmen in Dubai. MOMENT, ICON and SOUL, connected by one signature.",
+          "את SILAVU ייסד המעצב אריאל סיילס: תכשיטים בעלי זהות חזקה, שקמים לחיים בידי בעלי מלאכה מיומנים בדובאי. MOMENT, ICON ו־SOUL, מחוברות בחתימה אחת."),
   eyebrow: S("About SILAVU", "אודות SILAVU"),
-  h1: S("Some jewellery simply <em>feels like yours.</em>", "יש תכשיטים שפשוט <em>מרגישים שלכם.</em>"),
+  h1: S("Behind <em>SILAVU</em>", "מאחורי <em>SILAVU</em>"),
   portrait: "ariel-silas",
   name: S("Ariel Silas", "אריאל סיילס"),
   role: S("Founder", "מייסד"),
-  /* written about him, not by him: the two paragraphs as the house gave
-     them, word for word in Hebrew. No number of years, no title at another
-     house, no awards and no tie between the two names is added. */
+  /* written about him, in the house's own words (October 2026): who
+     founded it, the vision, where the pieces are made, and the three
+     collections. Nothing is added to what the house wrote. */
   letter: [
-    S("Behind SILAVU is Ariel Silas, a designer with years of experience in 3D modelling and design. In his work at Jacob & Co. he designed watches and watch dials — a world in which proportion, depth and finish carry meaning in every detail.",
-      "מאחורי SILAVU עומד אריאל סיילס, מעצב בעל שנות ניסיון במידול תלת־ממדי ובעיצוב. במסגרת עבודתו ב־Jacob & Co. עסק בעיצוב שעונים ולוחות שעון — עולם שבו פרופורציות, עומק וגימור מקבלים משמעות בכל פרט."),
-    S("Ariel brings the same attention to SILAVU: sculptural lines, the play of light, and jewellery with presence that feels natural on the body. The SILAVU signature connects MOMENT, ICON and SOUL, each giving it an expression of its own.",
-      "את אותה תשומת לב מביא אריאל אל SILAVU: קווים פיסוליים, משחקי אור ותכשיטים בעלי נוכחות שמרגישים טבעיים על הגוף. חתימת המותג מחברת בין MOMENT, ICON ו־SOUL, כשכל אחד מעניק לה ביטוי משלו.")
+    S("SILAVU was founded by Ariel Silas, a designer with a background in 3D and visual design. His experience includes creative collaborations with Jacob & Co., where his eye for detail, proportion and precision continued to develop.",
+      "את SILAVU ייסד אריאל סיילס, מעצב עם רקע בעיצוב תלת־ממדי ובעיצוב חזותי. ניסיונו כולל שיתופי פעולה יצירתיים עם \u2066Jacob & Co.\u2069, שבמסגרתם המשיכה להתפתח עינו לפרטים, לפרופורציה ולדיוק."),
+    S("Ariel created SILAVU with a clear vision: jewellery with a strong identity, designed to feel as good on the body as it looks. Every piece is considered down to the smallest detail, from its proportions and setting to the way it catches the light.",
+      "אריאל יצר את SILAVU מתוך חזון ברור: תכשיטים בעלי זהות חזקה, שמעוצבים להרגיש על הגוף טוב כפי שהם נראים. כל תכשיט נשקל עד לפרט הקטן ביותר — מהפרופורציות והשיבוץ ועד לאופן שבו הוא תופס את האור."),
+    S("SILAVU designs are brought to life by skilled craftsmen in Dubai, combining precise production with careful hand-finishing.",
+      "עיצובי SILAVU קמים לחיים בידי בעלי מלאכה מיומנים בדובאי, בשילוב של ייצור מדויק וגימור קפדני בעבודת יד."),
+    S("MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.",
+      "\u2066MOMENT\u2069, \u2066ICON\u2069 ו־\u2066SOUL\u2069 הן שלוש קולקציות נפרדות, שכולן מחוברות בחתימת SILAVU.")
   ],
 
   cta1: S("Discover the collection", "לגלות את הקולקציה"),
