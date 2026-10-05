@@ -2,7 +2,7 @@
 // small steps on a 4x slowed CPU, and every frame is timed. Reports the long
 // frames per section and where the main thread spends its time.
 import { chromium } from "playwright-core";
-const base = process.env.BASE || "http://localhost:8779/";
+const base = process.env.BASE || "http://localhost:8777/";
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium", args: ["--enable-gpu-rasterization"] });
 const c = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 3 });
 const p = await c.newPage(); const cdp = await c.newCDPSession(p);
