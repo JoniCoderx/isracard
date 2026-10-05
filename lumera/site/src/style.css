@@ -6152,3 +6152,48 @@ html body #collection { margin-top:-6px !important; position:relative; }
    on a tablet, without the blur the desktop has, the mark of the chapter
    beneath read through it and stood on top of the header's own. ───────── */
 @media (max-width:999px) { html body header.sh.scrolled { background:rgba(0,0,0,.97) !important; } }
+
+/* ══ v193 — About, as an editorial page ═══════════════════════════════════
+   The first paragraph is the lead, set larger in the serif; the closing line
+   about the three collections stands under a hairline as the last word; the
+   portrait sits in a fine offset frame and arrives with a slow fade; on a
+   desktop it aligns with the title, and on a phone the title comes first,
+   then the portrait, then the words. ──────────────────────────────────── */
+.dpage .doc.about .aletterpage { align-items:start; }
+.dpage .doc.about .aletter p:first-child { font-family:var(--serif); font-weight:300; font-size:clamp(1.22rem,1.75vw,1.5rem); line-height:1.55; color:var(--ink); letter-spacing:-.005em; }
+html[data-ns] .dpage .doc.about .aletter p:first-child { font-family:inherit; font-weight:300; font-size:clamp(1.15rem,1.6vw,1.35rem); }
+.dpage .doc.about .aletter p:last-child { margin-top:.4em; padding-top:1.1em; border-top:1px solid rgba(214,186,128,.28);
+  font-family:var(--serif); font-style:italic; font-weight:400 !important; font-size:clamp(1.08rem,1.4vw,1.25rem); color:var(--ink); }
+html[data-ns] .dpage .doc.about .aletter p:last-child { font-family:inherit; font-style:normal; }
+.dpage .doc.about .aport { position:relative; isolation:isolate; margin-top:clamp(8px,4.2vw,64px); }
+.dpage .doc.about .aport::before { content:""; position:absolute; z-index:-1; inset:0 0 auto 0; aspect-ratio:4 / 5;
+  transform:translate(14px, 14px); border:1px solid rgba(214,186,128,.34); border-radius:var(--r, 14px); pointer-events:none; }
+html[dir="rtl"] .dpage .doc.about .aport::before { transform:translate(-14px, 14px); }
+.dpage .doc.about .aport img { animation:aportIn 1.6s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes aportIn { from { opacity:0; transform:scale(1.035); filter:brightness(.7); } to { opacity:1; transform:none; filter:none; } }
+.dpage .doc.about .aport figcaption { padding-top:6px; }
+.dpage .doc.about .aport figcaption b { font-family:var(--serif); font-size:1.08rem; letter-spacing:.01em; }
+html[data-ns] .dpage .doc.about .aport figcaption b { font-family:inherit; }
+@media (max-width:999px) {
+  .dpage .doc.about .aletterpage { display:grid; grid-template-columns:minmax(0,1fr); gap:20px; }
+  .dpage .doc.about .ahtext { display:contents; }
+  .dpage .doc.about .ahtext > .k { order:1; }
+  .dpage .doc.about .ahtext > h1 { order:2; margin-bottom:6px; }
+  .dpage .doc.about .aport { order:3; margin:4px 14px 18px 0; max-width:none; }
+  html[dir="rtl"] .dpage .doc.about .aport { margin:4px 0 18px 14px; }
+  .dpage .doc.about .aletter { order:4; }
+  .dpage .doc.about .acta { order:5; margin-top:8px; }
+}
+@media (prefers-reduced-motion:reduce) { .dpage .doc.about .aport img { animation:none; } }
+
+/* the document footer on a phone: centred, light, in even steps */
+@media (max-width:759px) {
+  html body .dft { gap:22px; text-align:center; justify-items:center; padding-block:34px calc(22px + env(safe-area-inset-bottom, 0px)); }
+  html body .dfcols { grid-template-columns:1fr !important; gap:20px; width:100%; }
+  html body .dfcols > div { justify-items:center; gap:2px; display:flex; flex-wrap:wrap; justify-content:center; column-gap:16px; }
+  html body .dfcols > div > .k { flex-basis:100%; margin-bottom:6px; font-size:10px; }
+  html body .dfcols a { font-size:11px; letter-spacing:.14em; padding:6px 0; }
+  html[data-ns] body .dfcols a { font-size:13px; letter-spacing:0; }
+  html body .dfcols > div + div { padding-top:18px; border-top:1px solid rgba(255,255,255,.07); }
+  html body .dfbot { width:100%; justify-content:center; gap:18px; font-size:10px; }
+}
