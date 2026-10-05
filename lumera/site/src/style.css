@@ -6443,3 +6443,28 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   @media (prefers-reduced-motion:reduce) { #cform.delivered .cthanks, #cform .cthk circle, #cform .cthk path { animation:none; stroke-dashoffset:0; } }
   form.sent .done { border:1px solid rgba(246,241,230,.14); border-radius:14px; padding:16px 20px; background:rgba(255,255,255,.035);
     color:var(--ink2); font-size:.98rem; line-height:1.65; max-width:62ch; }
+
+  /* ── v204 — the builder's summary, compact on a phone. The card, the
+     reservation and the three actions take about a third less height: tighter
+     padding, the price a size down, a slimmer button, the trust line on one
+     small line, and the three actions as short tiles with the icon beside the
+     words. The tabs along the top fit "Lab-grown" without cutting it. ── */
+  @media (max-width:759px) {
+    html body #build #configure .total { margin-top:16px; padding:14px 16px 4px; gap:9px; border-radius:16px; }
+    html body #build #configure .total .tot { gap:6px; }
+    html body #build #configure .total .ltk { font-size:.6rem; }
+    html body #build #configure .total .lsum { font-size:.88rem !important; line-height:1.4; }
+    html body #build #configure .total .pricerow { gap:9px; }
+    html body #build #configure .total .pricerow > svg, html body #build #configure .total .sealsm { width:24px; height:24px; }
+    html body #build #configure .total .estk { font-size:.54rem; }
+    html body #build #configure .total .tot.onreq .price, html body #build #configure .total .price { font-size:1rem !important; line-height:1.15; }
+    html body #build #configure .total .estnote { font-size:.78rem !important; line-height:1.45 !important; }
+    html body #build #configure .total .btn.solid, html body #build #configure .total #reserve { min-height:44px !important; height:44px; padding-block:0 !important; font-size:.7rem !important; }
+    html body #build #configure .total .trustline { font-size:.7rem !important; letter-spacing:.01em; line-height:1.4; }
+    html body #build #configure .total .sdet > summary { min-height:36px; padding-block:6px; font-size:.6rem; }
+    html body #build #configure .cacts { gap:6px; margin-top:8px; }
+    html body #build #configure .clink { flex-direction:row; gap:6px; min-height:40px; padding:4px 6px; font-size:.5rem; letter-spacing:.05em; line-height:1.25; border-radius:10px; }
+    html[data-ns] body #build #configure .clink { font-size:.66rem; letter-spacing:0; }
+    html body #build #configure .clink svg { width:14px; height:14px; flex:none; }
+    html body #build #opts .optnow { font-size:.74rem; letter-spacing:0; }
+  }
