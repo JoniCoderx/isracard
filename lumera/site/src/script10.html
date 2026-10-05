@@ -28,7 +28,8 @@
   /* a seeded random, so the desk is laid out the same way each visit */
   var seed = 7; function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
 
-  var W = 0, H = 0, DPR = 1, bodies = [], chains = [], S = 60;
+  /* TOP: the wave the desk's upper edge is cut to (style.css --wv); stones lie and stop below it */
+  var W = 0, H = 0, DPR = 1, bodies = [], chains = [], S = 60, TOP = 0;
   var P = { x: -9999, y: -9999, vx: 0, vy: 0, on: false, t: 0 }, light = 0;
   var shadow = null, flare = null;
   /* the phone in the hand: how far it leans from where it was held, and a
@@ -55,7 +56,7 @@
     var r = film.getBoundingClientRect();
     DPR = Math.min(devicePixelRatio || 1, coarse ? 1.75 : 2);
     var w = Math.round(r.width), h = Math.round(r.height); if (!w || !h) return false;
-    var first = !W; W = w; H = h;
+    var first = !W; W = w; H = h; TOP = (parseFloat(getComputedStyle(film).getPropertyValue("--wv")) || 0) * 1.02;
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); cv.style.width = W + "px"; cv.style.height = H + "px";
     S = Math.max(30, Math.min(84, Math.min(W, H * 1.6) * (coarse ? 0.105 : 0.062)));
     if (first) lay(); else bodies.concat(flat()).forEach(keepIn);
@@ -66,15 +67,15 @@
      two bracelets */
   function lay() {
     seed = 7; bodies = []; chains = [];
-    var n = coarse ? 16 : Math.round(Math.min(46, 18 + W / 60)), kinds = NAMES.slice(0, 7), tries = 0;
+    var n = coarse ? 14 : Math.round(Math.min(40, 16 + W / 70)), kinds = NAMES.slice(0, 7), tries = 0;
     while (bodies.length < n && tries++ < 4000) {
       var k = kinds[bodies.length % kinds.length], im = IMG[k], ar = im.naturalWidth / im.naturalHeight;
       var sc = (0.72 + rnd() * 0.55) * (k === "baguette" ? 0.85 : 1), w = S * sc * Math.sqrt(ar), h = w / ar;
-      var x = 30 + rnd() * (W - 60), y = 30 + rnd() * (H - 60);
+      var x = 30 + rnd() * (W - 60), y = TOP + 24 + rnd() * (H - TOP - 54);
       /* the words sit in the middle: keep that part of the desk quieter */
-      var dx = (x - W / 2) / (W * 0.34), dy = (y - H / 2) / (H * 0.30); if (dx * dx + dy * dy < 1 && rnd() < 0.94) continue;
+      var dx = (x - W / 2) / (W * 0.34), dy = (y - (H + TOP) / 2) / ((H - TOP) * 0.32); if (dx * dx + dy * dy < 1 && rnd() < 0.94) continue;
       var r = 0.5 * Math.sqrt(w * h) * 0.92, ok = true;
-      for (var i = 0; i < bodies.length; i++) { var b = bodies[i]; if (Math.hypot(b.x - x, b.y - y) < b.r + r + 6) { ok = false; break; } }
+      for (var i = 0; i < bodies.length; i++) { var b = bodies[i]; if (Math.hypot(b.x - x, b.y - y) < b.r + r + S * 0.3) { ok = false; break; } }
       if (!ok) continue;
       bodies.push({ k: k, im: im, x: x, y: y, vx: 0, vy: 0, a: rnd() * Math.PI * 2, va: 0, w: w, h: h, r: r, m: w * h, g: 0, ph: rnd() * 6.28 });
     }
@@ -86,12 +87,12 @@
     /* one open, in a long lazy curve across the lower left */
     chain(L, false, function (t) { return [W * 0.07 + t * gap * (L - 1) * 0.92, H * 0.80 - Math.sin(t * Math.PI) * H * 0.12]; });
     /* one closed, in a loose loop to the upper right */
-    if (!coarse || W > 340) chain(L, true, function (t) { var a = t * Math.PI * 2; return [W * (coarse ? 0.72 : 0.80) + Math.cos(a) * R * 1.15, H * 0.28 + Math.sin(a) * R * 0.82]; });
+    if (!coarse || W > 340) chain(L, true, function (t) { var a = t * Math.PI * 2; return [W * (coarse ? 0.72 : 0.80) + Math.cos(a) * R * 1.15, TOP + (H - TOP) * 0.3 + Math.sin(a) * R * 0.82]; });
     /* nothing lies on top of a bracelet */
     bodies = bodies.filter(function (b) { return !flat().some(function (q) { return Math.hypot(q.x - b.x, q.y - b.y) < q.r + b.r; }); });
   }
   function flat() { var o = []; chains.forEach(function (c) { o = o.concat(c.p); }); return o; }
-  function keepIn(b) { var r = b.r || 10; b.x = Math.max(r, Math.min(W - r, b.x)); b.y = Math.max(r, Math.min(H - r, b.y)); }
+  function keepIn(b) { var r = b.r || 10; b.x = Math.max(r, Math.min(W - r, b.x)); b.y = Math.max(TOP + r, Math.min(H - r, b.y)); }
 
   /* ── the physics ── */
   function step(dt) {
@@ -118,7 +119,7 @@
     for (i = 0; i < bodies.length; i++) { b = bodies[i];
       b.x += b.vx * k; b.y += b.vy * k; b.a += b.va * k; b.vx *= fr; b.vy *= fr; b.va *= fa; b.g *= Math.pow(0.93, k);
       if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * 0.45; } else if (b.x > W - b.r) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * 0.45; }
-      if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy) * 0.45; } else if (b.y > H - b.r) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * 0.45; }
+      if (b.y < TOP + b.r) { b.y = TOP + b.r; b.vy = Math.abs(b.vy) * 0.45; } else if (b.y > H - b.r) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * 0.45; }
       moving = Math.max(moving, Math.abs(b.vx) + Math.abs(b.vy) + Math.abs(b.va) * 20); }
     /* and knock into each other */
     for (i = 0; i < bodies.length; i++) for (j = i + 1; j < bodies.length; j++) { b = bodies[i]; q = bodies[j];

@@ -6560,3 +6560,17 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   /* the client-care links in the document footer stand one under another on a
      desktop, as the house's own links beside them do (they ran together) */
   @media (min-width:900px) { html body .dft details.dfcare .dfcarel { display:grid; justify-items:start; gap:10px; } }
+
+  /* ── v212 — the desk's upper edge is a slow wave out of the collection's
+     ivory, softened at the edge, so the white flows into the leather instead
+     of meeting it on a hard line. The section takes the wave's height on top
+     of its own, the words stay centred in the leather below it, and the stones
+     lie and stop below the wave (script10). ── */
+  #macro { background:#f8f7f5; }
+  #macro .mfilm { --wv:clamp(64px, 8.5vw, 140px);
+    -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%201440%20160%22%20preserveAspectRatio=%22none%22%3E%3Cfilter%20id=%22b%22%20x=%22-5%25%22%20y=%22-30%25%22%20width=%22110%25%22%20height=%22160%25%22%3E%3CfeGaussianBlur%20stdDeviation=%225%22/%3E%3C/filter%3E%3Cpath%20filter=%22url%28%23b%29%22%20d=%22M-40,30%20C150,16%20330,70%20520,112%20C700,150%20860,96%201000,78%20C1130,62%201240,110%201330,108%20C1395,106%201425,70%201480,40%20L1480,240%20L-40,240%20Z%22/%3E%3C/svg%3E") top / 100% var(--wv) no-repeat, linear-gradient(#000, #000) bottom / 100% calc(100% - var(--wv) + 1px) no-repeat;
+    mask:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%201440%20160%22%20preserveAspectRatio=%22none%22%3E%3Cfilter%20id=%22b%22%20x=%22-5%25%22%20y=%22-30%25%22%20width=%22110%25%22%20height=%22160%25%22%3E%3CfeGaussianBlur%20stdDeviation=%225%22/%3E%3C/filter%3E%3Cpath%20filter=%22url%28%23b%29%22%20d=%22M-40,30%20C150,16%20330,70%20520,112%20C700,150%20860,96%201000,78%20C1130,62%201240,110%201330,108%20C1395,106%201425,70%201480,40%20L1480,240%20L-40,240%20Z%22/%3E%3C/svg%3E") top / 100% var(--wv) no-repeat, linear-gradient(#000, #000) bottom / 100% calc(100% - var(--wv) + 1px) no-repeat; }
+  @media (min-width:900px) { html body #macro .mfilm { height:calc(64svh + var(--wv)); min-height:calc(440px + var(--wv)); max-height:calc(680px + var(--wv)); } }
+  @media (max-width:899px) { html body #macro .mfilm { height:calc(58svh + var(--wv)); min-height:calc(380px + var(--wv)); max-height:calc(540px + var(--wv)); } }
+  html body #macro .mtxt { padding-top:var(--wv); }
+  #macro .mveil { background:linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 86%, rgba(0,0,0,.7)); }
