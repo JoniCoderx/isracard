@@ -6070,3 +6070,24 @@ html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline
 /* one emblem per opening: where a chapter begins with the mark between its
    hairlines, its label does not repeat it */
 html body section:has(.chap) .k.ol::before { display:none; }
+
+/* ══ v188 — the language menu, compact and quiet ══════════════════════════
+   Narrower and shorter, the rows closer together, the language you are in
+   marked with a small gold point, and the panel opening with a short fade
+   from the button. On a phone it is a compact card under the button. ──── */
+html body #langmenu { gap:2px; padding:6px; border-radius:16px; min-width:0; width:200px;
+  background:rgba(14,13,12,.96); border-color:rgba(236,227,207,.14);
+  box-shadow:0 24px 50px -22px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.04); }
+html body #langmenu.open { animation:lmIn .22s cubic-bezier(.2,.8,.2,1) both; transform-origin:top right; }
+@keyframes lmIn { from { opacity:0; transform:translateY(-4px) scale(.97); } to { opacity:1; transform:none; } }
+html body #langmenu button { min-height:42px !important; height:42px; padding:0 12px !important; gap:12px; border-radius:11px; }
+html body #langmenu button .lc { font-size:10px !important; letter-spacing:.16em; min-width:2.4em; }
+html body #langmenu button .ln { font-size:14px; letter-spacing:.01em; flex:1; }
+html body #langmenu button.on { background:rgba(255,255,255,.06); }
+html body #langmenu button.on::after { content:""; width:5px; height:5px; border-radius:50%; background:var(--gold, #d6ba80); box-shadow:0 0 8px rgba(214,186,128,.6); flex:none; }
+@media (max-width:759px) {
+  html body #langmenu { width:172px; padding:5px; border-radius:15px; }
+  html body #langmenu button { min-height:40px !important; height:40px; padding:0 11px !important; }
+  html body #langmenu button .ln { font-size:13.5px; }
+}
+@media (prefers-reduced-motion:reduce) { html body #langmenu.open { animation:none; } }
