@@ -110,7 +110,7 @@ const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection ca
 
 const SIZES_JRN = "(min-width:1000px) 56vw, 92vw", SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
-const bandItems = [["SILAVU", "SILAVU"], ["High jewellery", "תכשיטי יוקרה"], ["Made by hand", "נעשה ביד"], ["GIA · IGI certified", "מאושר GIA · IGI"], ["By appointment", "בתיאום מראש"]];
+const bandItems = [["SILAVU", "SILAVU"], ["Fine jewellery", "תכשיטי יוקרה"], ["Finished by hand", "גימור בעבודת יד"], ["GIA · IGI certified", "מאושר GIA · IGI"], ["By appointment", "בתיאום מראש"]];
 const band = bandItems.concat(bandItems).map(([en, he]) => `<span><em data-en="${en}" data-he="${he}">${en}</em><i class="dot"></i></span>`).join("");
 
 /* The Signature Chain is not here on purpose. It was written in full and left
@@ -179,7 +179,7 @@ ${markDefs()}
     <i class="hlight" aria-hidden="true"></i>
     <div class="hshade"></div>
     <div class="hcap" id="hcap">
-      <div class="k gold rv" data-en="High jewellery · Made by hand" data-he="תכשיטי יוקרה · עבודת יד">High jewellery · Made by hand</div>
+      <div class="k gold rv" data-en="Fine jewellery · Finished by hand" data-he="תכשיטי יוקרה · גימור בעבודת יד">Fine jewellery · Finished by hand</div>
       <h1 class="h sp rv" data-en="The Line of <em>Desire</em>" data-he="The Line of <em>Desire</em>">The Line of <em>Desire</em></h1>
       <p class="p rv d2" data-en="Crafted with intention. Made to leave an impression." data-he="נוצר מתוך כוונה. נעשה כדי להשאיר רושם.">Crafted with intention. Made to leave an impression.</p>
       <div class="hacts rv d3"><a class="btn solid" href="#collection" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</a><a class="lnk hsec" href="#concierge" data-en="Book a private viewing" data-he="קביעת פגישה פרטית">Book a private viewing</a></div>
@@ -194,7 +194,7 @@ ${markDefs()}
     <div class="hsig rv">${mark("hmark")}</div>
     <div class="k gold rv d1" data-en="The signature" data-he="החתימה">The signature</div>
     <h2 class="h2 rv d2" data-en="SILAVU signs <em>every piece it makes.</em>" data-he="‏SILAVU חותמת <em>על כל תכשיט שהיא יוצרת.</em>">SILAVU signs <em>every piece it makes.</em></h2>
-    <p class="p rv d3" data-en="Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you." data-he="שום תכשיט לא יוצא מהסדנה בלי חתימה. כל תכשיט נושא את הסמל ונוצר פעם אחת, בשבילכם.">Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you.</p>
+    <p class="p rv d3" data-en="Nothing leaves the bench unsigned. Every piece carries the mark of the house." data-he="שום תכשיט לא יוצא מהסדנה בלי חתימה. כל תכשיט נושא את סמל הבית.">Nothing leaves the bench unsigned. Every piece carries the mark of the house.</p>
   </div>
 </section>
 
@@ -219,7 +219,7 @@ ${markDefs()}
     <!-- one line comes in from the left and writes the name, without lifting, and rises away -->
     <div class="sgstage">
       <!-- the white half: it sweeps in from the lower left under the name, and joins the white collection below -->
-      <svg class="sgsplit" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="sgfill" d="M0 170 C 60 175, 130 190, 210 215 C 250 228, 300 250, 340 275 C 390 310, 425 345, 458 400 C 478 440, 495 480, 540 560 L 640 700 C 690 760, 728 800, 765 840 C 815 885, 900 930, 1000 960 L 1000 1300 L 0 1300 Z"/><path class="sgedge" d=""/></svg>
+      <svg class="sgsplit" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="sgfill" d="M0 600 C 120 560, 300 560, 500 600 C 700 640, 880 640, 1000 600 L 1000 1300 L 0 1300 Z"/><path class="sgedge" d=""/></svg>
       <div class="sgfig">
         <svg class="sgsvg" viewBox="146 0 1080 400" role="img" aria-label="SILAVU, written by hand in a single line" overflow="visible">
           <defs>

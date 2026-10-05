@@ -208,4 +208,32 @@
 
   window.__fx = { relang: function () { split(); } };
 })();
+
+/* The collection, in the hand. With a mouse, a piece turns toward the pointer
+   as if it were held up to the light: the card tilts a few degrees in depth,
+   the photograph moves the other way inside its frame, a soft light follows
+   the pointer across it and the shadow falls away from it. It eases back
+   when the pointer leaves. Not on touch, and not with reduced motion. */
+(function () {
+  "use strict";
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  function bind(fig) {
+    if (fig.__tilt) return; fig.__tilt = 1;
+    var glare = document.createElement("i"); glare.className = "tglare"; glare.setAttribute("aria-hidden", "true"); fig.appendChild(glare);
+    var raf = 0, nx = 0, ny = 0;
+    function paint() { raf = 0;
+      fig.style.setProperty("--rx", (-ny * 9).toFixed(2) + "deg"); fig.style.setProperty("--ry", (nx * 12).toFixed(2) + "deg");
+      fig.style.setProperty("--px", (-nx * 14).toFixed(1) + "px"); fig.style.setProperty("--py", (-ny * 11).toFixed(1) + "px");
+      fig.style.setProperty("--mx", ((nx + 1) * 50).toFixed(1) + "%"); fig.style.setProperty("--my", ((ny + 1) * 50).toFixed(1) + "%");
+      fig.style.setProperty("--sx2", (-nx * 18).toFixed(1) + "px"); fig.style.setProperty("--sy2", (22 - ny * 10).toFixed(1) + "px"); }
+    fig.addEventListener("pointerenter", function () { fig.classList.add("tilt"); });
+    fig.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return;
+      var r = fig.getBoundingClientRect(); nx = Math.max(-1, Math.min(1, (e.clientX - r.left) / r.width * 2 - 1)); ny = Math.max(-1, Math.min(1, (e.clientY - r.top) / r.height * 2 - 1));
+      if (!raf) raf = requestAnimationFrame(paint); });
+    fig.addEventListener("pointerleave", function () { nx = ny = 0; fig.classList.remove("tilt"); if (!raf) raf = requestAnimationFrame(paint); });
+  }
+  function all() { document.querySelectorAll(".pgrid .piece:not(.soon) .fig.r11").forEach(bind); }
+  all();
+  var g = document.querySelector(".pgrid"); if (g && window.MutationObserver) new MutationObserver(all).observe(g, { childList: true, subtree: true });
+})();
 </script>

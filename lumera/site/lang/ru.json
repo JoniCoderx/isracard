@@ -258,11 +258,9 @@
  "Drag to turn, pinch to zoom, double tap to reset.": "Проведите, чтобы повернуть, сведите пальцы для масштаба, коснитесь дважды для сброса.",
  "Choose the shape, the carat weight, the metal and your wrist size. The bracelet is built in three dimensions while you decide, then shown on a wrist you choose.": "Выберите форму, вес в каратах, металл и размер запястья. Браслет строится в трёх измерениях, пока вы решаете, а затем показывается на запястье по вашему выбору.",
  "Illustration only. 3D is not available in this browser.": "Иллюстрация. 3D недоступно в этом браузере.",
- "Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you.": "Ничто не покидает верстак без подписи. Каждое изделие несёт знак дома и создаётся один раз, для вас.",
  "Bracelet": "Браслет",
  "Ring": "Кольцо",
  "Necklace": "Колье",
- "SILAVU | High Jewellery": "SILAVU | Высокое ювелирное искусство",
  "Your bracelet": "Ваш браслет",
  "Only what you send us: a name, a city, a way to reach you, and what you wrote in the message. Nothing is bought from anyone and nothing is inferred about you. The enquiry form opens your own mail or messaging app, so the house receives what you chose to send, from your own address.": "Только то, что вы нам присылаете: имя, город, способ связи и текст сообщения. Ничего не покупается у третьих лиц и ничего о вас не додумывается. Форма открывает ваше собственное почтовое приложение или мессенджер, и дом получает то, что вы решили отправить, с вашего адреса.",
  "Every piece is guaranteed against fault in its making and its materials for as long as you own it. A setting that loosens, a clasp that tires, a solder that fails: the house repairs it, and it does not charge you for it.": "Каждое изделие имеет гарантию от дефектов изготовления и материалов на всё время, пока оно ваше. Ослабшая закрепка, уставший замок, не выдержавшая пайка: дом чинит это и не берёт за это плату.",
@@ -332,7 +330,6 @@
  "From the side": "Сбоку",
  "Close up": "Крупным планом",
  "Drag the bracelet onto your wrist": "Перетащите браслет на запястье",
- "High jewellery · Made by hand": "Высокое ювелирное искусство · Ручная работа",
  "Set by hand, to the measure of your wrist.": "Закреплено вручную, по мерке вашего запястья.",
  "GIA or IGI certified · Insured delivery · Care and resizing": "Сертификат GIA или IGI · Застрахованная доставка · Уход и подгонка размера",
  "Delivery and care": "Доставка и уход",
@@ -370,5 +367,10 @@
  "SILAVU was founded by Ariel Silas, a designer with a background in 3D and visual design. His experience includes creative collaborations with Jacob & Co., where his eye for detail, proportion and precision continued to develop.": "SILAVU основал Ариэль Сайлас — дизайнер с опытом в 3D и визуальном дизайне. В его опыте — творческое сотрудничество с Jacob & Co., где продолжили развиваться его внимание к деталям, чувство пропорции и точность.",
  "Ariel created SILAVU with a clear vision: jewellery with a strong identity, designed to feel as good on the body as it looks. Every piece is considered down to the smallest detail, from its proportions and setting to the way it catches the light.": "Ариэль создал SILAVU с ясным видением: украшения с сильным характером, которые ощущаются на теле так же хорошо, как выглядят. Каждое изделие продумано до мельчайших деталей — от пропорций и закрепки камней до того, как оно ловит свет.",
  "SILAVU designs are brought to life by skilled craftsmen in Dubai, combining precise production with careful hand-finishing.": "Изделия SILAVU воплощают в жизнь опытные мастера в Дубае, сочетая точное производство с тщательной ручной доводкой.",
- "MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.": "MOMENT, ICON и SOUL — три самостоятельные коллекции, объединённые подписью SILAVU."
+ "MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.": "MOMENT, ICON и SOUL — три самостоятельные коллекции, объединённые подписью SILAVU.",
+ "Fine jewellery · Finished by hand": "Ювелирные украшения · Ручная отделка",
+ "SILAVU | Fine Jewellery": "SILAVU | Ювелирные украшения",
+ "Fine jewellery": "Ювелирные украшения",
+ "Finished by hand": "Ручная отделка",
+ "Nothing leaves the bench unsigned. Every piece carries the mark of the house.": "Ничто не покидает верстак без подписи. Каждое изделие несёт знак дома."
 }

@@ -258,11 +258,9 @@
  "Drag to turn, pinch to zoom, double tap to reset.": "اسحب للتدوير، اقرص للتكبير، انقر مرتين لإعادة الضبط.",
  "Choose the shape, the carat weight, the metal and your wrist size. The bracelet is built in three dimensions while you decide, then shown on a wrist you choose.": "اختر الشكل ووزن القيراط والمعدن ومقاس معصمك. يُبنى السوار بثلاثة أبعاد بينما تقرّر، ثم يظهر على معصم تختاره.",
  "Illustration only. 3D is not available in this browser.": "رسم توضيحي. العرض ثلاثي الأبعاد غير متاح في هذا المتصفح.",
- "Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you.": "لا شيء يغادر طاولة العمل دون توقيع. كل قطعة تحمل الختم، وتُصنع مرة واحدة، لكم.",
  "Bracelet": "سوار",
  "Ring": "خاتم",
  "Necklace": "قلادة",
- "SILAVU | High Jewellery": "SILAVU | مجوهرات راقية",
  "Your bracelet": "سوارك",
  "Only what you send us: a name, a city, a way to reach you, and what you wrote in the message. Nothing is bought from anyone and nothing is inferred about you. The enquiry form opens your own mail or messaging app, so the house receives what you chose to send, from your own address.": "فقط ما ترسلونه إلينا: اسم ومدينة ووسيلة للتواصل وما كتبتموه في الرسالة. لا يُشترى شيء من أحد ولا يُستنتج عنكم شيء. نموذج التواصل يفتح تطبيق البريد أو المراسلة لديكم، فتتلقى الدار ما اخترتم إرساله من عنوانكم أنتم.",
  "Every piece is guaranteed against fault in its making and its materials for as long as you own it. A setting that loosens, a clasp that tires, a solder that fails: the house repairs it, and it does not charge you for it.": "كل قطعة مضمونة ضد أي عيب في صناعتها وموادها ما دامت ملككم. ترصيع يرتخي، أو قفل يضعف، أو لحام يتلف: تصلحه الدار دون أن تتقاضى أجرًا.",
@@ -332,7 +330,6 @@
  "From the side": "من الجانب",
  "Close up": "عن قرب",
  "Drag the bracelet onto your wrist": "اسحب السوار إلى معصمك",
- "High jewellery · Made by hand": "مجوهرات راقية · صناعة يدوية",
  "Set by hand, to the measure of your wrist.": "مرصّع يدويًا، على مقاس معصمك.",
  "GIA or IGI certified · Insured delivery · Care and resizing": "شهادة GIA أو IGI · توصيل مؤمَّن · عناية وتعديل المقاس",
  "Delivery and care": "التوصيل والعناية",
@@ -370,5 +367,10 @@
  "SILAVU was founded by Ariel Silas, a designer with a background in 3D and visual design. His experience includes creative collaborations with Jacob & Co., where his eye for detail, proportion and precision continued to develop.": "أسّس SILAVU أرييل سايلس، وهو مصمم ذو خلفية في التصميم ثلاثي الأبعاد والتصميم البصري. وتشمل تجربته تعاونات إبداعية مع Jacob & Co.، حيث واصلت عينه للتفاصيل والتناسب والدقة تطوّرها.",
  "Ariel created SILAVU with a clear vision: jewellery with a strong identity, designed to feel as good on the body as it looks. Every piece is considered down to the smallest detail, from its proportions and setting to the way it catches the light.": "أنشأ أرييل SILAVU برؤية واضحة: مجوهرات ذات هوية قوية، صُمّمت لتكون مريحة على الجسد بقدر ما هي جميلة في العين. كل قطعة مدروسة حتى أدق تفاصيلها، من تناسبها وترصيعها إلى الطريقة التي تلتقط بها الضوء.",
  "SILAVU designs are brought to life by skilled craftsmen in Dubai, combining precise production with careful hand-finishing.": "تُبعث تصاميم SILAVU إلى الحياة على أيدي حِرفيين مهرة في دبي، تجمع بين الإنتاج الدقيق واللمسات النهائية اليدوية المتأنية.",
- "MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.": "MOMENT وICON وSOUL ثلاث مجموعات متمايزة، تجمعها جميعًا توقيعة SILAVU."
+ "MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.": "MOMENT وICON وSOUL ثلاث مجموعات متمايزة، تجمعها جميعًا توقيعة SILAVU.",
+ "Fine jewellery · Finished by hand": "مجوهرات راقية · لمسات نهائية يدوية",
+ "SILAVU | Fine Jewellery": "SILAVU | مجوهرات راقية",
+ "Fine jewellery": "مجوهرات راقية",
+ "Finished by hand": "لمسات نهائية يدوية",
+ "Nothing leaves the bench unsigned. Every piece carries the mark of the house.": "لا شيء يغادر طاولة العمل دون توقيع. كل قطعة تحمل ختم الدار."
 }

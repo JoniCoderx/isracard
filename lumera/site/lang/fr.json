@@ -258,11 +258,9 @@
  "Drag to turn, pinch to zoom, double tap to reset.": "Glissez pour tourner, pincez pour zoomer, touchez deux fois pour réinitialiser.",
  "Choose the shape, the carat weight, the metal and your wrist size. The bracelet is built in three dimensions while you decide, then shown on a wrist you choose.": "Choisissez la forme, le poids en carats, le métal et votre tour de poignet. Le bracelet se construit en trois dimensions pendant que vous décidez, puis se montre sur le poignet de votre choix.",
  "Illustration only. 3D is not available in this browser.": "Illustration. La 3D n’est pas disponible dans ce navigateur.",
- "Nothing leaves the bench unsigned. Every piece carries the mark, and is made once, for you.": "Rien ne quitte l’établi sans être signé. Chaque pièce porte le sceau, et n’est faite qu’une fois, pour vous.",
  "Bracelet": "Bracelet",
  "Ring": "Bague",
  "Necklace": "Collier",
- "SILAVU | High Jewellery": "SILAVU | Haute Joaillerie",
  "Your bracelet": "Votre bracelet",
  "Only what you send us: a name, a city, a way to reach you, and what you wrote in the message. Nothing is bought from anyone and nothing is inferred about you. The enquiry form opens your own mail or messaging app, so the house receives what you chose to send, from your own address.": "Uniquement ce que vous nous envoyez : un nom, une ville, un moyen de vous joindre et ce que vous avez écrit. Rien n’est acheté à qui que ce soit et rien n’est déduit à votre sujet. Le formulaire ouvre votre propre application de messagerie : la maison reçoit ce que vous avez choisi d’envoyer, depuis votre propre adresse.",
  "Every piece is guaranteed against fault in its making and its materials for as long as you own it. A setting that loosens, a clasp that tires, a solder that fails: the house repairs it, and it does not charge you for it.": "Chaque pièce est garantie contre tout défaut de fabrication et de matière aussi longtemps que vous la possédez. Un serti qui se relâche, un fermoir qui se fatigue, une soudure qui cède : la maison répare, sans rien vous facturer.",
@@ -332,7 +330,6 @@
  "From the side": "De profil",
  "Close up": "De près",
  "Drag the bracelet onto your wrist": "Faites glisser le bracelet sur votre poignet",
- "High jewellery · Made by hand": "Haute joaillerie · Fait main",
  "Set by hand, to the measure of your wrist.": "Serti à la main, à la mesure de votre poignet.",
  "GIA or IGI certified · Insured delivery · Care and resizing": "Certifié GIA ou IGI · Livraison assurée · Entretien et mise à taille",
  "Delivery and care": "Livraison et entretien",
@@ -370,5 +367,10 @@
  "SILAVU was founded by Ariel Silas, a designer with a background in 3D and visual design. His experience includes creative collaborations with Jacob & Co., where his eye for detail, proportion and precision continued to develop.": "SILAVU a été fondée par Ariel Silas, designer formé à la 3D et au design visuel. Son parcours comprend des collaborations créatives avec Jacob & Co., où son regard pour le détail, la proportion et la précision a continué de s’affiner.",
  "Ariel created SILAVU with a clear vision: jewellery with a strong identity, designed to feel as good on the body as it looks. Every piece is considered down to the smallest detail, from its proportions and setting to the way it catches the light.": "Ariel a créé SILAVU avec une vision claire : des bijoux à l’identité forte, conçus pour être aussi agréables à porter qu’ils sont beaux à regarder. Chaque pièce est pensée jusque dans ses moindres détails, de ses proportions et de son serti à la façon dont elle capte la lumière.",
  "SILAVU designs are brought to life by skilled craftsmen in Dubai, combining precise production with careful hand-finishing.": "Les créations SILAVU prennent vie entre les mains d’artisans qualifiés à Dubaï, alliant une fabrication précise à une finition soignée à la main.",
- "MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.": "MOMENT, ICON et SOUL sont trois collections distinctes, toutes reliées par la signature SILAVU."
+ "MOMENT, ICON and SOUL are three distinct collections, all connected by the SILAVU signature.": "MOMENT, ICON et SOUL sont trois collections distinctes, toutes reliées par la signature SILAVU.",
+ "Fine jewellery · Finished by hand": "Joaillerie · Finitions à la main",
+ "SILAVU | Fine Jewellery": "SILAVU | Joaillerie",
+ "Fine jewellery": "Joaillerie",
+ "Finished by hand": "Finitions à la main",
+ "Nothing leaves the bench unsigned. Every piece carries the mark of the house.": "Rien ne quitte l’établi sans être signé. Chaque pièce porte le sceau de la maison."
 }

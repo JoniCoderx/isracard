@@ -61,7 +61,7 @@ html = html.replace(/<script>([\s\S]*?)<\/script>/g, (m0, code) => {
 const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
 /* What the tab and a search result say. Short, in the form the established
    houses use: the name, then what it is. The Hebrew page has its own. */
-const TITLE = { en: "SILAVU | High Jewellery", he: "SILAVU | תכשיטי יוקרה" };
+const TITLE = { en: "SILAVU | Fine Jewellery", he: "SILAVU | תכשיטי יוקרה" };
 const DESC = {
   en: "SILAVU, The Line of Desire. Private high jewellery from Dubai and Tel Aviv. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, bespoke diamond commissions and private viewings by appointment.",
   he: "\u200fSILAVU, The Line of Desire. תכשיטי יוקרה מדובאי ותל אביב: צמיד SILAVU MOMENT, טבעת ICON ושרשרת SOUL, תכשיטי יהלומים בהתאמה אישית ופגישות פרטיות בתיאום מראש."
@@ -123,7 +123,7 @@ ${cssLink}
       "@type": ["Organization", "JewelryStore"],
       "@id": base + "/#house",
       "name": "SILAVU",
-      "alternateName": ["Silavu", "SILAVU Jewellery", "SILAVU High Jewellery"],
+      "alternateName": ["Silavu", "SILAVU Jewellery", "SILAVU Fine Jewellery"],
       "slogan": "The Line of Desire",
       "description": "A private high-jewellery house in Dubai and Tel Aviv. House collection, bespoke commissions and the SILAVU Line, by appointment.",
       "url": base + "/",

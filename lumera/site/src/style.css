@@ -6047,3 +6047,22 @@ html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline
   #enquire .cnote, #enquire #cerr { text-align:center; margin-inline:auto; }
 }
 @media (max-width:999px) { #enquire .k.ol::before { display:none; } }
+
+/* ══ v187 — the collection, in the hand ═══════════════════════════════════
+   With a mouse a piece turns toward the pointer (script4): a few degrees of
+   tilt in depth, the photograph moving the other way inside its frame for
+   depth, a soft light under the pointer and a shadow that falls away from
+   it. Touch and reduced motion keep the quiet lift. ───────────────────── */
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  html body .pgrid .piece:not(.soon) .fig.r11 { transform-origin:50% 50%;
+    transition:transform .9s cubic-bezier(.2,.8,.2,1), box-shadow .9s cubic-bezier(.2,.8,.2,1), border-color .6s; }
+  html body .pgrid .piece:not(.soon) .fig.r11.tilt { transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-8px) scale(1.018) !important;
+    transition:transform .16s ease-out, box-shadow .3s ease-out, border-color .6s;
+    box-shadow:var(--sx2,0px) var(--sy2,22px) 44px -18px rgba(20,19,15,.34), 0 2px 6px -2px rgba(20,19,15,.12); }
+  html body .pgrid .piece:not(.soon) .fig.r11 .im img { translate:var(--px,0px) var(--py,0px); transition:transform 1.5s var(--ease), translate .5s cubic-bezier(.2,.8,.2,1) !important; }
+  html body .pgrid .piece:not(.soon) .fig.r11.tilt .im img { transition:transform 1.5s var(--ease), translate .18s ease-out !important; }
+  html body .pgrid .piece:not(.soon) .fig.r11 .tglare { position:absolute; inset:0; z-index:3; pointer-events:none; border-radius:inherit; opacity:0;
+    background:radial-gradient(60% 55% at var(--mx,50%) var(--my,30%), rgba(255,255,255,.42), rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 70%);
+    mix-blend-mode:soft-light; transition:opacity .6s ease; }
+  html body .pgrid .piece:not(.soon) .fig.r11.tilt .tglare { opacity:1; }
+}

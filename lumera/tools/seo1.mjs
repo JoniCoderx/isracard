@@ -40,7 +40,7 @@ for (const [w,h] of [[1440,900],[390,844]]) {
   await p.goto("http://localhost:8777/",{waitUntil:"load"}); await p.waitForTimeout(1500);
   const t0=await p.title(); await p.evaluate(()=>document.querySelector("#p-knot .fig").scrollIntoView({block:"center"})); await p.waitForTimeout(400);
   await p.click("#p-knot .fig"); await p.waitForTimeout(1000); const t1=await p.title();
-  ok(t0==="SILAVU | High Jewellery"&&t1==="SILAVU MOMENT | White Gold Bracelet", `en titles ${t0} / ${t1}`);
+  ok(t0==="SILAVU | Fine Jewellery"&&t1==="SILAVU MOMENT | White Gold Bracelet", `en titles ${t0} / ${t1}`);
   const ld=await p.evaluate(()=>JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent)["@graph"].map(g=>[].concat(g["@type"]).join("+")));
   ok(ld.join()==="Organization+JewelryStore,WebSite,ItemList", "schema "+ld);
   await c.close(); }

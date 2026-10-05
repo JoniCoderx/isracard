@@ -51,6 +51,7 @@
     pen.lastElementChild.setAttribute("r", (1.5 / scale).toFixed(2));
     var ss = Math.min(1.3, Math.max(0.5, 1 / scale));
     sparks.forEach(function (g) { g.dataset.s = ss; });
+    settle();
     dirty = false; last = -2;
   }
   /* a phone's address bar coming and going resizes the window on every
@@ -64,10 +65,28 @@
      the wave; a thread of light runs along the falling edge. Driven by the
      scroll, not by time: it stops when the page stops. */
   var fill = sec.querySelector(".sgfill"), edge = sec.querySelector(".sgedge");
-  /* the edge runs down through the middle of the name: its first letters are
-     written on white, its last ones on black, and the black above it is no
-     deeper than the name itself */
-  var WAVE = [[0,170],[60,175],[130,190],[210,215],[250,228],[300,250],[340,275],[390,310],[425,345],[458,400],[478,440],[495,480],[540,560],[640,700],[690,760],[728,800],[765,840],[815,885],[900,930],[1000,960]];
+  /* Half black, half white, through the name. The edge settles along the
+     middle of the writing itself (where half of the ink lies above and half
+     below, measured from the drawn line on this screen), with a long, quiet
+     swell like silk, so every letter is written half in white on the black
+     and half in ink on the white. */
+  var WX = [0,60,130,210,250,300,340,390,425,458,478,495,540,640,690,728,765,815,900,1000], WAVE = WX.map(function (x) { return [x, 600]; }), MID = 600;
+  function shape() {
+    WAVE = WX.map(function (x) { return [x, MID + 20 * Math.sin(x / 1000 * Math.PI * 2.1 + 0.5)]; });
+  }
+  function settle() {
+    /* the line's own points, sampled along its length, mapped to the stage */
+    var m = path.getScreenCTM(), sr = stage.getBoundingClientRect(); if (!m || !sr.height) return;
+    var ys = [], N = 240;
+    for (var i = 0; i <= N; i++) { var q = path.getPointAtLength(L0 + (L - L0) * i / N), x = m.a * q.x + m.c * q.y + m.e, y = m.b * q.x + m.d * q.y + m.f;
+      if (x > sr.left && x < sr.right) ys.push(y); }
+    if (!ys.length) return;
+    ys.sort(function (u, v) { return u - v; });
+    /* the small letters carry most of the line, the tall ones reach above
+       them: two thirds of the way down the ink is the middle of the a, v, u */
+    MID = Math.max(120, Math.min(920, (ys[Math.floor(ys.length * 0.66)] - sr.top) / sr.height * 1000));
+    shape(); lastF = -1;
+  }
   var lastF = -1;
   function pour(f) {
     if (!fill || f === lastF) return; lastF = f;
