@@ -589,6 +589,24 @@ fs.writeFileSync(path.join(outDir, "sitemap.xml"),
 /* A custom domain is one file away. Drop the bought domain into
    lumera/site/CNAME and GitHub Pages serves the site from it; everything
    above then needs the origin passed to match, which the workflow does. */
+/* A page that does not exist answers in the house's own voice, in both
+   languages, and leads back home. GitHub Pages serves 404.html for any
+   missing address, from any depth, so everything in it is absolute. */
+{ const root = (new URL(base + "/")).pathname, jost = fs.readdirSync(path.join(path.dirname(path.resolve(src)), "public/fonts")).find(f => /^jost-normal-latin-[0-9a-f]+\.woff2$/.test(f));
+  fs.writeFileSync(path.join(outDir, "404.html"), `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found · SILAVU</title><meta name="robots" content="noindex"><link rel="icon" href="${root}favicon.svg" type="image/svg+xml">
+<style>@font-face{font-family:Jost;font-weight:300 600;font-display:swap;src:url(${root}fonts/${jost}) format("woff2")}
+html,body{margin:0;height:100%;background:#000;color:#f6f3ed}body{display:grid;place-items:center;padding:24px;box-sizing:border-box;font-family:Jost,system-ui,sans-serif;text-align:center}
+main{display:grid;gap:18px;justify-items:center;max-width:520px}.k{font-size:.78rem;letter-spacing:.16em;color:#b3b0a8}
+h1{margin:0;font-weight:400;text-transform:uppercase;letter-spacing:.035em;font-size:clamp(2rem,6vw,3.2rem);line-height:1.08}
+p{margin:0;color:#dcd9d2;line-height:1.6}p[dir=rtl]{font-family:Assistant,Jost,system-ui,sans-serif}
+a{margin-top:10px;display:inline-block;padding:14px 26px;border-radius:12px;background:#f6f3ed;color:#111;text-decoration:none;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+a:focus-visible{outline:2px solid #e6d6b0;outline-offset:3px}</style></head>
+<body><main><span class="k">SILAVU · 404</span><h1>This page is not here</h1>
+<p>The address may have changed, or the piece has moved.</p><p dir="rtl" lang="he">העמוד הזה לא נמצא. אולי הכתובת השתנתה.</p>
+<a href="${root}">Back to SILAVU</a></main></body></html>
+`); }
 const cnameSrc = path.join(path.dirname(src), "CNAME");
 if (fs.existsSync(cnameSrc)) fs.copyFileSync(cnameSrc, path.join(outDir, "CNAME"));
 console.log("static index written:", path.join(outDir, "index.html"), ((head.length + html.length) / 1024).toFixed(0) + " KB");
