@@ -6066,3 +6066,7 @@ html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline
     mix-blend-mode:soft-light; transition:opacity .6s ease; }
   html body .pgrid .piece:not(.soon) .fig.r11.tilt .tglare { opacity:1; }
 }
+
+/* one emblem per opening: where a chapter begins with the mark between its
+   hairlines, its label does not repeat it */
+html body section:has(.chap) .k.ol::before { display:none; }
