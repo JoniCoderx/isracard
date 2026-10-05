@@ -39,7 +39,12 @@
   ];
   var WA = ($("cform").getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
   document.querySelectorAll("[data-socials]").forEach(function (box) {
-    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa ? !WA : !s[1]) return; var a = document.createElement("a"); a.href = isWa ? "https://wa.me/" + WA : s[1]; if (!isWa || WA) { a.target = "_blank"; a.rel = "noopener"; } a.setAttribute("aria-label", s[0]); a.title = s[0];
+    /* the house's channels are shown; one without a confirmed address yet is
+       drawn but not linked (no href: not clickable, not in the tab order),
+       and it becomes a link the moment its address is filled in above */
+    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa && !WA) return; var a = document.createElement("a");
+      if (isWa || s[1]) { a.href = isWa ? "https://wa.me/" + WA : s[1]; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("aria-label", s[0]); a.title = s[0]; }
+      else { a.className = "soon"; a.setAttribute("aria-hidden", "true"); }
       a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + s[2] + '"/></svg>'; box.appendChild(a); });
     /* no confirmed account, no "Follow" heading over an empty row */
     if (!box.children.length) { var col = box.closest(".ffol") || box; col.hidden = true; }

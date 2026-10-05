@@ -6393,3 +6393,5 @@ details.fcare > summary::-webkit-details-marker, details.dfcare > summary::-webk
    half meets the white section with nothing between them. */
 html body #craft .sgstage { box-shadow:inset 0 -3px 0 #fff, 0 -2px 0 #000; }
 html body #craft { background:#fff; }
+/* a channel whose address is still to come: drawn, quieter, and still */
+html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
