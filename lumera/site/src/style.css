@@ -6468,3 +6468,5 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
     html body #build #configure .clink svg { width:14px; height:14px; flex:none; }
     html body #build #opts .optnow { font-size:.74rem; letter-spacing:0; }
   }
+  /* v205 — no small print under the button */
+  html body #cform .cnote { display:none !important; }
