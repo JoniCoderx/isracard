@@ -6421,3 +6421,25 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   body, .p, p { font-weight:400; letter-spacing:.005em; }
   .lead, .p.lead { font-weight:400; }
   html[data-ns] .h, html[data-ns] .h2, html[data-ns] .h3, html[data-ns] .dpage .doc h1, html[data-ns] .ppage h1, html[data-ns] #macro .mh, html[data-ns] .ahtext h1 { text-transform:none; letter-spacing:0; }
+
+  /* ── v203 — the enquiry, answered. Once the house really has it, the form
+     gives way to a quiet card: a fine ring that draws its tick, the reader's
+     name, and what happens next. The note shown while the form still hands
+     over to the email app is a soft panel rather than a rule in the margin. ── */
+  #cform .cthanks { display:none; }
+  #cform.delivered .fields, #cform.delivered .csub, #cform.delivered .cnote, #cform.delivered .done, #cform.delivered .cerr { display:none !important; }
+  #cform.delivered .cthanks { display:grid; justify-items:start; gap:14px; max-width:560px; padding:clamp(26px,4vw,40px);
+    border:1px solid rgba(246,241,230,.14); border-radius:18px; background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+    animation:cthIn .9s var(--ease) both; }
+  #cform .cthk { width:48px; height:48px; fill:none; stroke:#e6d6b0; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; }
+  #cform .cthk circle { stroke-dasharray:139; stroke-dashoffset:139; animation:cthDraw 1.1s var(--ease) .1s forwards; }
+  #cform .cthk path { stroke-dasharray:30; stroke-dashoffset:30; animation:cthDraw .7s var(--ease) .75s forwards; }
+  #cform .cthh { margin:4px 0 0; font-family:var(--display); font-weight:400; text-transform:uppercase; letter-spacing:.04em; font-size:clamp(1.5rem,2.4vw,2.1rem); line-height:1.1; color:var(--ink); }
+  html[data-ns] #cform .cthh { text-transform:none; letter-spacing:0; }
+  #cform .cthp { margin:0; color:var(--ink2); line-height:1.65; max-width:46ch; overflow-wrap:anywhere; }
+  #cform .cthagain { margin-top:6px; }
+  @keyframes cthIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  @keyframes cthDraw { to { stroke-dashoffset:0; } }
+  @media (prefers-reduced-motion:reduce) { #cform.delivered .cthanks, #cform .cthk circle, #cform .cthk path { animation:none; stroke-dashoffset:0; } }
+  form.sent .done { border:1px solid rgba(246,241,230,.14); border-radius:14px; padding:16px 20px; background:rgba(255,255,255,.035);
+    color:var(--ink2); font-size:.98rem; line-height:1.65; max-width:62ch; }

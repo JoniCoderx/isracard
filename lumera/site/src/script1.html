@@ -1209,6 +1209,15 @@
       endpoint = (form.getAttribute("data-endpoint") || "").trim(),
       wa = (form.getAttribute("data-wa") || "").replace(/[^0-9]/g, ""),
       tel = (form.getAttribute("data-tel") || "").replace(/[^0-9+]/g, "");
+  /* v203 — the house's own inbox. With an address in data-to (and no endpoint
+     of its own), the enquiry is sent straight there through FormSubmit, a
+     form-to-email service: the reader never leaves the page, the concierge
+     gets a tidy table of everything they chose, and when the reader left an
+     email address an answer goes back to them at once, in their language. */
+  var to = (form.getAttribute("data-to") || "").trim(), fsub = false;
+  if (!endpoint && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) { endpoint = "https://formsubmit.co/ajax/" + encodeURIComponent(to); fsub = true; }
+  if (endpoint) { var cn = $("cnote"); if (cn) { cn.setAttribute("data-en", "Your enquiry goes straight to the SILAVU concierge. Leave an email and a confirmation comes back to you at once.");
+    cn.setAttribute("data-he", "הפנייה נשלחת ישירות לקונסיירז׳ של SILAVU. השאירו אימייל ואישור יחזור אליכם מיד."); cn.innerHTML = window.__say ? window.__say(cn) : cn.getAttribute("data-en"); } }
   (function () {
     var w = form.querySelector('.chip[data-ch="WhatsApp"]'); if (w && wa) w.hidden = false;
     var c = form.querySelector('.chip[data-ch="Call"]'); if (c && tel) c.hidden = false;
@@ -1240,6 +1249,8 @@
     if (d) { d.setAttribute("data-en", c.doneEn); d.setAttribute("data-he", c.doneHe); }
     [b, d].forEach(function (el) { if (el && window.__say) el.innerHTML = window.__say(el); });
   }
+  /* with a real inbox behind it, the button says it sends from the start */
+  if (endpoint) chanLabel();
   form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); fieldErr(el, null); }); el.addEventListener("blur", f); });
   /* a field that is missing or wrong says so in words, next to it, and the
      words are what a screen reader hears when it lands there */
@@ -1334,6 +1345,7 @@
       if (++n < 8) look(); }, n ? 130 : 140); })(); }
     (vv || window).addEventListener("resize", keep); })();
   form.addEventListener("focusout", function () { setTimeout(function () { var a = document.activeElement; if (!a || !form.contains(a) || !a.matches("input, textarea")) document.body.classList.remove("typing"); }, 60); });
+  var again = $("cthAgain"); if (again) again.addEventListener("click", function () { form.classList.remove("delivered", "sent"); msgEl.value = ""; try { msgEl.dispatchEvent(new Event("input")); } catch (e) {} msgEl.focus(); });
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     var name = $("fName"), contact = $("fContact"), bad = null;
@@ -1349,13 +1361,27 @@
     if (endpoint && chan === "Email") {
       var was = btn.innerHTML; btn.disabled = true; btn.setAttribute("aria-busy", "true"); btn.textContent = L2("Sending…", "שולחים…");
       var want = form.querySelector(".want .chip.on");
-      fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ name: name.value.trim(), city: $("fCity").value.trim(), contact: cv, want: want ? want.getAttribute("data-en") : "",
-          selection: sel ? selText().replace(/[\u2066\u2069]/g, "") : "", message: msgEl.value.trim(), lang: lang, page: location.href, text: body }) })
-        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r; })
-        .then(function () {
-          var d = $("cdone"); if (d) { d.setAttribute("data-en", "Thank you. Your enquiry has reached the concierge, and we will answer you personally."); d.setAttribute("data-he", "תודה. הפנייה שלכם הגיעה לקונסיירז׳, ונחזור אליכם באופן אישי."); d.innerHTML = window.__say(d); }
-          form.classList.add("sent"); try { sessionStorage.removeItem("silavu-draft"); } catch (e) {}
+      var isMail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cv), he = lang === "he";
+      var payload = { name: name.value.trim(), city: $("fCity").value.trim(), contact: cv, want: want ? want.getAttribute("data-en") : "",
+          selection: sel ? selText().replace(/[\u2066\u2069]/g, "") : "", message: msgEl.value.trim(), lang: lang, page: location.href, text: body };
+      if (fsub) {
+        payload._subject = "SILAVU enquiry · " + payload.name + (payload.want ? " · " + payload.want : "");
+        payload._template = "table"; payload._captcha = "false"; payload._honey = "";
+        if (isMail) { payload.email = cv; payload._replyto = cv;
+          payload._autoresponse = he
+            ? "תודה שכתבתם ל־SILAVU.\n\nהפנייה שלכם הגיעה לקונסיירז׳ שלנו, ונחזור אליכם באופן אישי.\n\nSILAVU · The Line of Desire"
+            : (T("Thank you for writing to SILAVU.") || "Thank you for writing to SILAVU.") + "\n\n" + (T("Your enquiry has reached our concierge, and we will answer you personally.") || "Your enquiry has reached our concierge, and we will answer you personally.") + "\n\nSILAVU · The Line of Desire"; }
+      }
+      fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json().catch(function () { return {}; }); })
+        .then(function (j) {
+          if (fsub && j && String(j.success) === "false") throw new Error(j.message || "not sent");
+          var first = payload.name.split(/\s+/)[0];
+          $("cthh").textContent = L2("Thank you", "תודה") + (first ? ", " + first : "");
+          $("cthp").textContent = L2("Your enquiry has reached the SILAVU concierge, and we will answer you personally.", "הפנייה שלכם הגיעה לקונסיירז׳ של SILAVU, ונחזור אליכם באופן אישי.")
+            + (isMail ? " " + L2("A confirmation is on its way to", "אישור נשלח אליכם אל") + " \u2068" + cv + "\u2069." : "");
+          form.classList.add("delivered"); try { sessionStorage.removeItem("silavu-draft"); } catch (e) {}
+          var th = $("cthanks"); if (th) { var r = th.getBoundingClientRect(); if (r.top < 70 || r.top > innerHeight * 0.6) window.scrollTo({ top: scrollY + r.top - innerHeight * 0.3, behavior: "smooth" }); }
         })
         .catch(function () {
           if (err) { err.textContent = L2("The enquiry could not be sent just now. Nothing you wrote is lost: press the button again, or continue in email.", "לא הצלחנו לשלוח את הפנייה כרגע. שום דבר ממה שכתבתם לא אבד: נסו שוב, או המשיכו באימייל."); err.hidden = false; }

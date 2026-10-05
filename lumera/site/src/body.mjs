@@ -387,7 +387,7 @@ ${markDefs()}
         </script>
         <p class="fine rv d3" style="margin-top:22px" data-en="Every message is read and answered personally by the SILAVU concierge." data-he="כל פנייה נקראת ונענית באופן אישי על ידי הקונסיירז' של SILAVU.">Every message is read and answered personally by the SILAVU concierge.</p>
       </div>
-      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-wa="" data-tel="" data-endpoint="">
+      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-to="" data-wa="" data-tel="" data-endpoint="">
         <div class="fields">
           <div class="field"><input id="fName" type="text" autocomplete="name" required aria-required="true" aria-describedby="fNameErr" dir="auto"><label for="fName" data-en="Name" data-he="שם">Name</label><p class="ferr" id="fNameErr" hidden></p></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2" dir="auto"><label for="fCity" data-en="City" data-he="עיר">City</label></div>
@@ -416,6 +416,7 @@ ${markDefs()}
         </div>
         <p class="fine cnote" id="cnote" data-en="This opens your email app with everything written in. Nothing reaches us until you press send there." data-he="הכפתור פותח את אפליקציית הדואר שלכם עם כל הפרטים. הפנייה תגיע אלינו רק אחרי שתלחצו שם על שליחה.">This opens your email app with everything written in. Nothing reaches us until you press send there.</p>
         <p class="cerr" id="cerr" role="alert" hidden></p>
+        <div class="cthanks" id="cthanks" role="status" aria-live="polite"><svg class="cthk" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M15 24.5l6.2 6.2L33.5 18"/></svg><h3 class="cthh" id="cthh"></h3><p class="cthp" id="cthp"></p><button type="button" class="lnk cthagain" id="cthAgain" data-en="Write another message" data-he="כתיבת הודעה נוספת">Write another message</button></div>
         <p class="done" id="cdone" data-en="Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com." data-he="אפליקציית הדואר אמורה להיפתח עכשיו עם ההודעה מוכנה. לחצו שם על שליחה כדי שהפנייה תגיע לקונסיירז׳. אם היא לא נפתחה, העתיקו את הפרטים וכתבו אל concierge@silavu.com.">Your email app should now be open with the message ready. Press send there to reach the concierge. If it did not open, copy the details and write to concierge@silavu.com.</p>
       </form>
     </div>
