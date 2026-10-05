@@ -47,7 +47,9 @@ for (const mob of [false, true]) {
   const visit = async ts => { for (const t of ts) { await p.evaluate(([y]) => scrollTo(0, y), [top.y + (top.h - 844) * t]); await p.waitForTimeout(260); const s = await p.evaluate(() => ({ held: __box.held, frame: __box.frame, win: __box.win, step: __box.step })); peak = Math.max(peak, s.held); frames.push(s.frame); } };
   const down = [...Array(11)].map((_, i) => i / 10); await visit(down); await visit([...down].reverse()); await visit(down);
   const win = await p.evaluate(() => __box.win);
-  ok(peak <= 2 * win + 2, (mob ? "390" : "1366") + " box holds at most its window of frames", { peak, win });
+  /* the window ahead, half of it behind, the frame on screen, and every
+     third frame of the strip kept as a skeleton (script5): well under 96 */
+  ok(peak <= win + Math.round(win / 2) + 1 + Math.ceil(96 / 3) && peak < 96, (mob ? "390" : "1366") + " box holds its window and skeleton, not the strip", { peak, win });
   ok(frames.filter(f => f >= 0).length > 25 && new Set(frames).size > 8, (mob ? "390" : "1366") + " box draws frames going down, up and down", frames);
   await p.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await p.waitForTimeout(800); await p.evaluate(() => scrollBy(0, -2)); await p.waitForTimeout(500);
   ok(await p.evaluate(() => __box.held === 0 && !__box.ok), (mob ? "390" : "1366") + " box lets go of its frames when far away", await p.evaluate(() => ({ held: __box.held, ok: __box.ok })));

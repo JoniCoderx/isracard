@@ -69,7 +69,7 @@ const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
    houses use: the name, then what it is. The Hebrew page has its own. */
 const TITLE = { en: "SILAVU | Fine Jewellery", he: "SILAVU | תכשיטי יוקרה" };
 const DESC = {
-  en: "SILAVU, The Line of Desire. Private high jewellery from Dubai and Tel Aviv. The SILAVU MOMENT bracelet, ICON ring and SOUL necklace, bespoke diamond commissions and private viewings by appointment.",
+  en: "SILAVU, The Line of Desire. Fine jewellery by appointment in Dubai and Tel Aviv: the MOMENT bracelet, ICON ring and SOUL necklace, and bespoke diamond pieces.",
   he: "\u200fSILAVU, The Line of Desire. תכשיטי יוקרה מדובאי ותל אביב: צמיד SILAVU MOMENT, טבעת ICON ושרשרת SOUL, תכשיטי יהלומים בהתאמה אישית ופגישות פרטיות בתיאום מראש."
 };
 const head = `<!doctype html>
@@ -409,7 +409,11 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\n")}
 <p class="dask"><span ${A(S("A question this page does not answer?", "יש שאלה שלא נענתה כאן?"))}>A question this page does not answer?</span> <a href="./#concierge" ${A(S("Write to the concierge", "כתבו לקונסיירז'"))}>Write to the concierge</a></p>
 </main>`;
-    page(d.slug, `${d.title.en} | SILAVU`, d.lede.en, inner, '+ " | SILAVU"');
+    /* the description is the page's own words: its lede and the first
+       sentence of what follows, kept to what a results page shows */
+    const first = (d.body[0][1].en.match(/^[^.!?]+[.!?]/) || [""])[0];
+    const ddesc = (d.lede.en + " " + first).length <= 160 ? d.lede.en + " " + first : d.lede.en;
+    page(d.slug, `${d.title.en} | SILAVU`, ddesc, inner, '+ " | SILAVU"');
   }
   {
     const a = ABOUT;

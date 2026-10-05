@@ -11,7 +11,7 @@ export const ABOUT = {
   slug: "about",
   title: S("About", "אודות"),
   seo: S("About SILAVU | Ariel Silas", "אודות SILAVU | אריאל סיילס"),
-  desc: S("SILAVU was founded by designer Ariel Silas: jewellery with a strong identity, brought to life by skilled craftsmen in Dubai. MOMENT, ICON and SOUL, connected by one signature.",
+  desc: S("SILAVU was founded by designer Ariel Silas: jewellery with a strong identity, made by skilled craftsmen in Dubai. MOMENT, ICON and SOUL, one signature.",
           "את SILAVU ייסד המעצב אריאל סיילס: תכשיטים בעלי זהות חזקה, שקמים לחיים בידי בעלי מלאכה מיומנים בדובאי. MOMENT, ICON ו־SOUL, מחוברות בחתימה אחת."),
   eyebrow: S("About SILAVU", "אודות SILAVU"),
   h1: S("Behind <em>SILAVU</em>", "מאחורי <em>SILAVU</em>"),
