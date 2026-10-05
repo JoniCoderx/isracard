@@ -80,6 +80,18 @@ jobs:
               rm -f "dist/v/$v.tmp.mp4"; echo "$v: left alone ($((before/1024))KB)"
             fi
           done
+      # The SOUL film: three takes joined with crossfades into one loop, plus a
+      # phone cut and the poster. If the generation host is down, what shipped
+      # last time is taken from the live site.
+      - name: The SOUL film
+        run: |
+          if ! bash lumera/site/film-assets.sh dist; then
+            LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+            mkdir -p dist/v dist/img
+            curl -fsSL --retry 3 -o dist/v/soul-film.mp4 "$LIVE/v/soul-film.mp4" || echo "missing: soul-film"
+            curl -fsSL --retry 3 -o dist/v/soul-film-720.mp4 "$LIVE/v/soul-film-720.mp4" || echo "missing: soul-film-720"
+            curl -fsSL --retry 3 -o dist/img/soul-film-poster.jpg "$LIVE/img/soul-film-poster.jpg" || echo "missing: soul-film-poster"
+          fi
       - name: Wrist photographs
         run: bash lumera/site/wrist-assets.sh dist/img
       - name: Collection photography (committed originals)

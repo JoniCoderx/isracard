@@ -463,11 +463,18 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
     const galScript = `<script>(function () {
   var g = document.querySelector(".ppgal"); if (!g) return;
   var track = g.querySelector(".pptrack"), slides = [].slice.call(track.children), n = slides.length, cur = 0;
+  /* a film, when the piece has one, is the first slide: it plays only while
+     it is the slide in view, and never with reduced motion */
+  var film = g.querySelector(".ppvid");
+  function filmPlay(on) { if (!film) return;
+    /* the film is fetched when it is first wanted, at the size the screen needs */
+    if (on && !film.getAttribute("src")) { film.src = film.getAttribute(innerWidth < 900 ? "data-src-sm" : "data-src"); } if (on && !matchMedia("(prefers-reduced-motion: reduce)").matches) { var pr = film.play(); if (pr && pr.catch) pr.catch(function () {}); } else film.pause(); }
+  if (film && "IntersectionObserver" in window) new IntersectionObserver(function (es) { es.forEach(function (e) { filmPlay(e.isIntersecting && cur === 0); }); }, { threshold: 0.4 }).observe(film);
   var dots = [].slice.call(g.querySelectorAll(".ppdots i")), ths = [].slice.call(g.querySelectorAll(".ppth")), cnt = g.querySelector(".ppcur");
   var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   function mark(i) { cur = i; dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
     ths.forEach(function (t, k) { t.classList.toggle("on", k === i); t.setAttribute("aria-current", k === i ? "true" : "false"); });
-    if (cnt) cnt.textContent = i + 1; }
+    if (cnt) cnt.textContent = i + 1; filmPlay(i === 0); }
   function go(i) { i = (i + n) % n; mark(i); track.scrollTo({ left: i * track.clientWidth, behavior: still ? "auto" : "smooth" }); }
   var raf = 0; track.addEventListener("scroll", function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; var i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); if (i !== cur && i >= 0 && i < n) mark(i); }); }, { passive: true });
   g.querySelectorAll(".ppstage .ppprev").forEach(function (b) { b.addEventListener("click", function () { go(cur - 1); }); });
@@ -477,11 +484,13 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
   addEventListener("resize", function () { track.scrollTo({ left: cur * track.clientWidth }); });
   /* the enlarged view: the photograph as it was shot, never stretched past it */
   var box = document.getElementById("ppbox"), bimg = box.querySelector("img"), bcnt = box.querySelector(".ppcount"), back = null, bi = 0;
-  function show(i) { bi = (i + n) % n; var im = slides[bi].querySelector("img"); box.classList.remove("zoom"); bimg.style.transformOrigin = "";
-    bimg.src = im.getAttribute("data-full"); bimg.alt = im.alt; bcnt.textContent = (bi + 1) + " / " + n; }
+  /* the enlarged view walks the photographs only; the film is not one */
+  var pics = slides.filter(function (sl) { return sl.querySelector(".ppzoom img"); }), pn = pics.length;
+  function show(i) { bi = (i + pn) % pn; var im = pics[bi].querySelector("img"); box.classList.remove("zoom"); bimg.style.transformOrigin = "";
+    bimg.src = im.getAttribute("data-full"); bimg.alt = im.alt; bcnt.textContent = (bi + 1) + " / " + pn; }
   function open(i) { back = document.activeElement; show(i); box.hidden = false; document.documentElement.classList.add("ppopen"); box.querySelector(".ppx").focus(); }
-  function close() { box.hidden = true; document.documentElement.classList.remove("ppopen"); go(bi); if (back && back.focus) back.focus(); }
-  slides.forEach(function (sl, i) { sl.querySelector(".ppzoom").addEventListener("click", function () { open(i); }); });
+  function close() { box.hidden = true; document.documentElement.classList.remove("ppopen"); go(slides.indexOf(pics[bi])); if (back && back.focus) back.focus(); }
+  pics.forEach(function (sl, i) { sl.querySelector(".ppzoom").addEventListener("click", function () { open(i); }); });
   box.querySelector(".ppx").addEventListener("click", close);
   box.querySelector(".ppprev").addEventListener("click", function () { show(bi - 1); });
   box.querySelector(".ppnext").addEventListener("click", function () { show(bi + 1); });
@@ -502,14 +511,17 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
       const slug = (he ? "he/" : "") + "pieces/" + p.id;
       const alt = { en: "pieces/" + p.id + "/", he: "he/pieces/" + p.id + "/" };
       const others = shown.filter(q => q !== p);
-      const n = p.shots.length, W = p.widths || [800, 1200], big = W[W.length - 1];
+      const F = p.film, n = p.shots.length + (F ? 1 : 0), W = p.widths || [800, 1200], big = W[W.length - 1];
+      const filmSlide = F ? `<li class="ppslide ppfilm" aria-roledescription="slide" aria-label="1 / ${n}"><video class="ppvid" data-src="${F.src}.mp4" data-src-sm="${F.src}-720.mp4" poster="${F.poster}" muted loop playsinline preload="none" width="1080" height="1080" aria-label="${escA(F.alt.en)}" data-aria-he="${escA(F.alt.he)}"></video></li>` : "";
+      const filmThumb = F ? `<button type="button" class="ppth ppthfilm on" data-i="0" aria-current="true" aria-label="${escA(F.alt.en)}" data-aria-he="${escA(F.alt.he)}"><img src="${F.poster}" alt="" loading="lazy" decoding="async" width="240" height="240"><i aria-hidden="true"></i></button>` : "";
+      const o = F ? 1 : 0;
       const nm = plain(pick(p.name, he));
       /* the photograph in the stage: the piece whole, never cropped (contain),
          in the width the screen and its pixel density ask for; the largest
          width is the photograph as it was shot, and is what the enlarged view
          shows. Nothing is upscaled past it. */
       const stageImg = (sh, i) => `<img src="img/${sh.img}-${W[Math.min(1, W.length - 1)]}.jpg" srcset="${W.map(x => `img/${sh.img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:1240px) 700px, (min-width:900px) 56vw, 100vw" width="${big}" height="${big}" alt="${escA(sh.alt.en)}" data-alt-he="${escA(sh.alt.he)}" data-full="img/${sh.img}-${big}.jpg"${i ? ' loading="lazy" decoding="async"' : ' fetchpriority="high" decoding="async"'}>`;
-      const thumb = (sh, i) => `<button type="button" class="ppth${i ? "" : " on"}" data-i="${i}" aria-current="${i ? "false" : "true"}" aria-label="${escA(sh.alt.en)}" data-aria-he="${escA(sh.alt.he)}"><img src="img/${sh.img}-${W[0]}.jpg" alt="" loading="lazy" decoding="async" width="${W[0]}" height="${W[0]}"></button>`;
+      const thumb = (sh, i) => `<button type="button" class="ppth${i + o ? "" : " on"}" data-i="${i + o}" aria-current="${i + o ? "false" : "true"}" aria-label="${escA(sh.alt.en)}" data-aria-he="${escA(sh.alt.he)}"><img src="img/${sh.img}-${W[0]}.jpg" alt="" loading="lazy" decoding="async" width="${W[0]}" height="${W[0]}"></button>`;
       const careLinks = ["care", "warranty", "delivery", "authenticity"].map(sl => POLICIES.find(d => d.slug === sl)).filter(Boolean);
       const specs = p.specs.filter(r => !/^Price$/.test(r[0].en));
       const enq = `./?piece=${p.id}#concierge`;
@@ -518,12 +530,12 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
 <div class="ppgrid">
 <section class="ppgal" aria-roledescription="carousel" aria-label="${escA(nm)}" data-n="${n}">
 <div class="ppstage">
-<ul class="pptrack" tabindex="0" aria-label="${escA(nm)}">${p.shots.map((sh, i) => `<li class="ppslide" aria-roledescription="slide" aria-label="${i + 1} / ${n}"><button type="button" class="ppzoom" data-i="${i}" aria-label="Enlarge the photograph" data-aria-he="הגדלת התמונה">${stageImg(sh, i)}</button></li>`).join("")}</ul>
+<ul class="pptrack" tabindex="0" aria-label="${escA(nm)}">${filmSlide}${p.shots.map((sh, i) => `<li class="ppslide" aria-roledescription="slide" aria-label="${i + 1 + o} / ${n}"><button type="button" class="ppzoom" data-i="${i}" aria-label="Enlarge the photograph" data-aria-he="הגדלת התמונה">${stageImg(sh, i)}</button></li>`).join("")}</ul>
 ${n > 1 ? `<button type="button" class="ppnav ppprev" aria-label="Previous photograph" data-aria-he="התמונה הקודמת"></button><button type="button" class="ppnav ppnext" aria-label="Next photograph" data-aria-he="התמונה הבאה"></button>
 <div class="ppcount k" aria-hidden="true"><span class="ppcur">1</span> / ${n}</div>
-<div class="ppdots" aria-hidden="true">${p.shots.map((sh, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div>` : ""}
+<div class="ppdots" aria-hidden="true">${(F ? [0] : []).concat(p.shots).map((sh, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div>` : ""}
 </div>
-${n > 1 ? `<div class="ppthumbs">${p.shots.map(thumb).join("")}</div>` : ""}
+${n > 1 ? `<div class="ppthumbs">${filmThumb}${p.shots.map(thumb).join("")}</div>` : ""}
 </section>
 <div class="pptext">
 <div class="k gold" ${AT(p.kind || S("", ""), he)}</div>

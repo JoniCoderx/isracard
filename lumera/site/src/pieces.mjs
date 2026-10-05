@@ -101,7 +101,7 @@ export const PIECES = [
     reserve: true
   }  ,{
     /* SILAVU SOUL: metal, setting and length as confirmed; no stone figures */
-    id: "pave", seo: S("SILAVU SOUL Necklace · 18K White Gold Pavé Diamond Pendant", "שרשרת SILAVU SOUL · תליון יהלומי פאווה מזהב לבן 18K"), sub: S("18K white gold necklace, pavé diamond signature pendant", "שרשרת זהב לבן 18K, תליון חתימה ביהלומי פאווה"), cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
+    id: "pave", film: { src: "v/soul-film", poster: "img/soul-film-poster.jpg", alt: S("The SILAVU SOUL necklace on black: out of the dark, over a black mirror, on black satin", "שרשרת SILAVU SOUL על שחור: מתוך החושך, מעל מראה שחורה, על סאטן שחור") }, seo: S("SILAVU SOUL Necklace · 18K White Gold Pavé Diamond Pendant", "שרשרת SILAVU SOUL · תליון יהלומי פאווה מזהב לבן 18K"), sub: S("18K white gold necklace, pavé diamond signature pendant", "שרשרת זהב לבן 18K, תליון חתימה ביהלומי פאווה"), cat: "necklaces", ref: "SLV·N·003", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     theme: "soul", word: "SOUL",
     title: S("SILAVU SOUL | Diamond Necklace", "SILAVU SOUL | שרשרת יהלומים"),
