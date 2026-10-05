@@ -65,6 +65,7 @@
      the wave; a thread of light runs along the falling edge. Driven by the
      scroll, not by time: it stops when the page stops. */
   var fill = sec.querySelector(".sgfill"), edge = sec.querySelector(".sgedge");
+  var coll = document.getElementById("collection"); if (coll) coll.classList.add("cqjs");
   /* Half black, half white, through the name. The edge settles along the
      middle of the writing itself (where half of the ink lies above and half
      below, measured from the drawn line on this screen), with a long, quiet
@@ -72,7 +73,9 @@
      and half in ink on the white. */
   var WX = [0,60,130,210,250,300,340,390,425,458,478,495,540,640,690,728,765,815,900,1000], WAVE = WX.map(function (x) { return [x, 600]; }), MID = 600;
   function shape() {
-    WAVE = WX.map(function (x) { return [x, MID + 20 * Math.sin(x / 1000 * Math.PI * 2.1 + 0.5)]; });
+    /* a little more swell than a straight horizon: two soft waves across the
+       width, the way silk lies, never more than a touch */
+    WAVE = WX.map(function (x) { var u = x / 1000; return [x, MID + 30 * Math.sin(u * Math.PI * 2.6 + 0.4) + 10 * Math.sin(u * Math.PI * 5.2 + 1.3)]; });
   }
   function settle() {
     /* the line's own points, sampled along its length, mapped to the stage */
@@ -101,18 +104,20 @@
     if (edge) { edge.setAttribute("d", curve); edge.style.opacity = (f > 0.001 && f < 0.999 ? Math.min(1, 6 * Math.min(f, 1 - f)) : 0).toFixed(3); }
   }
   function frame(q) {
-    pour(sm(0, 0.5, q));
-    var w = write(0.03, 0.8, q), len = L0 + (L1 - L0) * w, off = (L - len).toFixed(1);
+    pour(sm(0, 0.42, q));
+    /* the name is finished by the time it is in the middle of the screen, so
+       the collection can follow straight under it with nothing to wait for */
+    var w = write(0.03, 0.62, q), len = L0 + (L1 - L0) * w, off = (L - len).toFixed(1);
     layers.forEach(function (e) { e.style.strokeDashoffset = off; });
     var writing = q > 0.015 && w < 1;
     if (writing) { var pt = path.getPointAtLength(len); pen.setAttribute("transform", "translate(" + pt.x.toFixed(1) + " " + pt.y.toFixed(1) + ")"); }
-    pen.style.opacity = writing ? (sm(0.015, 0.05, q) * (1 - sm(0.76, 0.8, q))).toFixed(3) : "0";
+    pen.style.opacity = writing ? (sm(0.015, 0.05, q) * (1 - sm(0.58, 0.62, q))).toFixed(3) : "0";
     /* the dot of the i, placed as the line passes the top of the letter */
     dot.style.opacity = sm(0, 1, c01((len - Ls[0]) / 240)).toFixed(3);
     /* a few points catch the light, one after another, and go again */
     sparkG.style.opacity = "1";
     sparks.forEach(function (g, i) {
-      var keep = +(g.getAttribute("data-keep") || 0), a = 0.79 + i * 0.03, k = sm(a, a + 0.03, q) * (1 - (1 - keep) * sm(a + 0.045, a + 0.09, q)), s = +(g.dataset.s || 1), xy = g.getAttribute("data-at");
+      var keep = +(g.getAttribute("data-keep") || 0), a = 0.62 + i * 0.03, k = sm(a, a + 0.03, q) * (1 - (1 - keep) * sm(a + 0.045, a + 0.09, q)), s = +(g.dataset.s || 1), xy = g.getAttribute("data-at");
       g.setAttribute("transform", "translate(" + xy + ") scale(" + (s * (0.3 + 0.7 * k)).toFixed(3) + ") rotate(" + (10 * k).toFixed(1) + ")");
       g.style.opacity = k.toFixed(3);
     });
@@ -120,6 +125,9 @@
        black against the foot of the stage in a straight edge. What moves
        across it is the line being written, white on the black and ink on
        the white. */
+    /* the collection answers the last of the line: its hairlines draw out
+       from the mark and its heading rises into place as the name is finished */
+    if (coll) { var cq = sm(0.5, 0.86, q).toFixed(3); if (cq !== frame.cq) { frame.cq = cq; coll.style.setProperty("--cq", cq); } }
     var a1 = sm(0.82, 0.92, q), a2 = sm(0.86, 0.96, q);
     if (c1) { c1.style.opacity = a1.toFixed(3); c1.style.transform = "translate3d(0," + (10 * (1 - a1)).toFixed(1) + "px,0)"; }
     if (c2) { c2.style.opacity = a2.toFixed(3); c2.style.transform = "translate3d(0," + (10 * (1 - a2)).toFixed(1) + "px,0)"; }

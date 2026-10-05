@@ -6126,3 +6126,22 @@ html body #pbar { width:100% !important; transform:scaleX(0); transform-origin:0
 html[dir="rtl"] body #pbar { transform-origin:100% 50%; }
 html body #where .bar i { width:100% !important; transform:scaleX(0); transform-origin:0 50%; }
 html[dir="rtl"] body #where .bar i { transform-origin:100% 50%; }
+
+/* ══ v191 — the signature hands over to the collection ════════════════════
+   The hold after the name is short, so the collection follows straight under
+   it; and the collection's opening answers the end of the line (script9
+   sets --cq): the hairlines draw out from the mark, the mark settles, and
+   the heading rises the last few pixels into place. ───────────────────── */
+html body #craft.sgjs { height:calc(var(--sgS) + 8svh) !important; }
+@media (max-width:759px) { html body #craft.sgjs { height:calc(var(--sgS) + 5svh) !important; } }
+html body #collection { padding-top:0 !important; }
+html body #collection .chap { margin-block:4px clamp(8px, 1vw, 14px) !important; }
+#collection.cqjs .chap i { transform:scaleX(var(--cq, 1)); transition:transform .2s linear; }
+#collection.cqjs .chap i:first-child { transform-origin:100% 50%; }
+#collection.cqjs .chap i:last-child { transform-origin:0 50%; }
+#collection.cqjs .chap svg { opacity:calc(.25 + .75 * var(--cq, 1)); transform:rotate(calc((1 - var(--cq, 1)) * -40deg)) scale(calc(.8 + .2 * var(--cq, 1))); transition:opacity .2s linear, transform .2s linear; }
+#collection.cqjs .sechead { transform:translate3d(0, calc((1 - var(--cq, 1)) * 26px), 0); transition:transform .2s linear; }
+@media (prefers-reduced-motion:reduce) { #collection.cqjs .chap i, #collection.cqjs .chap svg, #collection.cqjs .sechead { transform:none; opacity:1; } }
+/* the collection tucks under the end of the signature: both are white there,
+   and the few pixels between them used to show the page's dark ground */
+html body #collection { margin-top:-6px !important; position:relative; }
