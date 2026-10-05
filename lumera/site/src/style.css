@@ -6019,3 +6019,31 @@ html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline
 #craft { margin-top:-1px; --sgS:calc(var(--sgw) * .3704 + 96px); }
 #craft .sgstage { box-shadow:0 -2px 0 #000; }
 @media (max-width:759px) { #craft { --sgS:calc(100vw * .3704 + 64px); } }
+
+/* ══ v186 — the enquiry on a phone: full width, on one centre line ════════
+   The mark no longer keeps a column of its own beside the heading: it sits
+   centred above it, the form takes the whole width, and everything — the
+   heading, the clocks, the note, the fields, the choices, the message and
+   the button — is set on the centre line. ─────────────────────────────── */
+@media (max-width:999px) {
+  #enquire .egrid { grid-template-columns:minmax(0, 1fr) !important; justify-items:stretch; }
+  #enquire .emb { position:relative !important; top:auto; inset:auto; order:-1; justify-self:center; width:clamp(64px,18vw,84px); margin:4px auto -6px; }
+  #enquire .embart { width:clamp(64px,18vw,84px); }
+  #enquire #concierge.cwrap, #enquire #concierge .cbody { width:100%; }
+  #enquire #concierge .cbody > div:first-child { padding-inline-end:0 !important; text-align:center; display:grid; justify-items:center; }
+  #enquire #concierge .cbody h2 { max-width:none; text-align:center; text-wrap:balance; }
+  #enquire #concierge .clocks { justify-content:center; text-align:center; }
+  #enquire #concierge .clocks .clock { align-items:center; text-align:center; }
+  #enquire #concierge .fine { margin-inline:auto; text-align:center; max-width:34ch; }
+  #enquire .field { text-align:center; }
+  #enquire .field input, #enquire .field textarea { text-align:center; }
+  #enquire .field label { inset-inline:0; text-align:center; }
+  #enquire .ferr { text-align:center; }
+  #enquire .want { justify-content:center; justify-items:stretch; text-align:center; }
+  #enquire .want > .k { text-align:center; }
+  #enquire .csel { margin-inline:auto; }
+  #enquire .csub { align-items:center; text-align:center; justify-content:center; }
+  #enquire .csub .btn { align-self:stretch; }
+  #enquire .cnote, #enquire #cerr { text-align:center; margin-inline:auto; }
+}
+@media (max-width:999px) { #enquire .k.ol::before { display:none; } }
