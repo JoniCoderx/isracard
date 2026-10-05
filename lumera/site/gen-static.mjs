@@ -309,6 +309,11 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
       el.innerHTML = rtl && t && /[\u0590-\u06ff]/.test(t) ? '<bdi dir="rtl">' + t.replace(/[0-9][0-9.,]*(?: *[–—-] *[0-9][0-9.,]*)+(?: +[A-Za-z]+)?|[0-9][0-9.,]*(?: *[×=] *[0-9][0-9.,]*)* +[A-Za-z]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}/g, '<bdi dir="ltr">$&</bdi>') + "</bdi>" : (rtl && t && /[A-Za-z]/.test(t) ? '<bdi dir="ltr">' + t + "</bdi>" : (t || en));
     });
     document.querySelectorAll(".dlang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === l ? "true" : "false"); });
+    /* the way home follows the language: in Hebrew the house, its chapters and
+       its pieces open at their Hebrew address directly, not by way of the
+       English page and a redirect */
+    document.querySelectorAll("a[href]").forEach(function (x) { var hr = x.getAttribute("href"), m = hr.match(/^(?:he\\/|\\.\\/)?(#.*)?$|^(?:he\\/)?(pieces\\/.*)$/); if (!m) return;
+      x.setAttribute("href", m[2] ? (l === "he" ? "he/" : "") + m[2] : (l === "he" ? "he/" : "./") + (m[1] || "")); });
     document.querySelectorAll("img[data-alt-he]").forEach(function (im) { if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt); im.alt = l === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en"); });
     var t1 = document.querySelector("[data-doc-title]");
     /* a page without a document title of its own (a piece) keeps the title it was written with */
