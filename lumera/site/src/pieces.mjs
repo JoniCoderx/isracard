@@ -63,7 +63,7 @@ export const PIECES = [
     reserve: true
   }  ,{
     /* SILAVU ICON: metal, setting and sizes as confirmed; no stone figures */
-    id: "ring", seo: S("SILAVU ICON Ring · 18K White Gold Pavé Diamond Signature Ring", "טבעת SILAVU ICON · טבעת יהלומי פאווה מזהב לבן 18K"), sub: S("18K white gold ring, pavé diamond signature", "טבעת זהב לבן 18K, חתימה ביהלומי פאווה"), cat: "rings", ref: "SLV·R·001", light: true,   /* shot on white */
+    id: "ring", film: { src: "v/icon-film", poster: "img/icon-film-poster.jpg", alt: S("The SILAVU ICON ring on black: out of the dark, over a black mirror, on black satin", "טבעת SILAVU ICON על שחור: מתוך החושך, מעל מראה שחורה, על סאטן שחור") }, seo: S("SILAVU ICON Ring · 18K White Gold Pavé Diamond Signature Ring", "טבעת SILAVU ICON · טבעת יהלומי פאווה מזהב לבן 18K"), sub: S("18K white gold ring, pavé diamond signature", "טבעת זהב לבן 18K, חתימה ביהלומי פאווה"), cat: "rings", ref: "SLV·R·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     theme: "icon", word: "ICON",
     title: S("SILAVU ICON | Diamond Ring", "SILAVU ICON | טבעת יהלומים"),
