@@ -6386,3 +6386,10 @@ details.fcare > summary::-webkit-details-marker, details.dfcare > summary::-webk
   html body .dft details.dfcare > summary { padding:6px 0; min-height:44px; }
   html body .dft .dfcols > div:last-child { display:grid; justify-items:center; gap:12px; }
 }
+/* no seam at the foot of the signature: the stage's own ground is black for
+   the half above the line, and where its last sub-pixel row met the white
+   below it a hairline of black showed, most of all on the way back up. The
+   foot of the stage is painted white underneath the drawing, so the white
+   half meets the white section with nothing between them. */
+html body #craft .sgstage { box-shadow:inset 0 -3px 0 #fff, 0 -2px 0 #000; }
+html body #craft { background:#fff; }
