@@ -238,7 +238,7 @@
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   var W = 2, H = 2, DPR = 1, cssW = 1, cssH = 1;
   function resize() { var r = wrap.getBoundingClientRect(); cssW = Math.max(1, r.width); cssH = Math.max(1, r.height); DPR = Math.min(devicePixelRatio || 1, 2); W = Math.max(2, Math.round(cssW * DPR)); H = Math.max(2, Math.round(cssH * DPR)); if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; } }
-  addEventListener("resize", resize); resize();
+  var rzKey = ""; addEventListener("resize", function () { var r = wrap.getBoundingClientRect(), k = Math.round(r.width) + "x" + Math.round(r.height); if (k === rzKey) return; rzKey = k; resize(); }); resize();
   var METAL = { white:[0.90,0.91,0.93], yellow:[0.96,0.72,0.30], rose:[0.94,0.64,0.52], platinum:[0.76,0.77,0.79] };
   function renderStoneTex(rot, pitch, envA) {
     gl.useProgram(PG); gl.bindFramebuffer(gl.FRAMEBUFFER, fbo); gl.viewport(0,0,TEX,TEX); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);

@@ -133,7 +133,10 @@
       else if (drawn < 0 || (!reduce && nearest(at(cur), 0) !== drawn)) draw(false);
       return p !== target;
     }
-    addEventListener("resize", function () { size(); draw(true); });
+    /* a phone's address bar resizes the window on every scroll; the canvas
+       itself (100svh) does not change, so only a real change of its size
+       reallocates and redraws it */
+    var szKey = ""; addEventListener("resize", function () { var r = cv.getBoundingClientRect(), k = Math.round(r.width) + "x" + Math.round(r.height); if (k === szKey) return; szKey = k; size(); draw(true); });
     return { tick: tick, size: size, redraw: function () { draw(true); },
       get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; },
       get held() { return held; }, get peak() { return peak; }, get step() { return STEP; }, get win() { return WIN; }, get width() { var f = frames[drawn]; return f ? f.naturalWidth : 0; } };

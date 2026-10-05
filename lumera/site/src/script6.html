@@ -30,7 +30,7 @@
     }
     track.addEventListener("pointerdown", down); addEventListener("pointermove", move, { passive: true }); addEventListener("pointerup", up); addEventListener("pointercancel", up);
     track.addEventListener("click", function (e) { if (Math.abs(x - tx) > 4) e.preventDefault(); }, true);
-    addEventListener("resize", function () { measure(); go(idx); }); measure(); go(0);
+    var rw = innerWidth; addEventListener("resize", function () { if (innerWidth === rw) return; rw = innerWidth; measure(); go(idx); }); measure(); go(0);
     return { go: go, get index() { return idx; }, get n() { return n; } };
   }
   var trays = Array.prototype.slice.call(document.querySelectorAll("[data-tray]")).map(Tray);

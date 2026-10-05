@@ -136,7 +136,7 @@
   #menu.open { opacity:1; pointer-events:auto; }
   .mclose { position:absolute; top:max(16px, env(safe-area-inset-top)); inset-inline-end:var(--pad); }
   .mlist { display:grid; gap:2px; }
-  .mbrand { display:flex; justify-content:center; margin-bottom:clamp(22px,4vh,40px); color:var(--ink); opacity:0; transform:translateY(8px); transition:opacity .6s var(--ease) .1s, transform .6s var(--ease) .1s; } .mbrand svg.sy { height:30px; } #menu.open .mbrand { opacity:1; transform:none; }
+  .mbrand { display:flex; justify-content:center; margin-bottom:clamp(22px,4svh,40px); color:var(--ink); opacity:0; transform:translateY(8px); transition:opacity .6s var(--ease) .1s, transform .6s var(--ease) .1s; } .mbrand svg.sy { height:30px; } #menu.open .mbrand { opacity:1; transform:none; }
   .cmark { color:var(--ink); opacity:.85; margin-bottom:18px; } .cmark svg.sy { height:26px; } .cmark.rv.in { opacity:.85; }
   .mlist a { text-decoration:none; display:flex; align-items:baseline; gap:18px; padding:14px 0; border-bottom:1px solid var(--line); font-size:clamp(1.6rem,6.6vw,2.6rem); letter-spacing:-.02em; line-height:1.1; transform:translateY(16px); opacity:0; transition:transform .7s var(--ease), opacity .7s var(--ease); }
   #menu.open .mlist a { transform:none; opacity:1; }
@@ -468,7 +468,7 @@
   .fig .im img, .piece .fig, .card .fig, .btn, .hcap { will-change:transform; }
   @media (max-width:999px) { .metal, .h em, .h2 em, .h3 em, .t em, em.sd .w > span { animation:none; } }
   /* ── v9 ── */
-  @media (min-width:900px) { .ed.stk { align-items:start; } .ed.stk > .fig { position:sticky; top:12vh; } .ed.stk .copy { max-width:560px; } .ed.stk .factsg { grid-template-columns:1fr; margin-top:36px; } .ed.stk .factsg .fact:nth-last-child(2) { border-bottom:0; } }
+  @media (min-width:900px) { .ed.stk { align-items:start; } .ed.stk > .fig { position:sticky; top:12svh; } .ed.stk .copy { max-width:560px; } .ed.stk .factsg { grid-template-columns:1fr; margin-top:36px; } .ed.stk .factsg .fact:nth-last-child(2) { border-bottom:0; } }
   .ed.stk .copy .factsg { width:100%; }
   .hcap { max-width:100%; }
   .hero-tw { display:none; }
@@ -625,7 +625,7 @@
   .vhint { position:absolute; left:50%; bottom:12px; transform:translateX(-50%); z-index:4; font-size:.6rem; letter-spacing:.2em; color:rgba(246,243,237,.7); background:rgba(0,0,0,.45); padding:7px 12px; border-radius:2px; opacity:0; transition:opacity .6s; pointer-events:none; white-space:nowrap; }
   .vmark { position:absolute; right:16px; bottom:12px; z-index:4; width:22px; color:rgba(246,243,237,.55); opacity:0; transition:opacity .6s; pointer-events:none; } html[dir="rtl"] .vmark { right:auto; left:16px; }
   .vmark svg { width:100%; height:auto; }
-  #stripwrap.wrist { height:auto; aspect-ratio:16/9; max-height:min(72vh, 640px); overflow:hidden; -webkit-box-reflect:none; touch-action:none; cursor:grab; background:#000; }
+  #stripwrap.wrist { height:auto; aspect-ratio:16/9; max-height:min(72svh, 640px); overflow:hidden; -webkit-box-reflect:none; touch-action:none; cursor:grab; background:#000; }
   #stripwrap.wrist:active { cursor:grabbing; }
   #stripwrap.wrist::before { display:none; }
   #stripwrap.wrist.ready .vhint, #stripwrap.wrist.ready .vmark { opacity:1; }
@@ -886,7 +886,7 @@
   .certs .seal, .certs svg.seal { display:none; }
 
   /* ── v34: the bracelet, carried across the page ── */
-  html.silavu-play #bcv { position:fixed; inset:0; width:100vw; height:100vh; z-index:26; pointer-events:none; cursor:auto; }
+  html.silavu-play #bcv { position:fixed; inset:0; width:100vw; height:100svh; z-index:26; pointer-events:none; cursor:auto; }
   #bgrab { position:fixed; z-index:27; display:none; cursor:grab; touch-action:none; border-radius:50%; }
   html.silavu-play #bgrab { display:block; }
   html.silavu-play #bgrab:active { cursor:grabbing; }
@@ -1433,11 +1433,11 @@
   /* ── 3. bespoke: the room the house was missing ── */
   #bespoke { position:relative; overflow:hidden; }
   .bwm { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:0; opacity:.05; }
-  .bwm svg.sy { height:min(82vh,880px); color:var(--ink); }
+  .bwm svg.sy { height:min(82svh,880px); color:var(--ink); }
   #bespoke > .wrap { position:relative; z-index:1; }
   .bhead { text-align:center; justify-items:center; }
   .bhead .h { max-width:17ch; margin:16px auto 0; }
-  .bjourney { list-style:none; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(10px,1.5vw,24px); margin-top:clamp(38px,6vh,70px); }
+  .bjourney { list-style:none; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(10px,1.5vw,24px); margin-top:clamp(38px,6svh,70px); }
   .bstep { position:relative; display:grid; gap:12px; min-width:0; }
   .bsim { position:relative; aspect-ratio:3/4.3; overflow:hidden; border-radius:10px; background:#060607; }
   .bsim img { width:100%; height:100%; object-fit:cover; transform:scale(1.07); filter:grayscale(.34) contrast(1.04) brightness(.86); transition:transform 1.5s var(--ease), filter 1.5s var(--ease); }
@@ -1448,7 +1448,7 @@
   .bstep:hover .bsw { transform:translateX(130%); }
   .bsn { color:var(--gold); font-variant-numeric:tabular-nums; }
   .bsl { font-size:clamp(.94rem,1.25vw,1.15rem); font-weight:300; line-height:1.3; }
-  .bfoot { margin-top:clamp(34px,5vh,60px); display:flex; align-items:center; justify-content:center; gap:clamp(18px,3vw,40px); flex-wrap:wrap; }
+  .bfoot { margin-top:clamp(34px,5svh,60px); display:flex; align-items:center; justify-content:center; gap:clamp(18px,3vw,40px); flex-wrap:wrap; }
   .bline { font-family:var(--serif); font-style:italic; font-size:clamp(1.25rem,2.5vw,2rem); color:var(--ink2); line-height:1.3; padding-bottom:.1em; }
   html[data-ns] .bline { font-family:inherit; font-style:normal; }
   @media (max-width:759px) {
@@ -2035,10 +2035,10 @@
      look like a second, broken line of text behind the first. It drops to the
      lower half of the chapter, well clear of the heading, and gets quieter
      still. A watermark should be felt, not deciphered. ─────────────────── */
-  .bwm { place-items:end center; padding-bottom:4vh; opacity:.035; }
-  .bwm svg.sy { height:min(52vh,520px); }
+  .bwm { place-items:end center; padding-bottom:4svh; opacity:.035; }
+  .bwm svg.sy { height:min(52svh,520px); }
   .ivory .bwm { opacity:.03; }
-  @media (max-width:899px) { .bwm svg.sy { height:min(38vh,360px); } }
+  @media (max-width:899px) { .bwm svg.sy { height:min(38svh,360px); } }
 
   /* ══ v57 — the footer mark, without its double ══════════════════════════
      The light layer is a mark-shaped mask, and it was being centred on .fbig
@@ -3726,18 +3726,18 @@
   @media (max-width:559px) { .ftrust { gap:10px 18px; } .ftrust a { font-size:.64rem; } }
 
   /* the documents themselves: one column, nothing else on the page */
-  .doc { max-width:62ch; margin:0 auto; padding:clamp(90px,12vh,150px) var(--pad) clamp(70px,9vh,120px); }
-  .doc .back { display:inline-block; margin-bottom:clamp(30px,5vh,56px); color:var(--ink3);
+  .doc { max-width:62ch; margin:0 auto; padding:clamp(90px,12svh,150px) var(--pad) clamp(70px,9svh,120px); }
+  .doc .back { display:inline-block; margin-bottom:clamp(30px,5svh,56px); color:var(--ink3);
     text-decoration:none; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; }
   .doc .back:hover { color:var(--ink); }
   .doc h1 { font-size:clamp(2rem,4.4vw,3.2rem); line-height:1.06; letter-spacing:-.02em; margin:0; }
   .doc .lede { margin:16px 0 0; color:var(--ink3); font-size:clamp(1rem,1.5vw,1.15rem); max-width:44ch; }
-  .doc section { margin-top:clamp(34px,4.6vh,56px); }
+  .doc section { margin-top:clamp(34px,4.6svh,56px); }
   .doc h2 { font-size:.7rem; letter-spacing:.2em; text-transform:uppercase;
     color:var(--ink3); margin:0 0 12px; font-weight:400; }
   html[data-ns] .doc h2 { letter-spacing:.03em; text-transform:none; font-size:.86rem; }
   .doc p { margin:0; line-height:1.72; color:var(--ink2); }
-  .doc .docfoot { margin-top:clamp(56px,8vh,96px); padding-top:26px;
+  .doc .docfoot { margin-top:clamp(56px,8svh,96px); padding-top:26px;
     border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:10px 26px; }
   .doc .docfoot a { color:var(--ink3); text-decoration:none; font-size:.66rem;
     letter-spacing:.14em; text-transform:uppercase; }
@@ -4956,16 +4956,16 @@
     border-radius:999px; padding:11px 18px; white-space:nowrap; transition:border-color .3s var(--ease); }
   .dbook:hover { border-color:var(--ink2); }
   html[data-ns] .dbook { letter-spacing:.02em; text-transform:none; font-size:.86rem; }
-  .dpage .doc { flex:1; width:100%; max-width:68ch; margin:0 auto; padding:clamp(56px,9vh,110px) var(--pad) clamp(56px,8vh,96px); background:none; }
+  .dpage .doc { flex:1; width:100%; max-width:68ch; margin:0 auto; padding:clamp(56px,9svh,110px) var(--pad) clamp(56px,8svh,96px); background:none; }
   .dpage .doc > .k.gold { margin-bottom:18px; }
   .dpage .doc h1 { color:var(--ink); }
   .dpage .doc .lede { color:var(--ink2); }
-  .dpage .doc section { padding-top:clamp(22px,3vh,30px); border-top:1px solid var(--line); }
+  .dpage .doc section { padding-top:clamp(22px,3svh,30px); border-top:1px solid var(--line); }
   .dpage .doc h2 { color:var(--gold); margin:0 0 12px; }
   .dpage .doc p { color:var(--ink2); }
-  .dask { margin-top:clamp(40px,6vh,64px) !important; color:var(--ink3) !important; }
+  .dask { margin-top:clamp(40px,6svh,64px) !important; color:var(--ink3) !important; }
   .dask a { color:var(--ink); text-underline-offset:4px; }
-  .dft { padding:clamp(40px,6vh,64px) var(--pad) calc(28px + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--line); display:grid; gap:32px; }
+  .dft { padding:clamp(40px,6svh,64px) var(--pad) calc(28px + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--line); display:grid; gap:32px; }
   .dfcols { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:28px; }
   .dfcols > div { display:grid; gap:12px; align-content:start; justify-items:start; }
   .dfcols .k { color:var(--ink3); margin-bottom:4px; }
@@ -4979,7 +4979,7 @@
   .dpage .doc.about { max-width:1160px; }
   .ahero { max-width:62ch; }
   .ahero h1 em { font-family:var(--serif, inherit); }
-  .dpage .doc.about section { border-top:0; padding-top:0; margin-top:clamp(56px,9vh,110px); }
+  .dpage .doc.about section { border-top:0; padding-top:0; margin-top:clamp(56px,9svh,110px); }
   .afounder { display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 6fr); gap:clamp(28px,5vw,80px); align-items:center; }
   .aport { margin:0; display:grid; gap:14px; }
   .aport img, .aph { width:100%; aspect-ratio:4 / 5; object-fit:cover; border-radius:var(--r); display:block; }
@@ -4993,7 +4993,7 @@
   .atext h2 { font-size:clamp(1.8rem,3.4vw,2.6rem) !important; letter-spacing:-.01em !important; text-transform:none !important; color:var(--ink) !important; font-weight:300; margin:0 !important; }
   .aatelier > h2 { font-size:clamp(1.6rem,3vw,2.3rem) !important; letter-spacing:-.01em !important; text-transform:none !important; color:var(--ink) !important; font-weight:300; }
   .aatelier .aint { max-width:56ch; }
-  .aroles { list-style:none; margin:clamp(28px,4vh,44px) 0 0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+  .aroles { list-style:none; margin:clamp(28px,4svh,44px) 0 0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
   .aroles li { background:#000; padding:clamp(22px,2.6vw,34px); display:grid; gap:10px; align-content:start; }
   .aroles h3 { margin:0; font-weight:400; font-size:1.05rem; color:var(--ink); }
   .aroles p { margin:0; font-size:.95rem; line-height:1.6; }
@@ -5081,7 +5081,7 @@
   .ahero2 .aport figcaption b { font-weight:400; color:var(--ink); }
   .ahero2 .aport figcaption .k { color:var(--ink3); }
   .asplit { display:grid; grid-template-columns:minmax(0, 4fr) minmax(0, 7fr); gap:clamp(24px,5vw,80px);
-    margin-top:clamp(64px,10vh,120px) !important; padding-top:clamp(28px,4vh,40px) !important; border-top:1px solid var(--line) !important; }
+    margin-top:clamp(64px,10svh,120px) !important; padding-top:clamp(28px,4svh,40px) !important; border-top:1px solid var(--line) !important; }
   .asplit > .k.gold { padding-top:6px; }
   .asplitb { display:grid; gap:18px; max-width:60ch; }
   .asplitb p { margin:0; font-size:clamp(1.05rem,1.35vw,1.2rem) !important; line-height:1.7 !important; color:var(--ink2) !important; }
@@ -5091,7 +5091,7 @@
   .aroles2 li { padding:18px 0; border-top:1px solid var(--line); display:grid; gap:6px; align-content:start; }
   .aroles2 h3 { margin:0; font-weight:400; font-size:1.02rem; color:var(--ink); }
   .aroles2 p { margin:0; font-size:.95rem; line-height:1.6; }
-  .ameet { margin-top:clamp(64px,10vh,120px) !important; padding:clamp(32px,5vw,56px) !important; border:1px solid var(--line) !important;
+  .ameet { margin-top:clamp(64px,10svh,120px) !important; padding:clamp(32px,5vw,56px) !important; border:1px solid var(--line) !important;
     border-radius:var(--r); display:grid; gap:16px; justify-items:start; }
   .ameet h2 { margin:0 !important; font-size:clamp(1.6rem,2.6vw,2.2rem) !important; letter-spacing:-.01em !important; text-transform:none !important; color:var(--ink) !important; font-weight:300; }
   .ameet p { margin:0 0 8px; max-width:58ch; }
@@ -6118,3 +6118,11 @@ html body #langmenu button.on::after { content:""; width:5px; height:5px; border
   html body #end .ftrust a { font-size:10px !important; letter-spacing:.14em; padding:6px 0 !important; min-height:30px; color:var(--ink3); }
   html body #end .fbot { margin-top:0 !important; padding-top:10px !important; font-size:10px !important; justify-content:center; gap:18px !important; color:var(--ink3); }
 }
+
+/* ══ v190 — smooth on a phone ═════════════════════════════════════════════
+   The reading bar and the chapter bar are full width and scaled by
+   transform (script1), so moving them never lays the page out again. ──── */
+html body #pbar { width:100% !important; transform:scaleX(0); transform-origin:0 50%; will-change:transform; }
+html[dir="rtl"] body #pbar { transform-origin:100% 50%; }
+html body #where .bar i { width:100% !important; transform:scaleX(0); transform-origin:0 50%; }
+html[dir="rtl"] body #where .bar i { transform-origin:100% 50%; }

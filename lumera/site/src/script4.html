@@ -89,7 +89,9 @@
        colours and drifts away, then gathers again on the way back ── */
   (function () {
     var marks = [].slice.call(document.querySelectorAll(".hsig, .fbig"));
-    if (!marks.length || reduce) return;
+    /* on a touch screen the mark rests: anything moved by script while the
+       finger moves the page lags it by a frame, which reads as shaking */
+    if (!marks.length || reduce || matchMedia("(pointer: coarse)").matches) return;
     var pending = false;
     function tick() {
       pending = false;
