@@ -1,0 +1,98 @@
+<script>
+/* Diamonds falling into the signature. The box chapter ends on loose stones
+   in the dark; as the page moves on, some of them fall out of it into the
+   black above the signature and come to rest along the edge where the black
+   meets the white, a few higher up, none across the name itself. The fall
+   follows the scroll and nothing else: scroll back and they rise again, stop
+   and they stop. With reduced motion they are simply lying there.
+
+   The stones are the desk's own cut-outs, drawn on a canvas that sits under
+   the drawing of the name: the white below the edge is part of that drawing,
+   so a stone can never show on the white. */
+(function () {
+  "use strict";
+  var sec = document.getElementById("craft"); if (!sec) return;
+  var stage = sec.querySelector(".sgstage"), svg = sec.querySelector(".sgsvg"), white = sec.querySelector(".sgwhite"), fig = sec.querySelector(".sgfig");
+  if (!stage || !svg || !white || !window.HTMLCanvasElement) return;
+  var cv = document.createElement("canvas"); cv.className = "sgfall"; cv.setAttribute("aria-hidden", "true");
+  stage.insertBefore(cv, stage.firstChild);
+  var ctx = cv.getContext("2d"); if (!ctx) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, coarse = matchMedia("(pointer: coarse)").matches;
+  var BASE = (document.getElementById("deskcv") && document.getElementById("deskcv").getAttribute("data-base")) || "desk/";
+  var KINDS = coarse ? ["round", "pear", "marquise"] : ["round", "pear", "marquise", "oval", "princess"];
+  var IMG = {}, got = 0, asked = false;
+
+  /* the top edge of the white, in the drawing's own units, read from its path */
+  var EDGE = (function () { var d = white.getAttribute("d") || "", pts = [], re = /L\s*(-?[\d.]+)\s+(-?[\d.]+)/g, m, lx = -1e9;
+    while ((m = re.exec(d))) { var x = +m[1], y = +m[2]; if (x < lx) break; if (x >= -2600 && x <= 3800) pts.push([x, y]); lx = x; } return pts; })();
+  if (EDGE.length < 4) return;
+
+  var seed = 11; function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  var W = 0, H = 0, DPR = 1, stones = [], edgeAt = null, last = -2, dirty = true;
+
+  function layout() {
+    var sr = stage.getBoundingClientRect(), m = svg.getScreenCTM(); if (!m || !sr.width) return false;
+    DPR = Math.min(devicePixelRatio || 1, coarse ? 1.75 : 2);
+    W = Math.round(sr.width); H = Math.round(sr.height);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    /* the edge, in the stage's pixels */
+    var pe = EDGE.map(function (p) { return [m.a * p[0] + m.c * p[1] + m.e - sr.left, m.b * p[0] + m.d * p[1] + m.f - sr.top]; });
+    edgeAt = function (x) { for (var i = 1; i < pe.length; i++) if (pe[i][0] >= x) { var a = pe[i - 1], b = pe[i], t = (x - a[0]) / ((b[0] - a[0]) || 1); return a[1] + (b[1] - a[1]) * t; } return pe[pe.length - 1][1]; };
+    /* where the name is: kept clear */
+    var fr = fig.getBoundingClientRect(), nx0 = fr.left - sr.left + fr.width * 0.06, nx1 = fr.right - sr.left - fr.width * 0.06, ny0 = fr.top - sr.top + fr.height * 0.05, ny1 = fr.bottom - sr.top - fr.height * 0.1;
+    seed = 11; stones = [];
+    var n = coarse ? 18 : Math.round(Math.min(44, 20 + W / 70)), S = Math.max(9, Math.min(24, W * (coarse ? 0.042 : 0.0145))), tries = 0;
+    while (stones.length < n && tries++ < 3000) {
+      var x = 8 + rnd() * (W - 16), e = edgeAt(x), k = KINDS[Math.floor(rnd() * KINDS.length)], s = S * (0.55 + rnd() * 0.75), far = rnd();
+      /* most come to rest near the edge, some higher in the black */
+      var up = Math.pow(rnd(), 2.8) * Math.max(40, e * 0.8), y = e - s * 0.42 - up;
+      if (y < s) continue;
+      if (x > nx0 && x < nx1 && y > ny0 && y < ny1 && rnd() < 0.9) continue;
+      var ok = true; for (var j = 0; j < stones.length; j++) { var q = stones[j]; if (Math.hypot(q.x - x, q.y - y) < (q.s + s) * 0.48) { ok = false; break; } }
+      if (!ok) continue;
+      stones.push({ k: k, x: x, y: y, s: s, a: (rnd() - 0.5) * 1.6, spin: (rnd() - 0.5) * 5, drift: (rnd() - 0.5) * W * 0.06, from: -s - rnd() * H * 0.9,
+        d: 0.04 + rnd() * 0.3, dur: 0.16 + rnd() * 0.14, al: 0.45 + far * 0.5, ph: rnd() * 6.28 });
+    }
+    dirty = false; last = -2; return true;
+  }
+
+  function c01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function draw(q) {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < stones.length; i++) {
+      var st = stones[i], im = IMG[st.k]; if (!im) continue;
+      var u = reduce ? 1 : c01((q - 0.02 - st.d) / st.dur); if (u <= 0) continue;
+      /* falls under its own weight, touches down, hops once and lies still */
+      var y, x = st.x + st.drift * (1 - Math.min(1, u / 0.82)), fall = st.y - st.from;
+      if (u < 0.82) { var t = u / 0.82; y = st.from + fall * t * t; }
+      else { var h = (u - 0.82) / 0.18; y = st.y - Math.max(4, fall * 0.035) * Math.sin(Math.PI * h); }
+      var ang = st.a + st.spin * (1 - Math.min(1, u / 0.82)) * 0.6, ar = im.naturalWidth / im.naturalHeight, w = st.s * Math.sqrt(ar), hh = w / ar;
+      ctx.globalAlpha = st.al * Math.min(1, u * 4);
+      ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.drawImage(im, -w / 2, -hh / 2, w, hh); ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function progress() {
+    var r = sec.getBoundingClientRect(), vh = innerHeight;
+    var hold = Math.max(1, sec.offsetHeight - stage.offsetHeight);
+    return { q: c01((vh - r.top) / (vh + hold)), near: r.top < vh * 2.5 && r.bottom > -vh, vis: r.top < vh + 40 && r.bottom > -40 };
+  }
+  function fetchAll() { if (asked) return; asked = true;
+    KINDS.forEach(function (n) { var im = new Image(); im.decoding = "async"; im.onload = function () { IMG[n] = im; got++; dirty = true; last = -2; if (window.__awake) window.__awake.wake(); }; im.src = BASE + n + "-512.webp"; }); }
+  var lw = innerWidth; addEventListener("resize", function () { if (innerWidth !== lw) { lw = innerWidth; dirty = true; } }, { passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { dirty = true; });
+
+  function tick() {
+    var p = progress(); if (p.near) fetchAll();
+    if (!p.vis || !got) return;
+    if (dirty && !layout()) return;
+    var q = reduce ? 1 : p.q; if (q === last) return;
+    /* once every stone has landed nothing moves until the page scrolls back */
+    if (last >= 0.68 && q >= 0.68) return;
+    last = q; draw(q);
+  }
+  (window.__awake || function (f) { (function l() { f(); requestAnimationFrame(l); })(); })(tick);
+  window.__sgfall = { get stones() { return stones.length; }, get loaded() { return got; } };
+})();
+</script>

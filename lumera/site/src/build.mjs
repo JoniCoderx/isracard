@@ -29,6 +29,7 @@ let s1 = fs.readFileSync(S + "script1.html", "utf8");
 const s8 = fs.readFileSync(S + "script8.html", "utf8"), s2 = fs.readFileSync(S + "script2.html", "utf8"), s3 = fs.readFileSync(S + "script3.html", "utf8"), s4 = fs.readFileSync(S + "script4.html", "utf8"), s5 = fs.readFileSync(S + "script5.html", "utf8"), s6 = fs.readFileSync(S + "script6.html", "utf8");
 const s9 = fs.readFileSync(S + "script9.html", "utf8");
 const s10 = fs.readFileSync(S + "script10.html", "utf8");
+const s11 = fs.readFileSync(S + "script11.html", "utf8");
 function rep(a, b) { if (!s1.includes(a)) { console.error("MISSING in script1:", a.slice(0, 80)); process.exit(1); } s1 = s1.replace(a, b); }
 rep(`window.__lock();`, `window.__lock(); window.__defer = window.__defer || [];`);
 rep(`document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });`, `document.querySelectorAll(".rv:not(.late)").forEach(function (el) { io.observe(el); });`);
@@ -210,7 +211,7 @@ const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
 /* the price list the estimate reads, without its note to the editor */
 const PRICING = JSON.parse(fs.readFileSync(S + "pricing.json", "utf8")); delete PRICING._read_me;
 const pricingTag = `<script>window.SILAVU_PRICING = ${JSON.stringify(PRICING)};</script>`;
-const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}\n${s10}`;
+const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}\n${s11}\n${s10}`;
 /* lighter on the wire: dead rules out, the sheet and the scripts minified (see slim.mjs) */
 const { slim } = await import("./slim.mjs");
 const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"]);
