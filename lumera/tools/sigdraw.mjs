@@ -18,7 +18,7 @@ for (const rm of [false, true]) for (const [w, h] of SIZES) {
   const H = await p.evaluate(() => document.getElementById("craft").offsetHeight);
   const S = await p.evaluate(() => document.querySelector("#craft .sgstage").offsetHeight);
   /* a short passage: the stage about three quarters of a screen, the hold a little over one */
-  ok(rm ? H < h * 1.2 : H > h * (mob ? 0.68 : 0.8) && H < h * (mob ? 0.8 : 1.0) && S < h * 0.72, `${tag} section ${(H / h).toFixed(2)} screens, stage ${(S / h).toFixed(2)}`);
+  ok(rm ? H < h * 1.2 : H > h * 0.4 && H < h * (mob ? 0.7 : 1.0) && S < h * (mob ? 0.4 : 0.72), `${tag} section ${(H / h).toFixed(2)} screens, stage ${(S / h).toFixed(2)}`);
   const probe = () => p.evaluate(() => { const q = s => document.querySelector("#craft " + s), O = e => +getComputedStyle(e).opacity, R = e => e.getBoundingClientRect();
     const st = R(q(".sgstage")), fig = R(q(".sgfig")), cpe = q(".sgcopy"), cp = cpe ? R(cpe) : { top: 1e9, bottom: 0 };
     return { st: st.top, fig: [fig.left, fig.top, fig.right, fig.bottom], copy: [cp.top, cp.bottom, cpe ? O(q(".sgc1")) : 1, cpe ? O(q(".sgc2")) : 1], hasCopy: !!cpe,

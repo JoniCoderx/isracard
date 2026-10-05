@@ -6008,3 +6008,14 @@ html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline
       radial-gradient(140% 90% at 50% 55%, rgba(0,0,0,0) 62%, rgba(0,0,0,.5) 86%, #000 100%),
       linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.42) 22%, rgba(0,0,0,0) 48%) !important; }
 }
+
+/* ══ v185 — the signature: a short black, split through the name ══════════
+   The stage is only as tall as the name and a breath above it, and the black
+   edge (script9) runs down through the middle of the name, so the first
+   letters are written on white and the last on black. The box chapter has a
+   black ground of its own and the signature tucks under it by a pixel, so no
+   hairline of the white page shows between them on a phone. ───────────── */
+#inside { background:#000; }
+#craft { margin-top:-1px; --sgS:calc(var(--sgw) * .3704 + 96px); }
+#craft .sgstage { box-shadow:0 -2px 0 #000; }
+@media (max-width:759px) { #craft { --sgS:calc(100vw * .3704 + 64px); } }
