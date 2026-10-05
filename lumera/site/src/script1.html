@@ -208,29 +208,41 @@
     var w = $("where"), t = 0; if (!w) return;
     var foot = $("end");
     /* and it steps aside once the footer is up, so it never sits on the copyright line */
-    addEventListener("scroll", function () { if (!w.classList.contains("live")) w.classList.add("live"); if (foot) { var ae = foot.getBoundingClientRect().top < innerHeight - 60; if (w.classList.contains("atend") !== ae) w.classList.toggle("atend", ae); } clearTimeout(t); t = setTimeout(function () { w.classList.remove("live"); }, 1600); }, { passive: true });
+    addEventListener("scroll", function () { if (!w.classList.contains("live")) w.classList.add("live"); if (foot) { var ae = box(foot).top < innerHeight - 60; if (w.classList.contains("atend") !== ae) w.classList.toggle("atend", ae); } clearTimeout(t); t = setTimeout(function () { w.classList.remove("live"); }, 1600); }, { passive: true });
   })();
+  /* v207 — where the chapters are, kept rather than asked for. Asking the page
+     where a section is, on every frame of a scroll, makes it lay itself out
+     again whenever anything else on that frame has just changed a style; on a
+     phone flicking fast that was a steady few milliseconds a frame, every
+     frame. Each section's place in the document is measured once and read back
+     against the scroll; it is measured again when the page changes size. */
+  var GEO = new Map();
+  function geoReset() { GEO.clear(); }
+  addEventListener("resize", geoReset, { passive: true }); addEventListener("load", geoReset);
+  if ("ResizeObserver" in window) new ResizeObserver(geoReset).observe(document.body);
+  function box(el) { var g = GEO.get(el); if (!g) { var r = el.getBoundingClientRect(); g = { t: r.top + scrollY, h: r.height }; GEO.set(el, g); }
+    var t = g.t - scrollY; return { top: t, bottom: t + g.h, height: g.h }; }
   function compass() {
     var mid = innerHeight * 0.45, best = secs[0];
-    for (var i = 0; i < secs.length; i++) { var r = secs[i].getBoundingClientRect(); if (r.top <= mid) best = secs[i]; }
+    for (var i = 0; i < secs.length; i++) { var r = box(secs[i]); if (r.top <= mid) best = secs[i]; }
     setWhere(best);
     /* The bar and the compass are fixed over whatever is passing beneath them.
        Two chapters are ivory, so they are told which ground they are on rather
        than being left as dark glass over a light page. */
     var overTop = null, ly = 64;
-    for (var q = 0; q < secs.length; q++) { var rq = secs[q].getBoundingClientRect(); if (rq.top <= ly && rq.bottom > ly) { overTop = secs[q]; break; } }
+    for (var q = 0; q < secs.length; q++) { var rq = box(secs[q]); if (rq.top <= ly && rq.bottom > ly) { overTop = secs[q]; break; } }
     /* a class written to the body restyles the whole page, so it is only
        written when it changes; and the bars move by transform, which the
        compositor does alone, never by width, which lays the page out again */
     flag(document.body, "onivory", !!overTop && overTop.classList.contains("ivory"));
     flag(document.body, "footivory", best.classList.contains("ivory"));
-    var r2 = best.getBoundingClientRect(), f = c01(-r2.top / Math.max(1, r2.height - innerHeight * 0.5)); bar(whereBar, f);
+    var r2 = box(best), f = c01(-r2.top / Math.max(1, r2.height - innerHeight * 0.5)); bar(whereBar, f);
     /* the bar arrives once the opening screen is behind the reader, and leaves
        when the enquiry it points at is in front of them */
-    var cr = $("concierge").getBoundingClientRect();
+    var cr = box($("concierge"));
     /* the bar stands aside wherever it would sit on something the reader is
        about to press: the Line's own reservation block and the footer */
-    var rz = resBlock ? resBlock.getBoundingClientRect() : null, ft = footEl ? footEl.getBoundingClientRect() : null;
+    var rz = resBlock ? box(resBlock) : null, ft = footEl ? box(footEl) : null;
     var clash = (rz && rz.top < innerHeight && rz.bottom > innerHeight * 0.25) || (ft && ft.top < innerHeight);
     flag(fab, "show", entered && scrollY > innerHeight * 0.7 && cr.top > innerHeight * 0.6 && !clash);
     bar(pbar, c01(scrollY / Math.max(1, document.body.scrollHeight - innerHeight)));

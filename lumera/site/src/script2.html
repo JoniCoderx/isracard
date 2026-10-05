@@ -383,6 +383,14 @@
   function ringRadius() { if (!photo.geo) return 0; fitPhoto(); var b = window.__build || { wrist: 17 }; return photo.geo.r * (photo.geo.rOf === "h" ? cover.ph : cover.pw) * (b.wrist + 1) / b.wrist; }
 
   var t0 = performance.now(), lost = false, fc = 0, texOnce = false, envA = 0, lastSpec = null;
+  /* the still of one stone (for the chips and the wrist) is read back from
+     the GPU, which stalls it; done mid-scroll it was a visible hitch as the
+     builder arrived, so it waits until the page has been still for a moment */
+  var spQ = false, lastMove = 0;
+  ["scroll", "touchmove", "wheel"].forEach(function (e) { addEventListener(e, function () { lastMove = performance.now(); }, { passive: true }); });
+  function queueSprite(el) { if (spQ) return; spQ = true;
+    (function wait() { if (performance.now() - lastMove < 450) { setTimeout(wait, 250); return; }
+      spQ = false; if (lost) return; renderStoneTex(el ? 0 : 0.4, -0.52, 0); exportSprite(); fc = 0; })(); }
   window.__renderStone = function (cut) { var was = curCut; useCut(cut || "round"); renderStoneTex(cut === "round" ? 0.4 : 0, -0.52, 0); exportSprite(); if (was && was !== curCut) { useCut(was); texOnce = false; } };
   canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); lost = true; wrap.style.opacity = "0"; });
   /* off screen the viewer stops asking for frames altogether, and the page's
@@ -401,7 +409,7 @@
     /* the light: the pointer sweeps it across the stones on the wrist; otherwise it drifts */
     var envTarget = view === "wrist" && ptr.on ? (ptr.x - 0.5) * 2.2 : 0.35 * Math.sin(t * 0.45); envA += (envTarget - envA) * 0.08;
     var rot = elong ? 0.09 * Math.sin(t * 0.6) : (reduce ? 0.4 : t * 0.25), pitch = -0.52 + (elong ? 0.05 * Math.sin(t * 0.5) : 0);
-    if (!texOnce || (!reduce && (fc++ % (mobile ? 4 : 2)) === 0)) { renderStoneTex(rot, pitch, envA); if (!texOnce) { renderStoneTex(elong ? 0 : 0.4, -0.52, 0); exportSprite(); if (!reduce) renderStoneTex(rot, pitch, envA); } texOnce = true; }
+    if (!texOnce || (!reduce && (fc++ % (mobile ? 4 : 2)) === 0)) { renderStoneTex(rot, pitch, envA); if (!texOnce) queueSprite(elong); texOnce = true; }
     gl.viewport(0,0,W,H); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
     beginSprites();
     if (view === "wrist") {
