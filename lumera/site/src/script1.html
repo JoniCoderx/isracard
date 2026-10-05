@@ -656,6 +656,10 @@
        never moves the frame of the page */
     document.documentElement.setAttribute("dir", def.rtl ? "rtl" : "ltr");
     document.documentElement.setAttribute("lang", lang);
+    /* the fields begin where the language begins: an empty "auto" field is
+       left to right, so in Hebrew the caret started on the left and the first
+       letters ran the wrong way until the browser caught up */
+    ["fName", "fCity", "fMsg"].forEach(function (id) { var f = document.getElementById(id); if (f) f.setAttribute("dir", def.rtl ? "rtl" : "auto"); });
     /* Hebrew and Arabic have no italic and no upper case, so the typography
        rules that drop both hang off this rather than off one language */
     if (def.rtl) document.documentElement.setAttribute("data-ns", "1");

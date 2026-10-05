@@ -6493,3 +6493,11 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
      drawing of the name, so the white below the edge always covers it ── */
   #craft .sgfall { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; display:block; }
   #craft .sgfig, #craft .sgcopy { position:relative; z-index:1; }
+
+  /* ── v210 — Hebrew and Arabic fields start on the right: the caret, the
+     first letter and the placeholder. A phone number or an email still runs
+     left to right inside its field, set against the right edge. ── */
+  html[dir="rtl"] #cform input, html[dir="rtl"] #cform textarea { text-align:right; }
+  html[dir="rtl"] #cform #fName, html[dir="rtl"] #cform #fCity, html[dir="rtl"] #cform #fMsg { direction:rtl; }
+  html[dir="rtl"] #cform #fContact { direction:ltr; text-align:right; }
+  html[dir="rtl"] #cform #fContact::placeholder { text-align:right; }

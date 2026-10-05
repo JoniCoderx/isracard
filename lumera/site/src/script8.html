@@ -1250,7 +1250,10 @@
      scroll for the same thread. It holds still until the page does. */
   var moved0 = -1e9;
   addEventListener("scroll", function () { moved0 = performance.now(); }, { passive: true });
-  var drag = null, dirty = true, idle = !reduce, idleN = 0, W2 = 1, H2 = 1, DPR = 1;
+  var drag = null, dirty = true, idle = !reduce, idleN = 0, W2 = 1, H2 = 1, DPR = 1, hoverOn = false, hoverT = 0;
+  /* a mouse resting on the bracelet holds it still; leaving lets it turn again a moment later */
+  cv.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { clearTimeout(hoverT); hoverOn = true; } });
+  cv.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { clearTimeout(hoverT); hoverT = setTimeout(function () { hoverOn = false; if (!reduce) idle = true; }, 700); } });
   function size() {
     /* the hand is the most expensive thing this shader draws, and on a phone
        it is drawn into a box a third of a screen tall: the pixels above this
@@ -1366,13 +1369,14 @@
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
         cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.90; cam.vph *= 0.90;
         cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph)); dirty = true;
-      } else if (idle && performance.now() - moved0 > 420) {
-        /* on a screen the browser can take a gesture from, a bracelet that
-           stops for good the first time that happens is a dead object — but
-           it only turns while the reader is still enough to watch it */
-        idleN++;
-        if (idleN > (coarse ? 5200 : 1400)) idle = false;
-        else if (idleN % 2 === 0) { cam.th += staged ? 0.0016 : 0.0032; dirty = true; }
+      } else if (idle && !hoverOn && performance.now() - moved0 > 420) {
+        /* v209 — it keeps turning, slowly, for as long as it is on screen (the
+           whole loop sleeps off screen). It used to stop for good after a
+           third of a turn, and a bracelet that has stopped reads as a picture
+           that failed to load. The pointer resting on it holds it still, so
+           it can be looked at; it turns again a moment after the pointer
+           leaves. Dragging it turns it by hand, as before. */
+        idleN++; cam.th += staged ? 0.0011 : 0.0024; dirty = true;
       }
     }
     if (Math.abs(cam.d - cam.td) > 1e-4) { cam.d += (cam.td - cam.d) * 0.12; dirty = true; }
@@ -1438,7 +1442,7 @@
     /* the drift comes back, but it does not get a fresh budget each time —
        a reader who scrolls past this chapter twenty times should not leave a
        canvas turning on their battery for the rest of the afternoon */
-    if (!reduce && idleN < 3000) { idle = true; idleN = Math.min(idleN, 2400); }
+    if (!reduce) idle = true;
   });
   cv.addEventListener("wheel", function (e) {
     if (page) return;
@@ -1454,8 +1458,10 @@
   cv.addEventListener("touchend", function () { pinch = null; });
   document.addEventListener("click", function (e) {
     var v = e.target.closest && e.target.closest("[data-vpos]"); if (!v) return;
-    idle = false; cam.vth = cam.vph = 0;
+    cam.vth = cam.vph = 0;
     var p = v.getAttribute("data-vpos");
+    /* the front view keeps turning; the side and the detail hold the angle asked for */
+    idle = !reduce && p !== "side" && p !== "detail";
     cam.th = p === "side" ? -1.57 : p === "detail" ? -0.30 : -0.62;
     cam.ph = p === "under" ? -0.88 : p === "side" ? 0.05 : p === "detail" ? 0.34 : (portrait ? 0.90 : 0.42);
     cam.fT = p === "detail" ? 1 : 0; cam.td = p === "detail" ? 0.34 : 1;
@@ -1747,6 +1753,6 @@
     } catch (e) { c = null; }
     for (k in keep) cam[k] = keep[k]; dirty = true; return c;
   }
-  window.__bracelet = { play: snakeOpen, unplay: snakeClose, build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, shot: shot, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
+  window.__bracelet = { play: snakeOpen, unplay: snakeClose, build: build, pickUp: pickUp, carry: carry, putBack: putBack, stage: stage, snap: snap, shot: shot, get th() { return cam.th; }, get spinning() { return idle && !hoverOn; }, home: function () { cam.th = -0.62; cam.ph = portrait ? 0.90 : 0.42; cam.td = 1; dirty = true; } };
 })();
 </script>
