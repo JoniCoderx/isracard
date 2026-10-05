@@ -1,4 +1,5 @@
-// Card photographs stay inside the card while the mouse rests on it (the slow walk), and
+// Card photographs stay inside the card while the mouse rests on it (one soft turn to the
+// piece worn, then still: no timed walk), and
 // the enquiry choices stay inside the form and clear of the SILAVU mark, also while it is hovered.
 import { chromium } from "playwright-core";
 const O = "/tmp/claude-0/-home-user-isracard/cbce1d7f-fb80-59fc-b523-1be1a454b815/scratchpad/look/";
@@ -6,22 +7,25 @@ const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-119
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL", m, x !== undefined ? JSON.stringify(x) : ""); } };
 for (const lang of ["", "he/"]) {
   const c = await b.newContext({ viewport: { width: 1366, height: 900 } }); const p = await c.newPage();
-  await p.goto("http://localhost:8777/" + lang, { waitUntil: "load" }); await p.waitForTimeout(700); await p.click("#enterBtn", { timeout: 800 }).catch(() => {});
+  await p.goto("http://localhost:8777/" + lang, { waitUntil: "load" }); await p.waitForTimeout(700); await p.click("#enterBtn", { timeout: 800 }).catch(() => {}); await p.waitForFunction(() => !document.documentElement.classList.contains("locked"), null, { timeout: 15000 }).catch(() => {});
   await p.evaluate(() => document.querySelector(".pgrid").scrollIntoView()); await p.waitForTimeout(1200);
   for (let k = 0; k < 3; k++) {
     const fig = (await p.$$(".pgrid .piece .fig"))[k]; const bx = await fig.boundingBox();
-    await p.mouse.move(bx.x + bx.width / 2, bx.y + bx.height / 3);
     const seen = [];
-    for (let t = 0; t < 6; t++) { await p.waitForTimeout(1000);
-      seen.push(await fig.evaluate(f => { const r = f.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 3;
-        /* the photograph really in the window: the frame whose computed
-           position is inside the card, not merely one the script says it moved */
-        const shown = [...f.querySelectorAll(".im")].filter(im => { const q = im.getBoundingClientRect(); return Math.abs(q.left - r.left) < 6 && q.top <= y && q.bottom >= y; });
-        const cover = [...f.querySelectorAll(".im")].some(im => { const q = im.getBoundingClientRect(); return q.left <= x && q.right >= x && q.top <= y && q.bottom >= y && im.querySelector("img").naturalWidth > 0; });
-        const img = shown.length ? shown[shown.length - 1].querySelector("img") : null; return { n: shown.length, cover, loaded: !img || (img.complete && img.naturalWidth > 0), src: img ? (img.currentSrc || img.src).split("/").pop() : "", at: f.closest(".piece").__at }; })); }
+    /* the state before the mouse arrives, then once a second while it rests */
+    const sample = () => fig.evaluate(f => { const r = f.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 3;
+      const vis = [...f.querySelectorAll(".im")].filter(im => { const q = im.getBoundingClientRect(), s = getComputedStyle(im); return q.left <= x && q.right >= x && q.top <= y && q.bottom >= y && s.visibility === "visible" && +s.opacity > 0.5; });
+      const top = vis[vis.length - 1], img = top && top.querySelector("img");
+      return { n: 1, cover: !!top && img.naturalWidth > 0, loaded: !!img && img.complete && img.naturalWidth > 0, src: img ? (img.currentSrc || img.src).split("/").pop() : "" }; });
+    seen.push(await sample());
+    await p.mouse.move(bx.x + bx.width / 2, bx.y + bx.height / 3);
+    for (let t = 0; t < 6; t++) { await p.waitForTimeout(1000); seen.push(await sample()); }
     /* never an empty card (a sample mid-slide has two frames sharing it), and
        at least three different photographs actually come into the window */
-    ok(seen.every(s => s.cover && s.n <= 1 && s.loaded) && new Set(seen.map(s => s.src).filter(Boolean)).size >= 3, `${lang || "en"} card ${k + 1}: exactly one photograph in the window at a time, and the photographs really change`, seen.map(s => s.n + ":" + s.src));
+    /* never an empty card, one photograph at a time, and exactly one turn:
+       from the piece on white to the piece worn, where it then rests */
+    const srcs = seen.map(s => s.src).filter(Boolean), changes = srcs.filter((v, i) => i && v !== srcs[i - 1]).length;
+    ok(seen.every(s => s.cover && s.n <= 1 && s.loaded) && changes === 1 && /worn/.test(srcs[srcs.length - 1]), `${lang || "en"} card ${k + 1}: one photograph at a time, one soft turn to the piece worn, then still`, seen.map(s => s.n + ":" + s.src));
     await p.mouse.move(5, 5); await p.waitForTimeout(900);
   }
   await p.screenshot({ path: O + `cards-hover-${lang ? "he" : "en"}.png` });
@@ -29,12 +33,12 @@ for (const lang of ["", "he/"]) {
 }
 for (const w of [1024, 1180, 1280, 1366, 1440, 1600, 1920]) for (const lang of ["", "he/"]) {
   const c = await b.newContext({ viewport: { width: w, height: 900 } }); const p = await c.newPage();
-  await p.goto("http://localhost:8777/" + lang, { waitUntil: "load" }); await p.waitForTimeout(700); await p.click("#enterBtn", { timeout: 800 }).catch(() => {});
+  await p.goto("http://localhost:8777/" + lang, { waitUntil: "load" }); await p.waitForTimeout(700); await p.click("#enterBtn", { timeout: 800 }).catch(() => {}); await p.waitForFunction(() => !document.documentElement.classList.contains("locked"), null, { timeout: 15000 }).catch(() => {});
   await p.evaluate(() => { document.querySelectorAll(".rv").forEach(e => e.classList.add("in")); document.getElementById("concierge").scrollIntoView(); }); await p.waitForTimeout(600);
   // the mark in its largest state: hovered, letters opened
   await p.evaluate(() => { const e = document.getElementById("emb"); e.classList.add("in", "hov"); }); await p.waitForTimeout(1600);
   const r = await p.evaluate(() => { const R = e => e.getBoundingClientRect();
-    const form = R(document.getElementById("cform")), chips = [...document.querySelectorAll("#cform .want .chip, #cform .csub > *")].map(R);
+    const form = R(document.getElementById("cform")), chips = [...document.querySelectorAll("#cform .want .chip, #cform .csub > *")].filter(e => !e.hidden && e.getBoundingClientRect().width > 0).map(R);
     const parts = [...document.querySelectorAll("#emb .embart, #emb .embword, #emb .embsub")].map(R);
     const rtl = document.documentElement.dir === "rtl";
     const inForm = chips.every(c => c.left >= form.left - 1 && c.right <= form.right + 1);
