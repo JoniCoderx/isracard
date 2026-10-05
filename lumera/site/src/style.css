@@ -6470,3 +6470,21 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   }
   /* v205 — no small print under the button */
   html body #cform .cnote { display:none !important; }
+
+  /* ── v206 — the builder's summary, compact on a desktop too: tighter card,
+     a slimmer button, the note and the trust line set small, and the three
+     actions on one row under the card. The steps above sit closer. ── */
+  @media (min-width:760px) {
+    html body #build #configure .total { padding:16px 18px 6px; gap:8px; }
+    html body #build #configure .total .tot { gap:5px; }
+    html body #build #configure .total .lsum { font-size:.94rem !important; }
+    html body #build #configure .total .pricerow { gap:10px; }
+    html body #build #configure .total .tot.onreq .price, html body #build #configure .total .price { font-size:1.08rem !important; line-height:1.2; }
+    html body #build #configure .total .estnote { font-size:.76rem !important; line-height:1.45 !important; max-width:none; }
+    html body #build #configure .total .btn.solid, html body #build #configure .total #reserve { min-height:42px !important; height:42px; padding-block:0 !important; }
+    html body #build #configure .total .trustline { font-size:.7rem !important; }
+    html body #build #configure .total .sdet > summary { min-height:34px; padding-block:4px; }
+    html body #build #configure .cacts { flex-wrap:wrap; justify-content:flex-start; gap:4px 18px; margin-top:10px; }
+    html body #build #configure .cacts .clink { white-space:nowrap; font-size:.6rem; }
+    html body #build #opts .opthead { min-height:44px; padding-block:6px; }
+  }
