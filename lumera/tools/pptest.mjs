@@ -20,7 +20,7 @@ for (const id of ["ring", "knot", "pave"]) {
   s = await p.evaluate(() => document.querySelector(".ppcur").textContent); ok(s === String(L.n), `${id}: thumbnail goes to ${s}`);
   await p.focus(".pptrack"); await p.keyboard.press("ArrowRight"); await p.waitForTimeout(700);
   s = await p.evaluate(() => document.querySelector(".ppcur").textContent); ok(s === "1", `${id}: keyboard wraps to ${s}`);
-  await p.click(".ppslide:first-child .ppzoom"); await p.waitForTimeout(500);
+  await p.click(".ppslide .ppzoom >> nth=0"); await p.waitForTimeout(500);
   const z = await p.evaluate(() => { const bx = document.getElementById("ppbox"), im = bx.querySelector("img"); return { open: !bx.hidden, src: im.getAttribute("src"), focus: document.activeElement.className }; });
   ok(z.open && /-1254\.jpg$/.test(z.src) && z.focus === "ppx", `${id}: enlarged view at the original (${z.src}), focus on close`);
   await p.keyboard.press("Escape"); await p.waitForTimeout(300);
