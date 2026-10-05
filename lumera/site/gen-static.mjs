@@ -33,7 +33,13 @@ let html = fs.readFileSync(src, "utf8").replace(/<title>[\s\S]*?<\/title>/, "").
    so the preview works on its own, and they are lifted out of the body here */
 let fontLinks = "";
 html = html.replace(/<link rel="preconnect" href="https:\/\/fonts\.[^>]*>\s*/g, "")
-           .replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g, m => { fontLinks = m.trim(); return ""; });
+           .replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g, m => {
+             /* the Arabic face is the only one fetched from outside, and only an
+                Arabic page needs it: it no longer holds up the first paint of
+                every page in every language (Lighthouse measured 600ms on a
+                phone). It arrives in the background and swaps in. */
+             const href = /href="([^"]+)"/.exec(m)[1];
+             fontLinks = `<link rel="stylesheet" href="${href}" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="${href}"></noscript>`; return ""; });
 /* every asset path becomes relative, so the page works under a sub-path such as /isracard/ */
 html = html.replace(/(["'(=,\s])\/(img\/|f\/|v\/|icon-|favicon\.|og\.jpg|site\.webmanifest)/g, "$1$2");
 /* The stylesheet and the large scripts leave the page and become files with
@@ -312,9 +318,13 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     /* the way home follows the language: in Hebrew the house, its chapters and
        its pieces open at their Hebrew address directly, not by way of the
        English page and a redirect */
-    document.querySelectorAll("a[href]").forEach(function (x) { var hr = x.getAttribute("href"), m = hr.match(/^(?:he\\/|\\.\\/)?(#.*)?$|^(?:he\\/)?(pieces\\/.*)$/); if (!m) return;
-      x.setAttribute("href", m[2] ? (l === "he" ? "he/" : "") + m[2] : (l === "he" ? "he/" : "./") + (m[1] || "")); });
-    document.querySelectorAll("img[data-alt-he]").forEach(function (im) { if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt); im.alt = l === "he" ? im.getAttribute("data-alt-he") : im.getAttribute("data-alt-en"); });
+    document.querySelectorAll("a[href]").forEach(function (x) { var hr = x.getAttribute("href"), m = hr.match(/^(?:he\\/|\\.\\/)?(\\?[^#]*)?(#.*)?$|^(?:he\\/)?(pieces\\/.*)$/); if (!m) return;
+      x.setAttribute("href", m[3] ? (l === "he" ? "he/" : "") + m[3] : (l === "he" ? "he/" : "./") + (m[1] || "") + (m[2] || "")); });
+    /* what a screen reader hears follows the language too: photographs'
+       descriptions and the names of buttons, in all five */
+    document.querySelectorAll("img[data-alt-he]").forEach(function (im) { if (!im.hasAttribute("data-alt-en")) im.setAttribute("data-alt-en", im.alt); var en = im.getAttribute("data-alt-en"); im.alt = l === "he" ? im.getAttribute("data-alt-he") : l === "en" ? en : (dict && dict[en]) || en; });
+    document.querySelectorAll("[data-aria-he]").forEach(function (el) { if (!el.hasAttribute("data-aria-en")) el.setAttribute("data-aria-en", el.getAttribute("aria-label") || ""); var en = el.getAttribute("data-aria-en"); el.setAttribute("aria-label", l === "he" ? el.getAttribute("data-aria-he") : l === "en" ? en : (dict && dict[en]) || en); });
+    if (window.__ppLang) window.__ppLang(l, dict);
     var t1 = document.querySelector("[data-doc-title]");
     /* a page without a document title of its own (a piece) keeps the title it was written with */
     document.title = l === "en" || !t1 ? orig : t1.textContent ${titleOf};
@@ -337,8 +347,8 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
         history.replaceState(null, "", a.pathname + a.search + a.hash); } catch (e) {}
       /* and the links follow: home, its chapters and the other pieces open in
          the language now showing */
-      document.querySelectorAll("a[href]").forEach(function (x) { var hr = x.getAttribute("href"), m = hr.match(/^(?:he\\/|\\.\\/)?(#.*)?$|^(?:he\\/)?(pieces\\/.*)$/); if (!m) return;
-        x.setAttribute("href", m[2] ? (l === "he" ? "he/" : "") + m[2] : (l === "he" ? "he/" : "./") + (m[1] || "")); });
+      document.querySelectorAll("a[href]").forEach(function (x) { var hr = x.getAttribute("href"), m = hr.match(/^(?:he\\/|\\.\\/)?(\\?[^#]*)?(#.*)?$|^(?:he\\/)?(pieces\\/.*)$/); if (!m) return;
+        x.setAttribute("href", m[3] ? (l === "he" ? "he/" : "") + m[3] : (l === "he" ? "he/" : "./") + (m[1] || "") + (m[2] || "")); });
       requestAnimationFrame(function () { scrollTo({ top: y, behavior: "instant" }); });
     }
     try { localStorage.setItem("silavu-lang", l); } catch (e) {}
@@ -384,9 +394,9 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     if (o.schema) dhead = dhead.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => `<script type="application/ld+json">${JSON.stringify(o.schema)}</script>`);
     let chrome = `<div class="dpage" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n`;
     /* the Hebrew address keeps a reader on Hebrew addresses */
-    if (o.he) chrome = chrome.replace(/href="\.\/(#[^"]*)?"/g, (m, h) => `href="he/${h || ""}"`).replace(/href="(pieces\/[^"]*)"/g, 'href="he/$1"');
+    if (o.he) chrome = chrome.replace(/href="\.\/(\?[^"#]*)?(#[^"]*)?"/g, (m, q, h) => `href="he/${q || ""}${h || ""}"`).replace(/href="(pieces\/[^"]*)"/g, 'href="he/$1"');
     const pre = o.alt ? `<script>window.__alt=${JSON.stringify(o.alt)};${o.he ? 'window.__pageLang="he";' : 'window.__pageLang="en";'}</script>` : "";
-    const body = styleBlock + chrome + pre + langScript(titleOf);
+    const body = styleBlock + chrome + pre + langScript(titleOf) + (o.script || "");
     fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
   };
   for (const d of POLICIES) {
@@ -427,27 +437,91 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
     const plain = x => String(x).replace(/<[^>]+>/g, "");
     const shown = PIECES.filter(p => p.id && !p.exceptional);
     const img = (sh, p, i) => { const w = p.widths || [800, 1200]; return `<img src="img/${sh.img}-${w[Math.min(1, w.length - 1)]}.jpg" srcset="${w.map(x => `img/${sh.img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:900px) 52vw, 100vw" alt="${escA(sh.alt.en)}" data-alt-he="${escA(sh.alt.he)}"${i ? ' loading="lazy" decoding="async"' : ' fetchpriority="high"'}>`; };
+    /* The piece's gallery: one photograph at a time in a stage that scrolls
+       sideways (a finger swipes it natively; the page still scrolls up and
+       down), arrows and thumbnails for a mouse and the keyboard, a count of
+       where you are, and an enlarged view at the photograph's own size. */
+    const galScript = `<script>(function () {
+  var g = document.querySelector(".ppgal"); if (!g) return;
+  var track = g.querySelector(".pptrack"), slides = [].slice.call(track.children), n = slides.length, cur = 0;
+  var dots = [].slice.call(g.querySelectorAll(".ppdots i")), ths = [].slice.call(g.querySelectorAll(".ppth")), cnt = g.querySelector(".ppcur");
+  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function mark(i) { cur = i; dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
+    ths.forEach(function (t, k) { t.classList.toggle("on", k === i); t.setAttribute("aria-current", k === i ? "true" : "false"); });
+    if (cnt) cnt.textContent = i + 1; }
+  function go(i) { i = (i + n) % n; mark(i); track.scrollTo({ left: i * track.clientWidth, behavior: still ? "auto" : "smooth" }); }
+  var raf = 0; track.addEventListener("scroll", function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; var i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); if (i !== cur && i >= 0 && i < n) mark(i); }); }, { passive: true });
+  g.querySelectorAll(".ppstage .ppprev").forEach(function (b) { b.addEventListener("click", function () { go(cur - 1); }); });
+  g.querySelectorAll(".ppstage .ppnext").forEach(function (b) { b.addEventListener("click", function () { go(cur + 1); }); });
+  ths.forEach(function (t) { t.addEventListener("click", function () { go(+t.getAttribute("data-i")); }); });
+  track.addEventListener("keydown", function (e) { if (e.key === "ArrowRight") { e.preventDefault(); go(cur + 1); } else if (e.key === "ArrowLeft") { e.preventDefault(); go(cur - 1); } });
+  addEventListener("resize", function () { track.scrollTo({ left: cur * track.clientWidth }); });
+  /* the enlarged view: the photograph as it was shot, never stretched past it */
+  var box = document.getElementById("ppbox"), bimg = box.querySelector("img"), bcnt = box.querySelector(".ppcount"), back = null, bi = 0;
+  function show(i) { bi = (i + n) % n; var im = slides[bi].querySelector("img"); box.classList.remove("zoom"); bimg.style.transformOrigin = "";
+    bimg.src = im.getAttribute("data-full"); bimg.alt = im.alt; bcnt.textContent = (bi + 1) + " / " + n; }
+  function open(i) { back = document.activeElement; show(i); box.hidden = false; document.documentElement.classList.add("ppopen"); box.querySelector(".ppx").focus(); }
+  function close() { box.hidden = true; document.documentElement.classList.remove("ppopen"); go(bi); if (back && back.focus) back.focus(); }
+  slides.forEach(function (sl, i) { sl.querySelector(".ppzoom").addEventListener("click", function () { open(i); }); });
+  box.querySelector(".ppx").addEventListener("click", close);
+  box.querySelector(".ppprev").addEventListener("click", function () { show(bi - 1); });
+  box.querySelector(".ppnext").addEventListener("click", function () { show(bi + 1); });
+  box.addEventListener("click", function (e) { if (e.target === box) close(); });
+  /* on a fine pointer the photograph can be looked into at its own size */
+  bimg.addEventListener("click", function (e) { if (!matchMedia("(pointer:fine)").matches) return; var r = bimg.getBoundingClientRect(), k = bimg.naturalWidth / Math.max(1, r.width);
+    if (box.classList.contains("zoom")) { box.classList.remove("zoom"); return; } if (k < 1.15) return;
+    bimg.style.setProperty("--zk", k.toFixed(3)); bimg.style.transformOrigin = ((e.clientX - r.left) / r.width * 100).toFixed(1) + "% " + ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%"; box.classList.add("zoom"); });
+  bimg.addEventListener("mousemove", function (e) { if (!box.classList.contains("zoom")) return; var r = box.getBoundingClientRect(); bimg.style.transformOrigin = ((e.clientX - r.left) / r.width * 100).toFixed(1) + "% " + ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%"; });
+  var sx = 0; box.addEventListener("pointerdown", function (e) { sx = e.clientX; }); box.addEventListener("pointerup", function (e) { if (e.pointerType === "mouse") return; var dx = e.clientX - sx; if (Math.abs(dx) > 40) show(bi + (dx < 0 ? 1 : -1)); });
+  document.addEventListener("keydown", function (e) { if (box.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); close(); } else if (e.key === "ArrowRight") show(bi + 1); else if (e.key === "ArrowLeft") show(bi - 1);
+    else if (e.key === "Tab") { var f = [].slice.call(box.querySelectorAll("button")), a = f.indexOf(document.activeElement); e.preventDefault(); f[(a + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus(); } });
+})();</script>`;
     const pick = (x, he) => he ? x.he : x.en;
     const AT = (x, he) => `${A(x)}>${pick(x, he)}`;
     for (const he of [false, true]) for (const p of shown) {
       const slug = (he ? "he/" : "") + "pieces/" + p.id;
       const alt = { en: "pieces/" + p.id + "/", he: "he/pieces/" + p.id + "/" };
       const others = shown.filter(q => q !== p);
+      const n = p.shots.length, W = p.widths || [800, 1200], big = W[W.length - 1];
+      const nm = plain(pick(p.name, he));
+      /* the photograph in the stage: the piece whole, never cropped (contain),
+         in the width the screen and its pixel density ask for; the largest
+         width is the photograph as it was shot, and is what the enlarged view
+         shows. Nothing is upscaled past it. */
+      const stageImg = (sh, i) => `<img src="img/${sh.img}-${W[Math.min(1, W.length - 1)]}.jpg" srcset="${W.map(x => `img/${sh.img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:1240px) 700px, (min-width:900px) 56vw, 100vw" width="${big}" height="${big}" alt="${escA(sh.alt.en)}" data-alt-he="${escA(sh.alt.he)}" data-full="img/${sh.img}-${big}.jpg"${i ? ' loading="lazy" decoding="async"' : ' fetchpriority="high" decoding="async"'}>`;
+      const thumb = (sh, i) => `<button type="button" class="ppth${i ? "" : " on"}" data-i="${i}" aria-current="${i ? "false" : "true"}" aria-label="${escA(sh.alt.en)}" data-aria-he="${escA(sh.alt.he)}"><img src="img/${sh.img}-${W[0]}.jpg" alt="" loading="lazy" decoding="async" width="${W[0]}" height="${W[0]}"></button>`;
+      const careLinks = ["care", "warranty", "delivery", "authenticity"].map(sl => POLICIES.find(d => d.slug === sl)).filter(Boolean);
+      const specs = p.specs.filter(r => !/^Price$/.test(r[0].en));
+      const enq = `./?piece=${p.id}#concierge`;
       const inner = `<main class="doc ppage">
-<nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}"><a href="./#collection" ${AT(S("The collection", "הקולקציה"), he)}</a><i aria-hidden="true">/</i><span aria-current="page">${plain(pick(p.name, he))}</span></nav>
+<nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}"><a href="./#collection" ${AT(S("The collection", "הקולקציה"), he)}</a><i aria-hidden="true">/</i><span aria-current="page">${nm}</span></nav>
 <div class="ppgrid">
-<div class="ppgal">${p.shots.map((sh, i) => `<figure>${img(sh, p, i)}</figure>`).join("")}</div>
+<section class="ppgal" aria-roledescription="carousel" aria-label="${escA(nm)}" data-n="${n}">
+<div class="ppstage">
+<ul class="pptrack" tabindex="0" aria-label="${escA(nm)}">${p.shots.map((sh, i) => `<li class="ppslide" aria-roledescription="slide" aria-label="${i + 1} / ${n}"><button type="button" class="ppzoom" data-i="${i}" aria-label="Enlarge the photograph" data-aria-he="הגדלת התמונה">${stageImg(sh, i)}</button></li>`).join("")}</ul>
+${n > 1 ? `<button type="button" class="ppnav ppprev" aria-label="Previous photograph" data-aria-he="התמונה הקודמת"></button><button type="button" class="ppnav ppnext" aria-label="Next photograph" data-aria-he="התמונה הבאה"></button>
+<div class="ppcount k" aria-hidden="true"><span class="ppcur">1</span> / ${n}</div>
+<div class="ppdots" aria-hidden="true">${p.shots.map((sh, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div>` : ""}
+</div>
+${n > 1 ? `<div class="ppthumbs">${p.shots.map(thumb).join("")}</div>` : ""}
+</section>
 <div class="pptext">
 <div class="k gold" ${AT(p.kind || S("", ""), he)}</div>
 <h1 ${AT(p.name, he)}</h1>
 <p class="lede" ${AT(p.line, he)}</p>
-${p.story ? `<p class="p" ${AT(p.story, he)}</p>` : ""}
-<dl class="ppspecs">${p.specs.map(r => `<div><dt ${AT(r[0], he)}</dt><dd ${AT(r[1], he)}</dd></div>`).join("")}</dl>
-<p class="pprice"><span ${AT(S("Price on request", "מחיר לפי בקשה"), he)}</span> · <span ${AT(S("Quoted personally, on enquiry", "הצעת מחיר אישית, לפי פנייה"), he)}</span></p>
-<div class="acta"><a class="btn solid" href="./#concierge" ${AT(S("Book a private viewing", "קביעת פגישה פרטית"), he)}</a><a class="btn" href="./#collection" ${AT(S("Back to the collection", "חזרה לקולקציה"), he)}</a></div>
+<dl class="ppkey">${(p.key || []).map(r => `<div><dt ${AT(r[0], he)}</dt><dd ${AT(r[1], he)}</dd></div>`).join("")}</dl>
+<p class="pprice"><span ${AT(S("Price on request", "מחיר לפי בקשה"), he)}</span></p>
+<div class="acta"><a class="btn solid ppenq" href="${enq}" data-piece-id="${p.id}" data-ref="${escA(p.ref)}" ${AT(S("Enquire about this piece", "פנייה לגבי התכשיט"), he)}</a><a class="lnk ppback" href="./#collection" ${AT(S("Back to the collection", "חזרה לקולקציה"), he)}</a></div>
+<div class="ppacc">
+${p.story ? `<details><summary ${AT(S("The story", "הסיפור"), he)}</summary><p class="p" ${AT(p.story, he)}</p></details>` : ""}
+<details><summary ${AT(S("Specification", "מפרט"), he)}</summary><dl class="ppspecs">${specs.map(r => `<div><dt ${AT(r[0], he)}</dt><dd ${AT(r[1], he)}</dd></div>`).join("")}</dl></details>
+<details><summary ${AT(S("Care and service", "טיפול ושירות"), he)}</summary><ul class="ppcare">${careLinks.map(d => `<li><a href="${d.slug}/" ${AT(d.title, he)}</a></li>`).join("")}</ul></details>
+</div>
 </div>
 </div>
 ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the collection", "עוד בקולקציה"), he)}</h2><ul>${others.map(q => `<li><a href="pieces/${q.id}/"><img src="img/${q.shots[0].img}-${(q.widths || [800])[0]}.jpg" alt="" loading="lazy" decoding="async"><span ${AT(q.name, he)}</span></a></li>`).join("")}</ul></section>` : ""}
+<div class="ppbox" id="ppbox" role="dialog" aria-modal="true" aria-label="${escA(nm)}" hidden><button type="button" class="ppx" aria-label="Close" data-aria-he="סגירה"></button><button type="button" class="ppnav ppprev" aria-label="Previous photograph" data-aria-he="התמונה הקודמת"></button><figure><img alt=""></figure><button type="button" class="ppnav ppnext" aria-label="Next photograph" data-aria-he="התמונה הבאה"></button><div class="ppcount k" aria-live="polite"></div></div>
 </main>`;
       const title = (he ? (p.title && p.title.he) : (p.title && p.title.en)) || (plain(pick(p.name, he)) + " | SILAVU");
       const desc = plain(pick(p.line, he)) + (he ? " מחיר לפי בקשה." : " Price on request.");
@@ -461,7 +535,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
         { "@type": "BreadcrumbList", "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" + (he ? "he/" : "") },
           { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
-      page(slug, title, desc, inner, "", { he, alt, image, schema });
+      page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript });
     }
     PIECE_URLS = shown.map(p => p.id);
     console.log("pieces:", PIECE_URLS.join(" "), "(en + he)");

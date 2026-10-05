@@ -6048,25 +6048,6 @@ html body .soc a:focus-visible { outline:2px solid rgba(236,227,207,.8); outline
 }
 @media (max-width:999px) { #enquire .k.ol::before { display:none; } }
 
-/* ══ v187 — the collection, in the hand ═══════════════════════════════════
-   With a mouse a piece turns toward the pointer (script4): a few degrees of
-   tilt in depth, the photograph moving the other way inside its frame for
-   depth, a soft light under the pointer and a shadow that falls away from
-   it. Touch and reduced motion keep the quiet lift. ───────────────────── */
-@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
-  html body .pgrid .piece:not(.soon) .fig.r11 { transform-origin:50% 50%;
-    transition:transform .9s cubic-bezier(.2,.8,.2,1), box-shadow .9s cubic-bezier(.2,.8,.2,1), border-color .6s; }
-  html body .pgrid .piece:not(.soon) .fig.r11.tilt { transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-8px) scale(1.018) !important;
-    transition:transform .16s ease-out, box-shadow .3s ease-out, border-color .6s;
-    box-shadow:var(--sx2,0px) var(--sy2,22px) 44px -18px rgba(20,19,15,.34), 0 2px 6px -2px rgba(20,19,15,.12); }
-  html body .pgrid .piece:not(.soon) .fig.r11 .im img { translate:var(--px,0px) var(--py,0px); transition:transform 1.5s var(--ease), translate .5s cubic-bezier(.2,.8,.2,1) !important; }
-  html body .pgrid .piece:not(.soon) .fig.r11.tilt .im img { transition:transform 1.5s var(--ease), translate .18s ease-out !important; }
-  html body .pgrid .piece:not(.soon) .fig.r11 .tglare { position:absolute; inset:0; z-index:3; pointer-events:none; border-radius:inherit; opacity:0;
-    background:radial-gradient(60% 55% at var(--mx,50%) var(--my,30%), rgba(255,255,255,.42), rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 70%);
-    mix-blend-mode:soft-light; transition:opacity .6s ease; }
-  html body .pgrid .piece:not(.soon) .fig.r11.tilt .tglare { opacity:1; }
-}
-
 /* one emblem per opening: where a chapter begins with the mark between its
    hairlines, its label does not repeat it */
 html body section:has(.chap) .k.ol::before { display:none; }
@@ -6197,3 +6178,134 @@ html[data-ns] .dpage .doc.about .aport figcaption b { font-family:inherit; }
   html body .dfcols > div + div { padding-top:18px; border-top:1px solid rgba(255,255,255,.07); }
   html body .dfbot { width:100%; justify-content:center; gap:18px; font-size:10px; }
 }
+
+/* ══ v194 — the collection, held still ═══════════════════════════════════
+   The cards no longer tilt, walk through their photographs on a timer or
+   drift with the scroll. Resting a mouse on a card turns it once, softly, to
+   the piece worn (script4), and the photograph on show grows by a breath
+   inside its frame. The frame, its border, the arrows and the words under it
+   do not move. Every earlier hover rule on these photographs is overruled
+   here, so only one thing ever drives their transform. ──────────────────── */
+html body .pgrid .piece .fig.swp, html body .pgrid .piece:hover .fig.swp,
+html body .pgrid .piece:not(.soon):hover .fig.r11 { transform:none !important; }
+html body .pgrid .piece .fig.swp .im img { transform:none !important; translate:none !important;
+  transition:transform 1.6s cubic-bezier(.22,.61,.36,1), opacity .7s ease !important; }
+html body .pgrid .piece:not(.soon):hover .t { transform:none !important; }
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  html body .pgrid .piece:not(.soon):hover .fig.swp .im img,
+  html body .pgrid .piece:not(.soon):hover .fig.swp.rv.in .im img { transform:scale(1.025) !important; }
+}
+/* the cross-fade to the worn photograph: shown in place, faded, never slid */
+html body .pgrid .piece .fig.swp .im.hx.hvr { visibility:visible !important; transform:none !important; z-index:2;
+  opacity:0 !important; transition:opacity .8s cubic-bezier(.25,.6,.3,1) !important; }
+html body .pgrid .piece .fig.swp .im.hx.hvr.hvon { opacity:1 !important; }
+@media (prefers-reduced-motion:reduce) {
+  html body .pgrid .piece .fig.swp .im.hx.hvr { transition:none !important; }
+}
+/* the arrows appear by fading only: they do not grow or shift under the pointer */
+html body .pgrid .fig.swp .cnav { transform:none !important; transition:opacity .45s ease, background-color .3s ease !important; }
+
+/* ══ v195 — the signature on one diagonal ═════════════════════════════════
+   The black above and the white below meet on one gentle diagonal through
+   the name, drawn inside the name's own drawing (body.mjs) so it scales with
+   it. The line is light metal over the black and dark ink over the white:
+   the same path twice, under two clips that share that diagonal, so nothing
+   is doubled and no blend mode is needed. The hold is a little longer, so
+   the writing is felt, but it is still a short pause, not a lock. ──────── */
+html body #craft .sgfig, html body #craft .sgcopy { mix-blend-mode:normal !important; }
+#craft .sgwhite { fill:#ffffff; }
+#craft .sgdark .sgpath { stroke:#1b1a17; stroke-opacity:.72; }
+#craft .sgdark .sgbody { stroke:url(#sgmetald); }
+#craft .sgdark .sgdot { fill:#14130f; }
+#craft .sgdark .sgcore { fill:#14130f; }
+html body #craft.sgjs { height:calc(var(--sgS) + 12svh) !important; }
+@media (max-width:759px) { html body #craft.sgjs { height:calc(var(--sgS) + 8svh) !important; } }
+#craft .sglite > path, #craft .sgdark > path { fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+/* ══ v196 — the piece page ════════════════════════════════════════════════
+   One photograph at a time in a wide stage, the piece whole on white
+   (contain, never cropped), with thumbnails under it; beside it, the name,
+   one line, the four key facts, "Price on request" once and one way to
+   enquire. The story, the full specification and the service documents are
+   folded underneath. About 60/40 on a desktop; on a phone the photograph
+   comes first and swipes, and the name and the enquiry follow straight
+   after it. Nothing is held to the height of the screen. ───────────────── */
+main.doc.ppage { max-width:1320px; }
+.ppage .ppgrid { display:grid; grid-template-columns:minmax(0, 3fr) minmax(0, 2fr); gap:clamp(32px, 4.5vw, 72px); align-items:start; }
+.ppage .ppgal { margin:0; display:grid; gap:12px; min-width:0; }
+.ppage .ppstage { position:relative; direction:ltr; background:#fff; border-radius:14px; overflow:hidden; aspect-ratio:1 / 1; max-height:min(78svh, 760px); }
+.ppage .pptrack { list-style:none; margin:0; padding:0; display:flex; height:100%; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior-x:contain; }
+.ppage .pptrack::-webkit-scrollbar { display:none; }
+.ppage .pptrack:focus-visible { outline:1px solid #8a6d3b; outline-offset:-3px; }
+.ppage .ppslide { flex:0 0 100%; height:100%; scroll-snap-align:start; scroll-snap-stop:always; }
+.ppage .ppzoom { display:block; width:100%; height:100%; padding:0; margin:0; border:0; background:#fff; cursor:zoom-in; }
+.ppage .ppzoom img { width:100%; height:100%; object-fit:contain; display:block; }
+.ppage .ppzoom:focus-visible { outline:1px solid #8a6d3b; outline-offset:-4px; }
+.ppage .ppnav { position:absolute; z-index:2; top:50%; width:44px; height:44px; margin-top:-22px; padding:0; border-radius:50%; cursor:pointer;
+  border:1px solid rgba(20,19,15,.12); background:rgba(255,255,255,.86); color:#14130f; box-shadow:0 8px 20px -12px rgba(0,0,0,.35); transition:background-color .3s ease; }
+.ppage .ppnav::before { content:""; position:absolute; left:50%; top:50%; width:8px; height:8px; border:solid currentColor; border-width:0 1.2px 1.2px 0; transform:translate(-65%,-50%) rotate(-45deg); }
+.ppage .ppprev::before { transform:translate(-35%,-50%) rotate(135deg); }
+.ppage .ppstage .ppprev { left:14px; } .ppage .ppstage .ppnext { right:14px; }
+.ppage .ppnav:hover { background:#fff; }
+.ppage .ppnav:focus-visible { outline:1px solid #8a6d3b; outline-offset:2px; }
+.ppage .ppcount { position:absolute; z-index:2; right:16px; bottom:14px; color:#6b655a; font-variant-numeric:tabular-nums; letter-spacing:.12em; }
+.ppage .ppdots { display:none; }
+.ppage .ppthumbs { display:grid; grid-template-columns:repeat(auto-fill, minmax(72px, 1fr)); gap:10px; direction:ltr; }
+.ppage .ppth { padding:0; margin:0; border:1px solid transparent; border-radius:10px; overflow:hidden; background:#fff; cursor:pointer; aspect-ratio:1 / 1; opacity:.62; transition:opacity .3s ease, border-color .3s ease; }
+.ppage .ppth img { width:100%; height:100%; object-fit:contain; display:block; }
+.ppage .ppth.on { opacity:1; border-color:rgba(242,239,233,.7); }
+.ppage .ppth:hover { opacity:1; }
+.ppage .ppth:focus-visible { outline:1px solid #8a6d3b; outline-offset:2px; opacity:1; }
+.ppage .pptext { position:static; display:grid; gap:18px; max-width:34rem; }
+.ppage .pptext h1 { margin:0; }
+.ppage .pptext .lede { margin:0; max-width:32em; }
+.ppage .ppkey, .ppage .ppspecs { margin:0; display:grid; border-top:1px solid rgba(242,239,233,.14); }
+.ppage .ppkey > div, .ppage .ppspecs > div { display:grid; grid-template-columns:minmax(0, 9.5em) minmax(0, 1fr); gap:16px; padding:11px 0; border-bottom:1px solid rgba(242,239,233,.14); }
+.ppage .ppkey dt, .ppage .ppspecs dt { color:var(--ink3); font-size:.875rem; letter-spacing:.04em; }
+.ppage .ppkey dd, .ppage .ppspecs dd { margin:0; color:var(--ink); font-size:1rem; }
+.ppage .pprice { margin:0; color:var(--ink2); font-size:.9375rem; letter-spacing:.02em; }
+.ppage .acta { display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; margin:0; }
+.ppage .ppback { color:var(--ink2); font-size:.8125rem; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid rgba(242,239,233,.28); padding-bottom:3px; }
+.ppage .ppback:hover { color:var(--ink); border-color:var(--ink2); }
+html[data-ns] .ppage .ppback { letter-spacing:0; text-transform:none; font-size:.9375rem; }
+.ppage .ppacc { margin-top:6px; border-top:1px solid rgba(242,239,233,.14); }
+.ppage .ppacc details { border-bottom:1px solid rgba(242,239,233,.14); }
+.ppage .ppacc summary { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 0; cursor:pointer; list-style:none;
+  color:var(--ink); font-size:.8125rem; letter-spacing:.16em; text-transform:uppercase; }
+html[data-ns] .ppage .ppacc summary { letter-spacing:0; text-transform:none; font-size:1rem; }
+.ppage .ppacc summary::-webkit-details-marker { display:none; }
+.ppage .ppacc summary::after { content:""; width:9px; height:9px; flex:none; border:solid var(--ink2); border-width:0 1.2px 1.2px 0; transform:rotate(45deg) translate(-2px,-2px); transition:transform .3s ease; }
+.ppage .ppacc details[open] > summary::after { transform:rotate(-135deg) translate(-2px,-2px); }
+.ppage .ppacc summary:focus-visible { outline:1px solid #8a6d3b; outline-offset:4px; }
+.ppage .ppacc details > :not(summary) { margin:0 0 18px; }
+.ppage .ppacc .p { margin:0 0 18px; color:var(--ink2); max-width:34em; }
+.ppage .ppcare { list-style:none; padding:0; display:grid; gap:10px; }
+.ppage .ppcare a { color:var(--ink2); text-decoration:none; border-bottom:1px solid rgba(242,239,233,.2); }
+.ppage .ppcare a:hover { color:var(--ink); }
+/* the enlarged view */
+html.ppopen, html.ppopen body { overflow:hidden; }
+.ppbox { position:fixed; inset:0; z-index:9000; display:grid; place-items:center; background:rgba(6,6,6,.96); direction:ltr; }
+.ppbox[hidden] { display:none; }
+.ppbox figure { margin:0; max-width:92vw; max-height:86svh; overflow:hidden; border-radius:10px; background:#fff; }
+.ppbox img { display:block; max-width:92vw; max-height:86svh; width:auto; height:auto; object-fit:contain; cursor:zoom-in; transition:transform .35s cubic-bezier(.22,.61,.36,1); }
+.ppbox.zoom img { transform:scale(var(--zk, 1)); cursor:zoom-out; }
+.ppbox .ppnav { position:fixed; } .ppbox .ppprev { left:20px; } .ppbox .ppnext { right:20px; }
+.ppbox .ppx { position:fixed; top:18px; right:18px; width:44px; height:44px; border-radius:50%; border:1px solid rgba(242,239,233,.3); background:rgba(0,0,0,.4); color:#f2efe9; cursor:pointer; }
+.ppbox .ppx::before, .ppbox .ppx::after { content:""; position:absolute; left:50%; top:50%; width:16px; height:1.2px; background:currentColor; transform:translate(-50%,-50%) rotate(45deg); }
+.ppbox .ppx::after { transform:translate(-50%,-50%) rotate(-45deg); }
+.ppbox .ppx:focus-visible { outline:1px solid #c9a96b; outline-offset:3px; }
+.ppbox .ppcount { position:fixed; bottom:18px; left:50%; transform:translateX(-50%); color:rgba(242,239,233,.7); letter-spacing:.14em; font-variant-numeric:tabular-nums; }
+@media (prefers-reduced-motion:reduce) { .ppbox img { transition:none; } }
+@media (max-width:899px) {
+  .ppage .ppgrid { grid-template-columns:minmax(0, 1fr); gap:26px; }
+  .ppage .ppstage { max-height:none; border-radius:12px; }
+  .ppage .ppthumbs { display:none; }
+  .ppage .ppdots { display:flex; position:absolute; z-index:2; left:50%; bottom:14px; transform:translateX(-50%); gap:7px; }
+  .ppage .ppdots i { width:6px; height:6px; border-radius:50%; background:rgba(20,19,15,.22); transition:background-color .3s ease; }
+  .ppage .ppdots i.on { background:rgba(20,19,15,.78); }
+  .ppage .ppcount { top:12px; bottom:auto; right:14px; }
+  .ppage .pptext { max-width:none; gap:16px; }
+  .ppbox .ppnav { top:auto; bottom:12px; margin-top:0; } .ppbox .ppprev { left:16px; } .ppbox .ppnext { right:16px; }
+}
+@media (hover:none) { .ppage .ppstage .ppnav { display:none; } }
+html body .ppage .ppgal { grid-template-columns:minmax(0, 1fr); grid-auto-flow:row; grid-auto-columns:auto; overflow:visible; scroll-snap-type:none; }

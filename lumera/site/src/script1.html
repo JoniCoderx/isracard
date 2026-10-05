@@ -157,7 +157,7 @@
         /* a commission is not a viewing of something that exists: say so, and
            mark it as such in the form */
         setSel({ k: "bespoke", a: "bespoke" });
-      } else setSel({ k: "piece", a: res ? "reserve" : "viewing", p: pn, ph: a.getAttribute("data-piece-he") || "" });
+      } else setSel({ k: "piece", a: res ? "reserve" : "viewing", p: pn, ph: a.getAttribute("data-piece-he") || "", r: a.getAttribute("data-ref") || "" });
     }
     /* a long way is travelled at once: gliding through the film and the box
        on the way made every chapter between render, and the page took three
@@ -254,12 +254,15 @@
   function glowTick() { if (!glowOn) return; gx = lerp(gx, tgx, 0.1); gy = lerp(gy, tgy, 0.1); glow.style.transform = "translate(" + (gx - 280).toFixed(1) + "px," + (gy - 280).toFixed(1) + "px)"; }
 
   /* ── photographs drift a little as they pass: cheap parallax on every card image ── */
-  var pimgs = Array.prototype.slice.call(document.querySelectorAll(".im img"));
+  var pimgs = Array.prototype.slice.call(document.querySelectorAll(".im img")).filter(function (im) { return !im.closest(".pgrid"); });  /* the collection's photographs hold still: one soft zoom on hover is their only movement */
   function drift() { var vh = innerHeight; for (var i = 0; i < pimgs.length; i++) { var r = pimgs[i].parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) continue; var t = (r.top + r.height / 2 - vh / 2) / vh; pimgs[i].style.setProperty("--py", (t * -5).toFixed(2) + "%"); } }
 
   /* ── inside the stone: the film plays when it comes into view ── */
   var iv = $("insidevid"), ivLoaded = false;
-  function insideTick() { var r = iv.getBoundingClientRect(); var near = r.bottom > -innerHeight && r.top < innerHeight * 2; /* setting src starts the fetch; load() then threw that one away and started another, so the phone downloaded this film twice — 1.9MB of it, measured on the live site */
+  /* its still is asked for as the chapter approaches, not with the page: a
+     poster attribute is fetched at once wherever the video sits */
+  function insideTick() { var r = iv.getBoundingClientRect(); var near = r.bottom > -innerHeight && r.top < innerHeight * 2;
+    if (!iv.poster && iv.dataset.poster && r.top < innerHeight * 3.5 && r.bottom > -innerHeight * 2) iv.poster = iv.dataset.poster; /* setting src starts the fetch; load() then threw that one away and started another, so the phone downloaded this film twice — 1.9MB of it, measured on the live site */
     if (near && !ivLoaded) { ivLoaded = true; iv.preload = "auto"; iv.src = desk() ? "/v/inside.mp4" : "/v/inside-v.mp4"; } if (!ivLoaded || reduce) return; var vis = r.bottom > 0 && r.top < innerHeight; if (vis && iv.paused) { var pr = iv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !iv.paused) iv.pause(); }
   /* inside the stone holds still: the film plays, the words stay where they are */
   window.__film = { get target() { return 0; }, get shown() { return 0; }, get loaded() { return ivLoaded ? 1 : 0; } };
@@ -461,6 +464,7 @@
     $("pmRes").setAttribute("data-piece", pmPiece);
     var pmHe = btn ? btn.getAttribute("data-piece-he") || "" : "";
     $("pmReq").setAttribute("data-piece-he", pmHe); $("pmRes").setAttribute("data-piece-he", pmHe);
+    var pmRef = btn ? btn.getAttribute("data-ref") || "" : ""; $("pmReq").setAttribute("data-ref", pmRef); $("pmRes").setAttribute("data-ref", pmRef);
     /* the try-on draws a tennis line on a photograph; it has nothing to say
        about a chain bracelet or a pendant */
     $("pmTry").hidden = !pc.hasAttribute("data-tryon");
@@ -978,7 +982,9 @@
   var SELWANT = { reserve: "A piece from the collection", viewing: "Private viewing", bespoke: "Bespoke commission", design: "A piece from the collection", tryon: "Private viewing" };
   function selText() {
     if (!sel) return "";
-    if (sel.k === "piece") return lang === "he" ? (sel.ph || sel.p) : (T(sel.p) || sel.p);
+    /* the piece by name and by its reference, the reference kept left to right inside a right-to-left line */
+    if (sel.k === "piece") { var nm = lang === "he" ? (sel.ph || sel.p) : (T(sel.p) || sel.p);
+      return sel.r ? nm + " · " + ((lang === "he" || lang === "ar") ? "\u2066" + sel.r + "\u2069" : sel.r) : nm; }
     if (sel.k === "line") return lineText(sel.b || {}, sel.est) + (sel.img ? " · " + L2("picture saved, to attach", "התמונה נשמרה לצירוף") : "");
     if (sel.k === "note") return sel.t || "";
     return L2("A bespoke piece, from a conversation", "תכשיט בהתאמה אישית, שמתחיל משיחה");
@@ -1281,6 +1287,17 @@
       var bd = $("build"); if (bd) window.scrollTo({ top: scrollY + bd.getBoundingClientRect().top - 60, behavior: "instant" });
     }
   });
+  /* Arriving from a piece's own page ("Enquire about this piece", in any
+     language, or straight from a link): the address names the piece, and the
+     form opens already holding it by name and reference. The address is then
+     tidied back to the page's own. */
+  (function () {
+    var q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+    var id = q.get("piece"); if (!id || !/^[a-z0-9-]+$/.test(id)) return;
+    var a = document.querySelector("#p-" + id + " .lnk.q");
+    if (a) setSel({ k: "piece", a: q.get("act") === "reserve" ? "reserve" : "viewing", p: a.getAttribute("data-piece"), ph: a.getAttribute("data-piece-he") || "", r: a.getAttribute("data-ref") || "" });
+    try { q.delete("piece"); q.delete("act"); var s = q.toString(); history.replaceState(history.state, "", location.pathname + (s ? "?" + s : "") + location.hash); } catch (e) {}
+  })();
   selPaint();
   form.addEventListener("focusin", function (e) { if (e.target.matches("input, textarea")) document.body.classList.add("typing"); });
   /* when the keyboard comes up the window shrinks; the field being typed in

@@ -20,7 +20,7 @@
        returns), and on a weak device only every third frame is used at all.
        With reduced motion there is one frame, and it does not follow the
        scroll. */
-    var STEP = o.step || 1, WIN = o.win || N, STILL = o.still == null ? 0.5 : o.still;
+    var STEP = o.step || 1, WIN = o.win || N, SKEL = o.skel || 0, STILL = o.still == null ? 0.5 : o.still;
     var held = 0, peak = 0;
     var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
     function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + (o.ext || ".jpg"); }
@@ -47,27 +47,68 @@
        Asking for the nearest missing frame first closes the gap you are looking
        through before any other. */
     function at(q) { var i = Math.max(0, Math.min(N - 1, Math.round(q * (N - 1)))); return STEP > 1 ? Math.min(N - 1, Math.round(i / STEP) * STEP) : i; }
-    var timer = 0;
+    var timer = 0, dirn = 1, prevCur = -1;
+    /* Two things are kept apart here. What is fetched: the whole strip,
+       quietly, a few at a time and only once the page itself has loaded, so it
+       sits in the HTTP cache before the chapter is reached and never competes
+       with the first screen. What is decoded and held: only a window around
+       the frame on screen, reaching further ahead in the direction the page is
+       moving than behind it. Measured with real-weight frames on a throttled
+       phone (tools/boxwin.mjs), this holds no frame back at reading speed in
+       either direction while keeping a fraction of the strip in memory. A
+       device with little memory or a data saver fetches nothing ahead and uses
+       every third frame. */
+    var fetched = new Array(N), inflight = 0, pfOn = false;
+    function prefetch() {
+      if (pfOn || !o.prefetch || reduce) return; pfOn = true;
+      var go = function () {
+        (function more() {
+          if (!started) { pfOn = false; return; }
+          var want = at(Math.max(0, cur)), pick = -1;
+          for (var d = 0; d < N && pick < 0; d += STEP) {
+            var a = want + d * dirn, b = want - d * dirn;
+            if (a >= 0 && a < N && !fetched[a]) pick = a; else if (b >= 0 && b < N && !fetched[b]) pick = b;
+          }
+          if (pick < 0) return;
+          fetched[pick] = 1; inflight++;
+          var done = function () { inflight--; more(); };
+          try { fetch(src(pick), { priority: "low", credentials: "same-origin" }).then(function (r) { return r.arrayBuffer(); }).then(done, done); } catch (e) { done(); }
+          if (inflight < 3) more();
+        })();
+      };
+      if (document.readyState === "complete") (window.requestIdleCallback || setTimeout)(go, { timeout: 1200 });
+      else addEventListener("load", function () { (window.requestIdleCallback || setTimeout)(go, { timeout: 1200 }); }, { once: true });
+    }
     function loadAll() {
       if (started) return; started = true;
       var first = reduce ? at(STILL) : at(Math.max(0, cur));
       asked[first] = 1; load(first, function () { draw(true); });
       if (reduce) return;
+      prefetch();
       (function next() {
         timer = 0; if (!started) return;
         var want = at(Math.max(0, cur)), batch = 0;
+        if (cur !== prevCur) { if (prevCur >= 0 && cur !== prevCur) dirn = cur > prevCur ? 1 : -1; prevCur = cur; }
+        var ahead = WIN, behind = Math.max(STEP * 2, Math.round(WIN / 2));
+        /* every SKEL-th frame of the whole strip is kept once it is here: at
+           reading speed a phone crosses this chapter at about a hundred frames
+           a second, faster than any window can be decoded, and the skeleton
+           means the frame on screen is never more than half a gap away from
+           the one asked for. The window fills in between as the page slows. */
+        var keep = function (i) { return SKEL > 0 && i % SKEL === 0; };
         /* let go of what has fallen out of the window */
-        for (var j = 0; j < N; j++) if (asked[j] && Math.abs(j - want) > WIN) { if (frames[j]) { frames[j].src = ""; held--; } frames[j] = null; asked[j] = 0; requested = Math.max(0, requested - 1); }
+        for (var j = 0; j < N; j++) if (asked[j] && !keep(j) && ((j - want) * dirn > ahead || (want - j) * dirn > behind)) { if (frames[j]) { frames[j].src = ""; held--; } frames[j] = null; asked[j] = 0; requested = Math.max(0, requested - 1); }
         while (batch < 10) {
           var pick = -1;
-          for (var d = 0; d <= WIN; d += STEP) {
-            if (want - d >= 0 && !asked[want - d]) { pick = want - d; break; }
-            if (want + d < N && !asked[want + d]) { pick = want + d; break; }
+          for (var d = 0; d < N; d += STEP) {
+            var f = want + d * dirn, bk = want - d * dirn;
+            if (f >= 0 && f < N && !asked[f] && (d <= ahead || keep(f))) { pick = f; break; }
+            if (bk >= 0 && bk < N && !asked[bk] && (d <= behind || keep(bk))) { pick = bk; break; }
           }
           if (pick < 0) break;
           asked[pick] = 1; load(pick); batch++;
         }
-        timer = setTimeout(next, batch ? 30 : 200);
+        timer = setTimeout(next, batch ? 30 : 120);
       })();
     }
     /* There is no point owning more canvas than the strip can fill. A frame is
@@ -117,9 +158,9 @@
          direction: a reader who scrolls back up above a chapter has left it
          just as surely as one who scrolled down past it. */
       var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
-      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(function (f) { if (f) f.src = ""; }); frames = new Array(N); asked = new Array(N); loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(function (f) { if (f) f.src = ""; }); frames = new Array(N); asked = new Array(N); fetched = new Array(N); pfOn = false; loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return false;
-      if (!started) { size(); loadAll(); }
+      if (!started && document.readyState === "complete") { size(); loadAll(); }
       var target = c01(-r.top / (r.height - innerHeight));
       /* The catch-up is per unit of time, not per animation frame. Written the
          obvious way — p += (target - p) * 0.2 every frame — the scrub tracks the
@@ -139,7 +180,7 @@
     var szKey = ""; addEventListener("resize", function () { var r = cv.getBoundingClientRect(), k = Math.round(r.width) + "x" + Math.round(r.height); if (k === szKey) return; szKey = k; size(); draw(true); });
     return { tick: tick, size: size, redraw: function () { draw(true); },
       get p() { return lastP; }, get loaded() { return loaded; }, get requested() { return requested; }, get frame() { return drawn; }, get ok() { return started; },
-      get held() { return held; }, get peak() { return peak; }, get step() { return STEP; }, get win() { return WIN; }, get width() { var f = frames[drawn]; return f ? f.naturalWidth : 0; } };
+      get held() { return held; }, has: function (i) { return !!frames[i]; }, get asked() { return asked.reduce(function (a, v) { return a + (v ? 1 : 0); }, 0); }, get peak() { return peak; }, get step() { return STEP; }, get win() { return WIN; }, get width() { var f = frames[drawn]; return f ? f.naturalWidth : 0; } };
   }
 
   /* ── the box ── */
@@ -178,6 +219,15 @@
     beatsAt.p = p; outFade();
     var k = Math.min(n - 1, Math.floor(p * n)); for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j === k);
   }
+  /* the decoded window, set by measurement (tools/boxwin.mjs); a 4K frame is
+     four times the bitmap of a phone frame, so the widest screens hold fewer */
+  var wide4k = !phone && innerWidth * Math.min(devicePixelRatio || 1, 2) >= 3200;
+  /* measured (tools/boxwin.mjs, real-weight frames, throttled phone and
+     desktop, slow, reading-speed and flick scrolls both ways): a window of 18
+     with every third frame kept never shows a frame more than two away from
+     the one asked for, and holds 51 decoded frames instead of 96. A 4K frame is
+     four times the bitmap, so the widest screens keep 12 and every fourth. */
+  var WINBOX = window.__boxwin || (wide4k ? 12 : 18), SKELBOX = wide4k ? 4 : 3;
   var box = sequence({
     pin: "stonepin", canvas: "boxcv", n: 96, dir: "/f/box/", ext: ".webp",
     /* Ninety-six full-screen frames is the largest thing on the page, and it
@@ -191,7 +241,7 @@
     release: true,
     /* how much of the strip is held at once, and how much of it is used on a
        device with little memory or a data saver on */
-    step: weak ? 3 : 1, win: 96, still: 0.5,
+    step: weak ? 3 : 1, win: WINBOX, skel: weak ? 0 : (window.__boxskel != null ? window.__boxskel : SKELBOX), still: 0.5, prefetch: !weak,
     /* Four tiers now. The frames are cut from a 4K restoration rather than
        fetched as 2560 JPEGs that had themselves been upscaled from something
        smaller — which is why the box went soft on a wide screen: the canvas
