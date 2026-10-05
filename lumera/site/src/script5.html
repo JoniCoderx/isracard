@@ -9,6 +9,8 @@
   /* ── a scrubbed film: a tall pin, a sticky screen, and a strip of frames drawn
        to a canvas as the page moves. The box chapter has used this since the
        beginning; The Line uses the same machine, with its own frames. ── */
+  var engaged = false;
+  ["scroll", "wheel", "touchstart", "keydown", "pointerdown"].forEach(function (ev) { addEventListener(ev, function () { if (scrollY > 0 || ev !== "scroll") engaged = true; }, { passive: true }); });
   function sequence(o) {
     var pin = $(o.pin), cv = $(o.canvas), ctx = cv && cv.getContext("2d");
     if (!pin || !ctx) return null;
@@ -160,7 +162,10 @@
       var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
       if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(function (f) { if (f) f.src = ""; }); frames = new Array(N); asked = new Array(N); fetched = new Array(N); pfOn = false; loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return false;
-      if (!started && document.readyState === "complete") { size(); loadAll(); }
+      /* the strip waits for the reader: it starts once the page has loaded and
+         the reader has begun to move (or the chapter is already at hand), so a
+         reader still on the first screen shares the connection with nothing */
+      if (!started && document.readyState === "complete" && (engaged || r.top < innerHeight * 1.1)) { size(); loadAll(); }
       var target = c01(-r.top / (r.height - innerHeight));
       /* The catch-up is per unit of time, not per animation frame. Written the
          obvious way — p += (target - p) * 0.2 every frame — the scrub tracks the
