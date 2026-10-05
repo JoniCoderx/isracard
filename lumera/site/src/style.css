@@ -2,10 +2,10 @@
      at the head of this sheet by build.mjs (from public/fonts). See FONT_HREF
      and SIZE_ADJUST there. */
   :root { --bg:#000; --ink:#f6f3ed; --ink2:#dcd9d2; --ink3:#b3b0a8; --gold:#e6e0d2; --house:#0b2327; --house-lit:#1a4a50; --house-tint:rgba(26,74,80,.22); --house-line:rgba(56,122,130,.45); --line:rgba(242,239,233,.14); --ease:cubic-bezier(.16,1,.3,1); --pad:clamp(20px,5vw,80px); --r:16px;
-    --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --serif:"Fraunces",Georgia,serif; --display:"Fraunces",Georgia,serif;
-    --word:"Urbanist","Manrope",system-ui,sans-serif; --ch:.593em; color-scheme:dark; }
-  html[data-lang="he"] { --sans:"Assistant","Manrope",system-ui,sans-serif; --display:"Rubik","Fraunces",system-ui,sans-serif; --ch:.482em; }
-  html[data-lang="ar"] { --sans:"Noto Sans Arabic","Manrope",system-ui,sans-serif; --display:"Noto Sans Arabic","Fraunces",system-ui,sans-serif; --ch:.482em; }
+    --sans:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif; --serif:"Jost",system-ui,sans-serif; --display:"Jost",system-ui,sans-serif;
+    --word:"Urbanist","Jost",system-ui,sans-serif; --ch:.593em; color-scheme:dark; }
+  html[data-lang="he"] { --sans:"Assistant","Jost",system-ui,sans-serif; --display:"Rubik","Jost",system-ui,sans-serif; --ch:.482em; }
+  html[data-lang="ar"] { --sans:"Noto Sans Arabic","Jost",system-ui,sans-serif; --display:"Noto Sans Arabic","Jost",system-ui,sans-serif; --ch:.482em; }
   :where(#silavu, #silavu *) { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; background:#000; }
   html, body { overflow-x:clip; }
@@ -5943,7 +5943,7 @@ html[dir="rtl"] .csel, html[dir="rtl"] .csel.hasimg { padding:10px 10px 10px 14p
 .csel .cselimg { flex:none; width:52px; height:52px; border-radius:12px; grid-row:auto; }
 .cselmain { flex:1 1 auto; min-width:0; display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; }
 .cselk { position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
-.csel .cseltxt { margin:0; font-family:var(--serif, "Fraunces", serif); font-size:1.06rem; line-height:1.3; letter-spacing:.005em; color:var(--ink); }
+.csel .cseltxt { margin:0; font-family:var(--serif, "Jost", sans-serif); font-size:1.06rem; line-height:1.3; letter-spacing:.005em; color:var(--ink); }
 .csel .cselact { margin:0; flex:none; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; line-height:1; color:#d6ba80;
   padding:6px 9px 5px; border:1px solid rgba(214,186,128,.38); border-radius:999px; }
 html[data-ns] .csel .cselact { letter-spacing:.04em; font-size:.7rem; }
@@ -6410,3 +6410,16 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   #macro .mveil { background:linear-gradient(to bottom, rgba(0,0,0,.7), rgba(0,0,0,0) 14%, rgba(0,0,0,0) 86%, rgba(0,0,0,.7)); }
   #macro .mveil::before { background:radial-gradient(closest-side, rgba(0,0,0,.42), rgba(0,0,0,.26) 40%, rgba(0,0,0,.1) 70%, rgba(0,0,0,0)); }
   @media (prefers-reduced-motion:reduce) { #macro #deskcv { transition:none; } }
+
+  /* ── v202 — one face, as the Paris houses set theirs. Jost (a free Futura)
+     for everything: headlines in capitals, regular weight, a little air
+     between the letters; text in the same face, plain and even; the accent in
+     a headline stays upright and is carried by its colour alone. Hebrew and
+     Arabic keep their own faces and have no capitals to set. ── */
+  .h, .h2, .h3, .dpage .doc h1, .ppage h1, #macro .mh, .ahtext h1 { font-family:var(--display); font-weight:400; text-transform:uppercase; letter-spacing:.035em; line-height:1.08; }
+  .h em, .h2 em, .h3 em, .dpage .doc h1 em, .ppage h1 em, #macro .mh em, #macro .mh .ml2, .ahtext h1 em { font-style:normal; font-weight:400; letter-spacing:inherit; }
+  .k, .btn, button, .hbook, .dbook, nav a { letter-spacing:.12em; }
+  body, .p, p { font-weight:400; letter-spacing:.005em; }
+  .lead, .p.lead { font-weight:400; }
+  html[data-ns] .h, html[data-ns] .h2, html[data-ns] .h3, html[data-ns] .dpage .doc h1, html[data-ns] .ppage h1, html[data-ns] #macro .mh, html[data-ns] .ahtext h1 { text-transform:none; letter-spacing:0; }
+  html[data-ns] .k, html[data-ns] .btn, html[data-ns] button, html[data-ns] .hbook, html[data-ns] .dbook, html[data-ns] nav a { letter-spacing:.02em; }

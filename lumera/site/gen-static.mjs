@@ -55,7 +55,7 @@ fs.rmSync(ASSETS, { recursive: true, force: true }); fs.mkdirSync(ASSETS, { recu
 const hashOf = t => crypto.createHash("sha1").update(t).digest("hex").slice(0, 10);
 let cssLink = "";
 /* the two faces every page sets first, asked for before the stylesheet is read */
-const fontPreload = ["manrope-normal-latin", "fraunces-normal-latin"].map(k => { const f = fs.readdirSync(path.join(path.dirname(path.resolve(src)), "public/fonts")).find(x => x.startsWith(k + "-") && x.endsWith(".woff2"));
+const fontPreload = ["jost-normal-latin"].map(k => { const f = fs.readdirSync(path.join(path.dirname(path.resolve(src)), "public/fonts")).find(x => x.startsWith(k + "-") && x.endsWith(".woff2"));
   return f ? `<link rel="preload" as="font" type="font/woff2" href="fonts/${f}" crossorigin>` : ""; }).filter(Boolean).join("\n");
 html = html.replace(/<style>([\s\S]*?)<\/style>\s*/, (m0, css) => { css = css.replace(/url\(fonts\//g, "url(../fonts/"); const n = "silavu." + hashOf(css) + ".css"; fs.writeFileSync(path.join(ASSETS, n), css); cssLink = '<link rel="stylesheet" href="assets/' + n + '">'; return ""; });
 let jsN = 0;

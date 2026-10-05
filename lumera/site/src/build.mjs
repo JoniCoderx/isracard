@@ -17,8 +17,11 @@ const FONT_HREF = "https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wgh
    Manrope runs about 4% wider than Urbanist, Fraunces upright about 15%
    narrower and lower in the x-height than the light Urbanist headlines it
    takes over, Rubik about 6% wider than Assistant */
-const SIZE_ADJUST = { Manrope: { normal: "96%" }, Fraunces: { normal: "108%" }, Rubik: { normal: "95%" } };
-const FONT_FACES = ["fraunces", "manrope", "rubik", "assistant", "wordmark"].map(n => fs.readFileSync(S + "../public/fonts/" + n + ".css", "utf8")).join("\n")
+/* v202: one geometric face for the whole house, in the manner of the great
+   Paris jewellers (Jost, a free Futura in all but name); its x-height is lower
+   than Manrope's, so it is set a little larger to read at the same size */
+const SIZE_ADJUST = { Jost: { normal: "104%", italic: "104%" }, Rubik: { normal: "95%" } };
+const FONT_FACES = ["jost", "rubik", "assistant", "wordmark"].map(n => fs.readFileSync(S + "../public/fonts/" + n + ".css", "utf8")).join("\n")
   .replace(/url\(([^)]+\.woff2)\)/g, "url(fonts/$1)")
   .replace(/@font-face \{([^}]*)\}/g, (m, body) => { const fam = (body.match(/font-family: '([^']+)'/) || [])[1], st = (body.match(/font-style: (\w+)/) || [])[1];
     const sa = SIZE_ADJUST[fam] && SIZE_ADJUST[fam][st]; return sa ? "@font-face {" + body.replace(/\s*$/, "") + "\n  size-adjust: " + sa + ";\n}" : m; });
