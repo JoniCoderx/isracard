@@ -271,7 +271,7 @@ ${markDefs()}
 
 
   <section id="macro" data-n="" data-title-en="The stone" data-title-he="האבן" aria-label="Inside the stone">
-    <div class="mfilm"><div class="mvid"><video id="insidevid" muted playsinline loop preload="none" data-poster="/img/one-2000.jpg" aria-hidden="true"></video></div><div class="mveil"></div>
+    <div class="mfilm"><picture class="mdesk" aria-hidden="true"><source media="(max-width:899px) and (orientation:portrait)" srcset="desk/leather-v-1080.jpg"><img class="mleather" src="desk/leather-2560.jpg" srcset="desk/leather-1600.jpg 1600w, desk/leather-2560.jpg 2560w, desk/leather-3840.jpg 3840w" sizes="100vw" alt="" loading="lazy" decoding="async"></picture><canvas id="deskcv" data-base="desk/" aria-hidden="true"></canvas><div class="mveil"></div>
       <div class="mtxt">
         <div class="msig" aria-hidden="true">${markUse("mmk")}${logo("mwm")}</div>
         <i class="mrule" aria-hidden="true"></i>

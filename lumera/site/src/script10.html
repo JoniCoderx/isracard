@@ -1,0 +1,205 @@
+<script>
+/* The desk. A black leather surface with loose stones on it (round, oval,
+   pear, marquise, emerald, princess, baguette) and two tennis bracelets, one
+   lying open and one in a loose loop. The pointer is a hand passing over the
+   desk: it pushes what it touches, by how fast it moves, and the stones slide,
+   knock into each other, turn and settle on the leather. A small light follows
+   the hand across the leather, and a stone catches a glint as it moves.
+
+   The photographs of the stones are cut-outs with their own transparency, so
+   each one is drawn as a picture, with a soft shadow under it; the bracelets
+   are chains of real links, each link held to the next at a fixed distance.
+
+   It only runs while the desk is on screen and something is moving, and it
+   sleeps the moment everything has come to rest. With reduced motion the desk
+   is drawn once and holds still. On a phone a sideways drag across the desk
+   pushes the stones and an upright one scrolls the page. */
+(function () {
+  "use strict";
+  var sec = document.getElementById("macro"), cv = document.getElementById("deskcv");
+  if (!sec || !cv || !cv.getContext) return;
+  var film = sec.querySelector(".mfilm"), ctx = cv.getContext("2d");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, coarse = matchMedia("(pointer: coarse)").matches;
+  var BASE = cv.getAttribute("data-base") || "desk/";
+  var NAMES = ["round", "oval", "pear", "marquise", "emerald", "princess", "baguette", "link"];
+  var IMG = {}, loaded = 0, started = false;
+
+  /* a seeded random, so the desk is laid out the same way each visit */
+  var seed = 7; function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+
+  var W = 0, H = 0, DPR = 1, bodies = [], chains = [], S = 60;
+  var P = { x: -9999, y: -9999, vx: 0, vy: 0, on: false, t: 0 }, light = 0;
+  var shadow = null, flare = null;
+
+  function sprites() {
+    /* a soft shadow and a four-point glint, drawn once */
+    shadow = document.createElement("canvas"); shadow.width = shadow.height = 128;
+    var s = shadow.getContext("2d"), g = s.createRadialGradient(64, 64, 4, 64, 64, 62);
+    g.addColorStop(0, "rgba(0,0,0,.62)"); g.addColorStop(.55, "rgba(0,0,0,.28)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    s.fillStyle = g; s.fillRect(0, 0, 128, 128);
+    flare = document.createElement("canvas"); flare.width = flare.height = 128;
+    var f = flare.getContext("2d"), h = f.createRadialGradient(64, 64, 0, 64, 64, 30);
+    h.addColorStop(0, "rgba(255,255,255,.95)"); h.addColorStop(.3, "rgba(255,250,240,.35)"); h.addColorStop(1, "rgba(255,250,240,0)");
+    f.fillStyle = h; f.fillRect(0, 0, 128, 128);
+    f.globalCompositeOperation = "lighter"; f.fillStyle = "rgba(255,255,255,.9)";
+    [[0, 1], [1, 0]].forEach(function (d) { f.save(); f.translate(64, 64); f.rotate(d[0] ? Math.PI / 2 : 0);
+      var lg = f.createLinearGradient(-62, 0, 62, 0); lg.addColorStop(0, "rgba(255,255,255,0)"); lg.addColorStop(.5, "rgba(255,255,255,.95)"); lg.addColorStop(1, "rgba(255,255,255,0)");
+      f.fillStyle = lg; f.beginPath(); f.moveTo(-62, 0); f.lineTo(0, -1.6); f.lineTo(62, 0); f.lineTo(0, 1.6); f.closePath(); f.fill(); f.restore(); });
+  }
+
+  function size() {
+    var r = film.getBoundingClientRect();
+    DPR = Math.min(devicePixelRatio || 1, coarse ? 1.75 : 2);
+    var w = Math.round(r.width), h = Math.round(r.height); if (!w || !h) return false;
+    var first = !W; W = w; H = h;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); cv.style.width = W + "px"; cv.style.height = H + "px";
+    S = Math.max(30, Math.min(84, Math.min(W, H * 1.6) * (coarse ? 0.105 : 0.062)));
+    if (first) lay(); else bodies.concat(flat()).forEach(keepIn);
+    return true;
+  }
+
+  /* lay the desk: loose stones, fewer under the words in the middle, and
+     two bracelets */
+  function lay() {
+    seed = 7; bodies = []; chains = [];
+    var n = coarse ? 16 : Math.round(Math.min(46, 18 + W / 60)), kinds = NAMES.slice(0, 7), tries = 0;
+    while (bodies.length < n && tries++ < 4000) {
+      var k = kinds[bodies.length % kinds.length], im = IMG[k], ar = im.naturalWidth / im.naturalHeight;
+      var sc = (0.72 + rnd() * 0.55) * (k === "baguette" ? 0.85 : 1), w = S * sc * Math.sqrt(ar), h = w / ar;
+      var x = 30 + rnd() * (W - 60), y = 30 + rnd() * (H - 60);
+      /* the words sit in the middle: keep that part of the desk quieter */
+      var dx = (x - W / 2) / (W * 0.34), dy = (y - H / 2) / (H * 0.30); if (dx * dx + dy * dy < 1 && rnd() < 0.94) continue;
+      var r = 0.5 * Math.sqrt(w * h) * 0.92, ok = true;
+      for (var i = 0; i < bodies.length; i++) { var b = bodies[i]; if (Math.hypot(b.x - x, b.y - y) < b.r + r + 6) { ok = false; break; } }
+      if (!ok) continue;
+      bodies.push({ k: k, im: im, x: x, y: y, vx: 0, vy: 0, a: rnd() * Math.PI * 2, va: 0, w: w, h: h, r: r, m: w * h, g: 0, ph: rnd() * 6.28 });
+    }
+    /* the bracelets: links of a tennis line, held at their own spacing */
+    var li = IMG.link, lar = li.naturalWidth / li.naturalHeight, lw = S * (coarse ? 0.62 : 0.56), lh = lw / lar, gap = lw * 0.8;
+    function chain(n, closed, fx) { var pts = []; for (var i = 0; i < n; i++) { var p = fx(i / (closed ? n : n - 1)); pts.push({ x: p[0], y: p[1], px: p[0], py: p[1], r: lh * 0.5 }); }
+      chains.push({ p: pts, closed: closed, d: gap, w: lw, h: lh }); }
+    var L = (coarse ? 20 : 30), R = gap * L / (2 * Math.PI);
+    /* one open, in a long lazy curve across the lower left */
+    chain(L, false, function (t) { return [W * 0.07 + t * gap * (L - 1) * 0.92, H * 0.80 - Math.sin(t * Math.PI) * H * 0.12]; });
+    /* one closed, in a loose loop to the upper right */
+    if (!coarse || W > 340) chain(L, true, function (t) { var a = t * Math.PI * 2; return [W * (coarse ? 0.72 : 0.80) + Math.cos(a) * R * 1.15, H * 0.28 + Math.sin(a) * R * 0.82]; });
+    /* nothing lies on top of a bracelet */
+    bodies = bodies.filter(function (b) { return !flat().some(function (q) { return Math.hypot(q.x - b.x, q.y - b.y) < q.r + b.r; }); });
+  }
+  function flat() { var o = []; chains.forEach(function (c) { o = o.concat(c.p); }); return o; }
+  function keepIn(b) { var r = b.r || 10; b.x = Math.max(r, Math.min(W - r, b.x)); b.y = Math.max(r, Math.min(H - r, b.y)); }
+
+  /* ── the physics ── */
+  function step(dt) {
+    var k = dt / 16.667, fr = Math.pow(0.905, k), fa = Math.pow(0.87, k), moving = 0;
+    var pr = coarse ? S * 1.25 : S * 1.05, i, j, b, q, dx, dy, d, o, nx, ny;
+    /* the hand */
+    if (P.on) {
+      for (i = 0; i < bodies.length; i++) { b = bodies[i]; dx = b.x - P.x; dy = b.y - P.y; d = Math.hypot(dx, dy) || 1; o = pr + b.r - d;
+        if (o > 0) { nx = dx / d; ny = dy / d; var push = Math.min(o, 40) * 0.09 + Math.max(0, P.vx * nx + P.vy * ny) * 0.55;
+          b.vx += nx * push; b.vy += ny * push; b.va += (P.vx * -ny + P.vy * nx) * 0.0016 * (60 / b.r); b.g = Math.min(1, b.g + 0.5); } }
+      chains.forEach(function (c) { c.p.forEach(function (n) { dx = n.x - P.x; dy = n.y - P.y; d = Math.hypot(dx, dy) || 1; o = pr + n.r - d;
+        if (o > 0) { nx = dx / d; ny = dy / d; var s = Math.min(o, 30) * 0.5 + Math.max(0, P.vx * nx + P.vy * ny) * 0.45; n.x += nx * s * 0.6; n.y += ny * s * 0.6; } }); });
+    }
+    /* stones slide and slow on the leather */
+    for (i = 0; i < bodies.length; i++) { b = bodies[i];
+      b.x += b.vx * k; b.y += b.vy * k; b.a += b.va * k; b.vx *= fr; b.vy *= fr; b.va *= fa; b.g *= Math.pow(0.93, k);
+      if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * 0.45; } else if (b.x > W - b.r) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * 0.45; }
+      if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy) * 0.45; } else if (b.y > H - b.r) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * 0.45; }
+      moving = Math.max(moving, Math.abs(b.vx) + Math.abs(b.vy) + Math.abs(b.va) * 20); }
+    /* and knock into each other */
+    for (i = 0; i < bodies.length; i++) for (j = i + 1; j < bodies.length; j++) { b = bodies[i]; q = bodies[j];
+      dx = q.x - b.x; dy = q.y - b.y; d = Math.hypot(dx, dy); o = b.r + q.r - d; if (o <= 0 || !d) continue;
+      nx = dx / d; ny = dy / d; var mt = b.m + q.m, wb = q.m / mt, wq = b.m / mt;
+      b.x -= nx * o * wb; b.y -= ny * o * wb; q.x += nx * o * wq; q.y += ny * o * wq;
+      var rv = (q.vx - b.vx) * nx + (q.vy - b.vy) * ny; if (rv < 0) { var J = -(1.35) * rv; b.vx -= nx * J * wb; b.vy -= ny * J * wb; q.vx += nx * J * wq; q.vy += ny * J * wq;
+        var t = (q.vx - b.vx) * -ny + (q.vy - b.vy) * nx; b.va -= t * 0.004; q.va += t * 0.004; b.g = Math.min(1, b.g + 0.25); q.g = Math.min(1, q.g + 0.25); } }
+    /* the bracelets: links move with what they were given, slowed by the
+       leather, held at their spacing, and pushed apart from loose stones */
+    chains.forEach(function (c) {
+      c.p.forEach(function (n) { var vx = (n.x - n.px) * fr, vy = (n.y - n.py) * fr; n.px = n.x; n.py = n.y; n.x += vx; n.y += vy; moving = Math.max(moving, Math.abs(vx) + Math.abs(vy)); });
+      for (var it = 0; it < 6; it++) {
+        var m = c.closed ? c.p.length : c.p.length - 1;
+        for (var e = 0; e < m; e++) { var A = c.p[e], B = c.p[(e + 1) % c.p.length]; dx = B.x - A.x; dy = B.y - A.y; d = Math.hypot(dx, dy) || 1; var df = (d - c.d) / d * 0.5; A.x += dx * df; A.y += dy * df; B.x -= dx * df; B.y -= dy * df; }
+        /* a link folds only so far against the next: the links either side
+           of each one are kept at least a link and a half apart, which stops a
+           kink without pulling a closed bracelet in on itself */
+        for (e = c.closed ? 0 : 1; e < c.p.length - (c.closed ? 0 : 1); e++) { var a0 = c.p[(e - 1 + c.p.length) % c.p.length], a2 = c.p[(e + 1) % c.p.length];
+          dx = a2.x - a0.x; dy = a2.y - a0.y; d = Math.hypot(dx, dy) || 1; var mn = c.d * 1.55; if (d < mn) { var f2 = (mn - d) / d * 0.25; a0.x -= dx * f2; a0.y -= dy * f2; a2.x += dx * f2; a2.y += dy * f2; } }
+        c.p.forEach(function (n) { keepIn(n); });
+      }
+      c.p.forEach(function (n) { bodies.forEach(function (b) { dx = b.x - n.x; dy = b.y - n.y; d = Math.hypot(dx, dy); o = b.r + n.r - d; if (o > 0 && d) { nx = dx / d; ny = dy / d; b.x += nx * o * 0.7; b.y += ny * o * 0.7; n.x -= nx * o * 0.3; n.y -= ny * o * 0.3; b.vx += nx * 0.4; b.vy += ny * 0.4; } }); });
+    });
+    return moving;
+  }
+
+  /* ── drawing ── */
+  function draw(now) {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, W, H);
+    /* the lamp that follows the hand across the leather */
+    if (light > 0.01 && P.x > -999) { var g = ctx.createRadialGradient(P.x, P.y, 0, P.x, P.y, S * 5); g.addColorStop(0, "rgba(255,248,236," + (0.075 * light).toFixed(3) + ")"); g.addColorStop(1, "rgba(255,248,236,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+    var i, b, sx = S * 0.10, sy = S * 0.16;
+    /* shadows first, then the metal and the stones */
+    chains.forEach(function (c) { c.p.forEach(function (n) { ctx.drawImage(shadow, n.x - c.w * 0.62 + sx * 0.6, n.y - c.h * 0.7 + sy * 0.6, c.w * 1.24, c.h * 1.4); }); });
+    for (i = 0; i < bodies.length; i++) { b = bodies[i]; var sw = Math.max(b.w, b.h) * 1.18; ctx.drawImage(shadow, b.x - sw / 2 + sx, b.y - sw / 2 + sy, sw, sw); }
+    chains.forEach(function (c) { var p = c.p, L = p.length;
+      for (var e = 0; e < L; e++) { var A = p[(e - 1 + L) % L], B = p[(e + 1) % L]; if (!c.closed) { if (e === 0) A = p[0]; if (e === L - 1) B = p[L - 1]; }
+        var ang = Math.atan2(B.y - A.y, B.x - A.x); ctx.save(); ctx.translate(p[e].x, p[e].y); ctx.rotate(ang); ctx.drawImage(IMG.link, -c.w / 2, -c.h / 2, c.w, c.h); ctx.restore(); } });
+    for (i = 0; i < bodies.length; i++) { b = bodies[i]; ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.a); ctx.drawImage(b.im, -b.w / 2, -b.h / 2, b.w, b.h); ctx.restore(); }
+    /* a glint on the stones that move, and on the ones near the hand */
+    ctx.globalCompositeOperation = "lighter";
+    for (i = 0; i < bodies.length; i++) { b = bodies[i]; var near = P.on ? Math.max(0, 1 - Math.hypot(b.x - P.x, b.y - P.y) / (S * 3)) : 0;
+      var tw = Math.max(b.g, near * (0.5 + 0.5 * Math.sin(now / 160 + b.ph))); if (tw < 0.05) continue;
+      var fs = Math.max(b.w, b.h) * (0.55 + 0.6 * tw); ctx.globalAlpha = Math.min(1, tw); ctx.save(); ctx.translate(b.x + b.w * 0.12, b.y - b.h * 0.12); ctx.rotate(0.3 + b.ph); ctx.drawImage(flare, -fs / 2, -fs / 2, fs, fs); ctx.restore(); }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+  }
+
+  /* ── the loop: on while there is something to move ── */
+  var raf = 0, last = 0, inView = false, rest = 0;
+  function frame(now) {
+    raf = 0; var dt = last ? Math.min(40, now - last) : 16.7; last = now;
+    if (P.on && now - P.t > 120) { P.vx *= 0.5; P.vy *= 0.5; }
+    light += ((P.on ? 1 : 0) - light) * 0.12;
+    var m = step(dt); draw(now);
+    rest = m < 0.06 && !P.on && light < 0.02 ? rest + 1 : 0;
+    if (inView && rest < 20) raf = requestAnimationFrame(frame); else last = 0;
+  }
+  function wake() { if (!raf && started && !reduce && inView) raf = requestAnimationFrame(frame); }
+
+  /* ── the hand ── */
+  function at(x, y) { var r = cv.getBoundingClientRect(), nx = x - r.left, ny = y - r.top, now = performance.now();
+    if (P.on && now - P.t < 80) { var k = 16.7 / Math.max(8, now - P.t); P.vx = (nx - P.x) * k; P.vy = (ny - P.y) * k; } else { P.vx = P.vy = 0; }
+    P.x = nx; P.y = ny; P.t = now; P.on = nx >= 0 && ny >= 0 && nx <= W && ny <= H; wake(); }
+  function off() { P.on = false; P.vx = P.vy = 0; wake(); }
+  if (!reduce) {
+    film.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse" || e.pointerType === "pen") at(e.clientX, e.clientY); }, { passive: true });
+    film.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") off(); }, { passive: true });
+    /* a finger: touch events keep coming while the page scrolls under it */
+    film.addEventListener("touchstart", function (e) { var t = e.touches[0]; P.on = false; at(t.clientX, t.clientY); }, { passive: true });
+    film.addEventListener("touchmove", function (e) { var t = e.touches[0]; at(t.clientX, t.clientY); }, { passive: true });
+    film.addEventListener("touchend", off, { passive: true }); film.addEventListener("touchcancel", off, { passive: true });
+  }
+
+  /* ── start when the desk is near, with its pictures in hand ── */
+  function begin() {
+    if (started || loaded < NAMES.length) return;
+    sprites(); if (!size()) return; started = true; cv.classList.add("on");
+    if (reduce) { step(16.7); draw(0); return; }
+    /* the stones settle into place as the desk arrives */
+    bodies.forEach(function (b) { b.vx = (rnd() - 0.5) * 1.6; b.vy = (rnd() - 0.5) * 1.6; b.va = (rnd() - 0.5) * 0.02; });
+    draw(0); wake();
+  }
+  function fetchAll() {
+    if (fetchAll.done) return; fetchAll.done = true;
+    var big = !coarse && (innerWidth * Math.min(devicePixelRatio || 1, 2)) > 2200;
+    NAMES.forEach(function (n) { var im = new Image(); im.decoding = "async"; im.onload = function () { loaded++; IMG[n] = im; begin(); }; im.onerror = function () { cv.remove(); }; im.src = BASE + n + "-512.webp"; void big; });
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) fetchAll(); }); }, { rootMargin: "120% 0px" }).observe(sec);
+    new IntersectionObserver(function (es) { es.forEach(function (e) { inView = e.isIntersecting; if (inView) wake(); }); }, { rootMargin: "60px 0px" }).observe(sec);
+  } else { fetchAll(); inView = true; }
+  var lw = innerWidth; addEventListener("resize", function () { if (!started || innerWidth === lw) return; lw = innerWidth; size(); draw(performance.now()); wake(); }, { passive: true });
+  window.__desk = { get stones() { return bodies.length; }, get links() { return flat().length; }, get running() { return !!raf; }, get started() { return started; },
+    pos: function () { return bodies.map(function (b) { return [Math.round(b.x), Math.round(b.y)]; }); } };
+})();
+</script>
