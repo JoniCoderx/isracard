@@ -1,46 +1,35 @@
-/* What sits on top of the piece? Reports every control inside the strip and
-   how much of it overlaps the drawn bracelet's own bounding box. */
+// Things on things: at every step of a full scroll, each fixed or sticky
+// control (header, bars, pills, buttons) is checked against the text and
+// controls of the page beneath it; anything readable or pressable that it
+// covers is reported, with where.
 import { chromium } from "playwright-core";
-const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
-  args: ["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] });
-const W = Number(process.argv[2]||390), H = Number(process.argv[3]||844);
-const p = await b.newPage({ viewport: { width: W, height: H }, isMobile: W<900, hasTouch: W<900, deviceScaleFactor: 1, reducedMotion: "reduce" });
-await p.goto("http://127.0.0.1:8777/", { waitUntil: "domcontentloaded" });
-await p.waitForTimeout(2600); await p.click("#enterBtn").catch(()=>{});
-await p.waitForTimeout(900);
-await p.evaluate(async()=>{const s=Math.round(innerHeight*0.7);for(let y=0;y<document.body.scrollHeight;y+=s){scrollTo({top:y,behavior:"instant"});await new Promise(r=>setTimeout(r,120));}});
-await p.evaluate(()=>{const e=document.getElementById("configure");scrollTo({top:e.getBoundingClientRect().top+scrollY-60,behavior:"instant"});});
-await p.waitForTimeout(1500);
-const r = await p.evaluate(() => {
-  const strip = document.getElementById("stripwrap").getBoundingClientRect();
-  const cv = document.getElementById("bcv");
-  const c2 = document.createElement("canvas"); c2.width = cv.width; c2.height = cv.height;
-  const g = c2.getContext("2d");
-  let art = null;
-  try { g.drawImage(cv, 0, 0);
-    const d = g.getImageData(0,0,c2.width,c2.height).data;
-    let x0=c2.width,x1=-1,y0=c2.height,y1=-1;
-    for (let y=0;y<c2.height;y++) for (let x=0;x<c2.width;x++) {
-      const i=(y*c2.width+x)*4;
-      if (d[i+3] > 24 && (d[i]+d[i+1]+d[i+2]) > 90) { if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+const base = process.env.BASE || "http://localhost:8777/";
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+for (const [w, h, mob, path] of [[390, 844, true, ""], [390, 844, true, "he/"], [1440, 900, false, ""], [768, 1024, true, ""]]) {
+  const c = await b.newContext({ viewport: { width: w, height: h }, isMobile: mob, hasTouch: mob });
+  const p = await c.newPage(); await p.goto(base + path, { waitUntil: "load" }); await p.waitForTimeout(1500); await p.click("#enterBtn", { timeout: 1200 }).catch(() => {});
+  const r = await p.evaluate(async () => {
+    document.documentElement.style.scrollBehavior = "auto"; document.querySelectorAll(".rv").forEach(e => e.classList.add("in"));
+    const vis = e => { const s = getComputedStyle(e); return s.visibility === "visible" && s.display !== "none" && +s.opacity > 0.3; };
+    const floats = () => [...document.querySelectorAll("body *")].filter(e => { const s = getComputedStyle(e); return (s.position === "fixed") && vis(e) && e.getBoundingClientRect().width > 10 && e.getBoundingClientRect().height > 10 && !["dust", "glow", "grain"].includes(e.id) && !e.closest("#header") || e.id === "header"; });
+    const targets = () => [...document.querySelectorAll("main h1, main h2, main h3, main p, main a, main button, main label, main input, main .chip, main .k")].filter(e => { const r = e.getBoundingClientRect(); return r.width > 4 && r.height > 4 && vis(e) && e.textContent.trim(); });
+    const hits = {}; const H = document.documentElement.scrollHeight - innerHeight;
+    for (let y = 0; y <= H; y += 260) {
+      scrollTo(0, y); await new Promise(r => setTimeout(r, 160));
+      const F = floats().map(e => [e, e.getBoundingClientRect()]);
+      for (const t of targets()) { const tr = t.getBoundingClientRect(); if (tr.bottom < 0 || tr.top > innerHeight) continue;
+        for (const [f, fr] of F) { if (f.contains(t) || t.contains(f)) continue;
+          const ox = Math.min(tr.right, fr.right) - Math.max(tr.left, fr.left), oy = Math.min(tr.bottom, fr.bottom) - Math.max(tr.top, fr.top);
+          if (ox > 6 && oy > 6 && ox * oy > 0.3 * tr.width * tr.height) {
+            /* is the float really on top here? */
+            const cx = Math.max(tr.left, fr.left) + ox / 2, cy = Math.max(tr.top, fr.top) + oy / 2, top = document.elementFromPoint(cx, cy);
+            if (!top || !(f === top || f.contains(top))) continue;
+            const k = (f.id ? "#" + f.id : f.className.toString().split(" ")[0]) + " over " + t.tagName.toLowerCase() + " \"" + t.textContent.trim().slice(0, 26) + "\" in " + ((t.closest("section") || {}).id || "-");
+            hits[k] = (hits[k] || 0) + 1; } } }
     }
-    if (x1 > 0) { const sx = strip.width/c2.width, sy = strip.height/c2.height;
-      art = { left: strip.left + x0*sx, right: strip.left + x1*sx, top: strip.top + y0*sy, bottom: strip.top + y1*sy }; }
-  } catch(e) { art = null; }
-  const out = [];
-  for (const sel of [".vt", ".stbtn", ".vmark", ".sthint", ".vhint"]) {
-    const e = document.querySelector("#stripwrap " + sel); if (!e) { out.push(`${sel}: absent`); continue; }
-    const c = getComputedStyle(e); if (c.display === "none" || +c.opacity < 0.05) { out.push(`${sel}: hidden`); continue; }
-    const b = e.getBoundingClientRect();
-    let ov = 0;
-    if (art) { const w = Math.max(0, Math.min(b.right,art.right) - Math.max(b.left,art.left));
-      const hh = Math.max(0, Math.min(b.bottom,art.bottom) - Math.max(b.top,art.top)); ov = w*hh; }
-    out.push(`${sel}: ${Math.round(b.width)}x${Math.round(b.height)} at (${Math.round(b.left-strip.left)},${Math.round(b.top-strip.top)})  covers ${Math.round(ov)}px² of the piece`);
-  }
-  return { strip: `${Math.round(strip.width)}x${Math.round(strip.height)}`,
-    art: art ? `x ${Math.round(art.left-strip.left)}..${Math.round(art.right-strip.left)} y ${Math.round(art.top-strip.top)}..${Math.round(art.bottom-strip.top)}` : "could not read the canvas",
-    out };
-});
-console.log(`${W}x${H} strip ${r.strip}\n  piece: ${r.art}`);
-r.out.forEach(l=>console.log("  "+l));
+    return Object.entries(hits).sort((a, b) => b[1] - a[1]).slice(0, 25);
+  });
+  console.log(`== ${w}x${h} ${path || "en"}: ${r.length ? "" : "nothing covered"}`); r.forEach(([k, v]) => console.log(`  ${v}x ${k}`));
+  await c.close();
+}
 await b.close();

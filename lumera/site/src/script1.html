@@ -900,7 +900,11 @@
        bar stayed up over the very figure it summarises */
     function measure() {
       var h = innerHeight, b = build.getBoundingClientRect();
-      inBuild = b.top < h * 0.65 && b.bottom > h * 0.35;
+      /* the bar never stands on the bracelet: while the foot of the viewer,
+         with its view buttons, is where the bar would be, it waits */
+      var sw = $("stripwrap"), sr = sw ? sw.getBoundingClientRect() : null;
+      var onViewer = sr && sr.bottom > h - 140 && sr.top < h - 40;
+      inBuild = b.top < h * 0.65 && b.bottom > h * 0.35 && !onViewer;
       if (total) { var t = total.getBoundingClientRect(), vis = Math.max(0, Math.min(h, t.bottom) - Math.max(0, t.top));
         totalSeen = vis >= Math.min(t.height * 0.35, h * 0.3); }
       show();

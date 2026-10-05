@@ -6146,3 +6146,9 @@ html body #collection .chap { margin-block:4px clamp(8px, 1vw, 14px) !important;
 /* the collection tucks under the end of the signature: both are white there,
    and the few pixels between them used to show the page's dark ground */
 html body #collection { margin-top:-6px !important; position:relative; }
+
+/* ══ v192 — nothing shows through the bar at the top ══════════════════════
+   On phones and tablets the scrolled header is a solid black band: at 81%
+   on a tablet, without the blur the desktop has, the mark of the chapter
+   beneath read through it and stood on top of the header's own. ───────── */
+@media (max-width:999px) { html body header.sh.scrolled { background:rgba(0,0,0,.97) !important; } }
