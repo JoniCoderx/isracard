@@ -10,6 +10,7 @@ import { href, go } from "../lib/router.js";
 import { Button, Input, TextArea, Select, Pill, PageHead, Load, useLoad, toast, ask, Empty } from "../lib/ui.jsx";
 import { SpecView } from "./Enquiries.jsx";
 import { formatMoney } from "../../../site/src/content/money.mjs";
+import { safeInline } from "../../../site/src/content/apply.mjs";
 
 const CURS = ["ILS", "AED", "USD", "EUR"];
 const QST = ["draft", "sent", "accepted", "declined", "expired", "withdrawn"];
@@ -72,7 +73,7 @@ export function QuoteEdit({ id }) {
         </section>
         <section class="card">
           <h2>{t("As quoted")}</h2>
-          {p ? <><p><strong dangerouslySetInnerHTML={{ __html: (p.name && p.name.en) || p.plain }} /> <span class="hint">{p.ref}</span></p>{p.specs && <dl class="meta">{p.specs.filter(x => x[0].en !== "Price").map(x => <><dt>{x[0].en}</dt><dd dangerouslySetInnerHTML={{ __html: x[1].en }} /></>)}</dl>}</> : <p class="hint">{t("No piece from the collection.")}</p>}
+          {p ? <><p><strong dangerouslySetInnerHTML={{ __html: safeInline((p.name && p.name.en) || p.plain) }} /> <span class="hint">{p.ref}</span></p>{p.specs && <dl class="meta">{p.specs.filter(x => x[0].en !== "Price").map(x => <><dt>{x[0].en}</dt><dd dangerouslySetInnerHTML={{ __html: safeInline(x[1].en) }} /></>)}</dl>}</> : <p class="hint">{t("No piece from the collection.")}</p>}
           {r.spec_snapshot && <><h3>{t("Their design (The Line)")}</h3><SpecView spec={r.spec_snapshot} /></>}
           <p class="hint">{t("Copied when the quote was made on {d}; later product changes do not affect it.", { d: when(r.created_at) })}</p>
         </section>
@@ -89,7 +90,7 @@ export function QuotePrint({ id }) {
     <header><div class="brand big">SILAVU</div><div>{r.number}<br />{day(r.created_at)}</div></header>
     {c && <p>{c.name}{c.city ? ", " + c.city : ""}</p>}
     <h1>{plain(r.title)}</h1>
-    {r.product_snapshot && <><p class="hint">{r.product_snapshot.ref}</p><dl class="meta">{(r.product_snapshot.specs || []).filter(x => x[0].en !== "Price" && x[0].en !== "Reference").map(x => <><dt>{x[0].en}</dt><dd dangerouslySetInnerHTML={{ __html: x[1].en }} /></>)}</dl></>}
+    {r.product_snapshot && <><p class="hint">{r.product_snapshot.ref}</p><dl class="meta">{(r.product_snapshot.specs || []).filter(x => x[0].en !== "Price" && x[0].en !== "Reference").map(x => <><dt>{x[0].en}</dt><dd dangerouslySetInnerHTML={{ __html: safeInline(x[1].en) }} /></>)}</dl></>}
     {r.spec_snapshot && <SpecView spec={r.spec_snapshot} />}
     <p class="amount">{money(r.amount_minor, r.currency)}</p>
     {r.valid_until && <p>{t("Valid until {d}.", { d: day(r.valid_until) })}</p>}

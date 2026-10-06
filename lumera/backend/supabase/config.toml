@@ -23,6 +23,8 @@ verify_jwt = false
 verify_jwt = false
 [functions.status]
 verify_jwt = false
+[functions.maintenance]
+verify_jwt = false
 
 [auth]
 # the admin's address (set to your custom domain's /admin/ when you move)

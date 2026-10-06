@@ -43,6 +43,7 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
   const files = new Map();          // bucket/path -> { body, type }
   const mail = [];                  // what Auth would have emailed
   const dispatches = [];            // what GitHub would have been asked
+  const faults = { github: false, storage: false, down: false };   // switched on by tests
   const env = { BUILD_TOKEN: "t".repeat(40), RATE_SALT: "dev", ALLOWED_ORIGINS: "*", SITE_URL: "http://127.0.0.1:8777", ADMIN_URL: "http://127.0.0.1:8777/admin/", GH_TOKEN: "fake", GH_REPO: "local/site", ...extraEnv };
 
   async function asCaller(claims, fn) {
@@ -235,7 +236,7 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
 
   /* ── Functions: the real handlers, with platform pieces from here ────── */
   const handlers = {};
-  for (const n of ["enquiry", "collect", "publish", "release-snapshot", "release-status", "staff", "media", "export", "setup", "status"])
+  for (const n of ["enquiry", "collect", "publish", "release-snapshot", "release-status", "staff", "media", "export", "setup", "status", "maintenance"])
     handlers[n] = (await import(path.join(functionsDir, n, "handler.ts"))).handler;
   const call = (fn, args) => { const ks = Object.keys(args); return `select public.${fn}(${ks.map((k, i) => `${k} => $${i + 1}`).join(", ")}) as r`; };
   const val = (v) => v === null || v === undefined ? null : typeof v === "object" && !Array.isArray(v) ? JSON.stringify(v) : Array.isArray(v) && v.some(x => typeof x === "object") ? JSON.stringify(v) : v;
@@ -243,7 +244,7 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
     env: (k) => env[k],
     fetch: async (u, init) => {
       u = String(u);
-      if (u.startsWith("https://api.github.com/repos/")) { const b = JSON.parse(init.body); dispatches.push(b); if (siteBuild) setTimeout(() => siteBuild(b.client_payload.release).catch(e => log("build failed: " + e.message)), 50); return new Response(null, { status: 204 }); }
+      if (u.startsWith("https://api.github.com/repos/")) { if (faults.github) return new Response('{"message":"Bad credentials"}', { status: 401 }); const b = JSON.parse(init.body); dispatches.push(b); if (siteBuild) setTimeout(() => siteBuild(b.client_payload.release).catch(e => log("build failed: " + e.message)), 50); return new Response(null, { status: 204 }); }
       if (u.startsWith(env.SITE_URL)) return fetch(u, init);
       if (u.startsWith("https://api.resend.com") || u.startsWith("https://formsubmit.co")) { mail.push({ to: "provider", body: init.body }); return new Response("{}", { status: 200 }); }
       return new Response("blocked in the fake", { status: 599 });
@@ -254,7 +255,9 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
     storage: {
       signedUrl: async (b, p, s) => `${base}/storage/v1/object/sign/${b}/${p}?token=${sign({ url: b + "/" + p, exp: Math.floor(Date.now() / 1000) + s })}`,
       download: async (b, p) => { const f = files.get(b + "/" + p); if (!f) throw new Error("not found"); return new Uint8Array(f.body); },
-      upload: async (b, p, body, type) => { await db.query("insert into storage.objects (bucket_id, name) values ($1, $2)", [b, p]); files.set(b + "/" + p, { body: Buffer.from(body), type }); }
+      upload: async (b, p, body, type) => { await db.query("insert into storage.objects (bucket_id, name) values ($1, $2)", [b, p]); files.set(b + "/" + p, { body: Buffer.from(body), type }); },
+      list: async (b) => (await db.query("select name, created_at from storage.objects where bucket_id = $1 and name not like '%/%' order by created_at desc", [b])).rows.map(r => ({ name: r.name, created_at: new Date(r.created_at).toISOString() })),
+      remove: async (b, ps) => { for (const p of ps) { await db.query("delete from storage.objects where bucket_id = $1 and name = $2", [b, p]); files.delete(b + "/" + p); } }
     },
     authAdmin: {
       invite: async (email) => { let u = users.get(email); if (!u) { u = await addUser(email, null); mail.push({ to: email, kind: "invite", link: env.ADMIN_URL }); } return { id: u.id }; },
@@ -269,6 +272,8 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
   const server = http.createServer(async (req, res) => {
     const cors = { "access-control-allow-origin": req.headers.origin || "*", "access-control-allow-headers": "authorization, apikey, content-type, prefer, range, accept, accept-profile, content-profile, x-client-info, x-upsert, x-supabase-api-version, cache-control", "access-control-allow-methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD", "access-control-expose-headers": "content-range, x-supabase-api-version" };
     if (req.method === "OPTIONS") { res.writeHead(204, cors); return res.end(); }
+    if (faults.down) { res.writeHead(503, { ...cors, "content-type": "application/json" }); return res.end('{"message":"Service unavailable"}'); }
+    if (faults.storage && req.url.startsWith("/storage/v1/object/media/") && req.method === "POST") { res.writeHead(500, { ...cors, "content-type": "application/json" }); return res.end('{"statusCode":"500","error":"internal","message":"Storage is unavailable"}'); }
     const chunks = []; for await (const c of req) chunks.push(c); const raw = Buffer.concat(chunks);
     const url = new URL(req.url, base);
     const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "") || req.headers.apikey;
@@ -294,7 +299,7 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
   await new Promise(r => server.listen(port, "127.0.0.1", r));
   log(`fake supabase on ${base}`);
   return {
-    url: base, anonKey: ANON_KEY, serviceKey: SERVICE_KEY, env, mail, dispatches, files, users, deps,
+    url: base, anonKey: ANON_KEY, serviceKey: SERVICE_KEY, env, mail, dispatches, files, users, deps, faults,
     addUser,
     /** the first owner, exactly as ADMIN_SETUP.md does it: a user, then bootstrap_owner in SQL */
     async bootstrapOwner(email, password) { const u = await addUser(email, password); await db.query("select app.bootstrap_owner($1)", [email]); return u; },

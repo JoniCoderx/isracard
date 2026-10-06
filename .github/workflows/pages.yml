@@ -3,7 +3,7 @@ name: SILAVU static site (GitHub Pages)
 on:
   push:
     branches: [claude/isracard-dev-environment-tzc6s5]
-    paths: ["lumera/site/**", ".github/workflows/pages.yml"]
+    paths: ["lumera/site/**", "lumera/admin/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
   # a publish in the admin (functions/publish sends this, naming the release)
   repository_dispatch:

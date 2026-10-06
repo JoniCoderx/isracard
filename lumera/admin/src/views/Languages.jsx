@@ -9,7 +9,7 @@ import { href, go } from "../lib/router.js";
 import { Bi, Input, PageHead, Tabs, Load, useLoad, Pill, NotImported } from "../lib/ui.jsx";
 import { SaveBar } from "./Products.jsx";
 import { useInventory } from "./Pages.jsx";
-import { toInline } from "../../../site/src/content/apply.mjs";
+import { toInline, safeInline } from "../../../site/src/content/apply.mjs";
 
 const OTHER = [["fr", "Français", "ltr"], ["ar", "العربية", "rtl"], ["ru", "Русский", "ltr"]];
 
@@ -58,7 +58,7 @@ function Translate({ lang }) {
       <p>{missing ? <Pill tone="warn">{t("{n} sentences have no translation and show in English", { n: missing })}</Pill> : <Pill tone="ok">{t("Everything is translated")}</Pill>}</p>
       <div class="filters"><Input label={t("Find")} value={search} onInput={setSearch} /><label class="chk"><input type="checkbox" checked={onlyMissing} onChange={(e) => setOnly(e.target.checked)} /> {t("Only missing")}</label></div>
     </section>
-    <section class="card"><div class="trs">{rows.slice(0, 200).map(r => <div class="tr"><div class="ten" dir="ltr" dangerouslySetInnerHTML={{ __html: r.en }} />
+    <section class="card"><div class="trs">{rows.slice(0, 200).map(r => <div class="tr"><div class="ten" dir="ltr" dangerouslySetInnerHTML={{ __html: safeInline(r.en) }} />
       <textarea dir={meta[2]} lang={lang} rows={2} aria-label={meta[1]} value={ov[r.key] ?? dict[r.key] ?? ""} onInput={(e) => d.setData({ ...d.data, [lang]: { ...ov, [r.key]: e.target.value } })} /></div>)}
       {rows.length > 200 && <p class="hint">{t("Showing the first 200; use Find to narrow.")}</p>}</div></section>
     <SaveBar d={d} />

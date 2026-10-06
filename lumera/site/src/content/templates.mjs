@@ -39,3 +39,16 @@ ${d.lede && d.lede.en ? `<p class="lede" ${A(I(d.lede))}>${I(d.lede).en}</p>` : 
 ${(d.blocks || []).map(blk).join("\n")}
 </main>`;
 }
+
+/* the About page's words: the letter column, and the name under the portrait.
+   The build places them around the portrait; the admin's preview lays them
+   over the live page. */
+export function aboutText(a) {
+  return `<div class="ahtext">
+<div class="k gold" ${A(a.eyebrow)}>${a.eyebrow.en}</div>
+<h1 ${A(a.h1)}>${a.h1.en}</h1>
+<div class="aletter">${a.letter.map(p => T("p", p)).join("")}</div>
+<div class="acta"><a class="btn solid" href="./#collection" ${A(a.cta1)}>${a.cta1.en}</a><a class="btn" href="./#concierge" ${A(a.cta2)}>${a.cta2.en}</a></div>
+</div>`;
+}
+export const aboutCaption = (a) => `<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption>`;

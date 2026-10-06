@@ -15,6 +15,9 @@ export type Deps = {
     signedUrl: (bucket: string, path: string, seconds: number) => Promise<string>;
     download: (bucket: string, path: string) => Promise<Uint8Array>;
     upload: (bucket: string, path: string, body: Uint8Array, type: string) => Promise<void>;
+    /** the files at the top of a bucket, newest first */
+    list: (bucket: string) => Promise<{ name: string; created_at: string }[]>;
+    remove: (bucket: string, paths: string[]) => Promise<void>;
   };
   authAdmin: {
     invite: (email: string, redirectTo: string) => Promise<{ id: string }>;

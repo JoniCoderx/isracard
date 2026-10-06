@@ -5,8 +5,8 @@
 // indexed, never at a public address. Library pictures that are not live yet
 // are shown from their private originals through short-lived signed links.
 import { sb, SITE } from "./sb.js";
-import { applyStrings, applySections, applySettings, applyConfigurator, applyNav, blockHtml, stringInventory, toInline, fnv } from "../../../site/src/content/apply.mjs";
-import { policyMain, docpageMain } from "../../../site/src/content/templates.mjs";
+import { applyStrings, applySections, applySettings, applyConfigurator, applyNav, blockHtml, stringInventory, toInline, fnv, safeDeep } from "../../../site/src/content/apply.mjs";
+import { policyMain, docpageMain, aboutText, aboutCaption } from "../../../site/src/content/templates.mjs";
 import { priceWords } from "../../../site/src/content/money.mjs";
 import { pieceCard } from "../../../site/src/body.mjs";
 
@@ -79,7 +79,7 @@ export async function previewHome({ lang = "en", inventory, strings, home, setti
   if (configurator) html = applyConfigurator(html, configurator);
   if (settings) { html = html.replace(/<div class="annbar"[\s\S]*?<\/script>/, ""); html = applySettings(html, settings); }
   if (piece) {
-    const p = JSON.parse(JSON.stringify(piece)), pw = priceWords(p.price);
+    const p = safeDeep(JSON.parse(JSON.stringify(piece))), pw = priceWords(p.price);
     p.shots = (p.shots || []).map(s => ({ ...s, img: String(s.img || "").replace(/^media:/, "m-"), alt: s.alt || { en: "", he: "" } }));
     if (p.shots.some(s => s.img.startsWith("m-")) && !p.widths) p.widths = [640, 900, 1254];
     if (p.meta && p.meta.length) p.meta[p.meta.length - 1] = pw;
@@ -96,6 +96,8 @@ export async function previewHome({ lang = "en", inventory, strings, home, setti
 export async function previewDocument(kind, d, lang = "en") {
   /* any live document page is the frame: header, footer, styles */
   let html = await live(lang === "he" ? "privacy/?lang=he" : "privacy/");
+  /* the draft is made safe exactly as the build makes published text safe */
+  d = safeDeep(d);
   const main = kind === "policy" ? policyMain(d) : docpageMain(d, (n, w) => `img/${n}-${w}.jpg`);
   html = html.replace(/<main class="doc">[\s\S]*?<\/main>/, main);
   html = await swapLibraryImages(html);
@@ -103,3 +105,12 @@ export async function previewDocument(kind, d, lang = "en") {
 }
 
 export { blockHtml };
+
+/* About: the live page with the draft's words in place */
+export async function previewAbout(a, lang = "en") {
+  a = safeDeep(a);
+  let html = await live(lang === "he" ? "about/?lang=he" : "about/");
+  html = html.replace(/<div class="ahtext">[\s\S]*?<\/div>\s*<div class="acol">/, aboutText(a) + '\n<div class="acol">')
+    .replace(/<figcaption><b [^>]*>[\s\S]*?<\/span><\/figcaption>/, aboutCaption(a));
+  return frameDoc(html);
+}

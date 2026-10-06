@@ -232,6 +232,7 @@ function PolicyEdit({ slug }) {
 
 function AboutEdit() {
   const d = useDoc("about", "about", { title: "About" });
+  const [prev, setPrev] = useState(false);
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error || !d.data) return <p class="err">{d.error ? message(d.error) : t("Not found.")}</p>;
   const a = d.data, set = (k, v) => d.setData({ ...a, [k]: v });
@@ -249,6 +250,7 @@ function AboutEdit() {
       <p class="hint">{t("The portrait is a file in the site's code (public/ariel-silas-*.jpg); replacing it is a code change.")}</p>
     </section>
     <Revisions docKey="about" onRestored={d.reload} compact />
-    <SaveBar d={d} />
+    <SaveBar d={d} onPreview={() => setPrev(true)} />
+    {prev && <Preview onClose={() => setPrev(false)} build={() => ({ kind: "about", data: a })} />}
   </>;
 }

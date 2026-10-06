@@ -9,11 +9,11 @@ import pg from "pg";
 
 const F = new URL("../supabase/functions/", import.meta.url).pathname;
 const H = {};
-for (const n of ["enquiry", "collect", "publish", "release-snapshot", "release-status", "staff", "media", "export", "setup", "status"]) H[n] = (await import(F + n + "/handler.ts")).handler;
+for (const n of ["enquiry", "collect", "publish", "release-snapshot", "release-status", "staff", "media", "export", "setup", "status", "maintenance"]) H[n] = (await import(F + n + "/handler.ts")).handler;
 
 const db = new pg.Client({ host: process.env.PGHOST || "/tmp", port: +(process.env.PGPORT || 54329), user: "postgres", database: "silavu_test" });
 const U = {};
-const store = new Map(), calls = [], banned = [];
+const store = new Map(), stamps = new Map(), calls = [], banned = [];
 let fetchImpl = async () => new Response("{}", { status: 200 });
 const ENV = { ALLOWED_ORIGINS: "https://jonicoderx.github.io", RATE_SALT: "test", BUILD_TOKEN: "b".repeat(40), SITE_URL: "https://jonicoderx.github.io/isracard", ADMIN_URL: "https://jonicoderx.github.io/isracard/admin/" };
 let env = { ...ENV };
@@ -40,7 +40,9 @@ const deps = {
   storage: {
     signedUrl: async (b, p, s) => `https://signed.example/${b}/${p}?ttl=${s}`,
     download: async (b, p) => { const v = store.get(b + "/" + p); if (!v) throw new Error("not found"); return v; },
-    upload: async (b, p, body) => { store.set(b + "/" + p, body); }
+    upload: async (b, p, body) => { store.set(b + "/" + p, body); stamps.set(b + "/" + p, new Date().toISOString()); },
+    list: async (b) => [...store.keys()].filter(k => k.startsWith(b + "/")).map(k => ({ name: k.slice(b.length + 1), created_at: stamps.get(k) })),
+    remove: async (b, ps) => { for (const p of ps) { store.delete(b + "/" + p); stamps.delete(b + "/" + p); } }
   },
   authAdmin: {
     invite: async (email) => ({ id: (await db.query("insert into auth.users (email) values ($1) on conflict (email) do update set email = excluded.email returning id", [email])).rows[0].id }),
@@ -185,4 +187,17 @@ test("status says what is connected, never a secret", async () => {
   assert.equal(JSON.parse(t).publishing, true); assert.equal(JSON.parse(t).mail, "resend");
   assert.equal((await H.status(req("GET", undefined, {}), deps)).status, 401);
   env = { ...ENV };
+});
+
+test("maintenance: only on the schedule's token; keeps visits for the set retention; old scheduled backups go, hand-made ones stay", async () => {
+  assert.equal((await H.maintenance(req("POST", {}, { token: tok(U.owner) }), deps)).status, 401);
+  await db.query("insert into public.analytics_events (event_id, ts, name, session_id, path) values (gen_random_uuid(), now() - interval '500 days', 'page_view', 'old-session', '/'), (gen_random_uuid(), now() - interval '2 days', 'page_view', 'new-session', '/')");
+  const old = "silavu-export-2025-01-01-scheduled.json.gz", mine = "silavu-export-2025-01-01.json.gz";
+  for (const n of [old, mine]) { store.set("exports/" + n, new Uint8Array([1])); stamps.set("exports/" + n, "2025-01-01T00:00:00Z"); }
+  const r = await (await H.maintenance(req("POST", {}, { token: ENV.BUILD_TOKEN }), deps)).json();
+  assert.equal(r.ok, true); assert.equal(r.retention_days, 400); assert.ok(r.analytics_pruned >= 1); assert.equal(r.exports_removed, 1);
+  assert.ok(!store.has("exports/" + old)); assert.ok(store.has("exports/" + mine));
+  const left = (await db.query("select session_id from public.analytics_events where session_id in ('old-session', 'new-session')")).rows.map(x => x.session_id);
+  assert.deepEqual(left, ["new-session"]);
+  assert.equal((await db.query("select count(*)::int n from public.audit_log where action = 'maintenance.run'")).rows[0].n, 1);
 });

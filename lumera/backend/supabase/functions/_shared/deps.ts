@@ -26,7 +26,9 @@ export function makeDeps(): Deps {
     storage: {
       signedUrl: async (bucket, path, seconds) => check(await admin.storage.from(bucket).createSignedUrl(path, seconds)).signedUrl,
       download: async (bucket, path) => new Uint8Array(await check(await admin.storage.from(bucket).download(path)).arrayBuffer()),
-      upload: async (bucket, path, body, type) => { check(await admin.storage.from(bucket).upload(path, body, { contentType: type, upsert: false })); }
+      upload: async (bucket, path, body, type) => { check(await admin.storage.from(bucket).upload(path, body, { contentType: type, upsert: false })); },
+      list: async (bucket) => (check(await admin.storage.from(bucket).list("", { limit: 1000, sortBy: { column: "created_at", order: "desc" } })) as any[]).filter(f => f.id).map(f => ({ name: f.name, created_at: f.created_at })),
+      remove: async (bucket, paths) => { check(await admin.storage.from(bucket).remove(paths)); }
     },
     authAdmin: {
       invite: async (email, redirectTo) => {

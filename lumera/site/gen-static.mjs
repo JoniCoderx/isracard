@@ -5,7 +5,7 @@ import path from "node:path";
 import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, REDIRECTS, publicRelease } from "./src/content/load.mjs";
 import { toInline, safeHref, safeInline, HOUSE_EMAIL } from "./src/content/apply.mjs";
 import { priceWords, baseCurrency } from "./src/content/money.mjs";
-import { policyMain, docpageMain } from "./src/content/templates.mjs";
+import { policyMain, docpageMain, aboutText, aboutCaption } from "./src/content/templates.mjs";
 /* a piece with a set price carries an Offer; a piece quoted on request carries none */
 const offerOf = (p, url) => { const pr = p.price || {}, cur = baseCurrency(pr);
   if (pr.mode !== "exact" || !cur) return undefined;
@@ -448,13 +448,8 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     const inner = `<main class="doc about">
 <span data-doc-title hidden ${A(a.seo)}>${a.seo.en}</span>
 <section class="ahero2 aletterpage">
-<div class="ahtext">
-<div class="k gold" ${A(a.eyebrow)}>${a.eyebrow.en}</div>
-<h1 ${A(a.h1)}>${a.h1.en}</h1>
-<div class="aletter">${a.letter.map(p => T("p", p)).join("")}</div>
-<div class="acta"><a class="btn solid" href="./#collection" ${A(a.cta1)}>${a.cta1.en}</a><a class="btn" href="./#concierge" ${A(a.cta2)}>${a.cta2.en}</a></div>
-</div>
-<div class="acol"><figure class="aport">${portrait}<figcaption><b ${A(a.name)}>${a.name.en}</b><span class="k" ${A(a.role)}>${a.role.en}</span></figcaption></figure>${(() => { const r = PIECES.find(x => x.id === "ring"), sh = r && r.shots.find(x => x.img === "ring-macro"); if (!sh) return "";
+${aboutText(a)}
+<div class="acol"><figure class="aport">${portrait}${aboutCaption(a)}</figure>${(() => { const r = PIECES.find(x => x.id === "ring"), sh = r && r.shots.find(x => x.img === "ring-macro"); if (!sh) return "";
   /* one detail of the house's own work, from the approved photography: the
      pavé signature of ICON, close. It sits under the portrait on a wide
      screen and is left out on a phone, so the page grows no longer. */
@@ -614,7 +609,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
   }
 }
 fs.writeFileSync(path.join(outDir, "robots.txt"),
-  "User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: " + base + "/sitemap.xml\n");
+  "User-agent: *\nAllow: /\nDisallow: " + new URL(base + "/").pathname + "admin/\n\nSitemap: " + base + "/sitemap.xml\n");
 /* English and Hebrew each have an address and name each other. French,
    Russian and Arabic are switched inside the page and have none, so they are
    not claimed here. */

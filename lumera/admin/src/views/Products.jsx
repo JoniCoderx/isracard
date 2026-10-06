@@ -8,11 +8,11 @@ import { when, ago } from "../lib/time.js";
 import { href, go } from "../lib/router.js";
 import { useDoc, listDocs, getDoc } from "../lib/doc.js";
 import { thumb } from "../lib/media.js";
-import { Button, Input, TextArea, Select, Toggle, Bi, Pill, PageHead, Load, useLoad, ListEdit, DocState, Tabs, Modal, toast, ask, Empty } from "../lib/ui.jsx";
+import { Button, Input, TextArea, Select, Toggle, Bi, Pill, PageHead, Load, useLoad, ListEdit, DocState, Tabs, Modal, toast, ask, Empty, NotImported } from "../lib/ui.jsx";
 import { MediaPicker } from "./Media.jsx";
 import { Preview } from "./PreviewFrame.jsx";
 import { Revisions } from "./History.jsx";
-import { toInline, fromInline } from "../../../site/src/content/apply.mjs";
+import { toInline, fromInline, safeInline } from "../../../site/src/content/apply.mjs";
 import { formatMoney, priceWords } from "../../../site/src/content/money.mjs";
 
 const CURS = ["ILS", "AED", "USD", "EUR"];
@@ -50,7 +50,7 @@ export function Products({ role }) {
         const p = d.draft, live = d.published_rev === d.draft_rev && !!d.archived_at === !!d.published_archived;
         return <a class="prow" href={href("products/" + p.id)}>
           <Thumb img={p.shots && p.shots[0] && p.shots[0].img} />
-          <div><strong dangerouslySetInnerHTML={{ __html: (p.name && p.name.en) || p.id }} /><div class="hint">{p.ref} · {t(p.cat)} · {priceWords(p.price)[getLang() === "he" ? "he" : "en"]}</div></div>
+          <div><strong dangerouslySetInnerHTML={{ __html: safeInline((p.name && p.name.en) || p.id) }} /><div class="hint">{p.ref} · {t(p.cat)} · {priceWords(p.price)[getLang() === "he" ? "he" : "en"]}</div></div>
           <div class="pills">{d.archived_at ? <Pill tone="bad">{t("Archived")}</Pill> : p.exceptional ? <Pill>{t("Not in the collection grid")}</Pill> : p.status === "hidden" ? <Pill>{t("Hidden")}</Pill> : <Pill tone="ok">{t("Shown")}</Pill>}{!live && <Pill tone="info">{t("Unpublished changes")}</Pill>}{p.badge && p.badge.en && <Pill tone="gold">{p.badge.en}</Pill>}</div>
         </a>;
       }} />;
@@ -82,6 +82,7 @@ function Collection() {
   const d = useDoc("collections", "collections", { title: "Collection" });
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const set = (cats) => d.setData({ ...d.data, cats });
   return <section class="card">
     <p class="hint">{t("The filter buttons above the collection. \"All\" always comes first. A product shows under the category it names.")}</p>

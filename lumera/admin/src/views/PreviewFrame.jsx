@@ -4,7 +4,7 @@ import { useEffect, useState } from "preact/hooks";
 import { t } from "../lib/i18n.js";
 import { message } from "../lib/sb.js";
 import { Modal, Button, Tabs } from "../lib/ui.jsx";
-import { previewHome, previewDocument } from "../lib/preview.js";
+import { previewHome, previewDocument, previewAbout } from "../lib/preview.js";
 
 export function Preview({ onClose, build, title }) {
   const [lang, setLang] = useState("en"), [w, setW] = useState("desk"), [doc, setDoc] = useState(null), [err, setErr] = useState(null), [notes, setNotes] = useState([]);
@@ -12,7 +12,8 @@ export function Preview({ onClose, build, title }) {
     let stop = false; setDoc(null); setErr(null);
     (async () => {
       const spec = build(lang);
-      if (spec.kind === "doc") { const h = await previewDocument(spec.docKind, spec.data, lang); if (!stop) setDoc(h); }
+      if (spec.kind === "about") { const h = await previewAbout(spec.data, lang); if (!stop) setDoc(h); }
+      else if (spec.kind === "doc") { const h = await previewDocument(spec.docKind, spec.data, lang); if (!stop) setDoc(h); }
       else { const r = await previewHome({ ...spec, lang }); if (!stop) { setDoc(r.html); setNotes(r.notes || []); } }
     })().catch(e => !stop && setErr(e));
     return () => { stop = true; };

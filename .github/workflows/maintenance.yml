@@ -1,0 +1,39 @@
+name: SILAVU nightly backup and housekeeping
+
+# Once a night: a full private backup of the admin's data into the backend's
+# private "exports" bucket, then the housekeeping (visit records past the
+# retention set in Settings, spent rate-limit counters, scheduled backups past
+# EXPORT_KEEP_DAYS). Nothing personal passes through GitHub: the functions
+# answer with counts and a file name only. Does nothing until the backend is
+# connected (ADMIN_SETUP.md).
+
+on:
+  schedule:
+    - cron: "17 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maintenance
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    if: ${{ vars.SILAVU_SUPABASE_URL != '' }}
+    env:
+      FN: ${{ vars.SILAVU_SUPABASE_URL }}/functions/v1
+      TOKEN: ${{ secrets.SILAVU_BUILD_TOKEN }}
+    steps:
+      - name: Backup
+        run: |
+          test -n "$TOKEN" || { echo "::error::SILAVU_BUILD_TOKEN is not set"; exit 1; }
+          curl -fsS --retry 3 --retry-all-errors -X POST "$FN/export" \
+            -H "authorization: Bearer $TOKEN" -H "content-type: application/json" \
+            -d '{"scheduled":true}'
+      - name: Housekeeping
+        run: |
+          curl -fsS --retry 3 --retry-all-errors -X POST "$FN/maintenance" \
+            -H "authorization: Bearer $TOKEN" -H "content-type: application/json" -d '{}'
