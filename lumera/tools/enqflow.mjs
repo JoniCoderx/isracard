@@ -8,7 +8,9 @@ for (const [W,H,mob] of [[1440,900,false],[390,844,true]]) {
   /* a mailto is recorded, never followed */
   await c.addInitScript(()=>{ window.__mail=null; const d=Object.getOwnPropertyDescriptor(Location.prototype,"href"); });
   const p=await c.newPage(); const errs=[]; p.on("pageerror",e=>errs.push(e.message));
+  /* the form sends straight to the house inbox through FormSubmit: answered here, never sent */
   let mailto=null; await p.route("**/*", r=>r.continue()); p.on("request",r=>{ if (r.url().startsWith("mailto:")) mailto=r.url(); });
+  let posted=null; /* registered last, so it is the one that answers */ await p.route("**/formsubmit.co/**", r=>{ posted=JSON.parse(r.request().postData()||"{}"); r.fulfill({status:200,contentType:"application/json",headers:{"access-control-allow-origin":"*"},body:'{"success":"true"}'}); });
   await p.goto(`http://localhost:${port}/`,{waitUntil:"load"}); await p.waitForTimeout(1200); await p.click("#enterBtn",{timeout:1500}).catch(()=>{}); await p.waitForTimeout(400);
   await p.evaluate(()=>{document.documentElement.style.scrollBehavior="auto"; sessionStorage.clear();});
   const tag=mob?"phone":"desktop";
@@ -51,8 +53,8 @@ for (const [W,H,mob] of [[1440,900,false],[390,844,true]]) {
   ok(/concierge@silavu.com/.test(clip) && /My own words/.test(clip) && /Test Person/.test(clip), `${tag} Copy the details puts everything on the clipboard`);
   await p.evaluate(()=>{ window.addEventListener("beforeunload",e=>{}); });
   await p.evaluate(()=>document.getElementById("csend").click()).catch(()=>{}); await p.waitForTimeout(800);
-  s=await p.evaluate(()=>({sent:document.getElementById("cform").classList.contains("sent"), done:getComputedStyle(document.getElementById("cdone")).display, txt:document.getElementById("cdone").textContent, fields:getComputedStyle(document.querySelector("#cform .fields")).display}));
-  ok(s.sent && s.done!=="none" && s.fields!=="none" && !/\bsent\b|נשלח/i.test(s.txt), `${tag} after sending: honest note, form still there ("${s.txt.slice(0,60)}…")`);
+  s=await p.evaluate(()=>({delivered:document.getElementById("cform").classList.contains("delivered"), thanks:document.getElementById("cthh").textContent, body:document.getElementById("cthp").textContent}));
+  ok(s.delivered && /Test/.test(s.thanks) && posted && /The Line/.test(posted.selection||""), `${tag} after sending: delivered with the selection, thank-you names the reader ("${s.thanks}")`);
   ok(!errs.length, `${tag} no page errors ${errs.join("|")}`);
   await c.close();
 }

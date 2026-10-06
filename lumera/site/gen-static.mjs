@@ -2,7 +2,7 @@
 // Usage: node gen-static.mjs <silavu-page.html> <out dir> [public base URL for OG tags]
 import fs from "node:fs";
 import path from "node:path";
-import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, publicRelease } from "./src/content/load.mjs";
+import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, publicRelease } from "./src/content/load.mjs";
 import { toInline, safeHref, HOUSE_EMAIL } from "./src/content/apply.mjs";
 import { priceWords, baseCurrency } from "./src/content/money.mjs";
 /* a piece with a set price carries an Offer; a piece quoted on request carries none */
@@ -269,6 +269,9 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   console.log("hebrew page:", cuts.length, "strings written in");
 }
 let POLICY_SLUGS = [], PIECE_URLS = [];
+/* the counter as a file of its own for the other pages (the home page carries it inline) */
+let TRACK_HASH = "";
+if (FUNCTIONS_URL && ANALYTICS !== "off") { const t = fs.readFileSync(path.join(SRCDIR, "src", "track.js"), "utf8"); TRACK_HASH = hashOf(t); fs.mkdirSync(ASSETS, { recursive: true }); fs.writeFileSync(path.join(ASSETS, "track." + TRACK_HASH + ".js"), t); }
 const escA = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 
@@ -415,7 +418,9 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     /* the Hebrew address keeps a reader on Hebrew addresses */
     if (o.he) chrome = chrome.replace(/href="\.\/(\?[^"#]*)?(#[^"]*)?"/g, (m, q, h) => `href="he/${q || ""}${h || ""}"`).replace(/href="(pieces\/[^"]*)"/g, 'href="he/$1"');
     const pre = o.alt ? `<script>window.__alt=${JSON.stringify(o.alt)};${o.he ? 'window.__pageLang="he";' : 'window.__pageLang="en";'}</script>` : "";
-    const body = styleBlock + chrome + pre + langScript(titleOf) + (o.script || "");
+    /* the visit counter, on every page, when the backend is connected */
+    const track = FUNCTIONS_URL && ANALYTICS !== "off" ? `<script>window.SILAVU_TRACK=${JSON.stringify({ url: FUNCTIONS_URL + "/collect", mode: ANALYTICS, privacy: "privacy/" })};</script><script src="assets/track.${TRACK_HASH}.js" defer></script>` : "";
+    const body = styleBlock + chrome + pre + langScript(titleOf) + (o.script || "") + track;
     fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
   };
   for (const d of POLICIES) {

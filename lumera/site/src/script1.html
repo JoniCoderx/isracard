@@ -1081,6 +1081,8 @@
        commission, a piece from the collection is that piece */
     if (v) setWant(v.k === "line" || v.k === "bespoke" ? "Bespoke commission" : v.k === "piece" ? (v.a === "viewing" ? "Private viewing" : "A piece from the collection") : (SELWANT[v.a] || "Private viewing"));
     selPaint();
+    /* the anonymous counter (when allowed) hears that a design or a piece was chosen */
+    if (v) try { window.dispatchEvent(new CustomEvent("silavu:select", { detail: { k: v.k, a: v.a, b: v.b || null } })); } catch (e) {}
   }
   /* kept for the few callers that only have words: they become the selection's line */
   function prefill(text) { setSel({ k: "note", a: "viewing", t: text }); }
@@ -1404,18 +1406,41 @@
             ? "תודה שכתבתם ל־SILAVU.\n\nהפנייה שלכם הגיעה לקונסיירז׳ שלנו, ונחזור אליכם באופן אישי.\n\nSILAVU · The Line of Desire"
             : (T("Thank you for writing to SILAVU.") || "Thank you for writing to SILAVU.") + "\n\n" + (T("Your enquiry has reached our concierge, and we will answer you personally.") || "Your enquiry has reached our concierge, and we will answer you personally.") + "\n\nSILAVU · The Line of Desire"; }
       }
+      /* the house's own backend: the enquiry is saved before the page says so.
+         One key per enquiry, kept until it is confirmed, so pressing Send
+         twice or retrying after a dropped connection saves it once. */
+      var house = !fsub;
+      if (house) {
+        if (!form.__idem) form.__idem = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, function (c) { return (c ^ (Math.random() * 16) >> (c / 4)).toString(16); });
+        payload.idem = form.__idem; payload.text = undefined; payload.page = location.pathname;
+        if (isMail) payload.email = cv;
+        if (sel && sel.k === "piece" && sel.r) { payload.ref = sel.r; var pc = document.querySelector('.pgrid [data-ref="' + sel.r.replace(/"/g, "") + '"]'); pc = pc && pc.closest(".piece"); if (pc && /^p-/.test(pc.id)) payload.product = pc.id.slice(2); }
+        if (sel && sel.k === "line" && sel.b) payload.spec = { cut: sel.b.cut, origin: sel.b.origin, ct: sel.b.ct, metal: sel.b.metal, wrist: sel.b.wrist };
+        payload.channel = chan;
+        try { payload.utm = JSON.parse(sessionStorage.getItem("silavu-utm") || "{}"); } catch (e) {}
+        var hp = form.querySelector('input[name="website"]'); if (hp) payload.website = hp.value;
+      }
       fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) })
-        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json().catch(function () { return {}; }); })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var x = new Error("HTTP " + r.status); x.status = r.status; x.body = j; throw x; } return j; }); })
         .then(function (j) {
           if (fsub && j && String(j.success) === "false") throw new Error(j.message || "not sent");
+          if (house && !(j && j.ok && j.ref)) throw new Error("not confirmed");
+          if (house) { form.__idem = null; try { window.dispatchEvent(new CustomEvent("silavu:enquiry", { detail: { want: payload.want } })); } catch (e) {} }
           var first = payload.name.split(/\s+/)[0];
           $("cthh").textContent = L2("Thank you", "תודה") + (first ? ", " + first : "");
           $("cthp").textContent = L2("Your enquiry has reached the SILAVU concierge, and we will answer you personally.", "הפנייה שלכם הגיעה לקונסיירז׳ של SILAVU, ונחזור אליכם באופן אישי.")
-            + (isMail ? " " + L2("A confirmation is on its way to", "אישור נשלח אליכם אל") + " \u2068" + cv + "\u2069." : "");
+            + (house && j.ref ? " " + L2("Your reference is", "מספר הפנייה שלכם:") + " \u2066" + j.ref + "\u2069." : "")
+            + (isMail && (!house || j.confirmation === true) ? " " + L2("A confirmation is on its way to", "אישור נשלח אליכם אל") + " \u2068" + cv + "\u2069." : "");
           form.classList.add("delivered"); try { sessionStorage.removeItem("silavu-draft"); } catch (e) {}
           var th = $("cthanks"); if (th) { var r = th.getBoundingClientRect(); if (r.top < 70 || r.top > innerHeight * 0.6) window.scrollTo({ top: scrollY + r.top - innerHeight * 0.3, behavior: "smooth" }); }
         })
-        .catch(function () {
+        .catch(function (x) {
+          /* the house's backend says which detail it could not accept */
+          if (x && x.status === 400 && x.body && x.body.fields) {
+            if (x.body.fields.indexOf("email") >= 0 || x.body.fields.indexOf("phone") >= 0 || x.body.fields.indexOf("contact") >= 0) { fieldErr(contact, "contactBad"); contact.focus(); return; }
+            if (x.body.fields.indexOf("name") >= 0) { fieldErr(name, "name"); name.focus(); return; }
+          }
+          if (x && x.status === 429 && err) { err.textContent = L2("Several enquiries have just been sent from here. Please wait a few minutes and send again; nothing you wrote is lost.", "כמה פניות נשלחו מכאן ממש עכשיו. המתינו כמה דקות ושלחו שוב; שום דבר ממה שכתבתם לא אבד."); err.hidden = false; return; }
           if (err) { err.textContent = L2("The enquiry could not be sent just now. Nothing you wrote is lost: press the button again, or continue in email.", "לא הצלחנו לשלוח את הפנייה כרגע. שום דבר ממה שכתבתם לא אבד: נסו שוב, או המשיכו באימייל."); err.hidden = false; }
           var a = document.createElement("a"); a.className = "lnk"; a.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); a.textContent = L2("Continue in email", "המשך באימייל");
           if (err) { err.appendChild(document.createTextNode(" ")); err.appendChild(a); }
@@ -1426,6 +1451,7 @@
     /* the app opens with the message written; nothing is sent from here, and
        the page says so rather than claiming it went */
     form.classList.add("sent");
+    try { window.dispatchEvent(new CustomEvent("silavu:contact", { detail: { channel: chan === "WhatsApp" ? "whatsapp" : chan === "Call" ? "phone" : "email" } })); } catch (e) {}
     if (chan === "WhatsApp" && wa) { try { window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(body), "_blank", "noopener"); } catch (err) {} }
     else if (chan === "Call" && tel) { try { location.href = "tel:" + tel; } catch (err) {} }
     else if (mail) { try { location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); } catch (err) {} }

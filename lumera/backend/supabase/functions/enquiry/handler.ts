@@ -26,12 +26,16 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
       if (/invalid request/.test(m)) throw new HttpError(400, "invalid", "The enquiry could not be read.");
       throw e;
     }
+    let confirmation = false;
     if (!saved.duplicate) {
-      const n = await notify(deps, { id: saved.id, ref: saved.ref, name: String(body.name || ""), email: body.email || (String(body.contact || "").includes("@") ? body.contact : null),
-        phone: body.phone || null, city: body.city, channel: body.channel, want: body.want, product: body.ref || body.product, selection: body.selection, message: body.message, lang: body.lang },
-        deps.env("AUTO_REPLY") === "on" && body.reply !== false);
+      const email = body.email || (String(body.contact || "").includes("@") ? body.contact : null);
+      const reply = deps.env("AUTO_REPLY") === "on" && body.reply !== false && !!email;
+      const n = await notify(deps, { id: saved.id, ref: saved.ref, name: String(body.name || ""), email,
+        phone: body.phone || null, city: body.city, channel: body.channel, want: body.want, product: body.ref || body.product, selection: body.selection, message: body.message, lang: body.lang }, reply);
       await deps.rpc("svc_set_enquiry_notify", { p_id: saved.id, p_status: n.status, p_error: n.error || null });
+      // the page promises a confirmation email only if one was actually sent
+      confirmation = reply && n.status === "sent";
     }
-    return json({ ok: true, id: saved.id, ref: saved.ref, received_at: saved.created_at, duplicate: !!saved.duplicate }, 200, cors);
+    return json({ ok: true, id: saved.id, ref: saved.ref, received_at: saved.created_at, duplicate: !!saved.duplicate, confirmation }, 200, cors);
   } catch (e) { return fail(e, cors); }
 }

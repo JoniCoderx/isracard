@@ -196,8 +196,16 @@ const NEW_PRICE = `  var CUTS = {
 if (!/  function price\(\) \{[\s\S]*?\n  \}\n/.test(s1)) { console.error("price() not found"); process.exit(1); }
 s1 = s1.replace(/  function price\(\) \{[\s\S]*?\n  \}\n/, NEW_PRICE);
 /* hero reveals wait for the intro to lift */
+/* With the backend connected (the workflow passes its address), the form
+   sends there and the visit counter is included; without it, nothing of
+   either appears and the page is exactly as before. */
+const FN = CONTENT.FUNCTIONS_URL;
+const SETTINGS = FN ? { ...CONTENT.SETTINGS, enquiry: { ...(CONTENT.SETTINGS.enquiry || {}), endpoint: FN + "/enquiry" } } : CONTENT.SETTINGS;
 /* the published content: page text, chapters, menus, the configurator's offer, settings */
-let b = applyAll(body, CONTENT);
+let b = applyAll(body, { ...CONTENT, SETTINGS });
+if (FN) b = b.replace(/(<form id="cform"[^>]*>)/, '$1\n        <div class="hpot" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>');
+const TRACK = FN && CONTENT.ANALYTICS !== "off"
+  ? `<script>window.SILAVU_TRACK = ${JSON.stringify({ url: FN + "/collect", mode: CONTENT.ANALYTICS, privacy: "privacy/" })};</script>\n<script>\n${fs.readFileSync(S + "track.js", "utf8")}</script>\n` : "";
 if (CONTENT.CONTENT_INFO.source !== "seed") console.log("content: release", CONTENT.CONTENT_INFO.release, CONTENT.CONTENT_INFO.generated_at);
 const hs = b.indexOf('<section id="hero"'), he = b.indexOf("</section>", hs);
 b = b.slice(0, hs) + b.slice(hs, he).replace(/class="([^"]*)\brv\b([^"]*)"/g, 'class="$1rv late$2"') + b.slice(he);
@@ -220,9 +228,9 @@ const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
 /* (the list itself is content now: the configurator document, seeded from src/pricing.json) */
 const PRICING = CONTENT.PRICING;
 const pricingTag = `<script>window.SILAVU_PRICING = ${JSON.stringify(PRICING)};</script>`;
-const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}\n${s11}\n${s10}`;
+const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}\n${s11}\n${s10}${TRACK}`;
 /* lighter on the wire: dead rules out, the sheet and the scripts minified (see slim.mjs) */
 const { slim } = await import("./slim.mjs");
-const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"]);
+const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"].concat(TRACK ? ["src/track.js"] : []));
 fs.writeFileSync(process.env.SILAVU_PAGE_OUT || S + "../silavu-page.html", slimmed);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

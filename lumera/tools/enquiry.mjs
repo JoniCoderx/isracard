@@ -7,6 +7,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); c ? pass++ : fa
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
 const errs = []; p.on("pageerror", e => errs.push(String(e).slice(0, 120)));
+await p.route("**/formsubmit.co/**", r => r.abort());   // never send from a test
 await p.goto("http://127.0.0.1:8777/", { waitUntil: "domcontentloaded" });
 
 /* the clocks must be right before anything else has run */
@@ -25,7 +26,7 @@ await p.waitForTimeout(700);
 /* the two channels a house has not published a number for are hidden; unhide
    them so the label logic can be read */
 await p.evaluate(() => { document.querySelectorAll("#cform .chip[data-ch]").forEach(c => c.hidden = false); document.querySelector("#cform .chan").hidden = false; });
-const want = { Email: "Continue in email", WhatsApp: "Continue on WhatsApp", Call: "Call SILAVU" };
+const want = { Email: "Send enquiry", WhatsApp: "Continue on WhatsApp", Call: "Call SILAVU" };
 for (const ch of ["WhatsApp", "Call", "Email"]) {
   await p.click(`#cform .chip[data-ch="${ch}"]`);
   await p.waitForTimeout(150);

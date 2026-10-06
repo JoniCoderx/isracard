@@ -8,7 +8,7 @@ const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL", m, x
 async function open(path, o = {}) {
   const c = await b.newContext({ viewport: o.vp || { width: 1366, height: 900 }, isMobile: !!o.mob, hasTouch: !!o.mob, reducedMotion: o.reduce ? "reduce" : "no-preference" });
   if (o.init) await c.addInitScript(o.init);
-  const p = await c.newPage(); const errs = []; p.on("pageerror", e => errs.push(e.message));
+  const p = await c.newPage(); const errs = []; p.on("pageerror", e => errs.push(e.message)); await c.route("**/formsubmit.co/**", r => r.abort());
   await p.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await p.route(/mailto:/, r => r.abort());
   await p.goto(U + path, { waitUntil: "load" }); await p.waitForTimeout(800);
@@ -79,7 +79,7 @@ for (const path of ["/", "/he/"]) {
   const { c, p } = await open(path);
   await p.evaluate(() => document.getElementById("concierge").scrollIntoView()); await p.waitForTimeout(400);
   const lbl = await p.evaluate(() => document.getElementById("csend").textContent.trim());
-  ok(lbl === (path === "/" ? "Continue in email" : "המשך באימייל"), path + " button says it continues in email", lbl);
+  ok(lbl === (path === "/" ? "Send enquiry" : "שליחת הפנייה"), path + " button says it sends the enquiry", lbl);
   await p.click("#csend"); await p.waitForTimeout(300);
   const e1 = await p.evaluate(() => ["fName", "fContact"].map(id => { const el = document.getElementById(id), m = document.getElementById(id + "Err"); return [el.getAttribute("aria-invalid"), m && !m.hidden ? m.textContent : "", el.getAttribute("aria-describedby")]; }));
   ok(e1.every(x => x[0] === "true" && x[1] && x[2]), path + " both required fields say what is missing", e1);

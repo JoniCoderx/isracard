@@ -74,7 +74,38 @@ export const PIECES = ofKind("product").map(([, d]) => d.data).filter(p => p.sta
 const col = one("collections");
 export const CATS = col.cats;
 export const SOON = col.soon || [];
-export const POLICIES = ofKind("policy").map(([, d]) => d.data);
+/* Words in a policy that must match how the site is set up. A policy can say
+   {{enquiry_delivery}} or {{site_collects}}; the build writes in the sentence
+   that is true for this build: where an enquiry goes, and what is counted. */
+const FN = /^https:\/\/[^\s"<>]+$/.test(process.env.SILAVU_FUNCTIONS_URL || "") ? process.env.SILAVU_FUNCTIONS_URL.replace(/\/+$/, "") : "";
+export const FUNCTIONS_URL = FN;
+const ANALYTICS_MODE = FN ? ((one("settings").analytics || {}).mode || "consent") : "off";
+const TRUTH = {
+  enquiry_delivery: FN
+    ? { en: "When you press send, what you wrote is saved in the house's own records, kept for SILAVU by Supabase (a database service), and the concierge is told by email. If you left an email address, a confirmation may be sent to it. Nothing else is sent with it.",
+        he: "כשאתם לוחצים על שליחה, מה שכתבתם נשמר ברשומות של הבית, המאוחסנות עבור SILAVU אצל Supabase (שירות מסדי נתונים), והקונסיירז׳ מקבל הודעה באימייל. אם השארתם כתובת אימייל, ייתכן שיישלח אליה אישור. דבר נוסף אינו נשלח יחד איתו." }
+    : { en: "When you press send, the enquiry form delivers what you wrote to the concierge's inbox through FormSubmit (formsubmit.co), a form-delivery service, which also emails you a confirmation if you left an email address. Nothing else is sent with it.",
+        he: "כשאתם לוחצים על שליחה, טופס הפנייה מעביר את מה שכתבתם לתיבת הדואר של הקונסיירז׳ באמצעות FormSubmit ‏(formsubmit.co), שירות להעברת טפסים, שגם שולח לכם אישור אם השארתם כתובת אימייל. דבר נוסף אינו נשלח יחד איתו." },
+  site_collects: ANALYTICS_MODE === "consent"
+    ? { en: "No advertising trackers, no third-party analytics, no profile, no cookies. If you allow it, the site counts your visit anonymously on the house's own systems: the pages and pieces you looked at, the site you came from, your kind of device and your language, and a random number kept in your browser so that a return visit can be told from a new one. Nothing you type is counted. You can change your answer at any time from \"Analytics choices\" at the foot of every page. Your language choice is kept in your own browser and never leaves it.",
+        he: "אין באתר רכיבי מעקב פרסומיים, אין כלי ניתוח של צד שלישי, אין פרופיל ואין עוגיות. אם תאשרו, האתר סופר את הביקור שלכם באופן אנונימי במערכות של הבית: הדפים והתכשיטים שראיתם, האתר שממנו הגעתם, סוג המכשיר והשפה, ומספר אקראי שנשמר בדפדפן כדי להבחין בין ביקור חוזר לביקור חדש. שום דבר שאתם מקלידים אינו נספר. אפשר לשנות את התשובה בכל עת דרך \"בחירות מדידה\" בתחתית כל דף. בחירת השפה נשמרת בדפדפן שלכם בלבד." }
+    : ANALYTICS_MODE === "cookieless"
+    ? { en: "No advertising trackers, no third-party analytics, no profile, no cookies. The site counts visits anonymously on the house's own systems: the pages and pieces looked at, the site a visit came from, the kind of device and the language. Nothing is stored on your device for this unless you allow it, which lets a return visit be told from a new one. Nothing you type is counted. You can say no at any time from \"Analytics choices\" at the foot of every page. Your language choice is kept in your own browser and never leaves it.",
+        he: "אין באתר רכיבי מעקב פרסומיים, אין כלי ניתוח של צד שלישי, אין פרופיל ואין עוגיות. האתר סופר ביקורים באופן אנונימי במערכות של הבית: הדפים והתכשיטים שנצפו, האתר שממנו הגיע הביקור, סוג המכשיר והשפה. דבר אינו נשמר במכשיר שלכם לשם כך אלא אם תאשרו, וכך אפשר להבחין בין ביקור חוזר לחדש. שום דבר שאתם מקלידים אינו נספר. אפשר לסרב בכל עת דרך \"בחירות מדידה\" בתחתית כל דף. בחירת השפה נשמרת בדפדפן שלכם בלבד." }
+    : { en: "No advertising trackers, no third-party analytics, no profile. The site sets no cookie for marketing. Your language choice is kept in your own browser and never leaves it.",
+        he: "אין באתר רכיבי מעקב פרסומיים, אין כלי ניתוח של צד שלישי ואין פרופיל משתמש. האתר אינו שומר עוגיות שיווקיות. בחירת השפה נשמרת בדפדפן שלכם בלבד." }
+};
+/* a pair { en, he } gets each language's sentence; anything else is walked */
+const truth = (o) => {
+  if (Array.isArray(o)) return o.map(truth);
+  if (!o || typeof o !== "object") return o;
+  const out = {};
+  for (const [k, v] of Object.entries(o)) out[k] = (k === "en" || k === "he") && typeof v === "string"
+    ? v.replace(/\{\{(\w+)\}\}/g, (m, t) => TRUTH[t] ? TRUTH[t][k] : m) : truth(v);
+  return out;
+};
+export const ANALYTICS = ANALYTICS_MODE;
+export const POLICIES = ofKind("policy").map(([, d]) => truth(d.data));
 export const ABOUT = one("about");
 export const DOCPAGES = ofKind("docpage").map(([, d]) => d.data).filter(p => p.status !== "hidden");
 /* the documents listed under "Client care": the policies, then any page the owner added there */
