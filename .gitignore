@@ -2,3 +2,4 @@ node_modules/
 qa/
 *.tgz
 lumera/site/dist/
+lumera/backend/node_modules/
