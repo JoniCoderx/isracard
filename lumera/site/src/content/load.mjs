@@ -112,7 +112,14 @@ export const DOCPAGES = ofKind("docpage").map(([, d]) => d.data).filter(p => p.s
 /* the documents listed under "Client care": the policies, then any page the owner added there */
 export const FOOTER_DOCS = [...POLICIES.map(d => ({ slug: d.slug, title: d.title })), ...DOCPAGES.filter(d => d.footer !== false).map(d => ({ slug: d.slug, title: d.title }))];
 export const CONFIGURATOR = one("configurator");
-export const PRICING = CONFIGURATOR.pricing;
+/* the database keeps object keys in its own order; written into the page,
+   the figures keep the seed's order, so the same content is the same bytes */
+const likeSeed = (v, ref) => {
+  if (!v || typeof v !== "object" || Array.isArray(v) || !ref || typeof ref !== "object") return v;
+  const keys = [...Object.keys(ref).filter(k => k in v), ...Object.keys(v).filter(k => !(k in ref))];
+  return Object.fromEntries(keys.map(k => [k, likeSeed(v[k], ref[k])]));
+};
+export const PRICING = likeSeed(CONFIGURATOR.pricing, (seedDocs().configurator || {}).data?.pricing);
 export const SETTINGS = one("settings");
 export const HOME = one("page:home");
 export const STRINGS = (one("strings").overrides) || {};

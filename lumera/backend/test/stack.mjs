@@ -30,7 +30,7 @@ export async function startStack({ sitePort = 8777, fnPort = 54321, dist = "/tmp
       body: JSON.stringify({ release, status, url: "https://github.com/local/site/actions/runs/" + Date.now(), error }) });
     try {
       if (faults.build) throw new Error("the build was made to fail (test)");
-      const f = await run("node", [path.join(SITE, "content-fetch.mjs")], { env });
+      const f = await run("node", [path.join(SITE, "content-fetch.mjs")], { env }); log("build: " + (f.stdout + f.stderr).trim().replace(/\n/g, " | "));
       const rel = (f.stdout.match(/release=(\d*)/) || [])[1];
       if (release) await report("building");
       await run("node", ["build.mjs"], { cwd: path.join(SITE, "src"), env });
@@ -41,7 +41,7 @@ export async function startStack({ sitePort = 8777, fnPort = 54321, dist = "/tmp
       const cache = path.join(path.dirname(dist), "img-cache");
       if (!fs.existsSync(path.join(cache, "knot-flat-640.jpg"))) await run("bash", [path.join(SITE, "piece-assets.sh"), cache], { env });
       fs.mkdirSync(path.join(tmp, "img"), { recursive: true }); for (const f of fs.readdirSync(cache)) fs.copyFileSync(path.join(cache, f), path.join(tmp, "img", f));
-      await run("bash", [path.join(SITE, "library-assets.sh"), tmp], { env });
+      const lib = await run("bash", [path.join(SITE, "library-assets.sh"), tmp], { env }); log("build: " + (lib.stdout + lib.stderr).trim().replace(/\n/g, " | "));
       await run("node", [path.join(ADMIN, "build.mjs"), path.join(tmp, "admin")], { env });
       /* swap in whole, like a Pages deploy: the old site stays up until the new one is complete */
       fs.rmSync(dist + ".old", { recursive: true, force: true }); if (fs.existsSync(dist)) fs.renameSync(dist, dist + ".old"); fs.renameSync(tmp, dist);

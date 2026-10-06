@@ -48,6 +48,8 @@ if (r) {
   out("release", r.release ?? "");
   out("source", r.media && r.media.some(m => m.live) ? "live" : (FN && TOKEN ? "backend" : "live"));
 } else {
+  /* a copy left by an earlier local build must not be mistaken for content */
+  for (const f of ["release.json", "media.json"]) fs.rmSync(DIR + f, { force: true });
   console.log("content: none published yet; the seed is built");
   out("release", ""); out("source", "seed");
 }

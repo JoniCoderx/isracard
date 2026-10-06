@@ -49,6 +49,16 @@ function NotConnected() {
     <p>{t("This copy of the admin was built without the backend's address. Follow ADMIN_SETUP.md: create the Supabase project, add its address and publishable key to the repository's Actions variables, and publish once.")}</p></div></main>;
 }
 
+/* a link from an email (password reset, invitation): a one-time token the
+   admin exchanges here, then the person chooses a password */
+async function emailLink() {
+  const u = new URL(location.href), token_hash = u.searchParams.get("token_hash"), type = u.searchParams.get("type");
+  if (!token_hash || !["recovery", "invite"].includes(type)) return;
+  history.replaceState(null, "", u.pathname + "#/reset"); dispatchEvent(new HashChangeEvent("hashchange"));
+  const { error } = await sb.auth.verifyOtp({ token_hash, type });
+  if (error) toast(t("This link has expired or was already used. Ask for a new one from the sign-in page."), "bad");
+}
+
 function App() {
   const route = useRoute();
   const [, rerender] = useState(0); useEffect(() => onLang(() => rerender(x => x + 1)), []);
@@ -63,7 +73,7 @@ function App() {
   };
   useEffect(() => {
     if (!connected) return;
-    sb.auth.getSession().then(({ data }) => refresh(data.session));
+    emailLink().catch(() => {}).then(() => sb.auth.getSession()).then(({ data }) => refresh(data.session));
     const { data: sub } = sb.auth.onAuthStateChange((ev, session) => { if (ev === "PASSWORD_RECOVERY") go("reset"); if (ev !== "INITIAL_SESSION") refresh(session); });
     return () => sub.subscription.unsubscribe();
   }, []);

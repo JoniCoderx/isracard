@@ -39,3 +39,15 @@ verify_enabled = true
 
 [auth.email]
 enable_signup = false
+
+# The links in these emails carry a one-time token the admin exchanges itself,
+# so they work in any browser (a phone's mail app included), not only the one
+# that asked. On the hosted project, paste the same two templates into
+# Authentication → Email Templates (ADMIN_SETUP.md, step 5).
+[auth.email.template.recovery]
+subject = "SILAVU admin: set a new password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.invite]
+subject = "You are invited to the SILAVU admin"
+content_path = "./supabase/templates/invite.html"

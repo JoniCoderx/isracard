@@ -12,10 +12,11 @@ LIST="$(dirname "$0")/content/media.json"
 [ -f "$LIST" ] || { echo "library: nothing to fetch"; exit 0; }
 LIVE="${SILAVU_LIVE%/}"
 T=$(mktemp -d)
-node -e 'for (const m of JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))) console.log([m.id, m.kind || "image", m.live ? "live" : "", m.url || ""].join("\t"))' "$LIST" |
+node -e 'for (const m of JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))) console.log([m.id, m.kind || "image", m.live ? "live" : "new", m.url || "-"].join("\t"))' "$LIST" |
 while IFS=$'\t' read -r id kind live url; do
   [[ "$id" =~ ^[0-9a-f-]{36}$ ]] || { echo "library: skipped a malformed id"; continue; }
-  if [ -n "$live" ]; then
+  # (tab is whitespace to read: an empty field would shift the next one, so none is empty)
+  if [ "$live" = "live" ]; then
     for w in 640 900 1254; do curl -fsSL --retry 3 -o "$OUT/img/m-$id-$w.jpg" "$LIVE/img/m-$id-$w.jpg" 2>/dev/null || true; done
     curl -fsSL --retry 3 -o "$OUT/v/m-$id.mp4" "$LIVE/v/m-$id.mp4" 2>/dev/null || rm -f "$OUT/v/m-$id.mp4"
     curl -fsSL --retry 3 -o "$OUT/v/m-$id-720.mp4" "$LIVE/v/m-$id-720.mp4" 2>/dev/null || rm -f "$OUT/v/m-$id-720.mp4"

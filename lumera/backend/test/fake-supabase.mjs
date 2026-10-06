@@ -149,9 +149,10 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
         return { status: 200, body: issue(u) };
       }
       if (gt === "refresh_token") { const s = sessions.get(body.refresh_token); if (!s || s.user.banned) return { status: 400, body: { code: "refresh_token_not_found", msg: "Invalid Refresh Token" } }; sessions.delete(body.refresh_token); return { status: 200, body: issue(s.user, s.aal) }; }
-      if (gt === "pkce") { const r = recoveries.get(body.auth_code); if (!r) return { status: 400, body: { msg: "invalid flow state" } }; recoveries.delete(body.auth_code); return { status: 200, body: issue(r) }; }
     }
-    if (p === "/recover") { const u = users.get(String(body.email || "").toLowerCase()); if (u) { const code = crypto.randomUUID(); recoveries.set(code, u); mail.push({ to: u.email, kind: "recovery", link: `${env.ADMIN_URL}?code=${code}#/reset` }); } return { status: 200, body: {} }; }
+    if (p === "/recover") { const u = users.get(String(body.email || "").toLowerCase()); if (u) { const code = crypto.randomUUID(); recoveries.set(code, u); mail.push({ to: u.email, kind: "recovery", link: `${env.ADMIN_URL}?token_hash=${code}&type=recovery` }); } return { status: 200, body: {} }; }
+    /* the link in the email (supabase/templates): a one-time token, any browser */
+    if (p === "/verify" && req.method === "POST") { const r = recoveries.get(body.token_hash); if (!r || !["recovery", "invite"].includes(body.type)) return { status: 403, body: { code: "otp_expired", msg: "Email link is invalid or has expired" } }; recoveries.delete(body.token_hash); return { status: 200, body: issue(r) }; }
     if (!claims || !claims.sub) return { status: 401, body: { msg: "not signed in", code: "no_authorization" } };
     const u = byId(claims.sub); if (!u) return { status: 401, body: { msg: "user not found" } };
     if (p === "/user" && req.method === "GET") return { status: 200, body: userJson(u) };
@@ -260,7 +261,7 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
       remove: async (b, ps) => { for (const p of ps) { await db.query("delete from storage.objects where bucket_id = $1 and name = $2", [b, p]); files.delete(b + "/" + p); } }
     },
     authAdmin: {
-      invite: async (email) => { let u = users.get(email); if (!u) { u = await addUser(email, null); mail.push({ to: email, kind: "invite", link: env.ADMIN_URL }); } return { id: u.id }; },
+      invite: async (email) => { let u = users.get(email); if (!u) { u = await addUser(email, null); const code = crypto.randomUUID(); recoveries.set(code, u); mail.push({ to: email, kind: "invite", link: `${env.ADMIN_URL}?token_hash=${code}&type=invite` }); } return { id: u.id }; },
       ban: async (id) => { const u = byId(id); if (u) u.banned = true; }
     }
   };
