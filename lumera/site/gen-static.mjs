@@ -401,7 +401,13 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     if (o.imageAlt) dhead = dhead.replace(/(<meta property="og:image:alt" content=")[^"]*/, `$1${escA(o.imageAlt)}`).replace(/(<meta name="twitter:image:alt" content=")[^"]*/, `$1${escA(o.imageAlt)}`);
     if (o.imageSize) dhead = dhead.replace(/(<meta property="og:image:width" content=")[^"]*/, `$1${o.imageSize}`).replace(/(<meta property="og:image:height" content=")[^"]*/, `$1${o.imageSize}`);
     if (o.product) dhead = dhead.replace(/(<meta property="og:type" content=")[^"]*/, "$1product");
-    if (o.light) dhead = dhead.replace(/(<meta name="theme-color" content=")[^"]*/, "$1#ffffff");
+    /* a white page is white up to the top of the phone: the browser paints its
+       bar from the theme colour and from the page's own background, so both
+       are white, and the home-screen status bar is dark text on white */
+    if (o.light) dhead = dhead.replace(/(<meta name="theme-color" content=")[^"]*/, "$1#ffffff")
+      .replace(/(<meta name="apple-mobile-web-app-status-bar-style" content=")[^"]*/, "$1default")
+      .replace(/<html /, '<html class="lightpg" ')
+      .replace(/(<meta name="theme-color"[^>]*>)/, '$1\n<meta name="color-scheme" content="light">\n<style>html.lightpg,html.lightpg body{background:#fff!important}</style>');
     if (o.schema) dhead = dhead.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => `<script type="application/ld+json">${JSON.stringify(o.schema)}</script>`);
     let chrome = `<div class="dpage${o.light ? " light" : ""}" id="top">\n${header(slug)}\n${inner}\n${footer(slug)}\n</div>\n`;
     /* the Hebrew address keeps a reader on Hebrew addresses */
