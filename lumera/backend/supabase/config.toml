@@ -1,0 +1,39 @@
+# Supabase project settings used by `supabase functions deploy` and `supabase db push`.
+project_id = "silavu"
+
+# Every function checks its caller itself (a staff session, the build token,
+# or nothing for the two public endpoints), so the gateway's JWT check is off.
+[functions.enquiry]
+verify_jwt = false
+[functions.collect]
+verify_jwt = false
+[functions.publish]
+verify_jwt = false
+[functions.release-snapshot]
+verify_jwt = false
+[functions.release-status]
+verify_jwt = false
+[functions.staff]
+verify_jwt = false
+[functions.media]
+verify_jwt = false
+[functions.export]
+verify_jwt = false
+[functions.setup]
+verify_jwt = false
+[functions.status]
+verify_jwt = false
+
+[auth]
+# the admin's address (set to your custom domain's /admin/ when you move)
+site_url = "https://jonicoderx.github.io/isracard/admin/"
+additional_redirect_urls = ["https://jonicoderx.github.io/isracard/admin/", "http://localhost:8777/admin/"]
+jwt_expiry = 3600
+enable_signup = false
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.email]
+enable_signup = false
