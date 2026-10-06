@@ -46,7 +46,7 @@ export const can = (role, path) => { const n = NAV.find(x => x[0] === path); ret
 
 function NotConnected() {
   return <main class="solo"><div class="card narrow"><div class="brand big">SILAVU</div><h1>{t("The admin is not connected yet")}</h1>
-    <p>{t("This copy of the admin was built without the backend's address. Follow ADMIN_SETUP.md: create the Supabase project, add its address and publishable key to the repository's Actions secrets, and publish once.")}</p></div></main>;
+    <p>{t("This copy of the admin was built without the backend's address. Follow ADMIN_SETUP.md: create the Supabase project, add its address and publishable key to the repository's Actions variables, and publish once.")}</p></div></main>;
 }
 
 function App() {

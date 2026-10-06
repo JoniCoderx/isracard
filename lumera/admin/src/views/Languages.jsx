@@ -6,7 +6,7 @@ import { message, SITE } from "../lib/sb.js";
 import { t } from "../lib/i18n.js";
 import { useDoc } from "../lib/doc.js";
 import { href, go } from "../lib/router.js";
-import { Bi, Input, PageHead, Tabs, Load, useLoad, Pill } from "../lib/ui.jsx";
+import { Bi, Input, PageHead, Tabs, Load, useLoad, Pill, NotImported } from "../lib/ui.jsx";
 import { SaveBar } from "./Products.jsx";
 import { useInventory } from "./Pages.jsx";
 import { toInline } from "../../../site/src/content/apply.mjs";
@@ -25,6 +25,7 @@ function SearchEdit() {
   const d = useDoc("seo", "seo", { title: "Search and sharing" });
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const h = d.data.home;
   const setH = (k, v) => d.setData({ ...d.data, home: { ...h, [k]: v } });
   return <>
@@ -45,6 +46,7 @@ function Translate({ lang }) {
   const [onlyMissing, setOnly] = useState(true), [search, setSearch] = useState("");
   if (inv.loading || d.loading || strings.loading || file.loading) return <p>{t("Loading…")}</p>;
   if (inv.error || d.error) return <p class="err">{message(inv.error || d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const meta = OTHER.find(x => x[0] === lang), ov = d.data[lang] || {}, so = (strings.data && strings.data.overrides) || {}, dict = file.data || {};
   /* the key is the English the page shows now: an edited sentence needs its translation again */
   const rows = inv.data.strings.map(s => { const en = toInline((so[s.key] && so[s.key].en) || s.en); return { key: en, en, have: ov[en] ?? dict[en] ?? "" }; })

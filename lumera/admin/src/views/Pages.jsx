@@ -6,7 +6,7 @@ import { sb, rpc, q, message, SITE } from "../lib/sb.js";
 import { t, getLang } from "../lib/i18n.js";
 import { href, go } from "../lib/router.js";
 import { useDoc, listDocs } from "../lib/doc.js";
-import { Button, Input, Select, Toggle, Bi, Pill, PageHead, Load, useLoad, ListEdit, Tabs, Modal, toast, ask, Empty } from "../lib/ui.jsx";
+import { Button, Input, Select, Toggle, Bi, Pill, PageHead, Load, useLoad, ListEdit, Tabs, Modal, toast, ask, Empty, NotImported } from "../lib/ui.jsx";
 import { SaveBar } from "./Products.jsx";
 import { MediaPicker } from "./Media.jsx";
 import { Preview } from "./PreviewFrame.jsx";
@@ -39,6 +39,7 @@ function HomeChapters() {
   const [pick, setPick] = useState(null), [prev, setPrev] = useState(false);
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const h = d.data, setSec = (id, hidden) => d.setData({ ...h, sections: { ...h.sections, [id]: { ...(h.sections[id] || {}), hidden } } });
   const setBlocks = (blocks) => d.setData({ ...h, blocks });
   return <>
@@ -87,6 +88,7 @@ function PageText({ focus }) {
   if (inv.loading || d.loading) return <p>{t("Loading…")}</p>;
   if (inv.error) return <p class="err">{message(inv.error)}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const ov = (d.data && d.data.overrides) || {}, published = (d.doc && d.doc.published && d.doc.published.overrides) || {};
   const setOv = (key, v) => { const n = { ...ov }; if (v) n[key] = v; else delete n[key]; d.setData({ ...d.data, overrides: n }); };
   const items = inv.data.strings.filter(s => !search || (s.en + " " + s.he + " " + ((ov[s.key] || {}).en || "") + " " + ((ov[s.key] || {}).he || "")).toLowerCase().includes(search.toLowerCase()));
@@ -127,6 +129,7 @@ function Menus() {
   const d = useDoc("navigation", "navigation", { title: "Menus" });
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const n = d.data;
   return <>
     <section class="card">

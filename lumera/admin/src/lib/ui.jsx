@@ -151,3 +151,8 @@ export function DocState({ doc, dirty, saving, savedAt, conflict }) {
   const live = doc.published_rev === doc.draft_rev && !!doc.published_archived === !!doc.archived_at;
   return live ? <Pill tone="ok">{t("Published")}</Pill> : <Pill tone="info">{t("Draft saved, not live yet")}</Pill>;
 }
+
+/* a screen whose content has not been brought into the admin yet */
+export function NotImported() {
+  return <div class="notice warn">{t("The site's content is not in the admin yet. Open Publishing and choose \"Import the current site\".")}</div>;
+}

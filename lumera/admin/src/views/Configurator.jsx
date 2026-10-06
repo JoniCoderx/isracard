@@ -8,7 +8,7 @@ import { message } from "../lib/sb.js";
 import { t, getLang } from "../lib/i18n.js";
 import { day } from "../lib/time.js";
 import { useDoc } from "../lib/doc.js";
-import { Button, Input, Select, Toggle, Bi, PageHead, Pill } from "../lib/ui.jsx";
+import { Button, Input, Select, Toggle, Bi, PageHead, Pill, NotImported } from "../lib/ui.jsx";
 import { SaveBar } from "./Products.jsx";
 import { Preview } from "./PreviewFrame.jsx";
 import { Revisions } from "./History.jsx";
@@ -18,6 +18,7 @@ export function Configurator() {
   const [prev, setPrev] = useState(false);
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const c = d.data, set = (k, v) => d.setData({ ...c, [k]: v });
   const list = (k, label) => <section class="card"><h2>{label}</h2><div class="opts">{c[k].map((x, i) => <div class="opt">
     <Toggle label={getLang() === "he" ? x.he : x.en} checked={x.enabled !== false} onChange={(v) => set(k, c[k].map((y, j) => j === i ? { ...y, enabled: v } : y))} />

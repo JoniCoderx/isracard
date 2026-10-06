@@ -5,7 +5,7 @@ import { useState } from "preact/hooks";
 import { message } from "../lib/sb.js";
 import { t } from "../lib/i18n.js";
 import { useDoc } from "../lib/doc.js";
-import { Input, Select, Toggle, Bi, PageHead } from "../lib/ui.jsx";
+import { Input, Select, Toggle, Bi, PageHead, NotImported } from "../lib/ui.jsx";
 import { SaveBar } from "./Products.jsx";
 import { Preview } from "./PreviewFrame.jsx";
 import { safeHref } from "../../../site/src/content/apply.mjs";
@@ -16,6 +16,7 @@ export function Settings({ role }) {
   const [prev, setPrev] = useState(false);
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
+  if (!d.data) return <NotImported />;
   const s = d.data, set = (k, v) => d.setData({ ...s, [k]: v });
   const sub = (k, f, v) => set(k, { ...(s[k] || {}), [f]: v });
   const url = (v) => v && !/^https:\/\/[^\s"'<>\\]+$/.test(v) ? t("A full address starting with https://") : "";
