@@ -6,3 +6,5 @@ lumera/backend/node_modules/
 lumera/site/silavu-page.test-*.html
 lumera/site/content/release.json
 lumera/site/content/media.json
+lumera/admin/node_modules/
+lumera/site/silavu-page.stack.html

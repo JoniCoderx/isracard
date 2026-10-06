@@ -2,9 +2,10 @@
 // Usage: node gen-static.mjs <silavu-page.html> <out dir> [public base URL for OG tags]
 import fs from "node:fs";
 import path from "node:path";
-import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, publicRelease } from "./src/content/load.mjs";
-import { toInline, safeHref, HOUSE_EMAIL } from "./src/content/apply.mjs";
+import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, REDIRECTS, publicRelease } from "./src/content/load.mjs";
+import { toInline, safeHref, safeInline, HOUSE_EMAIL } from "./src/content/apply.mjs";
 import { priceWords, baseCurrency } from "./src/content/money.mjs";
+import { policyMain, docpageMain } from "./src/content/templates.mjs";
 /* a piece with a set price carries an Offer; a piece quoted on request carries none */
 const offerOf = (p, url) => { const pr = p.price || {}, cur = baseCurrency(pr);
   if (pr.mode !== "exact" || !cur) return undefined;
@@ -424,13 +425,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     fs.writeFileSync(path.join(dir, "index.html"), dhead + body + "\n</body>\n</html>\n");
   };
   for (const d of POLICIES) {
-    const inner = `<main class="doc">
-<div class="k gold" ${A(S("Client care", "שירות לקוחות"))}>Client care</div>
-<h1 data-doc-title ${A(d.title)}>${d.title.en}</h1>
-<p class="lede" ${A(d.lede)}>${d.lede.en}</p>
-${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\n")}
-<p class="dask"><span ${A(S("A question this page does not answer?", "יש שאלה שלא נענתה כאן?"))}>A question this page does not answer?</span> <a href="./#concierge" ${A(S("Write to the concierge", "כתבו לקונסיירז'"))}>Write to the concierge</a></p>
-</main>`;
+    const inner = policyMain(d);
     /* the description is the page's own words: its lede and the first
        sentence of what follows, kept to what a results page shows */
     const first = (d.body[0][1].en.match(/^[^.!?]+[.!?]/) || [""])[0];
@@ -440,23 +435,7 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
   /* pages the owner made in the admin, from the same document template.
      Their text is plain, with *emphasis*; nothing in them can carry markup. */
   for (const d of DOCPAGES) {
-    const I = x => ({ en: toInline((x && x.en) || ""), he: toInline((x && (x.he || x.en)) || "") });
-    const blk = b => {
-      if (b.type === "heading") return `<section>${T("h2", I(b.text))}</section>`;
-      if (b.type === "paragraph") return `<section>${T("p", I(b.text))}</section>`;
-      if (b.type === "image" && /^media:[0-9a-f-]{36}$/.test(b.image || "")) {
-        const n = "m-" + b.image.slice(6);
-        return `<figure class="dfig"><img src="img/${n}-900.jpg" srcset="img/${n}-640.jpg 640w, img/${n}-900.jpg 900w, img/${n}-1254.jpg 1254w" sizes="(min-width:900px) 720px, 92vw" alt="${escA((b.alt && b.alt.en) || "")}" data-alt-he="${escA((b.alt && b.alt.he) || "")}" loading="lazy" decoding="async">${b.caption && b.caption.en ? `<figcaption ${A(I(b.caption))}>${I(b.caption).en}</figcaption>` : ""}</figure>`;
-      }
-      if (b.type === "button" && b.label && b.label.en && safeHref(b.href || "")) return `<p class="dask"><a class="dbtn" href="${escA(safeHref(b.href))}" ${A(I(b.label))}>${I(b.label).en}</a></p>`;
-      return "";
-    };
-    const inner = `<main class="doc">
-${d.eyebrow && d.eyebrow.en ? `<div class="k gold" ${A(I(d.eyebrow))}>${I(d.eyebrow).en}</div>` : ""}
-<h1 data-doc-title ${A(I(d.title))}>${I(d.title).en}</h1>
-${d.lede && d.lede.en ? `<p class="lede" ${A(I(d.lede))}>${I(d.lede).en}</p>` : ""}
-${(d.blocks || []).map(blk).join("\n")}
-</main>`;
+    const inner = docpageMain(d);
     const st = (d.seo && d.seo.title && d.seo.title.en) || `${d.title.en.replace(/\*/g, "")} | SILAVU`;
     const sd = (d.seo && d.seo.description && d.seo.description.en) || (d.lede && d.lede.en) || "";
     page(d.slug, st, sd, inner, '+ " | SILAVU"');
@@ -628,7 +607,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
       const l = f.replace(/\.json$/, ""), extra = (TRANSLATIONS && TRANSLATIONS[l]) || {};
       if (!Object.keys(extra).length) { fs.copyFileSync(path.join(from, f), path.join(to, f)); continue; }
       const dict = JSON.parse(fs.readFileSync(path.join(from, f), "utf8"));
-      for (const [k, v] of Object.entries(extra)) if (typeof v === "string" && v.trim()) dict[k] = v;
+      for (const [k, v] of Object.entries(extra)) if (typeof v === "string" && v.trim()) dict[k] = safeInline(v);
       fs.writeFileSync(path.join(to, f), JSON.stringify(dict, null, 1) + "\n");
     }
     console.log("languages:", fs.readdirSync(to).join(" "));
@@ -682,6 +661,16 @@ a:focus-visible{outline:2px solid #e6d6b0;outline-offset:3px}</style></head>
 const cnameSrc = path.join(path.dirname(src), "CNAME");
 if (fs.existsSync(cnameSrc)) fs.copyFileSync(cnameSrc, path.join(outDir, "CNAME"));
 console.log("static index written:", path.join(outDir, "index.html"), ((head.length + html.length) / 1024).toFixed(0) + " KB");
+
+/* moved pages: a page at the old address that forwards (never over a real page) */
+for (const r of REDIRECTS) {
+  const dir = path.join(outDir, r.from);
+  if (fs.existsSync(path.join(dir, "index.html"))) { console.warn("redirect skipped, a page exists at", r.from); continue; }
+  const to = base + "/" + r.to;
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "index.html"), `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Moved · SILAVU</title><meta name="robots" content="noindex"><link rel="canonical" href="${to}"><meta http-equiv="refresh" content="0; url=${to}"></head><body><p>This page has moved: <a href="${to}">${to}</a></p></body></html>\n`);
+}
+if (REDIRECTS.length) console.log("redirects:", REDIRECTS.length);
 
 /* the public copy of what this build rendered: every field in it is already
    on the site. The next build falls back to it if the backend is unreachable. */

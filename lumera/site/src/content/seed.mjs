@@ -17,18 +17,8 @@ const S = (en, he) => ({ en, he });
 const SRC = new URL("..", import.meta.url).pathname;
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
-export const HOME_SECTIONS = [
-  // id, label, may it be hidden (the opening, the collection, the enquiry and the footer carry the page)
-  { id: "hero", label: S("Opening", "פתיחה"), hideable: false },
-  { id: "house", label: S("The house", "הבית"), hideable: true },
-  { id: "inside", label: S("The box", "הקופסה"), hideable: true },
-  { id: "craft", label: S("The signature", "החתימה"), hideable: true },
-  { id: "collection", label: S("Collection", "הקולקציה"), hideable: false },
-  { id: "macro", label: S("Light goes in. Fire comes out.", "האור נכנס. האש יוצאת."), hideable: true },
-  { id: "build", label: S("The Line (configurator)", "הקו (עיצוב צמיד)"), hideable: true },
-  { id: "enquire", label: S("Enquire", "פנייה"), hideable: false },
-  { id: "end", label: S("Footer", "תחתית"), hideable: false }
-];
+export { HOME_SECTIONS } from "./sections.mjs";
+import { HOME_SECTIONS } from "./sections.mjs";
 
 /* the labels on the configurator's shape buttons */
 export const CUTS = [
@@ -65,7 +55,7 @@ export function seedDocs() {
   });
   put("strings", "strings", "Page text", 0, { overrides: {} });
   put("translations", "translations", "Other languages", 0, { ar: {}, fr: {}, ru: {} });
-  put("navigation", "navigation", "Menus", 0, { extra: [] });
+  put("navigation", "navigation", "Menus", 0, { extra: [], redirects: [] });
   put("seo", "seo", "Search and sharing", 0, {
     home: {
       title: S("SILAVU | Fine Jewellery", "SILAVU | תכשיטי יוקרה"),

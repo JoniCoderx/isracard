@@ -66,7 +66,7 @@ const T = (tag, cls, en, he, extra = "") => `<${tag} class="${cls}" data-en="${e
 const SIZES_PC = "(min-width:1330px) 612px, (min-width:900px) 46vw, (min-width:480px) 92vw, 88vw";
 const esc = (x) => String(x).replace(/"/g, "&quot;");
 
-function pieceCard(p) {
+export function pieceCard(p) {
   const a = p.shots[0], b = p.shots[1] || p.shots[0];
   const wide = p.widths && p.widths.length ? p.widths : undefined;
   const shots = JSON.stringify(p.shots.map(x => ({ i: x.img, a: x.alt.en, h: x.alt.he, w: wide || null })));
@@ -82,7 +82,8 @@ function pieceCard(p) {
   const prose = JSON.stringify({ story: p.story || null, stones: p.stones || null, care: p.care || null });
   return `<article class="piece" id="p-${p.id}" data-cat="${p.cat}"${p.stonesInside === false ? ' data-nostones=""' : ""}${p.theme ? ` data-theme="${p.theme}" data-word="${esc(p.word || "")}"` : ""}${p.title ? ` data-title="${esc(p.title.en)}" data-title-he="${esc(p.title.he)}"` : ""} data-shots="${esc(shots)}" data-specs="${esc(specs)}" data-keys="${esc(keys)}" data-prose="${esc(prose)}">
         <div class="fig r11 rv swp${p.light ? " swl" : ""}"><div class="im">${pic(a.img, a.alt, SIZES_PC, true, wide)}</div><i class="sheen"></i><i class="lt"></i><i class="wrapln" aria-hidden="true"></i>${p.shots.length > 1 ? `<button type="button" class="cnav cprev" aria-label="Previous photograph" data-l-en="Previous photograph" data-l-he="התמונה הקודמת"></button><button type="button" class="cnav cnext" aria-label="Next photograph" data-l-en="Next photograph" data-l-he="התמונה הבאה"></button>` : ""}<div class="swd" aria-hidden="true">${p.shots.map((x, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</div></div>
-        <div class="bd">
+        <div class="bd">${p.badge && p.badge.en ? `
+          <span class="pbadge k" data-en="${esc(p.badge.en)}" data-he="${esc(p.badge.he || p.badge.en)}">${p.badge.en}</span>` : ""}
           <div class="t">${markUse("nmk")}${T("span", "nm", p.name.en, p.name.he)}${p.kind ? `<span class="kd" data-en="${esc(p.kind.en)}" data-he="${esc(p.kind.he)}">${p.kind.en}</span>` : ""}</div>
           <p class="p" data-en="${esc(p.line.en)}" data-he="${esc(p.line.he)}">${p.line.en}</p>
           <div class="row k meta">${meta}</div>

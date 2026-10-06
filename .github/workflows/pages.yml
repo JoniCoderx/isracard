@@ -19,8 +19,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # set in Settings → Secrets and variables → Actions once the backend exists
-  SILAVU_FUNCTIONS_URL: ${{ secrets.SILAVU_FUNCTIONS_URL }}
+  # Set once the backend exists (ADMIN_SETUP.md), in Settings → Secrets and variables → Actions:
+  #   variables (public): SILAVU_SUPABASE_URL, SILAVU_SUPABASE_ANON_KEY
+  #   secret:             SILAVU_BUILD_TOKEN
+  # Without them the site builds exactly as before and the admin says it is not connected.
+  SILAVU_SUPABASE_URL: ${{ vars.SILAVU_SUPABASE_URL }}
+  SILAVU_SUPABASE_ANON_KEY: ${{ vars.SILAVU_SUPABASE_ANON_KEY }}
+  SILAVU_FUNCTIONS_URL: ${{ vars.SILAVU_SUPABASE_URL && format('{0}/functions/v1', vars.SILAVU_SUPABASE_URL) || '' }}
   SILAVU_BUILD_TOKEN: ${{ secrets.SILAVU_BUILD_TOKEN }}
   SILAVU_LIVE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
   RELEASE_ID: ${{ github.event.client_payload.release }}
@@ -36,7 +41,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: lumera/package-lock.json
+          cache-dependency-path: |
+            lumera/package-lock.json
+            lumera/admin/package-lock.json
       # the minifier the page build uses (postcss, cssnano, terser)
       - name: Build tools
         run: npm ci --prefix lumera --ignore-scripts --no-audit --no-fund
@@ -144,6 +151,11 @@ jobs:
       # pictures and films the owner uploaded in the admin and that this release uses
       - name: Library media
         run: bash lumera/site/library-assets.sh dist
+      # the admin: its own bundle at /admin/, never loaded by the storefront
+      - name: The admin
+        run: |
+          npm ci --prefix lumera/admin --no-audit --no-fund
+          SILAVU_SITE_URL="$SILAVU_LIVE/" node lumera/admin/build.mjs dist/admin
       # The cards are built in the browser from the catalogue, so a missing
       # derivative is invisible to anything that only reads the HTML. This
       # reads the catalogue, works out every file the page can ask for, and

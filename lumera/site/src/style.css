@@ -6644,3 +6644,5 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   .hpot { position:absolute !important; left:-10000px !important; width:1px; height:1px; overflow:hidden; }
   html body .consent .cbtns .btn { width:auto; flex:1 1 0; min-height:40px; padding:0 14px; justify-content:center; }
   @media (max-width:520px) { html body .consent { inset-inline:12px; max-width:none; padding:14px 14px 12px; font-size:.82rem; } }
+  /* a word the owner can set on a card: New, One of one */
+  .piece .pbadge { display:inline-block; margin-bottom:10px; padding:4px 10px; border:1px solid currentColor; border-radius:999px; font-size:.62rem; letter-spacing:.18em; opacity:.8; }

@@ -1,0 +1,15 @@
+{
+  "name": "silavu-admin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs ../site/dist/admin"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
+    "preact": "11.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

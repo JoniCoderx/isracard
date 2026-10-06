@@ -231,6 +231,6 @@ const pricingTag = `<script>window.SILAVU_PRICING = ${JSON.stringify(PRICING)};<
 const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}\n${s11}\n${s10}${TRACK}`;
 /* lighter on the wire: dead rules out, the sheet and the scripts minified (see slim.mjs) */
 const { slim } = await import("./slim.mjs");
-const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"].concat(TRACK ? ["src/track.js"] : []));
+const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs", "src/content/templates.mjs"].concat(TRACK ? ["src/track.js"] : []));
 fs.writeFileSync(process.env.SILAVU_PAGE_OUT || S + "../silavu-page.html", slimmed);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

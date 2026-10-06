@@ -21,6 +21,28 @@ const escText = (v) => String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").re
 export const toInline = (t) => escText(String(t ?? "")).replace(/\*([^*\n]+)\*/g, "<em>$1</em>").replace(/\n/g, "<br>");
 export const fromInline = (h) => unA(String(h ?? "").replace(/<em>([\s\S]*?)<\/em>/g, "*$1*").replace(/<br\s*\/?>/g, "\n").replace(/<[^>]+>/g, ""));
 
+/* Text that the page writes as markup (product names, stories, policies,
+   About): the few tags the house's copy uses are kept, everything else that
+   looks like a tag is written out as text. Never an attribute but the one
+   class the About page uses. */
+const KEEP = { em: 1, strong: 1, b: 1, i: 1, br: 1, bdi: 1, span: 1 };
+export function safeInline(html) {
+  return String(html ?? "").replace(/<(\/?)([a-zA-Z][\w-]*)([^<>]*)>/g, (m, close, tag, attrs) => {
+    const t = tag.toLowerCase();
+    if (!KEEP[t]) return m.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    if (close) return `</${t}>`;
+    if (t === "span" && /^\s*class="ajc"\s*$/.test(attrs)) return '<span class="ajc">';
+    return `<${t}>`;
+  }).replace(/<(?![a-zA-Z/])/g, "&lt;");
+}
+/* every string in a content object, made safe */
+export function safeDeep(o) {
+  if (typeof o === "string") return safeInline(o);
+  if (Array.isArray(o)) return o.map(safeDeep);
+  if (o && typeof o === "object") { const out = {}; for (const [k, v] of Object.entries(o)) out[k] = safeDeep(v); return out; }
+  return o;
+}
+
 const SAFE_HREF = /^(#[\w-]*|(?:\.\.?\/|\/)?[\w\-./]*\/?(?:[?#][\w\-=&%.]*)?|https:\/\/[^\s"'<>]+|mailto:[^\s"'<>]+|tel:\+?[\d\s-]+)$/;
 export const safeHref = (h) => typeof h === "string" && SAFE_HREF.test(h.trim()) && !/^\s*javascript:/i.test(h) ? h.trim() : null;
 
@@ -38,6 +60,8 @@ function regions(html) {
   const skip = [];
   const g = html.indexOf('<div class="pgrid">'); if (g >= 0) { const e = html.indexOf("</article></div>", g); skip.push([g, e > 0 ? e : g]); }
   const c = html.indexOf('<div class="cats k"'); if (c >= 0) skip.push([c, html.indexOf("</div>", c)]);
+  /* the documents' own titles in the footer are edited with the documents */
+  const t = html.indexOf('<div class="ftrust'); if (t >= 0) skip.push([t, html.indexOf("</div>", t)]);
   return { secs, skip };
 }
 
@@ -83,7 +107,8 @@ export function applyStrings(html, overrides) {
 }
 
 /* ── chapters of the home page ─────────────────────────────────────────── */
-const BLOCK_SLOTS = ["house", "inside", "craft", "collection", "macro", "build"];
+import { BLOCK_SLOTS } from "./sections.mjs";
+export { BLOCK_SLOTS };
 export function blockHtml(b) {
   const t = b.title || {}, p = b.text || {}, c = b.cta || {};
   const href = safeHref(c.href || "");
@@ -126,6 +151,8 @@ export function applySettings(html, st) {
              .replace(/(<form id="cform"[^>]*?)\sdata-wa="[^"]*"/, `$1 data-wa="${wa}"`)
              .replace(/(<form id="cform"[^>]*?)\sdata-tel="[^"]*"/, `$1 data-tel="${escAttr(tel)}"`)
              .replace(/(<form id="cform"[^>]*?)\sdata-endpoint="[^"]*"/, `$1 data-endpoint="${escAttr(endpoint)}"`);
+  /* the try-on with the visitor's own photograph can be switched off */
+  if (st && st.features && st.features.tryon === false) html = html.replace(/(<button\b[^>]*\sid="tryonBtn2")/, '$1 hidden style="display:none"');
   const a = st && st.announcement;
   if (a && a.enabled && a.text && a.text.en) {
     const h = safeHref(a.href || "");

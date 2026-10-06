@@ -11,6 +11,7 @@
 import fs from "node:fs";
 import { seedDocs } from "./seed.mjs";
 import { priceWords } from "./money.mjs";
+import { safeDeep } from "./apply.mjs";
 
 const ROOT = new URL("../../", import.meta.url).pathname;           // lumera/site/
 const FILE = process.env.SILAVU_RELEASE || ROOT + "content/release.json";
@@ -58,7 +59,7 @@ const imgName = (img) => /^media:[0-9a-f-]{36}$/.test(img) ? "m-" + img.slice(6)
 const LIGHT_WIDTHS = [640, 900, 1254];
 
 function piece(d) {
-  const p = JSON.parse(JSON.stringify(d));
+  const p = safeDeep(d);
   const usesLibrary = p.shots.some(s => /^media:/.test(s.img));
   p.shots = p.shots.map(s => ({ ...s, img: imgName(s.img), alt: s.alt || { en: "", he: "" } }));
   if (usesLibrary && !p.widths) p.widths = LIGHT_WIDTHS;
@@ -72,8 +73,8 @@ function piece(d) {
 
 export const PIECES = ofKind("product").map(([, d]) => d.data).filter(p => p.status !== "hidden").map(piece);
 const col = one("collections");
-export const CATS = col.cats;
-export const SOON = col.soon || [];
+export const CATS = safeDeep(col.cats);
+export const SOON = safeDeep(col.soon || []);
 /* Words in a policy that must match how the site is set up. A policy can say
    {{enquiry_delivery}} or {{site_collects}}; the build writes in the sentence
    that is true for this build: where an enquiry goes, and what is counted. */
@@ -105,9 +106,9 @@ const truth = (o) => {
   return out;
 };
 export const ANALYTICS = ANALYTICS_MODE;
-export const POLICIES = ofKind("policy").map(([, d]) => truth(d.data));
-export const ABOUT = one("about");
-export const DOCPAGES = ofKind("docpage").map(([, d]) => d.data).filter(p => p.status !== "hidden");
+export const POLICIES = ofKind("policy").map(([, d]) => truth(safeDeep(d.data)));
+export const ABOUT = safeDeep(one("about"));
+export const DOCPAGES = ofKind("docpage").map(([, d]) => d.data).filter(p => p.status !== "hidden");   // plain text, escaped when written
 /* the documents listed under "Client care": the policies, then any page the owner added there */
 export const FOOTER_DOCS = [...POLICIES.map(d => ({ slug: d.slug, title: d.title })), ...DOCPAGES.filter(d => d.footer !== false).map(d => ({ slug: d.slug, title: d.title }))];
 export const CONFIGURATOR = one("configurator");
@@ -117,7 +118,13 @@ export const HOME = one("page:home");
 export const STRINGS = (one("strings").overrides) || {};
 export const TRANSLATIONS = one("translations");
 export const NAV = one("navigation");
-export const SEO = one("seo");
+/* moved pages: GitHub Pages cannot answer with a redirect, so the old address
+   gets a small page that sends the reader on and tells search engines where
+   the page lives now */
+export const REDIRECTS = ((NAV && NAV.redirects) || []).filter(r => r && /^[a-z0-9][a-z0-9/_-]*\/$/.test(r.from || "") && /^([a-z0-9][a-z0-9/_-]*\/)?$/.test(r.to || ""));
+/* titles and descriptions go into the head and into attributes: no markup, no quotes */
+const plainDeep = (o) => typeof o === "string" ? o.replace(/<[^>]*>/g, "").replace(/["<>]/g, "") : Array.isArray(o) ? o.map(plainDeep) : o && typeof o === "object" ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k, plainDeep(v)])) : o;
+export const SEO = plainDeep(one("seo"));
 
 /* the public copy of what was built, served at /_content/release.json: the
    next build falls back to it if the backend cannot be reached. Everything

@@ -14,7 +14,7 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
     const b = await readJson(req, 1000);
     if (b.action !== "import") throw new HttpError(400, "action");
     const site = (deps.env("SITE_URL") || "").replace(/\/+$/, "");
-    if (!/^https:\/\//.test(site)) throw new HttpError(500, "site_url", "SITE_URL is not set");
+    if (!/^https:\/\//.test(site) && !/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?(\/|$)/.test(site)) throw new HttpError(500, "site_url", "SITE_URL is not set");
     const res = await deps.fetch(site + "/_content/release.json", { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new HttpError(502, "site", "The live site's content could not be read (" + res.status + ").");
     const r = await res.json() as any;

@@ -144,6 +144,9 @@ begin
     if coalesce(d ->> 'slug', '') in ('admin','pieces','he','img','v','f','desk','assets','fonts','lang','about','privacy','terms','_content') then errs := array_append(errs, ('that address is already used by the site')::text); end if;
   elsif p_kind = 'configurator' then
     if jsonb_typeof(d -> 'cuts') is distinct from 'array' or jsonb_array_length(d -> 'cuts') = 0 then errs := array_append(errs, ('at least one diamond shape must be enabled')::text); end if;
+    if not exists (select 1 from jsonb_array_elements(coalesce(d -> 'metals', '[]')) m where coalesce((m ->> 'enabled')::boolean, true)) then errs := array_append(errs, ('at least one metal must be offered')::text); end if;
+    if not exists (select 1 from jsonb_array_elements(coalesce(d -> 'origins', '[]')) o where coalesce((o ->> 'enabled')::boolean, true)) then errs := array_append(errs, ('at least one diamond origin must be offered')::text); end if;
+    if not exists (select 1 from jsonb_array_elements(coalesce(d -> 'cuts', '[]')) c where coalesce((c ->> 'enabled')::boolean, true)) then errs := array_append(errs, ('at least one diamond shape must be offered')::text); end if;
     if coalesce((d #>> '{carat,min}')::numeric, 0) <= 0 or coalesce((d #>> '{carat,max}')::numeric, 0) < coalesce((d #>> '{carat,min}')::numeric, 0) then errs := array_append(errs, ('the carat range is not valid')::text); end if;
   end if;
   return errs;
@@ -163,6 +166,10 @@ begin
     perform app.audit('content.create', 'doc:' || p_key, jsonb_build_object('kind', p_kind));
   else
     if cur.kind <> p_kind then raise exception 'the document kind cannot change'; end if;
+    -- how visits are counted changes what the privacy page promises: the owner's decision
+    if p_key = 'settings' and not app.has_role('owner') and (p_data -> 'analytics') is distinct from (cur.draft -> 'analytics') then
+      raise exception 'only the owner changes how visits are counted' using errcode = '42501';
+    end if;
     if cur.draft_rev <> p_expected_rev then
       raise exception 'conflict: someone saved this at % (version %); reload to see their changes', cur.draft_updated_at, cur.draft_rev using errcode = '40001';
     end if;
