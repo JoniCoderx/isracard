@@ -43,8 +43,11 @@ after(async () => { for (const c of ctxs) await c.close().catch(() => {}); await
 
 /* ── helpers ─────────────────────────────────────────────────────────── */
 const sql = async (q, p) => (await db.query(q, p)).rows;
+/* an ordinary browser's name: the counter rightly sets aside "HeadlessChrome" as a robot */
+const UA = { desk: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+  phone: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1" };
 async function context({ width = 1280, height = 900, lang, staffBrowser = false, init } = {}) {
-  const c = await browser.newContext({ viewport: { width, height }, locale: lang === "he" ? "he-IL" : "en-GB" });
+  const c = await browser.newContext({ viewport: { width, height }, locale: lang === "he" ? "he-IL" : "en-GB", userAgent: width < 600 ? UA.phone : UA.desk });
   await c.addInitScript(([l, st]) => { try { localStorage.setItem("silavu-seen", "1"); if (l) localStorage.setItem("silavu-admin-lang", l); if (st) localStorage.setItem("silavu-staff", "1"); } catch (e) {} }, [lang || "en", staffBrowser]);
   if (init) await c.addInitScript(init);
   ctxs.push(c); return c;
@@ -575,4 +578,152 @@ test("7 · simultaneous edits, a failed upload, a failed publication and a backe
   assert.equal(await field(e, "One line").inputValue(), "Typed while the backend was down.");
   await e.getByRole("button", { name: "Save draft" }).click(); await toast(e, "Draft saved");
   assert.equal((await sql("select count(*)::int n from public.enquiries where email = 'dana.down@example.test'"))[0].n, 0, "nothing claimed that was not saved");
+});
+
+/* ── 8 · a real enquiry from the site, with a design from The Line ───── */
+const events = async () => (await sql("select name, session_id, product_key as product, props from public.analytics_events order by id")).map(r => ({ ...r }));
+async function visitor(opts = {}) {
+  const c = await context(opts); const v = await page(c);
+  /* WhatsApp would open another site: stopped here, the click is what matters */
+  await c.route(/wa\.me|api\.whatsapp\.com/, r => r.fulfill({ status: 204 }));
+  v.collect = []; v.on("request", r => { if (r.url().endsWith("/functions/v1/collect") && r.method() === "POST") v.collect.push(r.postData()); });
+  return v;
+}
+const flush = async (v) => { await v.evaluate(() => document.dispatchEvent(new Event("visibilitychange"))); await v.waitForTimeout(800); };
+
+test("8 · a visitor designs a bracelet and sends an enquiry: one record, their design and details, seen by support, a truthful thank-you; a WhatsApp click is counted apart", async () => {
+  /* a support person again (the first was removed in check 2) */
+  await invite(state.owner, "care@silavu.test", "support", "Carmel Care");
+  const su = await accept("care@silavu.test", "care-password-12"); state.support = su;
+  const before = (await sql("select count(*)::int n from public.enquiries"))[0].n;
+  const v = await visitor(); await v.goto(S.siteUrl + "/");
+  await v.click('#consent [data-c="yes"]');
+  /* The Line: oval, natural, 8 carats, yellow gold, a 16 cm wrist */
+  await v.evaluate(() => document.getElementById("build").scrollIntoView());
+  /* the steps open one after another; each choice is a press on its chip */
+  for (const [k, val] of [["cut", "oval"], ["origin", "natural"], ["ct", "8"], ["metal", "yellow"], ["wrist", "16"]]) { await v.locator(`#opts .chip[data-k="${k}"][data-v="${val}"]`).evaluate(el => el.click()); await v.waitForTimeout(150); }
+  assert.deepEqual(await v.evaluate(() => { const b = window.__build || {}; return [b.cut, b.origin, +b.ct, b.metal, +b.wrist]; }), ["oval", "natural", 8, "yellow", 16]);
+  await v.locator("#reserve").evaluate(el => el.click());
+  await v.locator("#csel:not([hidden])").waitFor();
+  await fillEnquiry(v, { name: "Noa Test", contact: "noa.test@example.test", city: "Haifa", message: "Could this be ready by spring?" });
+  await v.click("#csend");
+  await v.locator("#cform.delivered").waitFor({ timeout: 20000 });
+  const thanks = await v.textContent("#cthp");
+  const e = (await sql("select * from public.enquiries where email = 'noa.test@example.test'"));
+  assert.equal(e.length, 1, "one record");
+  assert.ok(thanks.includes(e[0].ref), "the thank-you gives the saved reference " + e[0].ref);
+  assert.doesNotMatch(thanks, /confirmation is on its way/i, "no promise of an email nobody sends (auto-reply is off here)");
+  assert.deepEqual({ cut: e[0].spec.cut, origin: e[0].spec.origin, ct: Number(e[0].spec.ct), metal: e[0].spec.metal, wrist: Number(e[0].spec.wrist) }, { cut: "oval", origin: "natural", ct: 8, metal: "yellow", wrist: 16 });
+  assert.equal(e[0].name, "Noa Test"); assert.equal(e[0].city, "Haifa"); assert.equal(e[0].message, "Could this be ready by spring?");
+  assert.ok(e[0].config_rev, "the configurator version it was made with is kept");
+  assert.equal((await sql("select count(*)::int n from public.enquiries"))[0].n, before + 1);
+  state.enquiry = e[0];
+  await shot(v, "08-thank-you");
+  /* sent is sent: the button is gone until they choose to write again (a
+     retry before the answer reuses the same key: backend-storefront.test) */
+  assert.equal(await v.locator("#csend").isVisible(), false);
+
+  /* support sees it, with the design, and works it */
+  await go(su, "enquiries");
+  await su.getByRole("link", { name: e[0].ref }).click();
+  await su.getByText("Their design (The Line)").waitFor();
+  for (const w of ["Oval", "Natural", "8 ct", "16 cm"]) await su.locator(".meta", { hasText: w }).first().waitFor();
+  await su.getByLabel("Status").first().selectOption("contacted"); await toast(su, "Saved.");
+  await su.getByLabel("Add a note").fill("Called back, prefers a visit in Tel Aviv."); await su.getByRole("button", { name: "Add the note" }).click();
+  await su.locator(".notes li", { hasText: "prefers a visit" }).waitFor();
+  await shot(su, "08-enquiry-in-admin");
+  /* the editor and the analyst cannot see it */
+  assert.ok((await (await rest("enquiries?select=id", await tokenFor("analyst@silavu.test", "analyst-password-1"))).text()) === "[]");
+
+  /* WhatsApp: a click to another app is a click, never an enquiry */
+  const w = await visitor(); await w.goto(S.siteUrl + "/"); await w.click('#consent [data-c="yes"]');
+  await fillEnquiry(w, { name: "Wa Test", contact: "+972 50 765 4321", message: "Hello" });
+  await w.locator('.chan .chip[data-ch="WhatsApp"]').click();
+  await w.click("#csend"); await flush(w);
+  await w.waitForTimeout(4500);
+  assert.equal((await sql("select count(*)::int n from public.enquiries where name = 'Wa Test'"))[0].n, 0, "not an enquiry");
+  const clicks = (await events()).filter(x => x.name === "contact_click");
+  assert.ok(clicks.some(x => (x.props || {}).channel === "whatsapp"), "counted as a WhatsApp click");
+});
+
+/* ── 9 · a quote keeps what was quoted ───────────────────────────────── */
+test("9 · support makes a quote from the enquiry, sends it; editing the product later changes nothing in the quote or the customer's copy", async () => {
+  const su = state.support;
+  await go(su, "enquiries/" + state.enquiry.id);
+  await su.getByRole("button", { name: "Make a quote" }).click();
+  await su.locator("h1", { hasText: /^Q-/ }).waitFor();
+  await su.getByLabel("What it is for").fill("SILAVU The Line, oval, natural, 8 ct, yellow gold");
+  await su.getByLabel("Amount").fill("48000"); await su.getByLabel("Currency").selectOption("ILS");
+  await su.getByLabel("Valid until").fill("2026-12-31");
+  await su.getByLabel("Note to the customer (on their copy)").fill("Made to order in eight weeks.");
+  await su.getByLabel("Internal note (never on their copy)").fill("Margin check with the workshop.");
+  await su.getByRole("button", { name: "Save", exact: true }).click(); await toast(su, "Saved.");
+  await su.getByRole("button", { name: "Mark as sent" }).click(); await confirmDialog(su); await toast(su, "Saved.");
+  const qrow = (await sql("select * from public.quotes where enquiry_id = $1", [state.enquiry.id]))[0];
+  assert.equal(qrow.status, "sent"); assert.equal(Number(qrow.amount_minor), 4800000); assert.equal(qrow.currency, "ILS");
+  assert.equal(qrow.spec_snapshot.cut, "oval");
+  /* once sent the amount is fixed, even straight at the API */
+  const r = await rest("rpc/update_quote", await tokenFor("care@silavu.test", "care-password-12"), { method: "POST", body: JSON.stringify({ p_id: qrow.id, p_expected_rev: qrow.rev, p: { amount_minor: 100 } }) });
+  assert.equal(Number((await sql("select amount_minor from public.quotes where id = $1", [qrow.id]))[0].amount_minor), 4800000, "amount unchanged (" + r.status + ")");
+  /* the customer's copy: the amount, the design, their note; nothing internal */
+  const pr = await page(su.context());
+  await pr.goto(S.adminUrl + "#/print/" + qrow.id);
+  await pr.locator(".print .amount").waitFor();
+  const copy = await pr.locator(".print").innerText();
+  assert.match(copy, /₪48,000/); assert.match(copy, /Made to order in eight weeks\./); assert.match(copy, /Oval/);
+  assert.doesNotMatch(copy, /Margin check|workshop/, "no internal note");
+  await shot(pr, "09-customer-copy"); await pr.close();
+  state.quote = qrow;   /* check 11 takes the oval off the line and looks again */
+});
+
+/* ── 10 · counting visits: consent, dedupe, opt-out, never the house ─── */
+test("10 · visits are counted only with consent, once each, never after a no, never with Global Privacy Control, never from the admin's browser; the analyst sees and filters them", async () => {
+  const n0 = (await events()).length;
+  /* no answer yet, then no: nothing */
+  const a = await visitor(); await a.goto(S.siteUrl + "/"); await a.waitForTimeout(5000);
+  assert.equal(a.collect.length, 0, "nothing before an answer");
+  await a.click('#consent [data-c="no"]'); await a.goto(S.siteUrl + "/pieces/knot/"); await flush(a); await a.waitForTimeout(4500);
+  assert.equal(a.collect.length, 0, "nothing after a no");
+  /* Global Privacy Control is a no */
+  const g = await visitor({ init: () => Object.defineProperty(navigator, "globalPrivacyControl", { get: () => true }) });
+  await g.goto(S.siteUrl + "/pieces/ring/"); await flush(g); await g.waitForTimeout(4500);
+  assert.equal(g.collect.length, 0, "GPC");
+  assert.equal(await g.locator("#consent").count(), 0, "and it is not even asked");
+  /* the house's own browser */
+  const h = await visitor({ staffBrowser: true }); await h.goto(S.siteUrl + "/pieces/knot/"); await h.waitForTimeout(5000);
+  assert.equal(h.collect.length, 0, "the admin's browser is never counted");
+  /* yes: counted; the same batch sent twice is stored once */
+  const y = await visitor({ width: 390, height: 844 });
+  await y.goto(S.siteUrl + "/"); await y.click('#consent [data-c="yes"]');
+  await y.goto(S.siteUrl + "/pieces/ring/"); await flush(y); await y.waitForTimeout(4500);
+  assert.ok(y.collect.length >= 1);
+  const mid = (await events()).length; assert.ok(mid > n0, "counted");
+  /* a batch that arrives twice (a retry, a beacon and a fetch) is stored once */
+  const batch = JSON.stringify({ events: [{ id: crypto.randomUUID(), ts: new Date().toISOString(), name: "page_view", sid: "dedupe-test-01", path: "/isracard/", lang: "en" }] });
+  for (let i = 0; i < 2; i++) assert.ok((await fetch(S.fake.url + "/functions/v1/collect", { method: "POST", headers: { "content-type": "text/plain", origin: S.origin, "user-agent": UA.desk }, body: batch })).status < 300);
+  assert.equal((await events()).filter(x => x.session_id === "dedupe-test-01").length, 1, "stored once");
+  assert.ok((await sql("select 1 from public.analytics_events where device = 'mobile' and product_key = 'ring' and name = 'product_view'")).length >= 1, "the phone visit to the ring, counted");
+  /* nothing personal in what is stored */
+  const raw = JSON.stringify(await sql("select * from public.analytics_events"));
+  for (const bad of ["noa.test@example.test", "Noa Test", "+972", "Could this be ready"]) assert.ok(!raw.includes(bad), "no form content in analytics: " + bad);
+  /* withdrawn: from the foot of the page, at any time */
+  await y.evaluate(() => window.__consent.open()); await y.click('#consent [data-c="no"]');
+  const sent = y.collect.length; await y.goto(S.siteUrl + "/pieces/knot/"); await flush(y); await y.waitForTimeout(4500);
+  assert.equal(y.collect.length, sent, "nothing after withdrawing");
+
+  /* the analyst: totals, a breakdown, a filter */
+  const an = state.analyst; await go(an, "analytics");
+  await an.locator(".stat", { hasText: "Sessions" }).first().waitFor();
+  const sessions = Number(await an.locator(".stat", { hasText: /^Sessions/ }).locator(".sv").first().innerText());
+  assert.ok(sessions >= 2, "sessions " + sessions);
+  await an.getByRole("tab", { name: "Pieces" }).click().catch(() => {});
+  await an.locator(".filters label.fld", { hasText: "Device" }).locator("select").selectOption("mobile");
+  await an.waitForTimeout(800);
+  const mobile = Number(await an.locator(".stat", { hasText: /^Sessions/ }).locator(".sv").first().innerText());
+  assert.ok(mobile >= 1 && mobile <= sessions, `mobile ${mobile} of ${sessions}`);
+  await shot(an, "10-analytics");
+  const ov = await rest("rpc/analytics_overview", await tokenFor("analyst@silavu.test", "analyst-password-1"), { method: "POST", body: JSON.stringify({ p_from: new Date(Date.now() - 86400000).toISOString(), p_to: new Date(Date.now() + 60000).toISOString(), p_filters: {} }) });
+  const o = await ov.json();
+  assert.equal(o.enquiries_saved, (await sql("select count(*)::int n from public.enquiries where created_at > now() - interval '1 day'"))[0].n, "enquiries come from the enquiry records, not from events");
+  assert.ok(o.contact_clicks >= 1);
 });
