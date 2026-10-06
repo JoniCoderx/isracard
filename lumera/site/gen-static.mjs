@@ -290,7 +290,12 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
   /* the documents get the site's own type and palette: the stylesheet lives
      in a <style> block inside the page body, not in the shared head */
   const styleBlock = ""; /* the documents load the shared stylesheet from the head */
-  const NAV = [
+  /* the same menu as the home page, as the admin left it: its words, the
+     links it removed and the ones it added; a chapter link points home */
+  const unA = v => v.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  const topnav = (pageSrc.match(/<nav id="topnav">([\s\S]*?)<\/nav>/) || [])[1] || "";
+  const parsed = [...topnav.matchAll(/<a href="([^"]*)" data-en="([^"]*)" data-he="([^"]*)">/g)].map(m => [m[1].startsWith("#") ? "./" + m[1] : unA(m[1]), S(unA(m[2]), unA(m[3]))]);
+  const NAV = parsed.length ? parsed : [
     ["./#collection", S("Collection", "הקולקציה")],
     ["./#build", S("The Line", "הקו")],
     ["about/", S("About", "אודות")]

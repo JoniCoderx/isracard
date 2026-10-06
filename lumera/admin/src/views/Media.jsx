@@ -37,7 +37,7 @@ function Uploader({ onDone, folder }) {
     setBusy(false); onDone && onDone(out);
   };
   return <div class={"drop" + (over ? " over" : "")} onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)} onDrop={(e) => { e.preventDefault(); setOver(false); run([...e.dataTransfer.files]); }}>
-    <p>{t("Drop pictures or films here, or")} <label class="b"><input type="file" multiple accept={Object.keys(TYPES).join(",")} hidden onChange={(e) => run([...e.target.files])} disabled={busy} />{t("choose files")}</label></p>
+    <p>{t("Drop pictures or films here, or")} <label class="b"><input type="file" multiple accept={Object.keys(TYPES).join(",")} hidden onChange={(e) => { const f = [...e.target.files]; e.target.value = ""; run(f); }} disabled={busy} />{t("choose files")}</label></p>
     <p class="hint">{t("JPEG, PNG, WebP or AVIF pictures, MP4 or WebM films, up to 50 MB each. For product photographs, 1254 pixels or more on the short side.")}</p>
     {log.length > 0 && <ul class="uplog">{log.map(x => <li class={x.tone || ""}><b>{x.name}</b> {x.step}</li>)}</ul>}
   </div>;

@@ -146,7 +146,8 @@ export function applySettings(html, st) {
   const inbox = st && st.enquiry && /^[^\s@"<>]+@[^\s@"<>]+\.[^\s@"<>]{2,}$/.test(st.enquiry.inbox || "") ? st.enquiry.inbox : "";
   const wa = String((st && st.contact && st.contact.whatsapp) || "").replace(/[^0-9]/g, "");
   const tel = String((st && st.contact && st.contact.phone) || "").replace(/[^0-9+]/g, "");
-  const endpoint = st && st.enquiry && /^https:\/\/[^\s"<>]+$/.test(st.enquiry.endpoint || "") ? st.enquiry.endpoint : "";
+  /* https, or this machine's own address for a local rehearsal */
+  const endpoint = st && st.enquiry && /^(https:\/\/|http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/)[^\s"<>]+$/.test(st.enquiry.endpoint || "") ? st.enquiry.endpoint : "";
   html = html.replace(/(<form id="cform"[^>]*?)\sdata-to="[^"]*"/, `$1 data-to="${escAttr(inbox)}"`)
              .replace(/(<form id="cform"[^>]*?)\sdata-wa="[^"]*"/, `$1 data-wa="${wa}"`)
              .replace(/(<form id="cform"[^>]*?)\sdata-tel="[^"]*"/, `$1 data-tel="${escAttr(tel)}"`)

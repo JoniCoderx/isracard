@@ -114,12 +114,13 @@ test("support works enquiries but cannot publish, edit content or read analytics
   await denied(as("support", q => q("select public.publish_docs(null, '')")));
   await denied(as("support", q => q("select public.analytics_overview(now() - interval '1 day', now())")));
   await denied(as("support", q => q("select public.set_staff_role($1, 'owner')", [U.analyst])));
+  assert.equal((await as("support", q => q("select count(*)::int n from public.content_docs"))).rows[0].n, 0, "no drafts for support");
 });
 
 test("analysts see aggregates only", async () => {
   const r = await as("analyst", q => q("select public.analytics_overview(now() - interval '7 days', now()) o"));
   assert.equal(typeof r.rows[0].o.sessions, "number");
-  for (const t of ["customers", "enquiries", "content_revisions"]) assert.equal((await as("analyst", q => q(`select count(*)::int n from public.${t}`))).rows[0].n, 0, t);
+  for (const t of ["customers", "enquiries", "content_revisions", "content_docs"]) assert.equal((await as("analyst", q => q(`select count(*)::int n from public.${t}`))).rows[0].n, 0, t);
   await denied(as("analyst", q => q("select * from public.analytics_events")));
   await denied(as("analyst", q => q("select public.update_enquiry(gen_random_uuid(), 'closed', null, null, null)")));
 });
@@ -184,9 +185,9 @@ test("revoking someone, or changing their role, applies to their next request", 
 });
 
 test("a second factor, once required, is enforced in the database", async () => {
-  await assert.rejects(as("owner", q => q("select public.set_staff_mfa($1, true)", [U.editor])), /authenticator app/);
-  await db.query("insert into auth.mfa_factors (user_id) values ($1)", [U.editor]);
+  /* required before they have one: nothing on a password alone until they set it up */
   await as("owner", q => q("select public.set_staff_mfa($1, true)", [U.editor]), { keep: true });
+  await db.query("insert into auth.mfa_factors (user_id) values ($1)", [U.editor]);
   await denied(as({ id: U.editor, aal: "aal1" }, q => q("select public.save_draft('product:z','product','z','{}',0)")));
   const r = await as({ id: U.editor, aal: "aal2" }, q => q("select count(*)::int n from public.content_docs"));
   assert.ok(r.rows[0].n > 0);

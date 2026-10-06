@@ -78,7 +78,8 @@ export const SOON = safeDeep(col.soon || []);
 /* Words in a policy that must match how the site is set up. A policy can say
    {{enquiry_delivery}} or {{site_collects}}; the build writes in the sentence
    that is true for this build: where an enquiry goes, and what is counted. */
-const FN = /^https:\/\/[^\s"<>]+$/.test(process.env.SILAVU_FUNCTIONS_URL || "") ? process.env.SILAVU_FUNCTIONS_URL.replace(/\/+$/, "") : "";
+/* https, or this machine's own address for a local rehearsal (test/stack.mjs) */
+const FN = /^(https:\/\/|http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/)[^\s"<>]+$/.test(process.env.SILAVU_FUNCTIONS_URL || "") ? process.env.SILAVU_FUNCTIONS_URL.replace(/\/+$/, "") : "";
 export const FUNCTIONS_URL = FN;
 const ANALYTICS_MODE = FN ? ((one("settings").analytics || {}).mode || "consent") : "off";
 const TRUTH = {
@@ -110,7 +111,11 @@ export const POLICIES = ofKind("policy").map(([, d]) => truth(safeDeep(d.data)))
 export const ABOUT = safeDeep(one("about"));
 export const DOCPAGES = ofKind("docpage").map(([, d]) => d.data).filter(p => p.status !== "hidden");   // plain text, escaped when written
 /* the documents listed under "Client care": the policies, then any page the owner added there */
-export const FOOTER_DOCS = [...POLICIES.map(d => ({ slug: d.slug, title: d.title })), ...DOCPAGES.filter(d => d.footer !== false).map(d => ({ slug: d.slug, title: d.title }))];
+/* a page's title is written with *emphasis*; a link says it plainly (and,
+   being the owner's plain text, escaped) */
+const plain = (v) => String(v || "").replace(/\*/g, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const plainTitle = (t) => ({ en: plain(t.en), he: plain(t.he || t.en) });
+export const FOOTER_DOCS = [...POLICIES.map(d => ({ slug: d.slug, title: d.title })), ...DOCPAGES.filter(d => d.footer !== false).map(d => ({ slug: d.slug, title: plainTitle(d.title) }))];
 export const CONFIGURATOR = one("configurator");
 /* the database keeps object keys in its own order; written into the page,
    the figures keep the seed's order, so the same content is the same bytes */

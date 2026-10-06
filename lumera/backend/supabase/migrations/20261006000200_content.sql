@@ -74,7 +74,7 @@ alter table public.product_private enable row level security;
 
 -- ── reading ────────────────────────────────────────────────────────────────
 drop policy if exists content_staff_read on public.content_docs;
-create policy content_staff_read on public.content_docs for select to authenticated using (app.is_staff());
+create policy content_staff_read on public.content_docs for select to authenticated using (app.has_role('owner','editor'));
 drop policy if exists revisions_read on public.content_revisions;
 create policy revisions_read on public.content_revisions for select to authenticated using (app.has_role('owner','editor'));
 drop policy if exists releases_read on public.releases;

@@ -196,9 +196,8 @@ create or replace function public.set_staff_mfa(p_user uuid, p_required boolean)
 language plpgsql security definer set search_path = '' as $$
 declare me uuid := app.require('owner');
 begin
-  if p_required and not exists (select 1 from auth.mfa_factors f where f.user_id = p_user and f.status = 'verified') then
-    raise exception 'this person has not set up an authenticator app yet';
-  end if;
+  -- required before they have one: their next sign-in asks them to set it up
+  -- and shows nothing else until they have
   update public.staff set mfa_required = p_required, updated_at = now() where user_id = p_user;
   if p_required then perform app.kill_sessions(p_user); end if;
   perform app.audit('staff.mfa', 'staff:' || p_user, jsonb_build_object('required', p_required));

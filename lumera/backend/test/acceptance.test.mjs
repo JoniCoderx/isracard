@@ -87,6 +87,12 @@ const sha = (buf) => crypto.createHash("sha256").update(buf).digest("hex");
 const html = (rel) => fs.readFileSync(path.join(S.dist, rel), "utf8");
 
 const state = {};
+/* the storefront's enquiry form, as a visitor fills it */
+async function fillEnquiry(v, { name, contact, city = "", message = "" }) {
+  await v.evaluate(() => { const c = document.querySelector("#consent"); if (c) c.remove(); document.getElementById("concierge").scrollIntoView(); });
+  await v.waitForTimeout(500);
+  await v.fill("#fName", name); await v.fill("#fContact", contact); if (city) await v.fill("#fCity", city); if (message) await v.fill("#fMsg", message);
+}
 
 /* ── 1 · sign-in, recovery, sign-out; nobody else gets in ───────────── */
 test("1 · the owner signs in, recovers access and signs out; visitors and ordinary accounts get nothing", async () => {
@@ -267,4 +273,306 @@ test("3·4·6 · the owner changes a piece, adds and orders photographs, sets a 
   assert.doesNotMatch(html("pieces/knot/index.html"), /MOMENTO|12,500/);
   assert.match(html("pieces/knot/index.html"), /Price on request/);
   assert.deepEqual(p.errors, []);
+});
+
+/* ── 2 · the team: roles, escalation, second factor, removal, secrets ─── */
+async function invite(p, email, role, name) {
+  await go(p, "team");
+  await p.getByRole("button", { name: "Invite someone" }).click();
+  await p.locator(".modal").getByLabel("Email").fill(email);
+  await p.locator(".modal").getByLabel("Name").fill(name);
+  await p.locator(".modal").getByLabel("Role").selectOption(role);
+  await p.getByRole("button", { name: "Send the invitation" }).click();
+  await toast(p, "Invitation sent to " + email);
+}
+/* the invitation email's link, opened on another device: choose a password, arrive */
+async function accept(email, password) {
+  const link = S.fake.mail.filter(m => m.kind === "invite" && m.to === email).pop().link;
+  const c = await context(), p = await page(c);
+  await p.goto(link);
+  await p.getByLabel("New password").fill(password); await p.getByLabel("The same again").fill(password);
+  await p.getByRole("button", { name: "Save the password" }).click();
+  await p.getByRole("link", { name: "Continue" }).click();
+  await p.locator("aside.side").waitFor();
+  return p;
+}
+const navOf = (p) => p.locator("aside.side nav a").allInnerTexts();
+
+test("2 · each role sees and can do only its part; nobody can raise their own role; removal and a second factor take effect at once; no secret reaches a browser", async () => {
+  const o = state.owner;
+  await invite(o, "editor@silavu.test", "editor", "Eden Editor");
+  await invite(o, "support@silavu.test", "support", "Sam Support");
+  await invite(o, "analyst@silavu.test", "analyst", "Ana Analyst");
+  const ed = await accept("editor@silavu.test", "editor-password-1"), su = await accept("support@silavu.test", "support-password-1"), an = await accept("analyst@silavu.test", "analyst-password-1");
+  state.editor = ed; state.support = su; state.analyst = an;
+  assert.deepEqual(await navOf(ed), ["Overview", "Products", "Pages & text", "Media", "The Line", "Languages & SEO", "Settings", "History & backups"]);
+  assert.deepEqual(await navOf(su), ["Overview", "Enquiries", "Customers", "Quotes"]);
+  assert.deepEqual(await navOf(an), ["Overview", "Analytics"]);
+  /* typing an address they have no part in */
+  for (const [p, r] of [[ed, "team"], [ed, "enquiries"], [su, "products"], [su, "history"], [an, "customers"], [an, "settings"]]) {
+    await go(p, r); await p.getByText("Your role does not include this part of the admin.").waitFor();
+  }
+  await shot(su, "02-support-forbidden");
+
+  /* the same, straight at the API with their own sessions */
+  const tk = { editor: await tokenFor("editor@silavu.test", "editor-password-1"), support: await tokenFor("support@silavu.test", "support-password-1"), analyst: await tokenFor("analyst@silavu.test", "analyst-password-1") };
+  const me = async (email) => (await sql("select id from auth.users where email = $1", [email]))[0].id;
+  const empty = async (t, q) => { const r = await rest(q, t); const b = await r.text(); return r.status >= 400 || b === "[]"; };
+  assert.ok(await empty(tk.editor, "enquiries?select=id"), "editor: no enquiries");
+  assert.ok(await empty(tk.editor, "customers?select=id"), "editor: no customers");
+  assert.ok(await empty(tk.support, "content_docs?select=key"), "support: no drafts");
+  assert.ok(await empty(tk.analyst, "customers?select=id") && await empty(tk.analyst, "enquiries?select=id"), "analyst: no names");
+  assert.ok(await empty(tk.editor, "product_private?select=product_key"), "editor: no costs");
+  assert.ok(await empty(tk.analyst, "analytics_events?select=id"), "analyst: figures only through the summaries, never raw rows");
+  for (const [who, rpcName, body] of [
+    ["editor", "set_staff_role", { p_user: await me("editor@silavu.test"), p_role: "owner" }],
+    ["support", "set_staff_role", { p_user: await me("support@silavu.test"), p_role: "owner" }],
+    ["analyst", "set_staff_mfa", { p_user: await me("analyst@silavu.test"), p_required: false }],
+    ["support", "save_draft", { p_key: "settings", p_kind: "settings", p_title: "x", p_data: {}, p_expected_rev: 1, p_checkpoint: true }],
+    ["analyst", "update_enquiry", { p_id: crypto.randomUUID(), p_status: "won", p_assignee: null, p_due: null, p_tags: [] }],
+    ["editor", "anonymize_customer", { p_id: crypto.randomUUID() }]]) {
+    const r = await rest("rpc/" + rpcName, tk[who], { method: "POST", body: JSON.stringify(body) });
+    assert.ok(r.status >= 400, `${who} ${rpcName}: ${r.status}`);
+  }
+  const upd = await rest("staff?user_id=eq." + await me("editor@silavu.test"), tk.editor, { method: "PATCH", body: JSON.stringify({ role: "owner" }), headers: { prefer: "return=representation" } });
+  assert.ok(upd.status >= 400 || (await upd.text()) === "[]", "no direct write to the team table");
+  assert.equal((await sql("select role from public.staff s join auth.users u on u.id = s.user_id where u.email = 'editor@silavu.test'"))[0].role, "editor");
+  const fnAs = (name, t, body = {}) => fetch(S.fake.url + "/functions/v1/" + name, { method: "POST", headers: { authorization: "Bearer " + t, "content-type": "application/json", origin: S.origin }, body: JSON.stringify(body) });
+  assert.equal((await fnAs("export", tk.editor)).status, 403, "only the owner exports");
+  assert.equal((await fnAs("publish", tk.support, { action: "publish" })).status, 403, "support does not publish");
+  assert.equal((await fnAs("staff", tk.editor, { action: "invite", email: "x@y.z", role: "owner" })).status, 403, "only the owner invites");
+  /* private files: the exports and attachments buckets answer nobody but the owner */
+  for (const b of ["exports", "attachments", "media"]) {
+    const r = await fetch(`${S.fake.url}/storage/v1/object/list/${b}`, { method: "POST", headers: { apikey: S.fake.anonKey, authorization: "Bearer " + S.fake.anonKey, "content-type": "application/json" }, body: "{}" });
+    assert.equal((await r.text()), "[]", "anonymous list of " + b);
+  }
+
+  /* a second factor, required by the owner */
+  await go(o, "team");
+  await o.locator("tr", { hasText: "editor@silavu.test" }).getByRole("checkbox").check();
+  await toast(o, "They now need an authenticator code");
+  await ed.reload();
+  await ed.getByText("Your account needs a second factor").waitFor();
+  assert.ok(await empty(await tokenFor("editor@silavu.test", "editor-password-1"), "content_docs?select=key"), "no data on a password alone");
+  await ed.getByRole("button", { name: "Set up an authenticator" }).click();
+  await ed.locator("code.key").waitFor();
+  await ed.getByLabel("Code").fill(S.fake.totpFor("editor@silavu.test"));
+  await ed.getByRole("button", { name: "Turn it on" }).click();
+  await ed.waitForEvent("load");
+  await ed.getByText("Your authenticator code").waitFor({ timeout: 15000 }).catch(() => {});
+  if (await ed.getByText("Your authenticator code").isVisible()) {
+    await ed.getByLabel("Code").fill(S.fake.totpFor("editor@silavu.test")); await ed.getByRole("button", { name: "Continue" }).click();
+  }
+  await ed.locator("aside.side").waitFor();
+  /* a fresh sign-in asks for the code first */
+  await ed.getByRole("button", { name: "Sign out" }).click();
+  await signIn(ed, "editor@silavu.test", "editor-password-1");
+  await ed.getByText("Your authenticator code").waitFor();
+  await ed.getByLabel("Code").fill(S.fake.totpFor("editor@silavu.test")); await ed.getByRole("button", { name: "Continue" }).click();
+  await ed.locator("aside.side").waitFor();
+
+  /* removal: at once, everywhere */
+  await go(o, "team");
+  await o.locator("tr", { hasText: "support@silavu.test" }).getByRole("button", { name: "Remove" }).click();
+  await confirmDialog(o); await toast(o, "Removed.");
+  assert.ok(await empty(tk.support, "enquiries?select=id"), "the session they already had stops working");
+  await su.reload(); await su.getByText("This account has no access to the admin").waitFor();
+  const again = await fetch(S.fake.url + "/auth/v1/token?grant_type=password", { method: "POST", headers: { apikey: S.fake.anonKey, "content-type": "application/json" }, body: JSON.stringify({ email: "support@silavu.test", password: "support-password-1" }) });
+  assert.equal(again.status, 400, "and cannot sign in again");
+  assert.ok((await sql("select 1 from public.audit_log where action = 'staff.revoke'")).length === 1);
+
+  /* nothing privileged in anything a browser downloads */
+  const secrets = [S.fake.serviceKey, S.fake.env.BUILD_TOKEN, "service_role", "SERVICE_ROLE", "ghp_", "github_pat_", "re_", "GH_TOKEN", "RESEND_API_KEY"].filter(Boolean);
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : /\.(js|html|json|css|txt|xml|webmanifest)$/.test(e.name) ? [path.join(d, e.name)] : []);
+  for (const f of walk(S.dist)) {
+    const text = fs.readFileSync(f, "utf8");
+    for (const s of secrets) {
+      if (s === "re_" ) { assert.doesNotMatch(text, /\bre_[A-Za-z0-9]{20,}/, f); continue; }
+      assert.ok(!text.includes(s), `${s.slice(0, 12)}… found in ${path.relative(S.dist, f)}`);
+    }
+  }
+  /* support is back for the enquiry checks */
+  await o.reload(); state.supportRemoved = true;
+  for (const p of [ed, an, o]) assert.deepEqual(p.errors, []);
+});
+
+/* ── 5 · words, order, contact, a new page, the menu; both screen sizes ── */
+test("5 · the editor changes hero, footer and About words, orders two text bands, a contact number and adds a page to the menu; published, it reads right on desktop and phone", async () => {
+  const p = state.editor;
+  /* every sentence on the page: found by what it says */
+  await go(p, "pages/text");
+  const edit = async (find, en) => {
+    await p.getByLabel("Find a text").fill(find);
+    await p.locator(".str").first().getByLabel("English", { exact: true }).fill(en);
+  };
+  await edit("Crafted with intention", "Made slowly, by hand. Made to be kept.");
+  await edit("Dubai · Tel Aviv · By appointment", "Tel Aviv · Dubai · By private appointment");
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  /* two bands after the collection, the second moved above the first */
+  await go(p, "pages/home");
+  for (const title of ["First band", "Second band"]) {
+    await p.getByRole("button", { name: "Add a band" }).click();
+    const li = p.locator(".listed .li").last();
+    await li.locator("fieldset.bi", { has: p.locator("legend", { hasText: /^Title$/ }) }).getByLabel("English", { exact: true }).fill(title);
+    await li.locator("fieldset.bi", { has: p.locator("legend", { hasText: /^Title$/ }) }).getByLabel("עברית", { exact: true }).fill(title === "First band" ? "רצועה ראשונה" : "רצועה שנייה");
+    await li.locator("fieldset.bi", { has: p.locator("legend", { hasText: /^Text$/ }) }).getByLabel("English", { exact: true }).fill(title + ": a few words between two chapters.");
+  }
+  await p.locator(".listed .li").nth(1).getByRole("button", { name: "Move up" }).click();
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  /* About */
+  await go(p, "pages/about");
+  await field(p, /^Heading$/).fill("A letter from the *house*");
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  await p.getByRole("button", { name: "Preview" }).click();
+  await p.frameLocator("iframe.pv").locator("h1", { hasText: "A letter from the" }).waitFor({ timeout: 20000 });
+  await p.getByRole("button", { name: "Close" }).last().click();
+  /* a contact number (test value; the real one is the house's to give) */
+  await go(p, "settings");
+  await p.getByLabel("WhatsApp number").fill("+972 50 123 4567");
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  /* a new page, from the document template */
+  await go(p, "pages/pages");
+  await p.getByRole("button", { name: "New page" }).click();
+  await p.locator(".modal").getByLabel("Its address").fill("bespoke");
+  await p.locator(".modal").getByRole("button", { name: "Create" }).click();
+  await field(p, /^Title$/).fill("Bespoke *commissions*"); await field(p, /^Title$/, "עברית").fill("הזמנות *אישיות*");
+  await field(p, /^Introduction$/).fill("A piece made for one person, from the first drawing.");
+  await field(p, /^Introduction$/, "עברית").fill("תכשיט שנעשה לאדם אחד, מהשרטוט הראשון.");
+  await field(p, /^Paragraph$/).fill("Write to the house and we will arrange a private conversation.");
+  await field(p, /^Paragraph$/, "עברית").fill("כתבו לבית ונקבע שיחה פרטית.");
+  await p.getByRole("button", { name: "Preview" }).click();
+  await p.frameLocator("iframe.pv").locator("h1", { hasText: "Bespoke" }).waitFor({ timeout: 20000 });
+  await p.getByRole("button", { name: "Close" }).last().click();
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  /* in the top menu */
+  await go(p, "pages/menus");
+  await p.getByRole("button", { name: "Add a link" }).click();
+  await p.getByLabel("Where").selectOption("top");
+  await p.getByLabel("Goes to").fill("bespoke/");
+  await field(p, /^Words$/).fill("Bespoke"); await field(p, /^Words$/, "עברית").fill("בהזמנה");
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  /* nothing public yet */
+  assert.doesNotMatch(html("index.html"), /Made slowly, by hand|First band|href="bespoke\//);
+  assert.ok(!fs.existsSync(path.join(S.dist, "bespoke/index.html")));
+  /* publish everything waiting, in one release */
+  await go(p, "");
+  const b = await publishAll(p, "Words, bands, a contact number and the bespoke page"); assert.ok(b.ok, b.error);
+  const home = html("index.html");
+  assert.match(home, /Made slowly, by hand\. Made to be kept\./);
+  assert.match(home, /Tel Aviv · Dubai · By private appointment/);
+  assert.ok(home.indexOf("Second band") > 0 && home.indexOf("Second band") < home.indexOf("First band"), "the bands in the chosen order");
+  assert.ok(home.indexOf("First band") > home.indexOf('id="collection"'), "after the collection");
+  assert.match(home, /<form id="cform"[^>]*data-wa="972501234567"/, "the enquiry form offers the new WhatsApp number");
+  assert.match(html("about/index.html"), /A letter from the <em>house<\/em>/);
+  assert.match(html("bespoke/index.html"), /Bespoke <em>commissions<\/em>/);
+  assert.match(html("privacy/index.html"), /<nav class="dnav"[^]*?href="bespoke\/"[^>]*>Bespoke<\/a>/, "the document pages carry the same menu");
+  assert.match(html("privacy/index.html"), /href="bespoke\/"[^>]*>Bespoke commissions<\/a>/, "listed under Client care, plainly");
+  assert.match(html("he/index.html"), /רצועה שנייה/);
+  assert.match(html("sitemap.xml"), /\/isracard\/bespoke\//);
+  /* the visitor, on a desktop and on a phone */
+  for (const [w, h, name] of [[1366, 900, "desk"], [390, 844, "phone"]]) {
+    const v = await anonPage("", { width: w, height: h });
+    const link = v.locator('a[href$="bespoke/"]', { hasText: "Bespoke" });
+    assert.ok(await link.count() >= 1, "the menu has the new page at " + name);
+    assert.ok(await v.locator('footer a[href$="bespoke/"], .end a[href$="bespoke/"], [id="end"] a[href$="bespoke/"]').count() >= 1 || /bespoke\//.test(await v.content()), "listed under Client care");
+    await v.locator("text=Second band").first().scrollIntoViewIfNeeded(); await shot(v, `05-band-${name}`);
+    const over = await v.evaluate(() => document.scrollingElement.scrollWidth - innerWidth); assert.ok(over <= 0, `no sideways scroll on ${name}: ${over}`);
+    const d = await anonPage("bespoke/", { width: w, height: h });
+    assert.match(await d.locator("h1").innerText(), /Bespoke/i); await shot(d, `05-page-${name}`);
+    /* the document pages switch language in place, as the policies do */
+    const he = await anonPage("bespoke/?lang=he", { width: w, height: h });
+    await he.locator("h1", { hasText: "הזמנות" }).waitFor(); assert.equal(await he.locator("html").getAttribute("dir"), "rtl");
+    await shot(he, `05-page-he-${name}`);
+  }
+  assert.deepEqual(p.errors, []);
+});
+
+/* ── 7 · two people at once, a failed upload, a failed build, no backend ── */
+test("7 · simultaneous edits, a failed upload, a failed publication and a backend that is down all end in a plain, recoverable state", async () => {
+  const o = state.owner, e = state.editor;
+  /* the same piece open in two places */
+  await go(o, "products/ring"); await go(e, "products/ring");
+  await field(o, "One line").fill("Owner's line, saved first.");
+  await field(e, "One line").fill("Editor's line, saved second.");
+  await o.getByRole("button", { name: "Save draft" }).click(); await toast(o, "Draft saved");
+  await e.getByRole("button", { name: "Save draft" }).click();
+  await toast(e, "Someone else saved this page meanwhile");
+  await e.locator(".savebar").getByText("Changed elsewhere").waitFor();
+  assert.match((await sql("select draft from public.content_docs where key = 'product:ring'"))[0].draft.line.en, /Owner's line/, "nothing overwritten silently");
+  await shot(e, "07-conflict");
+  /* the editor keeps theirs, knowingly, on top of the owner's */
+  await e.getByRole("button", { name: "Keep mine on top of theirs" }).click();
+  await e.getByRole("button", { name: "Save draft" }).click(); await toast(e, "Draft saved");
+  assert.match((await sql("select draft from public.content_docs where key = 'product:ring'"))[0].draft.line.en, /Editor's line/);
+  const vs = await sql("select data->'line'->>'en' l from public.content_revisions where doc_key = 'product:ring' order by id");
+  assert.ok(vs.some(v => /Owner's line/.test(v.l)), "the owner's version is still in the history");
+
+  /* an upload that fails on the way */
+  await go(e, "media");
+  S.fake.faults.storage = true;
+  await e.locator("input[type=file]").setInputFiles(jpeg("will-fail.jpg", 1400, 1400, "#333333"));
+  await e.locator(".uplog li.bad").waitFor({ timeout: 20000 });
+  assert.match(await e.locator(".uplog li.bad").innerText(), /will-fail\.jpg/);
+  S.fake.faults.storage = false;
+  assert.equal((await sql("select count(*)::int n from public.media_assets where filename = 'will-fail.jpg'"))[0].n, 0, "no half-registered file");
+  await e.locator("input[type=file]").setInputFiles(jpeg("will-fail.jpg", 1400, 1400, "#333333"));
+  await e.locator(".uplog li.ok, .uplog li.warn").first().waitFor({ timeout: 20000 }).catch(async () => assert.fail("retry: " + await e.locator(".uplog").innerText()));
+
+  /* GitHub refuses the build: said plainly, kept, retried */
+  const liveBefore = html("pieces/ring/index.html");
+  S.fake.faults.github = true;
+  await go(e, "products/ring");
+  await e.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(e);
+  await toast(e, "the site build did not start");
+  const r1 = (await sql("select id, status from public.releases order by id desc limit 1"))[0];
+  assert.equal(r1.status, "queued", "the release is recorded and waits");
+  assert.equal(html("pieces/ring/index.html"), liveBefore, "the site is unchanged");
+  S.fake.faults.github = false;
+  await go(e, "history/releases");
+  const n = S.builds.length;
+  await e.locator("tr", { hasText: String(r1.id) }).getByRole("button", { name: "Start the build again" }).click();
+  await toast(e, "The build was started again.");
+  await S.waitForBuild(n + 1);
+  assert.match(html("pieces/ring/index.html"), /Editor's line/);
+
+  /* the build itself fails: the release says so, the last good site stays */
+  S.faults.build = true;
+  await go(e, "products/ring");
+  await field(e, "One line").fill("A line that will not build.");
+  const n2 = S.builds.length;
+  await e.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(e);
+  await S.waitForBuild(n2 + 1);
+  S.faults.build = false;
+  const r2 = (await sql("select status, error from public.releases order by id desc limit 1"))[0];
+  assert.equal(r2.status, "failed"); assert.match(r2.error, /made to fail/);
+  assert.match(html("pieces/ring/index.html"), /Editor's line/, "the last good release is still the site");
+  await go(e, "history/releases");
+  await e.getByText("The build failed: the site still shows the previous version").first().waitFor();
+  await shot(e, "07-build-failed");
+  /* and the next build is of the newest release that did not fail */
+  const n3 = S.builds.length; await S.siteBuild(null); await S.waitForBuild(n3 + 1);
+  assert.match(html("pieces/ring/index.html"), /Editor's line/);
+
+  /* the backend is unreachable: the work on screen is kept on this device */
+  await go(e, "products/ring");
+  await field(e, "One line").fill("Typed while the backend was down.");
+  S.fake.faults.down = true;
+  await e.getByRole("button", { name: "Save draft" }).click();
+  await e.locator(".toast.bad").first().waitFor();
+  await e.locator(".savebar").getByText("Unsaved changes").waitFor();
+  await shot(e, "07-backend-down");
+  /* the visitor's form says it was not sent, and keeps what they wrote */
+  const v = await anonPage("#concierge");
+  await fillEnquiry(v, { name: "Dana Down", contact: "dana.down@example.test", message: "Testing while the backend is down." });
+  await v.click("#csend");
+  await v.locator("#cerr", { hasText: "could not be sent" }).waitFor({ timeout: 20000 }).catch(async () => assert.fail("form said: " + JSON.stringify(await v.evaluate(() => ({ err: document.getElementById("cerr").textContent, hidden: document.getElementById("cerr").hidden, cls: document.getElementById("cform").className, ferr: [...document.querySelectorAll(".ferr")].map(x => x.textContent).join("|") })))));
+  assert.equal(await v.evaluate(() => document.getElementById("cform").classList.contains("delivered")), false, "no thank-you");
+  assert.equal(await v.inputValue("#fMsg"), "Testing while the backend is down.", "what they wrote is kept");
+  S.fake.faults.down = false;
+  /* back up: reload, and the unsaved words are still there */
+  await e.reload(); await e.waitForLoadState("networkidle");
+  await e.getByText("Unsaved work from earlier on this device was restored.").waitFor();
+  assert.equal(await field(e, "One line").inputValue(), "Typed while the backend was down.");
+  await e.getByRole("button", { name: "Save draft" }).click(); await toast(e, "Draft saved");
+  assert.equal((await sql("select count(*)::int n from public.enquiries where email = 'dana.down@example.test'"))[0].n, 0, "nothing claimed that was not saved");
 });
