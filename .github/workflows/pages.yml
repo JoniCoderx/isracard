@@ -5,6 +5,9 @@ on:
     branches: [claude/isracard-dev-environment-tzc6s5]
     paths: ["lumera/site/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
+  # a publish in the admin (functions/publish sends this, naming the release)
+  repository_dispatch:
+    types: [silavu-publish]
 
 permissions:
   contents: read
@@ -15,14 +18,39 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  # set in Settings → Secrets and variables → Actions once the backend exists
+  SILAVU_FUNCTIONS_URL: ${{ secrets.SILAVU_FUNCTIONS_URL }}
+  SILAVU_BUILD_TOKEN: ${{ secrets.SILAVU_BUILD_TOKEN }}
+  SILAVU_LIVE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+  RELEASE_ID: ${{ github.event.client_payload.release }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.content.outputs.release }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: lumera/package-lock.json
+      # the minifier the page build uses (postcss, cssnano, terser)
+      - name: Build tools
+        run: npm ci --prefix lumera --ignore-scripts --no-audit --no-fund
+      # what the owner has published: the backend, else the copy the live site serves, else the seed
+      - name: Published content
+        id: content
+        run: node lumera/site/content-fetch.mjs
+      - name: Report the build started
+        if: steps.content.outputs.release != '' && env.SILAVU_BUILD_TOKEN != ''
+        run: |
+          curl -fsS -X POST "$SILAVU_FUNCTIONS_URL/release-status" -H "authorization: Bearer $SILAVU_BUILD_TOKEN" -H "content-type: application/json" \
+            -d "{\"release\": ${{ steps.content.outputs.release }}, \"status\": \"building\", \"url\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" || echo "status not reported"
+      - name: The page, with the published content
+        run: cd lumera/site/src && node build.mjs
       - name: Static index
         run: node lumera/site/gen-static.mjs lumera/site/silavu-page.html dist "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
       - name: Icons, manifest, OG image
@@ -113,6 +141,9 @@ jobs:
             for f in round oval pear marquise emerald princess baguette link; do curl -fsSL --retry 3 -o "dist/desk/$f-512.webp" "$LIVE/desk/$f-512.webp" || echo "missing: desk/$f-512.webp"; done
             for f in leather-1600 leather-2560 leather-3840 leather-v-1080; do curl -fsSL --retry 3 -o "dist/desk/$f.jpg" "$LIVE/desk/$f.jpg" || echo "missing: desk/$f.jpg"; done
           fi
+      # pictures and films the owner uploaded in the admin and that this release uses
+      - name: Library media
+        run: bash lumera/site/library-assets.sh dist
       # The cards are built in the browser from the catalogue, so a missing
       # derivative is invisible to anything that only reads the HTML. This
       # reads the catalogue, works out every file the page can ask for, and
@@ -136,3 +167,15 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  # the admin shows whether a publish is live; the build says so when it has finished either way
+  report:
+    needs: [build, deploy]
+    if: always() && needs.build.outputs.release != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report the result
+        if: env.SILAVU_BUILD_TOKEN != ''
+        run: |
+          st=failed; [ "${{ needs.deploy.result }}" = "success" ] && st=live
+          curl -fsS -X POST "$SILAVU_FUNCTIONS_URL/release-status" -H "authorization: Bearer $SILAVU_BUILD_TOKEN" -H "content-type: application/json" \
+            -d "{\"release\": ${{ needs.build.outputs.release }}, \"status\": \"$st\", \"url\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\", \"error\": \"build ${{ needs.build.result }}, deploy ${{ needs.deploy.result }}\"}"

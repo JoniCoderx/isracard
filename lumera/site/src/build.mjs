@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import { body, MARK, MARK_W } from "./body.mjs";
+import * as CONTENT from "./content/load.mjs";
+import { applyAll, applySocials, configuratorDefaults } from "./content/apply.mjs";
 const S = new URL(".", import.meta.url).pathname;
 /* Measures in ch follow the width of the "0" of whatever face is in use, so
    changing the type would have widened or narrowed every column set in ch
@@ -38,7 +40,11 @@ rep(`price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compa
 rep(`var alias = { standard: "inside", atelier: "partners" }`, `var alias = { standard: "inside", wrist: "what", voices: "clients", partners: "clients" }`);
 
 /* v9: wrist size, the inside film is gone (the glints themselves went in v103) */
-rep(`window.__build = { origin: "lab", ct: 6, metal: "white" };`, `window.__build = { origin: "lab", ct: 6, metal: "white", wrist: 17, cut: "round" };`);
+/* the configurator opens on the defaults the house has set (content: configurator) */
+{ const d = configuratorDefaults(CONTENT.CONFIGURATOR);
+  rep(`window.__build = { origin: "lab", ct: 6, metal: "white" };`, `window.__build = { origin: "${d.origin}", ct: ${d.ct}, metal: "${d.metal}", wrist: ${d.wrist}, cut: "${d.cut}" };`); }
+/* the house's confirmed social accounts (content: settings) */
+s1 = applySocials(s1, CONTENT.SETTINGS);
 rep(`sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin);`, `sumStones.textContent = "36 × " + (b.ct / 36).toFixed(2) + " ct"; sumMetal.textContent = mname(b.metal); sumOrigin.textContent = oname(b.origin); $("sumWrist").textContent = b.wrist + " cm";`);
 rep(`$("lineLen").innerHTML = (36 * (mm + 0.7) / 10).toFixed(1) + "<small>cm</small>";`, `$("lineLen").innerHTML = b.wrist + "<small>cm</small>";`);
 rep(`window.__build[k] = k === "ct" ? Number(v) : v;`, `window.__build[k] = (k === "ct" || k === "wrist") ? Number(v) : v;`);
@@ -190,7 +196,9 @@ const NEW_PRICE = `  var CUTS = {
 if (!/  function price\(\) \{[\s\S]*?\n  \}\n/.test(s1)) { console.error("price() not found"); process.exit(1); }
 s1 = s1.replace(/  function price\(\) \{[\s\S]*?\n  \}\n/, NEW_PRICE);
 /* hero reveals wait for the intro to lift */
-let b = body;
+/* the published content: page text, chapters, menus, the configurator's offer, settings */
+let b = applyAll(body, CONTENT);
+if (CONTENT.CONTENT_INFO.source !== "seed") console.log("content: release", CONTENT.CONTENT_INFO.release, CONTENT.CONTENT_INFO.generated_at);
 const hs = b.indexOf('<section id="hero"'), he = b.indexOf("</section>", hs);
 b = b.slice(0, hs) + b.slice(hs, he).replace(/class="([^"]*)\brv\b([^"]*)"/g, 'class="$1rv late$2"') + b.slice(he);
 /* the three heavy canvases wait for the loader: they are stored, then run in order */
@@ -209,11 +217,12 @@ const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
   + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
   + '<link rel="stylesheet" href="' + FONT_HREF + '">';
 /* the price list the estimate reads, without its note to the editor */
-const PRICING = JSON.parse(fs.readFileSync(S + "pricing.json", "utf8")); delete PRICING._read_me;
+/* (the list itself is content now: the configurator document, seeded from src/pricing.json) */
+const PRICING = CONTENT.PRICING;
 const pricingTag = `<script>window.SILAVU_PRICING = ${JSON.stringify(PRICING)};</script>`;
 const page = `<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>SILAVU</title>\n${FONTS}\n<style>\n${MKVAR}${FONT_FACES}\n${css}</style>\n${b}\n${pricingTag}\n${s1}\n${defer(s2)}\n${defer(s3)}\n${defer(s8)}\n${s4}\n${s5}\n${s6}\n${s9}\n${s11}\n${s10}`;
 /* lighter on the wire: dead rules out, the sheet and the scripts minified (see slim.mjs) */
 const { slim } = await import("./slim.mjs");
 const slimmed = process.env.NO_SLIM ? page : await slim(page, ["gen-static.mjs", "src/body.mjs", "src/pieces.mjs", "src/about.mjs", "src/policies.mjs"]);
-fs.writeFileSync("/home/user/isracard/lumera/site/silavu-page.html", slimmed);
+fs.writeFileSync(process.env.SILAVU_PAGE_OUT || S + "../silavu-page.html", slimmed);
 console.log("page", (page.length / 1024).toFixed(0), "KB; scripts", (page.match(/<script>/g) || []).length);

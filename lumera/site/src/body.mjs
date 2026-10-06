@@ -32,8 +32,7 @@ export const lockup = (cls) => `<span class="lk${cls ? " " + cls : ""}">${markUs
 export const seal = (cls) => `<svg class="seal${cls ? " " + cls : ""}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47"/><use class="sm" href="#symb" x="${(50 - Math.ceil(MARK_BW) * 0.06 / 2).toFixed(2)}" y="20" width="${(Math.ceil(MARK_BW) * 0.06).toFixed(2)}" height="60"/></svg>`;
 export const emblem = (cls) => mark(cls);
 export const gemUse = () => mark("sm", "b");
-import { PIECES, CATS, SOON } from "./pieces.mjs";
-import { POLICIES } from "./policies.mjs";
+import { PIECES, CATS, SOON, FOOTER_DOCS } from "./content/load.mjs";
 export const wmk = (cls) => logo(cls);
 const W = [800, 1200, 1600, 2000];
 /* an alt is a string, or { en, he }: the Hebrew rides along for the Hebrew page */
@@ -444,7 +443,7 @@ ${markDefs()}
       <div class="fcol fbrand rv d3"><a class="fbl" href="#hero" aria-label="SILAVU, back to the top"><span class="fmk">${markUse("fsm")}</span>${logo("fsm")}</a><div class="k ftag"><span data-en="The Line of Desire" data-he="The Line of Desire">The Line of Desire</span><span data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span></div></div>
       <div class="fcol ffol rv d3"><div class="k" data-en="Follow" data-he="עקבו">Follow</div><div class="soc" data-socials></div></div>
     </div>
-    <details class="fcare rv" open data-fold><summary class="k" data-en="Client care" data-he="שירות לקוחות">Client care</summary><div class="ftrust k" aria-label="House documents">${POLICIES.map(d =>
+    <details class="fcare rv" open data-fold><summary class="k" data-en="Client care" data-he="שירות לקוחות">Client care</summary><div class="ftrust k" aria-label="House documents">${FOOTER_DOCS.map(d =>
       `<a href="${d.slug}/" data-en="${esc(d.title.en)}" data-he="${esc(d.title.he)}">${d.title.en}</a>`).join("")}</div></details>
     <div class="fbot k rv"><span dir="ltr">© SILAVU&nbsp;<span class="fyr">${new Date().getFullYear()}</span></span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
     </div>

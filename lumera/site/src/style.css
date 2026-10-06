@@ -6600,3 +6600,31 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   #pmodal .mfoot .mview { margin-inline-start:4px; }
   @media (max-width:899px) { html body #pmodal .mbuy .mpage { width:100%; min-height:54px; } }
   #pmImg { will-change:transform; }
+
+  /* ══ v215 — what the owner can add from the admin: a text band between the
+     chapters, a pictured page, a button on a page, and a short announcement.
+     Quiet on purpose: the house's own chapters stay the event. ══ */
+  .cmsband { padding:clamp(88px,12vw,168px) 0; position:relative; }
+  .cmsband.light { background:#f8f7f5; color:#14130f; }
+  .cmsband.dark { background:#0a0a0a; color:#f4f1ea; }
+  .cmsband .cmsin { display:grid; gap:clamp(28px,5vw,72px); align-items:center; justify-items:center; text-align:center; }
+  .cmsband.withfig .cmsin { justify-items:stretch; text-align:start; }
+  @media (min-width:900px) { .cmsband.withfig .cmsin { grid-template-columns:minmax(0,5fr) minmax(0,6fr); } }
+  .cmsband .cmstx { display:grid; gap:18px; max-width:46ch; justify-items:inherit; }
+  .cmsband .cmstx .t { margin:0; }
+  .cmsband .cmstx .p { margin:0; opacity:.82; }
+  .cmsband .cmstx .btn { justify-self:inherit; margin-top:10px; }
+  .cmsband.light .btn { color:#14130f; border-color:rgba(20,19,15,.35); }
+  .cmsband .cmsfig { margin:0; aspect-ratio:4 / 5; overflow:hidden; background:rgba(127,127,127,.08); }
+  .cmsband .cmsfig img { width:100%; height:100%; object-fit:cover; display:block; }
+  .doc .dfig { margin:clamp(30px,4svh,48px) 0 0; }
+  .doc .dfig img { width:100%; height:auto; display:block; }
+  .doc .dfig figcaption { margin-top:10px; color:var(--ink3); font-size:.86rem; }
+  .doc .dbtn { display:inline-flex; align-items:center; min-height:48px; padding:0 28px; border:1px solid currentColor; border-radius:999px; text-decoration:none; letter-spacing:.14em; text-transform:uppercase; font-size:.78rem; }
+  .annbar { position:fixed; z-index:60; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); max-width:calc(100vw - 32px);
+    display:flex; align-items:center; gap:14px; padding:10px 12px 10px 20px; border-radius:999px; background:rgba(14,14,14,.92); color:#f4f1ea;
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); font-size:.84rem; letter-spacing:.04em; box-shadow:0 12px 40px rgba(0,0,0,.25); }
+  .annbar a { color:inherit; text-underline-offset:4px; }
+  .annbar button { all:unset; cursor:pointer; width:28px; height:28px; display:grid; place-items:center; border-radius:50%; opacity:.7; }
+  .annbar button:hover, .annbar button:focus-visible { opacity:1; outline:1px solid rgba(255,255,255,.4); }
+  .annbar[hidden] { display:none; }

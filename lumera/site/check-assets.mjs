@@ -13,7 +13,7 @@
 
 import fs from "fs";
 import path from "path";
-import { PIECES, SOON } from "./src/pieces.mjs";
+import { PIECES, SOON } from "./src/content/load.mjs";
 
 const out = process.argv[2] || "dist";
 const img = path.join(out, "img");

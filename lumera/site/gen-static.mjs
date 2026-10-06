@@ -2,7 +2,13 @@
 // Usage: node gen-static.mjs <silavu-page.html> <out dir> [public base URL for OG tags]
 import fs from "node:fs";
 import path from "node:path";
-import { PIECES } from "./src/pieces.mjs";
+import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, publicRelease } from "./src/content/load.mjs";
+import { toInline, safeHref, HOUSE_EMAIL } from "./src/content/apply.mjs";
+import { priceWords, baseCurrency } from "./src/content/money.mjs";
+/* a piece with a set price carries an Offer; a piece quoted on request carries none */
+const offerOf = (p, url) => { const pr = p.price || {}, cur = baseCurrency(pr);
+  if (pr.mode !== "exact" || !cur) return undefined;
+  return { "@type": "Offer", "url": url, "price": (pr.amounts[cur] / 100).toFixed(2), "priceCurrency": cur, "availability": "https://schema.org/MadeToOrder", "seller": { "@type": "Organization", "name": "SILAVU" } }; };
 const [src, outDir, baseArg = "https://jonicoderx.github.io/isracard"] = process.argv.slice(2);
 /* Canonical, og:url, og:image and the sitemap have to be absolute — a share
    scraper cannot resolve a relative image and a crawler cannot resolve a
@@ -67,11 +73,8 @@ html = html.replace(/<script>([\s\S]*?)<\/script>/g, (m0, code) => {
 const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
 /* What the tab and a search result say. Short, in the form the established
    houses use: the name, then what it is. The Hebrew page has its own. */
-const TITLE = { en: "SILAVU | Fine Jewellery", he: "SILAVU | תכשיטי יוקרה" };
-const DESC = {
-  en: "SILAVU, The Line of Desire. Fine jewellery by appointment in Dubai and Tel Aviv: the MOMENT bracelet, ICON ring and SOUL necklace, and bespoke diamond pieces.",
-  he: "\u200fSILAVU, The Line of Desire. תכשיטי יוקרה מדובאי ותל אביב: צמיד SILAVU MOMENT, טבעת ICON ושרשרת SOUL, תכשיטי יהלומים בהתאמה אישית ופגישות פרטיות בתיאום מראש."
-};
+const TITLE = SEO.home.title;
+const DESC = SEO.home.description;
 const head = `<!doctype html>
 <html lang="en">
 <head>
@@ -191,7 +194,8 @@ ${cssLink}
             "category": p.cat,
             "additionalProperty": p.specs.map(function (r) {
               return { "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) };
-            })
+            }),
+            "offers": offerOf(p, base + "/pieces/" + p.id + "/")
             /* no "offers": an Offer without a price is not valid for product
                results, and the house does not publish prices; the pieces are
                quoted on request, which the page itself says in words */
@@ -274,10 +278,8 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
    at the top leading home, the same chapters one click away, every document
    in the footer, and the language the reader chose on the site. */
 {
-  const { POLICIES } = await import("./src/policies.mjs");
-  const { ABOUT } = await import("./src/about.mjs");
   const { mark, logo } = await import("./src/body.mjs");
-  POLICY_SLUGS = [ABOUT.slug, ...POLICIES.map(d => d.slug)];
+  POLICY_SLUGS = [ABOUT.slug, ...POLICIES.map(d => d.slug), ...DOCPAGES.map(d => d.slug)];
   const A = x => `data-en="${escA(x.en)}" data-he="${escA(x.he)}"`;
   const T = (tag, x, cls = "") => `<${tag}${cls ? ` class="${cls}"` : ""} ${A(x)}>${x.en}</${tag}>`;
   const S = (en, he) => ({ en, he });
@@ -300,7 +302,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
 <a class="dhome" href="./" aria-label="SILAVU, home" data-aria-he="SILAVU, דף הבית">${mark("dmk", "b")}${logo("dlg")}</a>
 <div class="dfcols">
 <div><div class="k" ${A(S("The house", "בית התכשיטים"))}>The house</div>${NAV.map(([h, t]) => `<a href="${h}" ${A(t)}>${t.en}</a>`).join("")}</div>
-<details class="dfcare" open data-fold><summary class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</summary><div class="dfcarel">${POLICIES.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div></details>
+<details class="dfcare" open data-fold><summary class="k" ${A(S("Client care", "שירות לקוחות"))}>Client care</summary><div class="dfcarel">${FOOTER_DOCS.map(o => `<a href="${o.slug}/"${o.slug === here ? ' aria-current="page"' : ""} ${A(o.title)}>${o.title.en}</a>`).join("")}</div></details>
 <div><div class="k" ${A(S("Contact", "יצירת קשר"))}>Contact</div><a href="mailto:concierge@silavu.com" dir="ltr">concierge@silavu.com</a><a href="./#concierge" ${A(S("Book a private viewing", "קביעת פגישה פרטית"))}>Book a private viewing</a><span class="k dfwhere" ${A(S("Dubai · Tel Aviv · By appointment", "דובאי · תל אביב · בתיאום מראש"))}>Dubai · Tel Aviv · By appointment</span></div>
 </div>
 <div class="dfbot k"><span dir="ltr">© SILAVU&nbsp;<span class="fyr">${new Date().getFullYear()}</span></span><a href="${here}/#top" ${A(S("Back to the top", "חזרה למעלה"))}>Back to the top</a></div>
@@ -429,6 +431,30 @@ ${d.body.map(([h, t]) => `<section>${T("h2", h)}${T("p", t)}</section>`).join("\
     const first = (d.body[0][1].en.match(/^[^.!?]+[.!?]/) || [""])[0];
     const ddesc = (d.lede.en + " " + first).length <= 160 ? d.lede.en + " " + first : d.lede.en;
     page(d.slug, `${d.title.en} | SILAVU`, ddesc, inner, '+ " | SILAVU"');
+  }
+  /* pages the owner made in the admin, from the same document template.
+     Their text is plain, with *emphasis*; nothing in them can carry markup. */
+  for (const d of DOCPAGES) {
+    const I = x => ({ en: toInline((x && x.en) || ""), he: toInline((x && (x.he || x.en)) || "") });
+    const blk = b => {
+      if (b.type === "heading") return `<section>${T("h2", I(b.text))}</section>`;
+      if (b.type === "paragraph") return `<section>${T("p", I(b.text))}</section>`;
+      if (b.type === "image" && /^media:[0-9a-f-]{36}$/.test(b.image || "")) {
+        const n = "m-" + b.image.slice(6);
+        return `<figure class="dfig"><img src="img/${n}-900.jpg" srcset="img/${n}-640.jpg 640w, img/${n}-900.jpg 900w, img/${n}-1254.jpg 1254w" sizes="(min-width:900px) 720px, 92vw" alt="${escA((b.alt && b.alt.en) || "")}" data-alt-he="${escA((b.alt && b.alt.he) || "")}" loading="lazy" decoding="async">${b.caption && b.caption.en ? `<figcaption ${A(I(b.caption))}>${I(b.caption).en}</figcaption>` : ""}</figure>`;
+      }
+      if (b.type === "button" && b.label && b.label.en && safeHref(b.href || "")) return `<p class="dask"><a class="dbtn" href="${escA(safeHref(b.href))}" ${A(I(b.label))}>${I(b.label).en}</a></p>`;
+      return "";
+    };
+    const inner = `<main class="doc">
+${d.eyebrow && d.eyebrow.en ? `<div class="k gold" ${A(I(d.eyebrow))}>${I(d.eyebrow).en}</div>` : ""}
+<h1 data-doc-title ${A(I(d.title))}>${I(d.title).en}</h1>
+${d.lede && d.lede.en ? `<p class="lede" ${A(I(d.lede))}>${I(d.lede).en}</p>` : ""}
+${(d.blocks || []).map(blk).join("\n")}
+</main>`;
+    const st = (d.seo && d.seo.title && d.seo.title.en) || `${d.title.en.replace(/\*/g, "")} | SILAVU`;
+    const sd = (d.seo && d.seo.description && d.seo.description.en) || (d.lede && d.lede.en) || "";
+    page(d.slug, st, sd, inner, '+ " | SILAVU"');
   }
   {
     const a = ABOUT;
@@ -565,7 +591,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
          description the piece in one sentence, its size, made to order */
       const title = p.seo ? pick(p.seo, he) : ((he ? (p.title && p.title.he) : (p.title && p.title.en)) || (plain(pick(p.name, he)) + " | SILAVU"));
       const size = (p.specs.find(r => /^(Length|Sizes?|Dimensions)$/.test(r[0].en)) || [])[1];
-      const desc = (plain(pick(p.line, he)) + (size ? (he ? " " + plain(size.he) + "." : " " + plain(size.en) + ".") : "") + (he ? " מיוצר לפי הזמנה. מחיר לפי בקשה." : " Made to order. Price on request.")).replace(/\s+/g, " ");
+      const desc = (plain(pick(p.line, he)) + (size ? (he ? " " + plain(size.he) + "." : " " + plain(size.en) + ".") : "") + (he ? " מיוצר לפי הזמנה. " + plain(priceWords(p.price).he).replace(/[\u2066\u2069]/g, "") + "." : " Made to order. " + plain(priceWords(p.price).en) + ".")).replace(/\s+/g, " ");
       const image = base + "/img/" + p.shots[0].img + "-" + (p.widths || [1200]).slice(-1)[0] + ".jpg";
       const schema = { "@context": "https://schema.org", "@graph": [
         { "@type": "Product", "@id": base + "/pieces/" + p.id + "/#product", "url": base + "/" + alt.en, "name": p.plain || plain(p.name.en),
@@ -574,7 +600,8 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
           "brand": { "@type": "Brand", "name": "SILAVU" },
           "material": plain(((p.specs.find(r => r[0].en === "Metal") || [])[1] || S("18K white gold", "")).en),
           "alternateName": p.plainHe || undefined,
-          "additionalProperty": p.specs.filter(r => !/^Price$/.test(r[0].en)).map(r => ({ "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) })) },
+          "additionalProperty": p.specs.filter(r => !/^Price$/.test(r[0].en)).map(r => ({ "@type": "PropertyValue", "name": r[0].en, "value": plain(r[1].en) })),
+          "offers": offerOf(p, base + "/" + alt.en) },
         { "@type": "BreadcrumbList", "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" + (he ? "he/" : "") },
           { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
@@ -591,12 +618,19 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
   if (fs.existsSync(from)) {
     const to = path.join(outDir, "lang");
     fs.mkdirSync(to, { recursive: true });
-    for (const f of fs.readdirSync(from)) if (f.endsWith(".json")) fs.copyFileSync(path.join(from, f), path.join(to, f));
+    /* the owner's translations (content: translations) are laid over the files */
+    for (const f of fs.readdirSync(from)) if (f.endsWith(".json")) {
+      const l = f.replace(/\.json$/, ""), extra = (TRANSLATIONS && TRANSLATIONS[l]) || {};
+      if (!Object.keys(extra).length) { fs.copyFileSync(path.join(from, f), path.join(to, f)); continue; }
+      const dict = JSON.parse(fs.readFileSync(path.join(from, f), "utf8"));
+      for (const [k, v] of Object.entries(extra)) if (typeof v === "string" && v.trim()) dict[k] = v;
+      fs.writeFileSync(path.join(to, f), JSON.stringify(dict, null, 1) + "\n");
+    }
     console.log("languages:", fs.readdirSync(to).join(" "));
   }
 }
 fs.writeFileSync(path.join(outDir, "robots.txt"),
-  "User-agent: *\nAllow: /\n\nSitemap: " + base + "/sitemap.xml\n");
+  "User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: " + base + "/sitemap.xml\n");
 /* English and Hebrew each have an address and name each other. French,
    Russian and Arabic are switched inside the page and have none, so they are
    not claimed here. */
@@ -643,3 +677,20 @@ a:focus-visible{outline:2px solid #e6d6b0;outline-offset:3px}</style></head>
 const cnameSrc = path.join(path.dirname(src), "CNAME");
 if (fs.existsSync(cnameSrc)) fs.copyFileSync(cnameSrc, path.join(outDir, "CNAME"));
 console.log("static index written:", path.join(outDir, "index.html"), ((head.length + html.length) / 1024).toFixed(0) + " KB");
+
+/* the public copy of what this build rendered: every field in it is already
+   on the site. The next build falls back to it if the backend is unreachable. */
+{
+  fs.mkdirSync(path.join(outDir, "_content"), { recursive: true });
+  fs.writeFileSync(path.join(outDir, "_content", "release.json"), JSON.stringify(publicRelease()));
+  console.log("content:", CONTENT_INFO.source, CONTENT_INFO.release ? "release " + CONTENT_INFO.release : "");
+}
+/* the house address, wherever a page names it, is the one in the settings */
+{
+  const email = SETTINGS && SETTINGS.contact && SETTINGS.contact.email;
+  if (email && email !== HOUSE_EMAIL && /^[^\s@"<>]+@[^\s@"<>]+\.[^\s@"<>]{2,}$/.test(email)) {
+    const walk = d => { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name);
+      if (f.isDirectory()) walk(p); else if (f.name.endsWith(".html")) { const t = fs.readFileSync(p, "utf8"); if (t.includes(HOUSE_EMAIL)) fs.writeFileSync(p, t.split(HOUSE_EMAIL).join(email)); } } };
+    walk(outDir);
+  }
+}

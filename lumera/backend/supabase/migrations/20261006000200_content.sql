@@ -102,14 +102,16 @@ begin
   return j;
 end $$;
 
+-- the published site: every live document, and the keys taken down (so a
+-- build does not bring back a piece from the code's own seed)
 create or replace function app.public_snapshot() returns jsonb
 language sql stable security definer set search_path = '' as $$
   select jsonb_build_object(
     'schema', 1,
     'generated_at', to_char(now() at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS"Z"'),
-    'docs', coalesce(jsonb_object_agg(d.key, jsonb_build_object('kind', d.kind, 'sort', d.sort, 'rev', d.published_rev, 'data', app.public_fields(d.published)) order by d.key), '{}'::jsonb))
-  from public.content_docs d
-  where d.published is not null and not d.published_archived
+    'docs', coalesce((select jsonb_object_agg(d.key, jsonb_build_object('kind', d.kind, 'sort', d.sort, 'rev', d.published_rev, 'data', app.public_fields(d.published)) order by d.key)
+                      from public.content_docs d where d.published is not null and not d.published_archived), '{}'::jsonb),
+    'archived', coalesce((select jsonb_agg(d.key order by d.key) from public.content_docs d where d.published_archived), '[]'::jsonb))
 $$;
 
 -- ── validation that cannot be skipped by a client ─────────────────────────
@@ -295,13 +297,14 @@ end $$;
 revoke all on function app.set_release_status(bigint, text, text, text) from public, anon, authenticated;
 grant execute on function app.set_release_status(bigint, text, text, text) to service_role;
 
--- what a build should use: a given release, else the newest live one, else the newest
+-- what a build should use: a given release, else the newest one that has not
+-- failed (a code change must not undo a publish whose build is still running)
 create or replace function app.release_for_build(p_release bigint default null) returns jsonb
 language sql stable security definer set search_path = '' as $$
   select jsonb_build_object('release', r.id, 'status', r.status, 'snapshot', r.snapshot)
   from public.releases r
   where (p_release is not null and r.id = p_release)
-     or (p_release is null and r.id = coalesce((select max(id) from public.releases where status = 'live'), (select max(id) from public.releases)))
+     or (p_release is null and r.id = (select max(id) from public.releases where status <> 'failed'))
   limit 1
 $$;
 revoke all on function app.release_for_build(bigint) from public, anon, authenticated;
