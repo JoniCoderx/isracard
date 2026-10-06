@@ -359,17 +359,25 @@
      the window is built from the catalogue rather than scraped out of the
      card's own markup. Cards that carry neither still work the old way. */
   var gShots = [], gAt = 0, gPiece = "", gCard = null;
+  /* every photograph of the piece is fetched and decoded as soon as the
+     window opens, at the width the window will ask for, so turning to the
+     next one is a swap of something already in memory: it slides in from
+     the side it came from instead of fading out and waiting on the network */
+  var G_SIZES = "(min-width:900px) 52vw, 92vw", gReady = {}, gDir = 0;
+  function gSet(sh) { var wide = sh.w && sh.w.length ? sh.w : [800, 1200, 1600, 2000];
+    return { src: "img/" + sh.i + "-" + wide[Math.min(1, wide.length - 1)] + ".jpg", srcset: wide.map(function (w) { return "img/" + sh.i + "-" + w + ".jpg " + w + "w"; }).join(", ") }; }
+  function gWarm() { gShots.forEach(function (sh) { var k = sh.i; if (gReady[k]) return; var s0 = gSet(sh), im = new Image(); im.decoding = "async"; im.sizes = G_SIZES; im.srcset = s0.srcset; im.src = s0.src;
+    (im.decode ? im.decode() : Promise.reject()).then(function () { gReady[k] = true; }, function () { im.onload = function () { gReady[k] = true; }; }); }); }
   function gPaint() {
     var sh = gShots[gAt]; if (!sh) return;
-    var wide = sh.w && sh.w.length ? sh.w : [800, 1200, 1600, 2000];
-    var img = $("pmImg");
-    /* the next photograph fades in once it has arrived, rather than the old
-       one blinking out and the new one painting in strips */
-    var nsrc = "img/" + sh.i + "-" + wide[Math.min(1, wide.length - 1)] + ".jpg";
-    if (img.getAttribute("src") !== nsrc) { img.classList.add("ld"); img.onload = img.onerror = function () { img.classList.remove("ld"); sq(); }; }
-    img.src = nsrc;
-    img.srcset = wide.map(function (w) { return "img/" + sh.i + "-" + w + ".jpg " + w + "w"; }).join(", ");
-    img.sizes = "(min-width:900px) 52vw, 92vw";
+    var img = $("pmImg"), s0 = gSet(sh), dir = gDir; gDir = 0;
+    if (img.getAttribute("src") !== s0.src) {
+      if (gReady[sh.i]) {
+        img.classList.remove("ld"); img.onload = function () { sq(); };
+        if (dir && img.animate && !reduce) img.animate([{ opacity: 0.35, transform: "translate3d(" + (dir * (document.documentElement.dir === "rtl" ? -1 : 1) * 7) + "%,0,0)" }, { opacity: 1, transform: "none" }], { duration: 420, easing: "cubic-bezier(.22,.8,.24,1)" });
+      } else { img.classList.add("ld"); img.onload = img.onerror = function () { img.classList.remove("ld"); gReady[sh.i] = true; sq(); }; }
+    }
+    img.sizes = G_SIZES; img.srcset = s0.srcset; img.src = s0.src;
     img.alt = (lang === "he" ? sh.h : sh.a) || sh.a || "";
     $("pmIm").classList.remove("two", "flip");
     $("pmImg2").removeAttribute("src");
@@ -387,7 +395,7 @@
   /* a square photograph gets a square frame, so nothing of the piece is cut
      away at the sides to fill a taller one */
   function sq() { var i = $("pmImg"); if (i.naturalWidth) $("pmIm").classList.toggle("sq", Math.abs(i.naturalWidth / i.naturalHeight - 1) < 0.06); }
-  function gGo(d) { if (!gShots.length) return; gAt = (gAt + d + gShots.length) % gShots.length; gPaint(); }
+  function gGo(d) { if (!gShots.length) return; gAt = (gAt + d + gShots.length) % gShots.length; gDir = d; gPaint(); }
   $("pmPrev").addEventListener("click", function (e) { e.stopPropagation(); gGo(-1); });
   $("pmNext").addEventListener("click", function (e) { e.stopPropagation(); gGo(1); });
   /* the arrow keys turn the photographs while the piece window is open; in
@@ -401,7 +409,7 @@
   });
   $("pmThumbs").addEventListener("click", function (e) {
     var b = e.target.closest("[data-i]"); if (!b) return;
-    gAt = +b.getAttribute("data-i"); gPaint();
+    var to = +b.getAttribute("data-i"); gDir = to > gAt ? 1 : to < gAt ? -1 : 0; gAt = to; gPaint();
   });
 
   function openPiece(pc) {
@@ -419,7 +427,7 @@
         return '<button type="button" role="tab" data-i="' + i + '" data-al="Photograph" data-n="' + (i + 1) + '" aria-label="' + (lang === "he" ? "תמונה" : (T("Photograph") || "Photograph")) + ' ' + (i + 1) + '">'
           + '<img src="img/' + sh.i + '-' + w + '.jpg" alt="" loading="lazy" decoding="async"></button>';
       }).join("");
-      gPaint();
+      gPaint(); gWarm();
     } else {
       gShots = []; $("pmThumbs").innerHTML = ""; $("pmThumbs").hidden = true;
       $("pmPrev").hidden = true; $("pmNext").hidden = true;
@@ -553,15 +561,23 @@
      that follows a swipe is not a tap on the photograph */
   var pmSwiped = false;
   (function () {
-    var im = $("pmIm"), sx = 0, sy = 0, down = false;
-    im.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse") return; sx = e.clientX; sy = e.clientY; down = true; pmSwiped = false; });
+    /* the photograph follows the finger a little while it is dragged, so a
+       swipe feels held rather than waiting for a threshold, and goes back
+       into place if the finger lets go short of it */
+    var im = $("pmIm"), pic = $("pmImg"), sx = 0, sy = 0, down = false, st = 0;
+    function back() { pic.style.transition = "transform .3s cubic-bezier(.22,.8,.24,1)"; pic.style.transform = ""; setTimeout(function () { pic.style.transition = ""; }, 320); }
+    im.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse" || gShots.length < 2) return; sx = e.clientX; sy = e.clientY; down = true; st = Date.now(); pmSwiped = false; pic.style.transition = "none"; });
     im.addEventListener("pointermove", function (e) {
       if (!down) return; var dx = e.clientX - sx, dy = e.clientY - sy;
-      if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) { down = false; return; }
-      if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) * 1.2) { down = false; pmSwiped = true; gGo((dx < 0) !== (document.documentElement.dir === "rtl") ? 1 : -1); }
+      if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) { down = false; back(); return; }
+      if (Math.abs(dx) > 6) pic.style.transform = "translate3d(" + (dx * 0.45).toFixed(1) + "px,0,0)";
+      /* a long drag, or a short quick flick, turns the photograph */
+      if (Math.abs(dx) > Math.max(56, im.clientWidth * 0.18) || (Math.abs(dx) > 26 && Date.now() - st < 180)) {
+        down = false; pmSwiped = true; pic.style.transform = ""; pic.style.transition = ""; gGo((dx < 0) !== (document.documentElement.dir === "rtl") ? 1 : -1); }
     });
-    im.addEventListener("pointerup", function () { down = false; });
-    im.addEventListener("pointercancel", function () { down = false; });
+    im.addEventListener("pointerup", function (e) { if (!down) return; down = false; var dx = e.clientX - sx;
+      if (Math.abs(dx) > 26 && Math.abs(dx) > Math.abs(e.clientY - sy)) { pmSwiped = true; pic.style.transform = ""; pic.style.transition = ""; gGo((dx < 0) !== (document.documentElement.dir === "rtl") ? 1 : -1); } else back(); });
+    im.addEventListener("pointercancel", function () { if (down) { down = false; back(); } });
   })();
   $("pmIm").addEventListener("click", function (e) { if (pmSwiped) { pmSwiped = false; return; } if (e.target.closest(".gnav")) return; if (this.classList.contains("two")) this.classList.toggle("flip"); });
   $("pmTry").addEventListener("click", function () { closeModals(); if (window.__tryon) window.__tryon.open(); });

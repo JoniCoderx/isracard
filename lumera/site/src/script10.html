@@ -52,11 +52,16 @@
       f.fillStyle = lg; f.beginPath(); f.moveTo(-62, 0); f.lineTo(0, -1.6); f.lineTo(62, 0); f.lineTo(0, 1.6); f.closePath(); f.fill(); f.restore(); });
   }
 
+  /* --wv is a clamp(); read back as a custom property it is only its text,
+     so it is measured: a hidden probe as tall as the wave */
+  var probe = null;
+  function wave() { if (!probe) { probe = document.createElement("i"); probe.setAttribute("aria-hidden", "true"); probe.style.cssText = "position:absolute;left:0;top:0;width:0;height:var(--wv,0px);visibility:hidden;pointer-events:none"; film.appendChild(probe); }
+    return probe.offsetHeight || 0; }
   function size() {
     var r = film.getBoundingClientRect();
     DPR = Math.min(devicePixelRatio || 1, coarse ? 1.75 : 2);
     var w = Math.round(r.width), h = Math.round(r.height); if (!w || !h) return false;
-    var first = !W; W = w; H = h; TOP = (parseFloat(getComputedStyle(film).getPropertyValue("--wv")) || 0) * 1.02;
+    var first = !W; W = w; H = h; TOP = wave() * 1.02;
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); cv.style.width = W + "px"; cv.style.height = H + "px";
     S = Math.max(30, Math.min(84, Math.min(W, H * 1.6) * (coarse ? 0.105 : 0.062)));
     if (first) lay(); else bodies.concat(flat()).forEach(keepIn);

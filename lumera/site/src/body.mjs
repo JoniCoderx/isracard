@@ -468,7 +468,7 @@ ${markDefs()}
         <div><span class="pv" id="pmPrice" data-en="Price on request" data-he="מחיר לפי בקשה">Price on request</span>
         <span class="k pn" data-en="Quoted personally, on enquiry" data-he="הצעת מחיר אישית, לפי פנייה">Quoted personally, on enquiry</span></div>
       </div>
-      <a class="btn solid mprim" href="#concierge" id="pmReq" data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>
+      <a class="btn solid mprim mpage" id="pmPage" href="./" data-en="View the full piece" data-he="לעמוד התכשיט המלא">View the full piece</a>
       </div>
       <div class="macts"><a class="btn" href="#concierge" id="pmRes" data-en="Reserve this piece" data-he="שריינו את התכשיט">Reserve this piece</a><button class="btn" type="button" id="pmTry" data-en="See it on your wrist" data-he="ראו על פרק היד שלכם">See it on your wrist</button></div>
       <div class="macc">
@@ -477,7 +477,7 @@ ${markDefs()}
         <details class="mdt"><summary><span data-en="With every piece" data-he="עם כל תכשיט">With every piece</span></summary><div class="incl"><ul><li data-stones="" data-en="GIA or IGI reports with your stones" data-he="תעודות GIA או IGI עם האבנים שלכם">GIA or IGI reports with your stones</li><li data-en="Valuation for your insurer" data-he="הערכת שווי לחברת הביטוח">Valuation for your insurer</li><li data-en="The black lacquer box" data-he="קופסת לכה שחורה">The black lacquer box</li><li data-en="Brought by hand by appointment, or sent by insured delivery" data-he="מסירה אישית בתיאום מראש, או משלוח מבוטח">Brought by hand by appointment, or sent by insured delivery</li><li data-en="Cleaning, checks and resizing" data-he="ניקוי, בדיקות ושינוי מידה">Cleaning, checks and resizing</li></ul></div></details>
         <details class="mdt" id="pmCareWrap"><summary><span data-en="Delivery and care" data-he="מסירה ושירות">Delivery and care</span></summary><p class="p" id="pmCare"></p></details>
       </div>
-      <p class="k mfoot"><span data-en="Viewed privately, by appointment" data-he="לצפייה בפגישה פרטית, בתיאום מראש">Viewed privately, by appointment</span> · <a class="lnk mpage" id="pmPage" href="./" data-en="The full page" data-he="לעמוד התכשיט">The full page</a></p>
+      <p class="k mfoot"><span data-en="Viewed privately, by appointment" data-he="לצפייה בפגישה פרטית, בתיאום מראש">Viewed privately, by appointment</span> · <a class="lnk mview" href="#concierge" id="pmReq" data-en="Book a viewing" data-he="קביעת פגישה">Book a viewing</a></p>
     </div>
   </div>
 </div>

@@ -42,10 +42,10 @@ await p.keyboard.press("Escape"); await p.waitForTimeout(500);
 ok(await p.evaluate(()=>!document.getElementById("menu").classList.contains("open") && !document.documentElement.classList.contains("locked")), `${T} menu closes with Escape`);
 // the gallery
 const vw = (await p.$$(".pgrid .piece:not(.soon) .fig"))[1]; await vw.scrollIntoViewIfNeeded(); await vw.tap(); await p.waitForTimeout(1200);
-const g = await p.evaluate(()=>{ const q=id=>document.getElementById(id).getBoundingClientRect(); const im=q("pmIm"), pr=q("pmPrev"), nx=q("pmNext"), cl=document.querySelector("#pmodal .mclose2").getBoundingClientRect(), th=q("pmThumbs"), req=q("pmReq");
+const g = await p.evaluate(()=>{ const q=id=>document.getElementById(id).getBoundingClientRect(); const im=q("pmIm"), pr=q("pmPrev"), nx=q("pmNext"), cl=document.querySelector("#pmodal .mclose2").getBoundingClientRect(), th=q("pmThumbs"), req=q("pmPage");
   const hit=(r,el)=>{ const e=document.elementFromPoint(r.left+r.width/2, r.top+r.height/2); return e && (e===el||el.contains(e)); };
-  return { imIn: im.left>=-1 && im.right<=innerWidth+1, navOk: pr.width>=40 && nx.width>=40 && hit(pr,document.getElementById("pmPrev")) && hit(nx,document.getElementById("pmNext")), closeOk: hit(cl, document.querySelector("#pmodal .mclose2")), thumbsIn: th.right<=innerWidth+1 && th.left>=-1, reqOk: hit(req, document.getElementById("pmReq")) && req.bottom<=innerHeight+1 }; });
-ok(g.imIn && g.navOk && g.closeOk && g.thumbsIn && g.reqOk, `${T} piece window: photo inside, arrows ≥40px and tappable, Close tappable, thumbnails inside, booking button reachable ${JSON.stringify(g)}`);
+  return { imIn: im.left>=-1 && im.right<=innerWidth+1, navOk: pr.width>=40 && nx.width>=40 && hit(pr,document.getElementById("pmPrev")) && hit(nx,document.getElementById("pmNext")), closeOk: hit(cl, document.querySelector("#pmodal .mclose2")), thumbsIn: th.right<=innerWidth+1 && th.left>=-1, reqOk: hit(req, document.getElementById("pmPage")) && req.bottom<=innerHeight+1 }; });
+ok(g.imIn && g.navOk && g.closeOk && g.thumbsIn && g.reqOk, `${T} piece window: photo inside, arrows ≥40px and tappable, Close tappable, thumbnails inside, full-page button reachable ${JSON.stringify(g)}`);
 await p.tap("#pmNext"); await p.waitForTimeout(700);
 ok(await p.evaluate(()=>document.querySelector("#pmThumbs button.on").dataset.i==="1"), `${T} tapping the arrow turns the photograph`);
 await p.screenshot({ path: OUT+`${W}-${lang}-piece.png` });
