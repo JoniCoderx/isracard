@@ -387,7 +387,7 @@ ${markDefs()}
         </script>
         <p class="fine rv d3" style="margin-top:22px" data-en="Every message is read and answered personally by the SILAVU concierge." data-he="כל פנייה נקראת ונענית באופן אישי על ידי הקונסיירז' של SILAVU.">Every message is read and answered personally by the SILAVU concierge.</p>
       </div>
-      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-to="" data-wa="" data-tel="" data-endpoint="">
+      <form id="cform" class="cf rv d2" novalidate data-mail="concierge@silavu.com" data-to="concierge@silavu.com" data-wa="" data-tel="" data-endpoint="">
         <div class="fields">
           <div class="field"><input id="fName" type="text" autocomplete="name" required aria-required="true" aria-describedby="fNameErr" dir="auto"><label for="fName" data-en="Name" data-he="שם">Name</label><p class="ferr" id="fNameErr" hidden></p></div>
           <div class="field"><input id="fCity" type="text" autocomplete="address-level2" dir="auto"><label for="fCity" data-en="City" data-he="עיר">City</label></div>

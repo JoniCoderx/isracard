@@ -7,7 +7,7 @@ for (const [path, w, mob, mode] of [["", 1440, false, "ok"], ["he/", 390, true, 
   const p = await br.newPage({ viewport: { width: w, height: mob ? 844 : 900 }, isMobile: mob });
   let sent = null;
   await p.route("**/formsubmit.co/**", async r => { sent = { url: r.request().url(), body: JSON.parse(r.request().postData()) }; await r.fulfill(mode === "ok" ? { status: 200, contentType: "application/json", body: '{"success":"true","message":"The form was submitted successfully."}' } : { status: 200, contentType: "application/json", body: '{"success":"false","message":"Activate"}' }); });
-  await p.route(/localhost:8777\/(he\/)?(index\.html)?$/, async r => { const res = await r.fetch(); const t = (await res.text()).replace('data-to=""', 'data-to="house@example.com"'); await r.fulfill({ response: res, body: t }); });
+  await p.route(/localhost:8777\/(he\/)?(index\.html)?$/, async r => { const res = await r.fetch(); const t = (await res.text()).replace(/data-to="[^"]*"/, 'data-to="house@example.com"'); await r.fulfill({ response: res, body: t }); });
   await p.goto("http://localhost:8777/" + path, { waitUntil: "load" });
   await p.waitForFunction(() => !document.documentElement.classList.contains("locked"), null, { timeout: 20000 }).catch(() => {});
   const tag = `${path || "en"} ${w} ${mode}`;
