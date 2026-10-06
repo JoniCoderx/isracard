@@ -105,7 +105,10 @@ export function Modal({ title, onClose, children, actions, wide }) {
     const prev = document.activeElement; const el = ref.current;
     const f = el && el.querySelector("input, textarea, select, button:not(.x)"); (f || el)?.focus();
     const key = (e) => { if (e.key === "Escape") onClose(); if (e.key === "Tab") { const all = [...el.querySelectorAll("a[href], button, input, textarea, select")].filter(x => !x.disabled); if (!all.length) return; const a = all[0], z = all[all.length - 1]; if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } } };
-    addEventListener("keydown", key); return () => { removeEventListener("keydown", key); prev && prev.focus && prev.focus(); };
+    /* first in line (capture), so nothing inside the dialog can swallow Escape */
+    addEventListener("keydown", key, true);
+    /* focus goes back where it was once the dialog is gone from the page */
+    return () => { removeEventListener("keydown", key, true); setTimeout(() => { if (prev && prev.isConnected && prev.focus) prev.focus(); }, 0); };
   }, []);
   return <div class="scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
     <div class={"modal" + (wide ? " wide" : "")} role="dialog" aria-modal="true" aria-label={title} ref={ref} tabIndex={-1}>

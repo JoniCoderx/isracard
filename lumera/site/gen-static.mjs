@@ -75,6 +75,15 @@ const BUILD = (process.env.GITHUB_SHA || "dev").slice(0, 12);
 /* What the tab and a search result say. Short, in the form the established
    houses use: the name, then what it is. The Hebrew page has its own. */
 const TITLE = SEO.home.title;
+/* the sharing picture: the one chosen in the admin (a library picture, made
+   1254 pixels on its long side at publish), or the designed og.jpg */
+const SHARE = (() => {
+  const im = SEO.home && SEO.home.image, m = im && /^media:([0-9a-f-]{36})$/.exec(im.media || "");
+  if (!m || !(im.w > 0 && im.h > 0)) return null;
+  const k = Math.min(1, 1254 / Math.max(im.w, im.h));
+  return { url: `${base}/img/m-${m[1]}-1254.jpg`, w: Math.round(im.w * k), h: Math.round(im.h * k), alt: String((im.alt && im.alt.en) || "SILAVU").replace(/"/g, "&quot;").replace(/</g, "&lt;") };
+})();
+const OG_IMG = SHARE ? SHARE.url : `${base}/og.jpg?v=7`;
 const DESC = SEO.home.description;
 const head = `<!doctype html>
 <html lang="en">
@@ -105,18 +114,18 @@ const head = `<!doctype html>
 <meta property="og:site_name" content="SILAVU">
 <meta property="og:title" content="SILAVU | The Line of Desire">
 <meta property="og:description" content="${DESC.en}">
-<meta property="og:image" content="${base}/og.jpg?v=7">
-<meta property="og:image:secure_url" content="${base}/og.jpg?v=7">
+<meta property="og:image" content="${OG_IMG}">
+<meta property="og:image:secure_url" content="${OG_IMG}">
 <meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
+<meta property="og:image:width" content="${SHARE ? SHARE.w : 1200}">
+<meta property="og:image:height" content="${SHARE ? SHARE.h : 630}">
+<meta property="og:image:alt" content="${SHARE ? SHARE.alt : "The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv"}">
 <meta property="og:url" content="${base}/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SILAVU | The Line of Desire">
 <meta name="twitter:description" content="${DESC.en}">
-<meta name="twitter:image" content="${base}/og.jpg?v=7">
-<meta name="twitter:image:alt" content="The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv">
+<meta name="twitter:image" content="${OG_IMG}">
+<meta name="twitter:image:alt" content="${SHARE ? SHARE.alt : "The SILAVU mark in white on black, above the words Private high jewellery, Dubai and Tel Aviv"}">
 <link rel="icon" href="favicon.ico?v=6" sizes="48x48 32x32 16x16">
 <link rel="icon" href="icon-32.png?v=6" type="image/png" sizes="32x32">
 <link rel="icon" href="icon-16.png?v=6" type="image/png" sizes="16x16">

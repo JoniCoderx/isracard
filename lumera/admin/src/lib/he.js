@@ -285,5 +285,10 @@ export const HE = {
   "Where visits came from": "מאיפה הגיעו הביקורים", "Campaign": "קמפיין", "First page": "דף ראשון", "Last page": "דף אחרון", "Pieces": "תכשיטים", "Browser": "דפדפן", "Language": "שפה", "Country": "מדינה",
   "Opened a piece": "פתחו תכשיט", "Started the form": "התחילו את הטופס", "Enquiry saved": "פנייה נשמרה", "Started designing": "התחילו לעצב", "Chose a design": "בחרו עיצוב",
   "Pieces opened": "תכשיטים שנפתחו", "Designs started": "עיצובים שהתחילו",
-  "bracelets": "צמידים", "necklaces": "שרשראות", "rings": "טבעות", "earrings": "עגילים"
+  "bracelets": "צמידים", "necklaces": "שרשראות", "rings": "טבעות", "earrings": "עגילים",
+  "Each piece's title and description are set on its own page in Products, and a piece is shared with its first photograph.": "הכותרת והתיאור של כל תכשיט נקבעים בעמוד שלו במוצרים, ותכשיט משותף עם התצלום הראשון שלו.",
+  "The picture when the site is shared": "התמונה כשמשתפים את האתר",
+  "Shown by WhatsApp, Instagram, Facebook and others when someone shares the site. Best 1200 × 630 pixels. Without one, the designed SILAVU card is used.": "מוצגת ב־WhatsApp, באינסטגרם, בפייסבוק ובמקומות אחרים כשמישהו משתף את האתר. הכי טוב 1200 × 630 פיקסלים. בלי תמונה, משתמשים בכרטיס SILAVU המעוצב.",
+  "Use the designed SILAVU card": "להשתמש בכרטיס SILAVU המעוצב",
+  "The designed SILAVU card": "כרטיס SILAVU המעוצב",
 };

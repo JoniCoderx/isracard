@@ -1,6 +1,7 @@
 # SILAVU site: the steps only the house can take
 
 These are the steps the code is ready for but that need a decision, an account or a figure from the business.
+Once the admin is connected (`ADMIN_SETUP.md` at the repository root), the price figures, contact details, socials and every text below are changed in the admin instead of in these files.
 Rebuild after any change (`cd lumera/site/src && node build.mjs`); CI regenerates the static site on push.
 
 ## 1. The price list (builder estimate)

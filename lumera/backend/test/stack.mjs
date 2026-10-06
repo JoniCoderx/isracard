@@ -12,7 +12,7 @@ const run = promisify(execFile);
 
 const BACKEND = new URL("..", import.meta.url).pathname, LUMERA = path.resolve(BACKEND, ".."), SITE = path.join(LUMERA, "site"), ADMIN = path.join(LUMERA, "admin");
 
-export async function startStack({ sitePort = 8777, fnPort = 54321, dist = "/tmp/silavu-stack/dist", log = (m) => console.log("[stack] " + m), resetDb = true, base = "" } = {}) {
+export async function startStack({ sitePort = 8777, fnPort = 54321, dist = "/tmp/silavu-stack/dist", log = (m) => console.log("[stack] " + m), resetDb = true, base = "", database = "silavu_test" } = {}) {
   if (resetDb) execFileSync("bash", [path.join(BACKEND, "test/reset.sh")], { stdio: "pipe" });
   fs.mkdirSync(dist, { recursive: true });
   /* base: served under a folder, as GitHub Pages serves the project at /isracard/ */
@@ -52,7 +52,7 @@ export async function startStack({ sitePort = 8777, fnPort = 54321, dist = "/tmp
       builds.push({ release, ok: false, error: String(e.stderr || e.message) }); log("build failed: " + String(e.stderr || e.message).slice(0, 600));
     } finally { fs.rmSync(path.join(SITE, "silavu-page.stack.html"), { force: true }); }
   }
-  fake = await startFakeSupabase({ port: fnPort, functionsDir: path.join(BACKEND, "supabase/functions"), siteBuild, env: { SITE_URL: siteUrl, ADMIN_URL: siteUrl + "/admin/", ALLOWED_ORIGINS: origin }, log });
+  fake = await startFakeSupabase({ port: fnPort, database, functionsDir: path.join(BACKEND, "supabase/functions"), siteBuild, env: { SITE_URL: siteUrl, ADMIN_URL: siteUrl + "/admin/", ALLOWED_ORIGINS: origin }, log });
 
   const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".mp4": "video/mp4", ".woff2": "font/woff2", ".ico": "image/x-icon", ".webmanifest": "application/manifest+json", ".xml": "application/xml", ".txt": "text/plain" };
   const server = http.createServer((q, s) => {

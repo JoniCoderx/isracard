@@ -1,12 +1,14 @@
 // Languages and search. English and Hebrew are written into every page; French,
 // Arabic and Russian are dictionaries the site loads when someone picks them,
 // keyed by the English words. A missing translation shows the English.
-import { useState } from "preact/hooks";
-import { message, SITE } from "../lib/sb.js";
+import { useState, useEffect } from "preact/hooks";
+import { sb, q, message, SITE } from "../lib/sb.js";
+import { thumb } from "../lib/media.js";
+import { MediaPicker } from "./Media.jsx";
 import { t } from "../lib/i18n.js";
 import { useDoc } from "../lib/doc.js";
 import { href, go } from "../lib/router.js";
-import { Bi, Input, PageHead, Tabs, Load, useLoad, Pill, NotImported } from "../lib/ui.jsx";
+import { Bi, Input, Button, PageHead, Tabs, Load, useLoad, Pill, NotImported } from "../lib/ui.jsx";
 import { SaveBar } from "./Products.jsx";
 import { useInventory } from "./Pages.jsx";
 import { toInline, safeInline } from "../../../site/src/content/apply.mjs";
@@ -21,8 +23,10 @@ export function Languages({ tab = "search" }) {
   </>;
 }
 
+function ShareThumb({ img }) { const [u, set] = useState(""); useEffect(() => { thumb(img).then(set); }, [img]); return u ? <img class="thumb" src={u} alt="" /> : null; }
 function SearchEdit() {
   const d = useDoc("seo", "seo", { title: "Search and sharing" });
+  const [pick, setPick] = useState(false);
   if (d.loading) return <p>{t("Loading…")}</p>;
   if (d.error) return <p class="err">{message(d.error)}</p>;
   if (!d.data) return <NotImported />;
@@ -34,7 +38,14 @@ function SearchEdit() {
       <Bi label={t("Title (in the tab and in search results)")} value={h.title} onInput={(v) => setH("title", v)} hint={t("About 60 characters. Now {n}.", { n: (h.title.en || "").length })} required />
       <Bi label={t("Description (under the title in search results)")} value={h.description} onInput={(v) => setH("description", v)} multiline rows={3} hint={t("About 155 characters. Now {n}.", { n: (h.description.en || "").length })} />
       <div class="serp"><div class="su">{SITE}</div><div class="st">{h.title.en}</div><div class="sd">{h.description.en}</div></div>
-      <p class="hint">{t("Each piece's title and description are set on its own page in Products. The sharing picture is og.jpg in the site's code.")}</p>
+      <p class="hint">{t("Each piece's title and description are set on its own page in Products, and a piece is shared with its first photograph.")}</p>
+    </section>
+    <section class="card form">
+      <h2>{t("The picture when the site is shared")}</h2>
+      <p class="hint">{t("Shown by WhatsApp, Instagram, Facebook and others when someone shares the site. Best 1200 × 630 pixels. Without one, the designed SILAVU card is used.")}</p>
+      <div class="row">{h.image ? <><ShareThumb img={h.image.media} /><Button kind="quiet" onClick={() => setH("image", undefined)}>{t("Use the designed SILAVU card")}</Button></> : <span class="hint">{t("The designed SILAVU card")}</span>}<Button onClick={() => setPick(true)}>{h.image ? t("Change the picture") : t("Choose a picture")}</Button></div>
+      {h.image && <Bi label={t("Picture description")} value={h.image.alt || { en: "", he: "" }} onInput={(v) => setH("image", { ...h.image, alt: v })} />}
+      {pick && <MediaPicker onClose={() => setPick(false)} onPick={async (ids) => { const r = await q(sb.from("media_assets").select("id,width,height").eq("id", ids[0]).maybeSingle()); setH("image", { media: "media:" + ids[0], w: r.width, h: r.height, alt: (h.image && h.image.alt) || { en: "", he: "" } }); setPick(false); }} />}
     </section>
     <SaveBar d={d} />
   </>;

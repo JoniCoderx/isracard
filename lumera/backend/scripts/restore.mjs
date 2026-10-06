@@ -79,12 +79,17 @@ try {
       if (t === "staff") { if (!r.user_id) continue; r.invited_by = r.invited_by ?? null; }
       if (SELF[t] && r[SELF[t]] != null) { later.push([r.id, r[SELF[t]]]); r[SELF[t]] = null; }
       const conflict = t === "staff" ? " on conflict (user_id) do nothing" : "";
-      const res = await db.query(`insert into public.${t} overriding system value select * from jsonb_populate_record(null::public.${t}, $1::jsonb)${conflict}`, [JSON.stringify(r)]);
+      let res;
+      /* the new backend already has a few audit entries of its own (the owner's
+         creation): the old trail follows them, in its order, with new numbers */
+      if (t === "audit_log") { delete r.id; res = await db.query(`insert into public.audit_log (at, actor, actor_role, action, target, summary) select at, actor, actor_role, action, target, summary from jsonb_populate_record(null::public.audit_log, $1::jsonb)`, [JSON.stringify(r)]); }
+      else res = await db.query(`insert into public.${t} overriding system value select * from jsonb_populate_record(null::public.${t}, $1::jsonb)${conflict}`, [JSON.stringify(r)]);
       n += res.rowCount;
     }
     for (const [id, ref] of later) await db.query(`update public.${t} set ${SELF[t]} = $2 where id = $1`, [id, ref]);
     /* identity columns continue after the restored ids */
-    const seq = (await db.query("select pg_get_serial_sequence($1, 'id') s", ["public." + t])).rows[0]?.s;
+    const hasId = (await db.query("select 1 from information_schema.columns where table_schema = 'public' and table_name = $1 and column_name = 'id' and is_identity = 'YES'", [t])).rowCount;
+    const seq = hasId ? (await db.query("select pg_get_serial_sequence($1, 'id') s", ["public." + t])).rows[0]?.s : null;
     if (seq) await db.query(`select setval($1, greatest((select coalesce(max(id), 0) from public.${t}), 1))`, [seq]);
     counts[t] = n;
   }

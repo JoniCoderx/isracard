@@ -8,3 +8,5 @@ lumera/site/content/release.json
 lumera/site/content/media.json
 lumera/admin/node_modules/
 lumera/site/silavu-page.stack.html
+lumera/backend/supabase/.env*
+!lumera/backend/supabase/.env.example

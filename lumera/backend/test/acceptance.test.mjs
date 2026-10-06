@@ -17,7 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import zlib from "node:zlib";
 import crypto from "node:crypto";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import pg from "pg";
 import { startStack } from "./stack.mjs";
@@ -65,6 +65,8 @@ async function signIn(p, email = OWNER, pw = OWNER_PW) {
 }
 const go = async (p, route) => { await p.goto(S.adminUrl + "#/" + route); await p.waitForTimeout(400); await p.waitForLoadState("networkidle"); };
 const field = (p, legend, lang = "English") => p.locator("fieldset.bi", { has: p.locator("legend", { hasText: legend }) }).first().getByLabel(lang, { exact: true });
+/* a switch is pressed on its label, as a person does */
+async function toggle(p, name, on) { const sw = p.getByRole("switch", { name }); if ((await sw.isChecked()) !== on) await p.locator(`label[for="${await sw.getAttribute("id")}"]`).click(); assert.equal(await sw.isChecked(), on); }
 const toast = (p, text) => p.locator(".toast", { hasText: text }).first().waitFor({ timeout: 15000 });
 async function confirmDialog(p) { await p.locator(".modal footer button.primary, .modal footer button.danger").last().click(); }
 async function publishAll(p, note = "") {
@@ -78,7 +80,8 @@ async function publishAll(p, note = "") {
   return b;
 }
 async function anonPage(route = "", opts = {}) { const c = await context(opts); const p = await page(c); await p.goto(S.siteUrl + "/" + route); return p; }
-const shot = (p, name) => p.screenshot({ path: path.join(SHOTS, name + ".png"), fullPage: false });
+/* pictures for the record; a slow screenshot never decides a check */
+const shot = (p, name) => p.screenshot({ path: path.join(SHOTS, name + ".png"), fullPage: false, timeout: 15000 }).catch(() => {});
 const anonFetch = (u, init) => fetch(u, init);
 const rest = (pathq, token = S.fake.anonKey, init = {}) => fetch(S.fake.url + "/rest/v1/" + pathq, { ...init, headers: { apikey: S.fake.anonKey, authorization: "Bearer " + token, "content-type": "application/json", ...(init.headers || {}) } });
 async function tokenFor(email, password) {
@@ -658,7 +661,9 @@ test("9 · support makes a quote from the enquiry, sends it; editing the product
   await su.getByLabel("Note to the customer (on their copy)").fill("Made to order in eight weeks.");
   await su.getByLabel("Internal note (never on their copy)").fill("Margin check with the workshop.");
   await su.getByRole("button", { name: "Save", exact: true }).click(); await toast(su, "Saved.");
-  await su.getByRole("button", { name: "Mark as sent" }).click(); await confirmDialog(su); await toast(su, "Saved.");
+  await su.locator(".toast").first().waitFor({ state: "detached", timeout: 10000 }).catch(() => {});
+  await su.getByRole("button", { name: "Mark as sent" }).click(); await confirmDialog(su);
+  await su.getByText(/This quote was sent on/).waitFor();
   const qrow = (await sql("select * from public.quotes where enquiry_id = $1", [state.enquiry.id]))[0];
   assert.equal(qrow.status, "sent"); assert.equal(Number(qrow.amount_minor), 4800000); assert.equal(qrow.currency, "ILS");
   assert.equal(qrow.spec_snapshot.cut, "oval");
@@ -726,4 +731,238 @@ test("10 · visits are counted only with consent, once each, never after a no, n
   const o = await ov.json();
   assert.equal(o.enquiries_saved, (await sql("select count(*)::int n from public.enquiries where created_at > now() - interval '1 day'"))[0].n, "enquiries come from the enquiry records, not from events");
   assert.ok(o.contact_clicks >= 1);
+});
+
+/* ── 11 · The Line's offer ───────────────────────────────────────────── */
+const enquire = (spec, extra = {}) => fetch(S.fake.url + "/functions/v1/enquiry", { method: "POST", headers: { "content-type": "application/json", origin: S.origin, "user-agent": UA.desk, "x-forwarded-for": "198.51.100." + Math.floor(Math.random() * 200) },
+  body: JSON.stringify({ idem: crypto.randomUUID(), name: "Line Test", contact: "line.test@example.test", want: "Bespoke commission", lang: "en", page: "/isracard/", spec, ...extra }) });
+test("11 · the editor takes the oval off The Line and adds a 21 cm wrist: the builder offers exactly that, the server refuses what is no longer offered, and earlier designs keep their shape", async () => {
+  const p = state.editor;
+  /* everything off is refused before it can blank the builder */
+  const tk = await tokenFor("editor@silavu.test", "editor-password-1");
+  const cfg = (await sql("select draft, draft_rev from public.content_docs where key = 'configurator'"))[0];
+  const none = { ...cfg.draft, cuts: cfg.draft.cuts.map(c => ({ ...c, enabled: false })) };
+  const bad = await rest("rpc/save_draft", tk, { method: "POST", body: JSON.stringify({ p_key: "configurator", p_kind: "configurator", p_title: "The Line", p_data: none, p_expected_rev: cfg.draft_rev, p_checkpoint: true }) });
+  assert.ok(bad.status >= 400, "a builder with no shape is refused: " + bad.status);
+  await go(p, "line");
+  await toggle(p, "Oval", false);
+  await p.getByLabel("Wrist sizes offered (cm)").fill("15, 16, 17, 18, 19, 20, 21");
+  await p.locator(".savebar").getByRole("button", { name: "Save draft" }).click(); await toast(p, "Draft saved");
+  await p.getByRole("button", { name: "Preview" }).click();
+  await p.frameLocator("iframe.pv").locator('#opts .chip[data-k="wrist"][data-v="21"]').waitFor({ state: "attached", timeout: 20000 });
+  await p.getByRole("button", { name: "Close" }).last().click();
+  const n = S.builds.length;
+  await p.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(p);
+  await S.waitForBuild(n + 1);
+  const v = await visitor(); await v.goto(S.siteUrl + "/"); await v.click('#consent [data-c="no"]');
+  await v.evaluate(() => document.getElementById("build").scrollIntoView()); await v.waitForTimeout(1500);
+  const offer = await v.evaluate(() => ({ oval: [...document.querySelectorAll('#opts .chip[data-k="cut"][data-v="oval"]')].filter(x => !x.hidden && getComputedStyle(x).display !== "none").length, w21: !!document.querySelector('#opts .chip[data-k="wrist"][data-v="21"]'), cut: (window.__build || {}).cut }));
+  assert.equal(offer.oval, 0, "oval is not offered"); assert.ok(offer.w21, "21 cm is offered"); assert.equal(offer.cut, "round", "it opens on a shape that is offered");
+  assert.deepEqual(v.errors, [], "the builder runs");
+  await shot(v, "11-line");
+  /* the server checks against what is published */
+  const r1 = await enquire({ cut: "oval", origin: "lab", ct: 6, metal: "white", wrist: 17 });
+  assert.equal(r1.status, 400, "oval refused"); assert.ok((await r1.json()).fields.some(f => /spec|cut/.test(f)));
+  const r2 = await enquire({ cut: "round", origin: "lab", ct: 99, metal: "white", wrist: 17 });
+  assert.equal(r2.status, 400, "an unknown weight refused");
+  const r3 = await enquire({ cut: "round", origin: "lab", ct: 6, metal: "white", wrist: 21 }, { price: 1, estimate: "AED 1" });
+  assert.equal(r3.status, 200, "21 cm accepted");
+  const saved = (await sql("select spec from public.enquiries where id = $1", [(await r3.json()).id]))[0].spec;
+  assert.equal(Number(saved.wrist), 21); assert.ok(!("price" in saved) && !("estimate" in saved), "no price is ever taken from the visitor");
+  /* the earlier enquiry and its quote still say oval */
+  assert.equal((await sql("select spec from public.enquiries where id = $1", [state.enquiry.id]))[0].spec.cut, "oval");
+  const pr = await page(state.support.context()); await pr.goto(S.adminUrl + "#/print/" + state.quote.id);
+  await pr.locator(".print .amount").waitFor(); assert.match(await pr.locator(".print").innerText(), /Oval/); assert.match(await pr.locator(".print").innerText(), /₪48,000/);
+  await pr.close();
+});
+
+/* ── 12 · two languages, two directions ──────────────────────────────── */
+test("12 · Hebrew reads right to left on the site (menu, modal, form, prices) and in the admin; English left to right", async () => {
+  const v = await visitor({ lang: "he" }); await v.goto(S.siteUrl + "/he/"); await v.click('#consent [data-c="no"]');
+  assert.equal(await v.locator("html").getAttribute("dir"), "rtl"); assert.equal(await v.locator("html").getAttribute("lang"), "he");
+  assert.match(await v.locator("#topnav").innerText(), /הקולקציה/);
+  /* a piece's window */
+  await v.locator(".pgrid .piece:not(.soon) .fig").first().click(); await v.locator(".modal.on, #pm.on, [id^=pm][aria-hidden=false]").first().waitFor({ timeout: 10000 }).catch(() => {});
+  await shot(v, "12-he-modal");
+  await v.keyboard.press("Escape");
+  /* the form, its labels and its direction */
+  await v.evaluate(() => document.getElementById("concierge").scrollIntoView()); await v.waitForTimeout(500);
+  assert.match(await v.locator('label[for="fName"]').innerText(), /שם/);
+  assert.equal(await v.evaluate(() => getComputedStyle(document.getElementById("cform")).direction), "rtl");
+  await shot(v, "12-he-form");
+  /* a price, in Hebrew, on the piece's page (MOMENT was priced in check 3 and restored; the ring has no price) */
+  const pp = await anonPage("he/pieces/knot/"); assert.match(await pp.locator(".pps, main").first().innerText(), /מחיר לפי בקשה|₪/);
+  const en = await anonPage(""); assert.equal(await en.locator("html").getAttribute("dir"), "ltr");
+  /* the admin in Hebrew */
+  const c = await context(), a = await page(c); await signIn(a, "care@silavu.test", "care-password-12");
+  await a.getByRole("button", { name: "עברית" }).click();
+  await a.locator("aside.side").waitFor();
+  assert.equal(await a.locator("html").getAttribute("dir"), "rtl");
+  assert.match(await a.locator("aside.side nav").innerText(), /פניות/);
+  await go(a, "enquiries/" + state.enquiry.id); await a.locator("h1", { hasText: state.enquiry.ref }).waitFor();
+  assert.match(await a.locator("main").innerText(), /אובל/, "the design, in Hebrew");
+  await shot(a, "12-admin-he");
+  /* each text field writes in its own direction, whatever the admin's */
+  const ed = state.editor; await go(ed, "products/knot");
+  assert.equal(await ed.locator('fieldset.bi [lang="he"]').first().getAttribute("dir"), "rtl");
+  assert.equal(await ed.locator('fieldset.bi [lang="en"]').first().getAttribute("dir"), "ltr");
+  assert.deepEqual(a.errors, []);
+});
+
+/* ── 13 · keyboard, labels, layouts ──────────────────────────────────── */
+test("13 · the admin works from the keyboard with labelled controls, dialogs keep focus, layouts hold on a phone, and the storefront is as light as before", async () => {
+  const c = await context(), p = await page(c);
+  await p.goto(S.adminUrl);
+  /* sign in without a mouse */
+  await p.locator('input[type="email"]').waitFor();
+  const order = []; for (let i = 0; i < 4; i++) { await p.keyboard.press("Tab"); order.push(await p.evaluate(() => document.activeElement.type || document.activeElement.tagName)); }
+  assert.ok(order.indexOf("email") >= 0 && order.indexOf("email") < order.indexOf("password"), "email, then password: " + order.join(" "));
+  await p.locator('input[type="email"]').focus(); await p.keyboard.type(OWNER); await p.keyboard.press("Tab"); await p.keyboard.type(OWNER_PW); await p.keyboard.press("Enter");
+  await p.locator("aside.side").waitFor();
+  /* the skip link and a visible focus ring */
+  await p.keyboard.press("Tab");
+  assert.match(await p.evaluate(() => document.activeElement.textContent), /Skip to content/);
+  const ring = await p.evaluate(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle !== "none" || s.boxShadow !== "none"; });
+  assert.ok(ring, "focus is visible");
+  /* every control on the main screens has a name */
+  for (const r of ["products/knot", "pages/text", "line", "settings", "team", "enquiries", "analytics", "history/backups", "media"]) {
+    await go(p, r);
+    const unnamed = await p.evaluate(() => [...document.querySelectorAll("main input:not([type=hidden]):not([hidden]), main select, main textarea, main button")].filter(e => {
+      const id = e.id && document.querySelector(`label[for="${e.id}"]`), wrap = e.closest("label"), aria = e.getAttribute("aria-label") || e.getAttribute("aria-labelledby"), txt = (e.textContent || "").trim();
+      return !(id || wrap || aria || (e.tagName === "BUTTON" && txt));
+    }).map(e => e.outerHTML.slice(0, 80)));
+    assert.deepEqual(unnamed, [], "unnamed controls on " + r);
+  }
+  /* a dialog holds focus and Escape closes it, returning focus */
+  await go(p, "team");
+  const opener = p.getByRole("button", { name: "Invite someone" }); await opener.focus(); await p.keyboard.press("Enter");
+  await p.locator(".modal").waitFor(); await p.waitForLoadState("networkidle"); await p.waitForTimeout(300);
+  for (let i = 0; i < 12; i++) { await p.keyboard.press("Tab"); await p.waitForTimeout(40); }
+  assert.ok(await p.evaluate(() => !!document.activeElement.closest(".modal")), "focus stays in the dialog");
+  await p.waitForTimeout(300); await p.keyboard.press("Escape"); await p.locator(".modal").waitFor({ state: "detached", timeout: 5000 });
+  assert.match(await p.evaluate(() => document.activeElement.textContent), /Invite someone/);
+  /* on a phone: the menu opens, nothing runs off the side */
+  const m = await page(await context({ width: 390, height: 844 })); await signIn(m);
+  for (const r of ["", "products/knot", "enquiries", "pages/text", "analytics", "line"]) {
+    await go(m, r); const over = await m.evaluate(() => document.scrollingElement.scrollWidth - innerWidth);
+    assert.ok(over <= 1, `${r || "overview"} runs ${over}px off a phone screen`);
+  }
+  await m.getByRole("button", { name: "Menu" }).click(); await m.locator(".shell.menu-open aside.side nav a").first().waitFor();
+  await shot(m, "13-admin-phone-menu");
+  /* the storefront carries none of the admin, and no more than before */
+  const home = html("index.html");
+  assert.ok(!/supabase|admin\/app\./i.test(home), "no admin code on the storefront");
+  assert.ok(Buffer.byteLength(home) < 400000, "home page " + Buffer.byteLength(home) + " bytes");
+  const track = fs.readdirSync(path.join(S.dist, "assets")).filter(f => f.startsWith("track."));
+  for (const f of track) assert.ok(zlib.gzipSync(fs.readFileSync(path.join(S.dist, "assets", f))).length < 5000, "the visit counter is under 5 KB as served");
+});
+
+/* ── 14 · addresses: the /isracard/ folder, reloads, links from email, back and forward ── */
+test("14 · the admin lives at /isracard/admin/: any screen can be reloaded or bookmarked, back and forward work, emails lead back to it", async () => {
+  const p = await page(await context()); await signIn(p);
+  await p.goto(S.siteUrl + "/admin/#/products/knot"); await p.locator("h1", { hasText: /MOMENT/ }).waitFor();
+  await p.reload(); await p.locator("h1", { hasText: /MOMENT/ }).waitFor();
+  await p.goto(S.siteUrl + "/admin/#/enquiries"); await p.locator("h1", { hasText: "Enquiries" }).waitFor();
+  await p.goto(S.siteUrl + "/admin/#/history/releases"); await p.locator("h1", { hasText: "History" }).waitFor();
+  await p.goBack(); await p.locator("h1", { hasText: "Enquiries" }).waitFor();
+  await p.goBack(); await p.locator("h1", { hasText: /MOMENT/ }).waitFor();
+  await p.goForward(); await p.locator("h1", { hasText: "Enquiries" }).waitFor();
+  /* the folder without its slash, and the admin without its slash */
+  const r = await fetch(S.siteUrl, { redirect: "manual" }); assert.equal(r.status, 301);
+  const a = await page(await context()); await a.goto(S.siteUrl + "/admin"); assert.ok(a.url().endsWith("/admin/") || (await a.locator("h1").count()) > 0);
+  /* the links in emails, and the storefront's links back, stay in the folder */
+  for (const m of S.fake.mail.filter(x => x.link)) assert.ok(m.link.startsWith(S.siteUrl + "/admin/"), m.link);
+  const home = html("index.html");
+  assert.ok(!/href="\/(?!\/|isracard)/.test(home), "no link escapes the folder");
+  assert.match(html("admin/index.html"), /noindex/);
+  assert.match(html("robots.txt"), /Disallow: \/isracard\/admin\//);
+  /* the address the live admin is built with */
+  const cfg = html("admin/index.html").match(/SILAVU_ADMIN\s*=\s*(\{[^<]*?\});/);
+  assert.ok(cfg && JSON.parse(cfg[1]).siteUrl.startsWith(S.siteUrl), "the admin knows its site");
+});
+
+/* ── 15 · search and sharing after a publish; a real restore ─────────── */
+test("15 · a published price and title reach the search and sharing tags, the structured data and the sitemap; an export restores into an empty backend that builds the same site", async () => {
+  /* SEO from the admin: the ring's search title and an exact price */
+  const p = state.owner;
+  await go(p, "products/ring");
+  await p.getByRole("tab", { name: "Search" }).click();
+  await field(p, "Title in search results").fill("SILAVU ICON Ring · Pavé signature in 18K white gold");
+  await p.getByRole("tab", { name: "Price & visibility" }).click();
+  await p.getByLabel("A set price").check(); await p.getByLabel("USD", { exact: true }).fill("9800");
+  const n = S.builds.length;
+  await p.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(p);
+  await S.waitForBuild(n + 1);
+  const ring = html("pieces/ring/index.html");
+  assert.match(ring, /<title>SILAVU ICON Ring · Pavé signature in 18K white gold/);
+  assert.match(ring, /<meta property="og:title" content="SILAVU ICON Ring · Pavé signature/);
+  assert.match(ring, /<link rel="canonical" href="http:\/\/127\.0\.0\.1:8788\/isracard\/pieces\/ring\/">/);
+  assert.match(ring, /<meta property="og:image" content="http[^"]+\.jpg"/);
+  assert.match(ring, /"price":"9800.00","priceCurrency":"USD"/);
+  assert.match(html("sitemap.xml"), /\/isracard\/pieces\/ring\//);
+  /* a hidden piece leaves the sitemap */
+  await toggle(p, "Shown in the collection", false);
+  const n2 = S.builds.length;
+  await p.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(p);
+  await S.waitForBuild(n2 + 1);
+  assert.doesNotMatch(html("sitemap.xml"), /\/pieces\/ring\//);
+  await toggle(p, "Shown in the collection", true);
+  const n3 = S.builds.length;
+  await p.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(p);
+  await S.waitForBuild(n3 + 1);
+  /* the picture shown when the site is shared, chosen from the library */
+  await go(p, "languages");
+  await p.getByRole("button", { name: "Choose a picture" }).click();
+  await p.locator(".modal .mitem").first().click(); await p.getByRole("button", { name: "Use 1" }).click();
+  await field(p, "Picture description").fill("A SILAVU bracelet in navy light");
+  const n4 = S.builds.length;
+  await p.locator(".savebar").getByRole("button", { name: "Publish", exact: true }).click(); await confirmDialog(p);
+  await S.waitForBuild(n4 + 1);
+  const og = html("index.html").match(/<meta property="og:image" content="([^"]+)">/)[1];
+  assert.match(og, /\/isracard\/img\/m-[0-9a-f-]{36}-1254\.jpg$/, og);
+  assert.ok(fs.existsSync(path.join(S.dist, og.replace(/^.*\/isracard\//, ""))), "the shared picture exists at that address");
+  assert.match(html("index.html"), /<meta property="og:image:alt" content="A SILAVU bracelet in navy light">/);
+  const siteNow = Object.fromEntries(pages(S.dist).map(f => [f, html(f)]));
+
+  /* the export, as the owner makes it */
+  await go(p, "history/backups");
+  const dl = p.waitForEvent("download").catch(() => null);
+  await p.getByRole("button", { name: "Make an export now" }).click(); await toast(p, "Export ready.");
+  const name = (await sql("select name from storage.objects where bucket_id = 'exports' order by created_at desc limit 1"))[0].name;
+  const file = path.join(TMP, name); fs.writeFileSync(file, S.fake.files.get("exports/" + name).body);
+  void dl;
+  /* a new, empty backend: the same migrations, the team invited again */
+  execFileSync("psql", ["-h", process.env.PGHOST || "/tmp", "-p", process.env.PGPORT || "54329", "-U", "postgres", "-q", "-c", "drop database if exists silavu_restore", "-c", "create database silavu_restore"]);
+  for (const f of ["test/shim.sql", ...fs.readdirSync("supabase/migrations").sort().map(x => "supabase/migrations/" + x)])
+    execFileSync("psql", ["-h", process.env.PGHOST || "/tmp", "-p", process.env.PGPORT || "54329", "-U", "postgres", "-q", "-v", "ON_ERROR_STOP=1", "-d", "silavu_restore", "-f", f], { env: { ...process.env, PGOPTIONS: "--client-min-messages=warning" } });
+  const R = await startStack({ sitePort: 8789, fnPort: 54332, dist: path.join(TMP, "restored"), base: BASE, resetDb: false, database: "silavu_restore", log: (m) => fs.appendFileSync(path.join(TMP, "restore.log"), m + "\n") });
+  try {
+    await R.fake.bootstrapOwner(OWNER, OWNER_PW);
+    for (const e of ["editor@silavu.test", "care@silavu.test"]) await R.fake.addUser(e, "x-password-1234");
+    /* refuses a backend that is not empty */
+    const url = `postgresql://postgres@localhost/silavu_restore?host=${encodeURIComponent(process.env.PGHOST || "/tmp")}&port=${process.env.PGPORT || 54329}`;
+    const env = { ...process.env, RESTORE_DATABASE_URL: url, SOURCE_SUPABASE_URL: S.fake.url, SOURCE_SERVICE_ROLE_KEY: S.fake.serviceKey, TARGET_SUPABASE_URL: R.fake.url, TARGET_SERVICE_ROLE_KEY: R.fake.serviceKey };
+    /* run alongside (not blocking) the two local stand-ins it copies between */
+    const run1 = await new Promise((ok) => { const c = spawn("node", ["scripts/restore.mjs", file], { env }); let o = "", e = ""; c.stdout.on("data", d => o += d); c.stderr.on("data", d => e += d); c.on("close", status => ok({ status, out: o, err: e })); });
+    const out = run1.out;
+    assert.equal(run1.status, 0, "restore: " + out + run1.err);
+    const res = JSON.parse(out.slice(out.indexOf("{"), out.indexOf("}\n") + 1));
+    for (const t of ["content_docs", "content_revisions", "releases", "media_assets", "enquiries", "quotes", "customers"]) assert.ok(res.restored[t] > 0, t + " restored");
+    assert.match(out, /"media_copied": [1-9]/);
+    assert.throws(() => execFileSync("node", ["scripts/restore.mjs", file], { env, stdio: "pipe" }), /already has/, "a second restore over data is refused");
+    /* the same counts, the same people, the same history */
+    const R2 = new pg.Client({ host: process.env.PGHOST || "/tmp", port: +(process.env.PGPORT || 54329), user: "postgres", database: "silavu_restore" }); await R2.connect();
+    for (const t of ["content_docs", "content_revisions", "releases", "enquiries", "quotes", "customers", "media_assets"]) {
+      const a = (await sql(`select count(*)::int n from public.${t}`))[0].n, b = (await R2.query(`select count(*)::int n from public.${t}`)).rows[0].n;
+      assert.equal(b, a, t);
+    }
+    assert.equal((await R2.query("select role from public.staff s join auth.users u on u.id = s.user_id where u.email = 'editor@silavu.test'")).rows[0].role, "editor", "the team, matched by email");
+    await R2.end();
+    /* and the site built from it is the same site */
+    await R.siteBuild(null);
+    const back = Object.fromEntries(pages(R.dist).map(f => [f, fs.readFileSync(path.join(R.dist, f), "utf8")]));
+    const norm = (h) => h.replace(/127\.0\.0\.1:8789/g, "127.0.0.1:8788").replace(/127\.0\.0\.1:54332/g, "127.0.0.1:54331");
+    const differ = Object.keys(siteNow).filter(f => norm(back[f] || "") !== siteNow[f]);
+    assert.deepEqual(differ, [], "the restored backend builds the same site");
+  } finally { await R.close(); }
 });
