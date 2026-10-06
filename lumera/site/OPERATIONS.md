@@ -14,18 +14,11 @@ Rebuild after any change (`cd lumera/site/src && node build.mjs`); CI regenerate
 
 ## 2. Sending the enquiry form
 
-- Today the form has no server. The button reads **"Continue in email" / "המשך באימייל"** and opens the reader's email app. Nothing is sent until they press send there, and the page says so.
-- **Quickest way to send for real: write the house inbox into `data-to=""`** on `<form id="cform">` in `src/body.mjs` (for example `data-to="concierge@silavu.com"`). The form then posts through FormSubmit (formsubmit.co, free):
-  - the very first enquiry makes FormSubmit email that inbox an **Activate** link; click it once, and every enquiry after arrives as a table (name, city, contact, what they want, their selection, message, language, page);
-  - when the reader leaves an email address, FormSubmit sends them an automatic reply at once, in their language ("Thank you for writing to SILAVU… we will answer you personally");
-  - the button reads "Send enquiry" / "שליחת הפנייה", and the form gives way to a thank-you card naming the reader.
-- Or put your own form endpoint URL in `data-endpoint=""` on `<form id="cform">` in `src/body.mjs`. The endpoint can be a form service or the house's own server, and must accept a JSON POST. The page then:
-  - posts `{ name, city, contact, want, selection, message, lang, page, text }`;
-  - shows "Thank you, your enquiry has reached the concierge" **only** when the server answers 2xx;
-  - on any failure says so, keeps everything typed, and offers "Continue in email".
-- Before switching it on:
-  1. Send a test enquiry and confirm it arrives at the business address (concierge@silavu.com).
-  2. Update the privacy page (`src/policies.mjs`, "privacy"). It currently says the form opens the reader's own mail app.
+- Live since 6 October 2026: `data-to="concierge@silavu.com"` on `<form id="cform">` in `src/body.mjs`. The form posts through FormSubmit (formsubmit.co, free).
+- **One step left for the house:** the first real enquiry makes FormSubmit email concierge@silavu.com an **Activate** link. Click it once; enquiries are delivered from then on. Until then nothing arrives.
+- The reader gets an automatic reply in their language when they leave an email address; the form gives way to a thank-you card. On any failure the page says so, keeps everything typed and offers "Continue in email".
+- The privacy page names FormSubmit as the delivery service.
+- To use your own server instead, put its URL in `data-endpoint=""` (JSON POST of `{ name, city, contact, want, selection, message, lang, page, text }`; success only on 2xx).
 
 ## 3. Moving to the house domain
 

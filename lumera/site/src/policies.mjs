@@ -25,8 +25,8 @@ export const POLICIES = [
             "מה אתם מוסרים לנו, ומה נעשה במידע."),
     body: [
       [S("What we hold", "המידע שנשמר"),
-       S("Only what you send us: a name, a city, a way to reach you, and what you wrote in the message. Nothing is bought from anyone and nothing is inferred about you. The enquiry form opens your own mail or messaging app, so the house receives what you chose to send, from your own address.",
-         "רק מה שאתם שולחים: שם, עיר, פרטי התקשרות ותוכן ההודעה. איננו רוכשים מידע מגורמים אחרים ואיננו מסיקים עליכם דבר. טופס הפנייה פותח את אפליקציית הדואר או ההודעות שלכם, כך שאנו מקבלים רק את מה שבחרתם לשלוח, מהכתובת שלכם.")],
+       S("Only what you send us: a name, a city, a way to reach you, and what you wrote in the message. Nothing is bought from anyone and nothing is inferred about you. When you press send, the enquiry form delivers what you wrote to the concierge's inbox through FormSubmit (formsubmit.co), a form-delivery service, which also emails you a confirmation if you left an email address. Nothing else is sent with it.",
+         "רק מה שאתם שולחים: שם, עיר, פרטי התקשרות ותוכן ההודעה. איננו רוכשים מידע מגורמים אחרים ואיננו מסיקים עליכם דבר. כשאתם לוחצים על שליחה, טופס הפנייה מעביר את מה שכתבתם לתיבת הדואר של הקונסיירז׳ באמצעות FormSubmit ‏(formsubmit.co), שירות להעברת טפסים, שגם שולח לכם אישור אם השארתם כתובת אימייל. דבר נוסף אינו נשלח יחד איתו.")],
       [S("What the site itself collects", "מה האתר אוסף"),
        S("No advertising trackers, no third-party analytics, no profile. The site sets no cookie for marketing. Your language choice is kept in your own browser and never leaves it.",
          "אין באתר רכיבי מעקב פרסומיים, אין כלי ניתוח של צד שלישי ואין פרופיל משתמש. האתר אינו שומר עוגיות שיווקיות. בחירת השפה נשמרת בדפדפן שלכם בלבד.")],
