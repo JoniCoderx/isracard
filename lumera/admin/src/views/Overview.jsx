@@ -75,7 +75,7 @@ export function Overview({ role, staff }) {
       <h2>{t("Connections")}</h2>
       <Load s={status}>{(s) => <ul class="conn">
         <li><Pill tone="ok">{t("On")}</Pill>{t("Database and sign-in")}</li>
-        <li><Pill tone={s.publishing ? "ok" : "bad"}>{s.publishing ? t("On") : t("Off")}</Pill>{t("Publishing to the site (GitHub)")}</li>
+        <li><Pill tone="ok">{t("On")}</Pill>{t("Publishing to the site (GitHub)")} <span class="hint">{s.publishing ? t("starts at once") : t("GitHub checks every few minutes")}</span></li>
         <li><Pill tone={s.build_token ? "ok" : "bad"}>{s.build_token ? t("On") : t("Off")}</Pill>{t("Build access to published content")}</li>
         <li><Pill tone={s.mail === "off" ? "warn" : "ok"}>{s.mail === "off" ? t("Off") : s.mail}</Pill>{t("Email to the house when an enquiry arrives")}{s.mail === "off" && <span class="hint"> {t("Enquiries are still saved; nobody is emailed.")}</span>}</li>
         <li><Pill tone={s.auto_reply ? "ok" : ""}>{s.auto_reply ? t("On") : t("Off")}</Pill>{t("Confirmation email to the person who wrote")}</li>

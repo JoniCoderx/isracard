@@ -62,7 +62,7 @@ export function useDoc(key, kind, { title, blank } = {}) {
     try {
       const r = await fn("publish", { action: "publish", keys: [key], note: note || "" });
       set(y => ({ ...y })); const doc = await getDoc(key); set(y => ({ ...y, doc }));
-      toast(r.dispatched ? t("Published. The site is rebuilding; it is usually live in two to four minutes.") : t("Published in the database, but the site build did not start: {e}. Retry from History.", { e: r.error || "" }), r.dispatched ? "ok" : "bad");
+      toast(r.dispatched ? t("Published. The site is rebuilding; it is usually live in two to four minutes.") : r.watched ? t("Published. GitHub checks for new releases every few minutes; the site is usually live within 10 to 15 minutes.") : t("Published in the database, but the site build did not start: {e}. Retry from History.", { e: r.error || "" }), r.dispatched || r.watched ? "ok" : "bad");
       return r;
     } catch (e) { toast(message(e), "bad"); return null; }
   }

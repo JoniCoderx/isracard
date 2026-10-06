@@ -42,6 +42,12 @@ export function makeDeps(): Deps {
         }
         return { id: r.data.user.id };
       },
+      create: async (email, password) => {
+        const r = await admin.auth.admin.createUser({ email, password, email_confirm: true });
+        if (r.error) throw new Error(/already/i.test(r.error.message) ? "conflict: this email already has an account; set its password from the team list instead" : r.error.message);
+        return { id: r.data.user.id };
+      },
+      setPassword: async (userId, password) => { check(await admin.auth.admin.updateUserById(userId, { password })); },
       ban: async (userId) => { check(await admin.auth.admin.updateUserById(userId, { ban_duration: "876000h" })); }
     }
   };

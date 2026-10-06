@@ -32,14 +32,14 @@ Until the steps below are done, the site builds exactly as before and `/admin/` 
 | `SILAVU_SUPABASE_ANON_KEY` | GitHub Actions **Variables** | yes | the project's publishable / anon key. It can do nothing that row-level security does not allow. |
 | `SILAVU_BUILD_TOKEN` | GitHub Actions **Secrets** | **no** | same value as `BUILD_TOKEN` below |
 | `BUILD_TOKEN` | Supabase function secret | **no** | 64 hex characters (`openssl rand -hex 32`). Lets the build read the published release and report its status, and lets the nightly job back up. Never contains a dot. |
-| `GH_TOKEN` | Supabase function secret | **no** | a GitHub fine-grained token, **only this repository**, permission *Contents: Read and write* (needed for `repository_dispatch`). Nothing else. |
+| `GH_TOKEN` | Supabase function secret | **no** | *optional.* Without it (the current setup), GitHub checks for waiting releases every 5 minutes (`publish-watch.yml`) and a publish is live in about 10–15 minutes. With a fine-grained token (**only this repository**, *Contents: Read and write*), the build starts at once (2–4 minutes). |
 | `GH_REPO` | Supabase function secret | no | `JoniCoderx/isracard` |
 | `SITE_URL` | Supabase function secret | no | `https://jonicoderx.github.io/isracard` |
 | `ADMIN_URL` | Supabase function secret | no | `https://jonicoderx.github.io/isracard/admin/` |
 | `ALLOWED_ORIGINS` | Supabase function secret | no | `https://jonicoderx.github.io` (origin only, no path; comma-separate if a domain is added) |
 | `RATE_SALT` | Supabase function secret | **no** | any long random string; visitor IP addresses are only ever kept as salted hashes for rate limits |
-| `NOTIFY_TO` | Supabase function secret | no | `concierge@silavu.com` (who is emailed when an enquiry arrives) |
-| `RESEND_API_KEY` | Supabase function secret | **no** | optional: email through Resend (needs a verified sending domain) |
+| `NOTIFY_TO` | Supabase function secret | no | *optional, not used now.* Who is emailed when an enquiry arrives |
+| `RESEND_API_KEY` | Supabase function secret | **no** | *optional, not used now:* email through Resend (needs a verified sending domain) |
 | `MAIL_FROM` | Supabase function secret | no | with Resend: e.g. `SILAVU <concierge@mail.silavu.com>` on the verified domain |
 | `NOTIFY_FORMSUBMIT` | Supabase function secret | no | `on` to notify through FormSubmit instead of Resend (the inbox must have been activated) |
 | `AUTO_REPLY` | Supabase function secret | no | `on` sends the visitor a short confirmation (Resend only). Off by default; the site never promises a confirmation that is not sent. |
@@ -79,10 +79,12 @@ Node 22, and admin rights on the GitHub repository.
 5. **Auth settings** (Dashboard → Authentication):
    * *Sign In / Providers*: turn **off** "Allow new users to sign up". Staff only ever arrive by invitation.
    * *URL Configuration*: Site URL = `https://jonicoderx.github.io/isracard/admin/`.
-   * *Emails → SMTP Settings*: **required.** Supabase's built-in mailer only delivers to members of
-     your Supabase organisation and about two emails an hour, so invitations and password resets
-     to anyone else fail without it. With Resend: host `smtp.resend.com`, port `465`, user `resend`,
-     password = a Resend API key, sender on your verified domain.
+   * *Emails → SMTP Settings*: **optional; skipped for now.** Supabase's built-in mailer only
+     delivers to members of your Supabase organisation, about two emails an hour. Without SMTP the
+     admin works without email: **Team → Invite someone** with a password makes the account ready
+     at once, and **Set a password** on the team list replaces a forgotten one. Enquiries are saved
+     in the admin; nobody is emailed about them. To add email later, with Resend: host
+     `smtp.resend.com`, port `465`, user `resend`, password = a Resend API key.
    * *Emails → Templates*: paste `supabase/templates/invite.html` into **Invite user** and
      `supabase/templates/recovery.html` into **Reset password** (subjects are in `config.toml`).
      These links carry a one-time token the admin exchanges itself, so they work from a phone's mail app.
@@ -102,7 +104,7 @@ Node 22, and admin rights on the GitHub repository.
    authenticator app (strongly advised for the owner). Then **Publishing → Import the current site**.
    The site's content is now in the admin, exactly as it is live (this is checked byte for byte in the
    tests). From now on the admin is where it changes.
-9. **The team.** **Team → Invite someone**, with a role. Tick *Authenticator required* for anyone
+9. **The team.** **Team → Invite someone**, with a role (and, while no email is set up, a password you give them). Tick *Authenticator required* for anyone
    who should need one; they are asked to set it up at their next sign-in and see nothing until then.
 
 ### Roles
@@ -152,7 +154,9 @@ GitHub is not called (a local build runs instead). The local stack leaves out th
    Previews exist only inside the signed-in admin; they are never at a public address.
 3. **Publish** (one page) or the **Publish** button at the top (everything waiting).
 4. The release appears under **History → Releases**: *queued → building → live*, usually 2–4 minutes.
-   If GitHub could not be reached it stays *queued* with the reason and a **Start the build again** button.
+   Without `GH_TOKEN` it stays *queued* until GitHub's next 5-minute check (`publish-watch.yml`)
+   picks it up; GitHub runs schedules on a best-effort basis, so allow 10–15 minutes.
+   With a token, if GitHub could not be reached it stays *queued* with the reason and a **Start the build again** button.
    If the build fails it is marked *failed*; **the site keeps the last good release**.
 
 A code push to the branch also rebuilds the site, always from the newest release that did not fail,
@@ -234,8 +238,7 @@ is identical to the original, page for page.
 | GitHub Pages + Actions | free (public repo) | $0 | site ≤ 1 GB, ~100 GB/month bandwidth (soft) |
 | Supabase | Free | $0 | 500 MB database, ~500 MB–1 GB files, 5 GB egress, 500k function calls/month; **a free project pauses after about a week without activity** (the nightly job calls it every day, which is expected to keep it awake, but this is not guaranteed); no automatic backups |
 | Supabase | Pro | $25/month per organisation | 8 GB database, 100 GB files, 250 GB egress, daily backups kept 7 days, never paused. Recommended once the admin is in daily use; it is your decision (nothing has been subscribed). |
-| Resend | Free | $0 | 3,000 emails/month, 100/day, one domain. Used for staff invitations/resets (SMTP) and enquiry notifications. |
-| Resend | Pro | $20/month | 50,000 emails/month |
+| Resend (not used now) | Free | $0 | 3,000 emails/month, 100/day, one domain, if email is added later |
 
 Media uploads are limited to 50 MB per file; on the free plan a handful of films fills the file quota.
 
@@ -250,8 +253,8 @@ real database, policies, functions and site build, with the site served under `/
 **Not verified** (needs the real accounts, so it could not be run from here):
 * Supabase-hosted behaviour: `db push` on a hosted project, function deployment, hosted Auth
   (invite/recovery emails through your SMTP, TOTP on the hosted service), Storage signed URLs.
-* GitHub `repository_dispatch` with a real token, and the Pages workflow building from a real release.
-* Email delivery (Resend or FormSubmit) and the visitor confirmation.
+* The 5-minute publish check (`publish-watch.yml`) on GitHub's real scheduler, and the Pages workflow building from a real release.
+* Email (not set up, by choice).
 * The nightly workflow against the real project; whether it keeps a free project from pausing.
 * Country detection (needs a hosting header the local stand-in does not have).
 * The custom domain (not set up yet).

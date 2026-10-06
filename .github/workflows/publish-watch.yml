@@ -1,0 +1,38 @@
+name: SILAVU publish check
+
+# Publishing without a GitHub token in the backend: every few minutes GitHub
+# asks the backend whether a release is waiting and, if one is, starts the
+# site build for it (the same build a token would start at once). GitHub
+# runs schedules on a best-effort basis, so a publish usually goes live in
+# 5 to 15 minutes. Does nothing until the backend is connected (ADMIN_SETUP.md).
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # only to send the repository's own "silavu-publish" event
+
+concurrency:
+  group: publish-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: ${{ vars.SILAVU_SUPABASE_URL != '' }}
+    steps:
+      - name: Is a release waiting?
+        env:
+          FN: ${{ vars.SILAVU_SUPABASE_URL }}/functions/v1
+          TOKEN: ${{ secrets.SILAVU_BUILD_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -n "$TOKEN" || { echo "::error::SILAVU_BUILD_TOKEN is not set"; exit 1; }
+          id=$(curl -fsS --retry 3 --retry-all-errors -X POST "$FN/release-snapshot" \
+                 -H "authorization: Bearer $TOKEN" -H "content-type: application/json" -d '{"waiting":true}' \
+               | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const w=JSON.parse(s).waiting;process.stdout.write(Number.isInteger(+w)&&+w>0?String(+w):"")})')
+          if [ -z "$id" ]; then echo "nothing waiting"; exit 0; fi
+          echo "release $id is waiting: starting the site build"
+          gh api "repos/${{ github.repository }}/dispatches" -f event_type=silavu-publish -F "client_payload[release]=$id"

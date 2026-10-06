@@ -4,7 +4,7 @@ Open **https://jonicoderx.github.io/isracard/admin/** and sign in. Every screen 
 or reloaded. The language switch (English / עברית) is at the foot of the menu.
 
 **The one rule:** *Save draft* keeps your work private. Nothing changes on the site until you
-**Publish**. After publishing, the site rebuilds itself in about 2–4 minutes; the top button and
+**Publish**. After publishing, the site rebuilds itself, usually within 10–15 minutes; the top button and
 **History → Releases** show *Building…* and then *Live on the site*.
 
 ---
@@ -77,7 +77,9 @@ A full private backup is made every night. **History & backups → Backups → M
 gives you a copy to keep (the link works for ten minutes). Restoring is described in ADMIN_SETUP.md.
 
 ### The team
-**Team → Invite someone** with a role (Owner, Editor, Support, Analyst). Tick **Authenticator
+**Team → Invite someone** with a role (Owner, Editor, Support, Analyst). While the site sends no
+email, also type a password: the account is ready at once, and you give them the password.
+**Set a password** on the list replaces a forgotten one. Tick **Authenticator
 required** to make someone use an authenticator app. **Remove** ends their access at once.
 Set up your own authenticator under **Account**.
 

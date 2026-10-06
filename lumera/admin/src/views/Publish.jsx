@@ -58,10 +58,10 @@ export function PublishPanel({ role, pending, onClose }) {
   return <Modal title={t("Publish")} onClose={onClose} wide actions={rel ? <Button onClick={onClose}>{t("Close")}</Button> : <><Button onClick={onClose}>{t("Cancel")}</Button>{rows && rows.length > 0 && <Button kind="primary" busy={busy} disabled={!Object.values(pick).some(Boolean)} onClick={go}>{t("Publish the selected changes")}</Button>}</>}>
     {empty && role === "owner" ? <div class="setup"><h3>{t("First time here")}</h3><p>{t("The database is empty. Bring in the site exactly as it is now; from then on the admin is where it changes.")}</p><Button kind="primary" busy={busy} onClick={importSite}>{t("Import the current site")}</Button></div>
     : rel ? <div>
-        <p>{t("Release {n} is recorded.", { n: rel })} {res && !res.dispatched && <strong class="badtx">{t("The build did not start: {e}", { e: res.error || "" })}</strong>}</p>
+        <p>{t("Release {n} is recorded.", { n: rel })} {res && !res.dispatched && !res.watched && <strong class="badtx">{t("The build did not start: {e}", { e: res.error || "" })}</strong>}</p>
         <ReleaseState r={release} />
-        {res && !res.dispatched && <Button onClick={async () => { const r = await fn("publish", { action: "retry", release: rel }); setRes(r); }}>{t("Try starting the build again")}</Button>}
-        <p class="hint">{t("Saving and publishing are done. The site rebuilds itself from what you published; it is usually live within two to four minutes. If the build fails, the site keeps showing the previous version and nothing you published is lost.")}</p>
+        {res && !res.dispatched && !res.watched && <Button onClick={async () => { const r = await fn("publish", { action: "retry", release: rel }); setRes(r); }}>{t("Try starting the build again")}</Button>}
+        <p class="hint">{res && res.watched ? t("GitHub checks for new releases every few minutes, so the build starts on its own within about ten minutes.") + " " : ""}{t("Saving and publishing are done. The site rebuilds itself from what you published; it is usually live within two to four minutes. If the build fails, the site keeps showing the previous version and nothing you published is lost.")}</p>
       </div>
     : !rows ? <p>{t("Loading…")}</p>
     : !rows.length ? <Empty title={t("Everything is live.")}>{t("There are no unpublished changes.")}</Empty>

@@ -24,7 +24,8 @@ export function Login() {
     {sent ? <p role="status">{t("If that address has an account, a link to set a new password is on its way. It works once and expires within an hour.")}</p> : <>
       <Input label={t("Email")} type="email" autocomplete="username" value={email} onInput={setEmail} />
       {err && <div class="err" role="alert">{err}</div>}
-      <Button kind="primary" busy={busy} onClick={recover} type="submit">{t("Send the link")}</Button></>}
+      <Button kind="primary" busy={busy} onClick={recover} type="submit">{t("Send the link")}</Button>
+      <p class="hint">{t("If no email arrives, the owner can set a new password for you under Team.")}</p></>}
     <button type="button" class="linkb" onClick={() => { setMode("in"); setSent(false); }}>{t("Back to sign in")}</button>
   </Frame>;
   return <Frame title={t("Sign in")}>

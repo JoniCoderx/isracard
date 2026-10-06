@@ -13,7 +13,7 @@ for (const n of ["enquiry", "collect", "publish", "release-snapshot", "release-s
 
 const db = new pg.Client({ host: process.env.PGHOST || "/tmp", port: +(process.env.PGPORT || 54329), user: "postgres", database: "silavu_test" });
 const U = {};
-const store = new Map(), stamps = new Map(), calls = [], banned = [];
+const store = new Map(), stamps = new Map(), passwords = new Map(), calls = [], banned = [];
 let fetchImpl = async () => new Response("{}", { status: 200 });
 const ENV = { ALLOWED_ORIGINS: "https://jonicoderx.github.io", RATE_SALT: "test", BUILD_TOKEN: "b".repeat(40), SITE_URL: "https://jonicoderx.github.io/isracard", ADMIN_URL: "https://jonicoderx.github.io/isracard/admin/" };
 let env = { ...ENV };
@@ -46,6 +46,8 @@ const deps = {
   },
   authAdmin: {
     invite: async (email) => ({ id: (await db.query("insert into auth.users (email) values ($1) on conflict (email) do update set email = excluded.email returning id", [email])).rows[0].id }),
+    create: async (email, password) => { const r = await db.query("insert into auth.users (email) values ($1) on conflict (email) do nothing returning id", [email]); if (!r.rows.length) throw new Error("conflict: this email already has an account"); passwords.set(r.rows[0].id, password); return { id: r.rows[0].id }; },
+    setPassword: async (id, password) => { passwords.set(id, password); },
     ban: async (id) => { banned.push(id); }
   }
 };
@@ -118,7 +120,10 @@ test("publish: editors publish and the build is asked for; support cannot; GitHu
   await deps.userRpc(tok(U.editor), "save_draft", { p_key: "product:knot", p_kind: "product", p_title: "MOMENT", p_data: { ...data, line: { en: "Edited line", he: "שורה" } }, p_expected_rev: rev, p_checkpoint: true });
   assert.equal((await H.publish(req("POST", { action: "publish", keys: ["product:knot"] }, { token: tok(U.support) }), deps)).status, 403);
   const nogh = await (await H.publish(req("POST", { action: "publish", keys: ["product:knot"] }, { token: tok(U.editor) }), deps)).json();
-  assert.equal(nogh.dispatched, false); assert.match(nogh.error, /not connected/); assert.ok(nogh.release > 1);
+  assert.equal(nogh.dispatched, false); assert.equal(nogh.watched, true, "without a token, GitHub's schedule picks it up"); assert.ok(!nogh.error); assert.ok(nogh.release > 1);
+  const w = await (await H["release-snapshot"](req("POST", { waiting: true }, { token: ENV.BUILD_TOKEN }), deps)).json();
+  assert.equal(Number(w.waiting), nogh.release, "the schedule sees the waiting release");
+  assert.equal((await H["release-snapshot"](req("POST", { waiting: true }, { token: tok(U.owner) }), deps)).status, 401);
   env = { ...ENV, GH_TOKEN: "ghp_x", GH_REPO: "JoniCoderx/isracard" }; calls.length = 0;
   fetchImpl = async () => new Response(null, { status: 204 });
   const ok = await (await H.publish(req("POST", { action: "retry", release: nogh.release }, { token: tok(U.editor) }), deps)).json();
@@ -140,6 +145,9 @@ test("the build: snapshot only with the build token, media links signed, status 
   assert.equal((await H["release-status"](req("POST", { release: r.release, status: "live", url: "https://github.com/JoniCoderx/isracard/actions/runs/1" }, { token: ENV.BUILD_TOKEN }), deps)).status, 200);
   assert.equal((await db.query("select status from public.releases where id = $1", [r.release])).rows[0].status, "live");
   assert.equal((await H["release-status"](req("POST", { release: r.release, status: "hacked" }, { token: ENV.BUILD_TOKEN }), deps)).status, 400);
+  /* once a release is live, nothing older is waiting: the site never steps back */
+  assert.equal((await (await H["release-snapshot"](req("POST", { waiting: true }, { token: ENV.BUILD_TOKEN }), deps)).json()).waiting, null);
+  assert.equal((await db.query("select count(*)::int n from public.releases where status = 'queued' and id < $1", [r.release])).rows[0].n, 0);
 });
 
 test("media: the bytes must be what they claim; the real size is recorded", async () => {
@@ -168,6 +176,15 @@ test("staff: only the owner invites and revokes; a revoked account is also block
   await H.staff(req("POST", { action: "revoke", user: r.user }, { token: tok(U.owner) }), deps);
   assert.ok(banned.includes(r.user));
   assert.equal((await db.query("select active from public.staff where user_id = $1", [r.user])).rows[0].active, false);
+  /* without email: an account ready at once with a password the owner hands over, and a new password set by the owner */
+  assert.equal((await H.staff(req("POST", { action: "invite", email: "pw@fn.example", role: "editor", password: "short" }, { token: tok(U.owner) }), deps)).status, 400);
+  const p = await (await H.staff(req("POST", { action: "invite", email: "pw@fn.example", role: "editor", password: "a-long-enough-pw" }, { token: tok(U.owner) }), deps)).json();
+  assert.equal(passwords.get(p.user), "a-long-enough-pw");
+  assert.equal((await H.staff(req("POST", { action: "invite", email: "pw@fn.example", role: "editor", password: "a-long-enough-pw" }, { token: tok(U.owner) }), deps)).status, 409, "an existing account is not taken over");
+  assert.equal((await H.staff(req("POST", { action: "set_password", user: p.user, password: "another-long-pw" }, { token: tok(U.editor) }), deps)).status, 403);
+  assert.equal((await H.staff(req("POST", { action: "set_password", user: p.user, password: "another-long-pw" }, { token: tok(U.owner) }), deps)).status, 200);
+  assert.equal(passwords.get(p.user), "another-long-pw");
+  assert.equal((await H.staff(req("POST", { action: "set_password", user: r.user, password: "another-long-pw" }, { token: tok(U.owner) }), deps)).status, 404, "not for someone removed");
 });
 
 test("export: the owner gets a ten-minute link; nobody else; the schedule stores without returning data", async () => {

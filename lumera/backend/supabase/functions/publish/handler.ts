@@ -7,9 +7,12 @@
 // retry button. The GitHub token never leaves this function.
 import { type Deps, HttpError, json, corsHeaders, readJson, requireStaff, fail } from "../_shared/http.ts";
 
-export async function dispatch(deps: Deps, release: number): Promise<{ dispatched: boolean; error?: string }> {
+/* Without a GitHub token here, GitHub's own schedule picks the release up
+   (publish-watch.yml): nothing to start, nothing failed. */
+export async function dispatch(deps: Deps, release: number): Promise<{ dispatched: boolean; watched?: boolean; error?: string }> {
   const token = deps.env("GH_TOKEN"), repo = deps.env("GH_REPO");
-  if (!token || !repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return { dispatched: false, error: "GitHub is not connected (GH_TOKEN, GH_REPO)" };
+  if (!token) return { dispatched: false, watched: true };
+  if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return { dispatched: false, error: "GH_REPO is not set" };
   try {
     const r = await deps.fetch(`https://api.github.com/repos/${repo}/dispatches`, {
       method: "POST",

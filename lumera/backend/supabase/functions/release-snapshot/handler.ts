@@ -1,6 +1,8 @@
 // POST /release-snapshot (the build, with BUILD_TOKEN): the published content
 // a build renders, and short-lived links to the library originals it uses.
 // { release?: number }  a publish names its release; a code push asks for the newest.
+// { waiting: true }      the schedule (publish-watch.yml) asks only whether a
+//                        release is waiting to be built: { waiting: id | null }
 import { type Deps, HttpError, json, readJson, requireBuildToken, fail } from "../_shared/http.ts";
 
 export async function handler(req: Request, deps: Deps): Promise<Response> {
@@ -8,6 +10,7 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
     if (req.method !== "POST") throw new HttpError(405, "method");
     requireBuildToken(req, deps);
     const body = await readJson(req, 2000);
+    if (body.waiting === true) return json({ waiting: (await deps.rpc("svc_waiting_release", {})) ?? null });
     const id = body.release == null ? null : Number(body.release);
     if (id !== null && (!Number.isInteger(id) || id < 1)) throw new HttpError(400, "release");
     const r = await deps.rpc("svc_release_for_build", { p_release: id }) as any;

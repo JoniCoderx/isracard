@@ -12,6 +12,7 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
     return json({
       role,
       publishing: !!(deps.env("GH_TOKEN") && deps.env("GH_REPO")),
+      publishing_mode: deps.env("GH_TOKEN") ? "direct" : "schedule",
       build_token: (deps.env("BUILD_TOKEN") || "").length >= 32,
       mail: provider(deps),
       auto_reply: deps.env("AUTO_REPLY") === "on",
