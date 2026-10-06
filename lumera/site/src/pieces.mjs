@@ -25,7 +25,7 @@ export const PIECES = [
   {
     /* SILAVU MOMENT. The figures below are the ones the house has confirmed:
        metal, finish, length, price on request. Nothing else is stated. */
-    id: "knot", seo: S("SILAVU MOMENT Bracelet · 18K White Gold Signature Chain Bracelet", "צמיד SILAVU MOMENT · צמיד שרשרת מזהב לבן 18K"), sub: S("18K white gold signature chain bracelet", "צמיד שרשרת עם חתימה, זהב לבן 18K"), cat: "bracelets", ref: "SLV·B·001", light: true,   /* shot on white */
+    id: "knot", film: { src: "v/moment-film", poster: "img/moment-film-poster.jpg", alt: S("The SILAVU MOMENT bracelet on black: out of the dark, over a black mirror, on black satin", "צמיד SILAVU MOMENT על שחור: מתוך החושך, מעל מראה שחורה, על סאטן שחור") }, seo: S("SILAVU MOMENT Bracelet · 18K White Gold Signature Chain Bracelet", "צמיד SILAVU MOMENT · צמיד שרשרת מזהב לבן 18K"), sub: S("18K white gold signature chain bracelet", "צמיד שרשרת עם חתימה, זהב לבן 18K"), cat: "bracelets", ref: "SLV·B·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],   /* what your photographs were actually shot at */
     theme: "moment", word: "MOMENT",
     title: S("SILAVU MOMENT | White Gold Bracelet", "SILAVU MOMENT | צמיד זהב לבן"),
