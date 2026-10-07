@@ -27,9 +27,10 @@ export function blankProduct(id) {
     reserve: true, price: { mode: "on_request" }, status: "hidden", badge: null };
 }
 
-function Thumb({ img, alt }) {
-  const [u, set] = useState(""); useEffect(() => { thumb(img).then(set); }, [img]);
-  return u ? <img class="thumb" src={u} alt={alt || ""} loading="lazy" /> : <div class="thumb ph" aria-hidden="true" />;
+function Thumb({ img, alt, unpublished }) {
+  /* a photograph the site does not publish (a piece kept out of the collection) has no small copy: an empty frame, not a broken picture */
+  const [u, set] = useState(""), [bad, setBad] = useState(false); useEffect(() => { setBad(false); if (unpublished && !/^media:/.test(img || "")) set(""); else thumb(img).then(set); }, [img, unpublished]);
+  return u && !bad ? <img class="thumb" src={u} alt={alt || ""} loading="lazy" onError={() => setBad(true)} /> : <div class="thumb ph" aria-hidden="true" />;
 }
 
 export function Products({ role }) {
@@ -49,7 +50,7 @@ export function Products({ role }) {
       return <ListEdit items={list} removable={false} onChange={(l) => saveOrder(l.map(d => d.key))} render={(d) => {
         const p = d.draft, live = d.published_rev === d.draft_rev && !!d.archived_at === !!d.published_archived;
         return <a class="prow" href={href("products/" + p.id)}>
-          <Thumb img={p.shots && p.shots[0] && p.shots[0].img} />
+          <Thumb img={p.shots && p.shots[0] && p.shots[0].img} unpublished={p.exceptional} />
           <div><strong dangerouslySetInnerHTML={{ __html: safeInline((p.name && p.name.en) || p.id) }} /><div class="hint">{p.ref} · {t(p.cat)} · {priceWords(p.price)[getLang() === "he" ? "he" : "en"]}</div></div>
           <div class="pills">{d.archived_at ? <Pill tone="bad">{t("Archived")}</Pill> : p.exceptional ? <Pill>{t("Not in the collection grid")}</Pill> : p.status === "hidden" ? <Pill>{t("Hidden")}</Pill> : <Pill tone="ok">{t("Shown")}</Pill>}{!live && <Pill tone="info">{t("Unpublished changes")}</Pill>}{p.badge && p.badge.en && <Pill tone="gold">{p.badge.en}</Pill>}</div>
         </a>;
@@ -156,7 +157,7 @@ export function ProductEdit({ id, role, onPublished }) {
     </section>}
     {tab === "photos" && <section class="card form">
       <p class="hint">{t("The first photograph is the card's face, the second is what it turns to, and all of them make the gallery. Photographs of 1254 pixels or more stay sharp on every screen.")}</p>
-      <ListEdit items={p.shots} onChange={(v) => set("shots", v)} render={(sh, up, i) => <div class="shot"><Thumb img={sh.img} alt={sh.alt?.en} /><div class="grow"><div class="hint">{i === 0 ? t("Card face") : i === 1 ? t("Card's second side") : t("Gallery")}</div><Bi label={t("Description for people who cannot see it")} value={sh.alt} onInput={(v) => up({ ...sh, alt: v })} /></div></div>} />
+      <ListEdit items={p.shots} onChange={(v) => set("shots", v)} render={(sh, up, i) => <div class="shot"><Thumb img={sh.img} alt={sh.alt?.en} unpublished={p.exceptional} /><div class="grow"><div class="hint">{i === 0 ? t("Card face") : i === 1 ? t("Card's second side") : t("Gallery")}</div><Bi label={t("Description for people who cannot see it")} value={sh.alt} onInput={(v) => up({ ...sh, alt: v })} /></div></div>} />
       <Button onClick={() => setPick(true)}>+ {t("Add photographs from the library")}</Button>
       <h3>{t("Film")}</h3>
       {p.film ? <div class="row"><span>{p.film.media ? t("A film from the library") : p.film.src}</span><Button kind="quiet" onClick={() => set("film", undefined)}>{t("Remove the film")}</Button></div> : <p class="hint">{t("No film. A film is shown first in the gallery on the piece's page.")}</p>}

@@ -6507,7 +6507,7 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
      capitals with a plain line beneath saying what the piece is, fine grey
      rules, one square black button. The header and footer turn white with
      it; the mark and the wordmark stay exactly as drawn, in black. ── */
-  html body .dpage.light { --bg:#ffffff; --ink:#111111; --ink2:#3d3d3d; --ink3:#767676; --line:rgba(0,0,0,.1); --gold:#8a6d3b;
+  html body .dpage.light { --bg:#ffffff; --ink:#111111; --ink2:#3d3d3d; --ink3:#6b6b6b; --line:rgba(0,0,0,.1); --gold:#8a6d3b;
     background:#ffffff; color:#111111; color-scheme:light; }
   html body .dpage.light .dhd { background:rgba(255,255,255,.92); border-bottom:1px solid rgba(0,0,0,.08); color:#111; }
   html body .dpage.light .dhome, html body .dpage.light .dhome svg.sy.dmk { color:#111 !important; }
@@ -6519,19 +6519,19 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   html body .dpage.light .dbook:hover { background:#111; color:#fff; }
   html body .dpage.light .dft { background:#fafafa; border-top:1px solid rgba(0,0,0,.08); color:#111; }
   html body .dpage.light .dft a { color:#3d3d3d; } html body .dpage.light .dft a:hover { color:#111; }
-  html body .dpage.light .dft .k, html body .dpage.light .dfwhere { color:#767676; }
+  html body .dpage.light .dft .k, html body .dpage.light .dfwhere { color:#6b6b6b; }
 
-  html body .dpage.light .ppage .crumbs, html body .dpage.light .ppage .crumbs a { color:#767676; font-size:.72rem; letter-spacing:.12em; }
+  html body .dpage.light .ppage .crumbs, html body .dpage.light .ppage .crumbs a { color:#6b6b6b; font-size:.72rem; letter-spacing:.12em; }
   html body .dpage.light .ppage .crumbs a:hover { color:#111; }
   html body .dpage.light .ppage .ppstage { background:#f5f5f3; border-radius:0; }
   html body .dpage.light .ppage .ppzoom { background:#f5f5f3; }
   html body .dpage.light .ppage .ppzoom img { mix-blend-mode:multiply; }
   html body .dpage.light .ppage .ppnav { background:rgba(255,255,255,.9); color:#111; border:1px solid rgba(0,0,0,.08); }
-  html body .dpage.light .ppage .ppcount { color:#767676; }
+  html body .dpage.light .ppage .ppcount { color:#6b6b6b; }
   html body .dpage.light .ppage .ppth { background:#f5f5f3; border-radius:0; border-color:transparent; opacity:.55; }
   html body .dpage.light .ppage .ppth.on { opacity:1; border-color:#111; }
   html body .dpage.light .ppage .pptext { gap:16px; }
-  html body .dpage.light .ppage .pptext > .k { color:#767676 !important; font-size:.72rem; letter-spacing:.16em; }
+  html body .dpage.light .ppage .pptext > .k { color:#6b6b6b !important; font-size:.72rem; letter-spacing:.16em; }
   html body .dpage.light .ppage .pptext h1 { color:#111; font-weight:400; text-transform:uppercase; letter-spacing:.04em; font-size:clamp(2rem, 3.2vw, 2.9rem); line-height:1.05; }
   html body .dpage.light .ppage .pptext h1 em { color:#111; font-style:normal; }
   html body .dpage.light .ppage .ppsub { margin:-6px 0 0; color:#3d3d3d; font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; }
@@ -6539,7 +6539,7 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   html body .dpage.light .ppage .pptext .lede { color:#3d3d3d; font-size:1rem; line-height:1.65; }
   html body .dpage.light .ppage .ppkey, html body .dpage.light .ppage .ppspecs { border-top-color:rgba(0,0,0,.1); }
   html body .dpage.light .ppage .ppkey > div, html body .dpage.light .ppage .ppspecs > div { border-bottom-color:rgba(0,0,0,.1); }
-  html body .dpage.light .ppage .ppkey dt, html body .dpage.light .ppage .ppspecs dt { color:#767676; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; }
+  html body .dpage.light .ppage .ppkey dt, html body .dpage.light .ppage .ppspecs dt { color:#6b6b6b; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; }
   html[data-ns] body .dpage.light .ppage .ppkey dt, html[data-ns] body .dpage.light .ppage .ppspecs dt { letter-spacing:0; text-transform:none; font-size:.875rem; }
   html body .dpage.light .ppage .ppkey dd, html body .dpage.light .ppage .ppspecs dd { color:#111; }
   html body .dpage.light .ppage .pprice { color:#111; font-size:.95rem; letter-spacing:.04em; }
@@ -6552,7 +6552,7 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   html body .dpage.light .ppage .ppacc summary { color:#111; }
   html body .dpage.light .ppage .ppacc .p, html body .dpage.light .ppage .ppcare a { color:#3d3d3d; }
   html body .dpage.light .ppage .ppmore { border-top:1px solid rgba(0,0,0,.08); }
-  html body .dpage.light .ppage .ppmore h2 { color:#767676; }
+  html body .dpage.light .ppage .ppmore h2 { color:#6b6b6b; }
   html body .dpage.light .ppage .ppmore li a { color:#111; }
   html body .dpage.light .ppage .ppmore img { background:#f5f5f3; border-radius:0; mix-blend-mode:multiply; }
   html body .dpage.light .ppage .ppbox { background:rgba(255,255,255,.97); }
