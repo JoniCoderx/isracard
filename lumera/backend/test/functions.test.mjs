@@ -218,3 +218,26 @@ test("maintenance: only on the schedule's token; keeps visits for the set retent
   assert.deepEqual(left, ["new-session"]);
   assert.equal((await db.query("select count(*)::int n from public.audit_log where action = 'maintenance.run'")).rows[0].n, 1);
 });
+
+test("the site's builds prove themselves with GitHub's signed statement: right repository, branch, audience and event only", async () => {
+  const crypto = await import("node:crypto");
+  const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const jwk = { ...publicKey.export({ format: "jwk" }), kid: "gh-test-key", alg: "RS256", use: "sig" };
+  const b64 = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
+  const sign = (claims, kid = "gh-test-key", key = privateKey) => { const h = b64({ alg: "RS256", typ: "JWT", kid }), p = b64(claims); return `${h}.${p}.${crypto.createSign("RSA-SHA256").update(h + "." + p).sign(key).toString("base64url")}`; };
+  const now = Math.floor(Date.now() / 1000);
+  const good = { iss: "https://token.actions.githubusercontent.com", aud: "silavu-build", repository: "JoniCoderx/isracard", ref: "refs/heads/claude/isracard-dev-environment-tzc6s5", event_name: "schedule", iat: now, nbf: now - 5, exp: now + 300 };
+  env = { ...ENV, BUILD_TOKEN: "", GH_REPO: "JoniCoderx/isracard", GH_BRANCH: "claude/isracard-dev-environment-tzc6s5" };
+  fetchImpl = async (u) => u === "https://token.actions.githubusercontent.com/.well-known/jwks" ? new Response(JSON.stringify({ keys: [jwk] }), { status: 200 }) : new Response("{}", { status: 404 });
+  const ask = (token) => H["release-snapshot"](req("POST", { waiting: true }, { token }), deps);
+  assert.equal((await ask(sign(good))).status, 200, "a build of this repository's branch");
+  for (const [why, claims] of [["another repository", { ...good, repository: "someone/else" }], ["another branch", { ...good, ref: "refs/heads/feature" }],
+    ["another audience", { ...good, aud: "sts.amazonaws.com" }], ["expired", { ...good, exp: now - 10 }], ["a pull request", { ...good, event_name: "pull_request" }], ["another issuer", { ...good, iss: "https://evil.example" }]])
+    assert.equal((await ask(sign(claims))).status, 401, why);
+  const other = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey;
+  assert.equal((await ask(sign(good, "gh-test-key", other))).status, 401, "not signed by GitHub");
+  assert.equal((await ask(sign(good, "unknown-kid"))).status, 401, "an unknown key");
+  assert.equal((await ask(tok(U.owner))).status, 401, "a staff session is not a build");
+  assert.equal((await H.maintenance(req("POST", {}, { token: sign(good) }), deps)).status, 200, "the nightly job too");
+  env = { ...ENV }; fetchImpl = async () => new Response("{}", { status: 200 });
+});

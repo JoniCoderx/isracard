@@ -6,7 +6,7 @@
 //   the scheduled backup, with BUILD_TOKEN and { scheduled: true }: stores it
 //   and returns only its name; nothing personal travels back to GitHub.
 // Pictures and films stay in the media bucket; the restore guide copies them.
-import { type Deps, HttpError, json, corsHeaders, readJson, requireStaff, requireBuildToken, bearer, fail } from "../_shared/http.ts";
+import { type Deps, HttpError, json, corsHeaders, readJson, requireStaff, requireBuild, fail } from "../_shared/http.ts";
 
 export async function gzip(text: string): Promise<Uint8Array> {
   const stream = new Blob([text]).stream().pipeThrough(new CompressionStream("gzip"));
@@ -20,7 +20,7 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
     if (req.method !== "POST") throw new HttpError(405, "method");
     const b = await readJson(req, 1000);
     let actor: string | null = null, scheduled = false;
-    if (b.scheduled === true && bearer(req) && !String(bearer(req)).includes(".")) { requireBuildToken(req, deps); scheduled = true; }
+    if (b.scheduled === true) { await requireBuild(req, deps); scheduled = true; }
     else actor = (await requireStaff(req, deps, ["owner"])).user.id;
     const data = await deps.rpc("svc_export", {});
     const name = `silavu-export-${new Date().toISOString().replace(/[:.]/g, "-")}${scheduled ? "-scheduled" : ""}.json.gz`;

@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write   # GitHub's signed statement of this run, which the backend checks
 
 concurrency:
   group: maintenance
@@ -22,18 +23,18 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    if: ${{ vars.SILAVU_SUPABASE_URL != '' }}
     env:
-      FN: ${{ vars.SILAVU_SUPABASE_URL }}/functions/v1
+      FN: ${{ vars.SILAVU_SUPABASE_URL || 'https://bugfiwulkbsjelmswcjh.supabase.co' }}/functions/v1
       TOKEN: ${{ secrets.SILAVU_BUILD_TOKEN }}
     steps:
       - name: Backup
         run: |
-          test -n "$TOKEN" || { echo "::error::SILAVU_BUILD_TOKEN is not set"; exit 1; }
+          T="$TOKEN"; [ -n "$T" ] || T=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=silavu-build" | jq -r .value)
           curl -fsS --retry 3 --retry-all-errors -X POST "$FN/export" \
-            -H "authorization: Bearer $TOKEN" -H "content-type: application/json" \
+            -H "authorization: Bearer $T" -H "content-type: application/json" \
             -d '{"scheduled":true}'
       - name: Housekeeping
         run: |
+          T="$TOKEN"; [ -n "$T" ] || T=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=silavu-build" | jq -r .value)
           curl -fsS --retry 3 --retry-all-errors -X POST "$FN/maintenance" \
-            -H "authorization: Bearer $TOKEN" -H "content-type: application/json" -d '{}'
+            -H "authorization: Bearer $T" -H "content-type: application/json" -d '{}'

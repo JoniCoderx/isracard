@@ -19,13 +19,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Set once the backend exists (ADMIN_SETUP.md), in Settings → Secrets and variables → Actions:
-  #   variables (public): SILAVU_SUPABASE_URL, SILAVU_SUPABASE_ANON_KEY
-  #   secret:             SILAVU_BUILD_TOKEN
-  # Without them the site builds exactly as before and the admin says it is not connected.
-  SILAVU_SUPABASE_URL: ${{ vars.SILAVU_SUPABASE_URL }}
-  SILAVU_SUPABASE_ANON_KEY: ${{ vars.SILAVU_SUPABASE_ANON_KEY }}
-  SILAVU_FUNCTIONS_URL: ${{ vars.SILAVU_SUPABASE_URL && format('{0}/functions/v1', vars.SILAVU_SUPABASE_URL) || '' }}
+  # The backend (ADMIN_SETUP.md). Its address and publishable key are public: they are in the
+  # admin that every browser downloads. Variables of the same names override them.
+  # The build proves itself to the backend with GitHub's own signed statement of this run
+  # (OIDC, audience "silavu-build"); a SILAVU_BUILD_TOKEN secret, if set, is used instead.
+  SILAVU_SUPABASE_URL: ${{ vars.SILAVU_SUPABASE_URL || 'https://bugfiwulkbsjelmswcjh.supabase.co' }}
+  SILAVU_SUPABASE_ANON_KEY: ${{ vars.SILAVU_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1Z2Zpd3Vsa2JzamVsbXN3Y2poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNTg5MDMsImV4cCI6MjEwNjkzNDkwM30.wTortnt6JQZgwPjK1Er7DilW_4ajn2lVuhYDjehsyUo' }}
+  SILAVU_FUNCTIONS_URL: ${{ vars.SILAVU_SUPABASE_URL && format('{0}/functions/v1', vars.SILAVU_SUPABASE_URL) || 'https://bugfiwulkbsjelmswcjh.supabase.co/functions/v1' }}
   SILAVU_BUILD_TOKEN: ${{ secrets.SILAVU_BUILD_TOKEN }}
   SILAVU_LIVE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
   RELEASE_ID: ${{ github.event.client_payload.release }}
@@ -50,11 +50,14 @@ jobs:
       # what the owner has published: the backend, else the copy the live site serves, else the seed
       - name: Published content
         id: content
-        run: node lumera/site/content-fetch.mjs
-      - name: Report the build started
-        if: steps.content.outputs.release != '' && env.SILAVU_BUILD_TOKEN != ''
         run: |
-          curl -fsS -X POST "$SILAVU_FUNCTIONS_URL/release-status" -H "authorization: Bearer $SILAVU_BUILD_TOKEN" -H "content-type: application/json" \
+          T="$SILAVU_BUILD_TOKEN"; [ -n "$T" ] || T=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=silavu-build" | jq -r .value)
+          SILAVU_BUILD_TOKEN="$T" node lumera/site/content-fetch.mjs
+      - name: Report the build started
+        if: steps.content.outputs.release != ''
+        run: |
+          T="$SILAVU_BUILD_TOKEN"; [ -n "$T" ] || T=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=silavu-build" | jq -r .value)
+          curl -fsS -X POST "$SILAVU_FUNCTIONS_URL/release-status" -H "authorization: Bearer $T" -H "content-type: application/json" \
             -d "{\"release\": ${{ steps.content.outputs.release }}, \"status\": \"building\", \"url\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" || echo "status not reported"
       - name: The page, with the published content
         run: cd lumera/site/src && node build.mjs
@@ -186,8 +189,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Report the result
-        if: env.SILAVU_BUILD_TOKEN != ''
         run: |
+          T="$SILAVU_BUILD_TOKEN"; [ -n "$T" ] || T=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=silavu-build" | jq -r .value)
           st=failed; [ "${{ needs.deploy.result }}" = "success" ] && st=live
-          curl -fsS -X POST "$SILAVU_FUNCTIONS_URL/release-status" -H "authorization: Bearer $SILAVU_BUILD_TOKEN" -H "content-type: application/json" \
+          curl -fsS -X POST "$SILAVU_FUNCTIONS_URL/release-status" -H "authorization: Bearer $T" -H "content-type: application/json" \
             -d "{\"release\": ${{ needs.build.outputs.release }}, \"status\": \"$st\", \"url\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\", \"error\": \"build ${{ needs.build.result }}, deploy ${{ needs.deploy.result }}\"}"

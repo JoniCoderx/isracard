@@ -85,6 +85,48 @@ export function requireBuildToken(req: Request, deps: Deps): void {
   if (want.length < 32 || !t || !safeEqual(t, want)) throw new HttpError(401, "unauthorized");
 }
 
+/* The site's own builds, without a shared secret: GitHub Actions signs a
+   short-lived statement (OIDC) of which repository, branch and event a run
+   belongs to. It is accepted when GitHub's signature checks out, it was made
+   for this backend (audience "silavu-build"), and it comes from GH_REPO on
+   GH_BRANCH. BUILD_TOKEN still works, for a build run anywhere else. */
+const GH_ISSUER = "https://token.actions.githubusercontent.com";
+export const BUILD_AUDIENCE = "silavu-build";
+let jwks: { at: number; keys: any[] } | null = null;
+const b64urlBytes = (s: string) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4)), c => c.charCodeAt(0));
+async function githubKeys(deps: Deps, kid: string): Promise<any | null> {
+  const find = () => jwks && jwks.keys.find(k => k.kid === kid);
+  if (!find() || Date.now() - (jwks?.at || 0) > 3600000) {
+    const r = await deps.fetch(GH_ISSUER + "/.well-known/jwks", { signal: AbortSignal.timeout(10000) });
+    if (r.ok) jwks = { at: Date.now(), keys: (await r.json()).keys || [] };
+  }
+  return find() || null;
+}
+export async function verifyGithubBuild(token: string, deps: Deps): Promise<boolean> {
+  const repo = (deps.env("GH_REPO") || "").toLowerCase(), branch = deps.env("GH_BRANCH") || "";
+  const parts = token.split(".");
+  if (!repo || !branch || parts.length !== 3) return false;
+  try {
+    const head = JSON.parse(new TextDecoder().decode(b64urlBytes(parts[0])));
+    if (head.alg !== "RS256" || !head.kid) return false;
+    const jwk = await githubKeys(deps, head.kid); if (!jwk) return false;
+    const key = await crypto.subtle.importKey("jwk", { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: "RS256", ext: true }, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
+    const ok = await crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, b64urlBytes(parts[2]), new TextEncoder().encode(parts[0] + "." + parts[1]));
+    if (!ok) return false;
+    const c = JSON.parse(new TextDecoder().decode(b64urlBytes(parts[1]))), now = Date.now() / 1000;
+    const aud = Array.isArray(c.aud) ? c.aud : [c.aud];
+    return c.iss === GH_ISSUER && aud.includes(BUILD_AUDIENCE) && typeof c.exp === "number" && c.exp > now && (c.nbf == null || c.nbf <= now + 60)
+      && String(c.repository || "").toLowerCase() === repo && c.ref === "refs/heads/" + branch
+      && ["push", "schedule", "workflow_dispatch", "repository_dispatch"].includes(c.event_name);
+  } catch { return false; }
+}
+export async function requireBuild(req: Request, deps: Deps): Promise<void> {
+  const t = bearer(req), want = deps.env("BUILD_TOKEN") || "";
+  if (t && want.length >= 32 && safeEqual(t, want)) return;
+  if (t && await verifyGithubBuild(t, deps)) return;
+  throw new HttpError(401, "unauthorized");
+}
+
 function claims(jwt: string): Record<string, unknown> {
   try { const p = jwt.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"); return JSON.parse(atob(p + "===".slice((p.length + 3) % 4))); } catch { return {}; }
 }

@@ -28,9 +28,10 @@ Until the steps below are done, the site builds exactly as before and `/admin/` 
 
 | Name | Where it lives | Public? | What it is |
 |---|---|---|---|
-| `SILAVU_SUPABASE_URL` | GitHub → Settings → Secrets and variables → Actions → **Variables** | yes | `https://<ref>.supabase.co` |
-| `SILAVU_SUPABASE_ANON_KEY` | GitHub Actions **Variables** | yes | the project's publishable / anon key. It can do nothing that row-level security does not allow. |
-| `SILAVU_BUILD_TOKEN` | GitHub Actions **Secrets** | **no** | same value as `BUILD_TOKEN` below |
+| `SILAVU_SUPABASE_URL` | the workflows (default) or GitHub Actions **Variables** (override) | yes | `https://bugfiwulkbsjelmswcjh.supabase.co` |
+| `SILAVU_SUPABASE_ANON_KEY` | the workflows (default) or GitHub Actions **Variables** (override) | yes | the project's anon key. It is in the admin every browser downloads, and can do nothing that row-level security does not allow. |
+| `SILAVU_BUILD_TOKEN` | GitHub Actions **Secrets** | **no** | *optional.* Without it (the current setup) each build proves itself with GitHub's own signed statement of the run (OIDC, audience `silavu-build`), which the backend checks against `GH_REPO` and `GH_BRANCH`. |
+| `GH_BRANCH` | Supabase function secret | no | `claude/isracard-dev-environment-tzc6s5`: the only branch whose builds the backend accepts |
 | `BUILD_TOKEN` | Supabase function secret | **no** | 64 hex characters (`openssl rand -hex 32`). Lets the build read the published release and report its status, and lets the nightly job back up. Never contains a dot. |
 | `GH_TOKEN` | Supabase function secret | **no** | *optional.* Without it (the current setup), GitHub checks for waiting releases every 5 minutes (`publish-watch.yml`) and a publish is live in about 10–15 minutes. With a fine-grained token (**only this repository**, *Contents: Read and write*), the build starts at once (2–4 minutes). |
 | `GH_REPO` | Supabase function secret | no | `JoniCoderx/isracard` |

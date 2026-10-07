@@ -3,12 +3,12 @@
 // { release?: number }  a publish names its release; a code push asks for the newest.
 // { waiting: true }      the schedule (publish-watch.yml) asks only whether a
 //                        release is waiting to be built: { waiting: id | null }
-import { type Deps, HttpError, json, readJson, requireBuildToken, fail } from "../_shared/http.ts";
+import { type Deps, HttpError, json, readJson, requireBuild, fail } from "../_shared/http.ts";
 
 export async function handler(req: Request, deps: Deps): Promise<Response> {
   try {
     if (req.method !== "POST") throw new HttpError(405, "method");
-    requireBuildToken(req, deps);
+    await requireBuild(req, deps);
     const body = await readJson(req, 2000);
     if (body.waiting === true) return json({ waiting: (await deps.rpc("svc_waiting_release", {})) ?? null });
     const id = body.release == null ? null : Number(body.release);
