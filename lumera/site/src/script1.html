@@ -1287,7 +1287,7 @@
   /* with a real inbox behind it, the button says it sends from the start */
   if (endpoint) chanLabel();
   /* Before sending to the house, the page does a small sum the server checks
-     (proof of work, 14 bits): unnoticeable for a person, costly for a bot that
+     (proof of work, 12 bits): unnoticeable for a person, costly for a bot that
      posts thousands, impossible for one that does not run the page. No
      outside service, nothing about the visitor sent anywhere. */
   function powFor(idem) {
@@ -1296,7 +1296,7 @@
     return new Promise(function (done, fail) {
       (function batch() {
         var tries = [];
-        for (var k = 0; k < 64; k++) tries.push((function (m) { return crypto.subtle.digest("SHA-256", enc.encode(key + m)).then(function (d) { var b = new Uint8Array(d); return b[0] === 0 && (b[1] >> 2) === 0 ? m : -1; }); })(n++));
+        for (var k = 0; k < 64; k++) tries.push((function (m) { return crypto.subtle.digest("SHA-256", enc.encode(key + m)).then(function (d) { var b = new Uint8Array(d); return b[0] === 0 && (b[1] >> 4) === 0 ? m : -1; }); })(n++));
         Promise.all(tries).then(function (r) { for (var i = 0; i < r.length; i++) if (r[i] >= 0) { form.__pow = { i: idem, n: String(r[i]) }; return done(String(r[i])); } batch(); }, fail);
       })();
     });

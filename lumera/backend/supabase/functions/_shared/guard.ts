@@ -10,7 +10,7 @@
 //
 // * Words. An enquiry whose words look abusive is flagged for the house, not
 //   rejected: a real customer who swears is still a customer.
-export const POW_BITS = 14;
+export const POW_BITS = 12;
 
 export async function powOk(idem: unknown, nonce: unknown): Promise<boolean> {
   if (typeof idem !== "string" || !/^[0-9a-f-]{36}$/i.test(idem)) return false;
