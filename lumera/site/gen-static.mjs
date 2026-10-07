@@ -278,7 +278,7 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   fs.writeFileSync(path.join(outDir, "he", "index.html"), heHead + heHtml + "\n</body>\n</html>\n");
   console.log("hebrew page:", cuts.length, "strings written in");
 }
-/* /test/: the home page with a candidate hero film, for the house to look at
+/* /test/: the home page with a candidate hero loop, for the house to look at
    before it replaces the one on the live page. Not listed, not indexed, not
    counted; the film and its still come from hero-test-assets.sh. */
 {
@@ -291,7 +291,7 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   const tHtml = html
     .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, '<source media="(max-width:899px)" srcset="img/hero-cloche-1600.jpg 1600w, img/hero-cloche-1920.jpg 1920w" sizes="100vw">')
     .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, '$1 src="img/hero-cloche-1920.jpg" srcset="img/hero-cloche-1600.jpg 1600w, img/hero-cloche-1920.jpg 1920w"')
-    .replace(/<video class="hv" id="herovid"[^>]*>/, '<video class="hv" id="herovid" muted playsinline preload="auto" data-src="v/hero-cloche.mp4" data-src-m="v/hero-cloche-720.mp4" aria-hidden="true">')
+    .replace(/<video class="hv" id="herovid"[^>]*>/, '<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/hero-cloche.mp4" data-src-m="v/hero-cloche-720.mp4" aria-hidden="true">')
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ");
   if (tHtml.includes('data-src="v/hero-cloche.mp4"') && tHtml.includes("hero-cloche-1920.jpg")) {
     fs.mkdirSync(path.join(outDir, "test"), { recursive: true });
