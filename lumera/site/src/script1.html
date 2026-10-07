@@ -68,8 +68,11 @@
     if (!thin) {
       hvSrc = function () {
         if (hv.src) return;
-        hv.src = desk() ? "/v/hero-loop.mp4" : "/v/hero-loop-v.mp4";
-        var pl = hv.play(); if (pl && pl.catch) pl.catch(function () {});
+        /* a page can name its own film (the /test/ page does); one that does
+           not loop is a film told once, so it waits for the reader to enter */
+        var own = hv.getAttribute("data-src");
+        hv.src = own ? (desk() ? own : hv.getAttribute("data-src-m") || own) : desk() ? "/v/hero-loop.mp4" : "/v/hero-loop-v.mp4";
+        if (hv.loop || entered) { var pl = hv.play(); if (pl && pl.catch) pl.catch(function () {}); }
       };
       var soon = function () { (window.requestIdleCallback || function (f) { setTimeout(f, 300); })(hvSrc, { timeout: 2000 }); };
       if (document.readyState === "complete") soon();
@@ -95,7 +98,7 @@
     setTimeout(function () { intro.style.display = "none"; }, 1300);
     /* if the reader gets through the opening before the loop has been asked
        for, it is wanted now rather than at the next idle moment */
-    if (!reduce) { if (hvSrc) hvSrc(); var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
+    if (!reduce) { if (hvSrc) hvSrc(); if (!hv.loop) hv.currentTime = 0; var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
   function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); contract(); }
   /* the symbol becomes the header symbol: the same object, moved and scaled, then the header takes over */
@@ -602,7 +605,7 @@
      a sticky stage or done by the browser itself. */
   /* the opening film loops only while it can be seen */
   function heroTick() { if (!hv.src || reduce) return; var r = hv.getBoundingClientRect(), vis = r.bottom > 0 && r.top < innerHeight && !document.hidden;
-    if (vis && hv.paused && entered) { var pr = hv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !hv.paused) hv.pause(); }
+    if (vis && hv.paused && !hv.ended && entered) { var pr = hv.play(); if (pr && pr.catch) pr.catch(function () {}); } else if (!vis && !hv.paused) hv.pause(); }
   window.__awake(function () { if (hidden) return; insideTick(); heroTick(); compass(); rulerTick(); });
   addEventListener("scroll", compass, { passive: true });
 

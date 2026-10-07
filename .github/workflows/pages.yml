@@ -132,6 +132,16 @@ jobs:
               curl -fsSL --retry 3 -o dist/img/$n-film-poster.jpg "$LIVE/img/$n-film-poster.jpg" || echo "missing: $n-film-poster"
             done
           fi
+      # The candidate hero film for /test/. A failure only leaves the test page
+      # without its film; the live page does not use it.
+      - name: The hero film on trial (/test/)
+        run: |
+          if ! bash lumera/site/hero-test-assets.sh dist; then
+            LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+            for f in v/hero-cloche.mp4 v/hero-cloche-720.mp4 img/hero-cloche-1600.jpg img/hero-cloche-1920.jpg; do
+              curl -fsSL --retry 3 -o dist/$f "$LIVE/$f" || echo "missing: $f"
+            done
+          fi
       - name: Wrist photographs
         run: bash lumera/site/wrist-assets.sh dist/img
       - name: Collection photography (committed originals)
