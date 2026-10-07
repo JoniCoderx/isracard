@@ -264,6 +264,7 @@ export async function startFakeSupabase({ port = 54321, database = "silavu_test"
       invite: async (email) => { let u = users.get(email); if (!u) { u = await addUser(email, null); const code = crypto.randomUUID(); recoveries.set(code, u); mail.push({ to: email, kind: "invite", link: `${env.ADMIN_URL}?token_hash=${code}&type=invite` }); } return { id: u.id }; },
       create: async (email, password) => { if (users.get(email)) throw new Error("conflict: this email already has an account"); const u = await addUser(email, password); return { id: u.id }; },
       setPassword: async (id, password) => { const u = byId(id); if (!u) throw new Error("not found"); u.password = password; },
+      remove: async (id) => { const u = byId(id); if (u) { users.delete(u.email); for (const [k, s] of sessions) if (s.user === u) sessions.delete(k); } await db.query("delete from auth.users where id = $1", [id]); },
       ban: async (id) => { const u = byId(id); if (u) u.banned = true; }
     }
   };

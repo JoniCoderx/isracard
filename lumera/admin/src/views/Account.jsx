@@ -1,6 +1,6 @@
 // Your own account: name, password, the authenticator app, language.
 import { useState } from "preact/hooks";
-import { sb, rpc, message } from "../lib/sb.js";
+import { sb, rpc, fn, message } from "../lib/sb.js";
 import { t, getLang, setLang } from "../lib/i18n.js";
 import { Button, Input, PageHead, Pill, toast, useLoad, Load, ask } from "../lib/ui.jsx";
 
@@ -47,7 +47,25 @@ export function Account({ staff, minimal }) {
       <section class="card"><h2>{t("Your name")}</h2><Input label={t("Shown to the team")} value={name} onInput={setName} /><Button busy={busy === "name"} onClick={saveName}>{t("Save")}</Button></section>
       <section class="card"><h2>{t("Password")}</h2><Input label={t("New password")} type="password" autocomplete="new-password" value={pw} onInput={setPw} hint={t("At least 10 characters.")} /><Button busy={busy === "pw"} onClick={savePw}>{t("Change the password")}</Button></section>
       {mfa}
+      <DeleteAccount />
       <section class="card"><h2>{t("Language of the admin")}</h2><div class="row"><Button kind={getLang() === "en" ? "primary" : ""} onClick={() => setLang("en")}>English</Button><Button kind={getLang() === "he" ? "primary" : ""} onClick={() => setLang("he")}>עברית</Button></div></section>
     </div>
   </>;
+}
+
+/* leaving for good: the account is deleted, not just switched off */
+function DeleteAccount() {
+  const [word, setWord] = useState(""), [busy, setBusy] = useState(false);
+  const go = async () => {
+    if (!(await ask(t("Delete your account?"), t("Your sign-in is deleted for good and you lose access at once. What you wrote and published stays on the site and in the history."), t("Delete my account"), true))) return;
+    setBusy(true);
+    try { await fn("staff", { action: "delete_account", confirm: word }); await sb.auth.signOut(); location.hash = ""; location.reload(); }
+    catch (e) { toast(message(e), "bad"); setBusy(false); }
+  };
+  return <section class="card danger">
+    <h2>{t("Delete my account")}</h2>
+    <p class="hint">{t("Type DELETE to confirm. The only owner cannot delete their account: make someone else owner first.")}</p>
+    <Input label={t("Type DELETE")} value={word} onInput={setWord} autocomplete="off" />
+    <Button kind="danger" busy={busy} disabled={word !== "DELETE"} onClick={go}>{t("Delete my account")}</Button>
+  </section>;
 }

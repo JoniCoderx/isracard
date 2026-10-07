@@ -89,7 +89,7 @@ const head = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">${/^https:/.test(base) ? '\n<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; object-src \'none\'; base-uri \'self\'">' : ""}
 <title data-en="${TITLE.en}" data-he="${TITLE.he}">${TITLE.en}</title>
 <meta name="description" content="${DESC.en}">
 <link rel="canonical" href="${base}/">

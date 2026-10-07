@@ -37,6 +37,8 @@ const strings = stringInventory(body).map(({ at, ...s }) => s);
 fs.writeFileSync(path.join(out, "inventory.json"), JSON.stringify({ strings }));
 
 const html = fs.readFileSync(path.join(HERE, "src/index.html"), "utf8")
+  /* no plugins, no foreign <base>, forms post nowhere else; on https every request is https */
+  .replace("%CSP%", `<meta http-equiv="Content-Security-Policy" content="${/^https:/.test(config.supabaseUrl) ? "upgrade-insecure-requests; " : ""}object-src 'none'; base-uri 'self'; form-action 'self'">`)
   .replace("%CONFIG%", JSON.stringify(config).replace(/</g, "\\u003c"))
   .replace("%CSS%", cssName).replace("%JS%", jsName);
 fs.writeFileSync(path.join(out, "index.html"), html);

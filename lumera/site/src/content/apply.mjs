@@ -106,13 +106,22 @@ export function applyStrings(html, overrides) {
   return html;
 }
 
+/* ── affiliate links ─────────────────────────────────────────────────────
+   A link the house is paid for says so in its own words, in both languages,
+   and tells search engines (rel="sponsored"). The editor ticks "This is an
+   affiliate or paid link" on the link; nothing else changes. */
+export const AFF = { en: " · Affiliate link", he: " · קישור שותפים" };
+export const affAttrs = (x) => x && x.affiliate ? ' rel="sponsored nofollow noopener" target="_blank"' : "";
+export const affLabel = (label, x) => x && x.affiliate ? { en: (label.en || "") + AFF.en, he: (label.he || label.en || "") + AFF.he } : label;
+
 /* ── chapters of the home page ─────────────────────────────────────────── */
 import { BLOCK_SLOTS } from "./sections.mjs";
 export { BLOCK_SLOTS };
 export function blockHtml(b) {
   const t = b.title || {}, p = b.text || {}, c = b.cta || {};
   const href = safeHref(c.href || "");
-  const btn = href && c.label && c.label.en ? `<a class="btn" href="${escAttr(href)}" data-en="${escAttr(toInline(c.label.en))}" data-he="${escAttr(toInline(c.label.he || c.label.en))}">${toInline(c.label.en)}</a>` : "";
+  const cl = c.label && c.label.en ? affLabel(c.label, c) : null;
+  const btn = href && cl ? `<a class="btn" href="${escAttr(href)}"${affAttrs(c)} data-en="${escAttr(toInline(cl.en))}" data-he="${escAttr(toInline(cl.he || cl.en))}">${toInline(cl.en)}</a>` : "";
   const img = b.image ? `<figure class="cmsfig"><img src="img/${escAttr(b.image.replace(/^media:/, "m-"))}-900.jpg" srcset="img/${escAttr(b.image.replace(/^media:/, "m-"))}-640.jpg 640w, img/${escAttr(b.image.replace(/^media:/, "m-"))}-900.jpg 900w, img/${escAttr(b.image.replace(/^media:/, "m-"))}-1254.jpg 1254w" sizes="(min-width:900px) 40vw, 92vw" alt="${escAttr((b.alt && b.alt.en) || "")}" data-alt-he="${escAttr((b.alt && b.alt.he) || "")}" loading="lazy" decoding="async"></figure>` : "";
   return `<section class="cmsband ${b.theme === "dark" ? "dark" : "light"}${b.image ? " withfig" : ""}" id="b-${escAttr(b.id)}" aria-label="${escAttr((t.en || "").replace(/\*/g, ""))}">
     <div class="wrap cmsin">${img}<div class="cmstx">${b.eyebrow && b.eyebrow.en ? `<div class="k gold" data-en="${escAttr(toInline(b.eyebrow.en))}" data-he="${escAttr(toInline(b.eyebrow.he || b.eyebrow.en))}">${toInline(b.eyebrow.en)}</div>` : ""}
@@ -221,7 +230,7 @@ export function configuratorDefaults(cfg) {
 /* ── menus: links the owner adds ───────────────────────────────────────── */
 export function applyNav(html, nav) {
   const extra = ((nav && nav.extra) || []).filter(x => x && x.label && x.label.en && safeHref(x.href || ""));
-  const link = (x) => `<a href="${escAttr(safeHref(x.href))}" data-en="${escAttr(toInline(x.label.en))}" data-he="${escAttr(toInline(x.label.he || x.label.en))}">${toInline(x.label.en)}</a>`;
+  const link = (x) => { const l = affLabel(x.label, x); return `<a href="${escAttr(safeHref(x.href))}"${affAttrs(x)} data-en="${escAttr(toInline(l.en))}" data-he="${escAttr(toInline(l.he || l.en))}">${toInline(l.en)}</a>`; };
   const top = extra.filter(x => x.slot === "top").map(link).join("\n    ");
   if (top) html = html.replace(/(<nav id="topnav">[\s\S]*?)(\n\s*<\/nav>)/, `$1\n    ${top}$2`);
   const explore = extra.filter(x => x.slot === "footer").map(link).join("");

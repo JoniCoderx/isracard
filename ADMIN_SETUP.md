@@ -232,6 +232,23 @@ is identical to the original, page for page.
 
 ---
 
+## 7b. Security, as built
+
+| Threat or rule | What protects the site |
+|---|---|
+| SQL injection | No query is ever built from text: the database is reached only through parameterised calls (PostgREST and database functions), and the only dynamic SQL in the migrations uses fixed names. Row-level security on every table. Tested: an enquiry full of SQL is stored as plain text and nothing changes. |
+| XSS (script injection) | Everything a visitor or editor types is escaped or reduced to a small safe set of tags before it reaches a page (`safeInline`), in the build, the previews and the admin. Tested: an enquiry carrying `<script>`, `onerror` and `onload` shows as text in the admin and runs nothing. A Content-Security-Policy forbids plugins and foreign `<base>`; the admin refuses to run inside another site's frame. |
+| HTTPS | GitHub Pages serves only HTTPS for github.io (with HSTS); every page also asks the browser to upgrade any http request (`upgrade-insecure-requests`). For a custom domain, tick **Enforce HTTPS** in the repository's Pages settings. Supabase only answers HTTPS. |
+| Bots on the form | A hidden honeypot field, a proof of work the page computes before sending (checked by the server; no Google reCAPTCHA, so nothing about visitors goes to Google), the origin check, and rate limits. |
+| Rate limiting | Enquiries: 5 per 10 minutes and 20 per day per address. Visit counting: 240 batches a minute per address. Sign-in attempts: limited by Supabase Auth (Authentication → Rate Limits). |
+| Two-factor sign-in | An authenticator app is required of everyone on the team, the owner included; a password alone shows nothing. |
+| Idle sessions | The admin signs out after 30 minutes without activity, with a minute's warning; unsaved words stay on the device. |
+| Deleting an account | Account → **Delete my account** (type DELETE). The only owner cannot, so the house always has one. Customers' data: Customers → anonymise. |
+| Offensive words | Enquiries with abusive words (English and Hebrew) are marked for the house and can be filtered; none is rejected. |
+| Affiliate links | A link marked "affiliate or paid" says so on the site in both languages and carries `rel="sponsored"`. There are no affiliate links on the site today. |
+| Licences | Fonts (SIL OFL 1.1), code libraries (MIT), icons (drawn for SILAVU): `THIRD_PARTY_NOTICES.md`. |
+| Accessibility statement | `/accessibility/` (Hebrew and English), editable in Pages & text → Policies. Israeli rules also expect the name and phone of an accessibility coordinator; add them there when you have chosen one. |
+
 ## 8. Costs and limits (check the providers' pages before relying on these figures)
 
 | Service | Plan | Cost | Limits that matter here |

@@ -256,3 +256,7 @@ dl.roles { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap
 .print .amount { font-size: 1.8rem; margin: 22px 0 6px; font-variant-numeric: tabular-nums; }
 .print footer { margin-top: 48px; color: var(--ink3); font-size: .84rem; border-top: 1px solid var(--line); padding-top: 12px; }
 @media print { .noprint { display: none !important; } body { background: #fff; } .print { padding: 0; } }
+.card.danger { border-color: var(--bad); } .card.danger h2 { color: var(--bad); }
+
+/* messages never sit in the way of the buttons under them */
+.toasts { pointer-events: none; } .toast { pointer-events: none; }

@@ -3,6 +3,7 @@
 // a second press of Send (the same idempotency key) returns the same record.
 import { type Deps, HttpError, json, corsHeaders, originAllowed, readJson, sha256hex, clientIp, fail } from "../_shared/http.ts";
 import { notify } from "../_shared/notify.ts";
+import { powOk, offensive } from "../_shared/guard.ts";
 
 export async function handler(req: Request, deps: Deps): Promise<Response> {
   const cors = corsHeaders(req, deps);
@@ -17,6 +18,8 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
     const okDay = await deps.rpc("svc_rate_hit", { p_bucket: "enqday:" + who, p_limit: 20, p_window: 86400 });
     if (!okShort || !okDay) throw new HttpError(429, "rate_limited", "Too many enquiries from here just now. Please try again later or write to us directly.");
 
+    // a bot that does not run the page cannot send (see _shared/guard.ts)
+    if (!(await powOk(body.idem, body.pow))) throw new HttpError(400, "invalid", "Please reload the page and send again.", { fields: ["pow"] });
     let saved: any;
     try { saved = await deps.rpc("svc_submit_enquiry", { p: body }); }
     catch (e) {
@@ -28,6 +31,8 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
     }
     let confirmation = false;
     if (!saved.duplicate) {
+      const bad = offensive(body.name, body.message, body.city);
+      if (bad) await deps.rpc("svc_flag_enquiry", { p_id: saved.id, p_reason: "words: " + bad });
       const email = body.email || (String(body.contact || "").includes("@") ? body.contact : null);
       const reply = deps.env("AUTO_REPLY") === "on" && body.reply !== false && !!email;
       const n = await notify(deps, { id: saved.id, ref: saved.ref, name: String(body.name || ""), email,

@@ -11,9 +11,20 @@ const F = new URL("../supabase/functions/", import.meta.url).pathname;
 const H = {};
 for (const n of ["enquiry", "collect", "publish", "release-snapshot", "release-status", "staff", "media", "export", "setup", "status", "maintenance"]) H[n] = (await import(F + n + "/handler.ts")).handler;
 
+/* the page's proof of work, as the storefront computes it (see _shared/guard.ts) */
+const { POW_BITS, powOk, offensive } = await import(F + "_shared/guard.ts");
+async function solve(idem) { for (let n = 0; ; n++) if (await powOk(idem, String(n))) return String(n); }
+/* every enquiry below is sent the way the page sends it, unless it says { nopow: true } */
+const realEnquiry = H.enquiry;
+H.enquiry = async (r, d) => {
+  if (r.method !== "POST") return realEnquiry(r, d);
+  const text = await r.text(); let b = null; try { b = JSON.parse(text); } catch (e) {}
+  if (b && b.idem && !b.pow && !b.nopow) b.pow = await solve(b.idem);
+  return realEnquiry(new Request(r.url, { method: "POST", headers: r.headers, body: b ? JSON.stringify(b) : text }), d);
+};
 const db = new pg.Client({ host: process.env.PGHOST || "/tmp", port: +(process.env.PGPORT || 54329), user: "postgres", database: "silavu_test" });
 const U = {};
-const store = new Map(), stamps = new Map(), passwords = new Map(), calls = [], banned = [];
+const store = new Map(), stamps = new Map(), passwords = new Map(), removed = [], calls = [], banned = [];
 let fetchImpl = async () => new Response("{}", { status: 200 });
 const ENV = { ALLOWED_ORIGINS: "https://jonicoderx.github.io", RATE_SALT: "test", BUILD_TOKEN: "b".repeat(40), SITE_URL: "https://jonicoderx.github.io/isracard", ADMIN_URL: "https://jonicoderx.github.io/isracard/admin/" };
 let env = { ...ENV };
@@ -28,7 +39,7 @@ async function asRole(role, claims, sql, params) {
 }
 const call = (fn, args) => { const ks = Object.keys(args); return `select public.${fn}(${ks.map((k, i) => `${k} => $${i + 1}`).join(", ")}) as r`; };
 const val = (v) => v === null || v === undefined ? null : typeof v === "object" && !Array.isArray(v) ? JSON.stringify(v) : Array.isArray(v) && v.some(x => typeof x === "object") ? JSON.stringify(v) : v;
-const tok = (id, aal = "aal1") => "h." + Buffer.from(JSON.stringify({ sub: id, aal })).toString("base64url") + ".valid";
+const tok = (id, aal = "aal2") => "h." + Buffer.from(JSON.stringify({ sub: id, aal })).toString("base64url") + ".valid";
 const claimsOf = (jwt) => JSON.parse(Buffer.from(jwt.split(".")[1], "base64url").toString());
 
 const deps = {
@@ -48,6 +59,7 @@ const deps = {
     invite: async (email) => ({ id: (await db.query("insert into auth.users (email) values ($1) on conflict (email) do update set email = excluded.email returning id", [email])).rows[0].id }),
     create: async (email, password) => { const r = await db.query("insert into auth.users (email) values ($1) on conflict (email) do nothing returning id", [email]); if (!r.rows.length) throw new Error("conflict: this email already has an account"); passwords.set(r.rows[0].id, password); return { id: r.rows[0].id }; },
     setPassword: async (id, password) => { passwords.set(id, password); },
+    remove: async (id) => { removed.push(id); await db.query("delete from auth.users where id = $1", [id]); },
     ban: async (id) => { banned.push(id); }
   }
 };
@@ -101,6 +113,22 @@ test("enquiry: saved once, notified separately, validated, rate-limited, origin-
   let last; for (let i = 0; i < 6; i++) last = await H.enquiry(req("POST", { ...body, idem: crypto.randomUUID() }, { ip: "198.51.100.1" }), deps);
   assert.equal(last.status, 429);
   assert.equal((await H.enquiry(req("POST", JSON.stringify({ name: "x".repeat(30000) }), { ip: "198.51.100.2" }), deps)).status, 413);
+});
+
+test("bots: a form sent without the page's proof of work is refused; abusive words are flagged, never rejected", async () => {
+  const body = { idem: crypto.randomUUID(), name: "Bot", contact: "bot@example.com", message: "Hi", lang: "en" };
+  const nopow = await H.enquiry(req("POST", { ...body, nopow: true }, { ip: "192.0.2.50" }), deps);
+  assert.equal(nopow.status, 400); assert.deepEqual((await nopow.json()).fields, ["pow"]);
+  const wrong = await H.enquiry(req("POST", { ...body, pow: "1" }, { ip: "192.0.2.51" }), deps);
+  assert.ok(wrong.status === 400 || (await powOk(body.idem, "1")), "a wrong answer is refused");
+  assert.ok(POW_BITS >= 12, "enough work to cost a bot");
+  const rude = await (await H.enquiry(req("POST", { ...body, idem: crypto.randomUUID(), name: "Rude", message: "אתם נוכלים, this is shit" }, { ip: "192.0.2.52" }), deps)).json();
+  assert.equal(rude.ok, true, "still saved");
+  const row = (await db.query("select flagged, flag_reason from public.enquiries where id = $1", [rude.id])).rows[0];
+  assert.equal(row.flagged, true); assert.match(row.flag_reason, /words/);
+  const polite = await (await H.enquiry(req("POST", { ...body, idem: crypto.randomUUID(), name: "Kind", message: "A nutritious (מזין) question about the Scunthorpe store" }, { ip: "192.0.2.53" }), deps)).json();
+  assert.equal((await db.query("select flagged from public.enquiries where id = $1", [polite.id])).rows[0].flagged, false, "no false alarm on ordinary words");
+  assert.equal(offensive("Shalom", "שלום רב"), null);
 });
 
 test("collect: allowlisted events in, robots set aside, nothing for foreign origins", async () => {
@@ -185,6 +213,13 @@ test("staff: only the owner invites and revokes; a revoked account is also block
   assert.equal((await H.staff(req("POST", { action: "set_password", user: p.user, password: "another-long-pw" }, { token: tok(U.owner) }), deps)).status, 200);
   assert.equal(passwords.get(p.user), "another-long-pw");
   assert.equal((await H.staff(req("POST", { action: "set_password", user: r.user, password: "another-long-pw" }, { token: tok(U.owner) }), deps)).status, 404, "not for someone removed");
+  /* deleting one's own account: confirmed, for good; never the last owner */
+  assert.equal((await H.staff(req("POST", { action: "delete_account" }, { token: tok(p.user) }), deps)).status, 400, "needs the typed confirmation");
+  assert.equal((await H.staff(req("POST", { action: "delete_account", confirm: "DELETE" }, { token: tok(p.user) }), deps)).status, 200);
+  assert.ok(removed.includes(p.user));
+  assert.equal((await db.query("select count(*)::int n from auth.users where id = $1", [p.user])).rows[0].n, 0, "the account is gone");
+  assert.equal((await db.query("select count(*)::int n from public.audit_log where action = 'staff.delete_account'")).rows[0].n, 1, "and the trail says so");
+  assert.equal((await H.staff(req("POST", { action: "delete_account", confirm: "DELETE" }, { token: tok(U.owner) }), deps)).status, 409, "the only owner stays");
 });
 
 test("export: the owner gets a ten-minute link; nobody else; the schedule stores without returning data", async () => {

@@ -5,6 +5,8 @@
 //        (for a project that sends no email); the owner hands the password over
 //   { action: "set_password", user, password } the owner sets a new password (no email needed)
 //   { action: "revoke", user }                 removes access and blocks the account from signing in
+//   { action: "delete_account", confirm: "DELETE" }  any member: deletes their own account for good
+//        (the last active owner cannot, so the house always has one)
 // Role changes are made directly in the admin (set_staff_role, owner-only in
 // the database) and apply on the person's next request.
 import { type Deps, HttpError, json, corsHeaders, readJson, requireStaff, fail } from "../_shared/http.ts";
@@ -16,8 +18,16 @@ export async function handler(req: Request, deps: Deps): Promise<Response> {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   try {
     if (req.method !== "POST") throw new HttpError(405, "method");
-    const { user, jwt } = await requireStaff(req, deps, ["owner"]);
     const b = await readJson(req, 4000);
+    if (b.action === "delete_account") {
+      const me = await requireStaff(req, deps, ["owner", "editor", "support", "analyst"]);
+      if (b.confirm !== "DELETE") throw new HttpError(400, "confirm", "Type DELETE to confirm.");
+      try { await deps.rpc("svc_leave_team", { p_user: me.user.id }); }
+      catch (e) { if (/last owner/.test(String((e as any)?.message))) throw new HttpError(409, "last_owner", "You are the only owner. Make someone else owner first, then delete your account."); throw e; }
+      await deps.authAdmin.remove(me.user.id);
+      return json({ ok: true }, 200, cors);
+    }
+    const { user, jwt } = await requireStaff(req, deps, ["owner"]);
     if (b.action === "invite") {
       const email = String(b.email || "").trim().toLowerCase(), role = String(b.role || "");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new HttpError(400, "email", "That email address does not look right.");

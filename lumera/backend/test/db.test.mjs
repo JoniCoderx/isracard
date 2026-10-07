@@ -17,7 +17,7 @@ async function as(who, fn, { keep = false } = {}) {
     else {
       const u = typeof who === "string" ? { id: U[who] } : who;
       await db.query("set local role authenticated");
-      await db.query("select set_config('request.jwt.claims', $1, true)", [JSON.stringify({ sub: u.id, role: "authenticated", aal: u.aal || "aal1", ...(u.extra || {}) })]);
+      await db.query("select set_config('request.jwt.claims', $1, true)", [JSON.stringify({ sub: u.id, role: "authenticated", aal: u.aal || "aal2", ...(u.extra || {}) })]);
     }
     const r = await fn((q, p) => db.query(q, p));
     await db.query(keep ? "commit" : "rollback");

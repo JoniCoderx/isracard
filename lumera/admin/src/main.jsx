@@ -96,7 +96,27 @@ function NoAccess({ staff, error }) {
     <Button onClick={() => sb.auth.signOut()}>{t("Sign out")}</Button></div></main>;
 }
 
+/* Signed out after 30 minutes without a key or a click, with a minute's
+   warning. Unsaved words are kept on this device (doc.js) and come back at
+   the next sign-in. */
+const IDLE_MS = 30 * 60 * 1000;
+function useIdleSignOut() {
+  useEffect(() => {
+    let last = Date.now(), warned = false;
+    const seen = () => { last = Date.now(); warned = false; };
+    const ev = ["pointerdown", "keydown", "wheel", "touchstart"];
+    ev.forEach(e => addEventListener(e, seen, { passive: true }));
+    const i = setInterval(async () => {
+      const idle = Date.now() - last;
+      if (idle > IDLE_MS) { clearInterval(i); try { sessionStorage.setItem("silavu-idle", "1"); } catch (e) {} await sb.auth.signOut(); location.hash = ""; }
+      else if (idle > IDLE_MS - 60000 && !warned) { warned = true; toast(t("You will be signed out in a minute because nothing has happened for a while. Click anywhere to stay."), "bad"); }
+    }, 15000);
+    return () => { clearInterval(i); ev.forEach(e => removeEventListener(e, seen)); };
+  }, []);
+}
+
 function Shell({ auth, route }) {
+  useIdleSignOut();
   const role = auth.staff.effective_role, [section, a, b] = route.parts;
   const [menu, setMenu] = useState(false), [pub, setPub] = useState(false);
   const pending = usePending(role);
@@ -155,4 +175,7 @@ const NotFound = () => <div class="state"><strong>{t("This page does not exist."
 const Forbidden = () => <div class="state bad"><strong>{t("Your role does not include this part of the admin.")}</strong><a href="#/">{t("Back to the overview")}</a></div>;
 
 function Root() { return <><App /><Toasts /><ConfirmHost /></>; }
-render(<Root />, document.getElementById("app"));
+/* never inside another site's frame (clickjacking): GitHub Pages cannot send
+   the header that forbids it, so the admin refuses to run in one */
+if (window.top !== window.self) document.getElementById("app").textContent = "Open the SILAVU admin in its own tab.";
+else render(<Root />, document.getElementById("app"));

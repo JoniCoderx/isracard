@@ -48,6 +48,7 @@ export function makeDeps(): Deps {
         return { id: r.data.user.id };
       },
       setPassword: async (userId, password) => { check(await admin.auth.admin.updateUserById(userId, { password })); },
+      remove: async (userId) => { check(await admin.auth.admin.deleteUser(userId)); },
       ban: async (userId) => { check(await admin.auth.admin.updateUserById(userId, { ban_duration: "876000h" })); }
     }
   };

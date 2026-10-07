@@ -28,7 +28,9 @@ export function Login() {
       <p class="hint">{t("If no email arrives, the owner can set a new password for you under Team.")}</p></>}
     <button type="button" class="linkb" onClick={() => { setMode("in"); setSent(false); }}>{t("Back to sign in")}</button>
   </Frame>;
+  const idle = (() => { try { const v = sessionStorage.getItem("silavu-idle"); sessionStorage.removeItem("silavu-idle"); return !!v; } catch (e) { return false; } })();
   return <Frame title={t("Sign in")}>
+    {idle && <p class="notice" role="status">{t("You were signed out after 30 minutes without activity. Anything you had not saved is kept on this device.")}</p>}
     <Input label={t("Email")} type="email" autocomplete="username" value={email} onInput={setEmail} />
     <Input label={t("Password")} type="password" autocomplete="current-password" value={pw} onInput={setPw} onKeyDown={(e) => e.key === "Enter" && signIn()} />
     {err && <div class="err" role="alert">{err}</div>}

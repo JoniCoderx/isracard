@@ -58,10 +58,28 @@ async function page(c) {
   p.on("dialog", d => d.accept());
   return p;
 }
-async function signIn(p, email = OWNER, pw = OWNER_PW) {
+/* every member of the team uses an authenticator app (required since October 2026):
+   set it up when asked, and give the code when asked */
+async function secondFactor(p, email) {
+  for (let i = 0; i < 12; i++) {
+    await p.waitForSelector("aside.side, .card.narrow h1", { timeout: 15000 });
+    if (await p.locator("aside.side").count()) return;
+    const h = await p.locator(".card.narrow h1").innerText();
+    if (/authenticator code/i.test(h)) { await p.getByLabel("Code").fill(S.fake.totpFor(email)); await p.getByRole("button", { name: "Continue" }).click(); await p.waitForTimeout(800); continue; }
+    if (/needs a second factor/i.test(h)) {
+      await p.getByRole("button", { name: "Set up an authenticator" }).click(); await p.locator("code.key").waitFor();
+      await p.getByLabel("Code").fill(S.fake.totpFor(email)); await p.getByRole("button", { name: "Turn it on" }).click();
+      await p.waitForEvent("load"); await p.waitForTimeout(500); continue;
+    }
+    if (/no access/i.test(h)) return;   // the test looks at that itself
+    await p.waitForTimeout(700);          // still on the way (a page about to change)
+  }
+}
+async function signIn(p, email = OWNER, pw = OWNER_PW, { mfa = true } = {}) {
   await p.goto(S.adminUrl); await p.getByLabel("Email").fill(email); await p.getByLabel("Password").fill(pw);
   await p.getByRole("button", { name: "Sign in" }).click();
   await p.waitForSelector("aside.side, .card.narrow h1:not(:text('Sign in'))", { timeout: 15000 });
+  if (mfa) await secondFactor(p, email);
 }
 const go = async (p, route) => { await p.goto(S.adminUrl + "#/" + route); await p.waitForTimeout(400); await p.waitForLoadState("networkidle"); };
 const field = (p, legend, lang = "English") => p.locator("fieldset.bi", { has: p.locator("legend", { hasText: legend }) }).first().getByLabel(lang, { exact: true });
@@ -86,7 +104,13 @@ const anonFetch = (u, init) => fetch(u, init);
 const rest = (pathq, token = S.fake.anonKey, init = {}) => fetch(S.fake.url + "/rest/v1/" + pathq, { ...init, headers: { apikey: S.fake.anonKey, authorization: "Bearer " + token, "content-type": "application/json", ...(init.headers || {}) } });
 async function tokenFor(email, password) {
   const r = await fetch(S.fake.url + "/auth/v1/token?grant_type=password", { method: "POST", headers: { apikey: S.fake.anonKey, "content-type": "application/json" }, body: JSON.stringify({ email, password }) });
-  return (await r.json()).access_token;
+  const t = (await r.json()).access_token;
+  /* with an authenticator set up, the session is lifted to the second level, as the admin does */
+  const u = S.fake.users.get(email.toLowerCase()), f = u && u.factors.filter(x => x.verified).pop();
+  if (!t || !f) return t;
+  const H = { apikey: S.fake.anonKey, authorization: "Bearer " + t, "content-type": "application/json" };
+  const ch = await (await fetch(`${S.fake.url}/auth/v1/factors/${f.id}/challenge`, { method: "POST", headers: H, body: "{}" })).json();
+  return (await (await fetch(`${S.fake.url}/auth/v1/factors/${f.id}/verify`, { method: "POST", headers: H, body: JSON.stringify({ challenge_id: ch.id, code: S.fake.totpFor(email) }) })).json()).access_token;
 }
 function jpeg(name, w, h, colour) { const f = path.join(TMP, name); execFileSync("convert", ["-size", `${w}x${h}`, `gradient:${colour}-white`, "-quality", "92", f]); return f; }
 const sha = (buf) => crypto.createHash("sha256").update(buf).digest("hex");
@@ -299,6 +323,7 @@ async function accept(email, password) {
   await p.getByLabel("New password").fill(password); await p.getByLabel("The same again").fill(password);
   await p.getByRole("button", { name: "Save the password" }).click();
   await p.getByRole("link", { name: "Continue" }).click();
+  await secondFactor(p, email);
   await p.locator("aside.side").waitFor();
   return p;
 }
@@ -353,26 +378,15 @@ test("2 · each role sees and can do only its part; nobody can raise their own r
     assert.equal((await r.text()), "[]", "anonymous list of " + b);
   }
 
-  /* a second factor, required by the owner */
+  /* a second factor: required of every new member (they set it up when they accepted) */
   await go(o, "team");
-  await o.locator("tr", { hasText: "editor@silavu.test" }).getByRole("checkbox").check();
-  await toast(o, "They now need an authenticator code");
-  await ed.reload();
-  await ed.getByText("Your account needs a second factor").waitFor();
-  assert.ok(await empty(await tokenFor("editor@silavu.test", "editor-password-1"), "content_docs?select=key"), "no data on a password alone");
-  await ed.getByRole("button", { name: "Set up an authenticator" }).click();
-  await ed.locator("code.key").waitFor();
-  await ed.getByLabel("Code").fill(S.fake.totpFor("editor@silavu.test"));
-  await ed.getByRole("button", { name: "Turn it on" }).click();
-  await ed.waitForEvent("load");
-  await ed.getByText("Your authenticator code").waitFor({ timeout: 15000 }).catch(() => {});
-  if (await ed.getByText("Your authenticator code").isVisible()) {
-    await ed.getByLabel("Code").fill(S.fake.totpFor("editor@silavu.test")); await ed.getByRole("button", { name: "Continue" }).click();
-  }
-  await ed.locator("aside.side").waitFor();
+  assert.equal(await o.locator("tr", { hasText: "editor@silavu.test" }).getByRole("checkbox").isChecked(), true, "required by default");
+  const pwOnly = (await (await fetch(S.fake.url + "/auth/v1/token?grant_type=password", { method: "POST", headers: { apikey: S.fake.anonKey, "content-type": "application/json" }, body: JSON.stringify({ email: "editor@silavu.test", password: "editor-password-1" }) })).json()).access_token;
+  assert.ok(await empty(pwOnly, "content_docs?select=key"), "no data on a password alone");
+  assert.ok(!(await empty(await tokenFor("editor@silavu.test", "editor-password-1"), "content_docs?select=key")), "with the code, their work");
   /* a fresh sign-in asks for the code first */
   await ed.getByRole("button", { name: "Sign out" }).click();
-  await signIn(ed, "editor@silavu.test", "editor-password-1");
+  await signIn(ed, "editor@silavu.test", "editor-password-1", { mfa: false });
   await ed.getByText("Your authenticator code").waitFor();
   await ed.getByLabel("Code").fill(S.fake.totpFor("editor@silavu.test")); await ed.getByRole("button", { name: "Continue" }).click();
   await ed.locator("aside.side").waitFor();
@@ -501,7 +515,8 @@ test("7 · simultaneous edits, a failed upload, a failed publication and a backe
   await field(o, "One line").fill("Owner's line, saved first.");
   await field(e, "One line").fill("Editor's line, saved second.");
   await o.getByRole("button", { name: "Save draft" }).click(); await toast(o, "Draft saved");
-  await e.getByRole("button", { name: "Save draft" }).click();
+  /* (the editor's own autosave may get there first: the result is the same) */
+  if (await e.getByRole("button", { name: "Save draft" }).isEnabled()) await e.getByRole("button", { name: "Save draft" }).click();
   await toast(e, "Someone else saved this page meanwhile");
   await e.locator(".savebar").getByText("Changed elsewhere").waitFor();
   assert.match((await sql("select draft from public.content_docs where key = 'product:ring'"))[0].draft.line.en, /Owner's line/, "nothing overwritten silently");
@@ -734,16 +749,23 @@ test("10 · visits are counted only with consent, once each, never after a no, n
 });
 
 /* ── 11 · The Line's offer ───────────────────────────────────────────── */
-const enquire = (spec, extra = {}) => fetch(S.fake.url + "/functions/v1/enquiry", { method: "POST", headers: { "content-type": "application/json", origin: S.origin, "user-agent": UA.desk, "x-forwarded-for": "198.51.100." + Math.floor(Math.random() * 200) },
-  body: JSON.stringify({ idem: crypto.randomUUID(), name: "Line Test", contact: "line.test@example.test", want: "Bespoke commission", lang: "en", page: "/isracard/", spec, ...extra }) });
+const { powOk } = await import("../supabase/functions/_shared/guard.ts");
+async function solvePow(idem) { for (let n = 0; ; n++) if (await powOk(idem, String(n))) return String(n); }
+const enquire = async (spec, extra = {}) => { const idem = crypto.randomUUID(); return fetch(S.fake.url + "/functions/v1/enquiry", { method: "POST", headers: { "content-type": "application/json", origin: S.origin, "user-agent": UA.desk, "x-forwarded-for": "198.51.100." + Math.floor(Math.random() * 200) },
+  body: JSON.stringify({ idem, pow: await solvePow(idem), name: "Line Test", contact: "line.test@example.test", want: "Bespoke commission", lang: "en", page: "/isracard/", spec, ...extra }) }); };
 test("11 · the editor takes the oval off The Line and adds a 21 cm wrist: the builder offers exactly that, the server refuses what is no longer offered, and earlier designs keep their shape", async () => {
   const p = state.editor;
   /* everything off is refused before it can blank the builder */
   const tk = await tokenFor("editor@silavu.test", "editor-password-1");
   const cfg = (await sql("select draft, draft_rev from public.content_docs where key = 'configurator'"))[0];
   const none = { ...cfg.draft, cuts: cfg.draft.cuts.map(c => ({ ...c, enabled: false })) };
-  const bad = await rest("rpc/save_draft", tk, { method: "POST", body: JSON.stringify({ p_key: "configurator", p_kind: "configurator", p_title: "The Line", p_data: none, p_expected_rev: cfg.draft_rev, p_checkpoint: true }) });
-  assert.ok(bad.status >= 400, "a builder with no shape is refused: " + bad.status);
+  /* a draft may be unfinished; publishing one with no shape is refused */
+  const drafted = await rest("rpc/save_draft", tk, { method: "POST", body: JSON.stringify({ p_key: "configurator", p_kind: "configurator", p_title: "The Line", p_data: none, p_expected_rev: cfg.draft_rev, p_checkpoint: false }) });
+  assert.ok(drafted.ok, "saved as a draft");
+  const bad = await rest("rpc/publish_docs", tk, { method: "POST", body: JSON.stringify({ p_keys: ["configurator"], p_note: "" }) });
+  assert.ok(bad.status >= 400, "a builder with no shape is not published: " + bad.status);
+  const now = (await sql("select draft_rev from public.content_docs where key = 'configurator'"))[0].draft_rev;
+  assert.ok((await rest("rpc/save_draft", tk, { method: "POST", body: JSON.stringify({ p_key: "configurator", p_kind: "configurator", p_title: "The Line", p_data: cfg.draft, p_expected_rev: now, p_checkpoint: false }) })).ok, "put back");
   await go(p, "line");
   await toggle(p, "Oval", false);
   await p.getByLabel("Wrist sizes offered (cm)").fill("15, 16, 17, 18, 19, 20, 21");
@@ -965,4 +987,34 @@ test("15 · a published price and title reach the search and sharing tags, the s
     const differ = Object.keys(siteNow).filter(f => norm(back[f] || "") !== siteNow[f]);
     assert.deepEqual(differ, [], "the restored backend builds the same site");
   } finally { await R.close(); }
+});
+
+
+/* ── attacks: SQL injection and script injection through the public form ── */
+test("security · what a visitor types (SQL, HTML, scripts) is stored as text and shown as text; a bot without the page cannot send; idle sessions end", async () => {
+  const evil = { name: `Robert'); DROP TABLE enquiries;-- <img src=x onerror="window.__pwned=1">`, message: `<script>window.__pwned=2</script>" OR 1=1 -- \'; delete from staff; <svg onload=window.__pwned=3>` };
+  const r = await enquire(null, { ...evil, contact: "attack.test@example.test" });
+  assert.equal(r.status, 200, "saved like any enquiry");
+  const id = (await r.json()).id;
+  const row = (await sql("select name, message from public.enquiries where id = $1", [id]))[0];
+  assert.equal(row.name, evil.name); assert.equal(row.message, evil.message, "stored exactly, as text");
+  assert.ok((await sql("select count(*)::int n from public.staff"))[0].n > 0, "nothing was dropped or deleted");
+  const su = state.support;
+  await go(su, "enquiries/" + id); await su.locator("h1", { hasText: "DROP TABLE" }).waitFor();
+  await go(su, "enquiries"); await su.getByLabel("Search name, email, phone, reference, city").fill("'); DROP TABLE"); await su.waitForTimeout(800);
+  await go(su, "enquiries/" + id); await su.waitForTimeout(800);
+  assert.equal(await su.evaluate(() => window.__pwned || 0), 0, "no script ran in the admin");
+  assert.equal(await su.locator("main img[src='x'], main script, main svg[onload]").count(), 0, "no markup was injected");
+  /* a bot that posts straight to the server, without running the page */
+  const idem = crypto.randomUUID();
+  const bot = await fetch(S.fake.url + "/functions/v1/enquiry", { method: "POST", headers: { "content-type": "application/json", origin: S.origin, "user-agent": UA.desk, "x-forwarded-for": "198.51.100.250" }, body: JSON.stringify({ idem, name: "Bot", contact: "bot@example.test", lang: "en" }) });
+  assert.equal(bot.status, 400, "no proof of work, no enquiry");
+  /* abusive words are marked for the house */
+  const rude = await enquire(null, { name: "Rude Test", contact: "rude.test@example.test", message: "you are scammers" });
+  await go(su, "enquiries"); await su.locator("label.fld", { hasText: "Status" }).locator("select").selectOption("flagged");
+  await su.getByRole("link", { name: (await rude.json()).ref }).waitFor();
+  /* a session left alone is ended: the clock is moved on, the admin signs out */
+  const c = await context(), p = await page(c); await c.addInitScript(() => { const real = Date.now; let skew = 0; window.__skip = (ms) => { skew += ms; }; Date.now = () => real() + skew; });
+  await signIn(p); await p.evaluate(() => window.__skip(31 * 60 * 1000)); await p.waitForTimeout(16000);
+  await p.getByText("You were signed out after 30 minutes without activity").waitFor({ timeout: 20000 });
 });

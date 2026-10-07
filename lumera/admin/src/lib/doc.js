@@ -67,8 +67,11 @@ export function useDoc(key, kind, { title, blank } = {}) {
     } catch (e) { toast(message(e), "bad"); return null; }
   }
 
-  /* autosave: quietly, every 30 seconds of unsaved work, without making a history entry */
+  /* autosave: quietly, 5 seconds after typing stops (and at least every 30
+     seconds while typing goes on), without making a history entry; every
+     keystroke is also kept on this device until it is saved */
   useEffect(() => { const i = setInterval(() => { const x = st.current; if (x.dirty && !x.saving && !x.conflict && x.data) save({ checkpoint: false, quiet: true }); }, 30000); return () => clearInterval(i); }, [key]);
+  useEffect(() => { if (!s.dirty || s.saving || s.conflict) return; const tm = setTimeout(() => { const x = st.current; if (x.dirty && !x.saving && !x.conflict && x.data) save({ checkpoint: false, quiet: true }); }, 5000); return () => clearTimeout(tm); }, [s.data, s.dirty]);
   useEffect(() => { setLeaveGuard((silent) => { const x = st.current; if (!x.dirty) return true; return silent ? false : confirm(t("You have unsaved changes. Leave without saving? (A copy is kept on this device.)")); }); return () => setLeaveGuard(null); }, [key]);
 
   /* keep their version after a conflict: reload, then put mine back as unsaved */

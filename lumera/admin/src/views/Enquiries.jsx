@@ -24,8 +24,8 @@ export function Enquiries({ query }) {
   const staff = useLoad(() => q(sb.from("staff").select("user_id,display_name,email,role").eq("active", true)));
   const [mine, setMine] = useState(false);
   const s = useLoad(async () => {
-    let b = sb.from("enquiries").select("id,ref,created_at,name,email,phone,city,channel,want,product_name,status,assignee,due_at,notify_status,lang", { count: "exact" }).order("created_at", { ascending: false }).range(page * 50, page * 50 + 49);
-    if (status === "open") b = b.in("status", ["new", "contacted", "quoted", "follow_up"]); else if (status !== "all") b = b.eq("status", status);
+    let b = sb.from("enquiries").select("id,ref,created_at,name,email,phone,city,channel,want,product_name,status,assignee,due_at,notify_status,lang,flagged", { count: "exact" }).order("created_at", { ascending: false }).range(page * 50, page * 50 + 49);
+    if (status === "open") b = b.in("status", ["new", "contacted", "quoted", "follow_up"]); else if (status === "flagged") b = b.eq("flagged", true); else if (status !== "all") b = b.eq("status", status);
     if (search) { const x = search.replace(/[,()*]/g, " ").trim(); b = b.or(`name.ilike.*${x}*,email.ilike.*${x}*,phone.ilike.*${x}*,ref.ilike.*${x}*,city.ilike.*${x}*`); }
     if (mine) { const { data } = await sb.auth.getUser(); b = b.eq("assignee", data.user.id); }
     return q(b);
@@ -34,14 +34,14 @@ export function Enquiries({ query }) {
   return <>
     <PageHead title={t("Enquiries")} sub={t("Only enquiries the site saved are here. Clicks on WhatsApp, email or phone are counted in Analytics; they are not messages.")} />
     <div class="filters">
-      <label class="fld"><span>{t("Status")}</span><select value={status} onChange={(e) => { setStatus(e.target.value); setPage(0); }}><option value="open">{t("Open")}</option><option value="all">{t("All")}</option>{STATUSES.map(x => <option value={x}>{t(x)}</option>)}</select></label>
+      <label class="fld"><span>{t("Status")}</span><select value={status} onChange={(e) => { setStatus(e.target.value); setPage(0); }}><option value="open">{t("Open")}</option><option value="all">{t("All")}</option>{STATUSES.map(x => <option value={x}>{t(x)}</option>)}<option value="flagged">{t("Offensive words")}</option></select></label>
       <Input label={t("Search name, email, phone, reference, city")} value={search} onInput={(v) => { setSearch(v); setPage(0); }} />
       <label class="chk"><input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} /> {t("Assigned to me")}</label>
     </div>
     <Load s={s}>{(r) => r.data.length ? <>
       <table class="tbl"><thead><tr><th>{t("When")}</th><th>{t("Ref.")}</th><th>{t("Who")}</th><th>{t("About")}</th><th>{t("Answer by")}</th><th>{t("Status")}</th><th>{t("Assigned")}</th></tr></thead><tbody>
         {r.data.map(e => <tr class="click" onClick={() => go("enquiries/" + e.id)}><td>{when(e.created_at)}</td><td><a href={href("enquiries/" + e.id)}>{e.ref}</a></td><td>{e.name}<div class="hint">{e.city}</div></td><td>{e.product_name || t(e.want) || "–"}</td><td>{t(e.channel)}</td>
-          <td><Pill tone={tone[e.status]}>{t(e.status)}</Pill>{e.due_at && new Date(e.due_at) < new Date() && !["won", "closed"].includes(e.status) && <Pill tone="bad">{t("overdue")}</Pill>}{e.notify_status === "failed" && <Pill tone="bad">{t("email not sent")}</Pill>}</td><td>{who(e.assignee)}</td></tr>)}
+          <td><Pill tone={tone[e.status]}>{t(e.status)}</Pill>{e.due_at && new Date(e.due_at) < new Date() && !["won", "closed"].includes(e.status) && <Pill tone="bad">{t("overdue")}</Pill>}{e.notify_status === "failed" && <Pill tone="bad">{t("email not sent")}</Pill>}{e.flagged && <Pill tone="bad">{t("offensive words")}</Pill>}</td><td>{who(e.assignee)}</td></tr>)}
       </tbody></table>
       <div class="pager"><Button disabled={page === 0} onClick={() => setPage(page - 1)}>← {t("Newer")}</Button><span>{t("{a}–{b} of {n}", { a: page * 50 + 1, b: page * 50 + r.data.length, n: r.count })}</span><Button disabled={(page + 1) * 50 >= r.count} onClick={() => setPage(page + 1)}>{t("Older")} →</Button></div>
     </> : <Empty title={t("No enquiries match.")} />}</Load>
@@ -65,6 +65,7 @@ export function EnquiryView({ id, role, me }) {
       <PageHead title={`${e.ref} · ${e.name}`} crumbs={[[t("Enquiries"), href("enquiries")], [e.ref]]} sub={t("Received {w} (Israel time) · written in {l}", { w: when(e.created_at), l: e.lang === "he" ? "עברית" : e.lang.toUpperCase() })}>
         <Button kind="primary" busy={busy === "q"} onClick={quote}>{t("Make a quote")}</Button>
       </PageHead>
+      {e.flagged && <div class="notice warn">{t("This enquiry contains words that look offensive ({w}). It is kept like any other; read it with care.", { w: (e.flag_reason || "").replace(/^words: /, "") })}</div>}
       {e.notify_status === "failed" && <div class="notice bad">{t("The email to the house about this enquiry was not sent ({why}). The enquiry itself is saved here.", { why: e.notify_error || "" })}</div>}
       <div class="grid2">
         <section class="card">

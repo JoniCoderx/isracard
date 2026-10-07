@@ -24,6 +24,8 @@ export type Deps = {
     /** an account ready to use, with a password and no email sent; refuses an address that already has one */
     create: (email: string, password: string) => Promise<{ id: string }>;
     setPassword: (userId: string, password: string) => Promise<void>;
+    /** deletes the sign-in account itself (its staff record goes with it) */
+    remove: (userId: string) => Promise<void>;
     ban: (userId: string) => Promise<void>;
   };
   fetch: typeof fetch;

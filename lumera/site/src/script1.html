@@ -1286,6 +1286,29 @@
   }
   /* with a real inbox behind it, the button says it sends from the start */
   if (endpoint) chanLabel();
+  /* Before sending to the house, the page does a small sum the server checks
+     (proof of work, 14 bits): unnoticeable for a person, costly for a bot that
+     posts thousands, impossible for one that does not run the page. No
+     outside service, nothing about the visitor sent anywhere. */
+  function powFor(idem) {
+    if (form.__pow && form.__pow.i === idem) return Promise.resolve(form.__pow.n);
+    var enc = new TextEncoder(), key = String(idem).toLowerCase() + ":", n = 0;
+    return new Promise(function (done, fail) {
+      (function batch() {
+        var tries = [];
+        for (var k = 0; k < 64; k++) tries.push((function (m) { return crypto.subtle.digest("SHA-256", enc.encode(key + m)).then(function (d) { var b = new Uint8Array(d); return b[0] === 0 && (b[1] >> 2) === 0 ? m : -1; }); })(n++));
+        Promise.all(tries).then(function (r) { for (var i = 0; i < r.length; i++) if (r[i] >= 0) { form.__pow = { i: idem, n: String(r[i]) }; return done(String(r[i])); } batch(); }, fail);
+      })();
+    });
+  }
+  /* what they have typed is kept in this tab (and only here) until it is sent,
+     so a reload or a look at another page loses nothing */
+  var FORMK = "silavu-form", FORMF = ["fName", "fCity", "fContact", "fMsg"];
+  try { var kept = JSON.parse(sessionStorage.getItem(FORMK) || "null");
+    if (kept) FORMF.forEach(function (id) { var el = $(id); if (el && kept[id] && !el.value) { el.value = kept[id]; try { el.dispatchEvent(new Event("input")); } catch (e) {} } }); } catch (e) {}
+  var keepT = 0;
+  form.addEventListener("input", function () { clearTimeout(keepT); keepT = setTimeout(function () { var o = {}; FORMF.forEach(function (id) { var el = $(id); if (el && el.value) o[id] = el.value.slice(0, 4000); });
+    try { Object.keys(o).length ? sessionStorage.setItem(FORMK, JSON.stringify(o)) : sessionStorage.removeItem(FORMK); } catch (e) {} }, 400); });
   form.querySelectorAll(".field input, .field textarea").forEach(function (el) { var f = function () { el.parentElement.classList.toggle("filled", !!el.value); }; el.addEventListener("input", function () { f(); fieldErr(el, null); }); el.addEventListener("blur", f); });
   /* a field that is missing or wrong says so in words, next to it, and the
      words are what a screen reader hears when it lands there */
@@ -1421,12 +1444,14 @@
         try { payload.utm = JSON.parse(sessionStorage.getItem("silavu-utm") || "{}"); } catch (e) {}
         var hp = form.querySelector('input[name="website"]'); if (hp) payload.website = hp.value;
       }
-      fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) })
+      (house ? powFor(payload.idem).then(function (n) { payload.pow = n; }) : Promise.resolve())
+        .then(function () { return fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) }); })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var x = new Error("HTTP " + r.status); x.status = r.status; x.body = j; throw x; } return j; }); })
         .then(function (j) {
           if (fsub && j && String(j.success) === "false") throw new Error(j.message || "not sent");
           if (house && !(j && j.ok && j.ref)) throw new Error("not confirmed");
           if (house) { form.__idem = null; try { window.dispatchEvent(new CustomEvent("silavu:enquiry", { detail: { want: payload.want } })); } catch (e) {} }
+          try { sessionStorage.removeItem(FORMK); } catch (e) {}
           var first = payload.name.split(/\s+/)[0];
           $("cthh").textContent = L2("Thank you", "תודה") + (first ? ", " + first : "");
           $("cthp").textContent = L2("Your enquiry has reached the SILAVU concierge, and we will answer you personally.", "הפנייה שלכם הגיעה לקונסיירז׳ של SILAVU, ונחזור אליכם באופן אישי.")

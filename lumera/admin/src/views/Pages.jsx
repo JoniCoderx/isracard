@@ -67,6 +67,7 @@ function HomeChapters() {
           <Bi label={t("Text")} value={b.text} onInput={(v) => up({ ...b, text: v })} multiline />
           <div class="grid2"><Bi label={t("Button (optional)")} value={b.cta.label} onInput={(v) => up({ ...b, cta: { ...b.cta, label: v } })} wide={false} />
             <Input label={t("Button goes to")} value={b.cta.href} onInput={(v) => up({ ...b, cta: { ...b.cta, href: v } })} error={b.cta.href && !safeHref(b.cta.href) ? t("Use a page on this site (like about/ or #concierge), or a full https:// address.") : ""} /></div>
+          {b.cta.href && /^https?:/.test(b.cta.href) && <Toggle label={t("This is an affiliate or paid link")} checked={!!b.cta.affiliate} onChange={(v) => up({ ...b, cta: { ...b.cta, affiliate: v || undefined } })} hint={t("The link then says so on the site (\"Affiliate link\" / \"קישור שותפים\"), opens in a new tab and tells search engines it is sponsored.")} />}
           <div class="row">{b.image ? <><Thumbnail img={b.image} /><Button kind="quiet" onClick={() => up({ ...b, image: null })}>{t("Remove the picture")}</Button></> : null}<Button onClick={() => setPick(b.id)}>{b.image ? t("Change the picture") : t("Add a picture")}</Button></div>
           {b.image && <Bi label={t("Picture description")} value={b.alt || S()} onInput={(v) => up({ ...b, alt: v })} />}
         </div>} />
@@ -138,7 +139,8 @@ function Menus() {
       <ListEdit items={n.extra || []} onChange={(v) => d.setData({ ...n, extra: v })} add={() => ({ slot: "footer", label: S(), href: "" })} addLabel={t("Add a link")} render={(x, up) => <div class="form">
         <div class="grid2"><Select label={t("Where")} value={x.slot} onChange={(v) => up({ ...x, slot: v })} options={[{ value: "top", label: t("Top menu") }, { value: "footer", label: t("Footer, under Explore") }]} />
           <Input label={t("Goes to")} value={x.href} onInput={(v) => up({ ...x, href: v })} error={x.href && !safeHref(x.href) ? t("Use a page on this site (like about/ or #concierge), or a full https:// address.") : ""} /></div>
-        <Bi label={t("Words")} value={x.label} onInput={(v) => up({ ...x, label: v })} required /></div>} />
+        <Bi label={t("Words")} value={x.label} onInput={(v) => up({ ...x, label: v })} required />
+        <Toggle label={t("This is an affiliate or paid link")} checked={!!x.affiliate} onChange={(v) => up({ ...x, affiliate: v || undefined })} hint={t("The link then says so on the site (\"Affiliate link\" / \"קישור שותפים\"), opens in a new tab and tells search engines it is sponsored.")} /></div>} />
     </section>
     <section class="card">
       <h2>{t("Moved pages")}</h2>
@@ -188,7 +190,8 @@ function DocPageEdit({ slug }) {
         <Select label={t("Kind")} value={b.type} onChange={(v) => up({ type: v, text: b.text || S(), label: b.label || S(), href: b.href || "", alt: b.alt || S(), caption: b.caption || S(), image: b.image })} options={[{ value: "heading", label: t("Heading") }, { value: "paragraph", label: t("Paragraph") }, { value: "image", label: t("Picture") }, { value: "button", label: t("Button") }]} />
         {(b.type === "heading" || b.type === "paragraph") && <Bi label={b.type === "heading" ? t("Heading") : t("Paragraph")} value={b.text} onInput={(v) => up({ ...b, text: v })} multiline={b.type === "paragraph"} rows={4} hint={t("*Stars* around words set them in italic.")} />}
         {b.type === "image" && <><div class="row">{b.image && <Thumbnail img={b.image} />}<Button onClick={() => setPick(p.blocks.indexOf(b))}>{b.image ? t("Change the picture") : t("Choose a picture")}</Button></div><Bi label={t("Picture description")} value={b.alt} onInput={(v) => up({ ...b, alt: v })} /><Bi label={t("Caption (optional)")} value={b.caption} onInput={(v) => up({ ...b, caption: v })} /></>}
-        {b.type === "button" && <div class="grid2"><Bi label={t("Words")} value={b.label} onInput={(v) => up({ ...b, label: v })} wide={false} /><Input label={t("Goes to")} value={b.href} onInput={(v) => up({ ...b, href: v })} error={b.href && !safeHref(b.href) ? t("Use a page on this site (like about/ or #concierge), or a full https:// address.") : ""} /></div>}
+        {b.type === "button" && <><div class="grid2"><Bi label={t("Words")} value={b.label} onInput={(v) => up({ ...b, label: v })} wide={false} /><Input label={t("Goes to")} value={b.href} onInput={(v) => up({ ...b, href: v })} error={b.href && !safeHref(b.href) ? t("Use a page on this site (like about/ or #concierge), or a full https:// address.") : ""} /></div>
+          {/^https?:/.test(b.href || "") && <Toggle label={t("This is an affiliate or paid link")} checked={!!b.affiliate} onChange={(v) => up({ ...b, affiliate: v || undefined })} hint={t("The link then says so on the site (\"Affiliate link\" / \"קישור שותפים\"), opens in a new tab and tells search engines it is sponsored.")} />}</>}
       </div>} add={() => ({ type: "paragraph", text: S() })} addLabel={t("Add a block")} />
       <Toggle label={t("Listed under Client care in the footer")} checked={p.footer !== false} onChange={(v) => set("footer", v)} />
       <Bi label={t("Title in search results (optional)")} value={(p.seo && p.seo.title) || S()} onInput={(v) => set("seo", { ...(p.seo || {}), title: v })} />
