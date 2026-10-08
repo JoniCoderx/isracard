@@ -1,7 +1,7 @@
 #!/bin/bash
 # The candidate hero film for the /test/ page ("The Cloche": the three pieces
 # under a glass cloche in a Dubai salon at night, the necklace taken out),
-# upscaled to 4K from the approved take.
+# made natively in 4K (Kling 3.0, 4K mode) from the approved opening still.
 # The whole take is used: she lifts the cloche and takes the necklace all the
 # way up; then it plays in reverse to where it began, so every
 # turn of the loop meets itself without a jump. The frames are laid out once in
@@ -16,7 +16,7 @@
 set -e
 OUT="${1:-dist}"; mkdir -p "$OUT/v" "$OUT/img"
 B=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf
-SRC=$B/hf_20261008_075615_ce1824c8-4e73-4e08-b7ed-8e0af61c8da5.mp4
+SRC=$B/hf_20261008_171734_9df192f2-d222-4e15-ba2d-a15691102e61.mp4
 T=$(mktemp -d)
 curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors -o "$T/src.mp4" "$SRC"
 # every frame of the take, at 24 fps
