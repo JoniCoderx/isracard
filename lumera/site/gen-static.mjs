@@ -316,16 +316,6 @@ const EMB3D = (() => {
     js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
   };
 })();
-/* the hero pop-out (src/hero-pop.js), tried on /test/ only, on computers:
-   the packed film (picture over matte) from hero-pop-assets.sh; the plain
-   film stays named on the video for phones and for any browser that cannot
-   draw the layers */
-const POP = /__MATTE__/.test(fs.readFileSync(path.join(path.dirname(path.resolve(src)), "hero-pop-assets.sh"), "utf8")) ? null : {
-  attrs: ' data-pop="v/hero-pop.mp4" data-pop-x="0.47" data-pop-y="0.54"',
-  css: `#hero canvas.popfg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;opacity:0;transition:opacity 1.4s var(--ease)}
-#hero canvas.popfg.on{opacity:1}`,
-  js: "<script>" + fs.readFileSync(path.join(path.dirname(path.resolve(src)), "src", "hero-pop.js"), "utf8") + "</script>",
-};
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
   const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join("") } : null;
@@ -347,7 +337,7 @@ function heroTest(dir, film, css, big, extras) {
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
   console.log("hero test page written:", dir);
 }
-heroTest("test", "hero-cloche", "", true, [EMB3D, POP]);
+heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
