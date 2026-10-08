@@ -300,7 +300,7 @@ const INK = `#hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.7
 const EMB3D = (() => {
   const nm = path.join(path.dirname(path.resolve(src)), "..", "node_modules", "three");
   if (!fs.existsSync(path.join(nm, "build", "three.module.min.js"))) { console.warn("emblem 3D skipped: three is not installed"); return null; }
-  const d3 = path.join(outDir, "assets", "3d"); fs.mkdirSync(d3, { recursive: true });
+  const d3 = path.join(outDir, "3d"); fs.mkdirSync(d3, { recursive: true });
   const local = f => fs.readFileSync(f, "utf8").replace(/from\s*['"]three['"]/g, "from './three.module.min.js'");
   fs.copyFileSync(path.join(nm, "build", "three.module.min.js"), path.join(d3, "three.module.min.js"));
   fs.writeFileSync(path.join(d3, "SVGLoader.js"), local(path.join(nm, "examples", "jsm", "loaders", "SVGLoader.js")));
@@ -313,7 +313,7 @@ const EMB3D = (() => {
 #enquire .emb.e3d .embart canvas.emb3d{opacity:1;transform:none}
 #enquire .emb.e3d .embsvg,#enquire .emb.e3d .embshine,#enquire .emb.e3d .embart::after{opacity:0!important;transition:opacity 1.2s ease}
 #enquire .emb.e3d .embtilt{transform:scale(var(--sc,1))!important}`,
-    js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./assets/3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
+    js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
   };
 })();
 function heroTest(dir, film, css, big, extra) {
