@@ -8,8 +8,9 @@
 # that order and each size is cut from them, so nothing is held in memory.
 #   dist/v/hero-cloche-4k.mp4 (2160, large screens on fast connections),
 #   dist/v/hero-cloche.mp4 (1080),
-#   dist/v/hero-cloche-v.mp4 (phones: only the upright slice a phone shows,
-#     cut from the 4K frames at full detail, 1216x2160),
+#   dist/v/hero-cloche-v.mp4 (phones: an upright slice cut from the 4K
+#     frames at full detail, 1080x1920, set so the pendant sits above the
+#     headline rather than behind it),
 #   dist/img/hero-cloche-{1600,1920,2560,3840}.jpg and
 #   dist/img/hero-cloche-v-{1080,1216}.jpg (the first frame)
 # Needs ffmpeg. Usage: hero-test-assets.sh <dist dir>
@@ -33,13 +34,15 @@ for spec in "3840 2160 24 hero-cloche-4k" "1920 1080 23 hero-cloche"; do
     -c:v libx264 -preset slow -crf $3 -profile:v high -pix_fmt yuv420p -movflags +faststart "$OUT/v/$4.mp4" -y
   echo "$4: $(( $(stat -c%s "$OUT/v/$4.mp4") / 1024 ))KB"
 done
-# the phone's slice: 9:16 of the 4K frame, anchored where the phone page looks (42% across)
-VX=$(( (3840 - 1216) * 42 / 100 / 2 * 2 ))
-ffmpeg -nostdin -v error -framerate 24 -i "$T/seq/%04d.jpg" -an -vf "crop=1216:2160:$VX:0,setsar=1,format=yuv420p" \
-  -c:v libx264 -preset slow -crf 24 -profile:v high -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-cloche-v.mp4" -y
+# the phone's slice: 9:16 of the 4K frame, around the necklace, starting
+# 280 px down so that on a phone the pendant sits above the headline (which
+# begins a little past half way down the screen) instead of behind it
+PV="crop=1058:1880:1181:280"
+ffmpeg -nostdin -v error -framerate 24 -i "$T/seq/%04d.jpg" -an -vf "$PV,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p" \
+  -c:v libx264 -preset slow -crf 23 -profile:v high -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-cloche-v.mp4" -y
 echo "hero-cloche-v: $(( $(stat -c%s "$OUT/v/hero-cloche-v.mp4") / 1024 ))KB"
 for w in 1080 1216; do
-  ffmpeg -nostdin -v error -i "$T/f/0001.jpg" -vf "crop=1216:2160:$VX:0,scale=$w:-2:flags=lanczos" -q:v 2 "$OUT/img/hero-cloche-v-$w.jpg" -y
+  ffmpeg -nostdin -v error -i "$T/f/0001.jpg" -vf "$PV,scale=$w:-2:flags=lanczos" -q:v 2 "$OUT/img/hero-cloche-v-$w.jpg" -y
 done
 for w in 1600 1920 2560 3840; do
   ffmpeg -nostdin -v error -i "$T/f/0001.jpg" -vf "scale=$w:-2:flags=lanczos" -q:v 2 "$OUT/img/hero-cloche-$w.jpg" -y
