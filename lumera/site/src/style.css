@@ -6133,6 +6133,10 @@ html body #collection { margin-top:-6px !important; position:relative; }
    on a tablet, without the blur the desktop has, the mark of the chapter
    beneath read through it and stood on top of the header's own. ───────── */
 @media (max-width:999px) { html body header.sh.scrolled { background:rgba(0,0,0,.97) !important; } }
+/* …and over the light chapters the band is light: the mark, the menu and the
+   language switch turn dark there (body.onivory), and on a black band they
+   disappeared. Still solid, so nothing reads through it. */
+@media (max-width:999px) { html body.onivory header.sh.scrolled { background:#f4f1e9 !important; box-shadow:0 1px 0 rgba(20,19,15,.12) !important; } }
 
 /* ══ v193 — About, as an editorial page ═══════════════════════════════════
    The first paragraph is the lead, set larger in the serif; the closing line
