@@ -2,8 +2,8 @@
 # The candidate hero film for the /test/ page ("The Cloche": the three pieces
 # under a glass cloche in a Dubai salon at night, the necklace taken out),
 # upscaled to 4K from the approved take.
-# The take is used up to 10.2 s (after that the chain doubles), and looped
-# forward and back: it plays, then plays in reverse to where it began, so every
+# The whole take is used: she lifts the cloche and takes the necklace all the
+# way up; then it plays in reverse to where it began, so every
 # turn of the loop meets itself without a jump. The frames are laid out once in
 # that order and each size is cut from them, so nothing is held in memory.
 #   dist/v/hero-cloche-4k.mp4 (2160, large screens on fast connections),
@@ -14,9 +14,10 @@ set -e
 OUT="${1:-dist}"; mkdir -p "$OUT/v" "$OUT/img"
 B=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf
 SRC=$B/hf_20261008_075615_ce1824c8-4e73-4e08-b7ed-8e0af61c8da5.mp4
-END=245            # frames used: 10.2 s at 24 fps
 T=$(mktemp -d)
 curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors -o "$T/src.mp4" "$SRC"
+# every frame of the take, at 24 fps
+END=$(ffmpeg -nostdin -v error -i "$T/src.mp4" -vf fps=24 -f null - -progress pipe:1 | awk -F= '/^frame=/ { n = $2 } END { print n }')
 mkdir "$T/f" "$T/seq"
 ffmpeg -nostdin -v error -i "$T/src.mp4" -an -vf "fps=24,scale=3840:2160:flags=lanczos,setsar=1" -frames:v $END -q:v 1 "$T/f/%04d.jpg"
 n=0
