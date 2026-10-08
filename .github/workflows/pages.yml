@@ -138,7 +138,7 @@ jobs:
         run: |
           if ! bash lumera/site/hero-test-assets.sh dist; then
             LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
-            for f in v/hero-cloche-4k.mp4 v/hero-cloche.mp4 v/hero-cloche-720.mp4 img/hero-cloche-1600.jpg img/hero-cloche-1920.jpg img/hero-cloche-2560.jpg img/hero-cloche-3840.jpg; do
+            for f in v/hero-cloche-4k.mp4 v/hero-cloche.mp4 v/hero-cloche-v.mp4 img/hero-cloche-1600.jpg img/hero-cloche-1920.jpg img/hero-cloche-2560.jpg img/hero-cloche-3840.jpg img/hero-cloche-v-1080.jpg img/hero-cloche-v-1216.jpg; do
               curl -fsSL --retry 3 -o dist/$f "$LIVE/$f" || echo "missing: $f"
             done
           fi

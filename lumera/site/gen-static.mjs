@@ -325,11 +325,13 @@ function heroTest(dir, film, css, big, extras) {
     .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">')
     .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">SILAVU · hero test<"))
     .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
-    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:42% 50%}}${css}${extra ? extra.css : ""}</style>\n</head>`);
+    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:${big ? 50 : 42}% 50%}}${css}${extra ? extra.css : ""}</style>\n</head>`);
   const tHtml = html
-    .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
+    .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, big
+      ? `<source media="(max-width:899px)" srcset="img/${film}-v-1080.jpg 1080w, img/${film}-v-1216.jpg 1216w" sizes="100vw">`
+      : `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
     .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${film}-1920.jpg" srcset="${set}"`)
-    .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-720.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
+    .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-${big ? "v" : "720"}.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
     .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
