@@ -320,7 +320,7 @@ const EMB3D = (() => {
    (picture over matte) from hero-pop-assets.sh; the plain film stays named
    on the video, for any browser that cannot draw the layers */
 const POP = /__MATTE__/.test(fs.readFileSync(path.join(path.dirname(path.resolve(src)), "hero-pop-assets.sh"), "utf8")) ? null : {
-  attrs: ' data-pop="v/hero-pop.mp4" data-pop-m="v/hero-pop-720.mp4" data-pop-y="0.54"',
+  attrs: ' data-pop="v/hero-pop.mp4" data-pop-m="v/hero-pop-720.mp4" data-pop-x="0.47" data-pop-y="0.54"',
   css: `#hero video.popsrc{opacity:.001!important}
 #hero canvas.popbg,#hero canvas.popfg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity 1.4s var(--ease)}
 #hero canvas.popfg{z-index:3}

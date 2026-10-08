@@ -13,7 +13,7 @@ set -e
 OUT="${1:-dist}"; mkdir -p "$OUT/v"
 B=https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf
 FILM=$B/hf_20261008_075615_ce1824c8-4e73-4e08-b7ed-8e0af61c8da5.mp4
-MATTE=$B/__MATTE__
+MATTE=https://d2ol7oe51mr4n9.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf/ffc52662-d6f9-4670-b3f4-c297b0adc066.mp4
 T=$(mktemp -d)
 curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors -o "$T/film.mp4" "$FILM"
 curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors -o "$T/matte.mp4" "$MATTE"

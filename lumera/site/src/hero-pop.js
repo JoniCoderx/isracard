@@ -5,8 +5,9 @@
    same frame. The <video> decodes it unseen; one canvas draws the picture
    where the video was (behind the words), and a second canvas above the words
    draws only the matted part of the same frame, so the two layers cannot
-   drift apart. Both are fitted like object-fit: cover and follow the video's
-   own movement. The front layer is darkened by the same veil the back layer
+   drift apart. Both are fitted like object-fit: cover, a little closer, with
+   the necklace (data-pop-x/-y, where it lies in the picture) set between the
+   headline's lines, and follow the video's own movement. The front layer is darkened by the same veil the back layer
    sits under, so its edges disappear.
 
    Runs before the page's own script picks the film. Without WebGL, with
@@ -61,7 +62,7 @@
   var uFit = gl.getUniformLocation(pr, "fit");
 
   var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var title = cap.querySelector(".h"), PY = parseFloat(hv.getAttribute("data-pop-y")) || 0.54;
+  var title = cap.querySelector(".h"), PY = parseFloat(hv.getAttribute("data-pop-y")) || 0.54, PX = parseFloat(hv.getAttribute("data-pop-x")) || 0.47;
   var Z = matchMedia("(min-width:900px)").matches ? 1.3 : 1.25;
   function size() {
     var r = hero.getBoundingClientRect(); W = Math.round(r.width * dpr); H = Math.round(r.height * dpr);
@@ -77,12 +78,12 @@
        set so the necklace sits between the headline's two lines: as it is
        lifted, the chain and her fingers cross the words */
     var s = Math.max(W / vw, H / ph) * Z, dw = vw * s, dh = ph * s;
-    var ax = parseFloat((getComputedStyle(hv).objectPosition || "50% 50%").split(" ")[0]) / 100; if (isNaN(ax)) ax = 0.5;
     var hr = hero.getBoundingClientRect(), tr = title ? title.getBoundingClientRect() : null;
     var aim = tr && hr.height ? (tr.top - hr.top + tr.height * 0.5) / hr.height : 0.62;
     /* where the pendant then falls, with no edge of the film left showing */
     var cy = Math.max(0.5 * H / dh, Math.min(1 - 0.5 * H / dh, PY - (aim - 0.5) * H / dh));
-    var dx = (W - dw) * ax, dy = H * 0.5 - cy * dh;
+    /* and across, the pendant under the centred headline */
+    var dx = Math.max(W - dw, Math.min(0, W * 0.5 - PX * dw)), dy = H * 0.5 - cy * dh;
     bx.drawImage(hv, 0, 0, vw, ph, dx, dy, dw, dh);
     gl.viewport(0, 0, W, H);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hv);

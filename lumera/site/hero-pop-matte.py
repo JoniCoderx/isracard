@@ -29,7 +29,7 @@ for k, n in enumerate(names, 1):
     im = Image.open(os.path.join(FR, n)).convert("L")
     lum = np.asarray(im.filter(ImageFilter.GaussianBlur(2)), np.float32) / 255.0
     m = np.asarray(Image.open(mp).convert("L").resize((W, H), Image.LANCZOS), np.float32) / 255.0
-    lit = np.clip((lum - 0.10) / 0.12, 0, 1)
+    lit = np.clip((lum - 0.22) / 0.14, 0, 1)
     lit = lit * lit * (3 - 2 * lit)
     a = m * lit * w
     a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8)))
