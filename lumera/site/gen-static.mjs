@@ -316,7 +316,20 @@ const EMB3D = (() => {
     js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
   };
 })();
-function heroTest(dir, film, css, big, extra) {
+/* the hero pop-out (src/hero-pop.js), tried on /test/ only: the packed film
+   (picture over matte) from hero-pop-assets.sh; the plain film stays named
+   on the video, for any browser that cannot draw the layers */
+const POP = /__MATTE__/.test(fs.readFileSync(path.join(path.dirname(path.resolve(src)), "hero-pop-assets.sh"), "utf8")) ? null : {
+  attrs: ' data-pop="v/hero-pop.mp4" data-pop-m="v/hero-pop-720.mp4" data-pop-y="0.54"',
+  css: `#hero video.popsrc{opacity:.001!important}
+#hero canvas.popbg,#hero canvas.popfg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity 1.4s var(--ease)}
+#hero canvas.popfg{z-index:3}
+#hero canvas.popbg.on,#hero canvas.popfg.on{opacity:1}`,
+  js: "<script>" + fs.readFileSync(path.join(path.dirname(path.resolve(src)), "src", "hero-pop.js"), "utf8") + "</script>",
+};
+function heroTest(dir, film, css, big, extras) {
+  extras = (extras || []).filter(Boolean);
+  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join("") } : null;
   const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
@@ -327,7 +340,7 @@ function heroTest(dir, film, css, big, extra) {
   const tHtml = html
     .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
     .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${film}-1920.jpg" srcset="${set}"`)
-    .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-720.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""} aria-hidden="true">`)
+    .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-720.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
     .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
@@ -335,7 +348,7 @@ function heroTest(dir, film, css, big, extra) {
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
   console.log("hero test page written:", dir);
 }
-heroTest("test", "hero-cloche", "", true, EMB3D);
+heroTest("test", "hero-cloche", "", true, [EMB3D, POP]);
 heroTest("test-white", "hero-white", INK);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
