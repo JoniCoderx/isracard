@@ -294,25 +294,48 @@ const INK = `#hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.7
 #hero .hcap .btn:first-child *{color:#f6f2ea!important}
 #header:not(.scrolled),#header:not(.scrolled) *{color:#16130f!important;text-shadow:none!important}
 #header:not(.scrolled) a,#header:not(.scrolled) button{border-color:rgba(22,19,15,.35)!important}`;
-function heroTest(dir, film, css, big) {
+/* the emblem in metal (src/emb3d.js), tried on /test/ only: the library and
+   its two helpers are copied from node_modules, their imports pointed at
+   each other, and the module is loaded when the chapter comes near */
+const EMB3D = (() => {
+  const nm = path.join(path.dirname(path.resolve(src)), "..", "node_modules", "three");
+  if (!fs.existsSync(path.join(nm, "build", "three.module.min.js"))) { console.warn("emblem 3D skipped: three is not installed"); return null; }
+  const d3 = path.join(outDir, "assets", "3d"); fs.mkdirSync(d3, { recursive: true });
+  const local = f => fs.readFileSync(f, "utf8").replace(/from\s*['"]three['"]/g, "from './three.module.min.js'");
+  fs.copyFileSync(path.join(nm, "build", "three.module.min.js"), path.join(d3, "three.module.min.js"));
+  fs.writeFileSync(path.join(d3, "SVGLoader.js"), local(path.join(nm, "examples", "jsm", "loaders", "SVGLoader.js")));
+  fs.writeFileSync(path.join(d3, "RoomEnvironment.js"), local(path.join(nm, "examples", "jsm", "environments", "RoomEnvironment.js")));
+  const js = fs.readFileSync(path.join(path.dirname(path.resolve(src)), "src", "emb3d.js"), "utf8"), v = hashOf(js);
+  fs.writeFileSync(path.join(d3, "emb3d.js"), js);
+  return {
+    css: `#enquire .embpave{display:none!important}
+#enquire .embart canvas.emb3d{position:absolute;left:-30%;top:-15%;width:160%;height:130%;pointer-events:none;opacity:0;transform:scale(.94);transition:opacity 1.6s ease,transform 2.2s cubic-bezier(.2,.8,.2,1)}
+#enquire .emb.e3d .embart canvas.emb3d{opacity:1;transform:none}
+#enquire .emb.e3d .embsvg,#enquire .emb.e3d .embshine,#enquire .emb.e3d .embart::after{opacity:0!important;transition:opacity 1.2s ease}
+#enquire .emb.e3d .embtilt{transform:scale(var(--sc,1))!important}`,
+    js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./assets/3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
+  };
+})();
+function heroTest(dir, film, css, big, extra) {
   const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
     .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">')
     .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">SILAVU · hero test<"))
     .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
-    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:42% 50%}}${css}</style>\n</head>`);
+    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:42% 50%}}${css}${extra ? extra.css : ""}</style>\n</head>`);
   const tHtml = html
     .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
     .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${film}-1920.jpg" srcset="${set}"`)
     .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-720.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""} aria-hidden="true">`)
-    .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ");
+    .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
+    .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
   fs.mkdirSync(path.join(outDir, dir), { recursive: true });
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
   console.log("hero test page written:", dir);
 }
-heroTest("test", "hero-cloche", "", true);
+heroTest("test", "hero-cloche", "", true, EMB3D);
 heroTest("test-white", "hero-white", INK);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
