@@ -9,7 +9,7 @@
 #   dist/v/hero-cloche-4k.mp4 (2160, large screens on fast connections),
 #   dist/v/hero-cloche.mp4 (1080),
 #   dist/v/hero-cloche-v.mp4 (phones: an upright slice cut from the 4K
-#     frames at full detail, 1080x1920, set so the pendant sits above the
+#     frames, 900x1600 and light, set so the pendant sits above the
 #     headline rather than behind it),
 #   dist/img/hero-cloche-{1600,1920,2560,3840}.jpg and
 #   dist/img/hero-cloche-v-{1080,1216}.jpg (the first frame)
@@ -38,8 +38,10 @@ done
 # 280 px down so that on a phone the pendant sits above the headline (which
 # begins a little past half way down the screen) instead of behind it
 PV="crop=1058:1880:1181:280"
-ffmpeg -nostdin -v error -framerate 24 -i "$T/seq/%04d.jpg" -an -vf "$PV,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p" \
-  -c:v libx264 -preset slow -crf 23 -profile:v high -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-cloche-v.mp4" -y
+# kept light for a phone that is also scrolling: 900 wide (sharp on a phone
+# screen once the page has fitted it), capped near the weight of the live film
+ffmpeg -nostdin -v error -framerate 24 -i "$T/seq/%04d.jpg" -an -vf "$PV,scale=900:1600:flags=lanczos,setsar=1,format=yuv420p" \
+  -c:v libx264 -preset slow -crf 25 -maxrate 1500k -bufsize 3000k -profile:v high -level 4.1 -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-cloche-v.mp4" -y
 echo "hero-cloche-v: $(( $(stat -c%s "$OUT/v/hero-cloche-v.mp4") / 1024 ))KB"
 for w in 1080 1216; do
   ffmpeg -nostdin -v error -i "$T/f/0001.jpg" -vf "$PV,scale=$w:-2:flags=lanczos" -q:v 2 "$OUT/img/hero-cloche-v-$w.jpg" -y

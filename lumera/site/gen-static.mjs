@@ -325,7 +325,9 @@ function heroTest(dir, film, css, big, extras) {
     .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">')
     .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">SILAVU · hero test<"))
     .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
-    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:${big ? 50 : 42}% 50%}}${css}${extra ? extra.css : ""}</style>\n</head>`);
+    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n` + (big
+      ? `<link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/${film}-v-1080.jpg" imagesrcset="img/${film}-v-1080.jpg 1080w, img/${film}-v-1216.jpg 1216w" imagesizes="100vw">`
+      : `<link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/${film}-1600.jpg" imagesrcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" imagesizes="100vw">`) + `\n<style>@media (max-width:899px){#hero .hv{object-position:${big ? 50 : 42}% 50%}}${css}${extra ? extra.css : ""}</style>\n</head>`);
   const tHtml = html
     .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, big
       ? `<source media="(max-width:899px)" srcset="img/${film}-v-1080.jpg 1080w, img/${film}-v-1216.jpg 1216w" sizes="100vw">`
