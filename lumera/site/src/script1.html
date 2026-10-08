@@ -70,7 +70,9 @@
         if (hv.src) return;
         /* a page can name its own film (the /test/ page does); one that does
            not loop is a film told once, so it waits for the reader to enter */
-        var own = hv.getAttribute("data-src");
+        var own = hv.getAttribute("data-src"), big = hv.getAttribute("data-src-4k");
+        /* the 4K cut only for a screen that can show it, on a fast line */
+        if (big && desk() && screen.width * (window.devicePixelRatio || 1) >= 2560 && (!conn.effectiveType || conn.effectiveType === "4g")) own = big;
         hv.src = own ? (desk() ? own : hv.getAttribute("data-src-m") || own) : desk() ? "/v/hero-loop.mp4" : "/v/hero-loop-v.mp4";
         if (hv.loop || entered) { var pl = hv.play(); if (pl && pl.catch) pl.catch(function () {}); }
       };

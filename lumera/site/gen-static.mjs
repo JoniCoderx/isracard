@@ -294,24 +294,25 @@ const INK = `#hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.7
 #hero .hcap .btn:first-child *{color:#f6f2ea!important}
 #header:not(.scrolled),#header:not(.scrolled) *{color:#16130f!important;text-shadow:none!important}
 #header:not(.scrolled) a,#header:not(.scrolled) button{border-color:rgba(22,19,15,.35)!important}`;
-function heroTest(dir, film, css) {
+function heroTest(dir, film, css, big) {
+  const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
     .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">')
     .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">SILAVU · hero test<"))
     .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
-    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:42% 50%}}${css}</style>\n</head>`);
+    .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n<style>@media (max-width:899px){#hero .hv{object-position:42% 50%}}${css}</style>\n</head>`);
   const tHtml = html
     .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
-    .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${film}-1920.jpg" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w"`)
-    .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-720.mp4" aria-hidden="true">`)
+    .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${film}-1920.jpg" srcset="${set}"`)
+    .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-720.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ");
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
   fs.mkdirSync(path.join(outDir, dir), { recursive: true });
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
   console.log("hero test page written:", dir);
 }
-heroTest("test", "hero-cloche", "");
+heroTest("test", "hero-cloche", "", true);
 heroTest("test-white", "hero-white", INK);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
