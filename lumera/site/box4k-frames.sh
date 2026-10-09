@@ -1,7 +1,7 @@
 #!/bin/bash
 # The box, made natively in 4K (Kling 3.0, 4K mode) between two 4K stills of
 # the same box: closed, then open with the diamonds fallen round it (the lid
-# opens on empty velvet, the stones fall in from above and spill out). Tried on
+# opens and the stones burst up out of the box and spread round it). Tried on
 # /test2/ only; the live page keeps f/box.
 #
 # Every frame of the take is kept — 120 at 24 fps instead of 96 — so the
@@ -12,7 +12,7 @@
 # Usage: box4k-frames.sh <out dir> [<the live box frames, for a fallback>]
 set -e
 OUT="${1:-dist/f/box4k}"; LIVE="${2:-dist/f/box}"; mkdir -p "$OUT"
-SRC="https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf/hf_20261009_085337_c88f70b2-3221-4a7d-8791-cf47a70d0bfb.mp4"
+SRC="https://d8j0ntlcm91z4.cloudfront.net/user_3ErATumMWusrALBkSVRVXQxJGVf/hf_20261009_085015_dc67027a-ba9a-40e8-9215-174be1a9da7a.mp4"
 N=120
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 
