@@ -352,9 +352,12 @@ const T2 = (() => {
     inject: [['<section id="enquire"', html]],
   };
 })();
+/* /test2/: the box made natively in 4K (box4k-frames.sh), every frame of
+   the take, in place of the live strip */
+const BOX4K = { swap: [[/n:\s*96,\s*dir:\s*"(\/?)f\/box\/"/, 'n:120,dir:"$1f/box4k/"']] };
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
-  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []) } : null;
+  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []), swap: extras.flatMap(x => x.swap || []) } : null;
   const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
@@ -372,6 +375,17 @@ function heroTest(dir, film, css, big, extras) {
     .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-${big ? "v" : "720"}.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
     .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");
+  /* a swap is made in the page, or in the page's own script file that holds
+     it: that file is copied under a name of its own, so the live page keeps
+     the original */
+  const has = (t, f) => f.test ? f.test(t) : t.includes(f);
+  if (extra) for (const [from, to] of extra.swap) {
+    if (has(tHtml, from)) { tHtml = tHtml.replace(from, to); continue; }
+    const ref = [...tHtml.matchAll(/assets\/(s\d+\.[0-9a-f]+\.js)/g)].map(m => m[1]).find(n => has(fs.readFileSync(path.join(ASSETS, n), "utf8"), from));
+    if (!ref) { console.warn(`hero test page ${dir}: ${from} not found`); return; }
+    const code = fs.readFileSync(path.join(ASSETS, ref), "utf8").replace(from, to), n = ref.replace(/\.[0-9a-f]+\.js$/, "." + dir + "." + hashOf(code) + ".js");
+    fs.writeFileSync(path.join(ASSETS, n), code); tHtml = tHtml.split("assets/" + ref).join("assets/" + n);
+  }
   if (extra) for (const [mark, add] of extra.inject) { if (!tHtml.includes(mark)) { console.warn(`hero test page ${dir}: ${mark} not found`); return; } tHtml = tHtml.replace(mark, add + mark); }
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
   fs.mkdirSync(path.join(outDir, dir), { recursive: true });
@@ -380,7 +394,7 @@ function heroTest(dir, film, css, big, extras) {
 }
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
-heroTest("test2", "hero-cloche", "", true, [EMB3D, T2]);
+heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, BOX4K]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";

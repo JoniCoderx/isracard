@@ -157,6 +157,8 @@ jobs:
         run: bash lumera/site/piece-assets.sh dist/img
       - name: The box sequence, cut from the 4K restoration
         run: bash lumera/site/box-frames.sh dist/f/box
+      - name: The box made natively in 4K (tried on /test2/)
+        run: bash lumera/site/box4k-frames.sh dist/f/box4k dist/f/box
       # The desk under "Light goes in. Fire comes out.": leather and loose
       # stones. It is decoration, so a missing host does not stop the deploy:
       # what shipped last time is taken from the live site instead, and with
