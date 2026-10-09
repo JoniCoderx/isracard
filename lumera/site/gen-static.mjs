@@ -316,9 +316,45 @@ const EMB3D = (() => {
     js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
   };
 })();
+/* /test2/: the next round, all at once (src/test2.css, src/test2.js): the
+   collection's own films over its photographs, "Find her piece" before the
+   enquiry, and the buttons' hover on a computer */
+const T2 = (() => {
+  const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  const E = (en, he) => `data-en="${q(en)}" data-he="${q(he)}"`;
+  const t = (tag, cls, en, he, extra = "") => `<${tag}${cls ? ` class="${cls}"` : ""}${extra}><span ${E(en, he)}>${en}</span></${tag}>`;
+  const opt = (v, en, he) => `<button type="button" class="chip gq" data-v="${v}"><span ${E(en, he)}>${en}</span></button>`;
+  const step = (k, qen, qhe, opts) => `<div class="gstep" data-k="${k}">${t("p", "gq-t", qen, qhe)}<div class="gopts">${opts.map(o => opt(...o)).join("")}</div></div>`;
+  const html = `<section id="guide" data-n="" data-title-en="Find her piece" data-title-he="מצאו את התכשיט שלה" aria-label="Find her piece">
+  <div class="gin">
+    ${t("div", "gk", "A private guide · Three questions", "מדריך פרטי · שלוש שאלות")}
+    ${t("h2", "", "Find her piece", "מצאו את התכשיט שלה")}
+    ${t("p", "gsub", "Three quiet questions, and the house suggests the piece that is hers.", "שלוש שאלות שקטות, והבית מציע את התכשיט שהוא שלה.")}
+    <div class="gbar" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="gstage">
+      ${step("moment", "What is the moment?", "מה הרגע?", [["anniversary", "An anniversary", "יום נישואין"], ["birthday", "A birthday", "יום הולדת"], ["promise", "A promise", "הבטחה"], ["because", "Just because", "בלי סיבה מיוחדת"]])}
+      ${step("how", "How does she wear jewellery?", "איך היא עונדת תכשיטים?", [["quiet", "Every day, quietly", "כל יום, בשקט"], ["layered", "Layered, piece on piece", "בשכבות, תכשיט על תכשיט"], ["noticed", "One piece that is noticed", "תכשיט אחד שמושך את העין"]])}
+      ${step("where", "Where should it rest?", "איפה הוא ינוח?", [["neck", "At her neck", "על הצוואר"], ["wrist", "On her wrist", "על פרק היד"], ["hand", "On her hand", "על האצבע"]])}
+      <div class="gstep gres-in" data-k="result"><div class="gres">
+        <div class="gpic"><img alt="" loading="lazy" decoding="async"></div>
+        <div><div class="gfor"></div><div class="gname"></div><p class="gwhy"></p>
+          <div class="gacts"><a class="btn solid gbook" href="#concierge"><span ${E("Book a private viewing", "קביעת פגישה פרטית")}>Book a private viewing</span></a><a class="btn gview" href="#collection"><span ${E("View the piece", "לצפייה בתכשיט")}>View the piece</span></a></div>
+          <button type="button" class="gagain"><span ${E("Start again", "להתחיל מחדש")}>Start again</span></button></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+`;
+  const dir = path.join(path.dirname(path.resolve(src)), "src");
+  return {
+    css: fs.readFileSync(path.join(dir, "test2.css"), "utf8"),
+    js: "<script>" + fs.readFileSync(path.join(dir, "test2.js"), "utf8") + "</script>",
+    inject: [['<section id="enquire"', html]],
+  };
+})();
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
-  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join("") } : null;
+  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []) } : null;
   const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
@@ -328,7 +364,7 @@ function heroTest(dir, film, css, big, extras) {
     .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/${film}-1920.jpg" imagesrcset="${set}" imagesizes="100vw">\n` + (big
       ? `<link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/${film}-v-1080.jpg" imagesrcset="img/${film}-v-1080.jpg 1080w, img/${film}-v-1216.jpg 1216w" imagesizes="100vw">`
       : `<link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/${film}-1600.jpg" imagesrcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" imagesizes="100vw">`) + `\n<style>@media (max-width:899px){#hero .hv{object-position:${big ? 50 : 42}% 50%}}${css}${extra ? extra.css : ""}</style>\n</head>`);
-  const tHtml = html
+  let tHtml = html
     .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, big
       ? `<source media="(max-width:899px)" srcset="img/${film}-v-1080.jpg 1080w, img/${film}-v-1216.jpg 1216w" sizes="100vw">`
       : `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
@@ -336,6 +372,7 @@ function heroTest(dir, film, css, big, extras) {
     .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-${big ? "v" : "720"}.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
     .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");
+  if (extra) for (const [mark, add] of extra.inject) { if (!tHtml.includes(mark)) { console.warn(`hero test page ${dir}: ${mark} not found`); return; } tHtml = tHtml.replace(mark, add + mark); }
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
   fs.mkdirSync(path.join(outDir, dir), { recursive: true });
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
@@ -343,6 +380,7 @@ function heroTest(dir, film, css, big, extras) {
 }
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
+heroTest("test2", "hero-cloche", "", true, [EMB3D, T2]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";

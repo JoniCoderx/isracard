@@ -100,7 +100,9 @@
     setTimeout(function () { intro.style.display = "none"; }, 1300);
     /* if the reader gets through the opening before the loop has been asked
        for, it is wanted now rather than at the next idle moment */
-    if (!reduce) { if (hvSrc) hvSrc(); if (!hv.loop) hv.currentTime = 0; var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
+    /* not before the page has loaded, though: a returning reader skips the
+       opening at once, and the film would otherwise race the first screen */
+    if (!reduce) { if (hvSrc && document.readyState === "complete") hvSrc(); if (!hv.loop) hv.currentTime = 0; var p = hv.play(); if (p && p.catch) p.catch(function () {}); }
   }
   function setSharp() { if (fillDone) return; fillDone = true; intro.classList.add("sharp"); contract(); }
   /* the symbol becomes the header symbol: the same object, moved and scaled, then the header takes over */

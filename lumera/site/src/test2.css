@@ -1,0 +1,84 @@
+/* /test2/: everything proposed for the next round, in one page. */
+
+/* ── the buttons, on a computer: a ring of light runs round the edge, a sheen
+      sweeps across, a soft light follows the pointer inside, and the button
+      leans a little toward the hand ── */
+@property --xa { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+html.xhov .btn, html.xhov .chip.gq { --mx: 50%; --my: 50%; transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .5s ease, color .4s ease, border-color .4s ease, background-color .4s ease !important; }
+html.xhov .btn .x-ring, html.xhov .chip.gq .x-ring {
+  position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; z-index: 2;
+  background: conic-gradient(from var(--xa), transparent 0 55%, rgba(255,255,255,.95) 70%, #e8d6a8 78%, transparent 90%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0; transition: opacity .45s ease; animation: xspin 2.6s linear infinite; animation-play-state: paused;
+}
+html.xhov .btn:hover .x-ring, html.xhov .chip.gq:hover .x-ring { opacity: 1; animation-play-state: running; }
+@keyframes xspin { to { --xa: 360deg; } }
+html.xhov .btn .x-sheen, html.xhov .chip.gq .x-sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 1; }
+html.xhov .btn .x-sheen::before, html.xhov .chip.gq .x-sheen::before {
+  content: ""; position: absolute; top: -60%; bottom: -60%; width: 38%; left: -70%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.5), transparent); transform: skewX(-18deg);
+}
+html.xhov .btn.solid .x-sheen::before { background: linear-gradient(100deg, transparent, rgba(214,186,128,.55), transparent); }
+html.xhov .btn:hover .x-sheen::before, html.xhov .chip.gq:hover .x-sheen::before { animation: xsweep 1.05s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes xsweep { to { left: 135%; } }
+html.xhov .btn .x-sheen::after, html.xhov .chip.gq .x-sheen::after {
+  content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease;
+  background: radial-gradient(140px circle at var(--mx) var(--my), rgba(255,255,255,.22), transparent 65%);
+}
+html.xhov .btn.solid .x-sheen::after { background: radial-gradient(140px circle at var(--mx) var(--my), rgba(214,186,128,.28), transparent 65%); }
+html.xhov .btn:hover .x-sheen::after, html.xhov .chip.gq:hover .x-sheen::after { opacity: 1; }
+html.xhov .btn:hover { box-shadow: 0 14px 40px -14px rgba(232,214,168,.55), 0 0 0 1px rgba(255,255,255,.08); }
+html.xhov .btn:active { transform: scale(.97) !important; transition-duration: .12s !important; }
+
+/* ── the collection comes alive: each piece's own film fades over its
+      photograph (on a computer while the pointer rests on it; on a phone
+      for the card in the middle of the screen) ── */
+#collection .piece .fig .im { position: relative; }
+#collection .piece video.pfilm { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 3;
+  opacity: 0; transition: opacity .9s cubic-bezier(.2,.8,.2,1); pointer-events: none; background: #000; border-radius: inherit; }
+#collection .piece.live video.pfilm { opacity: 1; }
+#collection .piece .pfilm-cue { position: absolute; left: 14px; bottom: 14px; z-index: 4; font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: #f4f1e9; background: rgba(0,0,0,.42); padding: 6px 10px; border-radius: 999px; opacity: 0; transform: translateY(6px); transition: opacity .6s ease .3s, transform .6s ease .3s; pointer-events: none; }
+#collection .piece.live .pfilm-cue { opacity: 1; transform: none; }
+
+/* ── "Find her piece": three questions, one answer ── */
+#guide { position: relative; background: #070707; color: #f4f1e9; padding: clamp(80px, 12vw, 160px) var(--pad); overflow: hidden; isolation: isolate; }
+#guide::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 0%, rgba(214,186,128,.10), transparent 70%), radial-gradient(40% 40% at 85% 100%, rgba(255,255,255,.05), transparent 70%); }
+#guide .gin { max-width: 980px; margin: 0 auto; text-align: center; }
+#guide .gk { font-size: .62rem; letter-spacing: .26em; text-transform: uppercase; color: #d8c08a; }
+#guide h2 { font-family: var(--word, inherit); font-weight: 300; font-size: clamp(2.2rem, 5.4vw, 4.4rem); letter-spacing: .04em; line-height: 1.04; margin: 18px 0 10px; text-wrap: balance; }
+#guide .gsub { color: #b9b4aa; max-width: 46ch; margin: 0 auto; line-height: 1.6; }
+#guide .gbar { display: flex; gap: 8px; justify-content: center; margin: 44px 0 30px; }
+#guide .gbar i { width: 46px; height: 2px; background: rgba(244,241,233,.16); position: relative; overflow: hidden; }
+#guide .gbar i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #e8d6a8, #fff); transform: scaleX(0); transform-origin: left; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+#guide .gbar i.on::after { transform: none; }
+#guide .gstage { position: relative; min-height: 260px; }
+#guide .gstep { position: absolute; inset: 0; opacity: 0; transform: translateY(18px); pointer-events: none; transition: opacity .6s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+#guide .gstep.on { position: relative; opacity: 1; transform: none; pointer-events: auto; }
+#guide .gq-t { font-size: clamp(1.25rem, 2.6vw, 1.8rem); font-weight: 300; letter-spacing: .02em; margin: 0 0 26px; }
+#guide .gopts { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+#guide .chip.gq { position: relative; overflow: hidden; cursor: pointer; border: 1px solid rgba(244,241,233,.26); background: rgba(255,255,255,.03); color: #f4f1e9;
+  padding: 16px 26px; border-radius: 999px; font: inherit; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; }
+#guide .chip.gq:hover, #guide .chip.gq:focus-visible { border-color: rgba(232,214,168,.7); background: rgba(232,214,168,.07); }
+#guide .chip.gq:focus-visible { outline: 2px solid #e8d6a8; outline-offset: 3px; }
+#guide .gres { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; text-align: start; }
+#guide .gpic { position: relative; aspect-ratio: 1; border-radius: 18px; overflow: hidden; background: #f4f1e9; box-shadow: 0 40px 80px -40px rgba(0,0,0,.9); }
+#guide .gpic img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 1.6s cubic-bezier(.2,.8,.2,1); }
+#guide .gstep.on .gpic img { transform: none; }
+#guide .gfor { font-size: .62rem; letter-spacing: .24em; text-transform: uppercase; color: #d8c08a; }
+#guide .gname { font-family: var(--word, inherit); font-weight: 300; font-size: clamp(1.9rem, 3.6vw, 3rem); letter-spacing: .06em; margin: 12px 0 14px; }
+#guide .gwhy { color: #c9c4b9; line-height: 1.65; max-width: 42ch; }
+#guide .gacts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+#guide .gagain { margin-top: 22px; background: none; border: 0; color: #9e998f; font: inherit; font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+#guide .gagain:hover { color: #f4f1e9; }
+@media (max-width: 760px) {
+  #guide .gres { grid-template-columns: 1fr; text-align: center; }
+  #guide .gwhy { margin: 0 auto; }
+  #guide .gacts { justify-content: center; }
+  #guide .chip.gq { padding: 14px 20px; font-size: .7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #guide .gstep, #guide .gpic img, #collection .piece video.pfilm { transition: none; }
+}
