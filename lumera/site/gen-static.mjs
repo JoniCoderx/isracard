@@ -352,13 +352,10 @@ const T2 = (() => {
     inject: [['<section id="enquire"', html]],
   };
 })();
-/* /test2/: the box made natively in 4K (box4k-frames.sh), every frame of
-   the take, in place of the live strip */
-const BOX4K = { swap: [[/n:\s*96,\s*dir:\s*"(\/?)f\/box\/"/, 'n:120,dir:"$1f/box4k/"']] };
 /* /test2/: the page recomposed around the jewellery (QA brief, 11 Oct 2026).
    The collection follows the opening and the handwritten signature that leads
    into it; the signature statement, the box and the stone become one story of
-   how a piece is made, after the pieces. Nothing is rewritten: the same sections, in a different order, some of them shorter. */
+   how a piece is made, after the pieces. Nothing is rewritten: the same sections, in a different order. */
 const LAYOUT = (() => {
   /* the guide sits beside the pieces, for the reader who has not chosen yet;
      the signature statement is no longer a section of its own: it becomes the
@@ -380,13 +377,7 @@ const LAYOUT = (() => {
     const body = ORDER.map(id => chunk[id].replace(/^(<section id="[a-z]+"[^>]*?) data-n="[^"]*"/, (s0, h) => NUM[id] ? `${h} data-n="${NUM[id]}"` : s0)).join("");
     return html.slice(0, main0.i) + body + html.slice(endAt);
   };
-  return {
-    edit,
-    css: `
-@media (min-width:1000px){#inside .pin{height:190svh!important}}
-@media (max-width:999px){#inside .pin{height:190svh!important}}
-`
-  };
+  return { edit };
 })();
 const HERO_ALT = {
   "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
@@ -434,7 +425,7 @@ function heroTest(dir, film, css, big, extras) {
 }
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
-heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, BOX4K, LAYOUT]);
+heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
