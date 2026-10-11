@@ -97,13 +97,23 @@ const TRUTH = {
     : { en: "No advertising trackers, no third-party analytics, no profile. The site sets no cookie for marketing. Your language choice is kept in your own browser and never leaves it.",
         he: "אין באתר רכיבי מעקב פרסומיים, אין כלי ניתוח של צד שלישי ואין פרופיל משתמש. האתר אינו שומר עוגיות שיווקיות. בחירת השפה נשמרת בדפדפן שלכם בלבד." }
 };
+/* The first published release (7 Oct 2026) carries the FormSubmit sentence
+   written out, not as {{enquiry_delivery}}, so the privacy page kept naming
+   FormSubmit after the form moved to the house's own backend. Where a policy
+   still holds that exact sentence, it is replaced by the one that is true for
+   this build. */
+const FORMSUBMIT_SAID = {
+  en: "When you press send, the enquiry form delivers what you wrote to the concierge's inbox through FormSubmit (formsubmit.co), a form-delivery service, which also emails you a confirmation if you left an email address. Nothing else is sent with it.",
+  he: "כשאתם לוחצים על שליחה, טופס הפנייה מעביר את מה שכתבתם לתיבת הדואר של הקונסיירז׳ באמצעות FormSubmit \u200f(formsubmit.co), שירות להעברת טפסים, שגם שולח לכם אישור אם השארתם כתובת אימייל. דבר נוסף אינו נשלח יחד איתו."
+};
+const stale = (v, k) => FN && v.includes(FORMSUBMIT_SAID[k]) ? v.split(FORMSUBMIT_SAID[k]).join(TRUTH.enquiry_delivery[k]) : v;
 /* a pair { en, he } gets each language's sentence; anything else is walked */
 const truth = (o) => {
   if (Array.isArray(o)) return o.map(truth);
   if (!o || typeof o !== "object") return o;
   const out = {};
   for (const [k, v] of Object.entries(o)) out[k] = (k === "en" || k === "he") && typeof v === "string"
-    ? v.replace(/\{\{(\w+)\}\}/g, (m, t) => TRUTH[t] ? TRUTH[t][k] : m) : truth(v);
+    ? stale(v.replace(/\{\{(\w+)\}\}/g, (m, t) => TRUTH[t] ? TRUTH[t][k] : m), k) : truth(v);
   return out;
 };
 export const ANALYTICS = ANALYTICS_MODE;

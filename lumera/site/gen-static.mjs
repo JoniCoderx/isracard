@@ -324,17 +324,18 @@ const T2 = (() => {
   const E = (en, he) => `data-en="${q(en)}" data-he="${q(he)}"`;
   const t = (tag, cls, en, he, extra = "") => `<${tag}${cls ? ` class="${cls}"` : ""}${extra}><span ${E(en, he)}>${en}</span></${tag}>`;
   const opt = (v, en, he) => `<button type="button" class="chip gq" data-v="${v}"><span ${E(en, he)}>${en}</span></button>`;
-  const step = (k, qen, qhe, opts) => `<div class="gstep" data-k="${k}">${t("p", "gq-t", qen, qhe)}<div class="gopts">${opts.map(o => opt(...o)).join("")}</div></div>`;
+  const step = (k, qen, qhe, opts) => `<div class="gstep" data-k="${k}" role="group" aria-labelledby="gq-${k}">${t("p", "gq-t", qen, qhe, ` id="gq-${k}"`)}<div class="gopts">${opts.map(o => opt(...o)).join("")}</div></div>`;
   const html = `<section id="guide" data-n="" data-title-en="Find her piece" data-title-he="מצאו את התכשיט שלה" aria-label="Find her piece">
   <div class="gin">
     ${t("div", "gk", "A private guide · Three questions", "מדריך פרטי · שלוש שאלות")}
     ${t("h2", "", "Find her piece", "מצאו את התכשיט שלה")}
-    ${t("p", "gsub", "Three quiet questions, and the house suggests the piece that is hers.", "שלוש שאלות שקטות, והבית מציע את התכשיט שהוא שלה.")}
+    ${t("p", "gsub", "Three short questions, and the house suggests the piece that suits her.", "שלוש שאלות קצרות, ונציע לכם את התכשיט שמתאים לה.")}
     <div class="gbar" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="gqnav"><button type="button" class="gback" hidden><span ${E("Back", "חזרה")}>Back</span></button><span class="gprog" aria-live="polite" ${E("Question 1 of 3", "שאלה 1 מתוך 3")}>Question 1 of 3</span></div>
     <div class="gstage">
-      ${step("moment", "What is the moment?", "מה הרגע?", [["anniversary", "An anniversary", "יום נישואין"], ["birthday", "A birthday", "יום הולדת"], ["promise", "A promise", "הבטחה"], ["because", "Just because", "בלי סיבה מיוחדת"]])}
-      ${step("how", "How does she wear jewellery?", "איך היא עונדת תכשיטים?", [["quiet", "Every day, quietly", "כל יום, בשקט"], ["layered", "Layered, piece on piece", "בשכבות, תכשיט על תכשיט"], ["noticed", "One piece that is noticed", "תכשיט אחד שמושך את העין"]])}
-      ${step("where", "Where should it rest?", "איפה הוא ינוח?", [["neck", "At her neck", "על הצוואר"], ["wrist", "On her wrist", "על פרק היד"], ["hand", "On her hand", "על האצבע"]])}
+      ${step("moment", "What is the occasion?", "מה האירוע?", [["anniversary", "An anniversary", "יום נישואין"], ["birthday", "A birthday", "יום הולדת"], ["promise", "A promise", "הבטחה"], ["because", "Just because", "סתם כי מתחשק"]])}
+      ${step("how", "How does she wear jewellery?", "איך היא אוהבת לענוד תכשיטים?", [["quiet", "Every day, quietly", "כל יום, בעדינות"], ["layered", "Layered, piece on piece", "בשכבות, כמה יחד"], ["noticed", "One piece that is noticed", "תכשיט אחד שבולט"]])}
+      ${step("where", "Where would she wear it?", "איפה היא תענוד אותו?", [["neck", "At her neck", "על הצוואר"], ["wrist", "On her wrist", "על פרק היד"], ["hand", "On her hand", "על האצבע"]])}
       <div class="gstep gres-in" data-k="result"><div class="gres">
         <div class="gpic"><img alt="" loading="lazy" decoding="async"></div>
         <div><div class="gfor"></div><div class="gname"></div><p class="gwhy"></p>
@@ -355,12 +356,16 @@ const T2 = (() => {
 /* /test2/: the box made natively in 4K (box4k-frames.sh), every frame of
    the take, in place of the live strip */
 const BOX4K = { swap: [[/n:\s*96,\s*dir:\s*"(\/?)f\/box\/"/, 'n:120,dir:"$1f/box4k/"']] };
+const HERO_ALT = {
+  "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
+                   he: "שרשרת, טבעת וצמיד של SILAVU תחת פעמון זכוכית על שיש שחור, ברקע קו הרקיע של דובאי בלילה, ויד של אישה מונחת לצידם" }
+};
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
   const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []), swap: extras.flatMap(x => x.swap || []) } : null;
   const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
-    .replace(/<head>\n/, '<head>\n<base href="../">\n')
+    .replace(/<head>\n/, `<head>\n<base href="../">\n<script>window.__route="${dir}/"</script>\n`)
     .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">')
     .replace(/<title[^>]*>[^<]*<\/title>/, m => m.replace(/>[^<]*</, ">SILAVU · hero test<"))
     .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
@@ -372,6 +377,8 @@ function heroTest(dir, film, css, big, extras) {
       ? `<source media="(max-width:899px)" srcset="img/${film}-v-1080.jpg 1080w, img/${film}-v-1216.jpg 1216w" sizes="100vw">`
       : `<source media="(max-width:899px)" srcset="img/${film}-1600.jpg 1600w, img/${film}-1920.jpg 1920w" sizes="100vw">`)
     .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${film}-1920.jpg" srcset="${set}"`)
+    /* the opening picture is described as what it shows, not as the film it replaced */
+    .replace(/(<img class="hv" id="heroimg"[^>]*?) alt="[^"]*" data-alt-he="[^"]*"/, (m, a) => HERO_ALT[film] ? `${a} alt="${HERO_ALT[film].en}" data-alt-he="${HERO_ALT[film].he}"` : m)
     .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-${big ? "v" : "720"}.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
     .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");

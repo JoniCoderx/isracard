@@ -71,8 +71,10 @@ rep(`function setLang(c) { lang = c; try { localStorage.setItem("silavu-lang", c
      the address bar says after a language change */
   (function () { try { var bs = document.querySelector("base"); if (!bs) { bs = document.createElement("base"); document.head.insertBefore(bs, document.head.firstChild); }
     bs.href = new URL(".", document.baseURI).href; } catch (e) {} })();
-  function langURL(c) { try { var root = new URL(".", document.baseURI), u = new URL(c === "he" ? "he/" : "", root);
-    if (c !== "en" && c !== "he") u.searchParams.set("lang", c); u.hash = location.hash;
+  /* a preview page (window.__route, e.g. "test2/") keeps its own address in
+     every language, Hebrew included, so the words and the page always agree */
+  function langURL(c) { try { var root = new URL(".", document.baseURI), rt = window.__route || "", u = new URL(rt || (c === "he" ? "he/" : ""), root);
+    if (c !== "en" && (c !== "he" || rt)) u.searchParams.set("lang", c); u.hash = location.hash;
     if (u.href !== location.href) history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) {} }
   /* a piece's own page, from a Hebrew page, is its Hebrew page */
   function langLinks(c) { document.querySelectorAll('a[href^="pieces/"], a[href^="he/pieces/"]').forEach(function (a) {

@@ -82,3 +82,11 @@ html.xhov .btn:active { transform: scale(.97) !important; transition-duration: .
 @media (prefers-reduced-motion: reduce) {
   #guide .gstep, #guide .gpic img, #collection .piece video.pfilm { transition: none; }
 }
+#guide .gqnav { display: flex; align-items: center; justify-content: center; gap: 18px; min-height: 28px; margin: -14px 0 18px; }
+#guide .gback { background: none; border: 0; color: #b9b4aa; font: inherit; font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; padding: 8px 4px; }
+#guide .gback::before { content: "←"; margin-inline-end: 8px; display: inline-block; }
+html[dir=rtl] #guide .gback::before { content: "→"; }
+#guide .gback:hover, #guide .gback:focus-visible { color: #f4f1e9; }
+#guide .gprog { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: #8f8a80; }
+#guide .chip.gq.on { border-color: rgba(232,214,168,.85); background: rgba(232,214,168,.12); }
+html[data-ns] #guide .gback, html[data-ns] #guide .gprog, html[data-ns] #guide .chip.gq, html[data-ns] #guide .gk, html[data-ns] #guide .gfor { letter-spacing: 0; text-transform: none; }

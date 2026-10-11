@@ -39,12 +39,11 @@
   ];
   var WA = ($("cform").getAttribute("data-wa") || "").replace(/[^0-9]/g, "");
   document.querySelectorAll("[data-socials]").forEach(function (box) {
-    /* the house's channels are shown; one without a confirmed address yet is
-       drawn but not linked (no href: not clickable, not in the tab order),
-       and it becomes a link the moment its address is filled in above */
-    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa && !WA) return; var a = document.createElement("a");
-      if (isWa || s[1]) { a.href = isWa ? "https://wa.me/" + WA : s[1]; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("aria-label", s[0]); a.title = s[0]; }
-      else { a.className = "soon"; a.setAttribute("aria-hidden", "true"); }
+    /* only a channel with a confirmed address is shown, as a real link; an
+       icon that looked clickable and went nowhere was a promise the house
+       cannot keep yet. It appears the moment its address is filled in above */
+    SOC.forEach(function (s) { var isWa = s[0] === "WhatsApp"; if (isWa ? !WA : !s[1]) return; var a = document.createElement("a");
+      a.href = isWa ? "https://wa.me/" + WA : s[1]; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("aria-label", s[0]); a.title = s[0];
       a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + s[2] + '"/></svg>'; box.appendChild(a); });
     /* no confirmed account, no "Follow" heading over an empty row */
     if (!box.children.length) { var col = box.closest(".ffol") || box; col.hidden = true; }
@@ -637,8 +636,10 @@
      (French, Russian, Arabic), and a remembered Hebrew goes to the Hebrew
      address rather than turning the English one Hebrew */
   else {
-    var qLang = (location.search.match(/[?&]lang=(en|fr|ar|ru)\b/) || [])[1];
+    var qLang = (location.search.match(window.__route ? /[?&]lang=(en|he|fr|ar|ru)\b/ : /[?&]lang=(en|fr|ar|ru)\b/) || [])[1];
     if (qLang) lang = qLang;
+    /* a preview page has no Hebrew address of its own: Hebrew rides on ?lang= there */
+    else if (lang !== "en" && window.__route) { try { var u1 = new URL(location.href); u1.searchParams.set("lang", lang); history.replaceState(null, "", u1.pathname + u1.search + u1.hash); } catch (e) {} }
     else if (lang === "he") { try { location.replace(new URL("he/", document.baseURI).href + location.hash); } catch (e) {} }
     else if (lang !== "en") { try { var u0 = new URL(location.href); u0.searchParams.set("lang", lang); history.replaceState(null, "", u0.pathname + u0.search + u0.hash); } catch (e) {} }
   }
@@ -713,6 +714,7 @@
     });
     price(); var k = stoneCur; stoneCur = -1; setStone(k); curSec = null; compass();
     try { selPaint(); } catch (e) {}
+    try { formRelang(); } catch (e) {}
   }
   /* Text the page writes for itself after load (the piece window's details,
      the story, the summaries) gets the same right-to-left island as the
@@ -1070,7 +1072,7 @@
       } else if (sel.k === "line") {
         var B = window.__bracelet, c = null;
         if (B && B.shot && !document.documentElement.classList.contains("no3d")) c = B.shot({ th: -0.62, ph: 0.42, d: 1 });
-        if (!c || !c.width) c = $("stripcv");
+        if (!c || !c.width) c = drawnLine();
         if (c && c.width) { var r = cropTo(c), t = document.createElement("canvas"); t.width = t.height = 160; var x = t.getContext("2d");
           x.fillStyle = "#121110"; x.fillRect(0, 0, 160, 160); fitIn(x, r, 10, 10, 140, 140); src = t.toDataURL("image/jpeg", 0.86); }
       }
@@ -1099,6 +1101,10 @@
        bracelet large, then from the side, close, and on a wrist; what was
        chosen; the estimate, said plainly to be one; and the house mark at the
        foot. The mark is the page's own path, never redrawn. ── */
+  /* the bracelet as it is drawn on screen now: the live renderer's canvas, or,
+     where this browser has no 3D, the illustration drawn in its place (the
+     renderer's own canvas is never sized then, and a picture of it was empty) */
+  function drawnLine() { var f = document.documentElement.classList.contains("no3d") && document.querySelector(".glfbcv"); return f && f.width ? f : $("stripcv"); }
   function cropTo(src) {
     /* the drawn piece only, with a little air: the renders are mostly empty frame */
     var t = document.createElement("canvas"); t.width = src.width; t.height = src.height; var tx = t.getContext("2d"); tx.drawImage(src, 0, 0);
@@ -1116,7 +1122,7 @@
     var B = window.__bracelet, has3d = !document.documentElement.classList.contains("no3d") && B && B.snap;
     var main = null, side = null, close = null;
     try { if (has3d) { main = B.shot ? B.shot({ th: -0.62, ph: 0.42, d: 1 }) : B.snap(); if (B.shot) { side = B.shot({ th: -1.57, ph: 0.05, d: 1 }); close = B.shot({ th: -0.30, ph: 0.34, d: 0.34, f: 1 }); } } } catch (e) {}
-    if (!main || !main.width) main = $("stripcv");
+    if (!main || !main.width) main = drawnLine();
     var go = function (wrist) { composeSheet(main, side, close, wrist, cb); };
     if (has3d && window.__wristShot) window.__wristShot(go); else go(null);
   }
@@ -1218,15 +1224,16 @@
     try {
       var f = function (tz) { return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date()); };
       var he = document.documentElement.getAttribute("data-lang") === "he";
-      /* the room is open from 9 to 21 local time, and the clock says so */
+      /* the clock tells the time there; whether the house is open is not
+         guessed from the hour (no weekday, no holiday), so until the house
+         publishes its hours the line under it says how a meeting is made */
       var state = function (id, tz) {
         var el = $(id); if (!el) return; var t = f(tz); el.textContent = t;
-        var hh = +t.slice(0, 2), open = hh >= 9 && hh < 21;
         var row = el.closest ? el.closest(".clock") : null; if (!row) return;
-        row.classList.toggle("open", open);
+        row.classList.remove("open");
         var tag = row.querySelector(".cst");
         if (!tag) { tag = document.createElement("div"); tag.className = "cst k"; row.appendChild(tag); }
-        tag.textContent = open ? (he ? "פתוח עכשיו" : "Open now") : (he ? "נפתח ב־9:00" : "Opens 9:00");
+        tag.textContent = he ? "בתיאום מראש" : ((typeof T === "function" && T("By appointment")) || "By appointment");
       };
       state("clkDXB", "Asia/Dubai"); state("clkTLV", "Asia/Jerusalem");
     } catch (e) {
@@ -1324,12 +1331,36 @@
     contact: ["Please add a phone number or an email address, so we can answer you.", "נא להוסיף טלפון או אימייל, כדי שנוכל לחזור אליכם."],
     contactBad: ["This does not look like a phone number or an email address.", "זה לא נראה כמו מספר טלפון או כתובת אימייל."]
   };
+  /* what the form has said to the reader (a field's error, a failed send,
+     the thank-you) is kept as what it means, not as the words, so a change of
+     language rewrites it in the new language instead of leaving the old one */
+  var errOn = {}, sendErr = null, thanks = null;
   function fieldErr(el, key) {
     var box = el.parentElement, msg = $(el.id + "Err");
-    box.classList.remove("err");
+    box.classList.remove("err"); errOn[el.id] = key || null;
     if (!key) { el.removeAttribute("aria-invalid"); if (msg) { msg.hidden = true; msg.textContent = ""; } return; }
     void box.offsetWidth; box.classList.add("err"); el.setAttribute("aria-invalid", "true");
     if (msg) { msg.textContent = L2(ERR[key][0], ERR[key][1]); msg.hidden = false; }
+  }
+  function sendErrPaint() {
+    var err = $("cerr"); if (!err || !sendErr) return;
+    err.textContent = sendErr.busy
+      ? L2("Several enquiries have just been sent from here. Please wait a few minutes and send again; nothing you wrote is lost.", "כמה פניות נשלחו מכאן ממש עכשיו. המתינו כמה דקות ושלחו שוב; שום דבר ממה שכתבתם לא אבד.")
+      : L2("The enquiry could not be sent just now. Nothing you wrote is lost: press the button again, or continue in email.", "לא הצלחנו לשלוח את הפנייה כרגע. שום דבר ממה שכתבתם לא אבד: נסו שוב, או המשיכו באימייל.");
+    if (!sendErr.busy && sendErr.href) { var a = document.createElement("a"); a.className = "lnk"; a.href = sendErr.href; a.textContent = L2("Continue in email", "המשך באימייל");
+      err.appendChild(document.createTextNode(" ")); err.appendChild(a); }
+    err.hidden = false;
+  }
+  function thanksPaint() {
+    if (!thanks) return; var t = thanks;
+    $("cthh").textContent = L2("Thank you", "תודה") + (t.first ? ", " + t.first : "");
+    $("cthp").textContent = L2("Your enquiry has reached the SILAVU concierge, and we will answer you personally.", "הפנייה שלכם הגיעה לקונסיירז׳ של SILAVU, ונחזור אליכם באופן אישי.")
+      + (t.ref ? " " + L2("Your reference is", "מספר הפנייה שלכם:") + " \u2066" + t.ref + "\u2069." : "")
+      + (t.cv ? " " + L2("A confirmation is on its way to", "אישור נשלח אליכם אל") + " \u2068" + t.cv + "\u2069." : "");
+  }
+  function formRelang() {
+    Object.keys(errOn).forEach(function (id) { var k = errOn[id], m = $(id + "Err"); if (k && m && ERR[k]) m.textContent = L2(ERR[k][0], ERR[k][1]); });
+    sendErrPaint(); thanksPaint();
   }
   function contactOk(v) { v = v.trim(); return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || (v.replace(/[^0-9]/g, "").length >= 7 && /^[0-9+()\-.\s]+$/.test(v)); }
   form.addEventListener("click", function (e) {
@@ -1419,7 +1450,7 @@
     fieldErr(name, name.value.trim() ? null : "name"); if (!name.value.trim()) bad = name;
     if (bad) { bad.focus(); return; }
     var body = compose(), err = $("cerr"), btn = $("csend");
-    if (err) err.hidden = true;
+    if (err) err.hidden = true; sendErr = null;
     /* with an endpoint the enquiry is really sent, and the page only says it
        arrived when the server says so; if it fails, nothing typed is lost and
        the email app is offered instead */
@@ -1459,11 +1490,9 @@
           if (house && !(j && j.ok && j.ref)) throw new Error("not confirmed");
           if (house) { form.__idem = null; try { window.dispatchEvent(new CustomEvent("silavu:enquiry", { detail: { want: payload.want } })); } catch (e) {} }
           try { sessionStorage.removeItem(FORMK); } catch (e) {}
-          var first = payload.name.split(/\s+/)[0];
-          $("cthh").textContent = L2("Thank you", "תודה") + (first ? ", " + first : "");
-          $("cthp").textContent = L2("Your enquiry has reached the SILAVU concierge, and we will answer you personally.", "הפנייה שלכם הגיעה לקונסיירז׳ של SILAVU, ונחזור אליכם באופן אישי.")
-            + (house && j.ref ? " " + L2("Your reference is", "מספר הפנייה שלכם:") + " \u2066" + j.ref + "\u2069." : "")
-            + (isMail && (!house || j.confirmation === true) ? " " + L2("A confirmation is on its way to", "אישור נשלח אליכם אל") + " \u2068" + cv + "\u2069." : "");
+          sendErr = null;
+          thanks = { first: payload.name.split(/\s+/)[0], ref: house && j.ref ? j.ref : "", cv: isMail && (!house || j.confirmation === true) ? cv : "" };
+          thanksPaint();
           form.classList.add("delivered"); try { sessionStorage.removeItem("silavu-draft"); } catch (e) {}
           var th = $("cthanks"); if (th) { var r = th.getBoundingClientRect(); if (r.top < 70 || r.top > innerHeight * 0.6) window.scrollTo({ top: scrollY + r.top - innerHeight * 0.3, behavior: "smooth" }); }
         })
@@ -1473,10 +1502,8 @@
             if (x.body.fields.indexOf("email") >= 0 || x.body.fields.indexOf("phone") >= 0 || x.body.fields.indexOf("contact") >= 0) { fieldErr(contact, "contactBad"); contact.focus(); return; }
             if (x.body.fields.indexOf("name") >= 0) { fieldErr(name, "name"); name.focus(); return; }
           }
-          if (x && x.status === 429 && err) { err.textContent = L2("Several enquiries have just been sent from here. Please wait a few minutes and send again; nothing you wrote is lost.", "כמה פניות נשלחו מכאן ממש עכשיו. המתינו כמה דקות ושלחו שוב; שום דבר ממה שכתבתם לא אבד."); err.hidden = false; return; }
-          if (err) { err.textContent = L2("The enquiry could not be sent just now. Nothing you wrote is lost: press the button again, or continue in email.", "לא הצלחנו לשלוח את הפנייה כרגע. שום דבר ממה שכתבתם לא אבד: נסו שוב, או המשיכו באימייל."); err.hidden = false; }
-          var a = document.createElement("a"); a.className = "lnk"; a.href = "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body); a.textContent = L2("Continue in email", "המשך באימייל");
-          if (err) { err.appendChild(document.createTextNode(" ")); err.appendChild(a); }
+          if (x && x.status === 429) { sendErr = { busy: true }; sendErrPaint(); return; }
+          sendErr = { href: "mailto:" + mail + "?subject=" + encodeURIComponent("SILAVU · " + name.value) + "&body=" + encodeURIComponent(body) }; sendErrPaint();
         })
         .then(function () { btn.disabled = false; btn.removeAttribute("aria-busy"); btn.innerHTML = was; });
       return;
