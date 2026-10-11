@@ -356,13 +356,71 @@ const T2 = (() => {
 /* /test2/: the box made natively in 4K (box4k-frames.sh), every frame of
    the take, in place of the live strip */
 const BOX4K = { swap: [[/n:\s*96,\s*dir:\s*"(\/?)f\/box\/"/, 'n:120,dir:"$1f/box4k/"']] };
+/* /test2/: the page recomposed around the jewellery (QA brief, 11 Oct 2026).
+   The collection follows the opening and the handwritten signature that leads
+   into it; the signature statement, the box and the stone become one story of
+   how a piece is made, after the pieces; the founder is introduced, in the
+   About page's own approved words, before the guide and the enquiry. Nothing
+   is rewritten: the same sections, in a different order, some of them shorter. */
+const LAYOUT = (() => {
+  const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  const E = x => `data-en="${q(x.en)}" data-he="${q(x.he)}"`;
+  const a = ABOUT, portrait = a && a.portrait;
+  const founder = a && a.letter && a.letter[0] ? `<section id="founder" data-n="" data-title-en="The founder" data-title-he="המייסד" aria-label="The founder">
+  <div class="fdin">
+    <figure class="fdpic">${portrait ? `<img src="${portrait}-800.jpg" srcset="${portrait}-800.jpg 800w, ${portrait}-1100.jpg 1100w" sizes="(min-width:900px) 30vw, 70vw" width="1100" height="1375" loading="lazy" decoding="async" alt="${q(a.name.en)}, ${q(a.role.en)} of SILAVU" data-alt-he="${q(a.name.he)}, ${q(a.role.he)} של SILAVU">` : ""}</figure>
+    <div class="fdtx">
+      <div class="k gold" ${E({ en: "The founder", he: "המייסד" })}>The founder</div>
+      <h2 class="h2" ${E(a.name)}>${a.name.en}</h2>
+      <p class="p fdlead" ${E(a.letter[0])}>${a.letter[0].en}</p>
+      <a class="btn" href="about/" ${E(a.eyebrow)}>${a.eyebrow.en}</a>
+    </div>
+  </div>
+</section>
+` : "";
+  const ORDER = ["hero", "craft", "collection", "house", "inside", "macro", "build", "founder", "guide", "enquire", "end"];
+  const NUM = { collection: "01", inside: "02", build: "03", enquire: "04" };
+  const edit = html => {
+    const re = /<section id="([a-z]+)"/g, at = [];
+    let m; while ((m = re.exec(html))) at.push({ id: m[1], i: m.index });
+    const main0 = at.find(x => x.id === "hero"), endAt = html.indexOf("</main>");
+    if (!main0 || endAt < 0) return null;
+    const top = at.filter(x => x.i >= main0.i && x.i < endAt);
+    const chunk = {};
+    top.forEach((x, k) => { chunk[x.id] = html.slice(x.i, k + 1 < top.length ? top[k + 1].i : endAt); });
+    if (founder) chunk.founder = founder;
+    if (ORDER.some(id => !chunk[id])) return null;
+    const body = ORDER.map(id => chunk[id].replace(/^(<section id="[a-z]+"[^>]*?) data-n="[^"]*"/, (s0, h) => NUM[id] ? `${h} data-n="${NUM[id]}"` : s0)).join("");
+    return html.slice(0, main0.i) + body + html.slice(endAt);
+  };
+  return {
+    edit,
+    css: `
+#house{padding-block:clamp(84px,11vw,140px) clamp(24px,4vw,48px)!important}
+#house .hsig svg.sy{height:clamp(84px,9vw,124px)!important}
+#house .hsig::after{height:clamp(84px,9vw,124px)!important}
+#house .h2{font-size:clamp(1.9rem,3.8vw,3.2rem)!important}
+@media (min-width:1000px){#inside .pin{height:190svh!important}}
+@media (max-width:999px){#inside .pin{height:190svh!important}}
+#founder{background:#0b0a09;color:#f4f1e9;padding:clamp(80px,11vw,150px) var(--pad,24px)}
+#founder .fdin{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:center}
+#founder .fdpic{margin:0;aspect-ratio:4/5;overflow:hidden;border-radius:4px;background:#151412}
+#founder .fdpic img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.04)}
+#founder .h2{margin:14px 0 18px}
+#founder .fdlead{color:#cfc9bd;max-width:52ch;line-height:1.7}
+#founder .fdlead .ajc{color:#e8d6a8;letter-spacing:.04em}
+#founder .btn{margin-top:28px}
+@media (max-width:760px){#founder .fdin{grid-template-columns:1fr;text-align:center}#founder .fdpic{width:100%;max-width:300px;margin:0 auto}#founder .fdlead{margin:0 auto}}
+`
+  };
+})();
 const HERO_ALT = {
   "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
                    he: "שרשרת, טבעת וצמיד של SILAVU תחת פעמון זכוכית על שיש שחור, ברקע קו הרקיע של דובאי בלילה, ויד של אישה מונחת לצידם" }
 };
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
-  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []), swap: extras.flatMap(x => x.swap || []) } : null;
+  const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []), swap: extras.flatMap(x => x.swap || []), edit: extras.map(x => x.edit).filter(Boolean) } : null;
   const W = big ? [1600, 1920, 2560, 3840] : [1600, 1920], set = W.map(w => `img/${film}-${w}.jpg ${w}w`).join(", ");
   const tHead = head
     .replace(/<head>\n/, `<head>\n<base href="../">\n<script>window.__route="${dir}/"</script>\n`)
@@ -394,6 +452,7 @@ function heroTest(dir, film, css, big, extras) {
     fs.writeFileSync(path.join(ASSETS, n), code); tHtml = tHtml.split("assets/" + ref).join("assets/" + n);
   }
   if (extra) for (const [mark, add] of extra.inject) { if (!tHtml.includes(mark)) { console.warn(`hero test page ${dir}: ${mark} not found`); return; } tHtml = tHtml.replace(mark, add + mark); }
+  if (extra) for (const f of extra.edit) { const t2 = f(tHtml); if (!t2) { console.warn(`hero test page ${dir}: the layout could not be applied`); return; } tHtml = t2; }
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
   fs.mkdirSync(path.join(outDir, dir), { recursive: true });
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
@@ -401,7 +460,7 @@ function heroTest(dir, film, css, big, extras) {
 }
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
-heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, BOX4K]);
+heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, BOX4K, LAYOUT]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
