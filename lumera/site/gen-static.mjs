@@ -378,7 +378,10 @@ const LAYOUT = (() => {
   </div>
 </section>
 ` : "";
-  const ORDER = ["hero", "craft", "collection", "house", "inside", "macro", "build", "founder", "guide", "enquire", "end"];
+  /* the guide sits beside the pieces, for the reader who has not chosen yet;
+     the signature statement is no longer a section of its own: it becomes the
+     box's first line, over the closed box with the mark on its lid */
+  const ORDER = ["hero", "craft", "collection", "guide", "inside", "macro", "build", "founder", "enquire", "end"];
   const NUM = { collection: "01", inside: "02", build: "03", enquire: "04" };
   const edit = html => {
     const re = /<section id="([a-z]+)"/g, at = [];
@@ -389,6 +392,9 @@ const LAYOUT = (() => {
     const chunk = {};
     top.forEach((x, k) => { chunk[x.id] = html.slice(x.i, k + 1 < top.length ? top[k + 1].i : endAt); });
     if (founder) chunk.founder = founder;
+    const sig = chunk.house && chunk.house.match(/<h2 class="h2[^"]*" (data-en="[^"]*" data-he="[^"]*")>([\s\S]*?)<\/h2>/);
+    if (!sig || !chunk.inside) return null;
+    chunk.inside = chunk.inside.replace(/<h2 class="h2 bt" data-en="[^"]*" data-he="[^"]*">[\s\S]*?<\/h2>/, `<h2 class="h2 bt" ${sig[1]}>${sig[2]}</h2>`);
     if (ORDER.some(id => !chunk[id])) return null;
     const body = ORDER.map(id => chunk[id].replace(/^(<section id="[a-z]+"[^>]*?) data-n="[^"]*"/, (s0, h) => NUM[id] ? `${h} data-n="${NUM[id]}"` : s0)).join("");
     return html.slice(0, main0.i) + body + html.slice(endAt);
@@ -396,10 +402,6 @@ const LAYOUT = (() => {
   return {
     edit,
     css: `
-#house{padding-block:clamp(84px,11vw,140px) clamp(24px,4vw,48px)!important}
-#house .hsig svg.sy{height:clamp(84px,9vw,124px)!important}
-#house .hsig::after{height:clamp(84px,9vw,124px)!important}
-#house .h2{font-size:clamp(1.9rem,3.8vw,3.2rem)!important}
 @media (min-width:1000px){#inside .pin{height:190svh!important}}
 @media (max-width:999px){#inside .pin{height:190svh!important}}
 #founder{background:#0b0a09;color:#f4f1e9;padding:clamp(80px,11vw,150px) var(--pad,24px)}
