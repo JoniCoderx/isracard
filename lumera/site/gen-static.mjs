@@ -316,9 +316,8 @@ const EMB3D = (() => {
     js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
   };
 })();
-/* /test2/: the next round, all at once (src/test2.css, src/test2.js): the
-   collection's own films over its photographs, "Find her piece" before the
-   enquiry, and the buttons' hover on a computer */
+/* /test2/: the next round, all at once (src/test2.css, src/test2.js): "Find
+   her piece", and the buttons' hover on a computer */
 const T2 = (() => {
   const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
   const E = (en, he) => `data-en="${q(en)}" data-he="${q(he)}"`;
