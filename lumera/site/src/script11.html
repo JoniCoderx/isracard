@@ -78,8 +78,13 @@
     var hold = Math.max(1, sec.offsetHeight - stage.offsetHeight);
     return { q: c01((vh - r.top) / (vh + hold)), near: r.top < vh * 2.5 && r.bottom > -vh, vis: r.top < vh + 40 && r.bottom > -40 };
   }
+  /* a stone is kept unpacked (a bitmap), so drawing it while the page scrolls
+     never stops to decode the picture again; same pixels */
+  function unpacked(im, f) { if (!window.createImageBitmap || !window.fetch) { f(im); return; }
+    fetch(im.src, { credentials: "same-origin" }).then(function (r) { return r.blob(); }).then(function (bl) { return createImageBitmap(bl); })
+      .then(function (b) { b.naturalWidth = b.width; b.naturalHeight = b.height; f(b); }, function () { f(im); }); }
   function fetchAll() { if (asked) return; asked = true;
-    KINDS.forEach(function (n) { var im = new Image(); im.decoding = "async"; im.onload = function () { IMG[n] = im; got++; dirty = true; last = -2; if (window.__awake) window.__awake.wake(); }; im.src = BASE + n + "-512.webp"; }); }
+    KINDS.forEach(function (n) { var im = new Image(); im.decoding = "async"; im.onload = function () { unpacked(im, function (b) { IMG[n] = b; got++; dirty = true; last = -2; if (window.__awake) window.__awake.wake(); }); }; im.src = BASE + n + "-512.webp"; }); }
   var lw = innerWidth; addEventListener("resize", function () { if (innerWidth !== lw) { lw = innerWidth; dirty = true; } }, { passive: true });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { dirty = true; });
 

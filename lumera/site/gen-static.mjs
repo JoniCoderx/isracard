@@ -313,7 +313,12 @@ const EMB3D = (() => {
 #enquire .emb.e3d .embart canvas.emb3d{opacity:1;transform:none}
 #enquire .emb.e3d .embsvg,#enquire .emb.e3d .embshine,#enquire .emb.e3d .embart::after{opacity:0!important;transition:opacity 1.2s ease}
 #enquire .emb.e3d .embtilt{transform:scale(var(--sc,1))!important}`,
-    js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();import("./3d/emb3d.js?v=${v}").then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{rootMargin:"700px"});io.observe(emb)})();</script>`,
+    /* The emblem is built (the outline extruded, the metal's shader compiled:
+       about a second of work on a phone) only while the reader has stopped
+       scrolling, and once it is within a few screens; the library itself is
+       fetched when the page is idle. Built on the way past, as it was, it froze
+       the scroll into the enquiry. Until it is built the drawn emblem shows. */
+    js: `<script type="module">(function(){var emb=document.getElementById("emb"),host=emb&&emb.querySelector(".embart"),p=emb&&emb.querySelector(".embfill");if(!host||!p||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window))return;var w=parseFloat((emb.querySelector(".embsvg").getAttribute("viewBox")||"0 0 872 1000").split(" ")[2]);var ric=window.requestIdleCallback||function(f){return setTimeout(f,200)},mod=null,near=false,done=false,last=0,wait=0;function lib(){return mod||(mod=import("./3d/emb3d.js?v=${v}"))}function quiet(){wait=0;if(done||!near)return;if(performance.now()-last<450){wait=setTimeout(quiet,250);return}done=true;ric(function(){lib().then(function(m){m.start(emb,host,p.getAttribute("d"),w)}).catch(function(){})},{timeout:1500})}addEventListener("scroll",function(){last=performance.now();if(near&&!done&&!wait)wait=setTimeout(quiet,450)},{passive:true});var go=function(){ric(function(){lib().catch(function(){})},{timeout:5000})};if(document.readyState==="complete")go();else addEventListener("load",go,{once:true});var io=new IntersectionObserver(function(es){if(!es.some(function(e){return e.isIntersecting}))return;io.disconnect();near=true;quiet()},{rootMargin:"250% 0px"});io.observe(emb)})();</script>`,
   };
 })();
 /* /test2/: the next round, all at once (src/test2.css, src/test2.js): "Find

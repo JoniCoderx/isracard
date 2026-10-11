@@ -33,15 +33,27 @@
        them. Each release opens a new generation and a frame from an older one
        is dropped on arrival. */
     var gen = 0;
+    function free(f) { if (!f) return; if (f.close) f.close(); else f.src = ""; }
     function load(i, cb) {
       if (frames[i] || requested > N + 2) return;
       var im = new Image(), g = gen; im.decoding = "async"; requested++;
       /* a frame counts as here only once it is decoded, so drawing it never
          stops the page to unpack a picture mid-scroll */
-      var got = function () { if (g !== gen || !asked[i] || frames[i]) return; frames[i] = im; loaded++; held++; if (held > peak) peak = held; if (cb) cb(); if (window.__awake) window.__awake.wake(); };
-      im.src = src(i);
-      if (im.decode) im.decode().then(got, function () { im.onload = got; if (im.complete && im.naturalWidth) got(); });
-      else im.onload = got;
+      var keepIt = function (f) { if (g !== gen || !asked[i] || frames[i]) { free(f); return; } frames[i] = f; loaded++; held++; if (held > peak) peak = held; if (cb) cb(); if (window.__awake) window.__awake.wake(); };
+      /* decode() alone is not enough: Chrome may drop the unpacked pixels of a
+         large picture, and a canvas then unpacks the frame again on the main
+         thread at the moment it is drawn, mid-scroll (measured: 14 stalls of
+         ~45 ms on a mid phone through one pass of the box). A bitmap is held
+         unpacked, so drawing it is only a copy. Same pixels, same size. */
+      var got = function () { keepIt(im); };
+      var viaImg = function () { im.src = src(i); if (im.decode) im.decode().then(got, function () { im.onload = got; if (im.complete && im.naturalWidth) got(); }); else im.onload = got; };
+      /* the file is unpacked from its bytes, which the browser does off the
+         page's own thread (from an already-loaded picture it does it on it) */
+      if (window.createImageBitmap && window.fetch) {
+        fetch(src(i), { credentials: "same-origin" }).then(function (r) { if (!r.ok) throw 0; return r.blob(); })
+          .then(function (bl) { if (g !== gen || !asked[i] || frames[i]) throw 1; return createImageBitmap(bl); })
+          .then(function (bm) { bm.naturalWidth = bm.width; bm.naturalHeight = bm.height; keepIt(bm); }, function (e) { if (e !== 1) viaImg(); });
+      } else viaImg();
     }
     /* Fetch from where the eye is, not from the top. A fixed order fills the far
        end of the strip while the frames either side of the playhead are still
@@ -99,7 +111,7 @@
            the one asked for. The window fills in between as the page slows. */
         var keep = function (i) { return SKEL > 0 && i % SKEL === 0; };
         /* let go of what has fallen out of the window */
-        for (var j = 0; j < N; j++) if (asked[j] && !keep(j) && ((j - want) * dirn > ahead || (want - j) * dirn > behind)) { if (frames[j]) { frames[j].src = ""; held--; } frames[j] = null; asked[j] = 0; requested = Math.max(0, requested - 1); }
+        for (var j = 0; j < N; j++) if (asked[j] && !keep(j) && ((j - want) * dirn > ahead || (want - j) * dirn > behind)) { if (frames[j]) { free(frames[j]); held--; } frames[j] = null; asked[j] = 0; requested = Math.max(0, requested - 1); }
         while (batch < 10) {
           var pick = -1;
           for (var d = 0; d < N; d += STEP) {
@@ -160,7 +172,7 @@
          direction: a reader who scrolls back up above a chapter has left it
          just as surely as one who scrolled down past it. */
       var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
-      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(function (f) { if (f) f.src = ""; }); frames = new Array(N); asked = new Array(N); fetched = new Array(N); pfOn = false; loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(free); frames = new Array(N); asked = new Array(N); fetched = new Array(N); pfOn = false; loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return false;
       /* the strip waits for the reader: it starts once the page has loaded and
          the reader has begun to move (or the chapter is already at hand), so a

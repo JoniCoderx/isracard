@@ -391,6 +391,30 @@
   function queueSprite(el) { if (spQ) return; spQ = true;
     (function wait() { if (performance.now() - lastMove < 450) { setTimeout(wait, 250); return; }
       spQ = false; if (lost) return; renderStoneTex(el ? 0 : 0.4, -0.52, 0); exportSprite(); fc = 0; })(); }
+  /* The first time each program draws, the graphics driver finishes
+     building it, and for the stone's ray tracer that can hold the page for a
+     long moment (measured on a throttled phone: 1.25 s, as the builder
+     scrolled in). It is done ahead, once, while the reader has stopped
+     scrolling within a few screens of the builder, onto the stone's own
+     texture and an invisible sprite; nothing on screen changes. */
+  (function () {
+    var warmed = false;
+    function tryWarm() {
+      if (warmed || lost) return;
+      var r = wrap.getBoundingClientRect();
+      if (!(r.top < innerHeight * 3 && r.bottom > -innerHeight)) { setTimeout(tryWarm, 700); return; }
+      if (performance.now() - lastMove < 450) { setTimeout(tryWarm, 300); return; }
+      warmed = true;
+      (window.requestIdleCallback || setTimeout)(function () {
+        try {
+          var was = curCut; useCut((window.__lineSpec || {}).cut || "round"); renderStoneTex(0.4, -0.52, 0);
+          resize(); beginSprites(); gl.uniform1f(US.uFade, 0); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          if (was && was !== curCut) useCut(was);
+        } catch (e) {}
+      }, { timeout: 1000 });
+    }
+    if (document.readyState === "complete") setTimeout(tryWarm, 1500); else addEventListener("load", function () { setTimeout(tryWarm, 1500); }, { once: true });
+  })();
   window.__renderStone = function (cut) { var was = curCut; useCut(cut || "round"); renderStoneTex(cut === "round" ? 0.4 : 0, -0.52, 0); exportSprite(); if (was && was !== curCut) { useCut(was); texOnce = false; } };
   canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); lost = true; wrap.style.opacity = "0"; });
   /* off screen the viewer stops asking for frames altogether, and the page's

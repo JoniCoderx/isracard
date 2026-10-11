@@ -17,6 +17,11 @@
    moves them: tip it and they slide the way it leans, shake it and they jump. */
 (function () {
   "use strict";
+  /* a stone is kept unpacked (a bitmap), so drawing it while the page scrolls
+     never stops to decode the picture again; same pixels */
+  function unpacked(im, f) { if (!window.createImageBitmap || !window.fetch) { f(im); return; }
+    fetch(im.src, { credentials: "same-origin" }).then(function (r) { return r.blob(); }).then(function (bl) { return createImageBitmap(bl); })
+      .then(function (b) { b.naturalWidth = b.width; b.naturalHeight = b.height; f(b); }, function () { f(im); }); }
   var sec = document.getElementById("macro"), cv = document.getElementById("deskcv");
   if (!sec || !cv || !cv.getContext) return;
   var film = sec.querySelector(".mfilm"), ctx = cv.getContext("2d");
@@ -242,7 +247,7 @@
   function fetchAll() {
     if (fetchAll.done) return; fetchAll.done = true;
     var big = !coarse && (innerWidth * Math.min(devicePixelRatio || 1, 2)) > 2200;
-    NAMES.forEach(function (n) { var im = new Image(); im.decoding = "async"; im.onload = function () { loaded++; IMG[n] = im; begin(); }; im.onerror = function () { cv.remove(); }; im.src = BASE + n + "-512.webp"; void big; });
+    NAMES.forEach(function (n) { var im = new Image(); im.decoding = "async"; im.onload = function () { unpacked(im, function (b) { loaded++; IMG[n] = b; begin(); }); }; im.onerror = function () { cv.remove(); }; im.src = BASE + n + "-512.webp"; void big; });
   }
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) fetchAll(); }); }, { rootMargin: "120% 0px" }).observe(sec);

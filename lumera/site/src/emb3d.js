@@ -97,6 +97,9 @@ export function start(emb, host, d, w) {
     if (!shown) { shown = true; emb.classList.add("e3d"); }
     raf = requestAnimationFrame(frame);
   }
+  /* the metal's shader is compiled now, while the page is quiet, rather than
+     on the first frame the emblem is seen */
+  try { renderer.compile(scene, cam); } catch (e) {}
   function play(v) { on = v && !document.hidden; if (on && !raf) raf = requestAnimationFrame(frame); }
   new IntersectionObserver(es => play(es.some(e => e.isIntersecting)), { rootMargin: "120px" }).observe(emb);
   document.addEventListener("visibilitychange", () => play(!document.hidden && emb.getBoundingClientRect().bottom > 0 && emb.getBoundingClientRect().top < innerHeight));
