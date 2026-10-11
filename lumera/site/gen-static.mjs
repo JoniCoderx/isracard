@@ -359,29 +359,12 @@ const BOX4K = { swap: [[/n:\s*96,\s*dir:\s*"(\/?)f\/box\/"/, 'n:120,dir:"$1f/box
 /* /test2/: the page recomposed around the jewellery (QA brief, 11 Oct 2026).
    The collection follows the opening and the handwritten signature that leads
    into it; the signature statement, the box and the stone become one story of
-   how a piece is made, after the pieces; the founder is introduced, in the
-   About page's own approved words, before the guide and the enquiry. Nothing
-   is rewritten: the same sections, in a different order, some of them shorter. */
+   how a piece is made, after the pieces. Nothing is rewritten: the same sections, in a different order, some of them shorter. */
 const LAYOUT = (() => {
-  const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-  const E = x => `data-en="${q(x.en)}" data-he="${q(x.he)}"`;
-  const a = ABOUT, portrait = a && a.portrait;
-  const founder = a && a.letter && a.letter[0] ? `<section id="founder" data-n="" data-title-en="The founder" data-title-he="המייסד" aria-label="The founder">
-  <div class="fdin">
-    <figure class="fdpic">${portrait ? `<img src="${portrait}-800.jpg" srcset="${portrait}-800.jpg 800w, ${portrait}-1100.jpg 1100w" sizes="(min-width:900px) 30vw, 70vw" width="1100" height="1375" loading="lazy" decoding="async" alt="${q(a.name.en)}, ${q(a.role.en)} of SILAVU" data-alt-he="${q(a.name.he)}, ${q(a.role.he)} של SILAVU">` : ""}</figure>
-    <div class="fdtx">
-      <div class="k gold" ${E({ en: "The founder", he: "המייסד" })}>The founder</div>
-      <h2 class="h2" ${E(a.name)}>${a.name.en}</h2>
-      <p class="p fdlead" ${E(a.letter[0])}>${a.letter[0].en}</p>
-      <a class="btn" href="about/" ${E(a.eyebrow)}>${a.eyebrow.en}</a>
-    </div>
-  </div>
-</section>
-` : "";
   /* the guide sits beside the pieces, for the reader who has not chosen yet;
      the signature statement is no longer a section of its own: it becomes the
      box's first line, over the closed box with the mark on its lid */
-  const ORDER = ["hero", "craft", "collection", "guide", "inside", "macro", "build", "founder", "enquire", "end"];
+  const ORDER = ["hero", "craft", "collection", "guide", "inside", "macro", "build", "enquire", "end"];
   const NUM = { collection: "01", inside: "02", build: "03", enquire: "04" };
   const edit = html => {
     const re = /<section id="([a-z]+)"/g, at = [];
@@ -391,7 +374,6 @@ const LAYOUT = (() => {
     const top = at.filter(x => x.i >= main0.i && x.i < endAt);
     const chunk = {};
     top.forEach((x, k) => { chunk[x.id] = html.slice(x.i, k + 1 < top.length ? top[k + 1].i : endAt); });
-    if (founder) chunk.founder = founder;
     const sig = chunk.house && chunk.house.match(/<h2 class="h2[^"]*" (data-en="[^"]*" data-he="[^"]*")>([\s\S]*?)<\/h2>/);
     if (!sig || !chunk.inside) return null;
     chunk.inside = chunk.inside.replace(/<h2 class="h2 bt" data-en="[^"]*" data-he="[^"]*">[\s\S]*?<\/h2>/, `<h2 class="h2 bt" ${sig[1]}>${sig[2]}</h2>`);
@@ -404,15 +386,6 @@ const LAYOUT = (() => {
     css: `
 @media (min-width:1000px){#inside .pin{height:190svh!important}}
 @media (max-width:999px){#inside .pin{height:190svh!important}}
-#founder{background:#0b0a09;color:#f4f1e9;padding:clamp(80px,11vw,150px) var(--pad,24px)}
-#founder .fdin{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:center}
-#founder .fdpic{margin:0;aspect-ratio:4/5;overflow:hidden;border-radius:4px;background:#151412}
-#founder .fdpic img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.04)}
-#founder .h2{margin:14px 0 18px}
-#founder .fdlead{color:#cfc9bd;max-width:52ch;line-height:1.7}
-#founder .fdlead .ajc{color:#e8d6a8;letter-spacing:.04em}
-#founder .btn{margin-top:28px}
-@media (max-width:760px){#founder .fdin{grid-template-columns:1fr;text-align:center}#founder .fdpic{width:100%;max-width:300px;margin:0 auto}#founder .fdlead{margin:0 auto}}
 `
   };
 })();
