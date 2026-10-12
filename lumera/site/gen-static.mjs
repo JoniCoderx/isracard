@@ -365,7 +365,7 @@ const LAYOUT = (() => {
   /* the guide sits beside the pieces, for the reader who has not chosen yet;
      the signature statement is no longer a section of its own: it becomes the
      box's first line, over the closed box with the mark on its lid */
-  const ORDER = ["hero", "craft", "collection", "guide", "inside", "macro", "build", "enquire", "end"];
+  const ORDER = ["hero", "craft", "collection", "guide", "inside", "details", "macro", "build", "enquire", "end"], OPTIONAL = ["details"];
   const NUM = { collection: "01", inside: "02", build: "03", enquire: "04" };
   const edit = html => {
     const re = /<section id="([a-z]+)"/g, at = [];
@@ -378,11 +378,35 @@ const LAYOUT = (() => {
     const sig = chunk.house && chunk.house.match(/<h2 class="h2[^"]*" (data-en="[^"]*" data-he="[^"]*")>([\s\S]*?)<\/h2>/);
     if (!sig || !chunk.inside) return null;
     chunk.inside = chunk.inside.replace(/<h2 class="h2 bt" data-en="[^"]*" data-he="[^"]*">[\s\S]*?<\/h2>/, `<h2 class="h2 bt" ${sig[1]}>${sig[2]}</h2>`);
-    if (ORDER.some(id => !chunk[id])) return null;
-    const body = ORDER.map(id => chunk[id].replace(/^(<section id="[a-z]+"[^>]*?) data-n="[^"]*"/, (s0, h) => NUM[id] ? `${h} data-n="${NUM[id]}"` : s0)).join("");
+    if (ORDER.some(id => !chunk[id] && !OPTIONAL.includes(id))) return null;
+    const body = ORDER.filter(id => chunk[id]).map(id => chunk[id].replace(/^(<section id="[a-z]+"[^>]*?) data-n="[^"]*"/, (s0, h) => NUM[id] ? `${h} data-n="${NUM[id]}"` : s0)).join("");
     return html.slice(0, main0.i) + body + html.slice(endAt);
   };
   return { edit };
+})();
+/* /test3/: /test2/ refined by the motion rules (12 Oct 2026): src/test3.css
+   and src/test3.js, the close-up strip between the box and the stones, one
+   name for the booking button, and the signature written without stones */
+const T3 = (() => {
+  const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  const E = x => `data-en="${q(x.en)}" data-he="${q(x.he)}"`;
+  const shot = (pid, img) => { const p = PIECES.find(x => x.id === pid), s = p && p.shots.find(x => x.img === img); return s && { img: s.img, alt: s.alt, w: p.widths || [640, 900, 1254] }; };
+  const picks = [shot("knot", "knot-macro"), shot("ring", "ring-macro"), shot("knot", "knot-clasp")].filter(Boolean);
+  const fig = s => `<figure><div class="dtpic"><img src="img/${s.img}-${s.w[1] || s.w[0]}.jpg" srcset="${s.w.map(w => `img/${s.img}-${w}.jpg ${w}w`).join(", ")}" sizes="(min-width:760px) 32vw, 50vw" loading="lazy" decoding="async" alt="" ></div><figcaption ${E(s.alt)}>${s.alt.en}</figcaption></figure>`;
+  const html = picks.length === 3 ? `<section id="details" data-n="" data-title-en="Up close" data-title-he="מקרוב" aria-label="Up close">
+  <div class="dtin">
+    <div class="dthd"><div class="k" ${E({ en: "The details", he: "הפרטים" })}>The details</div><h2 class="h2" ${E({ en: "Up <em>close.</em>", he: "<em>מקרוב.</em>" })}>Up <em>close.</em></h2></div>
+    <div class="dtrow">${picks.map(fig).join("")}</div>
+  </div>
+</section>
+` : "";
+  const dir = path.join(path.dirname(path.resolve(src)), "src");
+  return {
+    css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
+    js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
+    swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>']],
+  };
 })();
 const HERO_ALT = {
   "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
@@ -431,6 +455,7 @@ function heroTest(dir, film, css, big, extras) {
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
 heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
+heroTest("test3", "hero-cloche", "", true, [EMB3D, T2, LAYOUT, T3]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";

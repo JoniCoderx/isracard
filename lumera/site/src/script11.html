@@ -14,6 +14,8 @@
   var sec = document.getElementById("craft"); if (!sec) return;
   var stage = sec.querySelector(".sgstage"), svg = sec.querySelector(".sgsvg"), white = sec.querySelector(".sgwhite"), fig = sec.querySelector(".sgfig");
   if (!stage || !svg || !white || !window.HTMLCanvasElement) return;
+  /* a preview page can leave the name to be written alone, without the stones */
+  if (window.__sgOff) return;
   var cv = document.createElement("canvas"); cv.className = "sgfall"; cv.setAttribute("aria-hidden", "true");
   stage.insertBefore(cv, stage.firstChild);
   var ctx = cv.getContext("2d"); if (!ctx) return;

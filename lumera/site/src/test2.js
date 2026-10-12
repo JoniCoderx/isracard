@@ -16,9 +16,12 @@
       var r = document.createElement("i"), s = document.createElement("i");
       r.className = "x-ring"; s.className = "x-sheen"; r.setAttribute("aria-hidden", "true"); s.setAttribute("aria-hidden", "true");
       b.appendChild(s); b.appendChild(r);
+      /* window.__calmBtn (a preview page): the light follows the pointer, but
+         the button itself stays where it is */
       b.addEventListener("pointermove", function (e) {
         var k = b.getBoundingClientRect(), x = e.clientX - k.left, y = e.clientY - k.top;
         b.style.setProperty("--mx", x + "px"); b.style.setProperty("--my", y + "px");
+        if (window.__calmBtn) return;
         var dx = (x / k.width - 0.5) * Math.min(12, k.width * 0.06), dy = (y / k.height - 0.5) * 6;
         b.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)";
       });
