@@ -138,9 +138,36 @@
       for (k = 0; k < best.pts.length; k += 2) { var ux = best.pts[k] - best.mx, uy = best.pts[k + 1] - best.my, t = ux * ca + uy * sa, v = -ux * sa + uy * ca; proj.push(t, v, best.pts[k], best.pts[k + 1]); if (t < lo) lo = t; if (t > hi) hi = t; }
       var B = 14, bins = []; for (k = 0; k < B; k++) bins.push({ vs: [], x: 0, y: 0 });
       for (k = 0; k < proj.length; k += 4) { var bi = Math.min(B - 1, Math.floor((proj[k] - lo) / Math.max(1e-6, hi - lo) * B)); bins[bi].vs.push(proj[k + 1]); bins[bi].x += proj[k + 2]; bins[bi].y += proj[k + 3]; }
-      var pick = null;
-      for (k = 1; k < B - 1; k++) { var bn = bins[k]; if (bn.vs.length < 6) continue; bn.vs.sort(function (a2, b2) { return a2 - b2; });
-        var w = bn.vs[Math.floor(bn.vs.length * 0.92)] - bn.vs[Math.floor(bn.vs.length * 0.08)]; if (!pick || w < pick.w) pick = { w: w, x: bn.x / bn.vs.length, y: bn.y / bn.vs.length }; }
+      /* Fingers are narrower than a wrist, so "narrowest" alone put the line
+         round a finger whenever the hand was in the picture. Across the
+         fingers the skin is broken into several runs; the hand is at the end
+         of the arm where that happens, the palm is its widest whole run, and
+         the wrist is the narrowest whole run between the palm and the
+         forearm, never the fingers themselves. */
+      var row = [];
+      for (k = 0; k < B; k++) { var bn = bins[k], o2 = { k: k, ok: bn.vs.length >= 6, w: 0, x: 0, y: 0, broken: false };
+        if (o2.ok) { bn.vs.sort(function (a2, b2) { return a2 - b2; }); o2.w = bn.vs[Math.floor(bn.vs.length * 0.92)] - bn.vs[Math.floor(bn.vs.length * 0.08)]; o2.x = bn.x / bn.vs.length; o2.y = bn.y / bn.vs.length;
+          var gaps = 0; for (var q2 = 1; q2 < bn.vs.length; q2++) if (bn.vs[q2] - bn.vs[q2 - 1] > 2.2) gaps++; o2.broken = gaps >= 2; }
+        row.push(o2); }
+      /* most plainly: the forearm leaves the picture, the hand does not */
+      var edgeOf = function (lo3) { var m = 1e9; for (var q3 = 0; q3 < proj.length; q3 += 4) { var tt = (proj[q3] - lo) / Math.max(1e-6, hi - lo); if (lo3 ? tt > 0.12 : tt < 0.88) continue;
+        var ex = proj[q3 + 2], ey = proj[q3 + 3]; m = Math.min(m, ex, ey, S - 1 - ex, H - 1 - ey); } return m; };
+      var eLo = edgeOf(true), eHi = edgeOf(false), dirEdge = eLo <= 1 && eHi > 3 ? -1 : eHi <= 1 && eLo > 3 ? 1 : 0;
+      var brokenLo = 0, brokenHi = 0; for (k = 0; k < B; k++) if (row[k].broken) { if (k < B / 2) brokenLo++; else brokenHi++; }
+      var dir = dirEdge || (brokenHi > brokenLo ? -1 : brokenLo > brokenHi ? 1 : 0), pick = null;
+      /* fingers held together are one run, but they still end in a tip: the
+         hand is the end of the arm that narrows away, the forearm the end
+         that leaves the picture wide */
+      if (!dir) { var oks = row.filter(function (r2) { return r2.ok; });
+        if (oks.length >= 6) { var lo2 = (oks[0].w + oks[1].w) / 2, hi2 = (oks[oks.length - 1].w + oks[oks.length - 2].w) / 2;
+          if (Math.abs(lo2 - hi2) > 0.12 * Math.max(lo2, hi2)) dir = lo2 < hi2 ? 1 : -1; } }
+      if (dir) {
+        /* walk from the fingers' end: past the broken runs, the palm (widest), then the narrowest after it */
+        var start = dir > 0 ? 0 : B - 1, end = dir > 0 ? B : -1, palm = -1, kk;
+        for (kk = start; kk !== end; kk += dir) { if (!row[kk].ok || row[kk].broken) continue; if (palm < 0 || row[kk].w > row[palm].w) palm = kk; if (palm >= 0 && (kk - start) * dir > B * 0.55) break; }
+        for (kk = palm + dir; palm >= 0 && kk !== end - dir; kk += dir) { var rk = row[kk]; if (!rk.ok || rk.broken) continue; if (!pick || rk.w < pick.w) pick = rk; }
+      }
+      if (!pick) for (k = 1; k < B - 1; k++) { if (!row[k].ok || row[k].broken) continue; if (!pick || row[k].w < pick.w) pick = row[k]; }
       if (!pick || pick.w < 2) { fallback(); return; }
       pos = { x: Math.min(0.9, Math.max(0.1, pick.x / S)), y: Math.min(0.9, Math.max(0.1, pick.y / H)) };
       var ang = (best.arm + Math.PI / 2) * 180 / Math.PI; while (ang > 90) ang -= 180; while (ang < -90) ang += 180;
@@ -162,10 +189,30 @@
   (function () { var o = $("torig"); function on(e) { showOrig = true; tdraw(); e.preventDefault(); } function off() { if (!showOrig) return; showOrig = false; tdraw(); } o.addEventListener("pointerdown", on); o.addEventListener("pointerup", off); o.addEventListener("pointercancel", off); o.addEventListener("pointerleave", off); o.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") on(e); }); o.addEventListener("keyup", off); })();
   function tsum() { var sp = specNow(), b = window.__build || { wrist: 17, ct: 6, metal: "white" }, he = document.documentElement.getAttribute("data-lang") === "he", names = { white: ["18K white gold", "זהב לבן 18K"], yellow: ["18K yellow gold", "זהב צהוב 18K"], rose: ["18K rose gold", "זהב ורוד 18K"], platinum: ["Platinum", "פלטינה"] }; var el = $("tsum"); if (!el) return; var each = sp.each || (b.ct / 36); el.innerHTML = [ (he ? "פרק יד " : "Wrist ") + b.wrist + " cm", (sp.n || 36) + " × " + (he ? "אבן" : "stones") + " · " + (sp.L || 3.6).toFixed(1) + " mm", (he ? "≈ " : "Est. ") + each.toFixed(2) + " ct " + (he ? "כל אחת" : "each"), (names[b.metal] || names.white)[he ? 1 : 0] ].map(function (x) { return "<div>" + x + "</div>"; }).join(""); }
   function ringGeom() { var ang = +$("tang").value * Math.PI / 180, u = [Math.cos(ang), Math.sin(ang)], v = [-u[1], u[0]], rW = +$("tsize").value * tw, b = window.__build || { wrist: 17 }, rb = rW * (b.wrist + 1) / b.wrist, pxMm = rb * 2 * Math.PI / ((b.wrist + 1) * 10); return { u: u, v: v, C: [pos.x * tw, pos.y * th], rb: rb, pxMm: pxMm, k: +$("tcurve").value }; }
+  /* worn (window.__wear3d): the bracelet on the photograph is the 3D one
+     from the builder, the same stones, heads, links, metal and size, turned
+     to the wrist the reader placed it on; its far side goes behind the arm.
+     It lies on the skin with a soft shadow of its own shape, and takes the
+     photograph's brightness. No painted sparkle: the stones' own facets are
+     what catch the light. */
+  var worn = null, wornKey = "";
+  function wornTry() {
+    var g = ringGeom(), sp = specNow(), b = window.__build || {};
+    var key = [g.k, tphase.toFixed(3), sp.cut, sp.n, sp.L, sp.W, b.metal, b.wrist, window.__preview || "", Math.round(g.rb / 40)].join("|");
+    if (key !== wornKey || !worn) { worn = window.__wear({ k: g.k, phase: -tphase, px: g.rb * TD }); wornKey = key; }
+    if (!worn) return false;
+    var lit = 0.82 + 0.36 * tone.b;
+    /* the shadow: the ring's own outline, dark and soft, a little toward the light's far side */
+    tx.save(); tx.globalCompositeOperation = "multiply"; tx.globalAlpha = 0.42; tx.filter = "blur(" + Math.max(1.5, g.pxMm * 0.9).toFixed(1) + "px) brightness(0.25)";
+    window.__wearOn(tx, worn, g.C[0] + g.v[0] * g.pxMm * 1.2, g.C[1] + g.v[1] * g.pxMm * 1.2, g.rb, g.u); tx.restore();
+    tx.save(); tx.filter = "brightness(" + lit.toFixed(2) + ")"; var ok = window.__wearOn(tx, worn, g.C[0], g.C[1], g.rb, g.u); tx.restore();
+    return ok;
+  }
   function tdraw(t) {
     t = typeof t === "number" ? t : performance.now() / 1000; tx.clearRect(0, 0, tw, th); tx.fillStyle = "#000"; tx.fillRect(0, 0, tw, th);
     if (img) { var sc = Math.max(tw / img.naturalWidth, th / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc; tx.drawImage(img, (tw - dw) / 2, (th - dh) / 2, dw, dh); }
     if (!img || showOrig) return;
+    if (window.__wear3d && window.__wear && wornTry()) return;
     var g = ringGeom(), sp = specNow(), m = shade(metalOf(), 0.72 + 0.5 * tone.b), n = Math.max(8, Math.min(110, sp.n || 36)), pitch = sp.pitchMm * g.pxMm, aw = sp.alongMm * g.pxMm / 2, ah = sp.acrossMm * g.pxMm / 2, dth = pitch / g.rb, uAng = Math.atan2(g.u[1], g.u[0]), u = g.u, v = g.v, C = g.C, rb = g.rb, k = g.k, i;
     var stones = [];
     for (i = 0; i < n; i++) { var th0 = tphase + i * dth, s = Math.sin(th0), c = Math.cos(th0); if (s < -0.06) continue; stones.push({ i: i, x: C[0] + u[0] * rb * c + v[0] * rb * s * k, y: C[1] + u[1] * rb * c + v[1] * rb * s * k, s: s, fore: Math.max(0.12, Math.abs(s)), a: Math.min(1, (s + 0.06) / 0.22) }); }

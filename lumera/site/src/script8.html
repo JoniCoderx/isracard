@@ -914,8 +914,11 @@
     "      inside = e * (vec3(1.0) + spread * vec3(0.55, -0.06, -0.42));",
     "    } else if (dot(d, d) > 1e-8) {",
     "      vec3 p = vL + d * 1e-3;",
-    "      float energy = 1.0;",
-    "      for (int b = 0; b < 3; b++) {",
+    "      float energy = 1.0; bool left = false;",
+    /* five bounces, not three: a step cut (emerald, baguette) holds the
+       light longer than a brilliant, and a ray still inside after the last
+       bounce was left black, so those cuts came out as dark glass */
+    "      for (int b = 0; b < 5; b++) {",
     "        float tmin = 1e9; vec3 hn = vec3(0.0, 1.0, 0.0); bool got = false;",
     "        for (int i = 0; i < 26; i++) {",
     "          if (i >= uNP) break;",
@@ -932,9 +935,12 @@
     "        vec3 oB = refract(d, -hn, 2.500);",
     "        if (dot(oG, oG) < 1e-8) { d = reflect(d, hn); energy *= 0.985; continue; }",
     "        vec3 e = vec3(envS(R * (dot(oR,oR) > 1e-8 ? oR : oG)).r, envS(R * oG).g, envS(R * (dot(oB,oB) > 1e-8 ? oB : oG)).b);",
-    "        inside += e * energy;",
+    "        inside += e * energy; left = true;",
     "        break;",
     "      }",
+    /* still inside: it would leave somewhere bright soon enough; take the
+       studio in the direction it is travelling, a little dimmed, not black */
+    "      if (!left) inside += envS(R * d) * energy * 0.72;",
     "    }",
     "    col += (1.0 - F) * inside;",
     "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.20;",
@@ -1125,7 +1131,7 @@
       }
     }
   };
-  var pStone = new Part(), pHead = new Part(), pLink = new Part(), pClasp = new Part(), pHand = new Part(), pNail = new Part();
+  var pStone = new Part(), pHead = new Part(), pLink = new Part(), pClasp = new Part(), pHand = new Part(), pNail = new Part(), pOcc = new Part();
 
   /* ─────────────────────────── the bracelet ─────────────────────────── */
   /* reflectance at normal incidence, linear: white gold under its rhodium is
@@ -1345,6 +1351,10 @@
       /* the nail is the same flesh a shade paler and a touch cooler, lacquered */
       pNail.draw(-1, [Math.min(1, sk[0] * 0.92 + 0.11), Math.min(1, sk[1] * 0.96 + 0.13), Math.min(1, sk[2] * 1.00 + 0.14)], 1);
     }
+    /* worn (see wear() below): the arm is drawn into depth only, so the back
+       of the ring goes behind it exactly as it does on a wrist */
+    if (wearing) { gl.colorMask(false, false, false, false); gl.disable(gl.CULL_FACE); pOcc.draw(-1, [0, 0, 0], 0); gl.enable(gl.CULL_FACE); gl.colorMask(true, true, true, true); }
+    state.vp = mul(proj, view);
     pHead.draw(0, mc, 0.30); pLink.draw(0, mc, 0.26); pClasp.draw(0, mc, 0.20);
     var onScreen = state.L / (state.halfH || state.fit) * H2 * 0.5;
     gl.uniform1f(U.trace, onScreen > 26 ? 1 : 0);
@@ -1738,6 +1748,60 @@
     setTimeout(function () { wrap.classList.remove("bloom"); }, 1600);
     size(); dirty = true;
   }
+  /* ── worn: the same bracelet, as it sits on a photographed wrist ─────────
+     The wrist view and the try-on used to draw the Line again in 2D, stone
+     by stone from sprites, so the bracelet on the arm was a different object
+     from the one in the round. This renders the real one instead: these
+     stones, heads, links and clasp, this metal, at this size, seen across
+     the wrist from a little above (k is how open the ring looks, 0 edge-on
+     and 1 from straight along the arm), turned round the arm by phase. The
+     arm is an elliptic column a little inside the ring, drawn into depth
+     only, so the far side of the ring is hidden behind it, as on a wrist.
+     The caller places the picture: (cx, cy) is the ring's centre on it and
+     hw its half width across the wrist, both in the picture's pixels. */
+  var wearing = false, occFor = 0;
+  function buildOcc() {
+    if (occFor === state.R + state.depth) return; occFor = state.R + state.depth;
+    var m = new Mesh(), a = state.R - state.depth * 0.75, b = state.R / 1.30 - state.depth * 0.75, h = state.R * 4, N = 64, i;
+    for (i = 0; i < N; i++) {
+      var a0 = i / N * 2 * Math.PI, a1 = (i + 1) / N * 2 * Math.PI;
+      var p0 = [a * Math.cos(a0), -h, b * Math.sin(a0)], p1 = [a * Math.cos(a1), -h, b * Math.sin(a1)], q0 = [p0[0], h, p0[2]], q1 = [p1[0], h, p1[2]];
+      m.tri(p0, q0, q1); m.tri(p0, q1, p1);
+    }
+    pOcc.geometry(m); pOcc.instances(new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]));
+  }
+  function wear(o) {
+    if (!state.frames || snake || toy || hand.on) return null;
+    buildOcc();
+    var keep = { th: cam.th, ph: cam.ph, d: cam.d, td: cam.td, f: cam.f, fT: cam.fT, vth: cam.vth, vph: cam.vph }, k2, out = null, keepWH = [cv.width, cv.height, W2, H2];
+    try {
+      cam.th = o.phase || 0; cam.ph = Math.asin(Math.max(0.06, Math.min(0.9, o.k || 0.24))); cam.d = cam.td = 1; cam.f = cam.fT = 0; cam.vth = cam.vph = 0;
+      /* drawn at its own size (the strip's canvas is hidden in the wrist
+         view): enough pixels that the ring is sharper than it will be shown */
+      var Wt = Math.round(Math.max(640, Math.min(2600, (o.px || 300) * 2 * 1.5 / 0.78))), Ht = Math.round(Wt * 0.6);
+      W2 = Wt; H2 = Ht; cv.width = W2; cv.height = H2;
+      wearing = true; draw(); wearing = false;
+      var c = document.createElement("canvas"); c.width = cv.width; c.height = cv.height; c.getContext("2d").drawImage(cv, 0, 0);
+      /* where the ring falls in that picture: its centre, and how wide it is across */
+      var vp = state.vp, Wc = cv.width, Hc = cv.height, minx = 1e9, maxx = -1e9;
+      var pj = function (x, y, z) { var X = vp[0] * x + vp[4] * y + vp[8] * z + vp[12], Y = vp[1] * x + vp[5] * y + vp[9] * z + vp[13], Wn = vp[3] * x + vp[7] * y + vp[11] * z + vp[15]; return [(X / Wn * 0.5 + 0.5) * Wc, (1 - (Y / Wn * 0.5 + 0.5)) * Hc]; };
+      state.frames.forEach(function (f) { var q = pj(f.pos[0], f.pos[1], f.pos[2]); if (q[0] < minx) minx = q[0]; if (q[0] > maxx) maxx = q[0]; });
+      var ctr = pj(0, 0, 0);
+      out = { c: c, cx: ctr[0], cy: ctr[1], hw: (maxx - minx) / 2 };
+    } catch (e) { wearing = false; out = null; }
+    /* the canvas goes back to the size it had: measured now, while the wrist
+       view hides it, it would come back one pixel square and stay empty */
+    for (k2 in keep) cam[k2] = keep[k2]; cv.width = keepWH[0]; cv.height = keepWH[1]; W2 = keepWH[2]; H2 = keepWH[3]; dirty = true; return out;
+  }
+  /* the picture placed on a 2D canvas: centred on (x, y), its width across
+     the wrist rb pixels each side, turned so the ring runs along u */
+  function wearOn(ctx, w, x, y, rb, u) {
+    if (!w || !w.hw) return false;
+    var s = rb / w.hw; ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(u[1], u[0])); ctx.scale(s, s);
+    ctx.drawImage(w.c, -w.cx, -w.cy); ctx.restore(); return true;
+  }
+  window.__wear = function (o) { return wear(o || {}); };
+  window.__wearOn = wearOn;
   /* a picture of exactly what is on screen, for the reader to keep or send:
      drawn fresh and handed over in the same task, before the browser is free
      to clear the buffer */

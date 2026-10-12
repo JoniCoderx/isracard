@@ -404,7 +404,7 @@ const T3 = (() => {
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>']],
   };
 })();
