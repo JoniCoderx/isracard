@@ -1102,7 +1102,8 @@
   /* the third octave of skin detail is real work for a phone to do on every
      frame of a turn, and at that pixel density nobody can see it */
   /* (phone3d) a phone traces three bounces inside a stone, not five: the
-     last two are a few per cent of the light and most of the cost */
+     last two are a few per cent of the light and most of the cost, and
+     that saving pays for drawing it at the phone's sharpness (1.75x) */
   var FSRC = (matchMedia("(pointer:coarse)").matches ? "" : "#define FINE\n") + "#define BOUNCES " + (window.__phone3d && coarse ? 3 : 5) + "\n" + FS;
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FSRC)); gl.linkProgram(prog);
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error("SILAVU: the bracelet program did not link — " + gl.getProgramInfoLog(prog)); cv.style.display = "none"; return; }
@@ -1297,7 +1298,7 @@
     /* the hand is the most expensive thing this shader draws, and on a phone
        it is drawn into a box a third of a screen tall: the pixels above this
        are work nobody can see */
-    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on ? (staged ? 1.35 : 1.2) : PH ? (staged ? 1.4 : 1.15) : 1.5);
+    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on ? (staged ? 1.35 : 1.2) : PH ? (staged ? 2 : 1.75) : 1.5);
     var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }

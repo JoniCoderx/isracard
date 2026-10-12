@@ -90,3 +90,8 @@ html[dir="rtl"] #stripwrap .bphnote { left: auto; right: 16px; }
 @media (prefers-reduced-motion: reduce) { #stripwrap .bph img { transition: none; } }
 @media (max-width: 699px) { #stripwrap .bphnote { max-width: calc(100% - 150px); line-height: 1.5; } }
 
+
+/* the header: the page you are on is marked by its underline, not moved.
+   The builder's price row is also called .cur (display:flex, margin-top
+   12px), and the rule reached the menu link too, dropping it 12px */
+.sh nav a.cur { display: block; margin-top: 0; flex-wrap: nowrap; }

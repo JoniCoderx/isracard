@@ -38,10 +38,11 @@ done
 # 280 px down so that on a phone the pendant sits above the headline (which
 # begins a little past half way down the screen) instead of behind it
 PV="crop=1058:1880:1181:280"
-# kept light for a phone that is also scrolling: 900 wide (sharp on a phone
-# screen once the page has fitted it), capped near the weight of the live film
-ffmpeg -nostdin -v error -framerate 24 -i "$T/seq/%04d.jpg" -an -vf "$PV,scale=900:1600:flags=lanczos,setsar=1,format=yuv420p" \
-  -c:v libx264 -preset slow -crf 25 -maxrate 1500k -bufsize 3000k -profile:v high -level 4.1 -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-cloche-v.mp4" -y
+# at the slice's own 1058x1880, not scaled down: a phone screen is 1170 or
+# more pixels across, and at 900 the film went visibly softer than its own
+# first frame the moment it started playing
+ffmpeg -nostdin -v error -framerate 24 -i "$T/seq/%04d.jpg" -an -vf "$PV,setsar=1,format=yuv420p" \
+  -c:v libx264 -preset slow -crf 21 -maxrate 3200k -bufsize 6400k -profile:v high -level 4.1 -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-cloche-v.mp4" -y
 echo "hero-cloche-v: $(( $(stat -c%s "$OUT/v/hero-cloche-v.mp4") / 1024 ))KB"
 for w in 1080 1216; do
   ffmpeg -nostdin -v error -i "$T/f/0001.jpg" -vf "$PV,scale=$w:-2:flags=lanczos" -q:v 2 "$OUT/img/hero-cloche-v-$w.jpg" -y
