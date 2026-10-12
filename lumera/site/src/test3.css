@@ -37,29 +37,35 @@ html.xhov .btn:hover .x-sheen::before, html.xhov .chip.gq:hover .x-sheen::before
 #guide .gstage { min-height: 0 !important; }
 #guide .gbar { margin: 28px 0 22px !important; }
 
-/* up close: three photographs of the house's own details, revealed once
-   (rare delight; clip-path reveal, composited, no layout shift) */
-#details { background: #000; color: #f4f1e9; padding: clamp(72px, 9vw, 128px) var(--pad, 24px); }
-#details .dtin { max-width: 1240px; margin: 0 auto; }
-#details .dthd { text-align: center; margin-bottom: clamp(28px, 4vw, 52px); }
+/* up close, worn: three campaign photographs, the width of the screen
+   (one image per piece; a slow clip reveal once, rare delight) */
+#details { background: #000; color: #f4f1e9; padding: clamp(72px, 9vw, 128px) 0 clamp(64px, 8vw, 112px); }
+#details .dthd { text-align: center; margin-bottom: clamp(28px, 4vw, 52px); padding-inline: var(--pad, 24px); }
 #details .dthd .k { color: #d8c08a; }
 #details .dthd .h2 { margin-top: 12px; }
-#details .dtrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); }
-#details figure { margin: 0; }
-#details .dtpic { aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; background: #f4f4f2; clip-path: inset(0 0 0 0); }
-#details .dtpic img { width: 100%; height: 100%; object-fit: cover; display: block; }
-#details figcaption { margin-top: 14px; color: #b9b4aa; font-size: .9rem; line-height: 1.5; max-width: 34ch; }
-html.dtgo #details .dtpic { clip-path: inset(0 0 100% 0); transition: clip-path 1s cubic-bezier(.77, 0, .175, 1); }
-html.dtgo #details figure:nth-child(2) .dtpic { transition-delay: .08s; }
-html.dtgo #details figure:nth-child(3) .dtpic { transition-delay: .16s; }
-html.dtgo #details.in .dtpic { clip-path: inset(0 0 0 0); }
+#details .wlkrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, .8vw, 12px); padding-inline: clamp(6px, .8vw, 12px); }
+#details .wlk { margin: 0; }
+#details .wlkpic { display: block; aspect-ratio: 4 / 5; overflow: hidden; background: #1a1916; clip-path: inset(0 0 0 0); }
+#details .wlkpic img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.001); transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+@media (hover: hover) and (pointer: fine) { #details .wlkpic:hover img { transform: scale(1.03); } }
+#details figcaption { display: grid; gap: 6px; justify-items: center; text-align: center; padding: 18px 12px 0; }
+#details figcaption .k { color: #9e998f; font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; }
+#details .wlknm { color: #f4f1e9; text-decoration: none; font-size: clamp(1rem, 1.3vw, 1.2rem); letter-spacing: .14em; text-transform: uppercase; }
+#details .wlknm em { font-style: normal; color: #e8d6a8; }
+#details .wlknm:hover, #details .wlknm:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+html[data-ns] #details .wlknm, html[data-ns] #details figcaption .k { letter-spacing: 0; text-transform: none; }
+html.dtgo #details .wlkpic { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s cubic-bezier(.77, 0, .175, 1); }
+html.dtgo #details .wlk:nth-child(2) .wlkpic { transition-delay: .1s; }
+html.dtgo #details .wlk:nth-child(3) .wlkpic { transition-delay: .2s; }
+html.dtgo #details.in .wlkpic { clip-path: inset(0 0 0 0); }
+/* a phone: the three side by side under the finger, the next one showing at the edge */
 @media (max-width: 759px) {
-  #details .dtrow { grid-template-columns: 1fr 1fr; }
-  #details figure:first-child { grid-column: 1 / -1; }
-  #details figure:first-child .dtpic { aspect-ratio: 16 / 11; }
-  #details figcaption { font-size: .8rem; }
+  #details .wlkrow { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 84vw; overflow-x: auto; scroll-snap-type: x mandatory; padding-inline: 8vw; gap: 10px; scrollbar-width: none; }
+  #details .wlkrow::-webkit-scrollbar { display: none; }
+  #details .wlk { scroll-snap-align: center; }
+  html.dtgo #details .wlkpic { clip-path: none; transition: none; }
 }
-@media (prefers-reduced-motion: reduce) { html.dtgo #details .dtpic { clip-path: none !important; transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { html.dtgo #details .wlkpic { clip-path: none !important; transition: none !important; } #details .wlkpic img { transition: none; } }
 
 /* the form on a phone reads from the start of the line, like every form */
 @media (max-width: 759px) {

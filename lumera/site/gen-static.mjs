@@ -390,14 +390,20 @@ const LAYOUT = (() => {
 const T3 = (() => {
   const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
   const E = x => `data-en="${q(x.en)}" data-he="${q(x.he)}"`;
-  const shot = (pid, img) => { const p = PIECES.find(x => x.id === pid), s = p && p.shots.find(x => x.img === img); return s && { img: s.img, alt: s.alt, w: p.widths || [640, 900, 1254] }; };
-  const picks = [shot("knot", "knot-macro"), shot("ring", "ring-macro"), shot("knot", "knot-clasp")].filter(Boolean);
-  const fig = s => `<figure><div class="dtpic"><img src="img/${s.img}-${s.w[1] || s.w[0]}.jpg" srcset="${s.w.map(w => `img/${s.img}-${w}.jpg ${w}w`).join(", ")}" sizes="(min-width:760px) 32vw, 50vw" loading="lazy" decoding="async" alt="" ></div><figcaption ${E(s.alt)}>${s.alt.en}</figcaption></figure>`;
-  const html = picks.length === 3 ? `<section id="details" data-n="" data-title-en="Up close" data-title-he="מקרוב" aria-label="Up close">
-  <div class="dtin">
-    <div class="dthd"><div class="k" ${E({ en: "The details", he: "הפרטים" })}>The details</div><h2 class="h2" ${E({ en: "Up <em>close.</em>", he: "<em>מקרוב.</em>" })}>Up <em>close.</em></h2></div>
-    <div class="dtrow">${picks.map(fig).join("")}</div>
-  </div>
+  /* Up close, worn: one campaign photograph for each piece, the piece itself
+     reproduced from the house's own product photographs onto a model
+     (public/models). Each links to the piece's page. */
+  const W = [900, 1400, 2000];
+  const looks = [
+    { id: "ring", img: "ring", alt: { en: "A woman wearing the SILAVU ICON ring, her hand resting at her jaw", he: "אישה עונדת את טבעת SILAVU ICON, ידה מונחת על קו הלסת" } },
+    { id: "pave", img: "necklace", alt: { en: "A woman wearing the SILAVU SOUL necklace, the pendant below her collarbones", he: "אישה עונדת את שרשרת SILAVU SOUL, התליון מתחת לעצמות הבריח" } },
+    { id: "knot", img: "bracelet", alt: { en: "A woman wearing the SILAVU MOMENT bracelet, her hand on her shoulder", he: "אישה עונדת את צמיד SILAVU MOMENT, ידה על כתפה" } }
+  ].map(l => ({ ...l, p: PIECES.find(x => x.id === l.id) })).filter(l => l.p);
+  const look = l => `<figure class="wlk"><a class="wlkpic" href="pieces/${l.p.id}/"><img src="models/${l.img}-1400.jpg" srcset="${W.map(w => `models/${l.img}-${w}.jpg ${w}w`).join(", ")}" sizes="(min-width:760px) 33vw, 84vw" width="2000" height="2500" loading="lazy" decoding="async" alt="${q(l.alt.en)}" data-alt-he="${q(l.alt.he)}"></a>
+      <figcaption><span class="k" ${E(l.p.kind)}>${l.p.kind.en}</span><a class="wlknm" href="pieces/${l.p.id}/" ${E(l.p.name)}>${l.p.name.en}</a></figcaption></figure>`;
+  const html = looks.length === 3 ? `<section id="details" data-n="" data-title-en="Up close" data-title-he="מקרוב" aria-label="Up close">
+  <div class="dthd"><div class="k" ${E({ en: "Worn", he: "ענוד" })}>Worn</div><h2 class="h2" ${E({ en: "Up <em>close.</em>", he: "<em>מקרוב.</em>" })}>Up <em>close.</em></h2></div>
+  <div class="wlkrow">${looks.map(look).join("")}</div>
 </section>
 ` : "";
   const dir = path.join(path.dirname(path.resolve(src)), "src");
