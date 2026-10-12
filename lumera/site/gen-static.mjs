@@ -419,13 +419,23 @@ const T3 = (() => {
     ['<canvas id="bcv"', `<div class="bph"><img alt="" decoding="async"><img alt="" decoding="async"></div><p class="bphnote k" ${E(ph)} hidden>${ph.en}</p><canvas id="bcv"`],
     /* the drawing (minified) learns the third view, and the 3D sleeps behind it */
     [/(\w+)\.classList\.toggle\("wrist","wrist"===(\w+)\)/, '$1.classList.toggle("wrist","wrist"===$2),$1.classList.toggle("photo","photo"===$2)'],
-    [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()']
+    [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()'],
+    ['canvas:"boxcv",n:96,', 'canvas:"boxcv",n:1,']
   ];
+  /* The box: three photographs, one for each line, in place of the
+     rendered film (public/boxph; a portrait crop for phones). The film's
+     pin, beats and fades stay; it loads one frame, which is never shown */
+  const BX = [
+    { en: "The SILAVU box, closed, under a single light on black marble", he: "קופסת SILAVU סגורה, תחת אור יחיד על שיש שחור" },
+    { en: "The box open, a jeweller lifting one diamond with tweezers from a tray of loose stones", he: "הקופסה פתוחה, צורף מרים יהלום אחד בפינצטה ממגש של אבנים" },
+    { en: "The finished bracelet lying in the open box, a tape measure beside it", he: "הצמיד המוגמר מונח בקופסה הפתוחה, סרט מדידה לצידו" }
+  ];
+  const boxPh = `<div class="bxph">${BX.map((a, i) => `<picture><source media="(max-aspect-ratio: 1/1)" srcset="boxph/${i + 1}-m.jpg"><img${i ? "" : ' class="on"'} src="boxph/${i + 1}-1920.jpg" srcset="${[1920, 2560, 3840].map(w => `boxph/${i + 1}-${w}.jpg ${w}w`).join(", ")}" sizes="100vw" width="3840" height="2160" loading="lazy" decoding="async" alt="${q(a.en)}" data-alt-he="${q(a.he)}"></picture>`).join("")}</div>\n        `;
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : []), ['<div class="veil2">', boxPh]],
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();
