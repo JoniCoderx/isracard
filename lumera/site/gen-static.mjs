@@ -406,12 +406,27 @@ const T3 = (() => {
   <div class="wlkrow">${looks.map(look).join("")}</div>
 </section>
 ` : "";
+  /* Build your bracelet: a photograph of the bracelet in the cut and metal
+     chosen opens the chapter (public/line, one for each of 8 cuts x 4
+     metals, made from the configurator's own render at 6 ct); the 3D is
+     the second view, and sleeps while the photograph is showing */
+  const VT = 'class="vtb" type="button" role="tab"';
+  const ph = { en: "Photographed at 6 carats. In 3D, at yours.", he: "צולם ב־6 קראט. בתלת־ממד, במשקל שבחרתם." };
+  const lineSwap = [
+    ['<div id="stripwrap">', '<div id="stripwrap" class="photo">'],
+    ['<button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button>',
+     `<button class="vtb on" type="button" role="tab" aria-selected="true" data-view="photo" data-en="Photograph" data-he="צילום">Photograph</button><button ${VT} aria-selected="false" data-view="line" data-en="In 3D" data-he="בתלת־ממד">In 3D</button>`],
+    ['<canvas id="bcv"', `<div class="bph"><img alt="" decoding="async"><img alt="" decoding="async"></div><p class="bphnote k" ${E(ph)} hidden>${ph.en}</p><canvas id="bcv"`],
+    /* the drawing (minified) learns the third view, and the 3D sleeps behind it */
+    [/(\w+)\.classList\.toggle\("wrist","wrist"===(\w+)\)/, '$1.classList.toggle("wrist","wrist"===$2),$1.classList.toggle("photo","photo"===$2)'],
+    [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()']
+  ];
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
-    swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>']],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
+    swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();
 const HERO_ALT = {

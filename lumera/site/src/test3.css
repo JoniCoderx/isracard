@@ -72,3 +72,20 @@ html.dtgo #details.in .wlkpic { clip-path: inset(0 0 0 0); }
   #enquire #cform, #enquire #cform .field, #enquire #cform .want .k { text-align: start !important; }
   #enquire #cform .field label, #enquire #cform .field input, #enquire #cform .field textarea { text-align: start !important; }
 }
+
+/* Build your bracelet: the photograph. The black of the photograph gives
+   way to the chapter's own ground (lighten), so the frame stays one surface.
+   One change at a time, a cross-fade of 200ms (on-screen change: ease) */
+#stripwrap .bph { position: absolute; inset: 0; z-index: 2; display: none; cursor: zoom-in; }
+#stripwrap.photo:not(.wrist) .bph { display: block; }
+.bstage.open #stripwrap .bph { display: none; }
+#stripwrap .bph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: lighten; opacity: 0;
+  -webkit-mask-image: radial-gradient(ellipse 64% 66% at 50% 50%, #000 76%, transparent 100%); mask-image: radial-gradient(ellipse 64% 66% at 50% 50%, #000 76%, transparent 100%); transition: opacity .2s ease; }
+#stripwrap .bph img.on { opacity: 1; }
+#stripwrap.photo:not(.wrist) #bcv, #stripwrap.photo:not(.wrist) #stripcv, #stripwrap.photo:not(.wrist) .vhint { visibility: hidden; }
+.bstage.open #stripwrap.photo #bcv { visibility: visible; }
+#stripwrap .bphnote { position: absolute; z-index: 3; left: 16px; bottom: 14px; margin: 0; font-size: .58rem; letter-spacing: .1em; color: var(--ink2); pointer-events: none; }
+html[dir="rtl"] #stripwrap .bphnote { left: auto; right: 16px; }
+#stripwrap:not(.photo) .bphnote, #stripwrap.wrist .bphnote, .bstage.open .bphnote { display: none; }
+@media (prefers-reduced-motion: reduce) { #stripwrap .bph img { transition: none; } }
+@media (max-width: 699px) { #stripwrap .bphnote { max-width: calc(100% - 150px); line-height: 1.5; } }
