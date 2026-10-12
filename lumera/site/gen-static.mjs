@@ -406,36 +406,25 @@ const T3 = (() => {
   <div class="wlkrow">${looks.map(look).join("")}</div>
 </section>
 ` : "";
-  /* Build your bracelet: a photograph of the bracelet in the cut and metal
-     chosen opens the chapter (public/line, one for each of 8 cuts x 4
-     metals, made from the configurator's own render at 6 ct); the 3D is
-     the second view, and sleeps while the photograph is showing */
+  /* Build your bracelet: the 3D opens the chapter, and a photograph of the
+     bracelet in the cut and metal chosen is the second view (public/line,
+     one for each of 8 cuts x 4 metals, made from the configurator's own
+     render at 6 ct); the 3D sleeps while the photograph is showing */
   const VT = 'class="vtb" type="button" role="tab"';
   const ph = { en: "Photographed at 6 carats. In 3D, at yours.", he: "צולם ב־6 קראט. בתלת־ממד, במשקל שבחרתם." };
   const lineSwap = [
-    ['<div id="stripwrap">', '<div id="stripwrap" class="photo">'],
     ['<button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="The Line" data-he="הקו">The Line</button>',
-     `<button class="vtb on" type="button" role="tab" aria-selected="true" data-view="photo" data-en="Photograph" data-he="צילום">Photograph</button><button ${VT} aria-selected="false" data-view="line" data-en="In 3D" data-he="בתלת־ממד">In 3D</button>`],
+     `<button class="vtb on" type="button" role="tab" aria-selected="true" data-view="line" data-en="In 3D" data-he="בתלת־ממד">In 3D</button><button ${VT} aria-selected="false" data-view="photo" data-en="Photograph" data-he="צילום">Photograph</button>`],
     ['<canvas id="bcv"', `<div class="bph"><img alt="" decoding="async"><img alt="" decoding="async"></div><p class="bphnote k" ${E(ph)} hidden>${ph.en}</p><canvas id="bcv"`],
     /* the drawing (minified) learns the third view, and the 3D sleeps behind it */
     [/(\w+)\.classList\.toggle\("wrist","wrist"===(\w+)\)/, '$1.classList.toggle("wrist","wrist"===$2),$1.classList.toggle("photo","photo"===$2)'],
-    [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()'],
-    ['canvas:"boxcv",n:96,', 'canvas:"boxcv",n:1,']
+    [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()']
   ];
-  /* The box: three photographs, one for each line, in place of the
-     rendered film (public/boxph; a portrait crop for phones). The film's
-     pin, beats and fades stay; it loads one frame, which is never shown */
-  const BX = [
-    { en: "The SILAVU box, closed, under a single light on black marble", he: "קופסת SILAVU סגורה, תחת אור יחיד על שיש שחור" },
-    { en: "The box open, a jeweller lifting one diamond with tweezers from a tray of loose stones", he: "הקופסה פתוחה, צורף מרים יהלום אחד בפינצטה ממגש של אבנים" },
-    { en: "The finished bracelet lying in the open box, a tape measure beside it", he: "הצמיד המוגמר מונח בקופסה הפתוחה, סרט מדידה לצידו" }
-  ];
-  const boxPh = `<div class="bxph">${BX.map((a, i) => `<picture><source media="(max-aspect-ratio: 1/1)" srcset="boxph/${i + 1}-m.jpg"><img${i ? "" : ' class="on"'} src="boxph/${i + 1}-1920.jpg" srcset="${[1920, 2560, 3840].map(w => `boxph/${i + 1}-${w}.jpg ${w}w`).join(", ")}" sizes="100vw" width="3840" height="2160" loading="lazy" decoding="async" alt="${q(a.en)}" data-alt-he="${q(a.he)}"></picture>`).join("")}</div>\n        `;
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : []), ['<div class="veil2">', boxPh]],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();

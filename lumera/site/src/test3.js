@@ -56,25 +56,3 @@
   } else show();
 })();
 
-/* The box: the photograph for the line on screen. The film's own machine
-   still chooses the line and fades the chapter in and out; the photographs
-   follow it, one at a time. */
-(function () {
-  var box = document.querySelector("#inside .bxph"), cv = document.getElementById("boxcv"), beats = document.querySelectorAll("#beats .beat");
-  if (!box || !beats.length) return;
-  var ims = box.querySelectorAll("img"), at = 0;
-  function sync() {
-    var k = 0; for (var i = 0; i < beats.length; i++) if (beats[i].classList.contains("on")) k = i;
-    if (k !== at && ims[k]) { ims[at].classList.remove("on"); ims[k].classList.add("on"); at = k; }
-    if (cv) box.style.opacity = cv.style.opacity;
-  }
-  var mo = new MutationObserver(sync);
-  for (var i = 0; i < beats.length; i++) mo.observe(beats[i], { attributes: true, attributeFilter: ["class"] });
-  if (cv) mo.observe(cv, { attributes: true, attributeFilter: ["style"] });
-  /* the next photograph is asked for before it is needed */
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); ims.forEach(function (im) { im.loading = "eager"; }); } }, { rootMargin: "150% 0px" });
-    io.observe(document.getElementById("inside"));
-  }
-  sync();
-})();

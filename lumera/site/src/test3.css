@@ -90,12 +90,3 @@ html[dir="rtl"] #stripwrap .bphnote { left: auto; right: 16px; }
 @media (prefers-reduced-motion: reduce) { #stripwrap .bph img { transition: none; } }
 @media (max-width: 699px) { #stripwrap .bphnote { max-width: calc(100% - 150px); line-height: 1.5; } }
 
-/* The box: three photographs in place of the rendered film. A change of
-   line is a story moment, so the cross-fade is slower (.6s) and the new
-   photograph settles from a touch larger (ease-out); nothing else moves */
-#inside #boxcv { visibility: hidden; }
-#inside .bxph { position: absolute; inset: 0; overflow: hidden; background: #000; }
-#inside .bxph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.025);
-  transition: opacity .6s ease, transform 1.4s cubic-bezier(.2,.8,.2,1); }
-#inside .bxph img.on { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { #inside .bxph img { transition: none; transform: none; } }

@@ -944,7 +944,7 @@
     /* five bounces, not three: a step cut (emerald, baguette) holds the
        light longer than a brilliant, and a ray still inside after the last
        bounce was left black, so those cuts came out as dark glass */
-    "      for (int b = 0; b < 5; b++) {",
+    "      for (int b = 0; b < BOUNCES; b++) {",
     "        float tmin = 1e9; vec3 hn = vec3(0.0, 1.0, 0.0); bool got = false;",
     "        for (int i = 0; i < 26; i++) {",
     "          if (i >= uNP) break;",
@@ -1101,7 +1101,9 @@
   var prog = gl.createProgram();
   /* the third octave of skin detail is real work for a phone to do on every
      frame of a turn, and at that pixel density nobody can see it */
-  var FSRC = (matchMedia("(pointer:coarse)").matches ? "" : "#define FINE\n") + FS;
+  /* (phone3d) a phone traces three bounces inside a stone, not five: the
+     last two are a few per cent of the light and most of the cost */
+  var FSRC = (matchMedia("(pointer:coarse)").matches ? "" : "#define FINE\n") + "#define BOUNCES " + (window.__phone3d && coarse ? 3 : 5) + "\n" + FS;
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FSRC)); gl.linkProgram(prog);
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error("SILAVU: the bracelet program did not link — " + gl.getProgramInfoLog(prog)); cv.style.display = "none"; return; }
   gl.useProgram(prog);
@@ -1282,6 +1284,11 @@
      scroll for the same thread. It holds still until the page does. */
   var moved0 = -1e9;
   addEventListener("scroll", function () { moved0 = performance.now(); }, { passive: true });
+  /* (phone3d) on a phone a finger on the page is the start of a scroll: the
+     bracelet stops drawing at once, so the scroll never waits for a frame
+     of ray-traced stones, and its slow turn runs at half rate after */
+  var PH = !!window.__phone3d && coarse, half = 0;
+  if (PH) addEventListener("touchstart", function (e) { if (!cv.contains(e.target)) moved0 = performance.now(); }, { passive: true });
   var drag = null, dirty = true, idle = !reduce, idleN = 0, W2 = 1, H2 = 1, DPR = 1, hoverOn = false, hoverT = 0;
   /* a mouse resting on the bracelet holds it still; leaving lets it turn again a moment later */
   cv.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { clearTimeout(hoverT); hoverOn = true; } });
@@ -1290,7 +1297,7 @@
     /* the hand is the most expensive thing this shader draws, and on a phone
        it is drawn into a box a third of a screen tall: the pixels above this
        are work nobody can see */
-    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on ? (staged ? 1.35 : 1.2) : 1.5);
+    DPR = Math.min(devicePixelRatio || 1, coarse && hand.on ? (staged ? 1.35 : 1.2) : PH ? (staged ? 1.4 : 1.15) : 1.5);
     var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }
@@ -1405,7 +1412,7 @@
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
         cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.90; cam.vph *= 0.90;
         cam.ph = Math.max(-1.25, Math.min(1.25, cam.ph)); dirty = true;
-      } else if (idle && !hoverOn && performance.now() - moved0 > 420) {
+      } else if (idle && !hoverOn && performance.now() - moved0 > (PH ? 900 : 420) && (!PH || (half ^= 1))) {
         /* v209 — it keeps turning, slowly, for as long as it is on screen (the
            whole loop sleeps off screen). It used to stop for good after a
            third of a turn, and a bracelet that has stopped reads as a picture
