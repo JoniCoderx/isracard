@@ -445,14 +445,22 @@ const T3 = (() => {
     out = out.replace(soon[0], allc);
     const pave = out.indexOf('<article class="piece sig" id="p-pave"'); if (pave < 0) return null;
     const after = out.indexOf("</article>", pave) + 10;
-    out = out.slice(0, after) + "\n" + earrings + (SPECIAL.length ? "\n" + sph : "") + out.slice(after);
+    /* the earrings' place: the piece itself once it exists (live or preview),
+       else the place kept for it; any other preview piece joins its part */
+    const card = p => pieceCard(p).replace(/(["\s,])\/img\//g, "$1img/").replace('<article class="piece"', `<article class="piece ${p.group === "special" ? "spc" : "sig"}"`);
+    const ear = PIECES.concat(PREVIEW).find(p => p.cat === "earrings" && p.group !== "special");
+    if (ear && !PREVIEW.includes(ear)) out = out.replace(`<article class="piece" id="p-${ear.id}"`, `<article class="piece sig" id="p-${ear.id}"`);
+    const earHtml = !ear ? earrings : PREVIEW.includes(ear) ? card(ear) : "";
+    const morePre = PREVIEW.filter(p => p !== ear && p.group === "special").map(card).join("\n");
+    out = out.slice(0, after) + "\n" + earHtml + (SPECIAL.length || morePre ? "\n" + sph : "") + out.slice(after);
+    if (morePre) out = out.replace(allc, morePre + "\n" + allc);
     return out;
   };
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : []), ...(PREVIEW.length ? [['<article class="piece soon soon1"', PREVIEW.map(pieceCard).join("\n").replace(/(["\s,])\/img\//g, "$1img/") + "\n"]] : [])],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
     edit: twoParts,
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
@@ -834,7 +842,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
     for (const he of [false, true]) {
       const slug = (he ? "he/" : "") + "collection";
       const card = p => { const W = p.widths || [800, 1200]; return `<li><a href="pieces/${p.id}/"><img src="img/${p.shots[0].img}-${W[Math.min(1, W.length - 1)]}.jpg" srcset="${W.map(x => `img/${p.shots[0].img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:900px) 25vw, 50vw" alt="${escA(pick(p.shots[0].alt, he))}" loading="lazy" decoding="async"><span class="ccnm">${pick(p.name, he)}</span><span class="cckd k">${pick(p.kind, he)}</span></a></li>`; };
-      const sig = shown.filter(p => p.group !== "special"), sp = shown.filter(p => p.group === "special");
+      const all = shown.concat(PREVIEW), sig = all.filter(p => p.group !== "special"), sp = all.filter(p => p.group === "special");
       const inner = `<main class="doc ccpage">
 <nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}"><a href="./#collection" ${AT(S("Home", "דף הבית"), he)}</a><i aria-hidden="true">/</i><span aria-current="page" ${AT(S("The collection", "הקולקציה"), he)}</span></nav>
 <h1 ${AT(S("The collection", "הקולקציה"), he)}</h1>

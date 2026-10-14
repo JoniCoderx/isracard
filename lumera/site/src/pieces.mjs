@@ -135,6 +135,48 @@ export const PIECES = [
     ],
     reserve: true
   }  ,{
+    /* SILAVU ECHO, the earrings of the Signature: the owner's photographs
+       show the SILAVU mark as a stud, pavé on the loop, the band and the
+       teardrop, polished open loops either side, a butterfly back, SILAVU
+       engraved behind. Metal and setting follow the house (18K white gold,
+       pavé, as ICON and SOUL). The name is a WORKING NAME for the owner to
+       confirm; preview: true keeps it on /test3/ until then. */
+    id: "echo", preview: true, cat: "earrings", ref: "SLV·E·001", light: true,   /* shot on white */
+    widths: [640, 900, 1254],
+    seo: S("SILAVU ECHO Earrings · 18K White Gold Pavé Diamond Signature Studs", "עגילי SILAVU ECHO · עגילי צמוד מזהב לבן 18K עם חתימה ביהלומי פאווה"),
+    sub: S("18K white gold stud earrings, pavé diamond signature", "עגילים צמודים מזהב לבן 18K, חתימה ביהלומי פאווה"),
+    title: S("SILAVU ECHO | Diamond Earrings", "SILAVU ECHO | עגילי יהלומים"),
+    name: S("SILAVU <em>ECHO</em>", "SILAVU <em>ECHO</em>"),
+    kind: S("Earrings", "עגילים"),
+    plain: "SILAVU ECHO Earrings", plainHe: "עגילי SILAVU ECHO",
+    line: S("The SILAVU signature as a pair of 18k white-gold studs, traced in pavé diamonds.",
+            "חתימת SILAVU כזוג עגילים צמודים מזהב לבן 18K, משובצת ביהלומי פאווה."),
+    shots: [
+      { img: "echo-pair",   alt: S("The SILAVU ECHO earrings, a pair of pavé SILAVU signatures", "עגילי SILAVU ECHO, זוג חתימות SILAVU בשיבוץ פאווה") },
+      { img: "echo-side",   alt: S("One SILAVU ECHO earring from three quarters, the butterfly back behind it", "עגיל SILAVU ECHO בזווית שלושת־רבעי, הסגר מאחוריו") },
+      { img: "echo-worn",   alt: S("The SILAVU ECHO earring worn", "עגיל SILAVU ECHO ענוד") },
+      { img: "echo-macro",  alt: S("The pavé of the ECHO earring, close", "שיבוץ הפאווה של עגיל ECHO, מקרוב") },
+      { img: "echo-signed", alt: S("SILAVU engraved on the back of the ECHO earrings", "SILAVU חרוט בגב עגילי ECHO") }
+    ],
+    meta: [S("18K white gold", "זהב לבן 18K"), S("Studs", "צמודים"), S("Pavé", "פאווה"), S("Price on request", "מחיר לפי בקשה")],
+    key: [
+      [S("Material", "חומר"),          S("18K white gold", "זהב לבן 18K")],
+      [S("Diamonds", "יהלומים"),       S("Pavé, along the signature", "פאווה, לאורך החתימה")],
+      [S("Fastening", "סגירה"),        S("Stud with butterfly back", "צמוד עם סגר פרפר")],
+      [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
+    ],
+    stonesInside: true,
+    story: S("ECHO brings the SILAVU mark to the ear: pavé diamonds along its loop, its band and its teardrop, with polished open loops either side. Worn as a pair, each answers the other. SILAVU is engraved on the back of each one.",
+             "\u200fECHO מביאה את סמל SILAVU אל האוזן: יהלומי פאווה לאורך הלולאה, הפס והטיפה, ולולאות פתוחות מלוטשות משני הצדדים. כזוג, כל עגיל עונה לשני. SILAVU חרוט בגב כל אחד מהם."),
+    specs: [
+      [S("Reference", "מק\"ט"),  S("SLV·E·001", "SLV·E·001")],
+      [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
+      [S("Setting", "שיבוץ"),    S("Pavé", "פאווה")],
+      [S("Fastening", "סגירה"),  S("Butterfly back", "סגר פרפר")],
+      [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
+    ],
+    reserve: true
+  }  ,{
     /* SILAVU PROMISE: the name confirmed by the owner, who asked for the
        karat and the sizes to follow the house (18K, as every piece; EU 47–58,
        as ICON). The rest is what the owner's photographs show: a sculpted
