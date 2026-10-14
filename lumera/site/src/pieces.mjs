@@ -135,42 +135,43 @@ export const PIECES = [
     ],
     reserve: true
   }  ,{
-    /* PREVIEW, on /test3/ only until the owner confirms it (preview: true
-       keeps it off the live collection, its page is noindex). Only what the
-       owner's photographs show is stated: a sculpted yellow-gold band that
-       folds open over one baguette diamond, SILAVU engraved inside. The
-       name, the reference, the karat and the sizes are WORKING VALUES the
-       owner has not confirmed; no karat and no sizes are claimed. */
-    id: "promise", preview: true, cat: "rings", ref: "SLV·R·002", light: true,   /* shot on white */
+    /* SILAVU PROMISE: the name confirmed by the owner, who asked for the
+       karat and the sizes to follow the house (18K, as every piece; EU 47–58,
+       as ICON). The rest is what the owner's photographs show: a sculpted
+       band that folds open over one baguette diamond, SILAVU engraved inside.
+       Last in the collection, as the owner asked. */
+    id: "promise", cat: "rings", ref: "SLV·R·002", light: true,   /* shot on white */
     widths: [640, 900, 1254],
-    seo: S("SILAVU PROMISE Ring · Yellow Gold Baguette Diamond Engagement Ring", "טבעת SILAVU PROMISE · טבעת אירוסין מזהב צהוב עם יהלום בגט"),
-    sub: S("Yellow gold engagement ring, one baguette diamond", "טבעת אירוסין מזהב צהוב, יהלום בגט אחד"),
+    seo: S("SILAVU PROMISE Ring · 18K Yellow Gold Baguette Diamond Engagement Ring", "טבעת SILAVU PROMISE · טבעת אירוסין מזהב צהוב 18K עם יהלום בגט"),
+    sub: S("18K yellow gold engagement ring, one baguette diamond", "טבעת אירוסין מזהב צהוב 18K, יהלום בגט אחד"),
     title: S("SILAVU PROMISE | Engagement Ring", "SILAVU PROMISE | טבעת אירוסין"),
     name: S("SILAVU <em>PROMISE</em>", "SILAVU <em>PROMISE</em>"),
     kind: S("Engagement ring", "טבעת אירוסין"),
     plain: "SILAVU PROMISE Ring", plainHe: "טבעת SILAVU PROMISE",
-    line: S("A sculpted yellow-gold band that folds open along its crown to hold a single baguette diamond.",
-            "טבעת פיסולית מזהב צהוב, שנפתחת לאורך הכתר שלה ומחזיקה יהלום בגט יחיד."),
+    line: S("A sculpted 18k yellow-gold band that folds open along its crown to hold a single baguette diamond.",
+            "טבעת פיסולית מזהב צהוב 18K, שנפתחת לאורך הכתר שלה ומחזיקה יהלום בגט יחיד."),
     shots: [
       { img: "promise-front",  alt: S("The SILAVU PROMISE ring, a baguette diamond set in the fold of a yellow-gold band", "טבעת SILAVU PROMISE, יהלום בגט משובץ בקפל של טבעת זהב צהוב") },
       { img: "promise-worn",   alt: S("The SILAVU PROMISE ring worn on the hand", "טבעת SILAVU PROMISE ענודה על היד") },
       { img: "promise-macro",  alt: S("The baguette diamond in the fold of the PROMISE ring, close", "יהלום הבגט בקפל של טבעת PROMISE, מקרוב") },
       { img: "promise-signed", alt: S("SILAVU engraved inside the band of the PROMISE ring", "SILAVU חרוט בתוך טבעת PROMISE") }
     ],
-    meta: [S("Yellow gold", "זהב צהוב"), S("Baguette diamond", "יהלום בגט"), S("Polished", "מלוטש"), S("Price on request", "מחיר לפי בקשה")],
+    meta: [S("18K yellow gold", "זהב צהוב 18K"), S("EU 47–58", "EU 47–58"), S("Baguette diamond", "יהלום בגט"), S("Price on request", "מחיר לפי בקשה")],
     key: [
-      [S("Material", "חומר"),          S("Yellow gold, polished", "זהב צהוב, מלוטש")],
+      [S("Material", "חומר"),          S("18K yellow gold, polished", "זהב צהוב 18K, מלוטש")],
       [S("Diamonds", "יהלומים"),       S("One baguette-cut diamond", "יהלום אחד בחיתוך בגט")],
+      [S("Dimensions", "מידות"),       S("EU sizes 47–58", "מידות EU 47–58")],
       [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
     ],
     stonesInside: true,
-    story: S("PROMISE is a band that opens. Its polished yellow gold folds back along the crown, and in the opening sits a single baguette diamond, held by the metal itself. SILAVU is engraved inside the band.",
-             "\u200fPROMISE היא טבעת שנפתחת. הזהב הצהוב המלוטש מתקפל לאורך הכתר, ובפתח יושב יהלום בגט יחיד, מוחזק בידי המתכת עצמה. SILAVU חרוט בתוך הטבעת."),
+    story: S("PROMISE is a band that opens. Its polished 18k yellow gold folds back along the crown, and in the opening sits a single baguette diamond, held by the metal itself. SILAVU is engraved inside the band.",
+             "\u200fPROMISE היא טבעת שנפתחת. הזהב הצהוב 18K המלוטש מתקפל לאורך הכתר, ובפתח יושב יהלום בגט יחיד, מוחזק בידי המתכת עצמה. SILAVU חרוט בתוך הטבעת."),
     specs: [
       [S("Reference", "מק\"ט"),  S("SLV·R·002", "SLV·R·002")],
-      [S("Metal", "מתכת"),       S("Yellow gold", "זהב צהוב")],
+      [S("Metal", "מתכת"),       S("18K yellow gold", "זהב צהוב 18K")],
       [S("Stone", "אבן"),        S("One baguette diamond", "יהלום בגט אחד")],
       [S("Finish", "גימור"),     S("Polished", "מלוטש")],
+      [S("Size", "מידה"),        S("EU 47–58", "EU 47–58")],
       [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
     ],
     reserve: true
