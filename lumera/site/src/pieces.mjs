@@ -140,7 +140,7 @@ export const PIECES = [
        as ICON). The rest is what the owner's photographs show: a sculpted
        band that folds open over one baguette diamond, SILAVU engraved inside.
        Last in the collection, as the owner asked. */
-    id: "promise", cat: "rings", ref: "SLV·R·002", light: true,   /* shot on white */
+    id: "promise", group: "special", cat: "rings",   /* a special piece, not of the signature line */ ref: "SLV·R·002", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     seo: S("SILAVU PROMISE Ring · 18K Yellow Gold Baguette Diamond Engagement Ring", "טבעת SILAVU PROMISE · טבעת אירוסין מזהב צהוב 18K עם יהלום בגט"),
     sub: S("18K yellow gold engagement ring, one baguette diamond", "טבעת אירוסין מזהב צהוב 18K, יהלום בגט אחד"),
@@ -152,7 +152,6 @@ export const PIECES = [
             "טבעת פיסולית מזהב צהוב 18K, שנפתחת לאורך הכתר שלה ומחזיקה יהלום בגט יחיד."),
     shots: [
       { img: "promise-front",  alt: S("The SILAVU PROMISE ring, a baguette diamond set in the fold of a yellow-gold band", "טבעת SILAVU PROMISE, יהלום בגט משובץ בקפל של טבעת זהב צהוב") },
-      { img: "promise-worn",   alt: S("The SILAVU PROMISE ring worn on the hand", "טבעת SILAVU PROMISE ענודה על היד") },
       { img: "promise-macro",  alt: S("The baguette diamond in the fold of the PROMISE ring, close", "יהלום הבגט בקפל של טבעת PROMISE, מקרוב") },
       { img: "promise-signed", alt: S("SILAVU engraved inside the band of the PROMISE ring", "SILAVU חרוט בתוך טבעת PROMISE") }
     ],

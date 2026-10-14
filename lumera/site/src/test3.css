@@ -95,3 +95,36 @@ html[dir="rtl"] #stripwrap .bphnote { left: auto; right: 16px; }
    The builder's price row is also called .cur (display:flex, margin-top
    12px), and the rule reached the menu link too, dropping it 12px */
 .sh nav a.cur { display: block; margin-top: 0; flex-wrap: nowrap; }
+
+/* the collection with four pieces: one row of four on a wide screen, two
+   by two below it, so the newest piece never stands alone under the rest */
+@media (min-width: 1200px) { .pgrid[data-n="4"] .piece:not(.soon) { grid-column: span 3; } }
+@media (min-width: 900px) and (max-width: 1199px) { .pgrid[data-n="4"] .piece:not(.soon) { grid-column: span 6; } }
+
+/* the collection in two parts: the Signature (four across, the earrings'
+   place kept), then the special pieces, smaller, then the whole collection */
+@media (min-width: 900px) {
+  .pgrid .piece.sig { grid-column: span 3 !important; }
+  .pgrid .piece.spc { grid-column: span 2 !important; }
+  .pgrid .piece.spc .t { font-size: .92rem; } .pgrid .piece.spc .p { font-size: .78rem; } .pgrid .piece.spc .meta { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1199px) { .pgrid .piece.sig { grid-column: span 6 !important; } .pgrid .piece.spc { grid-column: span 4 !important; } }
+.pgrid .piece.sigsoon { display: flex !important; flex-direction: column; grid-template-columns: none !important; }
+.pgrid .piece.sigsoon .sfig { position: relative; aspect-ratio: 1 / 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.pgrid .piece.sigsoon .sfig .sm { width: 22%; opacity: .32; }
+.pgrid .piece.sigsoon .bd { padding: 14px 2px 0; gap: 6px; }
+.pgrid .sph, .pgrid .allc { grid-column: 1 / -1; }
+.pgrid .sph { display: flex; align-items: center; gap: 14px; margin-top: clamp(18px, 3vw, 40px); color: var(--ink3); font-size: .62rem; letter-spacing: .124em; }
+.pgrid .sph i { flex: 1; height: 1px; background: var(--line); }
+html[data-ns] .pgrid .sph { letter-spacing: 0; font-size: .78rem; }
+.pgrid .sph[hidden] { display: none; }
+.pgrid .allc { display: flex; justify-content: center; margin-top: clamp(10px, 2vw, 22px); }
+/* on a phone a special piece lies down: a small photograph beside its words */
+@media (max-width: 899px) {
+  .pgrid .piece.spc { display: grid; grid-template-columns: 38% minmax(0, 1fr); gap: 14px; align-items: center; }
+  .pgrid .piece.spc .bd { padding: 0; }
+}
+@media (max-width: 899px) {
+  .pgrid .piece.sigsoon { grid-column: auto !important; }
+  .pgrid .piece.spc { grid-column: 1 / -1; max-width: 560px; }
+}

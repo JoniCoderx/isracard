@@ -421,11 +421,39 @@ const T3 = (() => {
     [/(\w+)\.classList\.toggle\("wrist","wrist"===(\w+)\)/, '$1.classList.toggle("wrist","wrist"===$2),$1.classList.toggle("photo","photo"===$2)'],
     [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()']
   ];
+  /* The collection in two parts (the owner, 14 Oct): the Signature, the
+     four pieces that carry the SILAVU mark (MOMENT, ICON, SOUL and a place
+     kept for the earrings, which are coming), and under it the special
+     pieces, smaller, then a way to the whole collection on one page. */
+  const SPECIAL = PIECES.filter(p => p.group === "special" && !p.exceptional);
+  const earrings = `<article class="piece soon sig sigsoon" data-cat="earrings" aria-disabled="true">
+        <div class="fig r11 sfig"><div class="sm" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000" aria-hidden="true"><use href="#symb"/></svg></div></div>
+        <div class="bd"><div class="t"><span class="nm" ${E({ en: "SILAVU <em>Earrings</em>", he: "SILAVU <em>עגילים</em>" })}>SILAVU <em>Earrings</em></span><span class="kd" ${E({ en: "Earrings", he: "עגילים" })}>Earrings</span></div>
+          <div class="row k meta"><span ${E({ en: "Coming soon", he: "בקרוב" })}>Coming soon</span></div></div>
+      </article>`;
+  const sph = `<div class="sph"><span class="k" ${E({ en: "Special pieces", he: "פריטים מיוחדים" })}>Special pieces</span><i aria-hidden="true"></i></div>`;
+  const allc = `<div class="allc"><a class="lnk" href="collection/" ${E({ en: "The whole collection", he: "כל הקולקציה" })}>The whole collection</a></div>`;
+  const twoParts = html => {
+    if (html.indexOf('<div class="pgrid">') < 0) return null;
+    let out = html;
+    for (const id of ["knot", "ring", "pave"]) out = out.replace(`<article class="piece" id="p-${id}"`, `<article class="piece sig" id="p-${id}"`);
+    for (const p of SPECIAL) out = out.replace(`<article class="piece" id="p-${p.id}"`, `<article class="piece spc" id="p-${p.id}"`);
+    /* the old "Coming soon" row was the last thing in the grid: the way to
+       the whole collection takes its place, and the earrings' place joins
+       the signature row */
+    const soon = out.match(/<article class="piece soon soon1"[\s\S]*?<\/article>/); if (!soon) return null;
+    out = out.replace(soon[0], allc);
+    const pave = out.indexOf('<article class="piece sig" id="p-pave"'); if (pave < 0) return null;
+    const after = out.indexOf("</article>", pave) + 10;
+    out = out.slice(0, after) + "\n" + earrings + (SPECIAL.length ? "\n" + sph : "") + out.slice(after);
+    return out;
+  };
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
     inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : []), ...(PREVIEW.length ? [['<article class="piece soon soon1"', PREVIEW.map(pieceCard).join("\n").replace(/(["\s,])\/img\//g, "$1img/") + "\n"]] : [])],
+    edit: twoParts,
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();
@@ -799,6 +827,22 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
           { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" + (he ? "he/" : "") },
           { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
       page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript, light: true, imageAlt: pick(p.shots[0].alt, he), imageSize: big, product: true, noindex: !!p.preview });
+    }
+    /* The whole collection on one page (/test3/ asks for it; kept out of
+       search until the owner approves the new layout): the Signature first,
+       then the special pieces, each a photograph, its name and a way in. */
+    for (const he of [false, true]) {
+      const slug = (he ? "he/" : "") + "collection";
+      const card = p => { const W = p.widths || [800, 1200]; return `<li><a href="pieces/${p.id}/"><img src="img/${p.shots[0].img}-${W[Math.min(1, W.length - 1)]}.jpg" srcset="${W.map(x => `img/${p.shots[0].img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:900px) 25vw, 50vw" alt="${escA(pick(p.shots[0].alt, he))}" loading="lazy" decoding="async"><span class="ccnm">${pick(p.name, he)}</span><span class="cckd k">${pick(p.kind, he)}</span></a></li>`; };
+      const sig = shown.filter(p => p.group !== "special"), sp = shown.filter(p => p.group === "special");
+      const inner = `<main class="doc ccpage">
+<nav class="crumbs k" aria-label="${he ? "מיקום" : "Breadcrumb"}"><a href="./#collection" ${AT(S("Home", "דף הבית"), he)}</a><i aria-hidden="true">/</i><span aria-current="page" ${AT(S("The collection", "הקולקציה"), he)}</span></nav>
+<h1 ${AT(S("The collection", "הקולקציה"), he)}</h1>
+<section><h2 class="k" ${AT(S("The Signature", "החתימה"), he)}</h2><ul class="ccgrid">${sig.map(card).join("")}</ul></section>
+${sp.length ? `<section><h2 class="k" ${AT(S("Special pieces", "פריטים מיוחדים"), he)}</h2><ul class="ccgrid ccsm">${sp.map(card).join("")}</ul></section>` : ""}
+</main>
+<style>main.doc.ccpage{max-width:min(1240px,92vw)}.ccpage .crumbs a{color:inherit;text-decoration:none}.ccpage h1{margin:.2em 0 .8em}.ccpage section{margin:0 0 clamp(36px,5vw,64px)}.ccpage h2{margin:0 0 18px;color:#777}.ccgrid{list-style:none;padding:0;margin:0;display:grid;gap:clamp(14px,2vw,26px);grid-template-columns:repeat(2,minmax(0,1fr))}@media(min-width:900px){.ccgrid{grid-template-columns:repeat(4,minmax(0,1fr))}.ccgrid.ccsm{grid-template-columns:repeat(6,minmax(0,1fr))}}.ccgrid a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}.ccgrid img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f7f5f1;border-radius:10px}.ccnm{font-size:1rem;letter-spacing:.04em}.cckd{font-size:.62rem;color:#777}</style>`;
+      page(slug, (he ? "הקולקציה" : "The collection") + " | SILAVU", he ? "כל התכשיטים של SILAVU." : "Every SILAVU piece.", inner, "", { he, alt: { en: "collection/", he: "he/collection/" }, light: true, noindex: true });
     }
     PIECE_URLS = shown.map(p => p.id);
     console.log("pieces:", PIECE_URLS.join(" "), "(en + he)");

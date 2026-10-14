@@ -56,3 +56,12 @@
   } else show();
 })();
 
+
+/* the "Special pieces" heading follows the filter: it stands only when a
+   special piece is showing under it */
+(function () {
+  var h = document.querySelector(".pgrid .sph"); if (!h) return;
+  var sp = [].slice.call(document.querySelectorAll(".pgrid .piece.spc"));
+  function sync() { h.hidden = !sp.some(function (c) { return !c.hidden; }); }
+  var mo = new MutationObserver(sync); sp.forEach(function (c) { mo.observe(c, { attributes: true, attributeFilter: ["hidden"] }); }); sync();
+})();
