@@ -128,3 +128,21 @@ html[data-ns] .pgrid .sph { letter-spacing: 0; font-size: .78rem; }
   .pgrid .piece.sigsoon { grid-column: auto !important; }
   .pgrid .piece.spc { grid-column: 1 / -1; max-width: 560px; }
 }
+
+/* The names, set like the wordmark (the owner, 14 Oct): one weight for the
+   whole name, SILAVU in ink and the piece's own word in its metal, a
+   polished gradient with the light in its middle, never bold against
+   regular. Still: names are read, not watched. Each piece is its metal: MOMENT white gold, ICON yellow gold,
+   SOUL rose gold, AURA platinum, PROMISE a warm 18K yellow. */
+.piece[data-theme="moment"]  { --pc: #56677a; --mg: linear-gradient(100deg, #34404e 0%, #5a6c82 30%, #8fa1b6 52%, #5d6f85 74%, #34404e 100%); }
+.piece[data-theme="icon"]    { --pc: #9a7634; --mg: linear-gradient(100deg, #6a4b17 0%, #9e7631 28%, #d2ac62 52%, #a67c34 74%, #6a4b17 100%); }
+.piece[data-theme="soul"]    { --pc: #a8705b; --mg: linear-gradient(100deg, #6a392b 0%, #9c5f4a 28%, #cf9a84 52%, #a5664f 74%, #6a392b 100%); }
+.piece[data-theme="aura"]    { --pc: #7c7f8c; --mg: linear-gradient(100deg, #3f414a 0%, #6c6f7c 28%, #a3a6b3 52%, #707380 74%, #3f414a 100%); }
+.piece[data-theme="promise"] { --pc: #a8822f; --mg: linear-gradient(100deg, #74510f 0%, #a8822f 28%, #dcb760 52%, #b08832 74%, #74510f 100%); }
+.pgrid .piece .t .nm, .pgrid .piece .t .nm em { font-weight: 500 !important; letter-spacing: .16em !important; }
+.pgrid .piece .t .nm { color: #14130f; }
+.pgrid .piece[data-theme] .t .nm em {
+  background: var(--mg) !important; -webkit-background-clip: text !important; background-clip: text !important;
+  color: transparent !important; -webkit-text-fill-color: transparent !important;
+}
+#pmodal[data-p="aura"] { --pacc: #c9ccd6; } #pmodal[data-p="promise"] { --pacc: #d9b25e; }
