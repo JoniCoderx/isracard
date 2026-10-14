@@ -217,6 +217,47 @@ export const PIECES = [
     ],
     reserve: true
   }  ,{
+    /* SILAVU BLUSH, a special piece (the owner, 14 Oct): the photographs
+       show an eternity band of radiant-cut pink stones all the way round,
+       four claws each, white diamond pavé along both edges. Metal and sizes
+       follow the house (18K rose gold, EU 47–58). The pink stones are not
+       named: what they are is for the owner to say. */
+    id: "blush", theme: "blush", word: "BLUSH", group: "special", cat: "rings", ref: "SLV·R·003", light: true,   /* shot on white */
+    widths: [640, 900, 1254],
+    seo: S("SILAVU BLUSH Ring · 18K Rose Gold Pink Stone Eternity Band", "טבעת SILAVU BLUSH · טבעת נצח מזהב ורוד 18K עם אבנים ורודות"),
+    sub: S("18K rose gold eternity band, pink stones and diamond pavé", "טבעת נצח מזהב ורוד 18K, אבנים ורודות ושיבוץ יהלומי פאווה"),
+    title: S("SILAVU BLUSH | Eternity Ring", "SILAVU BLUSH | טבעת נצח"),
+    name: S("SILAVU <em>BLUSH</em>", "SILAVU <em>BLUSH</em>"),
+    kind: S("Eternity ring", "טבעת נצח"),
+    plain: "SILAVU BLUSH Ring", plainHe: "טבעת SILAVU BLUSH",
+    line: S("An 18k rose-gold eternity band of radiant-cut pink stones, edged on both sides in diamond pavé.",
+            "טבעת נצח מזהב ורוד 18K של אבנים ורודות בחיתוך רדיאנט, ומשני צדיה שיבוץ יהלומי פאווה."),
+    shots: [
+      { img: "blush-front",   alt: S("The SILAVU BLUSH ring, pink radiant-cut stones all the way round a rose-gold band", "טבעת SILAVU BLUSH, אבנים ורודות בחיתוך רדיאנט לכל אורך טבעת מזהב ורוד") },
+      { img: "blush-macro",   alt: S("The pink stones and the diamond pavé of the BLUSH ring, close", "האבנים הוורודות ויהלומי הפאווה של טבעת BLUSH, מקרוב") },
+      { img: "blush-worn",    alt: S("The SILAVU BLUSH ring worn on the hand", "טבעת SILAVU BLUSH ענודה על היד") },
+      { img: "blush-side",    alt: S("The SILAVU BLUSH ring from three quarters", "טבעת SILAVU BLUSH בזווית שלושת־רבעי") },
+      { img: "blush-profile", alt: S("The SILAVU BLUSH ring seen edge on, the pavé inside the circle", "טבעת SILAVU BLUSH מהצד, הפאווה בתוך המעגל") }
+    ],
+    meta: [S("18K rose gold", "זהב ורוד 18K"), S("EU 47–58", "EU 47–58"), S("Eternity", "נצח"), S("Price on request", "מחיר לפי בקשה")],
+    key: [
+      [S("Material", "חומר"),          S("18K rose gold", "זהב ורוד 18K")],
+      [S("Stones", "אבנים"),           S("Radiant-cut pink stones all the way round, diamond pavé on both edges", "אבנים ורודות בחיתוך רדיאנט לכל אורך הטבעת, יהלומי פאווה משני הצדדים")],
+      [S("Dimensions", "מידות"),       S("EU sizes 47–58", "מידות EU 47–58")],
+      [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
+    ],
+    stonesInside: true,
+    story: S("BLUSH is colour all the way round: radiant-cut pink stones held on four claws each, without a break, and a fine line of white diamond pavé along both edges, all in 18k rose gold.",
+             "\u200fBLUSH היא צבע לכל אורך הטבעת: אבנים ורודות בחיתוך רדיאנט, כל אחת על ארבע שיניים, בלי הפסקה, וקו עדין של יהלומי פאווה לבנים לאורך שני הצדדים, הכול בזהב ורוד 18K."),
+    specs: [
+      [S("Reference", "מק\"ט"),  S("SLV·R·003", "SLV·R·003")],
+      [S("Metal", "מתכת"),       S("18K rose gold", "זהב ורוד 18K")],
+      [S("Stones", "אבנים"),     S("Radiant-cut pink stones, diamond pavé", "אבנים ורודות בחיתוך רדיאנט, יהלומי פאווה")],
+      [S("Size", "מידה"),        S("EU 47–58", "EU 47–58")],
+      [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
+    ],
+    reserve: true
+  }  ,{
     id: "star", cat: "necklaces", ref: "SLV·N·001",
     widths: [800, 1200, 1600, 2000],
     /* Not of the collection. Every other piece here carries the house mark and
