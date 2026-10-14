@@ -257,6 +257,46 @@ export const PIECES = [
     ],
     reserve: true
   }  ,{
+    /* SILAVU CADENCE, a special piece (the owner, 14 Oct): a line bracelet
+       of baguette diamonds, three round diamonds between each pair. The
+       owner's renders were remade on white in the collection's style,
+       smaller and finer at the owner's request. Metal and length follow the
+       house (18K white gold, 16–19 cm, as MOMENT). */
+    id: "cadence", theme: "cadence", word: "CADENCE", group: "special", cat: "bracelets", ref: "SLV·B·002", light: true,   /* shot on white */
+    widths: [640, 900, 1254],
+    seo: S("SILAVU CADENCE Bracelet · 18K White Gold Baguette and Round Diamond Line Bracelet", "צמיד SILAVU CADENCE · צמיד שורה מזהב לבן 18K עם יהלומי בגט ויהלומים עגולים"),
+    sub: S("18K white gold line bracelet, baguette and round diamonds", "צמיד שורה מזהב לבן 18K, יהלומי בגט ויהלומים עגולים"),
+    title: S("SILAVU CADENCE | Diamond Line Bracelet", "SILAVU CADENCE | צמיד שורת יהלומים"),
+    name: S("SILAVU <em>CADENCE</em>", "SILAVU <em>CADENCE</em>"),
+    kind: S("Bracelet", "צמיד"),
+    plain: "SILAVU CADENCE Bracelet", plainHe: "צמיד SILAVU CADENCE",
+    line: S("A fine 18k white-gold line of baguette diamonds, with three round diamonds between each.",
+            "שורה עדינה מזהב לבן 18K של יהלומי בגט, ושלושה יהלומים עגולים בין כל אחד."),
+    shots: [
+      { img: "cadence-front", alt: S("The SILAVU CADENCE bracelet, baguette diamonds and trios of round diamonds in white gold", "צמיד SILAVU CADENCE, יהלומי בגט ושלישיות יהלומים עגולים בזהב לבן") },
+      { img: "cadence-macro", alt: S("The baguettes and the round diamonds of the CADENCE bracelet, close", "יהלומי הבגט והיהלומים העגולים של צמיד CADENCE, מקרוב") },
+      { img: "cadence-worn",  alt: S("The SILAVU CADENCE bracelet worn on the wrist", "צמיד SILAVU CADENCE ענוד על פרק היד") },
+      { img: "cadence-side",  alt: S("The SILAVU CADENCE bracelet from three quarters, the box clasp behind", "צמיד SILAVU CADENCE בזווית שלושת־רבעי, הסגר מאחור") }
+    ],
+    meta: [S("18K white gold", "זהב לבן 18K"), S("16–19 cm", "16–19 ס\"מ"), S("Baguette", "בגט"), S("Price on request", "מחיר לפי בקשה")],
+    key: [
+      [S("Material", "חומר"),          S("18K white gold", "זהב לבן 18K")],
+      [S("Diamonds", "יהלומים"),       S("Baguette diamonds, three round brilliants between each", "יהלומי בגט, שלושה יהלומי בריליאנט עגולים בין כל אחד")],
+      [S("Dimensions", "מידות"),       S("16–19 cm", "16–19 ס\"מ")],
+      [S("Availability", "זמינות"),    S("Made to order", "מיוצר לפי הזמנה")]
+    ],
+    stonesInside: true,
+    story: S("CADENCE keeps a rhythm around the wrist: a baguette diamond, then three small round diamonds, then a baguette again, each held on fine claws in 18k white gold and closed with a box clasp.",
+             "\u200fCADENCE שומר על קצב סביב פרק היד: יהלום בגט, אחריו שלושה יהלומים עגולים קטנים, ושוב בגט, כל אחד על שיניים עדינות בזהב לבן 18K, עם סגר קופסה."),
+    specs: [
+      [S("Reference", "מק\"ט"),  S("SLV·B·002", "SLV·B·002")],
+      [S("Metal", "מתכת"),       S("18K white gold", "זהב לבן 18K")],
+      [S("Diamonds", "יהלומים"), S("Baguette and round brilliant", "בגט ובריליאנט עגול")],
+      [S("Length", "אורך"),      S("16–19 cm", "16–19 ס\"מ")],
+      [S("Price", "מחיר"),       S("Price on request", "מחיר לפי בקשה")]
+    ],
+    reserve: true
+  }  ,{
     id: "star", cat: "necklaces", ref: "SLV·N·001",
     widths: [800, 1200, 1600, 2000],
     /* Not of the collection. Every other piece here carries the house mark and

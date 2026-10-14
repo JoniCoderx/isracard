@@ -6697,6 +6697,7 @@ html[data-ns] .pgrid .sph { letter-spacing: 0; font-size: .78rem; }
 .piece[data-theme="soul"]    { --pc: #a8705b; --mg: linear-gradient(100deg, #6a392b 0%, #9c5f4a 28%, #cf9a84 52%, #a5664f 74%, #6a392b 100%); }
 .piece[data-theme="aura"]    { --pc: #7c7f8c; --mg: linear-gradient(100deg, #3f414a 0%, #6c6f7c 28%, #a3a6b3 52%, #707380 74%, #3f414a 100%); }
 .piece[data-theme="blush"]   { --pc: #b4646a; --mg: linear-gradient(100deg, #7a3a3f 0%, #b0646b 28%, #e3a2a2 52%, #b8686e 74%, #7a3a3f 100%); }
+.piece[data-theme="cadence"] { --pc: #5b6676; --mg: linear-gradient(100deg, #2f3640 0%, #5b6676 28%, #b4bfcc 52%, #657183 74%, #2f3640 100%); }
 .piece[data-theme="promise"] { --pc: #a8822f; --mg: linear-gradient(100deg, #74510f 0%, #a8822f 28%, #dcb760 52%, #b08832 74%, #74510f 100%); }
 .pgrid .piece .t .nm, .pgrid .piece .t .nm em { font-weight: 500 !important; letter-spacing: .16em !important; }
 .pgrid .piece .t .nm { color: #14130f; }
@@ -6749,6 +6750,7 @@ html body #pmodal .mclose2:hover { border-color: #14130f !important; }
 #pmodal[data-p="soul"]   { --mg: linear-gradient(100deg, #6a392b 0%, #9c5f4a 28%, #cf9a84 52%, #a5664f 74%, #6a392b 100%); }
 #pmodal[data-p="aura"]   { --mg: linear-gradient(100deg, #3f414a 0%, #6c6f7c 28%, #a3a6b3 52%, #707380 74%, #3f414a 100%); }
 #pmodal[data-p="blush"]  { --mg: linear-gradient(100deg, #7a3a3f 0%, #b0646b 28%, #e3a2a2 52%, #b8686e 74%, #7a3a3f 100%); }
+#pmodal[data-p="cadence"]{ --mg: linear-gradient(100deg, #2f3640 0%, #5b6676 28%, #b4bfcc 52%, #657183 74%, #2f3640 100%); }
 #pmodal[data-p="promise"]{ --mg: linear-gradient(100deg, #74510f 0%, #a8822f 28%, #dcb760 52%, #b08832 74%, #74510f 100%); }
 html body #pmodal .t .nm, html body #pmodal .t .nm em { font-weight: 500 !important; letter-spacing: .16em !important; text-transform: uppercase; }
 html body #pmodal .t { padding-inline-end: 56px; }
