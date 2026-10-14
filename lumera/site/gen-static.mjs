@@ -2,10 +2,11 @@
 // Usage: node gen-static.mjs <silavu-page.html> <out dir> [public base URL for OG tags]
 import fs from "node:fs";
 import path from "node:path";
-import { PIECES, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, REDIRECTS, publicRelease } from "./src/content/load.mjs";
+import { PIECES, PREVIEW, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, REDIRECTS, publicRelease } from "./src/content/load.mjs";
 import { toInline, safeHref, safeInline, HOUSE_EMAIL } from "./src/content/apply.mjs";
 import { priceWords, baseCurrency } from "./src/content/money.mjs";
 import { policyMain, docpageMain, aboutText, aboutCaption } from "./src/content/templates.mjs";
+import { pieceCard } from "./src/body.mjs";
 /* a piece with a set price carries an Offer; a piece quoted on request carries none */
 const offerOf = (p, url) => { const pr = p.price || {}, cur = baseCurrency(pr);
   if (pr.mode !== "exact" || !cur) return undefined;
@@ -424,7 +425,7 @@ const T3 = (() => {
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : []), ...(PREVIEW.length ? [['<article class="piece soon soon1"', PREVIEW.map(pieceCard).join("\n").replace(/(["\s,])\/img\//g, "$1img/") + "\n"]] : [])],
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();
@@ -619,6 +620,7 @@ fs.writeFileSync(path.join(outDir, ".nojekyll"), "");
     if (o.imageAlt) dhead = dhead.replace(/(<meta property="og:image:alt" content=")[^"]*/, `$1${escA(o.imageAlt)}`).replace(/(<meta name="twitter:image:alt" content=")[^"]*/, `$1${escA(o.imageAlt)}`);
     if (o.imageSize) dhead = dhead.replace(/(<meta property="og:image:width" content=")[^"]*/, `$1${o.imageSize}`).replace(/(<meta property="og:image:height" content=")[^"]*/, `$1${o.imageSize}`);
     if (o.product) dhead = dhead.replace(/(<meta property="og:type" content=")[^"]*/, "$1product");
+    if (o.noindex) dhead = dhead.replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">');
     /* a white page is white up to the top of the phone: the browser paints its
        bar from the theme colour and from the page's own background, so both
        are white, and the home-screen status bar is dark text on white */
@@ -730,7 +732,7 @@ ${aboutText(a)}
 })();</script>`;
     const pick = (x, he) => he ? x.he : x.en;
     const AT = (x, he) => `${A(x)}>${pick(x, he)}`;
-    for (const he of [false, true]) for (const p of shown) {
+    for (const he of [false, true]) for (const p of shown.concat(PREVIEW)) {
       const slug = (he ? "he/" : "") + "pieces/" + p.id;
       const alt = { en: "pieces/" + p.id + "/", he: "he/pieces/" + p.id + "/" };
       const others = shown.filter(q => q !== p);
@@ -796,7 +798,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
         { "@type": "BreadcrumbList", "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" + (he ? "he/" : "") },
           { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
-      page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript, light: true, imageAlt: pick(p.shots[0].alt, he), imageSize: big, product: true });
+      page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript, light: true, imageAlt: pick(p.shots[0].alt, he), imageSize: big, product: true, noindex: !!p.preview });
     }
     PIECE_URLS = shown.map(p => p.id);
     console.log("pieces:", PIECE_URLS.join(" "), "(en + he)");

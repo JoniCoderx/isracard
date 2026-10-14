@@ -71,7 +71,11 @@ function piece(d) {
   return p;
 }
 
-export const PIECES = ofKind("product").map(([, d]) => d.data).filter(p => p.status !== "hidden").map(piece);
+const ALL_PIECES = ofKind("product").map(([, d]) => d.data).filter(p => p.status !== "hidden").map(piece);
+/* a piece marked preview is shown on the test pages only (and has its own
+   page, kept out of search) until the owner confirms it */
+export const PIECES = ALL_PIECES.filter(p => !p.preview);
+export const PREVIEW = ALL_PIECES.filter(p => p.preview);
 const col = one("collections");
 export const CATS = safeDeep(col.cats);
 export const SOON = safeDeep(col.soon || []);
