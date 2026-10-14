@@ -33,6 +33,12 @@ async function fromLive() {
   if (!res.ok) throw new Error("live copy answered " + res.status);
   const r = await res.json();
   if (!valid(r)) throw new Error("live copy is not a release");
+  /* The live copy holds every document the site was built with, the seed's
+     own among them; those come back without a revision. Only what the owner
+     published (it has one) is kept, so the seed stays the seed: taking its
+     echo as published froze every later edit to it (the pink sapphires
+     stayed "pink stones" on the live page). */
+  for (const [k, d] of Object.entries(r.snapshot.docs)) if (d.rev == null) delete r.snapshot.docs[k];
   // the library pictures it uses are already derived on the live site
   const ids = [...new Set((JSON.stringify(r.snapshot).match(/media:[0-9a-f-]{36}/g) || []).map(x => x.slice(6)))];
   r.media = ids.map(id => ({ id, live: true }));
