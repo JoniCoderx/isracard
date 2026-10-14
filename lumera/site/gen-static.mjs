@@ -6,7 +6,6 @@ import { PIECES, PREVIEW, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS,
 import { toInline, safeHref, safeInline, HOUSE_EMAIL } from "./src/content/apply.mjs";
 import { priceWords, baseCurrency } from "./src/content/money.mjs";
 import { policyMain, docpageMain, aboutText, aboutCaption } from "./src/content/templates.mjs";
-import { pieceCard } from "./src/body.mjs";
 /* a piece with a set price carries an Offer; a piece quoted on request carries none */
 const offerOf = (p, url) => { const pr = p.price || {}, cur = baseCurrency(pr);
   if (pr.mode !== "exact" || !cur) return undefined;
@@ -260,7 +259,8 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
   }
   const heHtml = (out + html.slice(at)).replace(/alt="([^"]*)" data-alt-he="([^"]*)"/g, 'alt="$2" data-alt-en="$1" data-alt-he="$2"')
     /* a piece's own page, from the Hebrew page, is its Hebrew page */
-    .replace(/href="pieces\//g, 'href="he/pieces/');
+    .replace(/href="pieces\//g, 'href="he/pieces/')
+    .replace(/href="collection\//g, 'href="he/collection/');
   const heHead = head
     .replace('<html lang="en">', '<html lang="he" dir="rtl" data-lang="he" data-ns="1">')
     .replace(/<head>\n/, '<head>\n<base href="../">\n')
@@ -421,47 +421,11 @@ const T3 = (() => {
     [/(\w+)\.classList\.toggle\("wrist","wrist"===(\w+)\)/, '$1.classList.toggle("wrist","wrist"===$2),$1.classList.toggle("photo","photo"===$2)'],
     [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()']
   ];
-  /* The collection in two parts (the owner, 14 Oct): the Signature, the
-     four pieces that carry the SILAVU mark (MOMENT, ICON, SOUL and a place
-     kept for the earrings, which are coming), and under it the special
-     pieces, smaller, then a way to the whole collection on one page. */
-  const SPECIAL = PIECES.filter(p => p.group === "special" && !p.exceptional);
-  const earrings = `<article class="piece soon sig sigsoon" data-cat="earrings" aria-disabled="true">
-        <div class="fig r11 sfig"><div class="sm" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000" aria-hidden="true"><use href="#symb"/></svg></div></div>
-        <div class="bd"><div class="t"><span class="nm" ${E({ en: "SILAVU <em>Earrings</em>", he: "SILAVU <em>עגילים</em>" })}>SILAVU <em>Earrings</em></span><span class="kd" ${E({ en: "Earrings", he: "עגילים" })}>Earrings</span></div>
-          <div class="row k meta"><span ${E({ en: "Coming soon", he: "בקרוב" })}>Coming soon</span></div></div>
-      </article>`;
-  const sph = `<div class="sph"><span class="k" ${E({ en: "Special pieces", he: "פריטים מיוחדים" })}>Special pieces</span><i aria-hidden="true"></i></div>`;
-  const allc = `<div class="allc"><a class="lnk" href="collection/" ${E({ en: "The whole collection", he: "כל הקולקציה" })}>The whole collection</a></div>`;
-  const twoParts = html => {
-    if (html.indexOf('<div class="pgrid">') < 0) return null;
-    let out = html;
-    for (const id of ["knot", "ring", "pave"]) out = out.replace(`<article class="piece" id="p-${id}"`, `<article class="piece sig" id="p-${id}"`);
-    for (const p of SPECIAL) out = out.replace(`<article class="piece" id="p-${p.id}"`, `<article class="piece spc" id="p-${p.id}"`);
-    /* the old "Coming soon" row was the last thing in the grid: the way to
-       the whole collection takes its place, and the earrings' place joins
-       the signature row */
-    const soon = out.match(/<article class="piece soon soon1"[\s\S]*?<\/article>/); if (!soon) return null;
-    out = out.replace(soon[0], allc);
-    const pave = out.indexOf('<article class="piece sig" id="p-pave"'); if (pave < 0) return null;
-    const after = out.indexOf("</article>", pave) + 10;
-    /* the earrings' place: the piece itself once it exists (live or preview),
-       else the place kept for it; any other preview piece joins its part */
-    const card = p => pieceCard(p).replace(/(["\s,])\/img\//g, "$1img/").replace('<article class="piece"', `<article class="piece ${p.group === "special" ? "spc" : "sig"}"`);
-    const ear = PIECES.concat(PREVIEW).find(p => p.cat === "earrings" && p.group !== "special");
-    if (ear && !PREVIEW.includes(ear)) out = out.replace(`<article class="piece" id="p-${ear.id}"`, `<article class="piece sig" id="p-${ear.id}"`);
-    const earHtml = !ear ? earrings : PREVIEW.includes(ear) ? card(ear) : "";
-    const morePre = PREVIEW.filter(p => p !== ear && p.group === "special").map(card).join("\n");
-    out = out.slice(0, after) + "\n" + earHtml + (SPECIAL.length || morePre ? "\n" + sph : "") + out.slice(after);
-    if (morePre) out = out.replace(allc, morePre + "\n" + allc);
-    return out;
-  };
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
     inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
-    edit: twoParts,
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();
@@ -836,9 +800,8 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
           { "@type": "ListItem", "position": 2, "name": plain(pick(p.name, he)), "item": base + "/" + (he ? alt.he : alt.en) } ] } ] };
       page(slug, title, desc, inner, "", { he, alt, image, schema, script: galScript, light: true, imageAlt: pick(p.shots[0].alt, he), imageSize: big, product: true, noindex: !!p.preview });
     }
-    /* The whole collection on one page (/test3/ asks for it; kept out of
-       search until the owner approves the new layout): the Signature first,
-       then the special pieces, each a photograph, its name and a way in. */
+    /* The whole collection on one page: the Signature first, then the
+       special pieces, each a photograph, its name and a way in. */
     for (const he of [false, true]) {
       const slug = (he ? "he/" : "") + "collection";
       const card = p => { const W = p.widths || [800, 1200]; return `<li><a href="pieces/${p.id}/"><img src="img/${p.shots[0].img}-${W[Math.min(1, W.length - 1)]}.jpg" srcset="${W.map(x => `img/${p.shots[0].img}-${x}.jpg ${x}w`).join(", ")}" sizes="(min-width:900px) 25vw, 50vw" alt="${escA(pick(p.shots[0].alt, he))}" loading="lazy" decoding="async"><span class="ccnm">${pick(p.name, he)}</span><span class="cckd k">${pick(p.kind, he)}</span></a></li>`; };
@@ -850,7 +813,7 @@ ${others.length ? `<section class="ppmore"><h2 class="k" ${AT(S("Also in the col
 ${sp.length ? `<section><h2 class="k" ${AT(S("Special pieces", "פריטים מיוחדים"), he)}</h2><ul class="ccgrid ccsm">${sp.map(card).join("")}</ul></section>` : ""}
 </main>
 <style>main.doc.ccpage{max-width:min(1240px,92vw)}.ccpage .crumbs a{color:inherit;text-decoration:none}.ccpage h1{margin:.2em 0 .8em}.ccpage section{margin:0 0 clamp(36px,5vw,64px)}.ccpage h2{margin:0 0 18px;color:#777}.ccgrid{list-style:none;padding:0;margin:0;display:grid;gap:clamp(14px,2vw,26px);grid-template-columns:repeat(2,minmax(0,1fr))}@media(min-width:900px){.ccgrid{grid-template-columns:repeat(4,minmax(0,1fr))}.ccgrid.ccsm{grid-template-columns:repeat(6,minmax(0,1fr))}}.ccgrid a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}.ccgrid img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f7f5f1;border-radius:10px}.ccnm{font-size:1rem;letter-spacing:.04em}.cckd{font-size:.62rem;color:#777}</style>`;
-      page(slug, (he ? "הקולקציה" : "The collection") + " | SILAVU", he ? "כל התכשיטים של SILAVU." : "Every SILAVU piece.", inner, "", { he, alt: { en: "collection/", he: "he/collection/" }, light: true, noindex: true });
+      page(slug, (he ? "הקולקציה" : "The collection") + " | SILAVU", he ? "כל התכשיטים של SILAVU." : "Every SILAVU piece.", inner, "", { he, alt: { en: "collection/", he: "he/collection/" }, light: true });
     }
     PIECE_URLS = shown.map(p => p.id);
     console.log("pieces:", PIECE_URLS.join(" "), "(en + he)");
@@ -888,6 +851,10 @@ fs.writeFileSync(path.join(outDir, "sitemap.xml"),
       + "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"" + base + "/\"/>\n"
       + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n"
       + "    <changefreq>weekly</changefreq>\n    <priority>" + (u === "/" ? "1.0" : "0.9") + "</priority>\n  </url>\n").join("")
+  + ["/collection/", "/he/collection/"].map(u => "  <url>\n    <loc>" + base + u + "</loc>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"" + base + "/collection/\"/>\n"
+      + "    <xhtml:link rel=\"alternate\" hreflang=\"he\" href=\"" + base + "/he/collection/\"/>\n"
+      + "    <lastmod>" + new Date().toISOString().slice(0, 10) + "</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n").join("")
   + PIECE_URLS.flatMap(id => ["/pieces/" + id + "/", "/he/pieces/" + id + "/"].map(u => "  <url>\n    <loc>" + base + u + "</loc>\n"
       + "    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"" + base + "/pieces/" + id + "/\"/>\n"
       + "    <xhtml:link rel=\"alternate\" hreflang=\"he\" href=\"" + base + "/he/pieces/" + id + "/\"/>\n"

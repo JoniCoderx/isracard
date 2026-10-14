@@ -558,6 +558,8 @@
       if (soon.length % 2) soon[soon.length - 1].classList.add("lone");
       if (grid) { grid.setAttribute("data-n", done.length); grid.setAttribute("data-s", soon.length); }
       if (soonh) soonh.hidden = !soon.length;
+      /* the "Special pieces" heading stands only over a special piece on screen */
+      var sph = grid && grid.querySelector(".sph"); if (sph) sph.hidden = !done.some(function (c) { return c.classList.contains("spc"); });
     }
     lone();
   })();

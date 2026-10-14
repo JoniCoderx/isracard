@@ -139,10 +139,9 @@ export const PIECES = [
        show the SILAVU mark as a stud, pavé on the loop, the band and the
        teardrop, polished open loops either side, a butterfly back, SILAVU
        engraved behind. Metal and setting follow the house (18K white gold,
-       pavé, as ICON and SOUL). AURA, the light around the face, replaces the
-       working name AURA, which the owner did not like; preview: true keeps
-       it on /test3/ until the owner confirms it. */
-    id: "aura", theme: "aura", word: "AURA", preview: true, cat: "earrings", ref: "SLV·E·001", light: true,   /* shot on white */
+       pavé, as ICON and SOUL). AURA, the light around the face, replaced the
+       working name ECHO, which the owner did not like. */
+    id: "aura", theme: "aura", word: "AURA", cat: "earrings", ref: "SLV·E·001", light: true,   /* shot on white */
     widths: [640, 900, 1254],
     seo: S("SILAVU AURA Earrings · 18K White Gold Pavé Diamond Signature Studs", "עגילי SILAVU AURA · עגילי צמוד מזהב לבן 18K עם חתימה ביהלומי פאווה"),
     sub: S("18K white gold stud earrings, pavé diamond signature", "עגילים צמודים מזהב לבן 18K, חתימה ביהלומי פאווה"),

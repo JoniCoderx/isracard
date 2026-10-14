@@ -6650,3 +6650,106 @@ html body .soc a.soon { pointer-events:none; cursor:default; opacity:.85; }
   @media (max-width:520px) { html body .consent { inset-inline:12px; max-width:none; padding:14px 14px 12px; font-size:.82rem; } }
   /* a word the owner can set on a card: New, One of one */
   .piece .pbadge { display:inline-block; margin-bottom:10px; padding:4px 10px; border:1px solid currentColor; border-radius:999px; font-size:.62rem; letter-spacing:.18em; opacity:.8; }
+
+  /* ══ 14 Oct 2026 ══ the collection in two parts, the names set like the
+     wordmark, the piece window, and the header link that dropped (all tried
+     on /test3/ first) ══════════════════════════════════════════════════ */
+/* the header: the page you are on is marked by its underline, not moved.
+   The builder's price row is also called .cur (display:flex, margin-top
+   12px), and the rule reached the menu link too, dropping it 12px */
+.sh nav a.cur { display: block; margin-top: 0; flex-wrap: nowrap; }
+
+/* the collection in two parts: the Signature (four across, the earrings'
+   place kept), then the special pieces, smaller, then the whole collection */
+@media (min-width: 900px) {
+  .pgrid .piece.sig { grid-column: span 3 !important; }
+  .pgrid .piece.spc { grid-column: span 2 !important; }
+  .pgrid .piece.spc .t { font-size: .92rem; } .pgrid .piece.spc .p { font-size: .78rem; } .pgrid .piece.spc .meta { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1199px) { .pgrid .piece.sig { grid-column: span 6 !important; } .pgrid .piece.spc { grid-column: span 4 !important; } }
+.pgrid .piece.sigsoon { display: flex !important; flex-direction: column; grid-template-columns: none !important; }
+.pgrid .piece.sigsoon .sfig { position: relative; aspect-ratio: 1 / 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.pgrid .piece.sigsoon .sfig .sm { width: 22%; opacity: .32; }
+.pgrid .piece.sigsoon .bd { padding: 14px 2px 0; gap: 6px; }
+.pgrid .sph, .pgrid .allc { grid-column: 1 / -1; }
+.pgrid .sph { display: flex; align-items: center; gap: 14px; margin-top: clamp(18px, 3vw, 40px); color: var(--ink3); font-size: .62rem; letter-spacing: .124em; }
+.pgrid .sph i { flex: 1; height: 1px; background: var(--line); }
+html[data-ns] .pgrid .sph { letter-spacing: 0; font-size: .78rem; }
+.pgrid .sph[hidden] { display: none; }
+.pgrid .allc { display: flex; justify-content: center; margin-top: clamp(10px, 2vw, 22px); }
+/* on a phone a special piece lies down: a small photograph beside its words */
+@media (max-width: 899px) {
+  .pgrid .piece.spc { display: grid; grid-template-columns: 38% minmax(0, 1fr); gap: 14px; align-items: center; }
+  .pgrid .piece.spc .bd { padding: 0; }
+}
+@media (max-width: 899px) {
+  .pgrid .piece.sigsoon { grid-column: auto !important; }
+  .pgrid .piece.spc { grid-column: 1 / -1; max-width: 560px; }
+}
+
+/* The names, set like the wordmark (the owner, 14 Oct): one weight for the
+   whole name, SILAVU in ink and the piece's own word in its metal, a
+   polished gradient with the light in its middle, never bold against
+   regular. Still: names are read, not watched. Each piece is its metal: MOMENT white gold, ICON yellow gold,
+   SOUL rose gold, AURA platinum, PROMISE a warm 18K yellow. */
+.piece[data-theme="moment"]  { --pc: #56677a; --mg: linear-gradient(100deg, #34404e 0%, #5a6c82 30%, #8fa1b6 52%, #5d6f85 74%, #34404e 100%); }
+.piece[data-theme="icon"]    { --pc: #9a7634; --mg: linear-gradient(100deg, #6a4b17 0%, #9e7631 28%, #d2ac62 52%, #a67c34 74%, #6a4b17 100%); }
+.piece[data-theme="soul"]    { --pc: #a8705b; --mg: linear-gradient(100deg, #6a392b 0%, #9c5f4a 28%, #cf9a84 52%, #a5664f 74%, #6a392b 100%); }
+.piece[data-theme="aura"]    { --pc: #7c7f8c; --mg: linear-gradient(100deg, #3f414a 0%, #6c6f7c 28%, #a3a6b3 52%, #707380 74%, #3f414a 100%); }
+.piece[data-theme="promise"] { --pc: #a8822f; --mg: linear-gradient(100deg, #74510f 0%, #a8822f 28%, #dcb760 52%, #b08832 74%, #74510f 100%); }
+.pgrid .piece .t .nm, .pgrid .piece .t .nm em { font-weight: 500 !important; letter-spacing: .16em !important; }
+.pgrid .piece .t .nm { color: #14130f; }
+.pgrid .piece[data-theme] .t .nm em {
+  background: var(--mg) !important; -webkit-background-clip: text !important; background-clip: text !important;
+  color: transparent !important; -webkit-text-fill-color: transparent !important;
+}
+#pmodal[data-p="aura"] { --pacc: #c9ccd6; } #pmodal[data-p="promise"] { --pacc: #d9b25e; }
+
+/* ══ the piece window, 14 Oct ══ one clear action, one quiet one, and a
+   real close. The name is set as in the collection. Buttons are the
+   site's own (radius 11px, 52px tall), full width, stacked: Reserve (the
+   reason to open the window) solid, the full page outlined. */
+html body #pmodal .mbd { display: flex !important; flex-direction: column; }
+html body #pmodal .mbuy, html body #pmodal .macts { display: contents !important; }
+html body #pmodal .mbd > #pmK { order: 1; } html body #pmodal .mbd > .t { order: 2; } html body #pmodal .mbd > .lead { order: 3; }
+html body #pmodal .mbd > .mkeys { order: 4; } html body #pmodal .mbd > .story { order: 5; }
+html body #pmodal .mprice { order: 10; border: 0 !important; padding: 18px 0 12px !important; margin: 0 !important; position: static !important; background: none !important; }
+html body #pmodal .mprice > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+html body #pmodal .mprice .pv { font-size: 1.05rem; }
+html body #pmodal .mprice .pn { white-space: nowrap; }
+@media (max-width: 899px) { html body #pmodal .mprice .pn { white-space: normal; } }
+html body #pmodal #pmRes { order: 11; }
+html body #pmodal #pmPage { order: 12; }
+html body #pmodal #pmTry { order: 13; }
+html body #pmodal .mbd > .macc { order: 20; margin-top: 18px; } html body #pmodal .mbd > p.mfoot { order: 21; margin-top: 16px; }
+html body #pmodal #pmRes, html body #pmodal .mbuy a.mpage.btn, html body #pmodal #pmTry {
+  display: flex !important; align-items: center; justify-content: center; gap: 12px; width: 100% !important; min-height: 52px !important; margin: 0 0 10px !important;
+  border-radius: 11px !important; font-size: .74rem !important; letter-spacing: .16em !important; text-transform: uppercase; box-shadow: none !important;
+  position: static !important; transform: none; transition: background-color .15s ease, color .15s ease, border-color .15s ease, transform .12s ease-out !important; }
+html body #pmodal #pmRes { background: #14130f !important; color: #f6f3ed !important; border: 1px solid #14130f !important; }
+html body #pmodal #pmRes:hover { background: #2a2822 !important; }
+html body #pmodal .mbuy a.mpage.btn, html body #pmodal #pmTry { background: transparent !important; color: #14130f !important; border: 1px solid rgba(20,19,15,.28) !important; }
+html body #pmodal .mbuy a.mpage.btn:hover, html body #pmodal #pmTry:hover { border-color: #14130f !important; }
+html body #pmodal #pmRes:active, html body #pmodal .mbuy a.mpage.btn:active, html body #pmodal #pmTry:active { transform: scale(.97); }
+html body #pmodal #pmTry[hidden], html body #pmodal .mbuy .mpage[hidden] { display: none !important; }
+html[data-ns] body #pmodal #pmRes, html[data-ns] body #pmodal .mbuy a.mpage.btn, html[data-ns] body #pmodal #pmTry { letter-spacing: .02em !important; text-transform: none; font-size: .9rem !important; }
+/* close: a round button in the corner of the window, never over the words */
+html body #pmodal .mclose2 { position: absolute !important; top: 14px !important; inset-inline-end: 14px !important; left: auto; float: none !important; margin: 0 !important;
+  z-index: 8; width: 44px; height: 44px; min-height: 44px; padding: 0 !important; border-radius: 50% !important; font-size: 0 !important; color: transparent !important;
+  background: rgba(252,251,248,.92) !important; border: 1px solid rgba(20,19,15,.14) !important; -webkit-backdrop-filter: blur(8px) !important; backdrop-filter: blur(8px) !important; }
+html[dir="rtl"] body #pmodal .mclose2 { left: auto !important; }
+html body #pmodal .mclose2::before, html body #pmodal .mclose2::after { content: none !important; display: none !important; }
+html body #pmodal .mclose2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 3l10 10M13 3L3 13' stroke='%2314130f' stroke-width='1.4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: center !important; background-size: 16px 16px !important; }
+html body #pmodal .mclose2:hover { border-color: #14130f !important; }
+@media (max-width: 899px) { html body #pmodal .mclose2 { position: fixed !important; top: max(12px, env(safe-area-inset-top)) !important; } }
+/* the name, as in the collection */
+#pmodal[data-p="moment"] { --mg: linear-gradient(100deg, #34404e 0%, #5a6c82 30%, #8fa1b6 52%, #5d6f85 74%, #34404e 100%); }
+#pmodal[data-p="icon"]   { --mg: linear-gradient(100deg, #6a4b17 0%, #9e7631 28%, #d2ac62 52%, #a67c34 74%, #6a4b17 100%); }
+#pmodal[data-p="soul"]   { --mg: linear-gradient(100deg, #6a392b 0%, #9c5f4a 28%, #cf9a84 52%, #a5664f 74%, #6a392b 100%); }
+#pmodal[data-p="aura"]   { --mg: linear-gradient(100deg, #3f414a 0%, #6c6f7c 28%, #a3a6b3 52%, #707380 74%, #3f414a 100%); }
+#pmodal[data-p="promise"]{ --mg: linear-gradient(100deg, #74510f 0%, #a8822f 28%, #dcb760 52%, #b08832 74%, #74510f 100%); }
+html body #pmodal .t .nm, html body #pmodal .t .nm em { font-weight: 500 !important; letter-spacing: .16em !important; text-transform: uppercase; }
+html body #pmodal .t { padding-inline-end: 56px; }
+html body #pmodal[data-p] .t .nm em { display: inline !important; margin: 0 0 0 .14em !important; background: var(--mg) !important; -webkit-background-clip: text !important; background-clip: text !important;
+  color: transparent !important; -webkit-text-fill-color: transparent !important; }
+@media (max-width: 899px) { html body #pmodal .mprice > div { flex-direction: column; align-items: flex-start; } }

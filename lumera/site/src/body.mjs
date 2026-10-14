@@ -105,8 +105,20 @@ function soonCard(x) {
 const COLLECTION = `<div class="cats k" role="tablist" aria-label="Collection categories">${
   CATS.map((c, i) => `<button type="button" role="tab" class="cat${i === 0 ? " on" : ""}" data-cat="${c.id}" aria-selected="${i === 0}" data-en="${esc(c.en)}" data-he="${esc(c.he)}">${c.en}</button>`).join("")
 }</div>
-    <div class="pgrid">${PIECES.filter(x => !x.exceptional).map(pieceCard).join("\n")}<article class="piece soon soon1" data-cat="soon"><div class="soonrow"><i aria-hidden="true"></i><span class="sm" aria-hidden="true">${markUse("")}</span><span class="k" data-en="Coming soon" data-he="בקרוב">Coming soon</span><i aria-hidden="true"></i></div></article>${SOON.map(soonCard).join("\n")}</div>
+    <div class="pgrid">${collectionGrid()}${SOON.map(soonCard).join("\n")}</div>
 `;
+/* The collection in two parts (the owner, 14 Oct 2026): the Signature, the
+   pieces that carry the SILAVU mark, four across (a place is kept for the
+   earrings until they exist); under it the special pieces, smaller; then
+   the way to the whole collection on one page. */
+function collectionGrid() {
+  const shown = PIECES.filter(x => !x.exceptional), as = (html, c) => html.replace('<article class="piece"', `<article class="piece ${c}"`);
+  const sig = shown.filter(x => x.group !== "special"), spc = shown.filter(x => x.group === "special");
+  const earSlot = sig.some(x => x.cat === "earrings") ? "" : `<article class="piece soon sig sigsoon" data-cat="earrings" aria-disabled="true"><div class="fig r11 sfig"><div class="sm" aria-hidden="true">${markUse("")}</div></div><div class="bd"><div class="t">${T("span", "nm", "SILAVU <em>Earrings</em>", "SILAVU <em>עגילים</em>")}<span class="kd" data-en="Earrings" data-he="עגילים">Earrings</span></div><div class="row k meta"><span data-en="Coming soon" data-he="בקרוב">Coming soon</span></div></div></article>`;
+  return sig.map(p => as(pieceCard(p), "sig")).join("\n") + earSlot
+    + (spc.length ? `<div class="sph"><span class="k" data-en="Special pieces" data-he="פריטים מיוחדים">Special pieces</span><i aria-hidden="true"></i></div>` + spc.map(p => as(pieceCard(p), "spc")).join("\n") : "")
+    + `<div class="allc"><a class="lnk" href="collection/" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</a></div>`;
+}
 
 const SIZES_JRN = "(min-width:1000px) 56vw, 92vw", SIZES_STEP = "(min-width:900px) 19vw, 46vw", SIZES_ED = "(min-width:900px) 600px, 100vw", SIZES_CARD = "(min-width:760px) 30vw, 78vw", SIZES_PIECE = "(min-width:1100px) 22vw, (min-width:760px) 45vw, 78vw";
 
