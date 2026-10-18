@@ -478,53 +478,6 @@ const T3 = (() => {
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();
-/* /test4/: the redesign (18 Oct 2026). Everything of /test3/, and "SOUL, in
-   light" between the signature and the collection: the piece pinned in white
-   while the scroll plays its film (soul-frames.sh), src/test4.css and
-   src/test4.js. The specs are the piece's own (src/pieces.mjs), nothing added. */
-const T4 = (() => {
-  const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-  const E = (en, he) => `data-en="${q(en)}" data-he="${q(he)}"`;
-  const t = (tag, cls, en, he) => `<${tag} class="${cls}" ${E(en, he)}>${en}</${tag}>`;
-  const soul = PIECES.find(p => p.id === "pave");
-  if (!soul) return null;
-  const spec = label => { const r = (soul.specs || []).find(x => x[0].en === label); return r ? r[1] : null; };
-  const metal = spec("Metal"), setting = spec("Setting"), length = spec("Length"), ref = spec("Reference");
-  const chain = (soul.key || []).find(x => x[0].en === "Diamonds");
-  if (!metal || !setting || !length || !ref || !chain) return null;
-  const N = 120;
-  const beat = inner => `<div class="sfbeat">${inner}</div>`;
-  const call = (x, y, side, len, en, he) => `<div class="sfc${side === "l" ? " l" : ""}" data-x="${x}" data-y="${y}" style="--len:${len}px"><i></i><b></b><span ${E(en, he)}>${en}</span></div>`;
-  const CX = fs.readFileSync(path.join(path.dirname(path.resolve(src)), "soul-cx.txt"), "utf8").trim();
-  if (CX.split(",").length !== N) return null;
-  const html = `<section id="soulfilm" class="ivory" data-n="${N}" data-base="f/soul/" data-cx="${CX}" data-cxref="0.494" data-title-en="SOUL, in light" data-title-he="SOUL, באור" aria-label="SOUL, in light">
-  <div class="sfpin">
-    <div class="sfstick">
-      <img class="sfposter" src="f/soul/d-000.webp" alt="" decoding="async" loading="lazy">
-      <canvas id="sfcv" role="img" aria-label="The SILAVU SOUL necklace floating in white light: it turns towards you, its pavé diamonds lift out of their settings and settle back, and it comes to rest on white silk"></canvas>
-      <div class="sfcall" aria-hidden="true">
-        ${call(0.575, 0.455, "r", 120, "Pavé, set by hand", "פאווה, משובץ ביד")}
-        ${call(0.643, 0.53, "r", 70, metal.en, metal.he)}
-      </div>
-      <div class="sfbeats">
-        ${beat(`${t("div", "k", "SILAVU SOUL", "SILAVU SOUL")}${t("h2", "h2", "The mark, <em>in light.</em>", "החותם, <em>באור.</em>")}${t("p", "p", "A fine 18K white-gold chain, and at its centre the SILAVU signature, drawn in pavé diamonds.", "שרשרת עדינה מזהב לבן 18K, ובמרכזה חתימת SILAVU, משורטטת ביהלומי פאווה.")}`)}
-        ${beat(`${t("div", "k", "Set by hand", "משובץ ביד")}${t("h2", "h2", "Every stone, <em>chosen by eye.</em>", "כל אבן <em>נבחרת בעין.</em>")}${t("p", "p", "Each diamond of the signature is set in its own seat, one after another, by hand.", "כל יהלום בחתימה מונח במושב משלו, אחד אחרי השני, ביד.")}`)}
-        ${beat(`${t("div", "k", "Inside the mark", "בתוך החותם")}${t("h2", "h2", "Pavé, <em>stone by stone.</em>", "פאווה, <em>אבן אחר אבן.</em>")}<dl class="sfspecs"><dt ${E("Metal", "מתכת")}>Metal</dt><dd ${E(metal.en, metal.he)}>${metal.en}</dd><dt ${E("Setting", "שיבוץ")}>Setting</dt><dd ${E(setting.en, setting.he)}>${setting.en}</dd><dt ${E("Diamonds", "יהלומים")}>Diamonds</dt><dd ${E(chain[1].en, chain[1].he)}>${chain[1].en}</dd><dt ${E("Length", "אורך")}>Length</dt><dd ${E(length.en, length.he)}>${length.en}</dd></dl>`)}
-        ${beat(`${t("div", "k", ref.en, ref.he)}${t("h2", "h2", "Made to be <em>lived in.</em>", "נולדה <em>להיענד.</em>")}${t("p", "p", "Made to order, in 18K white gold.", "מיוצרת לפי הזמנה, בזהב לבן 18K.")}<div class="sfacts"><a class="btn solid" href="pieces/pave/"><span ${E("View SOUL", "לצפייה ב־SOUL")}>View SOUL</span></a><a class="btn" href="#concierge"><span ${E("Book a private viewing", "קביעת פגישה פרטית")}>Book a private viewing</span></a></div>`)}
-      </div>
-      <div class="sfprog" aria-hidden="true"><i></i></div>
-    </div>
-  </div>
-</section>
-`;
-  const dir = path.join(path.dirname(path.resolve(src)), "src");
-  return {
-    css: fs.readFileSync(path.join(dir, "test4.css"), "utf8"),
-    js: "<script>" + fs.readFileSync(path.join(dir, "test4.js"), "utf8") + "</script>",
-    /* placed after the layout has set the order of the chapters */
-    edit: h => h.includes('<section id="collection"') ? h.replace('<section id="collection"', html + '<section id="collection"') : null
-  };
-})();
 const HERO_ALT = {
   "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
                    he: "שרשרת, טבעת וצמיד של SILAVU תחת פעמון זכוכית על שיש שחור, ברקע קו הרקיע של דובאי בלילה, ויד של אישה מונחת לצידם" },
@@ -579,8 +532,15 @@ heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
 /* /test3/ tries "LUMIÈRE" (hero-lumiere-assets.sh; "The Choice",
    hero-choice-assets.sh, came before it), with the words in ink (INK, WHOLE) */
 heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3D, T2, LAYOUT, T3, { edit: ultraCut("hero-lumiere") }]);
-/* /test4/: the redesign, "SOUL, in light" (T4) on top of /test3/ */
-heroTest("test4", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3D, T2, LAYOUT, T3, T4, { edit: ultraCut("hero-lumiere") }]);
+/* /test4/: the redesign, a page of its own, built from zero (src/t4/page.mjs) */
+{
+  const { mark, markDefs, markUse, logo } = await import("./src/body.mjs");
+  const { test4Page } = await import("./src/t4/page.mjs");
+  const root = path.dirname(path.resolve(src));
+  const page = test4Page({ PIECES, FOOTER_DOCS, mark, markDefs, markUse, logo, CX: fs.readFileSync(path.join(root, "soul-cx.txt"), "utf8").trim(), root });
+  if (page) { fs.mkdirSync(path.join(outDir, "test4"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test4", "index.html"), page); console.log("test page written: test4"); }
+  else console.warn("test4 skipped: the pieces it names have changed");
+}
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
