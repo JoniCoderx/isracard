@@ -221,53 +221,7 @@ ${cssLink}
 `;
 const SRCDIR = path.dirname(path.resolve(src));
 fs.mkdirSync(outDir, { recursive: true });
-const INK = `html body #hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.72) 0%,rgba(255,255,255,.34) 32%,rgba(255,255,255,0) 60%),linear-gradient(to bottom,rgba(255,255,255,.6),rgba(255,255,255,0) 26%)!important}
-@media (min-width:900px){html body #hero .hshade{background:linear-gradient(90deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.3) 28%,rgba(255,255,255,0) 48%),linear-gradient(to bottom,rgba(255,255,255,.5),rgba(255,255,255,0) 22%)!important}}
-html body #hero .hcap::before{background:radial-gradient(ellipse 60% 58% at 50% 55%,rgba(255,255,255,.5) 0%,rgba(255,255,255,.3) 46%,rgba(255,255,255,0) 100%)!important}
-#hero .hlight,#hero .hseam{display:none}
-#hero .hcap .h em,#hero .hcap .h em *{background:none!important;-webkit-text-fill-color:#16130f!important;filter:none!important}
-#header:not(.scrolled)::before{opacity:0!important}
-#header:not(.scrolled) .lang,#header:not(.scrolled) .btn{background:rgba(255,255,255,.55)!important}
-#hero .hcap,#hero .hcap *,#hero .hfacts,#hero .hfacts *{color:#16130f!important;text-shadow:none!important}
-#hero .hcap .btn{border-color:rgba(22,19,15,.45)!important}
-#hero .hcap .btn:first-child{background:#16130f!important;color:#f6f2ea!important;border-color:#16130f!important}
-#hero .hcap .btn:first-child *{color:#f6f2ea!important}
-#header:not(.scrolled),#header:not(.scrolled) *{color:#16130f!important;text-shadow:none!important}
-#header:not(.scrolled) a,#header:not(.scrolled) button{border-color:rgba(22,19,15,.35)!important}`;
-/* On a screen wider than the film, filling it cut the film's top and bottom
-   away (on a 4:1 window, the pendant itself): there the whole frame is shown
-   instead, at the right, its left edge fading into the white, and the words
-   stand on the white beside it (the film is as wide as 16/9 of the opening's
-   height, which is the screen's but never under 640 px; on a narrower screen,
-   a phone on its side, the opening is not that wide and the film fills it) */
-const WHOLE = `@media (min-aspect-ratio:16/9) and (min-width:1138px){html body #hero{background:#f3f3f5}
-html body #hero .hv{--fw:max(177.78svh,1138px);object-fit:contain!important;object-position:100% 50%!important;-webkit-mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9));mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9))}}`;
-/* The opening film of the live pages (18 Oct 2026): "The Choice", the white
-   film tried on /test3/ (hero-choice-assets.sh), with the words in ink. The
-   test pages are made from the page as it was built, before this. */
-const LIVE_FILM = "hero-choice";
-/* the words to the left, as on /test3/ (src/test3.css), so the pieces and
-   her hand stay in view */
-const LEFT = `@media (min-width:900px){#hero .hcap{left:clamp(32px,5vw,88px)!important;right:auto!important;bottom:auto!important;top:50%!important;transform:translateY(-38%)!important;max-width:min(360px,23vw)!important;align-items:flex-start!important;text-align:start!important}
-#hero .hcap .h{font-size:clamp(2.4rem,3.6vw,4rem)!important;line-height:1.02!important;text-wrap:balance}
-#hero .hcap .p{max-width:30ch!important;margin-inline:0!important}
-#hero .hcap .hacts{justify-content:flex-start!important;flex-wrap:wrap}
-#hero .hcap>*,#hero .hcap .h,#hero .hcap .p,#hero .hcap .k{text-align:start!important;margin-inline:0!important;align-self:flex-start!important}
-#hero .hv{object-position:0% 50%!important}
-html[dir] #hero .hcap{left:clamp(32px,5vw,88px)!important;right:auto!important}}`;
-const liveHead = head
-  .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
-  .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/${LIVE_FILM}-1920.jpg" imagesrcset="${[1600, 1920, 2560, 3840].map(w => `img/${LIVE_FILM}-${w}.jpg ${w}w`).join(", ")}" imagesizes="100vw">
-<link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/${LIVE_FILM}-v-1080.jpg" imagesrcset="img/${LIVE_FILM}-v-1080.jpg 1080w, img/${LIVE_FILM}-v-1216.jpg 1216w" imagesizes="100vw">
-<style>@media (max-width:899px){#hero .hv{object-position:50% 50%}}${LEFT}\n${INK}\n${WHOLE}</style>
-</head>`);
-const liveHtml = html
-  .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, `<source media="(max-width:899px)" srcset="img/${LIVE_FILM}-v-1080.jpg 1080w, img/${LIVE_FILM}-v-1216.jpg 1216w" sizes="100vw">`)
-  .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${LIVE_FILM}-1920.jpg" srcset="${[1600, 1920, 2560, 3840].map(w => `img/${LIVE_FILM}-${w}.jpg ${w}w`).join(", ")}"`)
-  .replace(/(<img class="hv" id="heroimg"[^>]*?) alt="[^"]*" data-alt-he="[^"]*"/, `$1 alt="The SILAVU bracelet, ring and earrings on white marble in morning light, as a woman's hand lifts the SOUL necklace" data-alt-he="צמיד, טבעת ועגילים של SILAVU על שיש לבן באור בוקר, ויד של אישה מרימה את שרשרת SOUL"`)
-  .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${LIVE_FILM}.mp4" data-src-m="v/${LIVE_FILM}-v.mp4" data-src-4k="v/${LIVE_FILM}-4k.mp4" aria-hidden="true">`);
-if (!liveHtml.includes(`data-src="v/${LIVE_FILM}.mp4"`) || !liveHtml.includes(`${LIVE_FILM}-v-1080.jpg`) || !liveHtml.includes(`src="img/${LIVE_FILM}-1920.jpg"`) || !liveHead.includes(`${LIVE_FILM}-v-1080.jpg`)) throw new Error("the live opening film could not be set: the hero markup has changed");
-fs.writeFileSync(path.join(outDir, "index.html"), liveHead + liveHtml + "\n</body>\n</html>\n");
+fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</html>\n");
 
 /* The Hebrew page. Same page, at its own address, so a search engine can find
    and show the Hebrew: the text is written into the markup here rather than
@@ -275,7 +229,6 @@ fs.writeFileSync(path.join(outDir, "index.html"), liveHead + liveHtml + "\n</bod
    name each other. Every element that carries data-he gets that as its
    content, which is exactly what the script does when someone picks Hebrew. */
 {
-  const html = liveHtml, head = liveHead;
   const unA = v => v.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
   const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
   /* scripts, styles and SVG text are left exactly as they are */
@@ -331,6 +284,19 @@ fs.writeFileSync(path.join(outDir, "index.html"), liveHead + liveHtml + "\n</bod
    not indexed, not counted; the films and their stills come from
    hero-test-assets.sh (the dark one) and hero-white.py (the white one). The
    white one sets the hero's words in ink, since they are white on the film. */
+const INK = `html body #hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.72) 0%,rgba(255,255,255,.34) 32%,rgba(255,255,255,0) 60%),linear-gradient(to bottom,rgba(255,255,255,.6),rgba(255,255,255,0) 26%)!important}
+@media (min-width:900px){html body #hero .hshade{background:linear-gradient(90deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.3) 28%,rgba(255,255,255,0) 48%),linear-gradient(to bottom,rgba(255,255,255,.5),rgba(255,255,255,0) 22%)!important}}
+html body #hero .hcap::before{background:radial-gradient(ellipse 60% 58% at 50% 55%,rgba(255,255,255,.5) 0%,rgba(255,255,255,.3) 46%,rgba(255,255,255,0) 100%)!important}
+#hero .hlight,#hero .hseam{display:none}
+#hero .hcap .h em,#hero .hcap .h em *{background:none!important;-webkit-text-fill-color:#16130f!important;filter:none!important}
+#header:not(.scrolled)::before{opacity:0!important}
+#header:not(.scrolled) .lang,#header:not(.scrolled) .btn{background:rgba(255,255,255,.55)!important}
+#hero .hcap,#hero .hcap *,#hero .hfacts,#hero .hfacts *{color:#16130f!important;text-shadow:none!important}
+#hero .hcap .btn{border-color:rgba(22,19,15,.45)!important}
+#hero .hcap .btn:first-child{background:#16130f!important;color:#f6f2ea!important;border-color:#16130f!important}
+#hero .hcap .btn:first-child *{color:#f6f2ea!important}
+#header:not(.scrolled),#header:not(.scrolled) *{color:#16130f!important;text-shadow:none!important}
+#header:not(.scrolled) a,#header:not(.scrolled) button{border-color:rgba(22,19,15,.35)!important}`;
 /* the emblem in metal (src/emb3d.js), tried on /test/ only: the library and
    its two helpers are copied from node_modules, their imports pointed at
    each other, and the module is loaded when the chapter comes near */
@@ -514,7 +480,15 @@ function heroTest(dir, film, css, big, extras) {
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
 heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
-/* /test3/ tries the white film (hero-choice-assets.sh), with the words in ink (INK, WHOLE) */
+/* /test3/ tries the white film (hero-choice-assets.sh), with the words in ink.
+   On a screen wider than the film, filling it cut the film's top and bottom
+   away (on a 4:1 window, the pendant itself): there the whole frame is shown
+   instead, at the right, its left edge fading into the white, and the words
+   stand on the white beside it (the film is as wide as 16/9 of the opening's
+   height, which is the screen's but never under 640 px; on a narrower screen,
+   a phone on its side, the opening is not that wide and the film fills it) */
+const WHOLE = `@media (min-aspect-ratio:16/9) and (min-width:1138px){html body #hero{background:#f3f3f5}
+html body #hero .hv{--fw:max(177.78svh,1138px);object-fit:contain!important;object-position:100% 50%!important;-webkit-mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9));mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9))}}`;
 heroTest("test3", "hero-choice", INK + "\n" + WHOLE, true, [EMB3D, T2, LAYOUT, T3]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
