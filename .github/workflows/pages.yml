@@ -171,11 +171,11 @@ jobs:
           key: hero-lumiere-${{ hashFiles('lumera/site/hero-lumiere-assets.sh') }}
       - name: The LUMIÈRE film on trial (/test3/)
         run: |
-          if [ ! -f hero-lumiere/v/hero-lumiere-v.mp4 ] && ! bash lumera/site/hero-lumiere-assets.sh hero-lumiere; then
+          if [ ! -f hero-lumiere/v/hero-lumiere-uw.mp4 ] && ! bash lumera/site/hero-lumiere-assets.sh hero-lumiere; then
             rm -rf hero-lumiere
             LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
             mkdir -p dist/v dist/img
-            for f in v/hero-lumiere-4k.mp4 v/hero-lumiere.mp4 v/hero-lumiere-v.mp4 img/hero-lumiere-1600.jpg img/hero-lumiere-1920.jpg img/hero-lumiere-2560.jpg img/hero-lumiere-3840.jpg img/hero-lumiere-v-1080.jpg img/hero-lumiere-v-1216.jpg; do
+            for f in v/hero-lumiere-4k.mp4 v/hero-lumiere.mp4 v/hero-lumiere-v.mp4 v/hero-lumiere-uw.mp4 img/hero-lumiere-uw-2560.jpg img/hero-lumiere-uw-3840.jpg img/hero-lumiere-1600.jpg img/hero-lumiere-1920.jpg img/hero-lumiere-2560.jpg img/hero-lumiere-3840.jpg img/hero-lumiere-v-1080.jpg img/hero-lumiere-v-1216.jpg; do
               curl -fsSL --retry 3 -o dist/$f "$LIVE/$f" || echo "missing: $f"
             done
           else

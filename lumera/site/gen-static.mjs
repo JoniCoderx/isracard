@@ -240,8 +240,21 @@ html body #hero .hcap::before{background:radial-gradient(ellipse 60% 58% at 50% 
    stand on the white beside it (the film is as wide as 16/9 of the opening's
    height, which is the screen's but never under 640 px; on a narrower screen,
    a phone on its side, the opening is not that wide and the film fills it) */
-const WHOLE = `@media (min-aspect-ratio:16/9) and (min-width:1138px){html body #hero{background:#f3f3f5}
+const WHOLE = `@media (min-aspect-ratio:16/9) and (max-aspect-ratio:14/5) and (min-width:1138px){html body #hero{background:#f3f3f5}
 html body #hero .hv{--fw:max(177.78svh,1138px);object-fit:contain!important;object-position:100% 50%!important;-webkit-mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9));mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9))}}`;
+/* Screens of 2.8:1 and wider (a 49" ultrawide is 32:9): the whole frame
+   would leave half the opening empty, so the film has a cut of its own
+   (hero-lumiere-assets.sh, "-uw"), filling the width; the words get room to
+   stand on two lines, sized by the screen's height */
+const ULTRA_MQ = "(min-aspect-ratio: 14/5) and (min-width: 1800px)";
+const ULTRA = `@media ${ULTRA_MQ}{html body #hero .hv{object-fit:cover!important;object-position:100% 50%!important;-webkit-mask-image:none!important;mask-image:none!important}}
+@media (min-aspect-ratio:2/1) and (min-width:1800px){html body #hero .hcap{max-width:min(680px,34vw)!important}html body #hero .hcap .h{font-size:clamp(2.6rem,6.2vh,5.6rem)!important}html body #hero .hcap .k{white-space:nowrap}}`;
+/* the film's ultrawide cut, where the film has one: its first frame in the
+   opening picture, and the film itself chosen before the page asks for it */
+const ultraCut = film => film === "hero-lumiere" ? h => h
+  .replace(/<source media="\(max-width:899px\)"/, `<source media="${ULTRA_MQ}" srcset="img/${film}-uw-2560.jpg 2560w, img/${film}-uw-3840.jpg 3840w" sizes="100vw">\n      $&`)
+  .replace(/(<video class="hv" id="herovid"[^>]*?)( aria-hidden="true">)/, `$1 data-src-uw="v/${film}-uw.mp4"$2`)
+  .replace(/(<video class="hv" id="herovid"[^>]*>\s*<\/video>)/, `$1<script>(function(v){if(v&&matchMedia("${ULTRA_MQ}").matches){v.setAttribute("data-src",v.getAttribute("data-src-uw"));v.removeAttribute("data-src-4k")}})(document.getElementById("herovid"))</script>`) : h => h;
 /* The opening film of the live pages (18 Oct 2026): "LUMIÈRE", tried on
    /test3/ (hero-lumiere-assets.sh), with the words in ink. The test pages are
    made from the page as it was built, before this. */
@@ -259,13 +272,13 @@ const liveHead = head
   .replace(/<link rel="preload" as="image"[^>]*herov?-[^>]*>\n/g, "")
   .replace("</head>", `<link rel="preload" as="image" fetchpriority="high" media="(min-width: 900px)" href="img/${LIVE_FILM}-1920.jpg" imagesrcset="${[1600, 1920, 2560, 3840].map(w => `img/${LIVE_FILM}-${w}.jpg ${w}w`).join(", ")}" imagesizes="100vw">
 <link rel="preload" as="image" fetchpriority="high" media="(max-width: 899px)" href="img/${LIVE_FILM}-v-1080.jpg" imagesrcset="img/${LIVE_FILM}-v-1080.jpg 1080w, img/${LIVE_FILM}-v-1216.jpg 1216w" imagesizes="100vw">
-<style>@media (max-width:899px){#hero .hv{object-position:50% 50%}}${LEFT}\n${INK}\n${WHOLE}</style>
+<style>@media (max-width:899px){#hero .hv{object-position:50% 50%}}${LEFT}\n${INK}\n${WHOLE}\n${ULTRA}</style>
 </head>`);
-const liveHtml = html
+const liveHtml = ultraCut(LIVE_FILM)(html
   .replace(/<source media="\(max-width:899px\)" srcset="img\/herov-[^>]*>/, `<source media="(max-width:899px)" srcset="img/${LIVE_FILM}-v-1080.jpg 1080w, img/${LIVE_FILM}-v-1216.jpg 1216w" sizes="100vw">`)
   .replace(/(<img class="hv" id="heroimg") src="[^"]*" srcset="[^"]*"/, `$1 src="img/${LIVE_FILM}-1920.jpg" srcset="${[1600, 1920, 2560, 3840].map(w => `img/${LIVE_FILM}-${w}.jpg ${w}w`).join(", ")}"`)
   .replace(/(<img class="hv" id="heroimg"[^>]*?) alt="[^"]*" data-alt-he="[^"]*"/, `$1 alt="The SILAVU SOUL pendant on a woman's skin, above the neckline of a black silk dress, its pavé diamonds catching the light" data-alt-he="תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור"`)
-  .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${LIVE_FILM}.mp4" data-src-m="v/${LIVE_FILM}-v.mp4" data-src-4k="v/${LIVE_FILM}-4k.mp4" aria-hidden="true">`);
+  .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${LIVE_FILM}.mp4" data-src-m="v/${LIVE_FILM}-v.mp4" data-src-4k="v/${LIVE_FILM}-4k.mp4" aria-hidden="true">`));
 if (!liveHtml.includes(`data-src="v/${LIVE_FILM}.mp4"`) || !liveHtml.includes(`${LIVE_FILM}-v-1080.jpg`) || !liveHtml.includes(`src="img/${LIVE_FILM}-1920.jpg"`) || !liveHead.includes(`${LIVE_FILM}-v-1080.jpg`)) throw new Error("the live opening film could not be set: the hero markup has changed");
 fs.writeFileSync(path.join(outDir, "index.html"), liveHead + liveHtml + "\n</body>\n</html>\n");
 
@@ -518,7 +531,7 @@ heroTest("test-white", "hero-white", INK);
 heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
 /* /test3/ tries "LUMIÈRE" (hero-lumiere-assets.sh; "The Choice",
    hero-choice-assets.sh, came before it), with the words in ink (INK, WHOLE) */
-heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE, true, [EMB3D, T2, LAYOUT, T3]);
+heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3D, T2, LAYOUT, T3, { edit: ultraCut("hero-lumiere") }]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";

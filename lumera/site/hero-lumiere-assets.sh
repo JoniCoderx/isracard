@@ -10,6 +10,8 @@
 #   dist/v/hero-lumiere.mp4 (1080),
 #   dist/v/hero-lumiere-v.mp4 (phones: an upright slice of each take, at the
 #     4K frame's full height, 1080x1920),
+#   dist/v/hero-lumiere-uw.mp4 (ultrawide screens, 32:9, 3840x1080),
+#   dist/img/hero-lumiere-uw-{2560,3840}.jpg,
 #   dist/img/hero-lumiere-{1600,1920,2560,3840}.jpg and
 #   dist/img/hero-lumiere-v-{1080,1216}.jpg (the first frame)
 # Needs ffmpeg. Usage: hero-lumiere-assets.sh <dist dir>
@@ -57,6 +59,26 @@ slice() {
 }
 slice 1 1178; slice 2 1602; slice 3 1950
 cut "null" "null" "null" "$T/tall.mp4" v
+# the ultrawide cut (32:9, for screens of 2.8:1 and wider): the pendant
+# close-up as a band across the whole width, at its height; her two takes
+# kept whole at the right, the studio wall at their left edge drawn out,
+# softly, across the rest, where the words stand
+ultra() {
+  ffmpeg -nostdin -v error -i "$T/$1.mp4" -filter_complex "[0:v]fps=24,split[s][g];\
+[g]crop=iw/14:ih:0:0,scale=2180:1080,gblur=sigma=45,pad=3840:1080:0:0[bg];\
+[s]scale=1920:1080:flags=lanczos,format=yuva420p,geq=lum='p(X,Y)':cb='p(X,Y)':cr='p(X,Y)':a='255*min(1\,X/260)'[fg];\
+[bg][fg]overlay=1920:0,setsar=1,format=yuv420p[o]" -map "[o]" -an -c:v libx264 -preset fast -crf 10 "$T/u$1.mp4" -y
+}
+ffmpeg -nostdin -v error -i "$T/1.mp4" -an -vf "fps=24,crop=iw:ih*1084/2148:0:ih*483/2148,scale=3840:1080:flags=lanczos,setsar=1,format=yuv420p" -c:v libx264 -preset fast -crf 10 "$T/u1.mp4" -y
+ultra 2; ultra 3
+cut "null" "null" "null" "$T/uw.mp4" u
+ffmpeg -nostdin -v error -i "$T/uw.mp4" -an -vf "format=yuv420p" \
+  -c:v libx264 -preset slow -crf 23 -profile:v high -pix_fmt yuv420p -movflags +faststart "$OUT/v/hero-lumiere-uw.mp4" -y
+echo "hero-lumiere-uw: $(( $(stat -c%s "$OUT/v/hero-lumiere-uw.mp4") / 1024 ))KB"
+ffmpeg -nostdin -v error -i "$T/uw.mp4" -frames:v 1 -q:v 1 "$T/first-uw.jpg" -y
+for w in 2560 3840; do
+  ffmpeg -nostdin -v error -i "$T/first-uw.jpg" -vf "scale=$w:-2:flags=lanczos" -q:v 2 "$OUT/img/hero-lumiere-uw-$w.jpg" -y
+done
 for spec in "3840 2160 24 hero-lumiere-4k" "1920 1080 23 hero-lumiere"; do
   set -- $spec
   ffmpeg -nostdin -v error -i "$T/wide.mp4" -an -vf "scale=$1:$2:flags=lanczos,setsar=1,format=yuv420p" \
