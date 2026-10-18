@@ -56,25 +56,30 @@ slice "$T/b.mp4" 1800 "$T/b-tall.mp4"
 cut "null" "null" "$T/tall24.mp4" "$T/a-tall.mp4" "$T/b-tall.mp4"
 # 60 fps: the frames between the takes' own 24 are drawn by motion
 # interpolation. It works on one core, so the loop is cut in four and the
-# pieces drawn at once; each piece reads one frame past its end (the last one
-# reads the loop's first frame again), so the seams, and the loop's own, have
-# their in-between frames too. 24 frames make 60, so the pieces start on even
-# frames.
+# pieces drawn side by side ($3 at a time: in 4K each takes some 2.6 GB, and
+# four of them with their encoders ran a 16 GB machine out of memory); each
+# piece reads one frame past its end (the last one reads the loop's first
+# frame again), so the seams, and the loop's own, have their in-between frames
+# too. 24 frames make 60, so the pieces start on even frames. A piece that
+# fails stops the whole film.
 to60() {
-  local n=$(frames "$1") i s e k cuts
+  local n=$(frames "$1") i s e k cuts pids=()
   cuts=(0 $(( n / 4 / 2 * 2 )) $(( n / 2 / 2 * 2 )) $(( n * 3 / 4 / 2 * 2 )) $n)
   : > "$T/list.txt"
   for i in 0 1 2 3; do
     s=${cuts[$i]}; e=${cuts[$((i + 1))]}; k=$(( (e - s) * 5 / 2 ))
     ffmpeg -nostdin -v error -stream_loop 1 -i "$1" -an -vf "trim=start_frame=$s:end_frame=$((e + 1)),setpts=PTS-STARTPTS,minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,trim=end_frame=$k,setpts=PTS-STARTPTS" \
       -c:v libx264 -preset fast -crf 10 -pix_fmt yuv420p "$T/p$i.mp4" -y &
+    pids+=($!)
     echo "file '$T/p$i.mp4'" >> "$T/list.txt"
+    if [ ${#pids[@]} -ge "$3" ]; then for p in "${pids[@]}"; do wait "$p"; done; pids=(); fi
   done
-  wait
+  for p in "${pids[@]}"; do wait "$p"; done
   ffmpeg -nostdin -v error -f concat -safe 0 -i "$T/list.txt" -c copy "$2" -y
+  [ "$(frames "$2")" -eq $(( n * 5 / 2 )) ] || { echo "$2: wrong length" >&2; exit 1; }
 }
-to60 "$T/wide24.mp4" "$T/wide.mp4"
-to60 "$T/tall24.mp4" "$T/tall.mp4"
+to60 "$T/wide24.mp4" "$T/wide.mp4" 2
+to60 "$T/tall24.mp4" "$T/tall.mp4" 4
 for spec in "3840 2160 23 hero-choice-4k" "1920 1080 22 hero-choice"; do
   set -- $spec
   ffmpeg -nostdin -v error -i "$T/wide.mp4" -an -vf "scale=$1:$2:flags=lanczos,setsar=1,format=yuv420p" \
