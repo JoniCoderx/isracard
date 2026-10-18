@@ -58,9 +58,9 @@ cut "null" "null" "$T/tall24.mp4" "$T/a-tall.mp4" "$T/b-tall.mp4"
 # interpolation. It works on one core, so the loop is cut in four and the
 # pieces drawn side by side ($3 at a time: in 4K each takes some 2.6 GB, and
 # four of them with their encoders ran a 16 GB machine out of memory); each
-# piece reads one frame past its end (the last one reads the loop's first
-# frame again), so the seams, and the loop's own, have their in-between frames
-# too. 24 frames make 60, so the pieces start on even frames. A piece that
+# piece reads past its end (the last one reads the loop's first frames
+# again), so the seams, and the loop's own, have their in-between frames too;
+# it reads three frames past, as the interpolation holds back its last two. 24 frames make 60, so the pieces start on even frames. A piece that
 # fails stops the whole film.
 to60() {
   local n=$(frames "$1") i s e k cuts pids=()
@@ -68,7 +68,7 @@ to60() {
   : > "$T/list.txt"
   for i in 0 1 2 3; do
     s=${cuts[$i]}; e=${cuts[$((i + 1))]}; k=$(( (e - s) * 5 / 2 ))
-    ffmpeg -nostdin -v error -stream_loop 1 -i "$1" -an -vf "trim=start_frame=$s:end_frame=$((e + 1)),setpts=PTS-STARTPTS,minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,trim=end_frame=$k,setpts=PTS-STARTPTS" \
+    ffmpeg -nostdin -v error -stream_loop 1 -i "$1" -an -vf "trim=start_frame=$s:end_frame=$((e + 3)),setpts=PTS-STARTPTS,minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,trim=end_frame=$k,setpts=PTS-STARTPTS" \
       -c:v libx264 -preset fast -crf 10 -pix_fmt yuv420p "$T/p$i.mp4" -y &
     pids+=($!)
     echo "file '$T/p$i.mp4'" >> "$T/list.txt"
