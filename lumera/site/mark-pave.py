@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-# Where the pavé of ICON sits on the SILAVU mark (for icon-frames.mjs): the
-# exact mark is drawn large, its two interlaced strands are found (the
-# crescents and the small wedges stay polished, as on the ring), each strand
+# Where the pavé sits on the SILAVU mark, for the pieces drawn in 3D: the
+# exact mark is drawn large and its parts are found: the two interlaced
+# strands, the two crescents and the two small wedges. Each part that is set
 # is thinned to its centre line, and stones are laid along that line one
-# after another, each as large as the strand is wide at that point, so they
-# grow and taper with the strand as they do on the piece.
-#   icon-pave.json: [[x, y, r], ...] in the mark's own units (872 x 1000)
-# Usage: python3 icon-pave.py <mark.png drawn at 2x>
+# after another, each as large as the part is wide at that point, so they
+# grow and taper with it as they do on the piece.
+#   ICON (icon-frames.mjs): the strands are set; crescents and wedges polished
+#   SOUL (soul5-frames.mjs): strands and crescents are set; the wedges polished
+# Output: [[x, y, r, angle], ...] in the mark's own units (872 x 1000), the
+# angle being the direction of the line at that stone.
+# Usage: python3 mark-pave.py <mark.png drawn at 2x> <strands|strands+crescents> <out.json>
 import sys, json, os
 import numpy as np
 from PIL import Image
@@ -17,7 +20,9 @@ img = np.array(Image.open(sys.argv[1]).convert("L")) < 128
 K = 2.0
 lab, n = nd.label(img)
 sizes = nd.sum(img, lab, range(1, n + 1))
-strands = [i + 1 for i in np.argsort(sizes)[::-1][:2]]   # the two largest: the strands
+order = [i + 1 for i in np.argsort(sizes)[::-1]]
+# by size: the two strands, then the two crescents, then the two wedges
+strands = order[:2] + (order[2:4] if len(sys.argv) > 2 and sys.argv[2] == "strands+crescents" else [])
 
 def thin(m):
     # Zhang-Suen thinning
@@ -70,7 +75,9 @@ for s in strands:
         r = dt[y, x] * 0.72
         if r < 9: continue          # too thin for a stone (the very tips)
         if acc >= (lastR + r) * 1.06:
-            stones.append([round(x / K, 2), round(y / K, 2), round(r / K, 2)]); acc = 0; lastR = r
-out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon-pave.json")
+            a, b = path[max(0, k - 4)], path[min(len(path) - 1, k + 4)]
+            ang = float(np.arctan2(b[0] - a[0], b[1] - a[1]))
+            stones.append([round(x / K, 2), round(y / K, 2), round(r / K, 2), round(ang, 3)]); acc = 0; lastR = r
+out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon-pave.json")
 json.dump(stones, open(out, "w"))
 print(len(stones), "stones", "radius", min(s[2] for s in stones), "-", max(s[2] for s in stones))

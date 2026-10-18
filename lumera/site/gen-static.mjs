@@ -541,6 +541,17 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
   if (page) { fs.mkdirSync(path.join(outDir, "test4"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test4", "index.html"), page); console.log("test page written: test4"); }
   else console.warn("test4 skipped: the pieces it names have changed");
 }
+/* /test5/: the full redesign around SOUL (src/t5/page5.mjs; its film is
+   soul5-frames.mjs, its gallery studio5.py) */
+{
+  const { mark, markDefs, markUse, logo } = await import("./src/body.mjs");
+  const { test5Page } = await import("./src/t5/page5.mjs");
+  const root = path.dirname(path.resolve(src));
+  const META = JSON.parse(fs.readFileSync(path.join(root, "soul5-meta.json"), "utf8"));
+  const page = test5Page({ PIECES, FOOTER_DOCS, mark, markDefs, markUse, logo, META, root });
+  if (page) { fs.mkdirSync(path.join(outDir, "test5"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test5", "index.html"), page); console.log("test page written: test5"); }
+  else console.warn("test5 skipped: the pieces it names have changed");
+}
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
