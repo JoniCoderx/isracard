@@ -181,6 +181,20 @@ jobs:
           else
             mkdir -p dist/v dist/img && cp hero-lumiere/v/* dist/v/ && cp hero-lumiere/img/* dist/img/
           fi
+      # "SOUL, in light" on /test4/: the frames the scroll plays (soul-frames.sh),
+      # kept in the cache; a failure only leaves /test4/ without its film.
+      - name: Keep the SOUL frames
+        uses: actions/cache@v4
+        with:
+          path: soul-frames
+          key: soul-frames-${{ hashFiles('lumera/site/soul-frames.sh', 'lumera/site/soul-cx.txt') }}
+      - name: The SOUL frames (/test4/)
+        run: |
+          if [ ! -f soul-frames/d-119.webp ] && ! bash lumera/site/soul-frames.sh soul-frames; then
+            rm -rf soul-frames; echo "soul frames: not made"
+          else
+            mkdir -p dist/f/soul && cp soul-frames/* dist/f/soul/
+          fi
       # The white candidate for /test-white/, moved from one still (hero-white.py).
       - name: The white hero film on trial (/test-white/)
         run: |

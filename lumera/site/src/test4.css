@@ -1,0 +1,104 @@
+/* /test4/: the redesign (owner, 18 Oct 2026: "float jewellery that moves with
+   the scroll, diamonds, specs; luxury, classic, the best"). Everything of
+   /test3/, plus "SOUL, in light": one piece pinned in white while the scroll
+   plays its film (soul-frames.sh), the words changing stage by stage, and the
+   specs pointing at the parts of the piece they name. Motion follows
+   .claude/skills/motion-taste: one moving thing per screen, frames decoded off
+   the main thread, nothing built while the reader scrolls. */
+
+#soulfilm { --sf-bg: #fbfbfa; --sf-ink: #141210; --sf-ink2: #4c4842; --sf-line: rgba(20,18,16,.22); position: relative; background: var(--sf-bg); color: var(--sf-ink); }
+/* "ivory" tells the bar at the top that it is over a light chapter; the
+   ivory chapters' own dark fades at their edges are not wanted here */
+#soulfilm.ivory::before, #soulfilm.ivory::after { display: none; }
+#soulfilm .sfpin { position: relative; height: 720svh; }
+#soulfilm .sfstick { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+#soulfilm canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* the first frame stands in until the strip is decoded */
+#soulfilm .sfposter { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 66% 50%; transition: opacity .4s ease; }
+#soulfilm.ready .sfposter { opacity: 0; }
+/* the words: a column at the left, one stage at a time */
+#soulfilm .sfbeats { position: absolute; z-index: 2; left: clamp(32px, 6vw, 112px); top: 50%; transform: translateY(-50%); width: min(420px, 30vw); }
+#soulfilm .sfbeat { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(calc(-50% + 14px)); opacity: 0; transition: opacity .45s cubic-bezier(.2,.8,.2,1), transform .45s cubic-bezier(.2,.8,.2,1); pointer-events: none; display: flex; flex-direction: column; gap: 18px; }
+#soulfilm .sfbeat.on { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+#soulfilm .k { color: var(--sf-ink2); }
+#soulfilm .h2 { color: var(--sf-ink); font-size: clamp(2.2rem, 3.4vw, 3.6rem); max-width: 13ch; }
+#soulfilm .h2 em { font-style: italic; color: var(--sf-ink2); }
+#soulfilm .p { color: var(--sf-ink2); max-width: 34ch; }
+#soulfilm .sfspecs { display: grid; grid-template-columns: auto 1fr; gap: 10px 22px; margin: 6px 0 0; font-size: .92rem; }
+#soulfilm .sfspecs dt { color: var(--sf-ink2); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; padding-top: 4px; }
+html[data-ns] #soulfilm .sfspecs dt { letter-spacing: 0; font-size: .82rem; }
+#soulfilm .sfspecs dd { margin: 0; color: var(--sf-ink); }
+#soulfilm .sfacts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+#soulfilm .btn { color: var(--sf-ink); border-color: var(--sf-line); background: transparent; }
+#soulfilm .btn.solid { background: var(--sf-ink); color: var(--sf-bg); border-color: var(--sf-ink); }
+/* the specs, drawn onto the piece: a hairline from a dot on the part to its name */
+#soulfilm .sfcall { position: absolute; z-index: 1; inset: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease; }
+#soulfilm .sfcall.on { opacity: 1; }
+#soulfilm .sfc { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 10px; font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--sf-ink); white-space: nowrap; }
+html[data-ns] #soulfilm .sfc { letter-spacing: 0; font-size: .8rem; }
+#soulfilm .sfc i { display: block; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--sf-ink); background: var(--sf-bg); flex: none; }
+#soulfilm .sfc b { display: block; height: 1px; width: var(--len, 56px); background: var(--sf-line); flex: none; }
+#soulfilm .sfc span { font-weight: 500; background: rgba(251,251,250,.82); padding: 3px 6px; }
+#soulfilm .sfc.l { flex-direction: row-reverse; }
+/* the reader's place in the chapter */
+#soulfilm .sfprog { position: absolute; z-index: 2; left: clamp(32px, 6vw, 112px); bottom: 36px; width: min(220px, 30vw); height: 1px; background: var(--sf-line); }
+#soulfilm .sfprog i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--sf-ink); }
+html[dir="rtl"] #soulfilm .sfprog i { left: auto; right: 0; }
+@media (max-width: 899px) {
+  #soulfilm .sfpin { height: 620svh; }
+  #soulfilm .sfposter { object-position: 50% 50%; }
+  #soulfilm .sfbeats { left: 20px; right: 20px; width: auto; top: auto; bottom: max(64px, calc(env(safe-area-inset-bottom) + 48px)); transform: none; height: 46svh; }
+  #soulfilm .sfbeats::before { content: ""; position: absolute; left: -20px; right: -20px; bottom: -80px; height: calc(100% + 120px); background: linear-gradient(to top, rgba(251,251,250,.96) 55%, rgba(251,251,250,0)); }
+  #soulfilm .sfbeat { top: auto; bottom: 0; transform: translateY(14px); gap: 12px; }
+  #soulfilm .sfbeat.on { transform: none; }
+  #soulfilm .h2 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+  #soulfilm .sfprog { left: 20px; bottom: 24px; width: 120px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #soulfilm .sfpin { height: auto; }
+  #soulfilm .sfstick { position: relative; height: auto; min-height: 100svh; }
+  #soulfilm .sfbeats { position: relative; inset: auto; transform: none; width: auto; padding: 60vh clamp(20px, 6vw, 112px) 80px; }
+  #soulfilm .sfbeat { position: relative; inset: auto; opacity: 1; transform: none; pointer-events: auto; margin-bottom: 64px; }
+  #soulfilm .sfcall, #soulfilm .sfprog, #soulfilm canvas { display: none; }
+  #soulfilm .sfposter { height: 100svh; }
+}
+
+/* The page moves with the scroll (owner, 18 Oct 2026: "when you scroll,
+   things move with the scroll"). Purpose: continuity, the reader's own hand
+   drives each piece into place and back (motion-taste 1). Scroll-linked CSS
+   only: transform/opacity on the compositor, nothing decoded or built while
+   scrolling (motion-taste 3); one moving thing per screen; still where the
+   browser cannot link to the scroll, and for reduced motion. The individual
+   translate/scale properties are used so the pieces' own transforms stay. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* the opening: as it leaves, the film comes closer and the words rise away */
+    #hero .hv { animation: sl-hero-film linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+    #hero .hcap { animation: sl-hero-words linear both; animation-timeline: view(); animation-range: exit 0% exit 70%; }
+    @keyframes sl-hero-film { to { scale: 1.12; translate: 0 10%; } }
+    @keyframes sl-hero-words { to { translate: 0 -18vh; opacity: 0; } }
+    /* the four of the signature: each comes up at its own pace and settles
+       in line by the time it is in full view; the photograph inside drifts
+       the other way, so the piece seems to float in its frame */
+    .pgrid .piece.sig { animation: sl-rise linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
+    .pgrid .piece.sig:nth-child(2) { --sl-from: 140px; }
+    .pgrid .piece.sig:nth-child(3) { --sl-from: 60px; }
+    .pgrid .piece.sig:nth-child(4) { --sl-from: 180px; }
+    @keyframes sl-rise { from { translate: 0 var(--sl-from, 100px); } to { translate: 0 0; } }
+    .pgrid .piece .fig .im img { animation: sl-float linear both; animation-timeline: view(); animation-range: cover; }
+    @keyframes sl-float { from { translate: 0 6%; scale: 1.08; } to { translate: 0 -6%; scale: 1; } }
+    /* the collection's headline slides in with the hand */
+    #collection .sechead .h2 { animation: sl-in-left linear both; animation-timeline: view(); animation-range: entry 10% cover 40%; }
+    @keyframes sl-in-left { from { translate: -6vw 0; opacity: .2; } to { translate: 0 0; opacity: 1; } }
+    /* up close: the three women come together from the sides as the row
+       comes into view (side by side only; on a phone the row is swiped) */
+    @media (min-width: 760px) {
+      #details .wlk { animation: sl-gather linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
+      #details .wlk:nth-child(1) { --sl-x: -8vw; --sl-r: -2deg; }
+      #details .wlk:nth-child(2) { --sl-x: 0; --sl-y: 90px; }
+      #details .wlk:nth-child(3) { --sl-x: 8vw; --sl-r: 2deg; }
+      @keyframes sl-gather { from { translate: var(--sl-x, 0) var(--sl-y, 40px); rotate: var(--sl-r, 0deg); } to { translate: 0 0; rotate: 0deg; } }
+      #details .wlk img { animation: sl-float linear both; animation-timeline: view(); animation-range: cover; }
+    }
+  }
+}
