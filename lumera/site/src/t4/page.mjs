@@ -101,28 +101,28 @@ export function test4Page({ PIECES, FOOTER_DOCS, mark, markDefs, markUse, logo, 
   </div></div>
 </section>`;
 
-  /* 4 · the cut: a short diamond moment. The round brilliant rendered once
-     (cut-frames.mjs) and played by the scroll: its 57 facets drawn, its
-     parts named, then in light, then it turns to face you. The poster is a
-     frame of the same film, so the chapter is whole before anything loads */
-  const cad = P("cadence");
-  const part = (k, en, he, l) => `<div class="cpart${l ? " l" : ""}" data-part="${k}"><span ${E(en, he)}>${en}</span><b></b><i></i></div>`;
-  const anchors = fs.existsSync(path.join(root, "cut-anchors.json")) ? fs.readFileSync(path.join(root, "cut-anchors.json"), "utf8").trim() : "{}";
-  const cut = `<section id="cut" class="cut scene" data-tone="night" data-n="120" data-base="${R}f/cut/" data-stages="0,0.44,0.74" data-anchors="${q(anchors)}" aria-label="The round brilliant" data-aria-he="הבריליאנט העגול">
+  /* 4 · ICON, from one stone: the diamond moment. The ring built in a warm
+     studio, rendered once (icon-frames.mjs, icon-scene.js) and played by
+     the scroll: one round brilliant above the plinth breaks into the pavé,
+     the pavé draws the SILAVU signature, the white gold forms under it, the
+     band is drawn round; then the ring as it is worn (its own photograph) */
+  const icon = P("ring");
+  const iconRef = icon && spec(icon, "Reference");
+  const wornAlt = icon && ((icon.shots || []).find(x => x.img === "ring-worn") || {}).alt;
+  const ICON = icon && iconRef && wornAlt ? `<section id="icon" class="icon scene" data-tone="stone" data-n="120" data-base="${R}f/icon/" data-stages="0,0.2,0.45,0.72" aria-label="SILAVU ICON, from one stone" data-aria-he="SILAVU ICON, מאבן אחת">
   <div class="spin"><div class="sstick">
-    <div class="cstone"><img class="cposter" src="${R}f/cut/d-119.webp" alt="" decoding="async" loading="lazy" data-tall="${R}f/cut/m-119.webp"><canvas class="ccv" role="img" aria-label="A drawing of a round brilliant diamond: first the outline of its 57 facets, then in light, turning to face you" data-aria-he="שרטוט של יהלום בחיתוך בריליאנט עגול: תחילה קווי המתאר של 57 הפאסטים שלו, ואחר כך באור, כשהוא מסתובב אליכם"></canvas></div>
-    <div class="cparts" aria-hidden="true">
-      ${part("table", "Table", "שולחן")}${part("crown", "Crown", "כתר")}${part("girdle", "Girdle", "חגורה", 1)}${part("pavilion", "Pavilion", "ביתן")}${part("culet", "Culet", "קולט", 1)}
-    </div>
+    <img class="iposter" src="${R}f/icon/d-119.webp" alt="" decoding="async" loading="lazy" data-tall="${R}f/icon/m-119.webp">
+    <canvas class="icv" role="img" aria-label="The SILAVU ICON ring being made: one round diamond floats above a stone plinth, breaks into small diamonds that draw the SILAVU signature, the white gold forms beneath them, and the band is drawn round until the ring stands finished" data-aria-he="טבעת SILAVU ICON נוצרת: יהלום עגול אחד מרחף מעל במה מאבן, מתפרק ליהלומים קטנים שמשרטטים את חתימת SILAVU, הזהב הלבן נוצר מתחתם, והחישוק נמשך סביב עד שהטבעת עומדת שלמה"></canvas>
+    <img class="iworn" src="${R}img/ring-worn-1254.jpg" srcset="${R}img/ring-worn-900.jpg 900w, ${R}img/ring-worn-1254.jpg 1254w" sizes="100vw" alt="${q(wornAlt.en)}" data-alt-he="${q(wornAlt.he)}" loading="lazy" decoding="async">
     <div class="beats">
-      ${beat(`${t("p", "k", "The cut", "החיתוך")}${t("h2", "h2", "The round <em>brilliant.</em>", "הבריליאנט <em>העגול.</em>")}${t("p", "p", "Fifty-seven facets, each at its own angle, so that the light that enters the stone comes back to the eye.", "חמישים ושבעה פאסטים, כל אחד בזווית משלו, כך שהאור שנכנס לאבן חוזר אל העין.")}<dl class="specs"><dt ${E("Table", "שולחן")}>Table</dt><dd dir="ltr">54%</dd><dt ${E("Crown", "כתר")}>Crown</dt><dd dir="ltr">34.5°</dd><dt ${E("Pavilion", "ביתן")}>Pavilion</dt><dd dir="ltr">40.75°</dd></dl>`)}
-      ${beat(`${t("p", "k", "Brilliance · Fire · Scintillation", "ברק · אש · נצנוץ")}${t("h2", "h2", "White light, <em>broken into colour.</em>", "אור לבן, <em>נשבר לצבעים.</em>")}${t("p", "p", "Brilliance is the white light a diamond returns, fire the colours it splits that light into, scintillation the flashes as it moves.", "ברק הוא האור הלבן שהיהלום מחזיר, אש היא הצבעים שהוא מפרק אליהם את האור, ונצנוץ הוא ההבזקים כשהוא זז.")}`)}
-      ${beat(`${t("p", "k", "In SILAVU", "ב־SILAVU")}${t("h2", "h2", "Set by hand, <em>stone by stone.</em>", "משובצים ביד, <em>אבן אחר אבן.</em>")}${t("p", "p", "Round brilliants and baguettes in CADENCE. Pavé diamonds tracing the signature of SOUL, ICON and AURA.", "בריליאנטים עגולים ובגטים ב־CADENCE. יהלומי פאווה המשרטטים את החתימה של SOUL, ICON ו־AURA.")}${cad ? `<div class="acts"><a class="btn light" href="${R}pieces/cadence/"><span ${E("View CADENCE", "לצפייה ב־CADENCE")}>View CADENCE</span></a></div>` : ""}`)}
+      ${beat(`${t("p", "k", "SILAVU ICON", "SILAVU ICON")}${t("h2", "h2", "It begins with <em>one stone.</em>", "זה מתחיל <em>באבן אחת.</em>")}${t("p", "p", "A round brilliant: fifty-seven facets, each at its own angle, so that the light that enters the stone comes back to the eye.", "בריליאנט עגול: חמישים ושבעה פאסטים, כל אחד בזווית משלו, כך שהאור שנכנס לאבן חוזר אל העין.")}`)}
+      ${beat(`${t("p", "k", "The signature", "החתימה")}${t("h2", "h2", "Drawn in <em>pavé.</em>", "משורטטת <em>בפאווה.</em>")}${t("p", "p", "Pavé diamonds follow the two strands of the SILAVU mark, smaller where the strands narrow.", "יהלומי פאווה עוקבים אחרי שני הגדילים של סמל SILAVU, וקטנים יותר היכן שהגדילים צרים.")}`)}
+      ${beat(`${t("p", "k", "18K white gold", "זהב לבן 18K")}${t("h2", "h2", "The mark, <em>in white gold.</em>", "החותם, <em>בזהב לבן.</em>")}${t("p", "p", "The crescents are left polished, so the stones and the metal each catch the light in their own way.", "הסהרונים נשארים מלוטשים, כך שהאבנים והמתכת תופסות כל אחת את האור בדרכה.")}`)}
+      ${beat(`${t("p", "k", iconRef.en, iconRef.he)}${t("h2", "h2", "ICON, <em>worn.</em>", "ICON, <em>ענודה.</em>")}${t("p", "p", icon.line.en, icon.line.he)}<div class="acts"><a class="btn light solid" href="${R}pieces/ring/"><span ${E("View ICON", "לצפייה ב־ICON")}>View ICON</span></a><button class="btn light" type="button" data-book="ring"><span ${E("Book a viewing", "תיאום צפייה")}>Book a viewing</span></button></div>`)}
     </div>
-    ${t("p", "cnote", "A round brilliant has 57 facets: 33 on the crown, 24 on the pavilion.", "לבריליאנט עגול 57 פאסטים: 33 בכתר, 24 בביתן.")}
     <div class="prog" aria-hidden="true"><i></i></div>
   </div></div>
-</section>`;
+</section>` : "";
 
   /* 5 · the collection: the four signature pieces in one studio, each in
      two of its own photographed angles (four-studio.py). Each card holds its
@@ -194,7 +194,7 @@ export function test4Page({ PIECES, FOOTER_DOCS, mark, markDefs, markUse, logo, 
 
   const LANGS = [["en", "EN", "English"], ["he", "עב", "עברית"], ["fr", "FR", "Français"], ["ar", "AR", "العربية"], ["ru", "RU", "Русский"]];
   const langBtns = cls => `<div class="${cls}" role="group" aria-label="Language" data-aria-he="שפה">${LANGS.map(([c, l, full]) => `<button type="button" data-lang="${c}" lang="${c}" aria-pressed="${c === "en"}" aria-label="${full}">${cls === "mlang" ? full : l}</button>`).join("")}</div>`;
-  const NAV = [["#four", "Collection", "קולקציה"], ["#soulfilm", "SOUL", "SOUL"], ["#cut", "The cut", "החיתוך"], ["#appointment", "Appointment", "תיאום פגישה"]];
+  const NAV = [["#four", "Collection", "קולקציה"], ["#soulfilm", "SOUL", "SOUL"], ["#icon", "ICON", "ICON"], ["#appointment", "Appointment", "תיאום פגישה"]];
   /* the bar: as on the product pages, the mark home, the chapters, the
      language and the appointment; on a phone, one menu */
   const header = `<a class="skip" href="#main" ${E("Skip to content", "דלגו לתוכן")}>Skip to content</a>
@@ -250,7 +250,7 @@ ${header}
 ${open}
 ${word}
 ${film}
-${cut}
+${ICON}
 ${four}
 ${special}
 ${appt}

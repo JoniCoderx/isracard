@@ -321,26 +321,26 @@
     window.__soul = { get p() { return pin.p; }, get frame() { return shown; }, stats: seq.stats };
   })();
 
-  /* ── "The cut": the round brilliant, rendered once (cut-frames.mjs) ── */
+  /* ── "ICON, from one stone": the ring made, rendered once
+     (icon-frames.mjs) and played by the scroll; the photograph of it worn
+     comes last ── */
   (function () {
-    var sec = $("#cut"); if (!sec) return;
-    var stick = $(".sstick", sec), box = $(".cstone", sec), cv = $(".ccv", sec), ctx = cv.getContext("2d"), poster = $(".cposter", sec), partsBox = $(".cparts", sec), parts = $$(".cpart", sec);
-    var N = +sec.getAttribute("data-n"), base = sec.getAttribute("data-base"), A = {}, stage = Stages(sec, sec.getAttribute("data-stages").split(",").map(Number));
-    try { A = JSON.parse(sec.getAttribute("data-anchors") || "{}"); } catch (e) {}
-    var pin = Pin($(".spin", sec), stick), set = "d", L = { side: 0, x: 0, y: 0 }, shown = -1, labelsOn = null;
-    var seq = new FrameSeq({ n: N, budget: MEM * 0.6, src: function (s, i) { return base + s + "-" + ("00" + i).slice(-3) + ".webp"; }, onload: function () { kick(); } });
+    var sec = $("#icon"); if (!sec) return;
+    var stick = $(".sstick", sec), cv = $(".icv", sec), ctx = cv.getContext("2d"), poster = $(".iposter", sec), worn = $(".iworn", sec);
+    var N = +sec.getAttribute("data-n"), base = sec.getAttribute("data-base"), stage = Stages(sec, sec.getAttribute("data-stages").split(",").map(Number));
+    var pin = Pin($(".spin", sec), stick), tall = false, W = 0, Hh = 0, shown = -1, lastW = -1;
+    var BYTES = { d: 1920 * 1080 * 4, m: 900 * 1600 * 4 };
+    var seq = new FrameSeq({ n: N, budget: MEM, src: function (s, i) { return base + s + "-" + ("00" + i).slice(-3) + ".webp"; }, onload: function () { kick(); } });
     var api = {
       measure: function () {
         pin.measure();
-        var W = stick.clientWidth, VH = stick.clientHeight, tall = W / VH < 1, short = !tall && VH < 520;
-        var side = tall ? Math.min(W * 0.96, VH * 0.5) : short ? Math.min(VH * 0.96, W * 0.46) : Math.min(VH * 0.92, W * 0.52);
-        var cx = tall ? 0.5 : rtl() ? 0.37 : 0.63, cy = tall ? 0.3 : 0.5;
-        L = { side: side, x: cx * W - side / 2, y: cy * VH - side / 2 };
-        box.style.setProperty("--side", side.toFixed(0) + "px"); box.style.setProperty("--sx", L.x.toFixed(0) + "px"); box.style.setProperty("--sy", L.y.toFixed(0) + "px");
-        var s = tall ? "m" : "d", px = s === "m" ? 820 : 1400;
-        if (seq.use(s, px * px * 4)) { set = s; shown = -1; poster.src = base + s + "-119.webp"; }
-        var c = Math.round(Math.min(side * Math.min(devicePixelRatio || 1, 2), px));
-        if (cv.width !== c) { cv.width = cv.height = c; shown = -1; }
+        var w0 = stick.clientWidth, h0 = stick.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2);
+        tall = w0 / h0 < 1;
+        var set = tall ? "m" : "d";
+        if (seq.use(set, BYTES[set])) { shown = -1; poster.src = tall ? poster.getAttribute("data-tall") : base + "d-119.webp"; }
+        var w = Math.round(w0 * dpr), h = Math.round(h0 * dpr);
+        if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; shown = -1; }
+        W = w; Hh = h;
       },
       wake: function () { pin.leave(); shown = -1; },
       frame: function () {
@@ -348,32 +348,30 @@
         var near = pin.near(1.2);
         seq.on(near && document.readyState === "complete");
         if (!near) { if (!pin.near(4)) seq.sleep(); pin.leave(); shown = -1; return; }
-        var p = pin.step(70, 0.25), i = Math.round(p * (N - 1));
+        var p = pin.step(70, 0.2), i = Math.round(p * (N - 1));
         stage(p);
         seq.at(i);
         var k = seq.pick(i, shown);
         if (k >= 0 && k !== shown) draw(k);
+        var wo = Math.round(ease((p - 0.88) / 0.1) * 100) / 100;
+        if (wo !== lastW) { lastW = wo; worn.style.opacity = wo; stick.style.setProperty("--wo", wo); }
         return !pin.settled();
       }
     };
     function draw(k) {
-      ctx.drawImage(seq.get(k), 0, 0, cv.width, cv.height); shown = k;
+      var im = seq.get(k), iw = im.width, ih = im.height, sc = Math.max(W / iw, Hh / ih), dw = iw * sc, dh = ih * sc;
+      /* on a wide screen the ring stands two thirds across, away from the
+         words; the studio is one tone, so its edge is simply drawn out */
+      var ox = tall ? (W - dw) / 2 : W * (rtl() ? 0.35 : 0.65) - dw / 2, oy = (Hh - dh) / 2;
+      ctx.drawImage(im, ox, oy, dw, dh);
+      if (ox > 0) ctx.drawImage(im, 0, 0, 3, ih, 0, oy, ox + 1, dh);
+      if (ox + dw < W) ctx.drawImage(im, iw - 3, 0, 3, ih, ox + dw - 1, oy, W - ox - dw + 1, dh);
+      shown = k;
       if (!sec.classList.contains("ready")) sec.classList.add("ready");
-      /* the names stand in a column either side of the stone, each pointing
-         at its part (where the part is in this frame was recorded with it) */
-      var an = (A[set] || [])[k], on = !!an;
-      if (on !== labelsOn) { labelsOn = on; partsBox.classList.toggle("on", on); }
-      if (!an) return;
-      var sz = set === "m" ? 0.25 : 0.36, gap = set === "m" ? 8 : 30, colR = L.x + L.side * (0.5 + sz * 1.04) + gap, colL = L.x + L.side * (0.5 - sz * 1.04) - gap;
-      parts.forEach(function (el, n) {
-        var ax = L.x + an[n][0] * L.side, ay = L.y + an[n][1] * L.side, left = el.classList.contains("l");
-        el.querySelector("b").style.width = Math.max(10, left ? ax - colL - 10 : colR - ax - 10).toFixed(0) + "px";
-        el.style.transform = "translate3d(" + (left ? "calc(" + (ax + 2.5).toFixed(1) + "px - 100%)" : (ax - 2.5).toFixed(1) + "px") + "," + (ay - 8).toFixed(1) + "px,0)";
-      });
     }
     hooks.push(function () { shown = -1; });
     scenes.push(api);
-    window.__cut = { get p() { return pin.p; }, get frame() { return shown; }, stats: seq.stats };
+    window.__icon = { get p() { return pin.p; }, get frame() { return shown; }, stats: seq.stats };
   })();
 
   /* ── the collection ──
@@ -482,7 +480,7 @@
       var tone = "paper";
       for (var i = 0; i < tones.length; i++) { var t = tones[i].top - V.Y; if (t <= 40 && t + tones[i].h > 40) { tone = tones[i].tone; break; } }
       if (tone === "film" && archOpen > 0.25) tone = "paper";
-      if (tone !== cur) { cur = tone; H.classList.toggle("on-film", tone === "film"); H.classList.toggle("on-night", tone === "night"); }
+      if (tone !== cur) { cur = tone; H.classList.toggle("on-film", tone === "film"); H.classList.toggle("on-night", tone === "night" || tone === "stone"); }
     } });
   })();
 

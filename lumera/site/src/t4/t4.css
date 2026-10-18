@@ -181,7 +181,7 @@ html[data-ns] .wtext { letter-spacing: 0; line-height: 1.3; }
 .scene .spin { position: relative; }
 .scene .sstick { position: sticky; top: 0; height: 100vh; height: var(--vh); overflow: hidden; }
 #soulfilm .spin { height: 380vh; height: 380svh; }
-#cut .spin { height: 250vh; height: 250svh; }
+#icon .spin { height: 300vh; height: 300svh; }
 .beats { position: absolute; z-index: 2; inset-inline-start: var(--gut); top: 50%; transform: translateY(-50%); width: min(440px, 32vw); height: 62svh; }
 .sfbeat { position: absolute; inset-inline: 0; top: 50%; transform: translateY(calc(-50% + 14px)); opacity: 0; transition: opacity .45s var(--ease), transform .45s var(--ease); pointer-events: none; display: flex; flex-direction: column; gap: 18px; }
 .sfbeat.on { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
@@ -192,49 +192,47 @@ html[data-ns] .wtext { letter-spacing: 0; line-height: 1.3; }
 .sfilm .sstick::after { content: ""; position: absolute; z-index: 1; inset-inline: 0; bottom: 0; height: 12svh; pointer-events: none; background: linear-gradient(to top, #fbfbfa, rgba(251,251,250,0)); }
 .sposter { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 66% 50%; transition: opacity .4s ease; }
 html[dir="rtl"] .sposter { object-position: 34% 50%; }
-.scene.ready .sposter, .scene.ready .cposter { opacity: 0; }
+.scene.ready .sposter, .scene.ready .iposter { opacity: 0; }
 .sfcall { position: absolute; z-index: 1; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s ease; }
 .sfcall.on { opacity: 1; }
-.sfc, .cpart { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; direction: ltr; }
-html[data-ns] .sfc, html[data-ns] .cpart { letter-spacing: 0; text-transform: none; font-size: .9rem; }
+.sfc { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; direction: ltr; }
+html[data-ns] .sfc { letter-spacing: 0; text-transform: none; font-size: .9rem; }
 .sfc i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid currentColor; flex: none; }
 .sfc b { height: 1px; width: var(--len, 56px); background: currentColor; opacity: .35; flex: none; }
 .sfc span { font-weight: 400; background: rgba(251,251,250,.86); padding: 3px 7px; }
-html[dir="rtl"] .sfc span, html[dir="rtl"] .cpart span { direction: rtl; unicode-bidi: isolate; }
+html[dir="rtl"] .sfc span { direction: rtl; unicode-bidi: isolate; }
 
-.cut { background: var(--night); color: var(--nink); }
-.cut .k, .cut .p, .cut .specs dt { color: var(--nink2); }
-.cut .h2 em { color: var(--nink2); }
-.cut .prog { background: var(--nhair); }
-.cut .btn { color: var(--nink); border-color: var(--nhair); }
-.cut .btn:hover { border-color: var(--nink); }
-.cstone { position: absolute; left: 0; top: 0; width: var(--side, 60vh); height: var(--side, 60vh); transform: translate3d(var(--sx, 50vw), var(--sy, 20vh), 0); }
-.cstone img, .cstone canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cposter { transition: opacity .4s ease; }
-.cparts { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .4s ease; }
-.cparts.on { opacity: 1; }
-.cpart { flex-direction: row-reverse; color: var(--nink); }
-.cpart.l { flex-direction: row; }
-.cpart b { width: 64px; height: 1px; background: var(--nink); opacity: .4; }
-.cpart i { width: 5px; height: 5px; border-radius: 50%; background: var(--nink); flex: none; }
-.cnote { position: absolute; z-index: 2; inset-inline-end: var(--gut); bottom: calc(26px + var(--sab)); max-width: 36ch; font-size: .9rem; line-height: 1.5; color: var(--nink2); text-align: end; }
+/* ICON, from one stone: the studio of the film, the words light on it */
+.icon { background: #776d63; color: var(--nink); }
+.icon .k, .icon .p, .icon .specs dt { color: #ddd5ca; }
+.icon .h2 em { color: #ddd5ca; }
+.icon .prog { background: var(--nhair); }
+.icv, .iposter, .iworn { position: absolute; inset: 0; width: 100%; height: 100%; }
+.iposter, .iworn { object-fit: cover; }
+.iposter { transition: opacity .4s ease; }
+.iworn { object-position: 62% 40%; opacity: 0; }
+/* the photograph of the ring worn comes last, under a soft shade on the
+   words' side so they stay readable over it */
+.icon .sstick::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to right, rgba(52,45,38,.62), rgba(52,45,38,.32) 30%, rgba(52,45,38,0) 50%); opacity: calc(.75 + var(--wo, 0) * .25); }
+html[dir="rtl"] .icon .sstick::after { background: linear-gradient(to left, rgba(52,45,38,.62), rgba(52,45,38,.32) 30%, rgba(52,45,38,0) 50%); }
 
 @media (max-aspect-ratio: 1/1) {
   #soulfilm .spin { height: 330svh; }
-  #cut .spin { height: 230svh; }
+  #icon .spin { height: 280svh; }
+  .iworn { object-position: 50% 40%; }
+  .icon .sstick::after { background: none; }
+  html[dir="rtl"] .icon .sstick::after { background: none; }
   .sposter { object-position: 50% 50%; }
   /* the words at the foot of the screen, inside what is visible whatever the
      browser's own bars are doing; the piece above them */
   .beats { inset-inline: 20px; width: auto; top: auto; bottom: calc(60px + var(--sab) + (var(--vh) - 100svh)); transform: none; height: 40svh; }
-  .sfilm .beats::before, .cut .beats::before { content: ""; position: absolute; inset-inline: -20px; bottom: -80px; height: calc(100% + 120px); }
+  .sfilm .beats::before, .icon .beats::before { content: ""; position: absolute; inset-inline: -20px; bottom: -80px; height: calc(100% + 120px); }
   .sfilm .beats::before { background: linear-gradient(to top, rgba(251,251,250,.97) 55%, rgba(251,251,250,0)); }
-  .cut .beats::before { background: linear-gradient(to top, rgba(11,11,12,.96) 58%, rgba(11,11,12,0)); }
+  .icon .beats::before { background: linear-gradient(to top, rgba(119,109,99,.96) 58%, rgba(119,109,99,0)); }
   .sfbeat { top: auto; bottom: 0; transform: translateY(14px); gap: 12px; }
   .sfbeat.on { transform: none; }
   .sfbeat .h2 { font-size: clamp(1.9rem, 8.4vw, 2.6rem); }
   .prog { inset-inline-start: 20px; bottom: calc(24px + var(--sab) + (var(--vh) - 100svh)); width: 120px; }
-  .cnote { display: none; }
-  .cpart { letter-spacing: .08em; font-size: .66rem; }
 }
 @media (max-height: 520px) and (min-aspect-ratio: 1/1) {
   .beats { height: 80svh; width: min(360px, 40vw); top: calc(50% + 20px); }
@@ -242,7 +240,7 @@ html[dir="rtl"] .sfc span, html[dir="rtl"] .cpart span { direction: rtl; unicode
   .sfbeat .h2 { font-size: clamp(1.6rem, 7svh, 2.2rem); }
   .sfbeat .p, .specs { font-size: .9rem; }
   .specs { gap: 4px 16px; }
-  .cnote, .sfcall { display: none; }
+  .sfcall { display: none; }
   .fstick { padding-top: calc(var(--hh) + 12px); }
   .fhead { margin-bottom: 12px; }
   .fhead .h2 { font-size: 1.7rem; }
@@ -356,15 +354,14 @@ html[data-ns] .ftrow a { letter-spacing: 0; text-transform: none; font-size: .95
   .open .ostick { position: relative; }
   .otitle, .olead { display: none; }
   .wtext .w { opacity: 1; }
-  #soulfilm .spin, #cut .spin { height: auto; }
+  #soulfilm .spin, #icon .spin { height: auto; }
   .scene .sstick { position: relative; height: auto; min-height: 0; overflow: visible; display: grid; gap: 40px; padding: calc(var(--hh) + 30px) var(--gut) 80px; }
-  .sfilm .sstick::after, .sfilm .scv, .sfcall, .prog, .cparts, .ccv, .cnote { display: none; }
+  .sfilm .sstick::after, .sfilm .scv, .sfcall, .prog, .icv, .iworn, .icon .sstick::after { display: none; }
   .sposter { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; opacity: 1 !important; }
-  .cposter { opacity: 1 !important; }
-  .cstone { position: relative; transform: none; width: min(70vw, 60svh); height: auto; aspect-ratio: 1; margin: 0 auto; }
+  .iposter { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; opacity: 1 !important; }
   .beats { position: relative; inset: auto; transform: none; width: auto; height: auto; }
   .beats::before { display: none; }
   .sfbeat, .sfbeat.on { position: relative; inset: auto; opacity: 1; transform: none; pointer-events: auto; margin-bottom: 48px; }
   .sheet .panel, .scrim, .btn, .skip, .hd { transition: none; }
 }
-@media (prefers-reduced-motion: reduce) and (max-aspect-ratio: 1/1) { .sposter { aspect-ratio: 9 / 14; } }
+@media (prefers-reduced-motion: reduce) and (max-aspect-ratio: 1/1) { .sposter, .iposter { aspect-ratio: 9 / 14; } }
