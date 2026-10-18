@@ -435,7 +435,9 @@ const HERO_ALT = {
   "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
                    he: "שרשרת, טבעת וצמיד של SILAVU תחת פעמון זכוכית על שיש שחור, ברקע קו הרקיע של דובאי בלילה, ויד של אישה מונחת לצידם" },
   "hero-choice": { en: "The SILAVU bracelet, ring and earrings on white marble in morning light, as a woman's hand lifts the SOUL necklace",
-                   he: "צמיד, טבעת ועגילים של SILAVU על שיש לבן באור בוקר, ויד של אישה מרימה את שרשרת SOUL" }
+                   he: "צמיד, טבעת ועגילים של SILAVU על שיש לבן באור בוקר, ויד של אישה מרימה את שרשרת SOUL" },
+  "hero-lumiere": { en: "The SILAVU SOUL pendant on a woman's skin, above the neckline of a black silk dress, its pavé diamonds catching the light",
+                    he: "תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור" }
 };
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
@@ -480,7 +482,8 @@ function heroTest(dir, film, css, big, extras) {
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
 heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
-/* /test3/ tries the white film (hero-choice-assets.sh), with the words in ink.
+/* /test3/ tries "LUMIÈRE" (hero-lumiere-assets.sh; "The Choice",
+   hero-choice-assets.sh, came before it), with the words in ink.
    On a screen wider than the film, filling it cut the film's top and bottom
    away (on a 4:1 window, the pendant itself): there the whole frame is shown
    instead, at the right, its left edge fading into the white, and the words
@@ -489,7 +492,7 @@ heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
    a phone on its side, the opening is not that wide and the film fills it) */
 const WHOLE = `@media (min-aspect-ratio:16/9) and (min-width:1138px){html body #hero{background:#f3f3f5}
 html body #hero .hv{--fw:max(177.78svh,1138px);object-fit:contain!important;object-position:100% 50%!important;-webkit-mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9));mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9))}}`;
-heroTest("test3", "hero-choice", INK + "\n" + WHOLE, true, [EMB3D, T2, LAYOUT, T3]);
+heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE, true, [EMB3D, T2, LAYOUT, T3]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";

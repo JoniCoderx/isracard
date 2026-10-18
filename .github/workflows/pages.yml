@@ -162,6 +162,25 @@ jobs:
           else
             mkdir -p dist/v dist/img && cp hero-choice/v/* dist/v/ && cp hero-choice/img/* dist/img/
           fi
+      # "LUMIÈRE", the film on trial on /test3/ (a few minutes of work, kept
+      # all the same); with neither, what the live site has is taken.
+      - name: Keep the LUMIÈRE film
+        uses: actions/cache@v4
+        with:
+          path: hero-lumiere
+          key: hero-lumiere-${{ hashFiles('lumera/site/hero-lumiere-assets.sh') }}
+      - name: The LUMIÈRE film on trial (/test3/)
+        run: |
+          if [ ! -f hero-lumiere/v/hero-lumiere-v.mp4 ] && ! bash lumera/site/hero-lumiere-assets.sh hero-lumiere; then
+            rm -rf hero-lumiere
+            LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+            mkdir -p dist/v dist/img
+            for f in v/hero-lumiere-4k.mp4 v/hero-lumiere.mp4 v/hero-lumiere-v.mp4 img/hero-lumiere-1600.jpg img/hero-lumiere-1920.jpg img/hero-lumiere-2560.jpg img/hero-lumiere-3840.jpg img/hero-lumiere-v-1080.jpg img/hero-lumiere-v-1216.jpg; do
+              curl -fsSL --retry 3 -o dist/$f "$LIVE/$f" || echo "missing: $f"
+            done
+          else
+            mkdir -p dist/v dist/img && cp hero-lumiere/v/* dist/v/ && cp hero-lumiere/img/* dist/img/
+          fi
       # The white candidate for /test-white/, moved from one still (hero-white.py).
       - name: The white hero film on trial (/test-white/)
         run: |
