@@ -284,7 +284,9 @@ fs.writeFileSync(path.join(outDir, "index.html"), head + html + "\n</body>\n</ht
    not indexed, not counted; the films and their stills come from
    hero-test-assets.sh (the dark one) and hero-white.py (the white one). The
    white one sets the hero's words in ink, since they are white on the film. */
-const INK = `#hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.72) 0%,rgba(255,255,255,.34) 32%,rgba(255,255,255,0) 60%),linear-gradient(to bottom,rgba(255,255,255,.6),rgba(255,255,255,0) 26%)}
+const INK = `html body #hero .hshade{background:linear-gradient(to top,rgba(255,255,255,.72) 0%,rgba(255,255,255,.34) 32%,rgba(255,255,255,0) 60%),linear-gradient(to bottom,rgba(255,255,255,.6),rgba(255,255,255,0) 26%)!important}
+@media (min-width:900px){html body #hero .hshade{background:linear-gradient(90deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.3) 28%,rgba(255,255,255,0) 48%),linear-gradient(to bottom,rgba(255,255,255,.5),rgba(255,255,255,0) 22%)!important}}
+html body #hero .hcap::before{background:radial-gradient(ellipse 60% 58% at 50% 55%,rgba(255,255,255,.5) 0%,rgba(255,255,255,.3) 46%,rgba(255,255,255,0) 100%)!important}
 #hero .hlight,#hero .hseam{display:none}
 #hero .hcap .h em,#hero .hcap .h em *{background:none!important;-webkit-text-fill-color:#16130f!important;filter:none!important}
 #header:not(.scrolled)::before{opacity:0!important}
@@ -431,7 +433,9 @@ const T3 = (() => {
 })();
 const HERO_ALT = {
   "hero-cloche": { en: "The SILAVU necklace, ring and bracelet under a glass cloche on black marble, the Dubai skyline at night behind, a woman's hand resting beside them",
-                   he: "שרשרת, טבעת וצמיד של SILAVU תחת פעמון זכוכית על שיש שחור, ברקע קו הרקיע של דובאי בלילה, ויד של אישה מונחת לצידם" }
+                   he: "שרשרת, טבעת וצמיד של SILAVU תחת פעמון זכוכית על שיש שחור, ברקע קו הרקיע של דובאי בלילה, ויד של אישה מונחת לצידם" },
+  "hero-choice": { en: "The SILAVU bracelet, ring and earrings on white marble in morning light, as a woman's hand lifts the SOUL necklace",
+                   he: "צמיד, טבעת ועגילים של SILAVU על שיש לבן באור בוקר, ויד של אישה מרימה את שרשרת SOUL" }
 };
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
@@ -476,7 +480,8 @@ function heroTest(dir, film, css, big, extras) {
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
 heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
-heroTest("test3", "hero-cloche", "", true, [EMB3D, T2, LAYOUT, T3]);
+/* /test3/ tries the white film (hero-choice-assets.sh), with the words in ink */
+heroTest("test3", "hero-choice", INK, true, [EMB3D, T2, LAYOUT, T3]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";

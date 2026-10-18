@@ -142,6 +142,26 @@ jobs:
               curl -fsSL --retry 3 -o dist/$f "$LIVE/$f" || echo "missing: $f"
             done
           fi
+      # The white film on trial on /test3/. Drawing it at 60 fps takes about
+      # half an hour, so the result is kept and made again only when its
+      # script changes; with neither, what the live site has is taken.
+      - name: Keep the white hero film
+        uses: actions/cache@v4
+        with:
+          path: hero-choice
+          key: hero-choice-${{ hashFiles('lumera/site/hero-choice-assets.sh') }}
+      - name: The white hero film on trial (/test3/)
+        run: |
+          if [ ! -f hero-choice/v/hero-choice-v.mp4 ] && ! bash lumera/site/hero-choice-assets.sh hero-choice; then
+            rm -rf hero-choice
+            LIVE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+            mkdir -p dist/v dist/img
+            for f in v/hero-choice-4k.mp4 v/hero-choice.mp4 v/hero-choice-v.mp4 img/hero-choice-1600.jpg img/hero-choice-1920.jpg img/hero-choice-2560.jpg img/hero-choice-3840.jpg img/hero-choice-v-1080.jpg img/hero-choice-v-1216.jpg; do
+              curl -fsSL --retry 3 -o dist/$f "$LIVE/$f" || echo "missing: $f"
+            done
+          else
+            mkdir -p dist/v dist/img && cp hero-choice/v/* dist/v/ && cp hero-choice/img/* dist/img/
+          fi
       # The white candidate for /test-white/, moved from one still (hero-white.py).
       - name: The white hero film on trial (/test-white/)
         run: |
