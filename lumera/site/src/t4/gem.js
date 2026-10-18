@@ -33,7 +33,7 @@ window.SilavuGem = function (cv, o) {
   /* the parts of the stone, for the words drawn beside it */
   var parts = { table: [0.3, hc, 0], crown: [0.8, hc * 0.3, 0], girdle: [-1, -g / 2, 0], pavilion: [0.5, -g - tp * 0.5, 0], culet: [-0.02, -g - tp, 0] };
   var VS = "#version 300 es\nin vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
-  var FS = "#version 300 es\nprecision highp float;\n#define NP " + NP + "\n#define NB " + (o.bounces || 6) + "\n#define MID " + ((hc - g - tp) / 2).toFixed(4) + "\n" +
+  var FS = "#version 300 es\nprecision highp float;\n#define NP " + NP + "\n#define NB " + (o.bounces || 6) + "\n#define LW " + (o.lw || 1).toFixed(2) + "\n#define MID " + ((hc - g - tp) / 2).toFixed(4) + "\n" +
   "uniform vec4 uP[NP];uniform mat3 uR;uniform vec2 uC;uniform float uS,uWire,uLit,uY;out vec4 oc;\n" +
   "const float D=12.;\n" +
   /* the studio: a ring of soft light around the lens with the photographer's
@@ -71,7 +71,7 @@ window.SilavuGem = function (cv, o) {
   "float span=tf-tn;if(miss||span<=0.){oc=vec4(0);return;}" +
   "float cov=clamp(span/max(fwidth(span),1e-5)*.7,0.,1.);" +
   /* the drawing: the facets' edges, front and back */
-  "float e1=tn-tn2,e2=tf2-tf;float w1=1.-smoothstep(.4,1.4,e1/max(fwidth(e1),1e-6)),w2=1.-smoothstep(.4,1.4,e2/max(fwidth(e2),1e-6));" +
+  "float e1=tn-tn2,e2=tf2-tf;float w1=1.-smoothstep(.4*LW,1.4*LW,e1/max(fwidth(e1),1e-6)),w2=1.-smoothstep(.4*LW,1.4*LW,e2/max(fwidth(e2),1e-6));" +
   "vec3 wire=vec3(.92,.93,.95)*max(w1,w2*.38);" +
   "vec3 col=vec3(0);" +
   "if(uLit>0.){vec3 p=o+d*tn,n=nn;float ci=clamp(-dot(d,n),0.,1.),F=fr(ci);col+=F*env(uR*reflect(d,n));" +

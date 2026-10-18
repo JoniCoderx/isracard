@@ -515,7 +515,6 @@
  "The four": "الأربع",
  "SOUL, in light": "SOUL في الضوء",
  "SILAVU <em>AURA</em>": "SILAVU <em>AURA</em>",
- "A round brilliant diamond, drawn live: first the outline of its 57 facets, then in light, turning to face you": "ماسة بقطع بريليانت دائري، تُرسم مباشرة: أولاً خطوط أوجهها السبعة والخمسين، ثم في الضوء وهي تستدير نحوك",
  "Brilliance is the white light a diamond returns, fire the colours it splits that light into, scintillation the flashes as it moves.": "اللمعان هو الضوء الأبيض الذي تعيده الماسة، والنار هي الألوان التي تفكّك إليها ذلك الضوء، والتلألؤ هو الومضات حين تتحرك.",
  "Brilliance · Fire · Scintillation": "اللمعان · النار · التلألؤ",
  "By <em>appointment.</em>": "<em>بموعد</em> مسبق.",
@@ -524,7 +523,6 @@
  "Crown": "التاج",
  "Culet": "الكوليت",
  "Drawn facet by facet": "مرسومة وجهاً بعد وجه",
- "Drawn live in your browser, ray by ray: 57 facets, refractive index 2.42.": "تُرسم مباشرة في متصفحك، شعاعاً بعد شعاع: 57 وجهاً، ومعامل انكسار 2.42.",
  "Every SILAVU piece can be seen in private. Tell the house what you are looking for, and a viewing will be arranged for you.": "يمكن مشاهدة كل قطعة من SILAVU بشكل خاص. أخبروا الدار بما تبحثون عنه، وسيُرتَّب لكم موعد للمعاينة.",
  "Facets": "الأوجه",
  "Fifty-seven facets, each at its own angle, so that the light that enters the stone comes back to the eye.": "سبعة وخمسون وجهاً، لكل منها زاويته، كي يعود الضوء الذي يدخل الحجر إلى العين.",
@@ -548,5 +546,16 @@
  "The signature, four pieces": "التوقيع، أربع قطع",
  "The whole collection": "المجموعة كاملة",
  "View CADENCE": "عرض CADENCE",
- "White light, <em>broken into colour.</em>": "ضوء أبيض، <em>يتكسّر ألواناً.</em>"
+ "White light, <em>broken into colour.</em>": "ضوء أبيض، <em>يتكسّر ألواناً.</em>",
+ "A drawing of the cut, traced ray by ray: 57 facets, refractive index 2.42.": "رسم للقطع، محسوب شعاعاً بعد شعاع: 57 وجهاً، ومعامل انكسار 2.42.",
+ "A drawing of a round brilliant diamond: first the outline of its 57 facets, then in light, turning to face you": "رسم لماسة بقطع بريليانت دائري: أولاً خطوط أوجهها السبعة والخمسين، ثم في الضوء وهي تستدير نحوك",
+ "A private <em>viewing.</em>": "معاينة <em>خاصة.</em>",
+ "A round brilliant has 57 facets: 33 on the crown, 24 on the pavilion.": "للماسة البريليانت الدائرية 57 وجهاً: 33 في التاج و24 في الجناح.",
+ "Appointment": "موعد",
+ "Choose the piece you would like to see. The house arranges every viewing in person, in Dubai or Tel Aviv.": "اختاروا القطعة التي تودّون رؤيتها. ترتّب الدار كل معاينة شخصياً، في دبي أو تل أبيب.",
+ "Continue to the booking form": "المتابعة إلى نموذج الحجز",
+ "Next piece": "القطعة التالية",
+ "Not decided yet": "لم أقرر بعد",
+ "Previous piece": "القطعة السابقة",
+ "The booking form opens with this piece already chosen, in your language. Nothing is sent until you send it.": "يُفتح نموذج الحجز وقد اختيرت هذه القطعة، بلغتكم. لا يُرسل شيء حتى ترسلوه أنتم."
 }
