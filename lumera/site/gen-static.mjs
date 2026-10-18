@@ -480,8 +480,16 @@ function heroTest(dir, film, css, big, extras) {
 heroTest("test", "hero-cloche", "", true, [EMB3D]);
 heroTest("test-white", "hero-white", INK);
 heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
-/* /test3/ tries the white film (hero-choice-assets.sh), with the words in ink */
-heroTest("test3", "hero-choice", INK, true, [EMB3D, T2, LAYOUT, T3]);
+/* /test3/ tries the white film (hero-choice-assets.sh), with the words in ink.
+   On a screen wider than the film, filling it cut the film's top and bottom
+   away (on a 4:1 window, the pendant itself): there the whole frame is shown
+   instead, at the right, its left edge fading into the white, and the words
+   stand on the white beside it (the film is as wide as 16/9 of the opening's
+   height, which is the screen's but never under 640 px; on a narrower screen,
+   a phone on its side, the opening is not that wide and the film fills it) */
+const WHOLE = `@media (min-aspect-ratio:16/9) and (min-width:1138px){html body #hero{background:#f3f3f5}
+html body #hero .hv{--fw:max(177.78svh,1138px);object-fit:contain!important;object-position:100% 50%!important;-webkit-mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9));mask-image:linear-gradient(90deg,transparent calc(100% - var(--fw)),#000 calc(100% - var(--fw) * .9))}}`;
+heroTest("test3", "hero-choice", INK + "\n" + WHOLE, true, [EMB3D, T2, LAYOUT, T3]);
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
