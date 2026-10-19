@@ -583,6 +583,16 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
   if (page) { fs.mkdirSync(path.join(outDir, "test8"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test8", "index.html"), page); console.log("test page written: test8"); }
   else console.warn("test8 skipped: the pieces it names have changed");
 }
+/* /test9/: SILAVU as a maison, from the house's own films and photographs
+   (src/t9/page9.mjs) */
+{
+  const { markDefs, markUse, logo } = await import("./src/body.mjs");
+  const { test9Page } = await import("./src/t9/page9.mjs");
+  const root = path.dirname(path.resolve(src));
+  const page = test9Page({ PIECES, FOOTER_DOCS, markDefs, markUse, logo, root });
+  if (page) { fs.mkdirSync(path.join(outDir, "test9"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test9", "index.html"), page); console.log("test page written: test9"); }
+  else console.warn("test9 skipped: the pieces it names have changed");
+}
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
