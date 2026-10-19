@@ -563,6 +563,16 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
   if (page) { fs.mkdirSync(path.join(outDir, "test6"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test6", "index.html"), page); console.log("test page written: test6"); }
   else console.warn("test6 skipped: the pieces it names have changed");
 }
+/* /test7/: SILAVU in real footage only (src/t7/page7.mjs; its films are
+   film7-assets.sh, its gallery studio6.py) */
+{
+  const { markDefs, markUse, logo } = await import("./src/body.mjs");
+  const { test7Page } = await import("./src/t7/page7.mjs");
+  const root = path.dirname(path.resolve(src));
+  const page = test7Page({ PIECES, FOOTER_DOCS, markDefs, markUse, logo, root });
+  if (page) { fs.mkdirSync(path.join(outDir, "test7"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test7", "index.html"), page); console.log("test page written: test7"); }
+  else console.warn("test7 skipped: the pieces it names have changed");
+}
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
