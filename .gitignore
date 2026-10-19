@@ -10,3 +10,4 @@ lumera/admin/node_modules/
 lumera/site/silavu-page.stack.html
 lumera/backend/supabase/.env*
 !lumera/backend/supabase/.env.example
+lumera/site/.soul6-raw/

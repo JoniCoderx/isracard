@@ -12,7 +12,9 @@
    - The chain is a fine cable chain with bezel-set diamonds along it,
      joined to the outer top of each crescent.
    - The studio: graphite walls, a warm stone floor, softboxes whose lines
-     are what the white gold reflects.
+     are what the white gold reflects. With look: "white" (/test6/), a pale
+     studio with black cards and a graded front card instead, as jewellery
+     is shot on white, and a soft shadow on the wall behind the necklace.
    The story, frame by frame: an extreme close-up of polished white gold;
    the camera draws back to the whole pendant; it turns to show its depth;
    its diamonds lift and settle into their seats; the camera moves into the
@@ -20,7 +22,8 @@
 import * as THREE from "three";
 import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
 
-export function makeSoul(canvas, { MARK, MARK_W, PAVE, W, H, ratio, tall }) {
+export function makeSoul(canvas, { MARK, MARK_W, PAVE, W, H, ratio, tall, look }) {
+  const white = look === "white";
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, premultipliedAlpha: false });
   renderer.setPixelRatio(ratio); renderer.setSize(W, H, false); renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.12;
@@ -34,11 +37,35 @@ export function makeSoul(canvas, { MARK, MARK_W, PAVE, W, H, ratio, tall }) {
     fragmentShader: "varying vec3 vP; void main(){ vec3 d = normalize(vP); vec3 graphite = vec3(.05,.046,.042), stone = vec3(.42,.36,.29); vec3 c = mix(stone, graphite, smoothstep(-.35,.35,d.y)); gl_FragColor = vec4(c, 1.); }" }));
   studio.add(room);
   const box = (w, h, x, y, z, k, tint) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(tint || 0xffffff).multiplyScalar(k), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); studio.add(m); };
+  if (white) {
+    /* a white studio, shot as jewellery is shot on white: the room is pale,
+       and black cards stand where the metal's faces look, so polished white
+       gold keeps its drawing (a white face in a white room has none) */
+    room.material.fragmentShader = "varying vec3 vP; void main(){ vec3 d = normalize(vP); vec3 c = mix(vec3(.07,.068,.066), vec3(.62,.61,.6), smoothstep(-.4,.75,d.y)); gl_FragColor = vec4(c, 1.); }";
+    /* the card the front faces see: light at the top, falling to charcoal,
+       so a flat polished face reads as a smooth gradient, as in a studio shot */
+    const gc = document.createElement("canvas"); gc.width = 4; gc.height = 256; const gx = gc.getContext("2d"), gr = gx.createLinearGradient(0, 0, 0, 256);
+    gr.addColorStop(0, "#f6f6f4"); gr.addColorStop(0.36, "#c4c2be"); gr.addColorStop(0.5, "#9d9b97"); gr.addColorStop(0.72, "#4c4b49"); gr.addColorStop(1, "#1a1919"); gx.fillStyle = gr; gx.fillRect(0, 0, 4, 256);
+    const gt = new THREE.CanvasTexture(gc); gt.colorSpace = THREE.SRGBColorSpace;
+    const card = new THREE.Mesh(new THREE.PlaneGeometry(700, 560), new THREE.MeshBasicMaterial({ map: gt, color: new THREE.Color(1.6, 1.6, 1.6), side: THREE.DoubleSide }));
+    card.position.set(0, 20, 470); card.lookAt(0, 0, 0); studio.add(card);
+    box(520, 40, 0, 300, 420, 7.0);               // a thin strip light above it: a line along the bevels
+    box(110, 520, -430, 0, 220, 0.04);             // dark flags at either side
+    box(110, 520, 440, 0, 180, 0.04);
+    box(320, 320, 0, 430, 40, 4.5);                // the overhead softbox
+    box(70, 420, -320, 60, -240, 6.0);             // strip lights behind, for the edges
+    box(70, 420, 330, 40, -230, 5.0);
+    box(260, 90, -190, -200, 360, 0.02);           // black flags low in front: the stones' dark facets
+    box(260, 90, 200, -210, 340, 0.02);
+    box(46, 360, -470, 60, 0, 5.5);                // and at the far sides
+    box(46, 360, 480, 40, -20, 4.5);
+  } else {
   box(320, 320, 0, 420, 60, 5.0);                 // the overhead softbox
   box(52, 440, -360, 40, 170, 7.0);              // a strip at the left, a little in front
   box(52, 440, 380, 60, 120, 5.5);               // and one at the right
   box(380, 240, -60, 60, 440, 2.4, 0xfff4e6);    // a broad warm fill from the camera's side
   box(420, 70, 0, 140, -420, 3.2, 0xffe9d2);     // a warm rim behind
+  }
   /* small hot lamps: what the diamonds break into points of light and colour */
   for (let i = 0; i < 12; i++) { const a = i * 2.399, z = 0.25 + 0.65 * ((i * 0.618) % 1), r = Math.sqrt(1 - z * z);
     const l = new THREE.Mesh(new THREE.SphereGeometry(7, 12, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(0xffffff).multiplyScalar(36) }));
@@ -155,6 +182,19 @@ export function makeSoul(canvas, { MARK, MARK_W, PAVE, W, H, ratio, tall }) {
   const sInst = new THREE.InstancedMesh(hull, diamond, stations.length); pendant.add(sInst);
   { const m = new THREE.Matrix4(), q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1));
     stations.forEach(([p], i) => { m.compose(p, new THREE.Quaternion(), new THREE.Vector3(1, 1, 1)); cups.setMatrixAt(i, m); m.compose(p.clone().add(new THREE.Vector3(0, 0, 0.32)), q, new THREE.Vector3(0.78, 0.78, 0.78)); sInst.setMatrixAt(i, m); }); }
+
+  /* on white, the necklace hangs a little in front of the studio wall and
+     lays a soft shadow on it, from a light above and to the left */
+  if (white) {
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.VSMShadowMap;
+    const sun = new THREE.DirectionalLight(0xffffff, 0.0001); sun.position.set(-22, 40, 150); sun.castShadow = true;
+    Object.assign(sun.shadow.camera, { left: -100, right: 100, top: 160, bottom: -60, near: 1, far: 400 });
+    sun.shadow.mapSize.set(2048, 2048); sun.shadow.radius = 14; sun.shadow.blurSamples = 20; sun.shadow.bias = -0.0005;
+    scene.add(sun, sun.target);
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.ShadowMaterial({ opacity: 0.13 }));
+    wall.position.z = -10; wall.receiveShadow = true; scene.add(wall);
+    pendant.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  }
 
   const camera = new THREE.PerspectiveCamera(tall ? 30 : 22, W / H, 0.3, 3000);
   /* on a phone the words sit in the lower part of the screen: the piece is framed above them */
