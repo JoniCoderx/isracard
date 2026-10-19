@@ -36,11 +36,12 @@ export function test9Page({ PIECES, FOOTER_DOCS, markDefs, markUse, logo, root }
   const plain = s => s.replace(/<[^>]+>/g, "");
   const LIST = PIECES.filter(p => p.id && !p.exceptional);
   const SIG = ["pave", "ring", "knot", "aura"].map(P).filter(Boolean), SPECIAL = ["blush", "promise", "cadence"].map(P).filter(Boolean);
-  const WORN = { knot: "knot-worn", ring: "ring-worn", pave: "necklace-worn", aura: "aura-worn", promise: "promise-worn", blush: "blush-worn", cadence: "cadence-worn" };
+  const WORN = { knot: "knot-worn", ring: "ring-worn", pave: "necklace-worn", aura: "aura-worn", promise: "promise-macro", blush: "blush-worn", cadence: "cadence-worn" };
   if (SIG.length < 4 || SPECIAL.length < 3) return null;
 
   /* a boutique card: the studio photograph, and the piece worn when the
-     pointer comes to it (a second picture, faded in: nothing is redrawn) */
+     pointer comes to it (a second picture, faded in: nothing is redrawn);
+     PROMISE has no photograph worn, so its close-up stands in */
   const card = p => `<li class="card">
       <a class="cimg" href="${R}pieces/${p.id}/" aria-label="${q(plain(p.name.en))}" data-aria-he="${q(plain(p.name.he))}">
         <img class="c1" src="${R}studio6/${p.id}-a-700.webp" srcset="${R}studio6/${p.id}-a-700.webp 700w, ${R}studio6/${p.id}-a-1200.webp 1200w" sizes="(max-width: 760px) 50vw, 25vw" width="1200" height="1200" alt="" loading="lazy" decoding="async">
