@@ -7,3 +7,4 @@
 - Hero 3, on black glass: ed0e5e61-17a5-4ecb-b24f-15ac27ef5414
 - World image: 4017bd1e-2dc6-4c25-b9a9-b79da3d7fb42
 - Material close-up: e951bff4-02fe-4cd7-976a-7576d31560d4
+- Hero film (12s): ecd41ebb-0732-4a2d-bb50-74d8bdceadd6
