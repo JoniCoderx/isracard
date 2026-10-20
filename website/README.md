@@ -13,7 +13,7 @@ npm run build             # portable static build in dist/ (relative paths)
 npx vite preview          # serve the build; never open dist/ through file://
 ```
 
-No libraries: plain HTML, CSS and about 5 KB of JavaScript, built with Vite.
+Plain HTML, CSS and JavaScript built with Vite; the one library is Lenis (smooth wheel scrolling on desktop).
 
 ## What's on the page
 
@@ -27,6 +27,22 @@ No libraries: plain HTML, CSS and about 5 KB of JavaScript, built with Vite.
 7. **The house:** The knot, and Signed.
 8. **The appointment:** services and the request form.
 9. **Footer.**
+
+## Scroll effects
+
+`src/main.js` holds a small scroll engine. Each effect maps a scroll range
+to 0–1 and writes styles only when that number changes:
+
+| Section | Effect |
+|---|---|
+| Opening | The film shrinks into a framed picture, SOUL rises below |
+| Intro | The sentence lights word by word |
+| SOUL and BLUSH, the house | Pictures drift slower than the page and open like a curtain |
+| Collection | Pinned, the pieces slide sideways, with a progress line |
+| LUMIÈRE | A small window opens to the whole screen, then the words arrive |
+| Band | The house name moves across |
+
+Reduced-motion visitors get the plain stacked page.
 
 ## How the films play
 

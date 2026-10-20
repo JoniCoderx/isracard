@@ -37,68 +37,74 @@
   </header>
 
   <main id="top">
-    <!-- the opening: the house film, then its title on white -->
+    <!-- the opening: the house film full screen, receding into a framed picture as SOUL rises -->
     <section class="hero" aria-labelledby="hero-h">
-      <div class="hero__film">
-        <video class="film" data-src="v/hero-choice.mp4" data-src-v="v/hero-choice-v.mp4" poster="img/hero-choice-1920.jpg" data-poster-v="img/hero-choice-v-1080.jpg" muted loop playsinline preload="none" aria-label="A hand lifts the SOUL pendant from white marble; the SOUL pendant worn with a white shirt"></video>
-      </div>
-      <div class="hero__cap">
-        <p class="label">The signature</p>
-        <h1 id="hero-h">SOUL</h1>
-        <p class="hero__sub">The house knot in 18K white gold and diamonds.</p>
-        <div class="hero__acts">
-          <a class="btn" href="#collection">Discover the collection</a>
-          <a class="txt" href="#appointment">Book an appointment</a>
+      <div class="hero__stage">
+        <div class="hero__frame">
+          <video class="film" data-src="v/hero-choice.mp4" data-src-v="v/hero-choice-v.mp4" poster="img/hero-choice-1920.jpg" data-poster-v="img/hero-choice-v-1080.jpg" muted loop playsinline preload="none" aria-label="A hand lifts the SOUL pendant from white marble; the SOUL pendant worn with a white shirt"></video>
+        </div>
+        <p class="hero__cue" aria-hidden="true"><span></span>Scroll</p>
+        <div class="hero__title">
+          <p class="label">The signature</p>
+          <h1 id="hero-h">SOUL</h1>
+          <p class="hero__sub">The house knot in 18K white gold and diamonds.</p>
+          <div class="hero__acts">
+            <a class="btn" href="#collection">Discover the collection</a>
+            <a class="txt" href="#appointment">Book an appointment</a>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- one sentence, lit word by word as it is read -->
     <section class="intro" aria-label="The house">
-      <svg class="intro__mark" aria-hidden="true"><use href="#mark" /></svg>
-      <p class="intro__line">Two loops that never break, held by two open arcs. Every SILAVU piece is drawn from this one knot, in 18K gold and diamonds matched by hand.</p>
+      <div class="intro__stage">
+        <svg class="intro__mark" aria-hidden="true"><use href="#mark" /></svg>
+        <p class="intro__line">Two loops that never break, held by two open arcs. Every SILAVU piece is drawn from this one knot, in 18K gold and diamonds matched by hand.</p>
+      </div>
     </section>
 
     <section class="duo" aria-label="Two pieces">
       <a class="duo__item" href="#collection" data-piece="soul">
-        <span class="duo__img"><img src="img/worn/necklace-worn-1254.jpg" srcset="img/worn/necklace-worn-900.jpg 900w, img/worn/necklace-worn-1254.jpg 1254w" sizes="(max-width: 760px) 100vw, 50vw" alt="The SOUL pendant worn at the collarbone with a black top" loading="lazy" width="1254" height="1254" /></span>
+        <span class="duo__img"><img class="px" src="img/worn/necklace-worn-1254.jpg" srcset="img/worn/necklace-worn-900.jpg 900w, img/worn/necklace-worn-1254.jpg 1254w" sizes="(max-width: 760px) 100vw, 50vw" alt="The SOUL pendant worn at the collarbone with a black top" loading="lazy" width="1254" height="1254" /></span>
         <span class="duo__txt"><span class="label">Pendant</span><span class="duo__name">SOUL</span><span class="txt">Discover</span></span>
       </a>
-      <a class="duo__item" href="#collection" data-piece="blush">
-        <span class="duo__img"><img src="img/worn/blush-worn-1254.jpg" srcset="img/worn/blush-worn-900.jpg 900w, img/worn/blush-worn-1254.jpg 1254w" sizes="(max-width: 760px) 100vw, 50vw" alt="The BLUSH eternity ring worn, the hand at the chin" loading="lazy" width="1254" height="1254" /></span>
+      <a class="duo__item duo__item--low" href="#collection" data-piece="blush">
+        <span class="duo__img"><img class="px" src="img/worn/blush-worn-1254.jpg" srcset="img/worn/blush-worn-900.jpg 900w, img/worn/blush-worn-1254.jpg 1254w" sizes="(max-width: 760px) 100vw, 50vw" alt="The BLUSH eternity ring worn, the hand at the chin" loading="lazy" width="1254" height="1254" /></span>
         <span class="duo__txt"><span class="label">Eternity ring</span><span class="duo__name">BLUSH</span><span class="txt">Discover</span></span>
       </a>
     </section>
 
+    <!-- the collection: scrolling down slides the pieces sideways -->
     <section id="collection" class="rail" aria-labelledby="col-h">
-      <div class="rail__head">
-        <div>
+      <div class="rail__stage">
+        <div class="rail__head">
           <p class="label">The collection</p>
           <h2 id="col-h">Seven pieces, one signature</h2>
         </div>
-        <div class="rail__arrows">
-          <button class="arrow" type="button" data-dir="-1" aria-label="Previous pieces"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
-          <button class="arrow" type="button" data-dir="1" aria-label="Next pieces"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
-        </div>
+        <ul class="rail__track" role="list"></ul>
+        <div class="rail__bar" aria-hidden="true"><span></span></div>
       </div>
-      <ul class="rail__track" role="list"></ul>
     </section>
 
+    <!-- LUMIÈRE: a small window that opens to the whole screen -->
     <section class="lumiere" aria-labelledby="lum-h">
-      <div class="lumiere__txt">
-        <p class="label">In motion</p>
-        <h2 id="lum-h">Made to catch the light</h2>
-        <p>Pavé set edge to edge, so the knot reads as one line of light. Worn close, it moves with every breath.</p>
-        <a class="txt" href="#appointment">See it in person</a>
-      </div>
-      <div class="lumiere__film">
-        <video class="film" data-src="v/hero-lumiere-v.mp4" data-src-v="v/hero-lumiere-v.mp4" poster="img/hero-lumiere-v-1080.jpg" muted loop playsinline preload="none" aria-label="The SOUL pendant up close, then worn with a black dress"></video>
+      <div class="lumiere__stage">
+        <div class="lumiere__film">
+          <video class="film" data-src="v/hero-lumiere.mp4" data-src-v="v/hero-lumiere-v.mp4" poster="img/hero-lumiere-1920.jpg" data-poster-v="img/hero-lumiere-v-1080.jpg" muted loop playsinline preload="none" aria-label="The SOUL pendant up close, then worn with a black dress"></video>
+        </div>
+        <div class="lumiere__txt">
+          <p class="label">In motion</p>
+          <h2 id="lum-h">Made to catch the light</h2>
+          <p>Pavé set edge to edge, so the knot reads as one line of light.</p>
+        </div>
       </div>
     </section>
 
     <section id="house" class="house" aria-labelledby="house-h">
       <h2 id="house-h" class="sr">The house</h2>
       <article class="row">
-        <figure class="row__img"><img src="img/p/knot-macro-900.jpg" alt="The KNOT bracelet's polished knot in white gold, close up" loading="lazy" width="900" height="900" /></figure>
+        <figure class="row__img"><img class="px" src="img/p/knot-macro-900.jpg" alt="The KNOT bracelet's polished knot in white gold, close up" loading="lazy" width="900" height="900" /></figure>
         <div class="row__txt">
           <p class="label">The knot</p>
           <h3>One unbroken line</h3>
@@ -106,7 +112,7 @@
         </div>
       </article>
       <article class="row row--flip">
-        <figure class="row__img"><img src="img/p/ring-signed-900.jpg" alt="The inside of a SILAVU ring band, engraved with the house name" loading="lazy" width="900" height="900" /></figure>
+        <figure class="row__img"><img class="px" src="img/p/ring-signed-900.jpg" alt="The inside of a SILAVU ring band, engraved with the house name" loading="lazy" width="900" height="900" /></figure>
         <div class="row__txt">
           <p class="label">Signed</p>
           <h3>Made by hand, signed by the house</h3>
@@ -114,6 +120,8 @@
         </div>
       </article>
     </section>
+
+    <div class="band" aria-hidden="true"><p class="band__line">SILAVU · Tel Aviv · Dubai · SILAVU · Tel Aviv · Dubai · SILAVU · Tel Aviv · Dubai</p></div>
 
     <section id="appointment" class="appt" aria-labelledby="appt-h">
       <div class="appt__txt">

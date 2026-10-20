@@ -215,7 +215,17 @@ to start over in white.
     1 MB each.
   - Each film loads only when it is near the screen.
   - Only the film in view plays.
-- **Nothing scroll-driven and no 3D,** so the page never lags.
+- **Scroll effects** (Phase 5, after "not effective when you scroll"):
+  - the opening film recedes into a frame as SOUL rises below it;
+  - the intro sentence lights word by word;
+  - pictures drift and open like a curtain;
+  - the collection slides sideways while pinned;
+  - the LUMIÈRE window opens to the whole screen;
+  - the house name moves across;
+  - desktop wheel scrolling is smoothed with Lenis.
+
+  Only transform, opacity and clip-path change, and only for the effect on
+  screen. No 3D and no frame sequences.
 - The generated velvet hero, film and images from Phases 2 and 3 are kept in
   `assets/` but not used.
 
