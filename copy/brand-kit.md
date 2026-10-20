@@ -196,3 +196,28 @@ Phase 4 obeys these and Phase 5 adds to them.
   - nothing laggy, which means no heavy scroll-frame sequences on phones;
   - no rendered pendant that looks fake;
   - the logo is never mirrored.
+
+## 18. Experience
+
+**Option B: cinematic film and images.** The owner left the choice to me
+("go as u think").
+
+Why not 3D: the pieces are pavé diamonds on fine chains. Image-to-3D melts
+small set stones and thin chains, and the owner has already rejected a
+rendered pendant that looked fake.
+
+**The story beats** are the five in section 15. They are moments in the film,
+not camera keyframes.
+
+**Film brief:**
+- **Length:** a 12–16 second continuous shot, 16:9, 1080p.
+- **Camera:** a slow push that descends toward the SOUL pendant lying on black
+  velvet in a single spotlight. Fine light dust drifts through the beam. The
+  diamonds spark as the angle changes. Blush rim light on the left edge, Ice
+  rim light on the right.
+- **Headline room:** the left third stays calm, deep blue-black shadow.
+- **Final frame (where the page comes to rest):** SOUL face-on, centred
+  slightly low, fully in frame, perfectly still. The pavé is lit evenly,
+  there is one soft reflection in the velvet, and the dust slows to almost
+  nothing.
+- **Phones:** they get the poster and still images, never the scrubbed film.
