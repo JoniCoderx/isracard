@@ -3,7 +3,7 @@ name: SILAVU static site (GitHub Pages)
 on:
   push:
     branches: [claude/isracard-dev-environment-tzc6s5]
-    paths: ["lumera/site/**", "lumera/admin/**", ".github/workflows/pages.yml"]
+    paths: ["lumera/site/**", "lumera/admin/**", "website/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
   # a publish in the admin (functions/publish sends this, naming the release)
   repository_dispatch:
@@ -239,6 +239,13 @@ jobs:
       # ring went live with no photography at any width, green all the way.
       - name: Every photograph the page asks for
         run: node lumera/site/check-assets.mjs dist
+      # the new single-page site (website/, Vite) on trial at /new/; the live home page is untouched
+      - name: The new site (/new/)
+        run: |
+          npm ci --prefix website --no-audit --no-fund
+          (cd website && npx vite build --outDir ../dist/new --emptyOutDir)
+          test -f dist/new/index.html && test -f dist/new/film.mp4
+          du -sh dist/new
       - uses: actions/configure-pages@v5
         with:
           enablement: true

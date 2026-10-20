@@ -153,16 +153,17 @@ a private viewing". It hands off to the existing concierge form
 
 ## 15. The story
 
-The subject is the SOUL pendant. Close-ups go to the solid knot and its pavé,
-never to the thin chain.
+Revised in Phase 4 to match the film as it was made. All copy sits on the
+left, the calm side of every frame. On phones, the film is replaced by a still
+image that changes with each beat.
 
-| Beat | What you see | Copy on screen | Copy side |
+| Beat | Film moment | Copy on screen | Copy side |
 |---|---|---|---|
-| 1. Hero | SOUL three-quarter, on velvet in the spotlight, Blush rim light | "Made to catch the light." | left |
-| 2. Macro | Extreme close-up on the pavé where the two loops cross; sparks in the stones | "Every brilliant matched by hand." | right |
-| 3. Profile | The pendant edge-on: the depth of the knot and the claws holding each stone | "Eighteen-karat gold, shaped as one unbroken line." | left |
-| 4. World | Wide: the pendant small in the beam, dust drifting, deep night around it | "One signature. Seven pieces." | right |
-| 5. Rest | SOUL face-on and centred low, perfectly still and composed | "Come and see it in the light." with the call to action | right |
+| 1. Hero | 0–1s: velvet and the spotlight beam, the dust drifting | "Made to catch the light." (h1) | left |
+| 2. The dark | 3s: the camera glides over the folds | "It begins in the dark." | left |
+| 3. The reveal | 6s: SOUL appears in the light | "Then the light finds it." | left |
+| 4. The line | 9s: the camera settles on the knot | "Two loops. One unbroken line." | left |
+| 5. Rest | 10–12s: SOUL at rest on the velvet | "Come and see it in the light." with the call to action | left |
 
 ## 16. Hero still brief
 
@@ -196,6 +197,11 @@ Phase 4 obeys these and Phase 5 adds to them.
   - nothing laggy, which means no heavy scroll-frame sequences on phones;
   - no rendered pendant that looks fake;
   - the logo is never mirrored.
+- Added in Phase 4's design check:
+  - no on-model photograph cropped so the lips are the subject (crop to the
+    jewellery);
+  - no line art behind body text where it cuts through the letters;
+  - no transparent product cut-out with a leftover white backdrop.
 
 ## 18. Experience
 
