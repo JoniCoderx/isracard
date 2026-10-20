@@ -244,7 +244,7 @@ jobs:
         run: |
           npm ci --prefix website --no-audit --no-fund
           (cd website && npx vite build --outDir ../dist/new --emptyOutDir)
-          test -f dist/new/index.html && test -f dist/new/film.mp4
+          test -f dist/new/index.html && test -f dist/new/v/hero-choice.mp4
           du -sh dist/new
       - uses: actions/configure-pages@v5
         with:

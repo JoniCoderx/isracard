@@ -38,33 +38,32 @@ discount and never explains too much.
 
 ## 6. Colour palette
 
+Changed in Phase 5. The owner rejected the dark velvet design ("very bad
+design", "too dark, I want light/white"), so the house is now white.
+
 | Role | Name | Hex |
 |---|---|---|
-| Background | Night velvet: blue-black, never pure black | `#0b0c10` |
-| Surface | Jewel box: the lifted panel | `#15171d` |
-| Text | Moonlight: soft white, never pure white | `#ecebe8` |
-| Muted text | Platinum mist | `#8d9099` |
-| Primary accent | Blush: the BLUSH stone's pink, as a glow and a rim light | `#f2a9bc` |
-| Secondary accent | Ice: diamond fire, a cool blue-white | `#bfd6ff` |
-| Line | Hairline | `#262932` |
+| Background | Gallery white: neutral, not cream | `#fcfcfc` |
+| Soft surface | Pearl: the bands behind films and the form | `#f3f3f5` |
+| Text | Ink | `#111214` |
+| Muted text | Graphite | `#6c6e75` |
+| Line | Hairline | `#e4e4e8` |
+| Accent | Rose: link hovers only | `#b5687e` |
 
-- Blush is used sparingly: the call to action, active states, the rim light
-  and the drifting light dust.
-- Ice appears only as light (sparks and the second rim), never as a fill.
+- Buttons are solid Ink with white letters, square.
+- Colour comes from the photographs and films, not from the page.
 
 ## 7. Typography
 
-- **Headings: Bellefair** (Google Fonts, one weight). It is a high-contrast
-  display serif with real character, and it has Hebrew glyphs, so English and
-  Hebrew headlines share one voice.
-- **Body: Assistant** (Google Fonts, 300 / 400 / 600). It is a clean humanist
-  sans with Latin and Hebrew.
-- Fallbacks for Arabic and Russian:
-  - Noto Naskh Arabic for Arabic headings and body.
-  - Cormorant (already self-hosted) for Cyrillic headings and Assistant's
-    system fallback for Cyrillic body.
-- Uppercase labels are tracked at 0.18em. Hebrew and Arabic are never
-  tracked.
+Changed in Phase 5.
+
+- **Everything in Jost** (self-hosted, weights 300–600), a geometric sans in
+  the Paris-house tradition.
+- **Headings:** uppercase, light weight, widely tracked.
+- **Body:** 400.
+- **Hebrew:** Heebo is the fallback.
+- **The wordmark:** SILAVU in Jost, tracked 0.5em, with the knot mark beside
+  it.
 
 ## 8. Logo direction
 
@@ -115,15 +114,12 @@ prices]
 
 ## 11. Visual mood
 
-- **Light:** night. One hard spotlight from above and behind. A Blush rim
-  light on one side and an Ice rim light on the other.
-- **Surface:** black velvet or wet black obsidian that holds a soft reflection.
-- **Atmosphere:** fine light dust drifting slowly through the beam, like
-  diamond dust in the air. Tiny star-shaped sparks where the light hits the
-  stones.
-- **Camera:** macro lens, very shallow depth of field, slow and steady, never
-  shaky.
-- **Overall:** intimate, hushed, expensive.
+Changed in Phase 5.
+
+- **Light:** daylight on white marble and white cotton, soft leaf shadows.
+- **Subjects:** skin, the pieces close up.
+- **Overall:** bright, calm, real: the house's own films and photographs, never
+  rendered or generated scenes.
 
 ## 12. Website goal
 
@@ -141,29 +137,26 @@ a private viewing". It hands off to the existing concierge form
 
 ## 14. Landing page sections
 
-1. The story: five scroll beats over the hero.
-2. Impact statement: one line about the knot.
-3. The collection: the seven pieces, each with one detail.
-4. Design and materials: gold, diamonds, the setting (film option), or Explore
-   in 3D (3D option).
-5. Worn: the pieces on skin, made for her.
-6. Details: metals, stones, certificates, care.
-7. Call to action: book a private viewing (salon or at home).
-8. Footer: contact, salons, languages.
+The white version, Phase 5:
+
+1. Header: the sections on the left, the logo centred, "Book an appointment"
+   on the right.
+2. The opening film, with SOUL and two calls to action below it.
+3. Intro: the knot mark and one sentence.
+4. Two large on-model pictures: SOUL and BLUSH.
+5. The collection: a rail of eight product photographs (AURA and ECHO
+   separately). The worn photograph shows on hover, and each card has "Book
+   a viewing".
+6. In motion: words beside the tall LUMIÈRE film.
+7. The house: two image-and-text rows, The knot and Signed.
+8. The appointment: three services, then the form.
+9. Footer.
 
 ## 15. The story
 
-Revised in Phase 4 to match the film as it was made. All copy sits on the
-left, the calm side of every frame. On phones, the film is replaced by a still
-image that changes with each beat.
-
-| Beat | Film moment | Copy on screen | Copy side |
-|---|---|---|---|
-| 1. Hero | 0–1s: velvet and the spotlight beam, the dust drifting | "Made to catch the light." (h1) | left |
-| 2. The dark | 3s: the camera glides over the folds | "It begins in the dark." | left |
-| 3. The reveal | 6s: SOUL appears in the light | "Then the light finds it." | left |
-| 4. The line | 9s: the camera settles on the knot | "Two loops. One unbroken line." | left |
-| 5. Rest | 10–12s: SOUL at rest on the velvet | "Come and see it in the light." with the call to action | left |
+The white version has no scroll story (Phase 5). The opening film carries
+the first impression. The five-beat story below belonged to the rejected dark
+version and is kept only for the record.
 
 ## 16. Hero still brief
 
@@ -197,6 +190,10 @@ Phase 4 obeys these and Phase 5 adds to them.
   - nothing laggy, which means no heavy scroll-frame sequences on phones;
   - no rendered pendant that looks fake;
   - the logo is never mirrored.
+- No dark or black page; the owner wants white (Phase 5). Cream stays banned
+  too: the white is neutral.
+- No generated or rendered imagery on the page; only the house's own films and
+  photographs (Phase 5).
 - Added in Phase 4's design check:
   - no on-model photograph cropped so the lips are the subject (crop to the
     jewellery);
@@ -205,25 +202,20 @@ Phase 4 obeys these and Phase 5 adds to them.
 
 ## 18. Experience
 
-**Option B: cinematic film and images.** The owner left the choice to me
-("go as u think").
+Changed in Phase 5. The owner rejected the dark scroll-film site and asked
+to start over in white.
 
-Why not 3D: the pieces are pavé diamonds on fine chains. Image-to-3D melts
-small set stones and thin chains, and the owner has already rejected a
-rendered pendant that looked fake.
+- **The opening:** the house film "The Choice" (white marble, a hand lifts
+  SOUL, SOUL worn with a white shirt) as a muted loop. Below it on white sit
+  the title SOUL and two calls to action.
+- **The second film:** LUMIÈRE (the SOUL macro, then worn with a black dress),
+  tall, beside its words.
+- **How films play:**
+  - The right cut for the screen: 16:9 on desktop, 9:16 on phones, at about
+    1 MB each.
+  - Each film loads only when it is near the screen.
+  - Only the film in view plays.
+- **Nothing scroll-driven and no 3D,** so the page never lags.
+- The generated velvet hero, film and images from Phases 2 and 3 are kept in
+  `assets/` but not used.
 
-**The story beats** are the five in section 15. They are moments in the film,
-not camera keyframes.
-
-**Film brief:**
-- **Length:** a 12–16 second continuous shot, 16:9, 1080p.
-- **Camera:** a slow push that descends toward the SOUL pendant lying on black
-  velvet in a single spotlight. Fine light dust drifts through the beam. The
-  diamonds spark as the angle changes. Blush rim light on the left edge, Ice
-  rim light on the right.
-- **Headline room:** the left third stays calm, deep blue-black shadow.
-- **Final frame (where the page comes to rest):** SOUL face-on, centred
-  slightly low, fully in frame, perfectly still. The pavé is lit evenly,
-  there is one soft reflection in the velvet, and the dust slows to almost
-  nothing.
-- **Phones:** they get the poster and still images, never the scrubbed film.
