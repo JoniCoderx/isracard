@@ -4,178 +4,243 @@ const BASE = import.meta.env.BASE_URL;
 const PHONE = matchMedia("(max-width: 760px)").matches;
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const FINE = matchMedia("(hover: hover) and (pointer: fine)").matches;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
+// The catalogue, as published on the live site (references, metals, sizes, descriptions).
 const PIECES = [
-  { id: "soul", name: "SOUL", type: "Pendant", img: "necklace-front", alt: "worn/necklace-worn-900",
-    line: "The knot of the house, pavé-set in 18K white gold, on a chain with diamond stations." },
-  { id: "silavu", name: "SILAVU", type: "Ring", img: "ring-front", alt: "worn/ring-worn-900",
-    line: "The knot as a pavé crown, on a band set all the way round." },
-  { id: "knot", name: "KNOT", type: "Bracelet", img: "knot-flat", alt: "worn/knot-worn-900",
-    line: "The polished knot, unset, on a fine chain with the engraved house tag." },
-  { id: "aura", name: "AURA", type: "Earrings", img: "aura-pair", alt: "worn/aura-worn-900",
-    line: "The knot as pavé studs, sized to sit close to the ear." },
-  { id: "echo", name: "ECHO", type: "Earrings", img: "echo-pair", alt: "p/necklace-macro-900",
-    line: "AURA's smaller twin, for every day." },
-  { id: "cadence", name: "CADENCE", type: "Line bracelet", img: "cadence-front", alt: "worn/cadence-worn-900",
-    line: "Emerald-cut diamonds between trios of round brilliants, in 18K white gold." },
-  { id: "blush", name: "BLUSH", type: "Eternity ring", img: "blush-front", alt: "worn/blush-worn-900",
-    line: "Cushion-cut pink stones all the way round, in 18K rose gold." },
-  { id: "promise", name: "PROMISE", type: "Band", img: "promise-front", alt: "p/promise-macro-900",
-    line: "A sculpted wave of 18K yellow gold holding one baguette diamond." },
+  { id: "pave", name: "SOUL", type: "Diamond necklace", cat: "necklaces", metal: "white", tag: "The signature",
+    desc: "A fine 18K white-gold chain with a pavé SILAVU signature pendant at its centre.",
+    specs: [["Reference", "SLV·N·003"], ["Metal", "18K white gold"], ["Setting", "Pavé"], ["Length", "42 cm"]],
+    shots: [["necklace-front", "The SOUL necklace, full length"], ["necklace-worn", "The SOUL necklace worn at the collarbone"], ["necklace-detail", "The SOUL pendant and the chain either side of it"], ["necklace-macro", "The pavé SOUL pendant, close"]] },
+  { id: "aura", name: "AURA", type: "Diamond earrings", cat: "earrings", metal: "white",
+    desc: "The SILAVU signature as a pair of 18K white-gold studs, traced in pavé diamonds.",
+    specs: [["Reference", "SLV·E·001"], ["Metal", "18K white gold"], ["Setting", "Pavé"], ["Fastening", "Butterfly back"]],
+    shots: [["aura-pair", "The AURA earrings, a pair of pavé SILAVU signatures"], ["aura-worn", "An AURA earring worn"], ["aura-side", "One AURA earring from three quarters"], ["aura-macro", "The pavé of an AURA earring, close"], ["aura-signed", "The AURA earrings, signed"]] },
+  { id: "knot", name: "MOMENT", type: "White gold bracelet", cat: "bracelets", metal: "white",
+    desc: "A delicate 18K white-gold chain, finished with the SILAVU signature in a polished sculptural form.",
+    specs: [["Reference", "SLV·B·001"], ["Metal", "18K white gold"], ["Finish", "Polished"], ["Length", "16–19 cm"]],
+    shots: [["knot-flat", "The MOMENT bracelet laid flat"], ["knot-worn", "MOMENT bracelets worn on the wrist"], ["knot-macro", "The polished signature of the MOMENT bracelet, close"], ["knot-clasp", "The clasp and the engraved SILAVU tag"], ["knot-full", "The MOMENT bracelet, full length"]] },
+  { id: "cadence", name: "CADENCE", type: "Diamond line bracelet", cat: "bracelets", metal: "white",
+    desc: "A fine 18K white-gold line of baguette diamonds, with three round diamonds between each.",
+    specs: [["Reference", "SLV·B·002"], ["Metal", "18K white gold"], ["Diamonds", "Baguette and round brilliant"], ["Length", "16–19 cm"]],
+    shots: [["cadence-front", "The CADENCE bracelet"], ["cadence-worn", "The CADENCE bracelet on the wrist"], ["cadence-macro", "Baguettes and round diamonds of CADENCE, close"], ["cadence-side", "The CADENCE bracelet from the side"]] },
+  { id: "ring", name: "ICON", type: "Diamond ring", cat: "rings", metal: "white",
+    desc: "A sculptural 18K white-gold ring with the SILAVU signature set in pavé diamonds.",
+    specs: [["Reference", "SLV·R·001"], ["Metal", "18K white gold"], ["Setting", "Pavé"], ["Size", "EU 47–58"]],
+    shots: [["ring-front", "The ICON ring, the SILAVU signature in pavé diamonds"], ["ring-worn", "The ICON ring worn"], ["ring-side", "The ICON ring from three quarters"], ["ring-macro", "The pavé signature of the ICON ring, close"], ["ring-signed", "SILAVU engraved inside the band"]] },
+  { id: "promise", name: "PROMISE", type: "Engagement ring", cat: "rings", metal: "yellow", tag: "Engagement",
+    desc: "A sculpted 18K yellow-gold band that folds open along its crown to hold a single baguette diamond.",
+    specs: [["Reference", "SLV·R·002"], ["Metal", "18K yellow gold"], ["Stone", "One baguette diamond"], ["Finish", "Polished"], ["Size", "EU 47–58"]],
+    shots: [["promise-front", "The PROMISE ring"], ["promise-macro", "The baguette diamond in the fold of the band, close"], ["promise-signed", "SILAVU engraved inside the PROMISE band"]] },
+  { id: "blush", name: "BLUSH", type: "Eternity ring", cat: "rings", metal: "rose",
+    desc: "An 18K rose-gold eternity band of radiant-cut pink sapphires, edged on both sides in diamond pavé.",
+    specs: [["Reference", "SLV·R·003"], ["Metal", "18K rose gold"], ["Stones", "Radiant-cut pink sapphires, diamond pavé"], ["Size", "EU 47–58"]],
+    shots: [["blush-front", "The BLUSH ring"], ["blush-worn", "The BLUSH ring worn"], ["blush-macro", "Pink sapphires and diamond pavé, close"], ["blush-side", "The BLUSH ring from the side"], ["blush-profile", "The BLUSH ring in profile"]] },
 ];
+const METAL = { white: "18K white gold", yellow: "18K yellow gold", rose: "18K rose gold" };
+const img = (n, w = 900) => `${BASE}img/p/${n}-${w}.jpg`;
+const byId = Object.fromEntries(PIECES.map((p) => [p.id, p]));
 
-// ---- the collection ----
-const track = document.querySelector(".rail__track");
-const pieceSelect = document.getElementById("f-piece");
-track.innerHTML = PIECES.map((p) => `
-  <li class="card" id="piece-${p.id}">
-    <span class="card__img">
-      <img src="${BASE}img/p/${p.img}-900.jpg" alt="${p.name} ${p.type.toLowerCase()}" loading="lazy" width="900" height="900" />
-      <img class="alt" src="${BASE}img/${p.alt}.jpg" alt="" loading="lazy" width="900" height="900" />
-    </span>
-    <span class="card__name">${p.name}</span>
-    <span class="card__type">${p.type}</span>
-    <span class="card__line">${p.line}</span>
-    <a class="txt" href="#appointment" data-piece="${p.id}">Book a viewing</a>
-  </li>`).join("");
-pieceSelect.insertAdjacentHTML("beforeend", PIECES.map((p) => `<option value="${p.id}">${p.name} · ${p.type}</option>`).join(""));
-track.addEventListener("click", (e) => {
-  const a = e.target.closest("[data-piece]");
-  if (a) pieceSelect.value = a.dataset.piece;
+// ---- wish list, kept in this browser only ----
+let wish = new Set();
+try { wish = new Set(JSON.parse(localStorage.getItem("silavu-wish") || "[]")); } catch {}
+const saveWish = () => { try { localStorage.setItem("silavu-wish", JSON.stringify([...wish])); } catch {} };
+
+// ---- the grid ----
+const grid = $(".grid");
+grid.innerHTML = PIECES.map((p) => `
+  <li class="card rv" data-id="${p.id}" data-cat="${p.cat}">
+    <button class="card__wish" type="button" aria-pressed="false" aria-label="Save ${p.name} to wish list"><svg><use href="#i-heart" /></svg></button>
+    <button class="card__open" type="button" aria-label="${p.name}, ${p.type}">
+      <span class="card__img">
+        ${p.tag ? `<span class="card__tag">${p.tag}</span>` : ""}
+        <img src="${img(p.shots[0][0])}" alt="${p.shots[0][1]}" loading="lazy" width="900" height="900" />
+        <img class="alt" src="${img(p.shots[1][0])}" alt="" loading="lazy" width="900" height="900" />
+      </span>
+      <span class="card__name">${p.name}</span>
+      <span class="card__type">${p.type}</span>
+      <span class="card__metal"><span class="dot dot--${p.metal}"></span>${METAL[p.metal]}</span>
+      <span class="card__price">Price on request</span>
+    </button>
+  </li>`).join("") + `
+  <li class="card card--insert rv" data-insert>
+    <img src="${img("aura-worn")}" alt="" loading="lazy" width="900" height="900" />
+    <div class="ins"><p class="eyebrow">In person</p><h3>See every creation in the hand</h3><button class="link link--light" type="button" data-open="book">Book an appointment</button></div>
+  </li>`;
+
+const chips = $$(".chip");
+const wishChip = $('.chip[data-cat="wish"]');
+const empty = $(".grid__empty");
+let current = "all";
+function filter(cat) {
+  current = cat;
+  chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.cat === cat)));
+  let shown = 0;
+  const ins = $("[data-insert]", grid); if (ins) ins.hidden = cat !== "all";
+  $$(".card:not([data-insert])", grid).forEach((c) => {
+    const on = cat === "all" || (cat === "wish" ? wish.has(c.dataset.id) : c.dataset.cat === cat);
+    c.hidden = !on;
+    if (on) { shown++; c.classList.add("is-in"); }
+  });
+  empty.hidden = shown > 0;
+}
+function paintWish() {
+  $$(".card:not([data-insert])", grid).forEach((c) => $(".card__wish", c).setAttribute("aria-pressed", String(wish.has(c.dataset.id))));
+  const n = wish.size;
+  $$(".wish-n").forEach((b) => { b.textContent = n; b.hidden = n === 0; });
+  $("[data-wishlist]").setAttribute("aria-pressed", String(n > 0));
+  wishChip.hidden = n === 0;
+  wishChip.textContent = `Wish list (${n})`;
+  if (current === "wish") filter("wish");
+}
+function toggleWish(id) { wish.has(id) ? wish.delete(id) : wish.add(id); saveWish(); paintWish(); if (openId === id) paintPvWish(); }
+chips.forEach((c) => c.addEventListener("click", () => filter(c.dataset.cat)));
+grid.addEventListener("click", (e) => {
+  const card = e.target.closest(".card");
+  if (!card) return;
+  if (e.target.closest(".card__wish")) toggleWish(card.dataset.id);
+  else if (e.target.closest(".card__open")) openPiece(card.dataset.id);
 });
-
-// ---- the intro sentence, one span per word ----
-const line = document.querySelector(".intro__line");
-line.innerHTML = line.textContent.trim().split(/\s+/).map((w) => `<span class="w">${w}</span>`).join(" ");
-const words = [...line.querySelectorAll(".w")];
+$("[data-wishlist]").addEventListener("click", () => { filter(wish.size ? "wish" : "all"); go($("#collection")); });
 
 // ---- smooth wheel on desktop; touch keeps the phone's own scrolling ----
 let lenis = null;
 if (FINE && !REDUCED) {
-  lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+  lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
   const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
 }
-document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => {
+const hd = $(".hd");
+function go(el) {
+  const y = el === 0 ? 0 : el.getBoundingClientRect().top + scrollY - hd.offsetHeight + 1;
+  if (lenis) lenis.scrollTo(y, { duration: 1.4 }); else scrollTo({ top: y, behavior: REDUCED ? "auto" : "smooth" });
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || a.dataset.open !== undefined) return;
   const id = a.getAttribute("href");
-  const el = id === "#top" ? 0 : document.querySelector(id);
+  const el = id === "#top" ? 0 : $(id);
   if (el === null) return;
   e.preventDefault();
-  const hd = document.querySelector(".hd").offsetHeight;
-  if (lenis) lenis.scrollTo(el, { offset: id === "#top" ? 0 : -hd, duration: 1.6 });
-  else scrollTo({ top: id === "#top" ? 0 : el.getBoundingClientRect().top + scrollY - hd, behavior: REDUCED ? "auto" : "smooth" });
-}));
+  if (a.dataset.cat) filter(a.dataset.cat);
+  closePanels();
+  go(el);
+});
 
-// ---- the scroll engine: each effect maps a scroll range to 0..1 and writes only when that changes ----
-const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const fx = [];
-// range(top, height, vh) -> [start, end] in page scroll pixels
-const add = (el, range, fn) => { if (el) fx.push({ el, range, fn, s: 0, e: 1, last: -1 }); };
-const pageTop = (el) => el.getBoundingClientRect().top + scrollY;
-let vh = innerHeight;
-function measure() {
-  vh = innerHeight;
-  const rail = document.querySelector(".rail");
-  // the collection is as tall as it takes to slide the whole track past
-  rail.style.height = `${vh + Math.max(0, track.scrollWidth - innerWidth) + vh * 0.25}px`;
-  for (const f of fx) { const t = pageTop(f.el); [f.s, f.e] = f.range(t, f.el.offsetHeight, vh); f.last = -1; }
+// ---- the header steps aside while reading down, returns when scrolling up ----
+let lastY = 0;
+const onScroll = (y) => {
+  hd.classList.toggle("is-hidden", y > lastY && y > 400 && !document.body.classList.contains("locked"));
+  lastY = y;
+};
+if (lenis) lenis.on("scroll", ({ scroll }) => onScroll(scroll));
+else addEventListener("scroll", () => onScroll(scrollY), { passive: true });
+
+// ---- panels ----
+const scrim = $(".scrim");
+let openPanel = null, lastFocus = null;
+function showPanel(id) {
+  const p = $(`#${id}`);
+  if (openPanel && openPanel !== p) hidePanel(openPanel, true);
+  lastFocus = document.activeElement;
+  p.hidden = false; scrim.hidden = false;
+  requestAnimationFrame(() => { p.classList.add("is-on"); scrim.classList.add("is-on"); });
+  document.body.classList.add("locked"); lenis?.stop();
+  openPanel = p;
+  setTimeout(() => $("[data-close]", p).focus(), 60);
 }
-function update(y) {
-  for (const f of fx) {
-    const p = clamp((y - f.s) / (f.e - f.s || 1));
-    if (Math.abs(p - f.last) < 0.0005) continue;
-    f.last = p; f.fn(p);
+function hidePanel(p, swap) {
+  p.classList.remove("is-on");
+  setTimeout(() => { if (!p.classList.contains("is-on")) p.hidden = true; }, 300);
+  if (!swap) {
+    scrim.classList.remove("is-on");
+    setTimeout(() => { if (!scrim.classList.contains("is-on")) scrim.hidden = true; }, 260);
+    document.body.classList.remove("locked"); lenis?.start();
+    openPanel = null;
+    lastFocus?.focus?.({ preventScroll: true });
   }
 }
+const closePanels = () => { if (openPanel) hidePanel(openPanel); };
+scrim.addEventListener("click", closePanels);
+addEventListener("keydown", (e) => { if (e.key === "Escape") closePanels(); });
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-close]")) return closePanels();
+  const o = e.target.closest("[data-open]");
+  if (o) { e.preventDefault(); if (o.dataset.open === "book") openBook(); else showPanel(o.dataset.open); return; }
+  const pc = e.target.closest("[data-piece]");
+  if (pc) openPiece(pc.dataset.piece);
+});
 
-if (!REDUCED) {
-  // the opening: the film recedes into a frame and SOUL rises beneath it
-  const frame = document.querySelector(".hero__frame"), title = document.querySelector(".hero__title"), cue = document.querySelector(".hero__cue");
-  const endScale = 0.6;
-  add(document.querySelector(".hero"), (t, h, v) => [t, t + h - v], (p) => {
-    const k = ease(clamp(p / 0.8));
-    frame.style.transform = `translateY(${(-k * (PHONE ? 9 : 6)).toFixed(2)}%) scale(${(1 - (1 - endScale) * k).toFixed(4)})`;
-    cue.style.opacity = (1 - clamp(p * 6)).toFixed(3);
-    const t2 = clamp((p - 0.45) / 0.4);
-    title.style.opacity = t2.toFixed(3);
-    title.style.transform = `translateY(${((1 - t2) * 40).toFixed(1)}px)`;
-  });
-
-  // the sentence lights word by word
-  add(document.querySelector(".intro"), (t, h, v) => [t - v * 0.2, t + h - v * 1.15], (p) => {
-    const n = Math.round(p * words.length);
-    words.forEach((w, i) => w.classList.toggle("on", i < n));
-  });
-
-  // pictures drift a little slower than the page
-  document.querySelectorAll(".px").forEach((img) => {
-    const box = img.parentElement, amp = img.closest(".duo__item--low") ? 9 : 6;
-    add(box, (t, h, v) => [t - v, t + h], (p) => { img.style.transform = `translate3d(0, ${((p - 0.5) * 2 * amp).toFixed(2)}%, 0)`; });
-  });
-
-  // the collection slides sideways while the section is pinned
-  const bar = document.querySelector(".rail__bar span");
-  add(document.querySelector(".rail"), (t, h, v) => [t, t + h - v], (p) => {
-    const dist = Math.max(0, track.scrollWidth - innerWidth);
-    const k = clamp(p / 0.92);
-    track.style.transform = `translate3d(${(-k * dist).toFixed(1)}px, 0, 0)`;
-    bar.style.transform = `scaleX(${k.toFixed(4)})`;
-  });
-
-  // LUMIÈRE: the window opens to the whole screen, then the words arrive
-  const lf = document.querySelector(".lumiere__film"), lv = lf.querySelector(".film"), lt = document.querySelector(".lumiere__txt"), ls = document.querySelector(".lumiere__stage");
-  const [iy, ix] = PHONE ? [18, 20] : [22, 36];
-  add(document.querySelector(".lumiere"), (t, h, v) => [t - v * 0.3, t + h - v], (p) => {
-    const k = ease(clamp(p / 0.7));
-    lf.style.clipPath = `inset(${((1 - k) * iy).toFixed(2)}% ${((1 - k) * ix).toFixed(2)}% ${((1 - k) * iy).toFixed(2)}% ${((1 - k) * ix).toFixed(2)}%)`;
-    lv.style.transform = `scale(${(1.18 - 0.18 * k).toFixed(4)})`;
-    const t2 = clamp((p - 0.66) / 0.24);
-    lt.style.opacity = t2.toFixed(3);
-    lt.style.transform = `translateY(${((1 - t2) * 30).toFixed(1)}px)`;
-    ls.style.setProperty("--shade", t2.toFixed(3));
-  });
-
-  // the house name moves across as the page passes
-  const band = document.querySelector(".band__line");
-  add(document.querySelector(".band"), (t, h, v) => [t - v, t + h], (p) => { band.style.transform = `translate3d(${(-p * 38).toFixed(2)}%, 0, 0)`; });
-
-  // pictures open like a curtain when they arrive
-  document.querySelectorAll(".duo__img, .row__img").forEach((el) => el.classList.add("reveal"));
-  const rio = new IntersectionObserver((es) => es.forEach((e) => {
-    if (!e.isIntersecting) return;
-    e.target.classList.add("is-in");
-    rio.unobserve(e.target);
-  }), { rootMargin: "0px 0px -12% 0px" });
-  document.querySelectorAll(".reveal").forEach((el) => rio.observe(el));
-
-  let ticking = false;
-  const onScroll = () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { ticking = false; update(scrollY); }); };
-  if (lenis) lenis.on("scroll", ({ scroll }) => update(scroll));
-  else addEventListener("scroll", onScroll, { passive: true });
-  let rt;
-  const remeasure = () => { measure(); update(lenis ? lenis.scroll : scrollY); };
-  addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(remeasure, 150); });
-  addEventListener("load", remeasure);
-  document.fonts?.ready.then(remeasure);
-  remeasure();
+// the piece in quick view
+let openId = null;
+const pvMain = $(".pv__main"), pvThumbs = $(".pv__thumbs"), pvWish = $("#pv-wish");
+const paintPvWish = () => pvWish.setAttribute("aria-pressed", String(wish.has(openId)));
+function pick(i) {
+  const s = byId[openId].shots[i];
+  pvMain.src = img(s[0], 1254); pvMain.alt = s[1];
+  $$("button", pvThumbs).forEach((b, k) => b.setAttribute("aria-current", String(k === i)));
 }
+function openPiece(id) {
+  const p = byId[id]; if (!p) return;
+  openId = id;
+  $("#pv-ref").textContent = p.specs[0][1];
+  $("#pv-type").textContent = p.type;
+  $("#pv-name").textContent = p.name;
+  $("#pv-desc").textContent = p.desc;
+  $("#pv-specs").innerHTML = [...p.specs.slice(1), ["Price", "On request"]].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+  pvThumbs.innerHTML = p.shots.map((s, i) => `<button type="button" aria-label="View ${i + 1}: ${s[1]}"><img src="${img(s[0])}" alt="" width="900" height="900" /></button>`).join("");
+  pick(0); paintPvWish();
+  showPanel("piece");
+}
+pvThumbs.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) pick($$("button", pvThumbs).indexOf(b)); });
+pvWish.addEventListener("click", () => toggleWish(openId));
+$("#pv-book").addEventListener("click", () => openBook(openId));
+
+// the appointment
+const sel = $("#f-piece");
+sel.insertAdjacentHTML("beforeend", PIECES.map((p) => `<option value="${p.id}">${p.name} · ${p.type}</option>`).join(""));
+function openBook(id) { if (id) sel.value = id; showPanel("book"); }
+const bk = $("#bk-form"), bkMsg = $(".bk__msg");
+bk.addEventListener("submit", (e) => {
+  e.preventDefault();
+  let ok = true;
+  for (const id of ["f-name", "f-contact"]) {
+    const f = $(`#${id}`); const bad = !f.value.trim();
+    f.closest(".field").classList.toggle("is-bad", bad); if (bad) ok = false;
+  }
+  if (!ok) { bkMsg.classList.remove("is-ok"); bkMsg.textContent = "Add your name and an email or phone number so the concierge can reply."; return; }
+  const v = (id) => $(`#${id}`).value.trim();
+  const where = $('input[name="where"]:checked', bk).value;
+  const piece = sel.value ? `${byId[sel.value].name} · ${byId[sel.value].type}` : "Not sure yet";
+  const body = [`Name: ${v("f-name")}`, `Email or phone: ${v("f-contact")}`, `Where: ${where}`, `Creation: ${piece}`, `Preferred day: ${v("f-when") || "Any"}`, "", v("f-note")].join("\n");
+  location.href = `mailto:concierge@silavu.com?subject=${encodeURIComponent("Appointment request")}&body=${encodeURIComponent(body)}`;
+  bkMsg.classList.add("is-ok");
+  bkMsg.textContent = "Your email app has the request ready. Send it and a concierge will confirm the time.";
+});
+
+// the letter
+$("#news").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const f = $("#n-email"), m = $(".news__msg");
+  if (!/^\S+@\S+\.\S+$/.test(f.value.trim())) { m.textContent = "Enter an email address, like name@example.com."; return; }
+  location.href = `mailto:concierge@silavu.com?subject=${encodeURIComponent("The SILAVU letter")}&body=${encodeURIComponent(`Please add ${f.value.trim()} to the SILAVU letter.`)}`;
+  m.textContent = "Your email app has the request ready. Send it to join the letter.";
+});
 
 // ---- films: the right cut for the screen, loaded when near, only the one in view plays ----
-const films = [...document.querySelectorAll("video.film")];
+const films = $$("video.film");
 films.forEach((v) => { if (PHONE && v.dataset.posterV) v.poster = BASE + v.dataset.posterV; });
 const ratio = new Map();
-// visibility is judged on each film's stage: the LUMIÈRE window is clipped, which would hide most of the video from the observer
-const stageOf = (v) => v.closest(".hero__stage, .lumiere__stage") || v;
 const near = new IntersectionObserver((es) => es.forEach((e) => {
   if (!e.isIntersecting) return;
-  const v = e.target.querySelector("video.film") || e.target;
+  const v = e.target;
   v.src = BASE + (PHONE ? v.dataset.srcV : v.dataset.src);
   v.preload = "auto";
-  near.unobserve(e.target);
+  near.unobserve(v);
 }), { rootMargin: "100% 0px" });
 const seen = new IntersectionObserver((es) => {
-  es.forEach((e) => ratio.set(e.target.querySelector("video.film") || e.target, e.intersectionRatio));
+  es.forEach((e) => ratio.set(e.target, e.intersectionRatio));
   let best = null, r = 0;
   ratio.forEach((v, k) => { if (v > r) { r = v; best = k; } });
   films.forEach((v) => {
@@ -184,33 +249,17 @@ const seen = new IntersectionObserver((es) => {
   });
 }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
 films.forEach((v) => {
-  near.observe(stageOf(v)); seen.observe(stageOf(v));
+  near.observe(v); seen.observe(v);
   v.addEventListener("loadeddata", () => { if (ratio.get(v) > 0.25 && !REDUCED) v.play().catch(() => {}); }, { once: true });
 });
 
-// ---- the appointment request: composed as an email to the concierge ----
-const form = document.getElementById("book");
-const msg = form.querySelector(".book__msg");
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  let ok = true;
-  for (const id of ["f-name", "f-contact"]) {
-    const f = document.getElementById(id);
-    const bad = !f.value.trim();
-    f.closest(".field").classList.toggle("is-bad", bad);
-    if (bad) ok = false;
-  }
-  if (!ok) {
-    msg.classList.remove("is-ok");
-    msg.textContent = "Add your name and an email or phone number so the concierge can reply.";
-    return;
-  }
-  const v = (id) => document.getElementById(id).value.trim();
-  const piece = pieceSelect.options[pieceSelect.selectedIndex].text;
-  const body = [`Name: ${v("f-name")}`, `Email or phone: ${v("f-contact")}`, `Where: ${v("f-where")}`, `Piece: ${piece}`, "", v("f-note")].join("\n");
-  location.href = `mailto:concierge@silavu.com?subject=${encodeURIComponent("An appointment")}&body=${encodeURIComponent(body)}`;
-  msg.classList.add("is-ok");
-  msg.textContent = "Your email app has the request ready. Send it and a concierge will reply.";
-});
+// ---- a short rise as things arrive ----
+const rio = new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add("is-in");
+  rio.unobserve(e.target);
+}), { rootMargin: "0px 0px -6% 0px" });
+$$(".rv").forEach((el, i) => { el.style.transitionDelay = `${(i % 4) * 70}ms`; rio.observe(el); });
 
+paintWish();
 if (import.meta.env.DEV) window.__lenis = lenis;

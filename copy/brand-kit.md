@@ -55,15 +55,13 @@ design", "too dark, I want light/white"), so the house is now white.
 
 ## 7. Typography
 
-Changed in Phase 5.
+Rebuilt in Phase 5.
 
-- **Everything in Jost** (self-hosted, weights 300–600), a geometric sans in
-  the Paris-house tradition.
-- **Headings:** uppercase, light weight, widely tracked.
-- **Body:** 400.
+- **Names and titles: Cormorant**, in sentence case, the way the Paris houses
+  set their headlines.
+- **Everything you operate** (navigation, labels, buttons, product names):
+  **Jost**, small, uppercase and tracked.
 - **Hebrew:** Heebo is the fallback.
-- **The wordmark:** SILAVU in Jost, tracked 0.5em, with the knot mark beside
-  it.
 
 ## 8. Logo direction
 
@@ -76,26 +74,21 @@ Changed in Phase 5.
 
 ## 9. Product description
 
-Seven pieces, all drawn from the knot. The photographs in
-`assets/references/` show them.
+The seven creations, exactly as published on the live site. AURA and ECHO
+earlier in this kit were wrong: the catalogue has AURA only. The ring is
+ICON and the knot bracelet is MOMENT.
 
-- **SOUL pendant**, the signature piece:
-  - the knot in 18K white gold, fully pavé-set with round brilliants;
-  - on a fine cable chain with small diamond stations;
-  - an engraved SILAVU tag at the clasp.
-- **The SILAVU ring:** the knot as a pavé crown on a pavé band.
-- **KNOT bracelet:** the polished knot, unset, on a fine chain, with the
-  engraved tag.
-- **AURA and ECHO earrings:** the knot as pavé studs, in two scales.
-- **CADENCE:** a line bracelet of emerald-cut diamonds between trios of round
-  brilliants, in 18K white gold.
-- **BLUSH:** an eternity ring of cushion-cut pink stones in 18K rose gold.
-- **PROMISE:** a sculpted 18K yellow-gold band with one baguette diamond set
-  into the wave.
+| Name | Type | Reference | Metal | Details |
+|---|---|---|---|---|
+| SOUL | Diamond necklace | SLV·N·003 | 18K white gold | Pavé signature pendant, 42 cm |
+| AURA | Diamond earrings | SLV·E·001 | 18K white gold | Pavé, butterfly back |
+| MOMENT | White gold bracelet | SLV·B·001 | 18K white gold | Polished signature, 16–19 cm |
+| CADENCE | Diamond line bracelet | SLV·B·002 | 18K white gold | Baguette and round brilliant, 16–19 cm |
+| ICON | Diamond ring | SLV·R·001 | 18K white gold | Pavé signature, EU 47–58 |
+| PROMISE | Engagement ring | SLV·R·002 | 18K yellow gold | One baguette diamond, EU 47–58 |
+| BLUSH | Eternity ring | SLV·R·003 | 18K rose gold | Radiant-cut pink sapphires, diamond pavé, EU 47–58 |
 
-Specs: diamonds G–H colour, VS clarity, natural, certified. The SOUL pendant
-is about 0.60 ct in total. [placeholder: owner to confirm grades, carats and
-prices]
+Every price is "Price on request".
 
 ## 10. Key benefits
 
@@ -137,20 +130,30 @@ a private viewing". It hands off to the existing concierge form
 
 ## 14. Landing page sections
 
-The white version, Phase 5:
+Rebuilt in Phase 5 on the structure Messika and Cartier actually use. The
+owner rejected every art-directed version ("build it in a new manner, it all
+looks bad").
 
-1. Header: the sections on the left, the logo centred, "Book an appointment"
-   on the right.
-2. The opening film, with SOUL and two calls to action below it.
-3. Intro: the knot mark and one sentence.
-4. Two large on-model pictures: SOUL and BLUSH.
-5. The collection: a rail of eight product photographs (AURA and ECHO
-   separately). The worn photograph shows on hover, and each card has "Book
-   a viewing".
-6. In motion: words beside the tall LUMIÈRE film.
-7. The house: two image-and-text rows, The knot and Signed.
-8. The appointment: three services, then the form.
-9. Footer.
+1. Announcement bar: private appointments, "Book now".
+2. Header: Menu and links on the left, the logo centred, Appointment and the
+   wish list on the right. It steps aside while reading down and returns on
+   scroll up.
+3. Campaign: the LUMIÈRE film full width, with one serif line and "Discover
+   SOUL".
+4. Explore the jewellery: four category tiles (Necklaces, Earrings,
+   Bracelets, Rings) that filter the collection.
+5. The collection: a product grid. Each card has the photograph (the worn
+   photograph on hover), name, type, metal swatch, "Price on request" and a
+   heart. Filter chips sit above it, and an appointment card fills the eighth
+   slot.
+6. Quick view: a side panel with the gallery, reference, description, specs,
+   "Book an appointment" and the heart.
+7. The signature: the film "The Choice" beside the story of the knot.
+8. PROMISE and BLUSH: the engagement and eternity rings as a double module.
+9. Services: private appointment, signed by the house, care for life.
+10. Four reassurances with line icons.
+11. The SILAVU letter.
+12. Footer.
 
 ## 15. The story
 

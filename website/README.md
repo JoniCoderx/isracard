@@ -1,7 +1,8 @@
 # SILAVU website
 
-A single white page for SILAVU fine jewellery, built from the house's own films
-and photographs. The brand decisions live in `../copy/brand-kit.md`.
+A jewellery-house home page on the structure Messika and Cartier actually
+use, built from SILAVU's own films, photographs and published catalogue. The
+brand decisions live in `../copy/brand-kit.md`.
 
 ## Run it
 
@@ -13,51 +14,44 @@ npm run build             # portable static build in dist/ (relative paths)
 npx vite preview          # serve the build; never open dist/ through file://
 ```
 
-Plain HTML, CSS and JavaScript built with Vite; the one library is Lenis (smooth wheel scrolling on desktop).
+It is plain HTML, CSS and JavaScript built with Vite. The only library is
+Lenis, which smooths wheel scrolling on desktop.
 
 ## What's on the page
 
-1. **Header:** the sections, the logo centred, "Book an appointment".
-2. **The opening:** the house film "The Choice" as a muted loop, then SOUL.
-3. **Intro:** the knot mark and one sentence.
-4. **SOUL and BLUSH:** two large pictures, worn.
-5. **The collection:** a rail of eight pieces with arrows. Hovering shows the
-   piece worn. "Book a viewing" fills in the form.
-6. **In motion:** the LUMIÈRE film, tall, beside its words.
-7. **The house:** The knot, and Signed.
-8. **The appointment:** services and the request form.
-9. **Footer.**
+1. **Announcement bar:** private appointments, "Book now".
+2. **Header:**
+   - Menu (a side panel) and section links on the left.
+   - The logo centred.
+   - Appointment and the wish list on the right.
+   - It hides while you read down and comes back when you scroll up.
+3. **Campaign:** the LUMIÈRE film, full width (16:9 on desktop, 9:16 on
+   phones).
+4. **Explore the jewellery:** four category tiles that filter the grid.
+5. **The collection:** seven creations plus an appointment card.
+   - Filter chips sit above the grid.
+   - Hovering a card shows the worn photograph.
+   - The heart saves a piece to a wish list kept in the visitor's browser.
+     The header counts saved pieces and a "Wish list" chip appears.
+6. **Quick view:** a side panel with the gallery and thumbnails, reference,
+   description, specs and "Book an appointment" (with the piece filled in).
+7. **The signature:** the film "The Choice" beside the story of the knot.
+8. **PROMISE and BLUSH:** the engagement and eternity rings.
+9. **Services and reassurances.**
+10. **The SILAVU letter.**
+11. **Footer.**
 
-## Scroll effects
+## Where requests go
 
-`src/main.js` holds a small scroll engine. Each effect maps a scroll range
-to 0–1 and writes styles only when that number changes:
+The appointment panel and the letter both open the visitor's own email app,
+with a message to **concierge@silavu.com** already written. Nothing is stored
+on a server.
 
-| Section | Effect |
-|---|---|
-| Opening | The film shrinks into a framed picture, SOUL rises below |
-| Intro | The sentence lights word by word |
-| SOUL and BLUSH, the house | Pictures drift slower than the page and open like a curtain |
-| Collection | Pinned, the pieces slide sideways, with a progress line |
-| LUMIÈRE | A small window opens to the whole screen, then the words arrive |
-| Band | The house name moves across |
+## Films
 
-Reduced-motion visitors get the plain stacked page.
-
-## How the films play
-
-- **The right cut for the screen:**
-  - Desktop gets `v/hero-choice.mp4` (1080p, 3.2 MB).
-  - Phones get the 9:16 cuts, 720 px wide, about 1 MB each.
-- **Loading:** a film loads only when it comes within a screen of view.
-- **Playing:** only the film most in view plays, and the rest pause.
-- **Reduced motion:** visitors who ask for it see the posters.
-
-## Where a visitor's request goes
-
-The form opens the visitor's own email app with a message to
-**concierge@silavu.com**, already filled in with their name, contact, salon
-and piece. They press send. Nothing is stored on a server.
+- Each film loads only when it comes near the screen.
+- Only the film in view plays.
+- Phones get the 9:16 cuts, about 1 MB each.
 
 ## Published at
 
