@@ -25,7 +25,12 @@ Lenis, which smooths wheel scrolling on desktop.
    - The logo centred.
    - Appointment and the wish list on the right.
    - It hides while you read down and comes back when you scroll up.
-3. **Campaign:** the LUMIÈRE film, full width (16:9 on desktop, 9:16 on
+3. **The box:** the SILAVU box opens as you scroll.
+   - The film (`v/box.mp4`, and `v/box-v.mp4` for phones) is cut from the
+     house's published box frames, every frame a keyframe, and loaded whole.
+   - Seeks are gated so the lid follows the scroll without stutter.
+   - With reduced motion, the closed box stays as a still.
+4. **Campaign:** the LUMIÈRE film, full width (16:9 on desktop, 9:16 on
    phones).
 4. **Explore the jewellery:** four category tiles that filter the grid.
 5. **The collection:** seven creations plus an appointment card.

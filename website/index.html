@@ -54,11 +54,27 @@
   </header>
 
   <main id="top">
+    <!-- the signature moment: the SILAVU box opens as you scroll -->
+    <section class="box" aria-labelledby="box-h">
+      <div class="box__stage">
+        <video class="box__film" data-src="v/box.mp4" data-src-v="v/box-v.mp4" poster="img/box-0.jpg" data-poster-v="img/box-0-v.jpg" muted playsinline preload="none" aria-label="The black lacquer SILAVU box, its lid engraved with the knot, opens and diamonds rise out of it"></video>
+        <div class="box__start">
+          <p class="eyebrow">Maison SILAVU</p>
+          <p class="box__hint"><span></span>Scroll to open</p>
+        </div>
+        <div class="box__end">
+          <p class="eyebrow">Fine jewellery in 18K gold and diamonds</p>
+          <h1 id="box-h">Seven creations, one signature</h1>
+          <a class="link link--light" href="#collection" data-cat="all">Discover the collection</a>
+        </div>
+      </div>
+    </section>
+
     <section class="hero" aria-labelledby="hero-h">
       <video class="film hero__film" data-src="v/hero-lumiere.mp4" data-src-v="v/hero-lumiere-v.mp4" poster="img/hero-lumiere-1920.jpg" data-poster-v="img/hero-lumiere-v-1080.jpg" muted loop playsinline preload="none" aria-label="The SOUL necklace up close, then worn with a black dress"></video>
       <div class="hero__txt">
         <p class="eyebrow">SOUL</p>
-        <h1 id="hero-h">The signature, set in light</h1>
+        <h2 id="hero-h" class="hero__h">The signature, set in light</h2>
         <button class="link link--light" type="button" data-piece="pave">Discover SOUL</button>
       </div>
     </section>
@@ -122,7 +138,7 @@
       <h2 id="serv-h" class="title">The SILAVU services</h2>
       <ul class="serv__list" role="list">
         <li class="svc rv"><span class="svc__img"><img src="img/p/necklace-detail-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>Private appointment</h3><p>An hour with a concierge and the whole collection, in our Tel Aviv or Dubai salon, or at home.</p><button class="link" type="button" data-open="book">Book an appointment</button></li>
-        <li class="svc rv"><span class="svc__img"><img src="img/p/ring-signed-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>Signed by the house</h3><p>Every creation carries the SILAVU name, engraved inside the band or on a tag at the clasp.</p><button class="link" type="button" data-piece="ring">Discover ICON</button></li>
+        <li class="svc rv"><span class="svc__img"><img src="img/box-open-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>The SILAVU box</h3><p>Every creation arrives in black lacquer edged in rose gold, the knot engraved on its lid.</p><button class="link" type="button" data-open="book">Book an appointment</button></li>
         <li class="svc rv"><span class="svc__img"><img src="img/p/knot-clasp-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>Care for life</h3><p>Cleaning, polishing and a check of every claw, for as long as the piece is yours.</p><button class="link" type="button" data-open="book">Ask a concierge</button></li>
       </ul>
     </section>

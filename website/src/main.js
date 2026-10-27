@@ -228,6 +228,46 @@ $("#news").addEventListener("submit", (e) => {
   m.textContent = "Your email app has the request ready. Send it to join the letter.";
 });
 
+// ---- the box: scrolling opens the lid ----
+// The film is loaded whole (every frame a keyframe) and scrubbed by the scroll; seeks are gated so a new one
+// only starts when the last has landed. Reduced motion keeps the closed box and shows the words.
+const boxSec = $(".box"), boxFilm = $(".box__film"), boxStart = $(".box__start"), boxEnd = $(".box__end");
+if (PHONE) boxFilm.poster = BASE + boxFilm.dataset.posterV;
+let boxBusy = false, boxNext = null, boxLast = -1;
+function boxSeek(t) {
+  if (!boxFilm.duration) return;
+  if (Math.abs(t - boxLast) < 0.01) return;
+  if (boxBusy) { boxNext = t; return; }
+  boxBusy = true; boxLast = t; boxFilm.currentTime = t;
+}
+boxFilm.addEventListener("seeked", () => { boxBusy = false; if (boxNext !== null) { const t = boxNext; boxNext = null; boxSeek(t); } });
+let boxP = -1;
+function boxUpdate(y) {
+  const top = boxSec.offsetTop, range = Math.max(1, boxSec.offsetHeight - innerHeight);
+  const p = Math.min(1, Math.max(0, (y - top) / range));
+  if (Math.abs(p - boxP) < 0.0008) return;
+  boxP = p;
+  const f = Math.min(1, p / 0.8);
+  boxSeek(f * Math.max(0, (boxFilm.duration || 0) - 0.04));
+  boxStart.style.opacity = String(Math.max(0, 1 - p * 8));
+  const e = Math.min(1, Math.max(0, (p - 0.74) / 0.18));
+  boxEnd.style.opacity = String(e);
+  boxEnd.style.transform = `translateY(${((1 - e) * 24).toFixed(1)}px)`;
+}
+if (!REDUCED) {
+  fetch(BASE + (PHONE ? boxFilm.dataset.srcV : boxFilm.dataset.src))
+    .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+    .then((b) => {
+      boxFilm.src = URL.createObjectURL(b);
+      boxFilm.addEventListener("loadeddata", () => { boxP = -1; boxUpdate(lenis ? lenis.scroll : scrollY); }, { once: true });
+    })
+    .catch(() => {});             // the closed box stays as a still; the words still arrive with the scroll
+  if (lenis) lenis.on("scroll", ({ scroll }) => boxUpdate(scroll));
+  else { let tk = false; addEventListener("scroll", () => { if (tk) return; tk = true; requestAnimationFrame(() => { tk = false; boxUpdate(scrollY); }); }, { passive: true }); }
+  addEventListener("resize", () => { boxP = -1; boxUpdate(lenis ? lenis.scroll : scrollY); });
+  boxUpdate(scrollY);
+}
+
 // ---- films: the right cut for the screen, loaded when near, only the one in view plays ----
 const films = $$("video.film");
 films.forEach((v) => { if (PHONE && v.dataset.posterV) v.poster = BASE + v.dataset.posterV; });

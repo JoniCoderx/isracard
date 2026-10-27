@@ -138,7 +138,13 @@ looks bad").
 2. Header: Menu and links on the left, the logo centred, Appointment and the
    wish list on the right. It steps aside while reading down and returns on
    scroll up.
-3. Campaign: the LUMIÈRE film full width, with one serif line and "Discover
+3. **The signature moment (Phase 5, chosen by the owner):** the SILAVU box.
+   - The house's own film of the black lacquer box with the knot on its lid.
+   - Scrolling opens it and diamonds rise out. Desktop and phones each get
+     their own cut, every frame a keyframe, scrubbed by the scroll.
+   - Then "Seven creations, one signature" and "Discover the collection".
+   - The box returns among the services as "The SILAVU box".
+4. Campaign: the LUMIÈRE film full width, with one serif line and "Discover
    SOUL".
 4. Explore the jewellery: four category tiles (Necklaces, Earrings,
    Bracelets, Rings) that filter the collection.
