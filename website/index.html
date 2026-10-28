@@ -14,7 +14,6 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="preload" as="font" type="font/woff2" href="fonts/jost-normal-latin-b58a58.woff2" crossorigin />
-  <link rel="preload" as="font" type="font/woff2" href="fonts/cormorant-normal-latin-d80df8.woff2" crossorigin />
   <link rel="stylesheet" href="/src/style.css" />
   <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -39,8 +38,8 @@
       <button class="ico hd__menu" type="button" data-open="menu" aria-label="Menu"><svg><use href="#i-menu" /></svg><span>Menu</span></button>
       <nav class="hd__nav" aria-label="Main">
         <a href="#collection" data-cat="all">Jewellery</a>
-        <a href="#signature">The signature</a>
-        <a href="#services">Services</a>
+        <a href="#box">The house</a>
+        <a href="#services">Appointments</a>
       </nav>
     </div>
     <a class="logo" href="#top" aria-label="SILAVU, home">
@@ -54,44 +53,65 @@
   </header>
 
   <main id="top">
-    <!-- the signature moment: the SILAVU box opens as you scroll -->
-    <section class="box" aria-labelledby="box-h">
-      <div class="box__stage">
-        <video class="box__film" data-src="v/box.mp4" data-src-v="v/box-v.mp4" poster="img/box-0.jpg" data-poster-v="img/box-0-v.jpg" muted playsinline preload="none" aria-label="The black lacquer SILAVU box, its lid engraved with the knot, opens and diamonds rise out of it"></video>
-        <div class="box__start">
-          <p class="eyebrow">Maison SILAVU</p>
-          <p class="box__hint"><span></span>Scroll to open</p>
-        </div>
-        <div class="box__end">
-          <p class="eyebrow">Fine jewellery in 18K gold and diamonds</p>
-          <h1 id="box-h">Seven creations, one signature</h1>
-          <a class="link link--light" href="#collection" data-cat="all">Discover the collection</a>
-        </div>
-      </div>
-    </section>
-
+    <!-- 1. the opening: the LUMIÈRE film, the words on its white side -->
     <section class="hero" aria-labelledby="hero-h">
-      <video class="film hero__film" data-src="v/hero-lumiere.mp4" data-src-v="v/hero-lumiere-v.mp4" poster="img/hero-lumiere-1920.jpg" data-poster-v="img/hero-lumiere-v-1080.jpg" muted loop playsinline preload="none" aria-label="The SOUL necklace up close, then worn with a black dress"></video>
+      <div class="hero__media"><video class="film" data-src="v/hero-lumiere.mp4" data-src-v="v/hero-lumiere-v.mp4" poster="img/hero-lumiere-1920.jpg" data-poster-v="img/hero-lumiere-v-1080.jpg" muted loop playsinline preload="none" aria-label="The SOUL necklace up close, then worn with a black dress"></video></div>
       <div class="hero__txt">
-        <p class="eyebrow">SOUL</p>
-        <h2 id="hero-h" class="hero__h">The signature, set in light</h2>
-        <button class="link link--light" type="button" data-piece="pave">Discover SOUL</button>
+        <p class="eyebrow">Fine jewellery · Finished by hand</p>
+        <h1 id="hero-h" class="h1">The line <em>of desire</em></h1>
+        <p class="hero__sub">Crafted with intention. Made to leave an impression.</p>
+        <div class="hero__acts">
+          <a class="btn" href="#collection" data-cat="all">Discover the collection</a>
+          <a class="link" href="#" data-open="book">Book a private viewing</a>
+        </div>
+      </div>
+      <p class="cue" aria-hidden="true"><span>Scroll</span><i></i></p>
+    </section>
+
+    <!-- 2. the signature: one line writes SILAVU as the page scrolls -->
+    <section id="signature" class="sig" aria-label="SILAVU, written in one line">
+      <div class="sig__stage">
+        <div class="sig__fig"><svg class="sgsvg" viewBox="146 0 1080 400" role="img" aria-label="SILAVU, written by hand in a single line" overflow="visible">
+          <defs>
+            <linearGradient id="sgmetal" gradientUnits="userSpaceOnUse" x1="0" y1="20" x2="0" y2="380"><stop offset="0" stop-color="#ffffff"/><stop offset=".34" stop-color="#d9d4cb"/><stop offset=".5" stop-color="#fbf8f2"/><stop offset=".68" stop-color="#aaa59d"/><stop offset=".84" stop-color="#efebe4"/><stop offset="1" stop-color="#a09b93"/></linearGradient>
+            <linearGradient id="sgword" gradientUnits="userSpaceOnUse" x1="-120" y1="0" x2="1260" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".2" stop-color="#fff"/><stop offset="1" stop-color="#fff"/></linearGradient>
+            <mask id="sgmask" maskUnits="userSpaceOnUse" x="-140" y="-40" width="1420" height="480"><rect x="-140" y="-40" width="1420" height="480" fill="url(#sgword)"/></mask>
+            <radialGradient id="sgglow"><stop offset="0" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".25" stop-color="#fff6e6" stop-opacity=".4"/><stop offset="1" stop-color="#fff6e6" stop-opacity="0"/></radialGradient>
+            <linearGradient id="sgmetald" gradientUnits="userSpaceOnUse" x1="0" y1="20" x2="0" y2="380"><stop offset="0" stop-color="#2a2824"/><stop offset=".34" stop-color="#0e0d0b"/><stop offset=".5" stop-color="#3b3833"/><stop offset=".68" stop-color="#121110"/><stop offset=".84" stop-color="#2e2c28"/><stop offset="1" stop-color="#0b0a09"/></linearGradient>
+            <clipPath id="sgtop" clipPathUnits="userSpaceOnUse"><path d="M -6000 -6000 L 7000 -6000 L 7000 -399.4 L 3800 -66.5 L 3760 -63.2 L 3720 -60.8 L 3680 -59.1 L 3640 -57.9 L 3600 -57 L 3560 -56.4 L 3520 -55.6 L 3480 -54.6 L 3440 -53.1 L 3400 -51 L 3360 -48.1 L 3320 -44.4 L 3280 -39.8 L 3240 -34.5 L 3200 -28.4 L 3160 -21.7 L 3120 -14.6 L 3080 -7.3 L 3040 0 L 3000 7.1 L 2960 13.7 L 2920 19.8 L 2880 25.1 L 2840 29.6 L 2800 33.2 L 2760 36.1 L 2720 38.1 L 2680 39.6 L 2640 40.6 L 2600 41.3 L 2560 42 L 2520 42.9 L 2480 44.1 L 2440 45.9 L 2400 48.4 L 2360 51.6 L 2320 55.8 L 2280 60.8 L 2240 66.5 L 2200 72.9 L 2160 79.8 L 2120 87.1 L 2080 94.4 L 2040 101.6 L 2000 108.5 L 1960 114.8 L 1920 120.5 L 1880 125.5 L 1840 129.5 L 1800 132.8 L 1760 135.2 L 1720 136.9 L 1680 138.1 L 1640 139 L 1600 139.6 L 1560 140.4 L 1520 141.4 L 1480 142.9 L 1440 145 L 1400 147.9 L 1360 151.6 L 1320 156.2 L 1280 161.5 L 1240 167.6 L 1200 174.3 L 1160 181.4 L 1120 188.7 L 1080 196 L 1040 203.1 L 1000 209.7 L 960 215.8 L 920 221.1 L 880 225.6 L 840 229.2 L 800 232.1 L 760 234.1 L 720 235.6 L 680 236.6 L 640 237.3 L 600 238 L 560 238.9 L 520 240.1 L 480 241.9 L 440 244.4 L 400 247.6 L 360 251.8 L 320 256.8 L 280 262.5 L 240 268.9 L 200 275.8 L 160 283.1 L 120 290.4 L 80 297.6 L 40 304.5 L 0 310.8 L -40 316.5 L -80 321.5 L -120 325.5 L -160 328.8 L -200 331.2 L -240 332.9 L -280 334.1 L -320 335 L -360 335.6 L -400 336.4 L -440 337.4 L -480 338.9 L -520 341 L -560 343.9 L -600 347.6 L -640 352.2 L -680 357.5 L -720 363.6 L -760 370.3 L -800 377.4 L -840 384.7 L -880 392 L -920 399.1 L -960 405.7 L -1000 411.8 L -1040 417.1 L -1080 421.6 L -1120 425.2 L -1160 428.1 L -1200 430.1 L -1240 431.6 L -1280 432.6 L -1320 433.3 L -1360 434 L -1400 434.9 L -1440 436.1 L -1480 437.9 L -1520 440.4 L -1560 443.6 L -1600 447.8 L -1640 452.8 L -1680 458.5 L -1720 464.9 L -1760 471.8 L -1800 479.1 L -1840 486.4 L -1880 493.6 L -1920 500.5 L -1960 506.8 L -2000 512.5 L -2040 517.5 L -2080 521.5 L -2120 524.8 L -2160 527.2 L -2200 528.9 L -2240 530.1 L -2280 531 L -2320 531.6 L -2360 532.4 L -2400 533.4 L -2440 534.9 L -2480 537 L -2520 539.9 L -2560 543.6 L -2600 548.2 L -6000 900.6 Z"/></clipPath>
+            <clipPath id="sgbot" clipPathUnits="userSpaceOnUse"><path d="M -6000 900.6 L -2600 548.2 L -2560 543.6 L -2520 539.9 L -2480 537 L -2440 534.9 L -2400 533.4 L -2360 532.4 L -2320 531.6 L -2280 531 L -2240 530.1 L -2200 528.9 L -2160 527.2 L -2120 524.8 L -2080 521.5 L -2040 517.5 L -2000 512.5 L -1960 506.8 L -1920 500.5 L -1880 493.6 L -1840 486.4 L -1800 479.1 L -1760 471.8 L -1720 464.9 L -1680 458.5 L -1640 452.8 L -1600 447.8 L -1560 443.6 L -1520 440.4 L -1480 437.9 L -1440 436.1 L -1400 434.9 L -1360 434 L -1320 433.3 L -1280 432.6 L -1240 431.6 L -1200 430.1 L -1160 428.1 L -1120 425.2 L -1080 421.6 L -1040 417.1 L -1000 411.8 L -960 405.7 L -920 399.1 L -880 392 L -840 384.7 L -800 377.4 L -760 370.3 L -720 363.6 L -680 357.5 L -640 352.2 L -600 347.6 L -560 343.9 L -520 341 L -480 338.9 L -440 337.4 L -400 336.4 L -360 335.6 L -320 335 L -280 334.1 L -240 332.9 L -200 331.2 L -160 328.8 L -120 325.5 L -80 321.5 L -40 316.5 L 0 310.8 L 40 304.5 L 80 297.6 L 120 290.4 L 160 283.1 L 200 275.8 L 240 268.9 L 280 262.5 L 320 256.8 L 360 251.8 L 400 247.6 L 440 244.4 L 480 241.9 L 520 240.1 L 560 238.9 L 600 238 L 640 237.3 L 680 236.6 L 720 235.6 L 760 234.1 L 800 232.1 L 840 229.2 L 880 225.6 L 920 221.1 L 960 215.8 L 1000 209.7 L 1040 203.1 L 1080 196 L 1120 188.7 L 1160 181.4 L 1200 174.3 L 1240 167.6 L 1280 161.5 L 1320 156.2 L 1360 151.6 L 1400 147.9 L 1440 145 L 1480 142.9 L 1520 141.4 L 1560 140.4 L 1600 139.6 L 1640 139 L 1680 138.1 L 1720 136.9 L 1760 135.2 L 1800 132.8 L 1840 129.5 L 1880 125.5 L 1920 120.5 L 1960 114.8 L 2000 108.5 L 2040 101.6 L 2080 94.4 L 2120 87.1 L 2160 79.8 L 2200 72.9 L 2240 66.5 L 2280 60.8 L 2320 55.8 L 2360 51.6 L 2400 48.4 L 2440 45.9 L 2480 44.1 L 2520 42.9 L 2560 42 L 2600 41.3 L 2640 40.6 L 2680 39.6 L 2720 38.1 L 2760 36.1 L 2800 33.2 L 2840 29.6 L 2880 25.1 L 2920 19.8 L 2960 13.7 L 3000 7.1 L 3040 0 L 3080 -7.3 L 3120 -14.6 L 3160 -21.7 L 3200 -28.4 L 3240 -34.5 L 3280 -39.8 L 3320 -44.4 L 3360 -48.1 L 3400 -51 L 3440 -53.1 L 3480 -54.6 L 3520 -55.6 L 3560 -56.4 L 3600 -57 L 3640 -57.9 L 3680 -59.1 L 3720 -60.8 L 3760 -63.2 L 3800 -66.5 L 7000 -399.4 L 7000 6000 L -6000 6000 Z"/></clipPath>
+          </defs>
+          <path class="sgwhite" d="M -6000 900.6 L -2600 548.2 L -2560 543.6 L -2520 539.9 L -2480 537 L -2440 534.9 L -2400 533.4 L -2360 532.4 L -2320 531.6 L -2280 531 L -2240 530.1 L -2200 528.9 L -2160 527.2 L -2120 524.8 L -2080 521.5 L -2040 517.5 L -2000 512.5 L -1960 506.8 L -1920 500.5 L -1880 493.6 L -1840 486.4 L -1800 479.1 L -1760 471.8 L -1720 464.9 L -1680 458.5 L -1640 452.8 L -1600 447.8 L -1560 443.6 L -1520 440.4 L -1480 437.9 L -1440 436.1 L -1400 434.9 L -1360 434 L -1320 433.3 L -1280 432.6 L -1240 431.6 L -1200 430.1 L -1160 428.1 L -1120 425.2 L -1080 421.6 L -1040 417.1 L -1000 411.8 L -960 405.7 L -920 399.1 L -880 392 L -840 384.7 L -800 377.4 L -760 370.3 L -720 363.6 L -680 357.5 L -640 352.2 L -600 347.6 L -560 343.9 L -520 341 L -480 338.9 L -440 337.4 L -400 336.4 L -360 335.6 L -320 335 L -280 334.1 L -240 332.9 L -200 331.2 L -160 328.8 L -120 325.5 L -80 321.5 L -40 316.5 L 0 310.8 L 40 304.5 L 80 297.6 L 120 290.4 L 160 283.1 L 200 275.8 L 240 268.9 L 280 262.5 L 320 256.8 L 360 251.8 L 400 247.6 L 440 244.4 L 480 241.9 L 520 240.1 L 560 238.9 L 600 238 L 640 237.3 L 680 236.6 L 720 235.6 L 760 234.1 L 800 232.1 L 840 229.2 L 880 225.6 L 920 221.1 L 960 215.8 L 1000 209.7 L 1040 203.1 L 1080 196 L 1120 188.7 L 1160 181.4 L 1200 174.3 L 1240 167.6 L 1280 161.5 L 1320 156.2 L 1360 151.6 L 1400 147.9 L 1440 145 L 1480 142.9 L 1520 141.4 L 1560 140.4 L 1600 139.6 L 1640 139 L 1680 138.1 L 1720 136.9 L 1760 135.2 L 1800 132.8 L 1840 129.5 L 1880 125.5 L 1920 120.5 L 1960 114.8 L 2000 108.5 L 2040 101.6 L 2080 94.4 L 2120 87.1 L 2160 79.8 L 2200 72.9 L 2240 66.5 L 2280 60.8 L 2320 55.8 L 2360 51.6 L 2400 48.4 L 2440 45.9 L 2480 44.1 L 2520 42.9 L 2560 42 L 2600 41.3 L 2640 40.6 L 2680 39.6 L 2720 38.1 L 2760 36.1 L 2800 33.2 L 2840 29.6 L 2880 25.1 L 2920 19.8 L 2960 13.7 L 3000 7.1 L 3040 0 L 3080 -7.3 L 3120 -14.6 L 3160 -21.7 L 3200 -28.4 L 3240 -34.5 L 3280 -39.8 L 3320 -44.4 L 3360 -48.1 L 3400 -51 L 3440 -53.1 L 3480 -54.6 L 3520 -55.6 L 3560 -56.4 L 3600 -57 L 3640 -57.9 L 3680 -59.1 L 3720 -60.8 L 3760 -63.2 L 3800 -66.5 L 7000 -399.4 L 7000 6000 L -6000 6000 Z"/>
+          <g class="sglite" clip-path="url(#sgtop)">
+            <path class="sghalo" d="M -1896.0 300.0 C -1293.6 278.0, -765.6 388.0, -303.2 366.0 C -195.4 385.8, -78.2 319.8, 31.8 319.8 C 111.8 319.8, 160.4 333.0, 206.8 319.8 C 266.0 300.0, 331.6 157.0, 378.2 77.8 C 392.9 53.6, 423.8 27.2, 426.1 42.6 C 428.2 60.2, 389.0 71.2, 347.9 62.4 C 308.6 55.8, 264.0 80.0, 260.2 115.2 C 256.3 150.4, 290.6 165.8, 322.7 183.4 C 360.3 205.4, 372.7 238.4, 362.6 275.8 C 351.8 319.8, 307.2 344.0, 261.4 341.8 C 221.7 339.6, 188.4 333.0, 174.7 348.4 C 162.8 366.0, 226.3 370.4, 296.8 366.0 C 367.3 361.6, 420.4 333.0, 457.2 234.0 C 445.0 291.2, 432.4 333.0, 462.2 335.2 C 497.9 337.4, 535.6 267.0, 564.0 190.0 C 584.0 135.0, 596.5 75.6, 581.9 62.4 C 565.4 49.2, 544.6 93.2, 536.4 168.0 C 528.0 245.0, 516.4 333.0, 548.2 335.2 C 573.9 337.4, 604.0 300.0, 634.6 258.2 C 651.0 236.2, 675.9 227.4, 691.0 236.2 C 664.2 225.2, 625.5 249.4, 617.2 289.0 C 609.6 322.0, 627.7 339.6, 650.9 328.6 C 674.1 317.6, 690.4 278.0, 700.7 238.4 C 689.2 289.0, 680.4 333.0, 708.2 335.2 C 733.9 337.4, 752.0 300.0, 767.6 267.0 C 778.0 245.0, 781.4 231.8, 793.2 234.0 C 797.6 267.0, 796.1 317.6, 808.4 333.0 C 834.0 300.0, 864.6 258.2, 879.2 234.0 C 893.4 214.2, 912.2 225.2, 902.7 238.4 C 887.6 267.0, 875.3 306.6, 884.9 328.6 C 898.7 348.4, 930.9 328.6, 951.2 289.0 C 964.1 262.6, 970.0 245.0, 975.2 234.0 C 964.4 278.0, 952.4 333.0, 980.2 335.2 C 1039.9 337.4, 1123.6 212.0, 1196.8 91.0"/>
+            <path class="sgpath" d="M -1896.0 300.0 C -1293.6 278.0, -765.6 388.0, -303.2 366.0 C -195.4 385.8, -78.2 319.8, 31.8 319.8 C 111.8 319.8, 160.4 333.0, 206.8 319.8 C 266.0 300.0, 331.6 157.0, 378.2 77.8 C 392.9 53.6, 423.8 27.2, 426.1 42.6 C 428.2 60.2, 389.0 71.2, 347.9 62.4 C 308.6 55.8, 264.0 80.0, 260.2 115.2 C 256.3 150.4, 290.6 165.8, 322.7 183.4 C 360.3 205.4, 372.7 238.4, 362.6 275.8 C 351.8 319.8, 307.2 344.0, 261.4 341.8 C 221.7 339.6, 188.4 333.0, 174.7 348.4 C 162.8 366.0, 226.3 370.4, 296.8 366.0 C 367.3 361.6, 420.4 333.0, 457.2 234.0 C 445.0 291.2, 432.4 333.0, 462.2 335.2 C 497.9 337.4, 535.6 267.0, 564.0 190.0 C 584.0 135.0, 596.5 75.6, 581.9 62.4 C 565.4 49.2, 544.6 93.2, 536.4 168.0 C 528.0 245.0, 516.4 333.0, 548.2 335.2 C 573.9 337.4, 604.0 300.0, 634.6 258.2 C 651.0 236.2, 675.9 227.4, 691.0 236.2 C 664.2 225.2, 625.5 249.4, 617.2 289.0 C 609.6 322.0, 627.7 339.6, 650.9 328.6 C 674.1 317.6, 690.4 278.0, 700.7 238.4 C 689.2 289.0, 680.4 333.0, 708.2 335.2 C 733.9 337.4, 752.0 300.0, 767.6 267.0 C 778.0 245.0, 781.4 231.8, 793.2 234.0 C 797.6 267.0, 796.1 317.6, 808.4 333.0 C 834.0 300.0, 864.6 258.2, 879.2 234.0 C 893.4 214.2, 912.2 225.2, 902.7 238.4 C 887.6 267.0, 875.3 306.6, 884.9 328.6 C 898.7 348.4, 930.9 328.6, 951.2 289.0 C 964.1 262.6, 970.0 245.0, 975.2 234.0 C 964.4 278.0, 952.4 333.0, 980.2 335.2 C 1039.9 337.4, 1123.6 212.0, 1196.8 91.0"/>
+            <path class="sgbody" d="M -1896.0 300.0 C -1293.6 278.0, -765.6 388.0, -303.2 366.0 C -195.4 385.8, -78.2 319.8, 31.8 319.8 C 111.8 319.8, 160.4 333.0, 206.8 319.8 C 266.0 300.0, 331.6 157.0, 378.2 77.8 C 392.9 53.6, 423.8 27.2, 426.1 42.6 C 428.2 60.2, 389.0 71.2, 347.9 62.4 C 308.6 55.8, 264.0 80.0, 260.2 115.2 C 256.3 150.4, 290.6 165.8, 322.7 183.4 C 360.3 205.4, 372.7 238.4, 362.6 275.8 C 351.8 319.8, 307.2 344.0, 261.4 341.8 C 221.7 339.6, 188.4 333.0, 174.7 348.4 C 162.8 366.0, 226.3 370.4, 296.8 366.0 C 367.3 361.6, 420.4 333.0, 457.2 234.0 C 445.0 291.2, 432.4 333.0, 462.2 335.2 C 497.9 337.4, 535.6 267.0, 564.0 190.0 C 584.0 135.0, 596.5 75.6, 581.9 62.4 C 565.4 49.2, 544.6 93.2, 536.4 168.0 C 528.0 245.0, 516.4 333.0, 548.2 335.2 C 573.9 337.4, 604.0 300.0, 634.6 258.2 C 651.0 236.2, 675.9 227.4, 691.0 236.2 C 664.2 225.2, 625.5 249.4, 617.2 289.0 C 609.6 322.0, 627.7 339.6, 650.9 328.6 C 674.1 317.6, 690.4 278.0, 700.7 238.4 C 689.2 289.0, 680.4 333.0, 708.2 335.2 C 733.9 337.4, 752.0 300.0, 767.6 267.0 C 778.0 245.0, 781.4 231.8, 793.2 234.0 C 797.6 267.0, 796.1 317.6, 808.4 333.0 C 834.0 300.0, 864.6 258.2, 879.2 234.0 C 893.4 214.2, 912.2 225.2, 902.7 238.4 C 887.6 267.0, 875.3 306.6, 884.9 328.6 C 898.7 348.4, 930.9 328.6, 951.2 289.0 C 964.1 262.6, 970.0 245.0, 975.2 234.0 C 964.4 278.0, 952.4 333.0, 980.2 335.2 C 1039.9 337.4, 1123.6 212.0, 1196.8 91.0"/>
+            <circle class="sgdot" cx="473" cy="187" r="5"/>
+            <g class="sgpen"><circle r="22" fill="url(#sgglow)"/><circle class="sgcore" r="2.2"/></g>
+            <g class="sgspark">
+            <g data-at="473 187"><circle r="22" fill="url(#sgglow)"/><path d="M 0 -24 L 1.3 -1.3 L 24 0 L 1.3 1.3 L 0 24 L -1.3 1.3 L -24 0 L -1.3 -1.3 Z"/></g>
+            <g data-at="426 43"><circle r="18" fill="url(#sgglow)"/><path d="M 0 -20 L 1.1 -1.1 L 20 0 L 1.1 1.1 L 0 20 L -1.1 1.1 L -20 0 L -1.1 -1.1 Z"/></g>
+            <g data-at="582 62"><circle r="15" fill="url(#sgglow)"/><path d="M 0 -16 L 1 -1 L 16 0 L 1 1 L 0 16 L -1 1 L -16 0 L -1 -1 Z"/></g>
+            <g data-at="1197 91" data-keep=".55"><circle r="30" fill="url(#sgglow)"/><path d="M 0 -34 L 1.6 -1.6 L 34 0 L 1.6 1.6 L 0 34 L -1.6 1.6 L -34 0 L -1.6 -1.6 Z"/><path d="M 0 -14 L .8 -.8 L 14 0 L .8 .8 L 0 14 L -.8 .8 L -14 0 L -.8 -.8 Z" transform="rotate(45)"/></g>
+          </g>
+          </g>
+          <g class="sgdark" clip-path="url(#sgbot)">
+            <path class="sgpath sgink" d="M -1896.0 300.0 C -1293.6 278.0, -765.6 388.0, -303.2 366.0 C -195.4 385.8, -78.2 319.8, 31.8 319.8 C 111.8 319.8, 160.4 333.0, 206.8 319.8 C 266.0 300.0, 331.6 157.0, 378.2 77.8 C 392.9 53.6, 423.8 27.2, 426.1 42.6 C 428.2 60.2, 389.0 71.2, 347.9 62.4 C 308.6 55.8, 264.0 80.0, 260.2 115.2 C 256.3 150.4, 290.6 165.8, 322.7 183.4 C 360.3 205.4, 372.7 238.4, 362.6 275.8 C 351.8 319.8, 307.2 344.0, 261.4 341.8 C 221.7 339.6, 188.4 333.0, 174.7 348.4 C 162.8 366.0, 226.3 370.4, 296.8 366.0 C 367.3 361.6, 420.4 333.0, 457.2 234.0 C 445.0 291.2, 432.4 333.0, 462.2 335.2 C 497.9 337.4, 535.6 267.0, 564.0 190.0 C 584.0 135.0, 596.5 75.6, 581.9 62.4 C 565.4 49.2, 544.6 93.2, 536.4 168.0 C 528.0 245.0, 516.4 333.0, 548.2 335.2 C 573.9 337.4, 604.0 300.0, 634.6 258.2 C 651.0 236.2, 675.9 227.4, 691.0 236.2 C 664.2 225.2, 625.5 249.4, 617.2 289.0 C 609.6 322.0, 627.7 339.6, 650.9 328.6 C 674.1 317.6, 690.4 278.0, 700.7 238.4 C 689.2 289.0, 680.4 333.0, 708.2 335.2 C 733.9 337.4, 752.0 300.0, 767.6 267.0 C 778.0 245.0, 781.4 231.8, 793.2 234.0 C 797.6 267.0, 796.1 317.6, 808.4 333.0 C 834.0 300.0, 864.6 258.2, 879.2 234.0 C 893.4 214.2, 912.2 225.2, 902.7 238.4 C 887.6 267.0, 875.3 306.6, 884.9 328.6 C 898.7 348.4, 930.9 328.6, 951.2 289.0 C 964.1 262.6, 970.0 245.0, 975.2 234.0 C 964.4 278.0, 952.4 333.0, 980.2 335.2 C 1039.9 337.4, 1123.6 212.0, 1196.8 91.0"/>
+            <path class="sgbody sgink" d="M -1896.0 300.0 C -1293.6 278.0, -765.6 388.0, -303.2 366.0 C -195.4 385.8, -78.2 319.8, 31.8 319.8 C 111.8 319.8, 160.4 333.0, 206.8 319.8 C 266.0 300.0, 331.6 157.0, 378.2 77.8 C 392.9 53.6, 423.8 27.2, 426.1 42.6 C 428.2 60.2, 389.0 71.2, 347.9 62.4 C 308.6 55.8, 264.0 80.0, 260.2 115.2 C 256.3 150.4, 290.6 165.8, 322.7 183.4 C 360.3 205.4, 372.7 238.4, 362.6 275.8 C 351.8 319.8, 307.2 344.0, 261.4 341.8 C 221.7 339.6, 188.4 333.0, 174.7 348.4 C 162.8 366.0, 226.3 370.4, 296.8 366.0 C 367.3 361.6, 420.4 333.0, 457.2 234.0 C 445.0 291.2, 432.4 333.0, 462.2 335.2 C 497.9 337.4, 535.6 267.0, 564.0 190.0 C 584.0 135.0, 596.5 75.6, 581.9 62.4 C 565.4 49.2, 544.6 93.2, 536.4 168.0 C 528.0 245.0, 516.4 333.0, 548.2 335.2 C 573.9 337.4, 604.0 300.0, 634.6 258.2 C 651.0 236.2, 675.9 227.4, 691.0 236.2 C 664.2 225.2, 625.5 249.4, 617.2 289.0 C 609.6 322.0, 627.7 339.6, 650.9 328.6 C 674.1 317.6, 690.4 278.0, 700.7 238.4 C 689.2 289.0, 680.4 333.0, 708.2 335.2 C 733.9 337.4, 752.0 300.0, 767.6 267.0 C 778.0 245.0, 781.4 231.8, 793.2 234.0 C 797.6 267.0, 796.1 317.6, 808.4 333.0 C 834.0 300.0, 864.6 258.2, 879.2 234.0 C 893.4 214.2, 912.2 225.2, 902.7 238.4 C 887.6 267.0, 875.3 306.6, 884.9 328.6 C 898.7 348.4, 930.9 328.6, 951.2 289.0 C 964.1 262.6, 970.0 245.0, 975.2 234.0 C 964.4 278.0, 952.4 333.0, 980.2 335.2 C 1039.9 337.4, 1123.6 212.0, 1196.8 91.0"/>
+            <circle class="sgdot sgink" cx="473" cy="187" r="5"/>
+            <g class="sgpen sgink"><circle class="sgcore" r="2.2"/></g>
+          </g>
+        </svg></div>
       </div>
     </section>
 
-    <section class="cats" aria-labelledby="cats-h">
-      <h2 id="cats-h" class="title">Explore the jewellery</h2>
-      <ul class="cats__list" role="list">
-        <li><a class="cat rv" href="#collection" data-cat="necklaces"><span class="cat__img"><img src="img/p/necklace-worn-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><span class="cat__name">Necklaces</span></a></li>
-        <li><a class="cat rv" href="#collection" data-cat="earrings"><span class="cat__img"><img src="img/p/aura-worn-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><span class="cat__name">Earrings</span></a></li>
-        <li><a class="cat rv" href="#collection" data-cat="bracelets"><span class="cat__img"><img src="img/p/cadence-worn-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><span class="cat__name">Bracelets</span></a></li>
-        <li><a class="cat rv" href="#collection" data-cat="rings"><span class="cat__img"><img src="img/p/ring-worn-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><span class="cat__name">Rings</span></a></li>
-      </ul>
-    </section>
-
+    <!-- 3. the collection -->
     <section id="collection" class="coll" aria-labelledby="coll-h">
       <div class="coll__head">
-        <h2 id="coll-h" class="title">The collection</h2>
+        <svg class="coll__mark" aria-hidden="true"><use href="#mark" /></svg>
+        <p class="eyebrow eyebrow--ink">Collection</p>
+        <h2 id="coll-h" class="h2">Fine jewellery, <em>made to be lived in.</em></h2>
+        <p class="coll__sub">Signed by SILAVU and set by hand, each piece is made to become the one you never take off.</p>
         <div class="chips" role="group" aria-label="Show">
           <button type="button" class="chip" data-cat="all" aria-pressed="true">All</button>
           <button type="button" class="chip" data-cat="necklaces" aria-pressed="false">Necklaces</button>
@@ -105,67 +125,83 @@
       <p class="grid__empty" hidden>Nothing saved yet. Tap the heart on any piece to keep it here.</p>
     </section>
 
-    <section id="signature" class="feat" aria-labelledby="feat-h">
-      <div class="feat__media rv">
-        <video class="film" data-src="v/hero-choice.mp4" data-src-v="v/hero-choice-v.mp4" poster="img/hero-choice-1920.jpg" data-poster-v="img/hero-choice-v-1080.jpg" muted loop playsinline preload="none" aria-label="A hand lifts the SOUL necklace from white marble"></video>
-      </div>
-      <div class="feat__txt rv">
-        <p class="eyebrow eyebrow--ink">The signature</p>
-        <h2 id="feat-h" class="title title--l">One knot, drawn in gold</h2>
-        <p>Two loops that never break, held by two open arcs. The SILAVU signature runs through every creation: set in pavé diamonds on SOUL, polished bare on MOMENT, traced in pairs on AURA.</p>
-        <button class="link" type="button" data-piece="pave">Discover SOUL</button>
+    <!-- 4. the box: held on screen while the scroll opens it, three lines in turn -->
+    <section id="box" class="box" aria-label="The SILAVU box">
+      <svg class="wave wave--top" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V40C1080 120 720 120 360 70 220 50 100 60 0 90Z" /></svg>
+      <div class="box__stage">
+        <video class="box__film" data-src="v/box.mp4" data-src-v="v/box-v.mp4" poster="img/box-0.jpg" data-poster-v="img/box-0-v.jpg" muted playsinline preload="none" aria-label="The black lacquer SILAVU box opens and diamonds rise out of it"></video>
+        <div class="box__veil"></div>
+        <div class="beats">
+          <h2 class="beat h2 is-on">SILAVU signs <em>every piece it makes.</em></h2>
+          <h2 class="beat h2">Each stone, <em>chosen by eye.</em></h2>
+          <div class="beat"><h2 class="h2">Then made <em>to your measure.</em></h2><a class="btn btn--light" href="#" data-open="book">Book a private viewing</a></div>
+        </div>
+        <div class="box__prog" aria-hidden="true"><i></i></div>
+        <div class="box__dots" aria-hidden="true"><i class="is-on"></i><i></i><i></i></div>
+        <p class="cue cue--light" aria-hidden="true"><span>Scroll</span><i></i></p>
       </div>
     </section>
 
+    <!-- 5. up close, worn -->
+    <section id="worn" class="worn" aria-labelledby="worn-h">
+      <div class="worn__head"><p class="eyebrow">Worn</p><h2 id="worn-h" class="h2">Up <em>close.</em></h2></div>
+      <div class="worn__row">
+        <figure class="look"><button class="look__pic" type="button" data-piece="ring" aria-label="ICON, diamond ring"><img class="px" src="models/ring-1400.jpg" srcset="models/ring-900.jpg 900w, models/ring-1400.jpg 1400w" sizes="(min-width: 760px) 33vw, 84vw" alt="A woman wearing the ICON ring, her hand resting at her jaw" loading="lazy" width="1400" height="1751" /></button><figcaption><span class="eyebrow">Ring</span><span class="look__name">SILAVU <em>ICON</em></span></figcaption></figure>
+        <figure class="look look--mid"><button class="look__pic" type="button" data-piece="pave" aria-label="SOUL, diamond necklace"><img class="px" src="models/necklace-1400.jpg" srcset="models/necklace-900.jpg 900w, models/necklace-1400.jpg 1400w" sizes="(min-width: 760px) 33vw, 84vw" alt="A woman wearing the SOUL necklace, the pendant below her collarbones" loading="lazy" width="1400" height="1751" /></button><figcaption><span class="eyebrow">Necklace</span><span class="look__name">SILAVU <em>SOUL</em></span></figcaption></figure>
+        <figure class="look"><button class="look__pic" type="button" data-piece="knot" aria-label="MOMENT, white gold bracelet"><img class="px" src="models/bracelet-1400.jpg" srcset="models/bracelet-900.jpg 900w, models/bracelet-1400.jpg 1400w" sizes="(min-width: 760px) 33vw, 84vw" alt="A woman wearing the MOMENT bracelet, her hand on her shoulder" loading="lazy" width="1400" height="1751" /></button><figcaption><span class="eyebrow">Bracelet</span><span class="look__name">SILAVU <em>MOMENT</em></span></figcaption></figure>
+      </div>
+    </section>
+
+    <!-- 6. the stone: loose stones on black leather drift apart as the scroll passes -->
+    <section class="desk" aria-labelledby="desk-h">
+      <div class="desk__stage">
+        <picture class="desk__bg"><source media="(max-width: 760px)" srcset="desk/leather-v-1080.jpg" /><img src="desk/leather-1600.jpg" srcset="desk/leather-1600.jpg 1600w, desk/leather-2560.jpg 2560w" sizes="100vw" alt="" loading="lazy" /></picture>
+        <div class="stones" aria-hidden="true"></div>
+        <div class="desk__txt">
+          <div class="desk__sig"><svg aria-hidden="true"><use href="#mark" /></svg><span>SILAVU</span></div>
+          <i class="desk__rule" aria-hidden="true"></i>
+          <h2 id="desk-h" class="h2"><span class="l1">Light goes in.</span> <em class="l2">Fire comes out.</em></h2>
+        </div>
+      </div>
+      <svg class="wave wave--bottom" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V40C1080 120 720 120 360 70 220 50 100 60 0 90Z" /></svg>
+    </section>
+
+    <!-- 7. engagement and eternity -->
     <section class="duo" aria-label="For a promise">
       <article class="duo__item rv">
-        <button class="duo__img" type="button" data-piece="promise" aria-label="Discover PROMISE"><img src="img/p/promise-macro-1254.jpg" alt="The baguette diamond set in the fold of the PROMISE ring's yellow-gold band" loading="lazy" width="1254" height="1254" /></button>
+        <button class="duo__img" type="button" data-piece="promise" aria-label="Discover PROMISE"><img class="px" src="img/p/promise-macro-1254.jpg" alt="The baguette diamond set in the fold of the PROMISE ring's yellow-gold band" loading="lazy" width="1254" height="1254" /></button>
         <p class="eyebrow eyebrow--ink">The engagement ring</p>
-        <h3 class="title">PROMISE</h3>
+        <h3 class="h3">SILAVU <em>PROMISE</em></h3>
         <p class="duo__line">A yellow-gold band that folds open to hold a single baguette diamond.</p>
         <button class="link" type="button" data-piece="promise">Discover</button>
       </article>
-      <article class="duo__item rv">
-        <button class="duo__img" type="button" data-piece="blush" aria-label="Discover BLUSH"><img src="img/p/blush-macro-1254.jpg" alt="Pink sapphires and diamond pavé on the BLUSH eternity ring, close" loading="lazy" width="1254" height="1254" /></button>
+      <article class="duo__item duo__item--low rv">
+        <button class="duo__img" type="button" data-piece="blush" aria-label="Discover BLUSH"><img class="px" src="img/p/blush-macro-1254.jpg" alt="Pink sapphires and diamond pavé on the BLUSH eternity ring, close" loading="lazy" width="1254" height="1254" /></button>
         <p class="eyebrow eyebrow--ink">The eternity ring</p>
-        <h3 class="title">BLUSH</h3>
+        <h3 class="h3">SILAVU <em>BLUSH</em></h3>
         <p class="duo__line">Radiant-cut pink sapphires all the way round, edged in diamonds.</p>
         <button class="link" type="button" data-piece="blush">Discover</button>
       </article>
     </section>
 
-    <section id="services" class="serv" aria-labelledby="serv-h">
-      <h2 id="serv-h" class="title">The SILAVU services</h2>
-      <ul class="serv__list" role="list">
-        <li class="svc rv"><span class="svc__img"><img src="img/p/necklace-detail-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>Private appointment</h3><p>An hour with a concierge and the whole collection, in our Tel Aviv or Dubai salon, or at home.</p><button class="link" type="button" data-open="book">Book an appointment</button></li>
-        <li class="svc rv"><span class="svc__img"><img src="img/box-open-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>The SILAVU box</h3><p>Every creation arrives in black lacquer edged in rose gold, the knot engraved on its lid.</p><button class="link" type="button" data-open="book">Book an appointment</button></li>
-        <li class="svc rv"><span class="svc__img"><img src="img/p/knot-clasp-900.jpg" alt="" loading="lazy" width="900" height="900" /></span><h3>Care for life</h3><p>Cleaning, polishing and a check of every claw, for as long as the piece is yours.</p><button class="link" type="button" data-open="book">Ask a concierge</button></li>
+    <!-- 8. the appointment -->
+    <section id="services" class="appt" aria-labelledby="appt-h">
+      <p class="eyebrow">By appointment · Tel Aviv · Dubai</p>
+      <h2 id="appt-h" class="h2">Tell us <em>what you have in mind.</em></h2>
+      <p class="appt__sub">A private viewing in our salons or at home, a piece from the collection, or something made for you. A concierge replies within a day.</p>
+      <div class="appt__acts"><button class="btn btn--light" type="button" data-open="book">Book a private viewing</button><a class="link link--light" href="mailto:concierge@silavu.com">concierge@silavu.com</a></div>
+      <ul class="perks" role="list">
+        <li><svg aria-hidden="true"><use href="#i-gem" /></svg><span>18K gold, natural diamonds</span></li>
+        <li><svg aria-hidden="true"><use href="#i-sign" /></svg><span>Signed by the house</span></li>
+        <li><svg aria-hidden="true"><use href="#i-care" /></svg><span>Care for life</span></li>
       </ul>
-    </section>
-
-    <section class="perks" aria-label="Why SILAVU">
-      <div class="perk"><svg aria-hidden="true"><use href="#i-gem" /></svg><h3>18K gold, natural diamonds</h3><p>White, yellow and rose gold, set by hand.</p></div>
-      <div class="perk"><svg aria-hidden="true"><use href="#i-hand" /></svg><h3>Chosen in the hand</h3><p>Private appointments, never a crowded counter.</p></div>
-      <div class="perk"><svg aria-hidden="true"><use href="#i-sign" /></svg><h3>Signed SILAVU</h3><p>Every piece carries the house name.</p></div>
-      <div class="perk"><svg aria-hidden="true"><use href="#i-care" /></svg><h3>Care for life</h3><p>Cleaned, polished and checked, always.</p></div>
-    </section>
-
-    <section class="news" aria-labelledby="news-h">
-      <h2 id="news-h" class="title">The SILAVU letter</h2>
-      <p>New creations and private events, a few times a year.</p>
-      <form class="news__form" id="news" novalidate>
-        <label class="sr" for="n-email">Email</label>
-        <input id="n-email" type="email" placeholder="Your email" autocomplete="email" required />
-        <button class="btn" type="submit">Subscribe</button>
-      </form>
-      <p class="news__msg" role="status" aria-live="polite"></p>
     </section>
   </main>
 
   <footer class="ft">
     <div class="ft__cols">
       <div><h3>Jewellery</h3><a href="#collection" data-cat="necklaces">Necklaces</a><a href="#collection" data-cat="earrings">Earrings</a><a href="#collection" data-cat="bracelets">Bracelets</a><a href="#collection" data-cat="rings">Rings</a></div>
-      <div><h3>The house</h3><a href="#signature">The signature</a><a href="#services">Services</a><a href="#" data-open="book">Salons: Tel Aviv · Dubai</a></div>
+      <div><h3>The house</h3><a href="#box">The house</a><a href="#worn">Up close</a><a href="#" data-open="book">Salons: Tel Aviv · Dubai</a></div>
       <div><h3>Client care</h3><a href="#" data-open="book">Book an appointment</a><a href="mailto:concierge@silavu.com">concierge@silavu.com</a><a href="#services">Care for life</a></div>
     </div>
     <a class="logo logo--ft" href="#top" aria-label="SILAVU, home"><svg class="logo__mark" aria-hidden="true"><use href="#mark" /></svg><span class="logo__word">SILAVU</span></a>
@@ -184,8 +220,8 @@
       <a href="#collection" data-cat="bracelets">Bracelets</a>
       <a href="#collection" data-cat="rings">Rings</a>
       <hr />
-      <a href="#signature">The signature</a>
-      <a href="#services">Services</a>
+      <a href="#box">The house</a>
+      <a href="#worn">Up close</a>
       <a href="#" data-open="book">Book an appointment</a>
     </nav>
   </aside>

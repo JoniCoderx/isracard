@@ -130,36 +130,33 @@ a private viewing". It hands off to the existing concierge form
 
 ## 14. Landing page sections
 
-Rebuilt in Phase 5 on the structure Messika and Cartier actually use. The
-owner rejected every art-directed version ("build it in a new manner, it all
-looks bad").
+Rebuilt in Phase 5 on the owner's one concrete reference: "organised, high
+level, and when you scroll things move like in test3". It uses test3's
+language (black and white chapters, light uppercase Jost with the second half
+of each line in grey, curved waves between chapters) on the organised house
+structure.
 
-1. Announcement bar: private appointments, "Book now".
-2. Header: Menu and links on the left, the logo centred, Appointment and the
-   wish list on the right. It steps aside while reading down and returns on
-   scroll up.
-3. **The signature moment (Phase 5, chosen by the owner):** the SILAVU box.
-   - The house's own film of the black lacquer box with the knot on its lid.
-   - Scrolling opens it and diamonds rise out. Desktop and phones each get
-     their own cut, every frame a keyframe, scrubbed by the scroll.
-   - Then "Seven creations, one signature" and "Discover the collection".
-   - The box returns among the services as "The SILAVU box".
-4. Campaign: the LUMIÈRE film full width, with one serif line and "Discover
-   SOUL".
-4. Explore the jewellery: four category tiles (Necklaces, Earrings,
-   Bracelets, Rings) that filter the collection.
-5. The collection: a product grid. Each card has the photograph (the worn
-   photograph on hover), name, type, metal swatch, "Price on request" and a
-   heart. Filter chips sit above it, and an appointment card fills the eighth
-   slot.
-6. Quick view: a side panel with the gallery, reference, description, specs,
-   "Book an appointment" and the heart.
-7. The signature: the film "The Choice" beside the story of the knot.
-8. PROMISE and BLUSH: the engagement and eternity rings as a double module.
-9. Services: private appointment, signed by the house, care for life.
-10. Four reassurances with line icons.
-11. The SILAVU letter.
-12. Footer.
+1. Announcement bar and header: Menu, links, the logo centred,
+   Appointment and the wish list.
+2. **The line of desire:** the LUMIÈRE film, with the words on its white side.
+   As you scroll, the film grows a little and the words rise away.
+3. **The signature:** test3's own drawing. One line writes "Silavu" by hand
+   across a black-and-white diagonal, exactly as far as the page has moved,
+   with the dot of the i and the sparks at the end.
+4. **Fine jewellery, made to be lived in:** the collection grid, with filters,
+   wish list, quick view and an appointment card.
+5. **The box:** held on screen while the scroll opens it. Its three lines come
+   in turn ("SILAVU signs every piece it makes" / "Each stone, chosen by eye"
+   / "Then made to your measure"), with a progress line and dots. A white
+   wave flattens as the chapter arrives.
+6. **Up close:** the three on-model photographs (ICON, SOUL, MOMENT). They
+   open like a curtain and drift slower than the page.
+7. **Light goes in. Fire comes out:** loose stones on black leather drift
+   apart at their own depths while the two lines arrive one at a time. A
+   wave hands over to the white.
+8. **PROMISE and BLUSH.**
+9. **Tell us what you have in mind:** the appointment and the reassurances.
+10. Footer.
 
 ## 15. The story
 
