@@ -1,4 +1,4 @@
-// The vitrine: seven niches in a wall of black leather. The wall drifts with the pointer (or a finger); selecting a
+// The vitrine: seven niches carved in a wall of honed basalt (rendered in Blender, tools/niche-blender.py). The wall drifts with the pointer (or a finger); selecting a
 // niche brings the camera close, beside the piece's details; ‹ › travel along the wall; Back returns to it.
 const BASE = import.meta.env.BASE_URL;
 const PHONE = matchMedia("(max-width: 760px)").matches;
@@ -7,56 +7,63 @@ const $ = (s) => document.querySelector(s);
 
 // The catalogue, as published (names, references, metals, sizes, descriptions); the wall's order and each niche's light.
 const P = [
-  { id: "knot", name: ["Mo", "ment"], type: "White gold bracelet", tint: "#a9bde0", w: 82,
+  { id: "knot", name: ["Mo", "ment"], type: "White gold bracelet", tint: "#a9bde0", w: 62,
     desc: "A delicate 18K white-gold chain, finished with the SILAVU signature in a polished sculptural form.",
     specs: [["Metal", "18K white gold"], ["Finish", "Polished"], ["Length", "16–19 cm"]], ref: "SLV·B·001" },
-  { id: "aura", name: ["Au", "ra"], type: "Diamond earrings", tint: "#e9b4c8", w: 70,
+  { id: "aura", name: ["Au", "ra"], type: "Diamond earrings", tint: "#e9b4c8", w: 50,
     desc: "The SILAVU signature as a pair of 18K white-gold studs, traced in pavé diamonds.",
     specs: [["Metal", "18K white gold"], ["Setting", "Pavé"], ["Fastening", "Butterfly back"]], ref: "SLV·E·001" },
-  { id: "ring", name: ["I", "con"], type: "Diamond ring", tint: "#f3eee4", w: 76,
+  { id: "ring", name: ["I", "con"], type: "Diamond ring", tint: "#f3eee4", w: 58,
     desc: "A sculptural 18K white-gold ring with the SILAVU signature set in pavé diamonds.",
     specs: [["Metal", "18K white gold"], ["Setting", "Pavé"], ["Size", "EU 47–58"]], ref: "SLV·R·001" },
-  { id: "pave", name: ["So", "ul"], type: "Diamond necklace", tint: "#ffcc8f", w: 90,
+  { id: "pave", name: ["So", "ul"], type: "Diamond necklace", tint: "#ffcc8f", w: 78,
     desc: "A fine 18K white-gold chain with a pavé SILAVU signature pendant at its centre.",
     specs: [["Metal", "18K white gold"], ["Setting", "Pavé"], ["Length", "42 cm"]], ref: "SLV·N·003" },
-  { id: "promise", name: ["Pro", "mise"], type: "Engagement ring", tint: "#ffd27a", w: 70,
+  { id: "promise", name: ["Pro", "mise"], type: "Engagement ring", tint: "#ffd27a", w: 54,
     desc: "A sculpted 18K yellow-gold band that folds open along its crown to hold a single baguette diamond.",
     specs: [["Metal", "18K yellow gold"], ["Stone", "One baguette diamond"], ["Size", "EU 47–58"]], ref: "SLV·R·002" },
-  { id: "blush", name: ["Blu", "sh"], type: "Eternity ring", tint: "#ff98b4", w: 46,
+  { id: "blush", name: ["Blu", "sh"], type: "Eternity ring", tint: "#ff98b4", w: 40,
     desc: "An 18K rose-gold eternity band of radiant-cut pink sapphires, edged on both sides in diamond pavé.",
     specs: [["Metal", "18K rose gold"], ["Stones", "Pink sapphires, diamond pavé"], ["Size", "EU 47–58"]], ref: "SLV·R·003" },
-  { id: "cadence", name: ["Ca", "dence"], type: "Diamond line bracelet", tint: "#b3d1ff", w: 84,
+  { id: "cadence", name: ["Ca", "dence"], type: "Diamond line bracelet", tint: "#b3d1ff", w: 72,
     desc: "A fine 18K white-gold line of baguette diamonds, with three round diamonds between each.",
     specs: [["Metal", "18K white gold"], ["Diamonds", "Baguette and round brilliant"], ["Length", "16–19 cm"]], ref: "SLV·B·002" },
 ];
 const N = P.length, pad = (n) => String(n).padStart(2, "0");
 
-// ---- build the wall ----
+// Where the render puts the niche's opening and the ledge, as fractions of its frame (the render's niche-meta.json).
+const OPEN = { l: 0.2518, r: 0.7482, t: 0.2695, b: 0.766 }, LEDGE = 0.757;
+
+// ---- build the wall: one rendered frame per niche, edge to edge, the house's photograph set on each ledge ----
 const track = $("#track"), wall = $("#wall");
+const frame = PHONE ? 600 : 900;
 track.innerHTML = P.map((p, i) => `
   <button class="niche" type="button" data-i="${i}" style="--tint:${p.tint};--pw:${p.w}%" aria-label="${p.name.join("")}, ${p.type}. Come closer">
-    <span class="niche__box"><span class="niche__lamp"></span><span class="niche__ledge"></span>
-      <img class="niche__piece" src="${BASE}img/cut/${p.id}-1200.webp" alt="" decoding="async" /></span>
-    <span class="niche__refl"><img src="${BASE}img/cut/${p.id}-700.webp" alt="" decoding="async" /></span>
+    <img class="niche__bg" src="${BASE}vitrine/${p.id}-${frame}.webp" alt="" decoding="async" ${i > 4 ? 'loading="lazy"' : ""} />
+    <span class="niche__in">
+      <span class="niche__piece" style="--src:url('${BASE}img/cut/${p.id}-1200.webp')"><img src="${BASE}img/cut/${p.id}-1200.webp" alt="" decoding="async" /></span>
+      <span class="niche__refl"><img src="${BASE}img/cut/${p.id}-700.webp" alt="" decoding="async" /></span>
+    </span>
     <span class="niche__label"><b>${p.name.join("")}</b><span>N°${pad(i + 1)} · ${p.type}</span></span>
   </button>`).join("");
 const niches = [...track.children];
+const R = document.documentElement.style;
+R.setProperty("--ol", OPEN.l); R.setProperty("--or", OPEN.r); R.setProperty("--ot", OPEN.t); R.setProperty("--ob", OPEN.b); R.setProperty("--ledge", LEDGE);
 
-// ---- geometry: niche size, positions, the wall's pan range ----
+// ---- geometry: frame size, positions, the wall's pan range ----
 let G = {};
 function layout() {
   const W = innerWidth, H = innerHeight;
-  const nh = PHONE ? Math.min(H * 0.5, W * 0.95) : Math.min(H * 0.56, W * 0.32);
-  const nw = nh * 0.66, gap = PHONE ? nw * 0.16 : nw * 0.2, side = PHONE ? W * 0.5 - nw / 2 : Math.max(W * 0.06, 40);
-  const width = side * 2 + N * nw + (N - 1) * gap;
-  const top = PHONE ? H * 0.22 : H * 0.17;
-  niches.forEach((n, i) => { n.style.left = `${side + i * (nw + gap)}px`; });
-  document.documentElement.style.setProperty("--nw", `${nw}px`);
-  document.documentElement.style.setProperty("--nh", `${nh}px`);
-  G = { W, H, nh, nw, gap, side, width, top, minPan: Math.min(0, W - width), maxPan: 0 };
+  const nh = PHONE ? H * 0.96 : H * 0.92, nw = nh * (2 / 3);
+  const width = N * nw;
+  const top = PHONE ? H * -0.06 : H * -0.05;
+  niches.forEach((n, i) => { n.style.left = `${i * nw}px`; });
+  R.setProperty("--nw", `${nw}px`);
+  R.setProperty("--nh", `${nh}px`);
+  G = { W, H, nh, nw, width, top, minPan: Math.min(0, W - width), maxPan: 0 };
   if (cur < 0) { setPan(clampPan(G.pan ?? centreOn(3)), true); } else close(cur, true);
 }
-const centreOn = (i) => G.W / 2 - (G.side + i * (G.nw + G.gap) + G.nw / 2);
+const centreOn = (i) => G.W / 2 - (i + 0.5) * G.nw;
 const clampPan = (x) => Math.max(G.minPan, Math.min(G.maxPan, x));
 
 // ---- the wall drifts: with the pointer on desktop, under a finger on a phone ----
@@ -69,7 +76,7 @@ let drag = null;
 wall.addEventListener("pointerdown", (e) => { if (cur >= 0) return; drag = { x: e.clientX, p: panTo, moved: false }; });
 addEventListener("pointermove", (e) => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 6) drag.moved = true; if (drag.moved) setPan(clampPan(drag.p + dx * (PHONE ? 1.2 : 1)), true); });
 addEventListener("pointerup", () => { if (drag && drag.moved && PHONE) { // settle on the nearest niche
-  const i = Math.round((G.W / 2 - pan - G.side - G.nw / 2) / (G.nw + G.gap)); setPan(clampPan(centreOn(Math.max(0, Math.min(N - 1, i))))); }
+  const i = Math.round((G.W / 2 - pan) / G.nw - 0.5); setPan(clampPan(centreOn(Math.max(0, Math.min(N - 1, i))))); }
   setTimeout(() => (drag = null), 0); });
 addEventListener("wheel", (e) => { if (cur >= 0) return; setPan(clampPan(panTo - (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY))); }, { passive: true });
 
@@ -79,9 +86,10 @@ const detail = $("#detail");
 function close(i, instant) {
   cur = i;
   const p = P[i], n = niches[i];
-  const targetH = PHONE ? G.H * 0.44 : G.H * 0.84, s = targetH / G.nh;
-  const cx = parseFloat(n.style.left) + G.nw / 2, cy = G.nh / 2;
-  const X = PHONE ? G.W / 2 : G.W * 0.64, Y = PHONE ? G.H * 0.27 : G.H * 0.5;
+  // bring the opening close: tall beside the words on a desktop, above the sheet on a phone
+  const oh = (OPEN.b - OPEN.t) * G.nh, targetH = PHONE ? G.H * 0.37 : G.H * 0.8, s = targetH / oh;
+  const cx = parseFloat(n.style.left) + G.nw * (OPEN.l + OPEN.r) / 2, cy = G.nh * (OPEN.t + OPEN.b) / 2;
+  const X = PHONE ? G.W / 2 : G.W * 0.64, Y = PHONE ? G.H * 0.3 : G.H * 0.5;
   track.classList.toggle("is-gliding", !instant && !REDUCED);
   track.style.transform = `translate3d(${(X - s * cx).toFixed(1)}px, ${(Y - s * cy).toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
   niches.forEach((e, k) => e.classList.toggle("is-on", k === i));

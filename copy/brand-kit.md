@@ -235,3 +235,21 @@ to start over in white.
 - The generated velvet hero, film and images from Phases 2 and 3 are kept in
   `assets/` but not used.
 
+
+## 19. The vitrine (`vitrine.html`)
+
+Built on the owner's reference video: a dark wall of lit niches, one piece in
+each.
+
+- **The wall:** seven niches carved in honed basalt, each with a lamp in its
+  ceiling that draws a scallop of light on the back wall and a polished black
+  slab for a ledge. The owner asked for it to be "more realistic" and chose
+  free renders now and photographed niches later. So the niches are rendered
+  in Blender (`website/tools/niche-blender.py`), an exception to the ban on
+  rendered imagery that covers the setting only.
+- **The light:** each lamp carries a faint tint of its piece (cool for white
+  gold, warm for yellow, pink for BLUSH).
+- **The pieces:** always the house's own photographs, set on the ledge with a
+  contact shadow, a top-lit shade and a reflection in the slab.
+- **Later:** photographed niches, one per piece, once Higgsfield credits are
+  topped up. Each spend is priced first and waits for the owner's "go".

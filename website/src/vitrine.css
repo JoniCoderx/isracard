@@ -1,4 +1,4 @@
-/* The vitrine: SILAVU's seven creations, each in its own lit niche in a wall of black leather.
+/* The vitrine: SILAVU's seven creations, each in its own lit niche carved in a wall of honed basalt.
    Select one and the camera comes closer; its details arrive beside it. */
 
 @font-face { font-family: "Jost"; font-style: normal; font-weight: 300 600; font-display: swap; src: url("/fonts/jost-normal-latin-b58a58.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
@@ -9,6 +9,7 @@
   --ink: #f3efe8;
   --dim: #9c958b;
   --black: #060606;
+  --stone: #070606;
   --sans: "Jost", "Helvetica Neue", Arial, sans-serif;
   --serif: "Cormorant", Georgia, serif;
   --gut: clamp(18px, 3.4vw, 56px);
@@ -24,51 +25,45 @@ p, h1, h2, dl { margin: 0; }
 :focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
 
 /* ---- the scene ---- */
-.scene { position: fixed; inset: 0; overflow: hidden; background: #050505; }
+.scene { position: fixed; inset: 0; overflow: hidden; background: var(--stone); }
 .wall { position: absolute; inset: 0; touch-action: none; cursor: grab; }
 .wall:active { cursor: grabbing; }
-.wall::before { content: ""; position: absolute; inset: -4%; background: url("../desk/leather-2560.jpg") center / cover; filter: brightness(.42) contrast(1.1) saturate(.6); transform: scale(var(--wallz, 1)); transition: transform 1.1s var(--zoom), filter 1.1s var(--zoom); }
-body.is-close .wall::before { filter: brightness(.22) contrast(1.1) saturate(.5); }
 .vignette { position: absolute; inset: 0; pointer-events: none; background:
-  radial-gradient(ellipse 75% 70% at 50% 42%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .78) 100%),
-  linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, .7)); }
+  radial-gradient(ellipse 80% 75% at 50% 46%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, .55) 100%),
+  linear-gradient(rgba(0, 0, 0, .45), rgba(0, 0, 0, 0) 16%, rgba(0, 0, 0, 0) 78%, rgba(0, 0, 0, .5)); }
 
 .track { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
 .track.is-gliding { transition: transform 1.15s var(--zoom); }
 
-/* a niche: leather lit from a lamp in its ceiling, the piece standing on its ledge */
-.niche { all: unset; position: absolute; top: 0; cursor: pointer; display: block; width: var(--nw); height: var(--nh); --tint: #fff; transition: opacity .8s ease, filter .6s ease; }
-.niche__box { position: absolute; inset: 0; overflow: hidden; border-radius: 2px;
-  background:
-    radial-gradient(ellipse 70% 62% at 50% -4%, color-mix(in srgb, var(--tint) 62%, transparent), transparent 68%),
-    radial-gradient(ellipse 40% 26% at 50% 78%, color-mix(in srgb, var(--tint) 22%, transparent), transparent 70%),
-    linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .55)),
-    url("../desk/leather-1600.jpg") center / 260% auto;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05), inset 18px 0 34px -14px rgba(0, 0, 0, .9), inset -18px 0 34px -14px rgba(0, 0, 0, .9), inset 0 26px 40px -20px rgba(0, 0, 0, .85), 0 30px 60px rgba(0, 0, 0, .55); }
-.niche__box::before { content: ""; position: absolute; left: 22%; right: 22%; top: 0; height: 88%; pointer-events: none;
-  background: linear-gradient(color-mix(in srgb, var(--tint) 30%, transparent), transparent 85%); clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); opacity: .55; mix-blend-mode: screen; }
-.niche__lamp { position: absolute; left: 50%; top: 3.5%; width: 26%; height: 2.2%; transform: translateX(-50%); border-radius: 50%; background: #fffaf0; box-shadow: 0 0 14px 4px color-mix(in srgb, var(--tint) 70%, #fff), 0 0 40px 10px color-mix(in srgb, var(--tint) 35%, transparent); }
-.niche__ledge { position: absolute; left: 0; right: 0; bottom: 0; height: 15%; background: linear-gradient(rgba(255, 255, 255, .06), rgba(0, 0, 0, .55)), linear-gradient(90deg, rgba(0, 0, 0, .6), color-mix(in srgb, var(--tint) 14%, #1a1715), rgba(0, 0, 0, .6)); border-top: 1px solid rgba(255, 255, 255, .1); }
-.niche__piece { position: absolute; left: 50%; bottom: 13%; width: var(--pw, 74%); max-height: 64%; object-fit: contain; object-position: bottom; transform: translateX(-50%);
-  filter: drop-shadow(0 16px 14px rgba(0, 0, 0, .65)) brightness(.96) contrast(1.06); transition: transform .6s var(--zoom); }
-.niche__refl { position: absolute; left: 0; right: 0; top: calc(100% + 6px); height: 34%; overflow: hidden; pointer-events: none; opacity: .32;
-  -webkit-mask-image: linear-gradient(rgba(0, 0, 0, .85), rgba(0, 0, 0, 0) 80%); mask-image: linear-gradient(rgba(0, 0, 0, .85), rgba(0, 0, 0, 0) 80%); }
-.niche__refl::before { content: ""; position: absolute; inset: 0; background: linear-gradient(color-mix(in srgb, var(--tint) 25%, transparent), transparent 70%); }
-.niche__refl img { position: absolute; left: 50%; top: 0; width: var(--pw, 74%); transform: translateX(-50%) scaleY(-1); transform-origin: top; filter: blur(1.5px) brightness(.8); }
-.niche__label { position: absolute; left: 0; right: 0; top: calc(100% + 18px); display: grid; justify-items: center; gap: 4px; text-align: center; opacity: 0; transform: translateY(6px); transition: opacity .3s ease, transform .3s ease; pointer-events: none; }
-.niche__label b { font: 400 1.15rem/1 var(--serif); letter-spacing: .02em; }
-.niche__label span { font: 500 .58rem/1 var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--dim); }
+/* a niche: the rendered frame of stone, and on its ledge the house's photograph of the piece, shaded by the same lamp */
+.niche { all: unset; position: absolute; top: 0; cursor: pointer; display: block; width: var(--nw); height: var(--nh); transition: opacity .8s ease; }
+.niche__bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.niche__in { position: absolute; left: calc(var(--ol) * 100%); right: calc((1 - var(--or)) * 100%); top: calc(var(--ot) * 100%); bottom: calc((1 - var(--ob)) * 100%); }
+.niche__piece { position: absolute; left: 50%; bottom: calc((var(--ob) - var(--ledge)) / (var(--ob) - var(--ot)) * 100%); width: var(--pw, 74%); transform: translateX(-50%); transform-origin: 50% 100%; transition: transform .6s var(--zoom); }
+.niche__piece img { display: block; width: 100%; height: auto; max-height: calc(var(--nh) * .22); object-fit: contain; object-position: 50% 100%;
+  filter: drop-shadow(0 calc(var(--nh) * .006) calc(var(--nh) * .006) rgba(0, 0, 0, .7)) brightness(.93) contrast(1.08); }
+/* the lamp is above: the piece is brightest at its crown and falls into shade at its foot */
+.niche__piece::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(color-mix(in srgb, var(--tint) 16%, transparent), transparent 40%, rgba(8, 6, 4, .38));
+  -webkit-mask: var(--src) 50% 100% / contain no-repeat; mask: var(--src) 50% 100% / contain no-repeat; }
+/* where it touches the stone */
+.niche__piece::before { content: ""; position: absolute; left: 12%; right: 12%; bottom: -2%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .85), rgba(0, 0, 0, 0)); }
+/* and in the polished slab */
+.niche__refl { position: absolute; left: 0; right: 0; top: calc((var(--ledge) - var(--ot)) / (var(--ob) - var(--ot)) * 100%); height: 9%; overflow: hidden; pointer-events: none; opacity: .3;
+  -webkit-mask-image: linear-gradient(#000, transparent 85%); mask-image: linear-gradient(#000, transparent 85%); }
+.niche__refl img { position: absolute; left: 50%; top: 0; width: var(--pw, 74%); max-height: calc(var(--nh) * .22); object-fit: contain; object-position: 50% 100%; transform: translateX(-50%) scaleY(-1); transform-origin: top; filter: blur(1px) brightness(.75); }
+.niche__label { position: absolute; left: 0; right: 0; top: calc(var(--ob) * 100% + 3.4%); display: grid; justify-items: center; gap: 7px; text-align: center; opacity: .62; transition: opacity .3s ease; pointer-events: none; }
+.niche__label b { font: 400 1.2rem/1 var(--serif); letter-spacing: .04em; }
+.niche__label span { font: 500 .54rem/1 var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--dim); }
 @media (hover: hover) {
-  .niche:hover .niche__label, .niche:focus-visible .niche__label { opacity: 1; transform: none; }
-  .niche:hover .niche__piece { transform: translateX(-50%) translateY(-3%) scale(1.03); }
+  .niche:hover .niche__label, .niche:focus-visible .niche__label { opacity: 1; }
+  .niche:hover .niche__piece { transform: translateX(-50%) translateY(-2%) scale(1.03); }
 }
 .niche:focus-visible { outline: none; }
-.niche:focus-visible .niche__box { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5), 0 30px 60px rgba(0, 0, 0, .55); }
-body.is-close .niche { opacity: .06; filter: blur(3px); pointer-events: none; }
-body.is-close .niche.is-on { opacity: 1; filter: none; }
+.niche:focus-visible .niche__label b { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+body.is-close .niche { opacity: .2; pointer-events: none; }
+body.is-close .niche.is-on { opacity: 1; }
 body.is-close .niche__label { opacity: 0 !important; }
-
-.floor { position: absolute; left: 0; right: 0; bottom: 0; height: 30%; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .55)); }
 
 /* ---- the words over the scene ---- */
 .top { position: fixed; left: 0; right: 0; top: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: calc(env(safe-area-inset-top, 0px) + 22px) var(--gut) 0; pointer-events: none; }
@@ -78,17 +73,17 @@ body.is-close .niche__label { opacity: 0 !important; }
 .brand__sub { font: 400 .54rem/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--dim); }
 .pill { display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 18px; border-radius: 999px; background: rgba(20, 18, 16, .55); border: 1px solid rgba(255, 255, 255, .1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   font: 400 .66rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
-.pill a { text-decoration: none; padding: 6px 0; }
+.pill a { text-decoration: none; padding: 6px 0; white-space: nowrap; }
 .pill a:hover { color: var(--tint); }
 .pill span { color: var(--dim); }
 .pill__wish { display: grid; place-items: center; width: 24px; height: 24px; padding: 0 !important; border-radius: 50%; background: var(--tint); color: #111; font-weight: 600; letter-spacing: 0; transition: background-color .6s ease; }
 
-.intro { position: fixed; left: var(--gut); bottom: clamp(26px, 6vh, 64px); z-index: 4; display: grid; gap: 10px; max-width: 30rem; transition: opacity .5s ease, transform .5s ease; }
+.intro { position: fixed; left: var(--gut); bottom: clamp(22px, 4.5vh, 48px); z-index: 4; display: grid; gap: 10px; max-width: 30rem; transition: opacity .5s ease, transform .5s ease; }
 .kick { font: 500 .58rem/1.4 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--dim); }
-.intro h1 { font: 400 clamp(2.4rem, 4.6vw, 4.2rem)/1 var(--serif); letter-spacing: -.005em; }
+.intro h1 { font: 400 clamp(2.2rem, 3.4vw, 3.2rem)/1 var(--serif); letter-spacing: -.005em; }
 .intro h1 em, .dname em { font-style: italic; color: var(--tint); transition: color .6s ease; }
 .intro__sub { color: #c9c3b9; font-size: .88rem; }
-.hint { position: fixed; right: var(--gut); bottom: clamp(26px, 6vh, 64px); z-index: 4; display: flex; align-items: center; gap: 10px; font: 500 .58rem/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--dim); transition: opacity .5s ease; }
+.hint { position: fixed; right: var(--gut); bottom: clamp(22px, 4.5vh, 48px); z-index: 4; display: flex; align-items: center; gap: 10px; font: 500 .58rem/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--dim); transition: opacity .5s ease; }
 .hint__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tint); box-shadow: 0 0 0 0 color-mix(in srgb, var(--tint) 60%, transparent); animation: ping 2.2s ease-out infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--tint) 60%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
 body.is-close .intro, body.is-close .hint { opacity: 0; transform: translateY(10px); pointer-events: none; }
@@ -122,6 +117,7 @@ body.is-close .intro, body.is-close .hint { opacity: 0; transform: translateY(10
   .hint { left: var(--gut); right: auto; bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 72px); }
   .brand__sub { display: none; }
   .pill { gap: 9px; padding: 7px 8px 7px 14px; font-size: .6rem; letter-spacing: .1em; }
+  .pill > a:first-child, .pill > a:first-child + span { display: none; }   /* the brand already returns to the wall */
   .detail { left: 0; right: 0; top: auto; bottom: 0; width: auto; max-height: 52svh; overflow-y: auto; padding: 22px var(--gut) calc(env(safe-area-inset-bottom, 0px) + 18px); gap: 12px;
     background: linear-gradient(rgba(6, 6, 6, 0), rgba(6, 6, 6, .92) 14%, #060606); transform: translateY(24px); }
   .detail.is-on { transform: none; }
@@ -130,6 +126,6 @@ body.is-close .intro, body.is-close .hint { opacity: 0; transform: translateY(10
   .dnav { margin-top: 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .track.is-gliding, .wall::before, .detail, .niche, .niche__piece { transition: none; }
+  .track.is-gliding, .detail, .niche, .niche__piece { transition: none; }
   .hint__dot { animation: none; }
 }
