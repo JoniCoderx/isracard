@@ -10,7 +10,7 @@
 # This is the sequence version (website/tools/soul-seq.py): the same build, then
 # one camera move rendered frame by frame for the page's scroll.
 # Usage: blender -b -P soul-seq.py -- <mark.json> <pave.json> <outdir> [size] [samples] [from] [to] [step]
-import bpy, bmesh, json, math, sys, random
+import bpy, bmesh, json, math, sys, random, os
 from mathutils import Vector, Matrix, Quaternion
 
 argv = sys.argv[sys.argv.index("--") + 1:]
@@ -220,7 +220,7 @@ for o in list(sc.collection.objects):   # and so do the lights, the cards and re
         if o.parent is ROOT: mw = o.matrix_world.copy(); o.parent = None; o.matrix_world = mw
 for f in range(F0, F1 + 1, STEP):
     t = f / (NF - 1)
-    spin = keys(t, [(0, -2 * math.pi - 0.45), (0.3, -0.35), (0.55, 0.5), (0.78, -0.2), (1, 0)])        # turns about its own upright axis
+    spin = keys(t, [(0, -0.45), (0.11, 1.15), (0.21, -1.1), (0.3, -0.35), (0.55, 0.5), (0.78, -0.2), (1, 0)])   # sways on its upright axis (never far enough to show its back: the mark is never seen mirrored)
     tilt = keys(t, [(0, 0.5), (0.3, 0.12), (0.5, -0.32), (0.7, 0.25), (1, 0.06)])              # leans to catch the light
     drop = keys(t, [(0, 5), (0.28, 0), (1, 0)])                                                 # falls in from above (mm)
     fr = keys(t, [(0, 40), (0.3, 30), (0.5, 9), (0.66, 7), (0.82, 22), (1, 30)])                 # mm of the piece across the frame
@@ -232,6 +232,7 @@ for f in range(F0, F1 + 1, STEP):
     tgt = UP @ Vector((pan, 0.2 + rise, DEPTH / 2))
     co.location = tgt + Vector((0, -dist, 0))
     co.rotation_euler = (math.pi / 2, 0, 0)
+    if os.path.exists(f"{OUTDIR}/f{f:03d}.png"): continue
     sc.render.filepath = f"{OUTDIR}/f{f:03d}.png"
     bpy.ops.render.render(write_still=True)
     print("FRAME", f, flush=True)

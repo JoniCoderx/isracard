@@ -19,7 +19,8 @@ p,h1,h2{margin:0}
 :root{--sans:"Jost","Helvetica Neue",Arial,sans-serif;--serif:"Cormorant",Georgia,serif;--gut:clamp(18px,3.6vw,60px);--gold:#a3803a;--ivory:#f1ece3;--ink:#1a1814}
 
 /* the header, as in D */
-.top{position:fixed;z-index:20;inset:0 0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 22px) var(--gut) 0;pointer-events:none}
+.top{position:fixed;z-index:20;inset:0 0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 22px) var(--gut) 14px;pointer-events:none;transition:background-color .3s ease}
+.top.solid{background:rgba(241,236,227,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .top>*{pointer-events:auto}
 .top nav{display:flex;gap:26px;font:500 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase}.top nav.r{justify-content:flex-end}.top a{text-decoration:none}
 .brand{display:grid;justify-items:center;gap:7px;text-decoration:none}.brand b{font:500 18px/1 var(--sans);letter-spacing:.6em;padding-left:.6em}.brand span{font:400 italic 13px/1 var(--serif);color:#6d6559;letter-spacing:.06em}
@@ -35,12 +36,14 @@ p,h1,h2{margin:0}
 .arch::after{inset:12px;border:1px solid rgba(163,128,58,.35)}
 .arch i{position:absolute;inset:0;border-radius:999px 999px 0 0;background:linear-gradient(#ebe4d8,#f1ece3 70%);box-shadow:inset 0 30px 60px -30px rgba(80,60,30,.18)}
 /* the word behind */
-.word{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) translateX(var(--wx,0));font:300 clamp(9rem,30vw,30rem)/1 var(--serif);letter-spacing:-.04em;color:#e6dfd2;white-space:nowrap;user-select:none;pointer-events:none}
-.word i{color:#e3d6bd}
+.word{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) translateX(var(--wx,0));font:300 clamp(9rem,30vw,30rem)/1 var(--serif);letter-spacing:-.04em;color:rgba(205,190,160,.28);white-space:nowrap;user-select:none;pointer-events:none}
+.word i{color:rgba(190,160,100,.3)}
 /* the piece */
-canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);transform:translate(-50%,-50%)}
+canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);transform:translate(-50%,-50%);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(transparent,#000 9%,#000 91%,transparent);mask-composite:intersect}
 /* the words, in turn */
-.beat{position:absolute;display:grid;gap:14px;max-width:24rem;opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.beat{position:absolute;display:grid;gap:14px;max-width:21rem;opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1);pointer-events:none}
 .beat.on{opacity:1;transform:none;pointer-events:auto}
 .beat.l{left:var(--gut);top:50%;margin-top:-4rem;text-align:left}
 .beat.r{right:var(--gut);top:50%;margin-top:-4rem;text-align:right;justify-items:end}
@@ -80,10 +83,11 @@ canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);trans
 
 @media (max-width:760px){
   .top{grid-template-columns:1fr auto}.top nav.l{display:none}.brand{justify-items:start}.brand b{padding-left:0}.top nav.r a:not(:last-child){display:none}
-  .arch,.word,canvas{top:40%}
+  .arch,.word,canvas{top:36%}
   .glow{background:radial-gradient(ellipse 70% 40% at 50% 40%,#fbf8f2 0%,rgba(251,248,242,0) 70%)}
-  .beat.l,.beat.r{left:var(--gut);right:var(--gut);top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);margin:0;max-width:none;text-align:center;justify-items:center}
-  .beat h1,.beat h2{font-size:2.5rem}.beat p{font-size:.92rem}
+  .beat.l,.beat.r{left:0;right:0;top:auto;bottom:0;margin:0;max-width:none;text-align:center;justify-items:center;gap:10px;
+    padding:56px var(--gut) calc(env(safe-area-inset-bottom,0px) + 92px);background:linear-gradient(rgba(241,236,227,0),rgba(241,236,227,.94) 48px,#f1ece3)}
+  .beat h1,.beat h2{font-size:2.3rem}.beat p{font-size:.9rem;line-height:1.5}
   .count{font-size:3.6rem}
   .cue{display:none}
   .row{grid-template-columns:repeat(3,1fr);gap:10px}.row b{font-size:1.2rem;margin-top:12px}.row small{display:none}
@@ -97,8 +101,8 @@ canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);trans
 <section class="stage" id="stage" aria-label="SOUL, the knot in diamonds">
   <div class="hold">
     <div class="glow"></div>
-    <div class="word" aria-hidden="true">So<i>ul</i></div>
     <div class="arch" aria-hidden="true"><i></i></div>
+    <div class="word" aria-hidden="true">So<i>ul</i></div>
     <canvas id="soul" role="img" aria-label="The SOUL necklace, the SILAVU knot in white gold and pavé diamonds, turning in the light"></canvas>
 
     <div class="beat l on" data-from="0" data-to=".2"><p class="kick">Collection N°1</p><h1>The knot, <i>in diamonds</i></h1><div class="rule"></div></div>
@@ -133,7 +137,7 @@ canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);trans
 // coarse to fine, so the move is whole from the start and sharpens as the rest arrive.
 (() => {
   const NF = 96, stage = document.getElementById("stage"), cv = document.getElementById("soul"), cx = cv.getContext("2d");
-  const root = document.documentElement.style, beats = [...document.querySelectorAll(".beat")];
+  const top = document.querySelector(".top"), root = document.documentElement.style, beats = [...document.querySelectorAll(".beat")];
   const PHONE = matchMedia("(max-width: 760px)").matches, REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const dir = `soul/${PHONE ? 600 : 864}/`;
   const bm = new Array(NF), order = [];
@@ -150,7 +154,7 @@ canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);trans
 
   function size() {
     const W = innerWidth, H = innerHeight;
-    const cs = PHONE ? Math.min(W * 1.08, H * 0.62) : Math.min(H * 0.86, W * 0.5);
+    const cs = PHONE ? Math.min(W * 1.04, H * 0.56) : Math.min(H * 0.86, W * 0.44);
     root.setProperty("--cs", `${cs}px`); root.setProperty("--aw", `${cs * 0.62}px`);
     const d = Math.min(devicePixelRatio || 1, 2); cv.width = cv.height = Math.round(Math.min(cs * d, PHONE ? 600 : 864)); shown = -1;
   }
@@ -174,6 +178,7 @@ canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);trans
     root.setProperty("--wx", `${((0.5 - t) * 18).toFixed(2)}vw`);
     root.setProperty("--p", t.toFixed(4));
     document.getElementById("cue").style.opacity = t > 0.02 ? 0 : 1;
+    top.classList.toggle("solid", stage.getBoundingClientRect().bottom < 70);
     for (const b of beats) b.classList.toggle("on", t >= +b.dataset.from && t < +b.dataset.to);
     if (now !== want) tick();
   }
