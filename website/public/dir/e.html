@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex" />
+<title>SILAVU — Soul, in the arch</title>
+<link rel="preload" as="fetch" href="soul/864/f000.webp" crossorigin />
+<style>
+@font-face{font-family:"Jost";font-weight:300 600;font-display:swap;src:url("../fonts/jost-normal-latin-b58a58.woff2") format("woff2")}
+@font-face{font-family:"Cormorant";font-weight:300 700;font-display:swap;src:url("../fonts/cormorant-normal-latin-d80df8.woff2") format("woff2")}
+@font-face{font-family:"Cormorant";font-style:italic;font-weight:300 700;font-display:swap;src:url("../fonts/cormorant-italic-latin-6f2f5c.woff2") format("woff2")}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#f1ece3;color:#1a1814;font:400 15px/1.6 "Jost","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+img,canvas{display:block;max-width:100%}
+a{color:inherit}
+p,h1,h2{margin:0}
+:root{--sans:"Jost","Helvetica Neue",Arial,sans-serif;--serif:"Cormorant",Georgia,serif;--gut:clamp(18px,3.6vw,60px);--gold:#a3803a;--ivory:#f1ece3;--ink:#1a1814}
+
+/* the header, as in D */
+.top{position:fixed;z-index:20;inset:0 0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 22px) var(--gut) 0;pointer-events:none}
+.top>*{pointer-events:auto}
+.top nav{display:flex;gap:26px;font:500 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase}.top nav.r{justify-content:flex-end}.top a{text-decoration:none}
+.brand{display:grid;justify-items:center;gap:7px;text-decoration:none}.brand b{font:500 18px/1 var(--sans);letter-spacing:.6em;padding-left:.6em}.brand span{font:400 italic 13px/1 var(--serif);color:#6d6559;letter-spacing:.06em}
+
+/* the stage: held on screen while the scroll moves the piece */
+.stage{position:relative;height:620vh}
+.hold{position:sticky;top:0;height:100svh;overflow:hidden}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 46% 52% at 50% 54%,#fbf8f2 0%,rgba(251,248,242,0) 70%);opacity:var(--glow,1)}
+/* the arch: the piece's home; it opens out of the way while the piece comes close, then closes around it again */
+.arch{position:absolute;left:50%;top:54%;width:var(--aw);aspect-ratio:3/4.3;transform:translate(-50%,-50%) scale(var(--as,1));opacity:var(--ao,1);will-change:transform,opacity}
+.arch::before,.arch::after{content:"";position:absolute;inset:0;border-radius:999px 999px 0 0}
+.arch::before{border:1px solid var(--gold)}
+.arch::after{inset:12px;border:1px solid rgba(163,128,58,.35)}
+.arch i{position:absolute;inset:0;border-radius:999px 999px 0 0;background:linear-gradient(#ebe4d8,#f1ece3 70%);box-shadow:inset 0 30px 60px -30px rgba(80,60,30,.18)}
+/* the word behind */
+.word{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) translateX(var(--wx,0));font:300 clamp(9rem,30vw,30rem)/1 var(--serif);letter-spacing:-.04em;color:#e6dfd2;white-space:nowrap;user-select:none;pointer-events:none}
+.word i{color:#e3d6bd}
+/* the piece */
+canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);transform:translate(-50%,-50%)}
+/* the words, in turn */
+.beat{position:absolute;display:grid;gap:14px;max-width:24rem;opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.beat.on{opacity:1;transform:none;pointer-events:auto}
+.beat.l{left:var(--gut);top:50%;margin-top:-4rem;text-align:left}
+.beat.r{right:var(--gut);top:50%;margin-top:-4rem;text-align:right;justify-items:end}
+.kick{font:500 11px/1.4 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.beat h1,.beat h2{font:300 clamp(2.6rem,4.4vw,4.6rem)/.98 var(--serif);letter-spacing:-.01em}
+.beat h1 i,.beat h2 i{color:var(--gold)}
+.beat p{color:#4a443b;max-width:28ch}
+.rule{width:64px;height:1px;background:var(--gold)}
+.btn{display:inline-block;padding:17px 30px;background:var(--ink);color:var(--ivory);text-decoration:none;font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;transition:transform .12s ease}
+.btn:active{transform:scale(.97)}
+.link{font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:8px}
+.count{font:300 clamp(4rem,7vw,7rem)/.9 var(--serif);color:var(--gold)}
+/* the scroll cue and the progress */
+.cue{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);transform:translateX(-50%);display:grid;justify-items:center;gap:10px;font:500 10px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:#7a7266;transition:opacity .4s ease}
+.cue span{width:1px;height:38px;background:linear-gradient(var(--gold),transparent);animation:drip 2s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.prog{position:absolute;left:var(--gut);right:var(--gut);bottom:calc(env(safe-area-inset-bottom,0px) + 22px);height:1px;background:rgba(163,128,58,.22)}
+.prog b{position:absolute;inset:0;background:var(--gold);transform-origin:left;transform:scaleX(var(--p,0))}
+.load{position:absolute;right:var(--gut);bottom:calc(env(safe-area-inset-bottom,0px) + 34px);font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:#9a917f;transition:opacity .4s ease}
+
+/* worn, in three arches (as in D) */
+.trio{padding:clamp(70px,10vw,140px) var(--gut);background:var(--ink);color:var(--ivory);text-align:center}
+.trio h2{font:300 clamp(2.4rem,4.6vw,4.2rem)/1 var(--serif);margin:14px 0 clamp(36px,5vw,64px)}.trio h2 i{color:#d2b06a}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,300px));justify-content:center;gap:clamp(12px,3vw,48px)}
+.row a{text-decoration:none}
+.pic{position:relative;border-radius:999px 999px 0 0;overflow:hidden;aspect-ratio:3/4.4;background:#2a2621}
+.pic img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.pic.seen img{transform:none}
+.pic::after{content:"";position:absolute;inset:10px;border:1px solid rgba(210,176,106,.5);border-radius:999px 999px 0 0}
+.row b{display:block;margin-top:18px;font:400 1.7rem/1 var(--serif)}.row small{font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:#a59c8d}
+.end{padding:clamp(70px,10vw,130px) var(--gut);text-align:center;display:grid;justify-items:center;gap:22px}
+.end h2{font:300 clamp(2.4rem,4.6vw,4.2rem)/1 var(--serif)}.end h2 i{color:var(--gold)}
+.end p{color:#4a443b;max-width:40ch}
+
+.dirtag{position:fixed;z-index:50;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 36px);transform:translateX(-50%);display:flex;gap:6px;padding:6px;border-radius:999px;background:rgba(17,17,17,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:500 11px/1 var(--sans);letter-spacing:.12em}
+.dirtag a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;opacity:.7}.dirtag a.on{background:#fff;color:#111;opacity:1}
+
+@media (max-width:760px){
+  .top{grid-template-columns:1fr auto}.top nav.l{display:none}.brand{justify-items:start}.brand b{padding-left:0}.top nav.r a:not(:last-child){display:none}
+  .arch,.word,canvas{top:40%}
+  .glow{background:radial-gradient(ellipse 70% 40% at 50% 40%,#fbf8f2 0%,rgba(251,248,242,0) 70%)}
+  .beat.l,.beat.r{left:var(--gut);right:var(--gut);top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);margin:0;max-width:none;text-align:center;justify-items:center}
+  .beat h1,.beat h2{font-size:2.5rem}.beat p{font-size:.92rem}
+  .count{font-size:3.6rem}
+  .cue{display:none}
+  .row{grid-template-columns:repeat(3,1fr);gap:10px}.row b{font-size:1.2rem;margin-top:12px}.row small{display:none}
+}
+@media (prefers-reduced-motion:reduce){.cue span{animation:none}.beat{transition:none}.pic img{transform:none;transition:none}}
+</style>
+</head>
+<body>
+<header class="top"><nav class="l"><a href="#">Collection</a><a href="#">The house</a></nav><a class="brand" href="#"><b>SILAVU</b><span>Maison de joaillerie</span></a><nav class="r"><a href="#">Wish list</a><a href="mailto:concierge@silavu.com">Appointment</a></nav></header>
+<main>
+<section class="stage" id="stage" aria-label="SOUL, the knot in diamonds">
+  <div class="hold">
+    <div class="glow"></div>
+    <div class="word" aria-hidden="true">So<i>ul</i></div>
+    <div class="arch" aria-hidden="true"><i></i></div>
+    <canvas id="soul" role="img" aria-label="The SOUL necklace, the SILAVU knot in white gold and pavé diamonds, turning in the light"></canvas>
+
+    <div class="beat l on" data-from="0" data-to=".2"><p class="kick">Collection N°1</p><h1>The knot, <i>in diamonds</i></h1><div class="rule"></div></div>
+    <div class="beat r" data-from=".24" data-to=".44"><span class="count">163</span><h2>diamonds, <i>matched by eye</i></h2><p>Every brilliant in the pavé is chosen for its size and fire, then set by hand.</p></div>
+    <div class="beat l" data-from=".5" data-to=".7"><p class="kick">The signature</p><h2>Two loops, <i>two open arcs</i></h2><p>The SILAVU knot runs through every piece the house makes.</p></div>
+    <div class="beat r" data-from=".8" data-to="1.01"><p class="kick">N°04 · Diamond necklace</p><h2>Soul</h2><p>18K white gold · 42 cm · Price on request</p><a class="btn" href="mailto:concierge@silavu.com?subject=A%20private%20viewing%3A%20SOUL">Book a private viewing</a></div>
+
+    <div class="cue" id="cue">Scroll<span></span></div>
+    <div class="prog"><b id="prog"></b></div>
+    <div class="load" id="load"></div>
+  </div>
+</section>
+<section class="trio">
+  <p class="kick">Worn by her</p><h2>Three ways to <i>wear the knot</i></h2>
+  <div class="row">
+    <a href="#"><div class="pic"><img src="../models/necklace-900.jpg" alt="SOUL, worn" loading="lazy" /></div><b>Soul</b><small>Necklace</small></a>
+    <a href="#"><div class="pic"><img src="../models/ring-900.jpg" alt="ICON, worn" loading="lazy" /></div><b>Icon</b><small>Ring</small></a>
+    <a href="#"><div class="pic"><img src="../models/bracelet-900.jpg" alt="MOMENT, worn" loading="lazy" /></div><b>Moment</b><small>Bracelet</small></a>
+  </div>
+</section>
+<section class="end">
+  <p class="kick">Tel Aviv · Dubai · At home</p>
+  <h2>See it <i>in person</i></h2>
+  <p>A concierge brings the pieces to you, in the salon or at home.</p>
+  <a class="btn" href="mailto:concierge@silavu.com?subject=A%20private%20viewing">Book a private viewing</a>
+</section>
+</main>
+<nav class="dirtag" aria-label="Directions"><a href="index.html">ALL</a><a href="a.html">A</a><a href="b.html">B</a><a href="c.html">C</a><a href="d.html">D</a><a href="e.html" class="on">D+3D</a></nav>
+<script>
+// SOUL, rendered in Blender as 96 frames, drawn on a canvas as far as the page has scrolled.
+// Frames are fetched and decoded off the main thread (createImageBitmap from the file's bytes),
+// coarse to fine, so the move is whole from the start and sharpens as the rest arrive.
+(() => {
+  const NF = 96, stage = document.getElementById("stage"), cv = document.getElementById("soul"), cx = cv.getContext("2d");
+  const root = document.documentElement.style, beats = [...document.querySelectorAll(".beat")];
+  const PHONE = matchMedia("(max-width: 760px)").matches, REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dir = `soul/${PHONE ? 600 : 864}/`;
+  const bm = new Array(NF), order = [];
+  for (const step of [16, 8, 4, 2, 1]) for (let i = 0; i < NF; i += step) if (!order.includes(i)) order.push(i);
+  if (!order.includes(NF - 1)) order.splice(1, 0, NF - 1);
+  let loaded = 0, want = 0, shown = -1, now = 0;
+  const loadEl = document.getElementById("load");
+  async function load(i) {
+    try { const b = await (await fetch(`${dir}f${String(i).padStart(3, "0")}.webp`)).blob(); bm[i] = await createImageBitmap(b); }
+    catch { bm[i] = null; }
+    loaded++; loadEl.textContent = loaded < NF ? `${Math.round(loaded / NF * 100)}%` : ""; shown = -1; tick();
+  }
+  (async () => { let k = 0; const next = async () => { while (k < order.length) await load(order[k++]); }; await Promise.all([next(), next(), next(), next()]); })();
+
+  function size() {
+    const W = innerWidth, H = innerHeight;
+    const cs = PHONE ? Math.min(W * 1.08, H * 0.62) : Math.min(H * 0.86, W * 0.5);
+    root.setProperty("--cs", `${cs}px`); root.setProperty("--aw", `${cs * 0.62}px`);
+    const d = Math.min(devicePixelRatio || 1, 2); cv.width = cv.height = Math.round(Math.min(cs * d, PHONE ? 600 : 864)); shown = -1;
+  }
+  const near = (i) => { for (let d = 0; d < NF; d++) { if (bm[i - d]) return bm[i - d]; if (bm[i + d]) return bm[i + d]; } return null; };
+  function draw(i) { const b = near(i); if (!b) return; cx.clearRect(0, 0, cv.width, cv.height); cx.drawImage(b, 0, 0, cv.width, cv.height); }
+  const ease = (x) => x * x * (3 - 2 * x), clamp = (x) => Math.max(0, Math.min(1, x));
+  const band = (t, a, b) => clamp((t - a) / (b - a));
+  function progress() { const r = stage.getBoundingClientRect(); return clamp(-r.top / (r.height - innerHeight)); }
+  let raf = 0;
+  function tick() { if (!raf) raf = requestAnimationFrame(frame); }
+  function frame() {
+    raf = 0;
+    const t = REDUCED ? 1 : progress();
+    want = t * (NF - 1);
+    now += (want - now) * (REDUCED ? 1 : 0.2); if (Math.abs(want - now) < 0.05) now = want;
+    const i = Math.round(now); if (i !== shown) { shown = i; draw(i); }
+    // the arch opens out of the way while the piece is close, and closes round it again
+    const out = band(t, 0.3, 0.46) - band(t, 0.72, 0.88);
+    root.setProperty("--as", (1 + ease(out) * 0.9).toFixed(3)); root.setProperty("--ao", (1 - ease(out)).toFixed(3));
+    root.setProperty("--glow", (1 - ease(out) * 0.6).toFixed(3));
+    root.setProperty("--wx", `${((0.5 - t) * 18).toFixed(2)}vw`);
+    root.setProperty("--p", t.toFixed(4));
+    document.getElementById("cue").style.opacity = t > 0.02 ? 0 : 1;
+    for (const b of beats) b.classList.toggle("on", t >= +b.dataset.from && t < +b.dataset.to);
+    if (now !== want) tick();
+  }
+  addEventListener("scroll", tick, { passive: true });
+  addEventListener("resize", () => { size(); tick(); });
+  size(); tick();
+  // the worn pictures settle as they arrive
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("seen"); io.unobserve(e.target); } }), { threshold: 0.25 });
+  document.querySelectorAll(".pic").forEach((p) => io.observe(p));
+})();
+</script>
+</body>
+</html>
