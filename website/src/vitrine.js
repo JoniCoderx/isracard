@@ -54,10 +54,10 @@ R.setProperty("--ol", OPEN.l); R.setProperty("--or", OPEN.r); R.setProperty("--o
 let G = {};
 function layout() {
   const W = innerWidth, H = innerHeight;
-  const nh = PHONE ? H * 0.96 : H * 0.92, nw = nh * (2 / 3);
+  const nh = PHONE ? Math.min(H * 0.8, W * 1.5) : H * 0.92, nw = nh * (2 / 3);
   const width = N * nw;
-  const top = PHONE ? H * -0.06 : H * -0.05;
-  niches.forEach((n, i) => { n.style.left = `${i * nw}px`; });
+  const top = PHONE ? Math.max(H * 0.04, (H - nh) * 0.3) : H * -0.05;
+  niches.forEach((n, i) => { n.style.left = `${Math.round(i * nw)}px`; });
   R.setProperty("--nw", `${nw}px`);
   R.setProperty("--nh", `${nh}px`);
   G = { W, H, nh, nw, width, top, minPan: Math.min(0, W - width), maxPan: 0 };
@@ -87,9 +87,9 @@ function close(i, instant) {
   cur = i;
   const p = P[i], n = niches[i];
   // bring the opening close: tall beside the words on a desktop, above the sheet on a phone
-  const oh = (OPEN.b - OPEN.t) * G.nh, targetH = PHONE ? G.H * 0.37 : G.H * 0.8, s = targetH / oh;
+  const oh = (OPEN.b - OPEN.t) * G.nh, targetH = PHONE ? Math.min(G.H * 0.42, G.W * 1.05) : G.H * 0.8, s = targetH / oh;
   const cx = parseFloat(n.style.left) + G.nw * (OPEN.l + OPEN.r) / 2, cy = G.nh * (OPEN.t + OPEN.b) / 2;
-  const X = PHONE ? G.W / 2 : G.W * 0.64, Y = PHONE ? G.H * 0.3 : G.H * 0.5;
+  const X = PHONE ? G.W / 2 : G.W * 0.64, Y = PHONE ? G.H * 0.31 : G.H * 0.5;
   track.classList.toggle("is-gliding", !instant && !REDUCED);
   track.style.transform = `translate3d(${(X - s * cx).toFixed(1)}px, ${(Y - s * cy).toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
   niches.forEach((e, k) => e.classList.toggle("is-on", k === i));

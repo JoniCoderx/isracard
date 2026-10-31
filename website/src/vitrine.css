@@ -36,8 +36,9 @@ p, h1, h2, dl { margin: 0; }
 .track.is-gliding { transition: transform 1.15s var(--zoom); }
 
 /* a niche: the rendered frame of stone, and on its ledge the house's photograph of the piece, shaded by the same lamp */
-.niche { all: unset; position: absolute; top: 0; cursor: pointer; display: block; width: var(--nw); height: var(--nh); transition: opacity .8s ease; }
-.niche__bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.niche { all: unset; position: absolute; top: 0; cursor: pointer; display: block; width: calc(var(--nw) + 1px); height: var(--nh); transition: opacity .8s ease; }
+.niche__bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none;
+  -webkit-mask-image: linear-gradient(transparent, #000 9%, #000 88%, transparent); mask-image: linear-gradient(transparent, #000 9%, #000 88%, transparent); }
 .niche__in { position: absolute; left: calc(var(--ol) * 100%); right: calc((1 - var(--or)) * 100%); top: calc(var(--ot) * 100%); bottom: calc((1 - var(--ob)) * 100%); }
 .niche__piece { position: absolute; left: 50%; bottom: calc((var(--ob) - var(--ledge)) / (var(--ob) - var(--ot)) * 100%); width: var(--pw, 74%); transform: translateX(-50%); transform-origin: 50% 100%; transition: transform .6s var(--zoom); }
 .niche__piece img { display: block; width: 100%; height: auto; max-height: calc(var(--nh) * .22); object-fit: contain; object-position: 50% 100%;
@@ -78,12 +79,12 @@ body.is-close .niche__label { opacity: 0 !important; }
 .pill span { color: var(--dim); }
 .pill__wish { display: grid; place-items: center; width: 24px; height: 24px; padding: 0 !important; border-radius: 50%; background: var(--tint); color: #111; font-weight: 600; letter-spacing: 0; transition: background-color .6s ease; }
 
-.intro { position: fixed; left: var(--gut); bottom: clamp(22px, 4.5vh, 48px); z-index: 4; display: grid; gap: 10px; max-width: 30rem; transition: opacity .5s ease, transform .5s ease; }
+.intro { pointer-events: none; position: fixed; left: var(--gut); bottom: clamp(22px, 4.5vh, 48px); z-index: 4; display: grid; gap: 10px; max-width: 30rem; transition: opacity .5s ease, transform .5s ease; }
 .kick { font: 500 .58rem/1.4 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--dim); }
 .intro h1 { font: 400 clamp(2.2rem, 3.4vw, 3.2rem)/1 var(--serif); letter-spacing: -.005em; }
 .intro h1 em, .dname em { font-style: italic; color: var(--tint); transition: color .6s ease; }
 .intro__sub { color: #c9c3b9; font-size: .88rem; }
-.hint { position: fixed; right: var(--gut); bottom: clamp(22px, 4.5vh, 48px); z-index: 4; display: flex; align-items: center; gap: 10px; font: 500 .58rem/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--dim); transition: opacity .5s ease; }
+.hint { pointer-events: none; position: fixed; right: var(--gut); bottom: clamp(22px, 4.5vh, 48px); z-index: 4; display: flex; align-items: center; gap: 10px; font: 500 .58rem/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--dim); transition: opacity .5s ease; }
 .hint__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tint); box-shadow: 0 0 0 0 color-mix(in srgb, var(--tint) 60%, transparent); animation: ping 2.2s ease-out infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--tint) 60%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
 body.is-close .intro, body.is-close .hint { opacity: 0; transform: translateY(10px); pointer-events: none; }
@@ -91,6 +92,8 @@ body.is-close .intro, body.is-close .hint { opacity: 0; transform: translateY(10
 /* ---- the details, beside the piece ---- */
 .detail { position: fixed; z-index: 6; left: var(--gut); top: 50%; width: min(31vw, 400px); transform: translate(-12px, -46%); opacity: 0; display: grid; gap: 16px; transition: opacity .55s ease, transform .55s ease; }
 .detail.is-on { opacity: 1; transform: translate(0, -50%); }
+.detail[hidden] { display: none; }
+.detail:not(.is-on) { pointer-events: none; }   /* while it is fading, the wall stays under the finger */
 .dname { font: 400 clamp(3rem, 5vw, 4.6rem)/.95 var(--serif); letter-spacing: -.01em; }
 .ddesc { color: #cfc9bf; max-width: 34ch; }
 .dspecs { display: grid; gap: 0; border-top: 1px solid rgba(255, 255, 255, .1); }
@@ -118,12 +121,19 @@ body.is-close .intro, body.is-close .hint { opacity: 0; transform: translateY(10
   .brand__sub { display: none; }
   .pill { gap: 9px; padding: 7px 8px 7px 14px; font-size: .6rem; letter-spacing: .1em; }
   .pill > a:first-child, .pill > a:first-child + span { display: none; }   /* the brand already returns to the wall */
-  .detail { left: 0; right: 0; top: auto; bottom: 0; width: auto; max-height: 52svh; overflow-y: auto; padding: 22px var(--gut) calc(env(safe-area-inset-bottom, 0px) + 18px); gap: 12px;
-    background: linear-gradient(rgba(6, 6, 6, 0), rgba(6, 6, 6, .92) 14%, #060606); transform: translateY(24px); }
+  /* the sheet: the essentials only, and its way back and onward always on screen */
+  .detail { left: 0; right: 0; top: auto; bottom: 0; width: auto; max-height: 50svh; overflow-y: auto; overscroll-behavior: contain; padding: 26px var(--gut) 0; gap: 9px;
+    background: linear-gradient(rgba(6, 6, 6, 0), rgba(6, 6, 6, .94) 22px, #060606); transform: translateY(24px); }
+  .ddesc { font-size: .84rem; line-height: 1.5; }
+  .dspecs { display: flex; flex-wrap: wrap; gap: 2px 14px; border: 0; }
+  .dspecs div { display: block; padding: 0; border: 0; font-size: .74rem; color: #cfc9bf; }
+  .dspecs dt { display: none; }
+  .dprice { flex-wrap: wrap; row-gap: 6px; }
+  .dprice b { font-size: 1.2rem; }
+  .dnav { position: sticky; bottom: 0; margin: 4px calc(-1 * var(--gut)) 0; padding: 10px var(--gut) calc(env(safe-area-inset-bottom, 0px) + 12px); background: #060606; border-top: 1px solid rgba(255, 255, 255, .08); }
+  .pager button { width: 44px; height: 44px; }
   .detail.is-on { transform: none; }
-  .dname { font-size: 2.6rem; }
-  .dspecs div { grid-template-columns: 5.5rem 1fr; }
-  .dnav { margin-top: 6px; }
+  .dname { font-size: 2.3rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .track.is-gliding, .detail, .niche, .niche__piece { transition: none; }
