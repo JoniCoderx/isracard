@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex" />
+<title>SILAVU · ארבעה כיוונים</title>
+<style>
+@font-face{font-family:"Heebo";font-weight:300 700;font-display:swap;src:url("../fonts/heebo-normal-hebrew-f1f7cf.woff2") format("woff2")}
+@font-face{font-family:"Jost";font-weight:300 600;font-display:swap;src:url("../fonts/jost-normal-latin-b58a58.woff2") format("woff2")}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#f3f1ed;color:#161513;font:400 16px/1.6 "Heebo","Jost",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(16px,4vw,48px) 80px}
+.brand{font:500 14px/1 "Jost",sans-serif;letter-spacing:.5em;direction:ltr;text-align:right;margin:0 0 28px}
+h1{font-weight:500;font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.15;margin:0 0 10px;text-wrap:balance}
+.lead{color:#5d5952;max-width:52ch;margin:0 0 clamp(28px,4vw,48px)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.4vw,28px)}
+.card{display:grid;grid-template-rows:auto 1fr;background:#fff;border:1px solid #e3dfd8;text-decoration:none;color:inherit;transition:border-color .2s ease}
+.card:hover{border-color:#161513}
+.card:focus-visible{outline:2px solid #161513;outline-offset:3px}
+.card picture,.card img{display:block;width:100%}
+.card img{aspect-ratio:16/9.3;object-fit:cover;object-position:top;background:#ddd}
+.card div{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:baseline;padding:18px 20px 20px}
+.card b{grid-row:span 2;font:500 2rem/1 "Jost",sans-serif}
+.card h2{margin:0;font-size:1.15rem;font-weight:500}
+.card p{grid-column:2;margin:0;color:#5d5952;font-size:.93rem}
+.card span{grid-row:1;grid-column:3;font-size:.85rem;font-weight:500;border-bottom:1px solid currentColor}
+.note{margin-top:36px;color:#5d5952;font-size:.95rem}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.card img{aspect-ratio:4/5}}
+</style>
+</head>
+<body>
+<main>
+  <p class="brand">SILAVU</p>
+  <h1>ארבעה כיוונים לעיצוב. תבחר אחד.</h1>
+  <p class="lead">כל כיוון הוא מסך פתיחה וקטע אחד מתחתיו, עם התמונות והסרטים האמיתיים של SILAVU. תפתח כל אחד, גם בטלפון, ותגיד לי איזה. אפשר גם לשלב, למשל "הצבעים של C עם הקשתות של D".</p>
+  <div class="grid">
+    <a class="card" href="a.html"><picture><source media="(max-width:760px)" srcset="thumbs/a-phone.webp" /><img src="thumbs/a-desk.webp" alt="כיוון A" /></picture>
+      <div><b>A</b><h2>מגזין</h2><span>פתח</span><p>לבן ונקי, טיפוגרפיה ענקית ותמונה גדולה, כמו שער של Vogue.</p></div></a>
+    <a class="card" href="b.html"><picture><source media="(max-width:760px)" srcset="thumbs/b-phone.webp" /><img src="thumbs/b-desk.webp" alt="כיוון B" /></picture>
+      <div><b>B</b><h2>קולנוע</h2><span>פתח</span><p>הסרט על כל המסך, שחור, מעט מילים. כמו בית אופנה גדול.</p></div></a>
+    <a class="card" href="c.html"><picture><source media="(max-width:760px)" srcset="thumbs/c-phone.webp" /><img src="thumbs/c-desk.webp" alt="כיוון C" /></picture>
+      <div><b>C</b><h2>צבע</h2><span>פתח</span><p>בלוקים של צבע לכל תכשיט, ורוד, תכלת וצהוב, ותמונות מקרו ענקיות. נועז ומודרני.</p></div></a>
+    <a class="card" href="d.html"><picture><source media="(max-width:760px)" srcset="thumbs/d-phone.webp" /><img src="thumbs/d-desk.webp" alt="כיוון D" /></picture>
+      <div><b>D</b><h2>קשתות</h2><span>פתח</span><p>שמנת וזהב, תמונות במסגרת של קשת. קלאסי, יוקרתי, מתאים לדובאי.</p></div></a>
+  </div>
+  <p class="note">בתחתית כל דף יש כפתורי A B C D, כדי לעבור ביניהם מהר.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex" />
+<title>SILAVU — B · Cinema</title>
+<style>
+@font-face{font-family:"Jost";font-weight:300 600;font-display:swap;src:url("../fonts/jost-normal-latin-b58a58.woff2") format("woff2")}
+@font-face{font-family:"Cormorant";font-weight:300 700;font-display:swap;src:url("../fonts/cormorant-normal-latin-d80df8.woff2") format("woff2")}
+@font-face{font-family:"Cormorant";font-style:italic;font-weight:300 700;font-display:swap;src:url("../fonts/cormorant-italic-latin-6f2f5c.woff2") format("woff2")}
+*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;-webkit-font-smoothing:antialiased}img,video{display:block;max-width:100%}a{color:inherit}p,h1,h2,h3{margin:0}
+:root{--sans:"Jost","Helvetica Neue",Arial,sans-serif;--serif:"Cormorant",Georgia,serif;--gut:clamp(18px,3.6vw,60px)}
+.dirtag{position:fixed;z-index:50;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:6px;padding:6px;border-radius:999px;background:rgba(17,17,17,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:500 11px/1 var(--sans);letter-spacing:.12em}
+.dirtag a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;opacity:.7}.dirtag a.on{background:#fff;color:#111;opacity:1}
+
+
+body{background:#000;color:#f4f1ec;font:400 15px/1.6 var(--sans)}
+.top{position:fixed;z-index:10;inset:0 0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gut) 0}
+.top .l,.top .r{display:flex;gap:26px;font:500 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase}.top .r{justify-content:flex-end}.top a{text-decoration:none}
+.brand{font:500 17px/1 var(--sans);letter-spacing:.62em;text-decoration:none;padding-left:.62em}
+.hero{position:relative;height:100svh;overflow:hidden}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:breathe 14s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(1.02)}to{transform:scale(1.1)}}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 52%,rgba(0,0,0,.78))}
+.hero__words{position:absolute;z-index:2;left:0;right:0;bottom:clamp(40px,9vh,96px);display:grid;justify-items:center;gap:22px;text-align:center;padding:0 var(--gut)}
+.kick{font:500 11px/1 var(--sans);letter-spacing:.36em;text-transform:uppercase;color:#cfc8bd}
+.hero h1{font:300 clamp(3rem,7.4vw,7.2rem)/.95 var(--serif);letter-spacing:-.015em}.hero h1 i{font-weight:300}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn{padding:16px 28px;border:1px solid rgba(255,255,255,.7);text-decoration:none;font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase}.btn.solid{background:#f4f1ec;color:#000;border-color:#f4f1ec}
+.reel{padding:clamp(70px,11vw,150px) 0}
+.reel__head{display:flex;justify-content:space-between;align-items:end;padding:0 var(--gut) 30px}
+.reel__head h2{font:300 clamp(2.4rem,5vw,4.6rem)/1 var(--serif)}.reel__head p{max-width:30ch;color:#a9a39a}
+.strip{display:flex;gap:14px;overflow-x:auto;padding:0 var(--gut);scroll-snap-type:x mandatory;scrollbar-width:none}.strip::-webkit-scrollbar{display:none}
+.strip figure{flex:0 0 clamp(250px,30vw,440px);margin:0;scroll-snap-align:start}
+.strip img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.strip figcaption{display:flex;justify-content:space-between;padding-top:14px;font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:#a9a39a}.strip figcaption b{font:400 1.5rem/1 var(--serif);letter-spacing:0;text-transform:none;color:#f4f1ec}
+@media (max-width:760px){.reel__head{flex-direction:column;align-items:start;gap:10px}.top{grid-template-columns:auto 1fr}.top .l{display:none}.brand{padding-left:0}.top .r a:not(:last-child){display:none}.hero h1{font-size:3.1rem}}
+@media (prefers-reduced-motion:reduce){.hero video{animation:none}}
+</style>
+</head>
+<body>
+<header class="top"><nav class="l"><a href="#">Collection</a><a href="#">The house</a></nav><a class="brand" href="#">SILAVU</a><nav class="r"><a href="#">Wish list</a><a href="mailto:concierge@silavu.com">Appointment</a></nav></header>
+<main>
+<section class="hero">
+  <video autoplay muted loop playsinline poster="../img/hero-lumiere-1920.jpg">
+    <source src="../v/hero-lumiere-v.mp4" media="(max-width: 760px)" type="video/mp4" />
+    <source src="../v/hero-lumiere.mp4" type="video/mp4" />
+  </video>
+  <div class="hero__words">
+    <p class="kick">Lumière · The new film</p>
+    <h1>Made to catch <i>the light</i></h1>
+    <div class="ctas"><a class="btn solid" href="#">Discover Soul</a><a class="btn" href="#">Book a viewing</a></div>
+  </div>
+</section>
+<section class="reel">
+  <div class="reel__head"><h2>Worn</h2><p>Every piece carries the knot: two loops held by two open arcs.</p></div>
+  <div class="strip">
+    <figure><img src="../models/necklace-900.jpg" alt="" loading="lazy" /><figcaption><b>Soul</b>Necklace</figcaption></figure>
+    <figure><img src="../img/p/aura-worn-900.jpg" alt="" loading="lazy" /><figcaption><b>Aura</b>Earrings</figcaption></figure>
+    <figure><img src="../models/ring-900.jpg" alt="" loading="lazy" /><figcaption><b>Icon</b>Ring</figcaption></figure>
+    <figure><img src="../models/bracelet-900.jpg" alt="" loading="lazy" /><figcaption><b>Moment</b>Bracelet</figcaption></figure>
+    <figure><img src="../img/p/blush-worn-900.jpg" alt="" loading="lazy" /><figcaption><b>Blush</b>Ring</figcaption></figure>
+  </div>
+</section>
+</main>
+<nav class="dirtag" aria-label="Directions"><a href="index.html">ALL</a><a href="a.html" class="">A</a><a href="b.html" class="on">B</a><a href="c.html" class="">C</a><a href="d.html" class="">D</a></nav>
+</body>
+</html>
