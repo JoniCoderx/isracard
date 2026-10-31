@@ -213,6 +213,11 @@ cam = bpy.data.cameras.new("cam"); cam.lens = LENS; cam.sensor_width = 36
 co = link(bpy.data.objects.new("cam", cam)); sc.camera = co
 PIV = bpy.data.objects.new("piv", None); sc.collection.objects.link(PIV); PIV.location = UP @ Vector((0, 0.2, DEPTH / 2))
 ROOT.parent = PIV; ROOT.matrix_parent_inverse = PIV.matrix_world.inverted()
+# the wall behind stays where it is while the piece turns (it only catches the shadow),
+bpy.context.view_layer.update()
+for o in list(sc.collection.objects):   # and so do the lights, the cards and reflectors: the piece turns under them
+    if o is wall or o.type in ("LIGHT", "EMPTY") or o in (refl, refl2) or o.name.startswith("flag"):
+        if o.parent is ROOT: mw = o.matrix_world.copy(); o.parent = None; o.matrix_world = mw
 for f in range(F0, F1 + 1, STEP):
     t = f / (NF - 1)
     spin = keys(t, [(0, -2 * math.pi - 0.45), (0.3, -0.35), (0.55, 0.5), (0.78, -0.2), (1, 0)])        # turns about its own upright axis
