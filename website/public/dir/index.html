@@ -17,6 +17,7 @@ h1{font-weight:500;font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.15;margin:0 
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.4vw,28px)}
 .card{display:grid;grid-template-rows:auto 1fr;background:#fff;border:1px solid #e3dfd8;text-decoration:none;color:inherit;transition:border-color .2s ease}
 .card:hover{border-color:#161513}
+.card.wide{grid-column:1/-1;border-color:#a3803a}.card.wide img{aspect-ratio:16/7}
 .card:focus-visible{outline:2px solid #161513;outline-offset:3px}
 .card picture,.card img{display:block;width:100%}
 .card img{aspect-ratio:16/9.3;object-fit:cover;object-position:top;background:#ddd}
@@ -32,9 +33,11 @@ h1{font-weight:500;font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.15;margin:0 
 <body>
 <main>
   <p class="brand">SILAVU</p>
-  <h1>ארבעה כיוונים לעיצוב. תבחר אחד.</h1>
+  <h1>ארבעה כיוונים, ועכשיו גם D עם תלת מימד.</h1>
   <p class="lead">כל כיוון הוא מסך פתיחה וקטע אחד מתחתיו, עם התמונות והסרטים האמיתיים של SILAVU. תפתח כל אחד, גם בטלפון, ותגיד לי איזה. אפשר גם לשלב, למשל "הצבעים של C עם הקשתות של D".</p>
   <div class="grid">
+  <a class="card wide" href="e.html"><picture><source media="(max-width:760px)" srcset="thumbs/e-phone.webp" /><img src="thumbs/e-desk.webp" alt="כיוון D עם תלת מימד" /></picture>
+    <div><b>D+3D</b><h2>הקשתות, עם SOUL בתלת מימד</h2><span>פתח</span><p>הבחירה שלך: D, ו-SOUL שמסתובב, יוצא מהקשת אליך עם הגלילה, עובר על היהלומים מקרוב וחוזר פנימה.</p></div></a>
     <a class="card" href="a.html"><picture><source media="(max-width:760px)" srcset="thumbs/a-phone.webp" /><img src="thumbs/a-desk.webp" alt="כיוון A" /></picture>
       <div><b>A</b><h2>מגזין</h2><span>פתח</span><p>לבן ונקי, טיפוגרפיה ענקית ותמונה גדולה, כמו שער של Vogue.</p></div></a>
     <a class="card" href="b.html"><picture><source media="(max-width:760px)" srcset="thumbs/b-phone.webp" /><img src="thumbs/b-desk.webp" alt="כיוון B" /></picture>
