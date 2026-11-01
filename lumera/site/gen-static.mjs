@@ -470,11 +470,28 @@ const T3 = (() => {
     [/(\w+)\.classList\.toggle\("wrist","wrist"===(\w+)\)/, '$1.classList.toggle("wrist","wrist"===$2),$1.classList.toggle("photo","photo"===$2)'],
     [/if\((\w+)\.classList\.contains\("wrist"\)\|\|document\.hidden\)return (\w+)\(\)/, 'if($1.classList.contains("wrist")||$1.classList.contains("photo")&&!document.querySelector(".bstage.open")&&!document.documentElement.classList.contains("silavu-play")||document.hidden)return $2()']
   ];
+  /* SOUL, in three dimensions: the house's model rendered as 96 frames
+     (website/tools/soul-seq.py, in public/soul3d) that the scroll plays
+     (src/test3.js), between the signature and the collection */
+  const w3 = (from, to, inner) => `<div class="s3w" data-from="${from}" data-to="${to}">${inner}</div>`;
+  const soul = PIECES.find(x => x.id === "pave");
+  const s3 = soul && fs.existsSync(path.join(path.dirname(path.resolve(src)), "public/soul3d/864/f095.webp")) ? `<section id="soul3d" class="ivory paper" data-n="" data-title-en="SOUL" data-title-he="SOUL" aria-label="SOUL, the SILAVU knot in diamonds">
+  <div class="s3hold">
+    <div class="s3ring" aria-hidden="true"></div>
+    <canvas role="img" aria-label="The SILAVU SOUL necklace, the knot in 18K white gold and pavé diamonds, turning in the light" data-alt-he="שרשרת SILAVU SOUL, הקשר בזהב לבן 18K ויהלומי פאווה, מסתובבת באור"></canvas>
+    ${w3(0, .22, `<div class="k" ${E({ en: "The signature, in diamonds", he: "החתימה, ביהלומים" })}>The signature, in diamonds</div><h2 class="h2" ${E({ en: "The knot, <em>in diamonds.</em>", he: "הקשר, <em>ביהלומים.</em>" })}>The knot, <em>in diamonds.</em></h2>`)}
+    ${w3(.26, .46, `<span class="h2 s3n">163</span><h2 class="h2" ${E({ en: "Diamonds, <em>matched by eye.</em>", he: "יהלומים, <em>מותאמים בעין.</em>" })}>Diamonds, <em>matched by eye.</em></h2><p ${E({ en: "Every brilliant in the pavé is chosen for its size and fire, then set by hand.", he: "כל בריליאנט בפאווה נבחר לפי גודלו והאש שבו, ומשובץ ביד." })}>Every brilliant in the pavé is chosen for its size and fire, then set by hand.</p>`)}
+    ${w3(.5, .72, `<div class="k" ${E({ en: "The signature", he: "החתימה" })}>The signature</div><h2 class="h2" ${E({ en: "Two loops, <em>two open arcs.</em>", he: "שתי לולאות, <em>שתי קשתות פתוחות.</em>" })}>Two loops, <em>two open arcs.</em></h2><p ${E({ en: "The SILAVU knot runs through every piece the house makes.", he: "הקשר של SILAVU עובר בכל תכשיט שהבית יוצר." })}>The SILAVU knot runs through every piece the house makes.</p>`)}
+    ${w3(.8, 1.01, `<div class="k" ${E(soul.kind)}>${soul.kind.en}</div><h2 class="h2" ${E({ en: "SILAVU <em>SOUL.</em>", he: "SILAVU <em>SOUL.</em>" })}>SILAVU <em>SOUL.</em></h2><p ${E({ en: "18K white gold and pavé diamonds, on a fine chain of 42 cm.", he: "זהב לבן 18K ויהלומי פאווה, על שרשרת עדינה באורך 42 ס״מ." })}>18K white gold and pavé diamonds, on a fine chain of 42 cm.</p><a class="lnk" href="pieces/${soul.id}/" ${E({ en: "View the piece", he: "לתכשיט" })}>View the piece</a>`)}
+    <div class="s3bar" aria-hidden="true"><i></i></div>
+  </div>
+</section>
+` : "";
   const dir = path.join(path.dirname(path.resolve(src)), "src");
   return {
     css: fs.readFileSync(path.join(dir, "test3.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir, "test3.js"), "utf8") + "</script>",
-    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : [])],
+    inject: [['<header class="sh"', '<script>window.__sgOff = 1; window.__calmBtn = 1; window.__wear3d = 1; window.__neatHeads = 1; window.__phone3d = 1;</script>\n'], ...(html ? [['<section id="macro"', html]] : []), ...(s3 ? [['<section id="collection"', s3]] : [])],
     swap: [['data-en="Private appointment" data-he="פגישה פרטית">Private appointment</a>', 'data-en="Book a private viewing" data-he="פגישה פרטית">Book a private viewing</a>'], ...lineSwap],
   };
 })();

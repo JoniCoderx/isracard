@@ -90,3 +90,44 @@ html[dir="rtl"] #stripwrap .bphnote { left: auto; right: 16px; }
 @media (prefers-reduced-motion: reduce) { #stripwrap .bph img { transition: none; } }
 @media (max-width: 699px) { #stripwrap .bphnote { max-width: calc(100% - 150px); line-height: 1.5; } }
 
+
+/* While a photograph is on its way, its frame is the colour of the paper it
+   sits on, not a black square (the shared rule gives every image frame
+   #0a0a0b, right for the dark chapters, a hole in the ivory ones) */
+#collection .piece .im, #collection .piece picture, #collection .piece .fig { background: #f2f0ec; }
+#details .wlkpic { background: #1b1a18; }
+
+/* SOUL, in three dimensions: the house's model, rendered (soul-seq.py) as 96
+   frames that the scroll plays. Held on screen while it plays; the piece sways
+   into the light, comes out to the eye along its pavé, and goes back. A ring,
+   the jeweller's loupe, opens round it as it comes close and closes again. */
+#soul3d { position: relative; height: 460vh; }
+#soul3d .s3hold { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+#soul3d canvas { position: absolute; left: 62%; top: 52%; width: var(--s3, 70vh); height: var(--s3, 70vh); transform: translate(-50%, -50%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(transparent, #000 9%, #000 91%, transparent); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(transparent, #000 9%, #000 91%, transparent); mask-composite: intersect; }
+#soul3d .s3ring { position: absolute; left: 62%; top: 52%; width: calc(var(--s3, 70vh) * .78); aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(20, 19, 15, .16);
+  transform: translate(-50%, -50%) scale(var(--s3r, 1)); opacity: var(--s3o, 1); pointer-events: none; }
+#soul3d .s3ring::after { content: ""; position: absolute; inset: 14px; border-radius: 50%; border: 1px solid rgba(20, 19, 15, .07); }
+#soul3d .s3w { position: absolute; left: clamp(32px, 5vw, 88px); top: 50%; max-width: min(380px, 30vw); display: grid; gap: 16px; opacity: 0; transform: translateY(calc(-50% + 14px));
+  transition: opacity .5s ease, transform .5s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+#soul3d .s3w.on { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+#soul3d .s3w .h2 { margin: 0; }
+#soul3d .s3w p { margin: 0; color: var(--ink2); max-width: 32ch; }
+#soul3d .s3n { font-weight: 300; font-size: clamp(3.4rem, 6vw, 6rem); line-height: .9; letter-spacing: .02em; }
+#soul3d .s3bar { position: absolute; left: clamp(32px, 5vw, 88px); right: clamp(32px, 5vw, 88px); bottom: 26px; height: 1px; background: rgba(20, 19, 15, .1); }
+#soul3d .s3bar i { position: absolute; inset: 0; background: rgba(20, 19, 15, .55); transform-origin: 0 50%; transform: scaleX(var(--s3p, 0)); }
+html[dir="rtl"] #soul3d .s3bar i { transform-origin: 100% 50%; }
+html[dir="rtl"] #soul3d canvas, html[dir="rtl"] #soul3d .s3ring { left: 38%; }
+html[dir="rtl"] #soul3d .s3w { left: auto; right: clamp(32px, 5vw, 88px); }
+@media (max-width: 899px) {
+  #soul3d { height: 420vh; }
+  #soul3d canvas, #soul3d .s3ring, html[dir="rtl"] #soul3d canvas, html[dir="rtl"] #soul3d .s3ring { left: 50%; top: 37%; }
+  #soul3d .s3w, html[dir="rtl"] #soul3d .s3w { left: 0; right: 0; top: auto; bottom: 0; max-width: none; transform: translateY(14px); text-align: center; justify-items: center; gap: 10px;
+    padding: 54px 22px calc(env(safe-area-inset-bottom, 0px) + 92px); background: linear-gradient(rgba(253, 253, 252, 0), var(--s3bg, #fdfdfc) 46px); }
+  #soul3d .s3w.on { transform: none; }
+  #soul3d .s3w p { font-size: .9rem; }
+  #soul3d .s3n { font-size: 3.2rem; }
+  #soul3d .s3bar { bottom: calc(env(safe-area-inset-bottom, 0px) + 70px); }
+}
+@media (prefers-reduced-motion: reduce) { #soul3d .s3w { transition: none; } }

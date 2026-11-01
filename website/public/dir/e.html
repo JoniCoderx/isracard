@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="robots" content="noindex" />
 <title>SILAVU — Soul, in the arch</title>
-<link rel="preload" as="fetch" href="soul/864/f000.webp" crossorigin />
+<link rel="preload" as="fetch" href="../../soul3d/864/f000.webp" crossorigin />
 <style>
 @font-face{font-family:"Jost";font-weight:300 600;font-display:swap;src:url("../fonts/jost-normal-latin-b58a58.woff2") format("woff2")}
 @font-face{font-family:"Cormorant";font-weight:300 700;font-display:swap;src:url("../fonts/cormorant-normal-latin-d80df8.woff2") format("woff2")}
@@ -139,7 +139,7 @@ canvas{position:absolute;left:50%;top:54%;width:var(--cs);height:var(--cs);trans
   const NF = 96, stage = document.getElementById("stage"), cv = document.getElementById("soul"), cx = cv.getContext("2d");
   const top = document.querySelector(".top"), root = document.documentElement.style, beats = [...document.querySelectorAll(".beat")];
   const PHONE = matchMedia("(max-width: 760px)").matches, REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const dir = `soul/${PHONE ? 600 : 864}/`;
+  const dir = `../../soul3d/${PHONE ? 600 : 864}/`;
   const bm = new Array(NF), order = [];
   for (const step of [16, 8, 4, 2, 1]) for (let i = 0; i < NF; i += step) if (!order.includes(i)) order.push(i);
   if (!order.includes(NF - 1)) order.splice(1, 0, NF - 1);
