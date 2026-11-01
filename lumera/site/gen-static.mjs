@@ -286,9 +286,11 @@ fs.writeFileSync(path.join(outDir, "index.html"), liveHead + liveHtml + "\n</bod
    and show the Hebrew: the text is written into the markup here rather than
    swapped in by the script after load, the head speaks Hebrew, and both pages
    name each other. Every element that carries data-he gets that as its
-   content, which is exactly what the script does when someone picks Hebrew. */
-{
-  const html = liveHtml, head = liveHead;
+   content, which is exactly what the script does when someone picks Hebrew.
+   Written for the page as built here, and again for the home page that takes
+   /test3/'s chapters (below), so the two languages stay one page. */
+writeHebrew(liveHtml, liveHead);
+function writeHebrew(html, head) {
   const unA = v => v.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
   const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
   /* scripts, styles and SVG text are left exactly as they are */
@@ -503,6 +505,25 @@ const HERO_ALT = {
   "hero-lumiere": { en: "The SILAVU SOUL pendant on a woman's skin, above the neckline of a black silk dress, its pavé diamonds catching the light",
                     he: "תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור" }
 };
+/* a test page's chapters (extras: css, js, inject, swap, edit) applied to a
+   page. A swap is made in the page, or in the page's own script file that
+   holds it: that file is copied under a name of its own, so the live page
+   keeps the original */
+function withExtras(dir, tHtml, extras) {
+  const extra = { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), inject: extras.flatMap(x => x.inject || []), swap: extras.flatMap(x => x.swap || []), edit: extras.map(x => x.edit).filter(Boolean) };
+  tHtml = tHtml.replace(/<\/body>\s*$/, "") + extra.js;
+  const has = (t, f) => f.test ? f.test(t) : t.includes(f);
+  for (const [from, to] of extra.swap) {
+    if (has(tHtml, from)) { tHtml = tHtml.replace(from, to); continue; }
+    const ref = [...tHtml.matchAll(/assets\/(s\d+\.[0-9a-f]+\.js)/g)].map(m => m[1]).find(n => has(fs.readFileSync(path.join(ASSETS, n), "utf8"), from));
+    if (!ref) { console.warn(`${dir}: ${from} not found`); return null; }
+    const code = fs.readFileSync(path.join(ASSETS, ref), "utf8").replace(from, to), n = ref.replace(/\.[0-9a-f]+\.js$/, "." + dir + "." + hashOf(code) + ".js");
+    fs.writeFileSync(path.join(ASSETS, n), code); tHtml = tHtml.split("assets/" + ref).join("assets/" + n);
+  }
+  for (const [mark, add] of extra.inject) { if (!tHtml.includes(mark)) { console.warn(`${dir}: ${mark} not found`); return null; } tHtml = tHtml.replace(mark, add + mark); }
+  for (const f of extra.edit) { const t2 = f(tHtml); if (!t2) { console.warn(`${dir}: the layout could not be applied`); return null; } tHtml = t2; }
+  return { html: tHtml, css: extra.css };
+}
 function heroTest(dir, film, css, big, extras) {
   extras = (extras || []).filter(Boolean);
   const extra = extras.length ? { css: extras.map(x => x.css).join("\n"), js: extras.map(x => x.js).join(""), attrs: extras.map(x => x.attrs || "").join(""), inject: extras.flatMap(x => x.inject || []), swap: extras.flatMap(x => x.swap || []), edit: extras.map(x => x.edit).filter(Boolean) } : null;
@@ -524,20 +545,8 @@ function heroTest(dir, film, css, big, extras) {
     .replace(/(<img class="hv" id="heroimg"[^>]*?) alt="[^"]*" data-alt-he="[^"]*"/, (m, a) => HERO_ALT[film] ? `${a} alt="${HERO_ALT[film].en}" data-alt-he="${HERO_ALT[film].he}"` : m)
     .replace(/<video class="hv" id="herovid"[^>]*>/, `<video class="hv" id="herovid" muted playsinline loop autoplay preload="metadata" data-src="v/${film}.mp4" data-src-m="v/${film}-${big ? "v" : "720"}.mp4"${big ? ` data-src-4k="v/${film}-4k.mp4"` : ""}${extra ? extra.attrs : ""} aria-hidden="true">`)
     .replace(/window\.SILAVU_TRACK = (?=\{)/, "window.SILAVU_TRACK_OFF = ")
-    .replace(/<\/body>\s*$/, "") + (extra ? extra.js : "");
-  /* a swap is made in the page, or in the page's own script file that holds
-     it: that file is copied under a name of its own, so the live page keeps
-     the original */
-  const has = (t, f) => f.test ? f.test(t) : t.includes(f);
-  if (extra) for (const [from, to] of extra.swap) {
-    if (has(tHtml, from)) { tHtml = tHtml.replace(from, to); continue; }
-    const ref = [...tHtml.matchAll(/assets\/(s\d+\.[0-9a-f]+\.js)/g)].map(m => m[1]).find(n => has(fs.readFileSync(path.join(ASSETS, n), "utf8"), from));
-    if (!ref) { console.warn(`hero test page ${dir}: ${from} not found`); return; }
-    const code = fs.readFileSync(path.join(ASSETS, ref), "utf8").replace(from, to), n = ref.replace(/\.[0-9a-f]+\.js$/, "." + dir + "." + hashOf(code) + ".js");
-    fs.writeFileSync(path.join(ASSETS, n), code); tHtml = tHtml.split("assets/" + ref).join("assets/" + n);
-  }
-  if (extra) for (const [mark, add] of extra.inject) { if (!tHtml.includes(mark)) { console.warn(`hero test page ${dir}: ${mark} not found`); return; } tHtml = tHtml.replace(mark, add + mark); }
-  if (extra) for (const f of extra.edit) { const t2 = f(tHtml); if (!t2) { console.warn(`hero test page ${dir}: the layout could not be applied`); return; } tHtml = t2; }
+    .replace(/<\/body>\s*$/, "");
+  if (extra) { const w = withExtras(dir, tHtml, extras); if (!w) return; tHtml = w.html; }
   if (!tHtml.includes(`data-src="v/${film}.mp4"`) || !tHtml.includes(`${film}-1920.jpg`)) { console.warn(`hero test page ${dir} skipped: the hero markup has changed`); return; }
   fs.mkdirSync(path.join(outDir, dir), { recursive: true });
   fs.writeFileSync(path.join(outDir, dir, "index.html"), tHead + tHtml + "\n</body>\n</html>\n");
@@ -549,6 +558,20 @@ heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
 /* /test3/ tries "LUMIÈRE" (hero-lumiere-assets.sh; "The Choice",
    hero-choice-assets.sh, came before it), with the words in ink (INK, WHOLE) */
 heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3D, T2, LAYOUT, T3, { edit: ultraCut("hero-lumiere") }]);
+/* The home page takes /test3/'s chapters (the house's choice, 1 Nov 2026):
+   the live page as built above (its film, its words, its tracking, its
+   address), with the 3D emblem, the layout, the close-ups, SOUL in three
+   dimensions and the motion of /test3/. The Hebrew page follows it. If a
+   chapter no longer fits the page, the home page stays as it was. */
+{
+  const home = withExtras("home", liveHtml, [EMB3D, T2, LAYOUT, T3]);
+  if (home) {
+    const hHead = liveHead.replace("</head>", `<style>${home.css}</style>\n</head>`);
+    fs.writeFileSync(path.join(outDir, "index.html"), hHead + home.html + "\n</body>\n</html>\n");
+    writeHebrew(home.html, hHead);
+    console.log("home page: /test3/'s chapters");
+  } else console.warn("home page: /test3/'s chapters could not be applied; the page stays as built");
+}
 /* /test4/: the redesign, a page of its own, built from zero (src/t4/page.mjs) */
 {
   const { mark, markDefs, markUse, logo } = await import("./src/body.mjs");
