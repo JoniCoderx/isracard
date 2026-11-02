@@ -659,6 +659,16 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
   if (page) { fs.mkdirSync(path.join(outDir, "test11"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test11", "index.html"), page); console.log("test page written: test11"); }
   else console.warn("test11 skipped: the pieces or the wordmark font it names have changed");
 }
+/* /test12/: SILAVU on white, SOUL on its box (src/t12/page12.mjs; the
+   picture is website/tools/soul-box.py) */
+{
+  const { markDefs, markUse } = await import("./src/body.mjs");
+  const { test12Page } = await import("./src/t12/page12.mjs");
+  const root = path.dirname(path.resolve(src));
+  const page = test12Page({ PIECES, markDefs, markUse, root });
+  if (page) { fs.mkdirSync(path.join(outDir, "test12"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test12", "index.html"), page); console.log("test page written: test12"); }
+  else console.warn("test12 skipped: the pieces, the fonts or the hero picture it names are missing");
+}
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
