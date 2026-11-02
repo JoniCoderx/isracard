@@ -50,7 +50,7 @@ bpy.ops.mesh.primitive_plane_add(size=3000, location=(0, 0, -BZ)); floor = bpy.c
 sc.render.film_transparent = True
 
 # ── the studio: a white room's soft light, and dark flags for the stones' drawing
-AIM = bpy.data.objects.new("aim", None); sc.collection.objects.link(AIM); AIM.location = (7, 8, -12)
+AIM = bpy.data.objects.new("aim", None); sc.collection.objects.link(AIM); AIM.location = (2, 8, -12)
 def aim(o, axis="TRACK_NEGATIVE_Z"):
     c = o.constraints.new("TRACK_TO"); c.target = AIM; c.track_axis = axis; c.up_axis = "UP_Y"
 def area(name, size, loc, power, sy=None, color=(1, 1, 1)):
@@ -81,7 +81,7 @@ bg = world.node_tree.nodes["Background"]; bg.inputs["Color"].default_value = (0.
 # ── the camera: in front and to one side, looking down at the lid
 cam = bpy.data.cameras.new("cam"); cam.lens = 85; cam.sensor_width = 36
 co = bpy.data.objects.new("cam", cam); sc.collection.objects.link(co); sc.camera = co
-dist = float(argv[8]) if len(argv) > 8 else 215
+dist = float(argv[8]) if len(argv) > 8 else 226
 co.location = Vector((dist * math.cos(EL) * math.sin(AZ), -dist * math.cos(EL) * math.cos(AZ), dist * math.sin(EL)))
 aim(co)
 
