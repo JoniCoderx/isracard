@@ -649,6 +649,16 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
   if (page) { fs.mkdirSync(path.join(outDir, "test9"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test9", "index.html"), page); console.log("test page written: test9"); }
   else console.warn("test9 skipped: the pieces it names have changed");
 }
+/* /test11/: SILAVU as a dark room, a redesign from zero by the taste-skill
+   run (src/t11/page11.mjs) */
+{
+  const { markDefs, MARK_B, MARK_BW } = await import("./src/body.mjs");
+  const { test11Page } = await import("./src/t11/page11.mjs");
+  const root = path.dirname(path.resolve(src));
+  const page = test11Page({ PIECES, markDefs, root, MARK_B, MARK_BW });
+  if (page) { fs.mkdirSync(path.join(outDir, "test11"), { recursive: true }); fs.writeFileSync(path.join(outDir, "test11", "index.html"), page); console.log("test page written: test11"); }
+  else console.warn("test11 skipped: the pieces or the wordmark font it names have changed");
+}
 let POLICY_SLUGS = [], PIECE_URLS = [];
 /* the counter as a file of its own for the other pages (the home page carries it inline) */
 let TRACK_HASH = "";
