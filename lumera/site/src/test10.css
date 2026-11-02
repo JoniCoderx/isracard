@@ -1,0 +1,73 @@
+/* /test10/: the home page (test3's look, which the house chose) after a
+   measured review (taste-skill inspector at 1440 / 768 / 390, Emil
+   Kowalski's motion rules, motion-taste). Nothing changes the look; each
+   block fixes one thing the review found, and says which. */
+
+/* 1. The opening: the words were still invisible 1.2s after the page
+   arrived (a 1.2s blurred fade). They now arrive in 0.7s, rising 16px, no
+   blur (blur costs every frame; entrances stay under a second). */
+#hero .hcap .rv { filter: none !important; transform: translateY(16px);
+  transition: opacity .7s cubic-bezier(.2, .8, .2, 1), transform .7s cubic-bezier(.2, .8, .2, 1) !important; }
+#hero .hcap .rv.in { transform: none; }
+#hero .hcap .rv.d2 { transition-delay: .08s !important; }
+#hero .hcap .rv.d3 { transition-delay: .16s !important; }
+
+/* 2. Every reveal on the page: no blur (2px at most by the motion rules;
+   none is cheaper), and 0.9s instead of 1.2s */
+.rv { filter: none !important; }
+.rv:not(.late) { transition-duration: .9s !important; }
+
+/* 3. SOUL in 3D: the titles broke onto three and four lines ("Two / loops, /
+   two open / arcs."). The words get a wider column and one size, so each
+   title stands on two lines; the piece moves right to leave them room */
+@media (min-width: 900px) {
+  #soul3d .s3w { max-width: min(600px, 40vw); }
+  #soul3d .s3w .h2 { font-size: clamp(2.3rem, 3.9vw, 3.6rem) !important; line-height: 1.04; text-wrap: balance; }
+  #soul3d .s3w p { font-size: 1rem; }
+  #soul3d canvas, #soul3d .s3ring { left: 65%; }
+  html[dir="rtl"] #soul3d canvas, html[dir="rtl"] #soul3d .s3ring { left: 35%; }
+}
+/* the chapter and the collection after it are one sheet of paper: the
+   chapter ended on a warmer grey and the collection began on white, which
+   read as a stripe across the page */
+#soul3d { background: #fff !important; --s3bg: #fff; }
+#soul3d .s3w .k, #soul3d .s3bar { color: var(--ink2); }
+
+/* 4. The collection: the three special pieces sat in the left half of the
+   row with the right half empty. On a wide screen they fill the row. */
+@media (min-width: 1100px) {
+  .pgrid .piece.spc { grid-column: span 4 !important; }
+}
+/* on a phone the filters wrap instead of running off the screen's edge
+   ("Earrings" was cut at the right) */
+@media (max-width: 759px) {
+  #collection .cats { flex-wrap: wrap !important; overflow: visible !important; -webkit-mask-image: none !important; mask-image: none !important; padding-inline: 0 !important; margin-inline: 0 !important; }
+  #collection .sechead .h2 { font-size: clamp(1.55rem, 7vw, 2rem) !important; text-wrap: balance; }
+  #macro .mh { font-size: clamp(1.9rem, 9vw, 2.4rem) !important; text-wrap: balance; }
+}
+
+/* 5. Words over pictures: the box's lines and "Light goes in. Fire comes
+   out." crossed the loose stones and lost their edges. A soft shade of the
+   ground sits behind the words only (the one gradient the rules allow:
+   a neutral scrim over a photograph) */
+#beats .bt, #macro .mtxt .mh { position: relative; isolation: isolate; }
+#beats .bt::before, #macro .mtxt .mh::before { content: ""; position: absolute; inset: -40% -14%; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, .72), rgba(0, 0, 0, .45) 55%, rgba(0, 0, 0, 0)); }
+
+/* 6. Text too small to read: 84 lines were under 13px, some under 9px. The
+   house's small capitals stay (they are the look); none is under 11px */
+#collection .piece .bd span:not(.nm) { font-size: max(11px, .7rem) !important; }
+#collection .piece .kd, #collection .piece .price { font-size: max(11.5px, .72rem) !important; }
+.pgrid .sph { font-size: max(11px, .7rem) !important; }
+#details figcaption .k, .clock .cst, #whereT, .gprog, .vp, #langmenu .lc, #stripwrap .vtb, .tsteps b { font-size: max(11px, .7rem) !important; }
+#opts .opthead .k { font-size: max(11.5px, .72rem) !important; }
+#stripwrap .bphnote { font-size: max(11px, .68rem) !important; }
+#guide .gk span, #guide .gback span, #guide .gagain span, #end .ftag span, #end .ftrust a { font-size: max(11.5px, .72rem) !important; }
+
+/* 7. "Tell us what you have in mind." broke onto three lines in a column
+   narrower than its own block; it takes the block's width and two lines */
+#concierge .cbody h2.h2 { max-width: none !important; text-wrap: balance; }
+
+/* 8. The box's lines dissolved through a 10px blur as they changed (a
+   filter on 66px type, every frame). They cross-fade by opacity alone */
+#beats .bt { filter: none !important; }

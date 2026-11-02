@@ -572,6 +572,22 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
     console.log("home page: /test3/'s chapters");
   } else console.warn("home page: /test3/'s chapters could not be applied; the page stays as built");
 }
+/* /test10/: the home page as it is (/test3/'s chapters on the live page),
+   with the fixes of a measured review (src/test10.css, 2 Nov 2026). It
+   becomes the home page only when the house says so. */
+{
+  const T10 = { css: fs.readFileSync(path.join(path.dirname(path.resolve(src)), "src", "test10.css"), "utf8") };
+  const t10 = withExtras("test10", liveHtml, [EMB3D, T2, LAYOUT, T3, T10]);
+  if (t10) {
+    const tHead = liveHead
+      .replace(/<head>\n/, `<head>\n<base href="../">\n<script>window.__route="test10/"</script>\n`)
+      .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,nofollow">')
+      .replace("</head>", `<style>${t10.css}</style>\n</head>`);
+    fs.mkdirSync(path.join(outDir, "test10"), { recursive: true });
+    fs.writeFileSync(path.join(outDir, "test10", "index.html"), tHead + t10.html + "\n</body>\n</html>\n");
+    console.log("test page written: test10");
+  } else console.warn("test10 skipped: a chapter no longer fits the page");
+}
 /* /test4/: the redesign, a page of its own, built from zero (src/t4/page.mjs) */
 {
   const { mark, markDefs, markUse, logo } = await import("./src/body.mjs");
