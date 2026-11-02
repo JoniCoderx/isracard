@@ -5,6 +5,7 @@ Copied unchanged from their public repositories, under the MIT licence. Each lic
 | Skills | Source | Commit |
 |---|---|---|
 | animate, animate-expo, animation-performance, animation-vocabulary, apple-design, ask-sonner, break-ui, emil-design-eng, find-animation-opportunities, improve-animations, mobile-native, pick-ui-library, prototype, remove-animations, review-animations, write-swift | https://github.com/emilkowalski/skills | f1090be |
+| web3d-integration-patterns | https://github.com/freshtechbro/claudedesignskills | 1da73fe |
 | taste-skill (design-taste-frontend) | https://github.com/leonxlnx/taste-skill | 12af471 |
 
 ## Order of precedence on this project
