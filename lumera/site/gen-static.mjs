@@ -566,7 +566,49 @@ heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3
    finished one; the words stand in white on the film's own light. */
 /* the shade behind the words fades to nothing inside its own box, so no edge shows on the sand */
 const DUNES = `html body #hero .hcap::before{inset:-110px -170px -110px -150px!important;background:radial-gradient(closest-side,rgba(0,0,0,.5) 0%,rgba(0,0,0,.3) 50%,rgba(0,0,0,0) 100%)!important}`;
-heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3]);
+/* the house's notes on /test13/ (3 Nov 2026): the turning SOUL and "Find her
+   piece" leave the page, the special pieces' row is completed with places
+   still to come, and the type and the sections are calmer (src/t13/t13.css) */
+const { markUse } = await import("./src/body.mjs");
+const T13 = (() => {
+  const dir = path.join(path.dirname(path.resolve(src)), "src", "t13");
+  const cut = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return h; const j = h.indexOf("</section>", i); return j < 0 ? h : h.slice(0, i) + h.slice(j + "</section>".length); };
+  const soon = n => `<article class="piece soon spc" data-cat="all" aria-disabled="true"><div class="fig r11 sfig"><div class="sm" aria-hidden="true">${markUse("")}</div></div><div class="bd"><div class="t"><span class="nm" data-en="Coming soon" data-he="בקרוב">Coming soon</span></div><p class="p" data-en="A new special piece, now in the making." data-he="פריט מיוחד חדש, בעבודה בימים אלה.">A new special piece, now in the making.</p></div></article>`;
+  /* the footer, new: the house, its pages, its documents, and its channels.
+     A channel without a confirmed address is a quiet place marked "soon",
+     not a link (the icons are the first script's own, src/script1.html) */
+  const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  const S1 = fs.readFileSync(path.join(path.dirname(dir), "script1.html"), "utf8");
+  const icon = n => { const m = S1.match(new RegExp(`\\["${n}", "[^"]*", "([^"]+)"`)); return m ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${m[1]}"/></svg>` : ""; };
+  const SOC = ["Instagram", "TikTok", "Pinterest", "YouTube", "WhatsApp"];
+  const a2 = (href, en, he) => `<a href="${href}" data-en="${q(en)}" data-he="${q(he)}">${en}</a>`;
+  const foot = `<section id="end" data-n="" aria-label="Footer"><div class="f13">
+  <div class="f13top">
+    <div class="f13house"><a class="f13brand" href="#hero" aria-label="SILAVU, back to the top">${markUse("f13mk")}</a>
+      <p class="f13line" data-en="Fine jewellery in 18K gold and diamonds, signed with one knot and finished by hand. Seen in private, in Dubai and Tel Aviv." data-he="תכשיטי יוקרה בזהב 18K ויהלומים, חתומים בקשר אחד ומוגמרים בעבודת יד. בפגישה פרטית, בדובאי ובתל אביב.">Fine jewellery in 18K gold and diamonds, signed with one knot and finished by hand. Seen in private, in Dubai and Tel Aviv.</p>
+      <a class="f13cta" href="#concierge" data-en="Book a private viewing" data-he="קביעת פגישה פרטית">Book a private viewing</a></div>
+    <nav class="f13col" aria-label="Explore"><p class="k" data-en="Explore" data-he="גלו">Explore</p>${a2("#collection", "Collection", "הקולקציה")}${a2("#build", "Design your bracelet", "עצבו את הצמיד שלכם")}${a2("#inside", "The box", "הקופסה")}${a2("about/", "About SILAVU", "אודות SILAVU")}</nav>
+    <nav class="f13col" aria-label="Client care"><p class="k" data-en="Client care" data-he="שירות לקוחות">Client care</p>${FOOTER_DOCS.map(d => a2(d.slug + "/", d.title.en, d.title.he)).join("")}</nav>
+    <div class="f13col"><p class="k" data-en="Contact" data-he="יצירת קשר">Contact</p><a href="mailto:concierge@silavu.com">concierge@silavu.com</a><span class="f13city" data-en="Dubai · Tel Aviv · By appointment" data-he="דובאי · תל אביב · בתיאום מראש">Dubai · Tel Aviv · By appointment</span>
+      <p class="k f13fk" data-en="Follow" data-he="עקבו">Follow</p>
+      <ul class="f13soc">${SOC.map(n => `<li class="soon" title="${n} · soon">${icon(n)}<span class="vh">${n}, coming soon</span></li>`).join("")}</ul>
+      <p class="f13soon" data-en="Our channels open soon." data-he="הערוצים שלנו ייפתחו בקרוב.">Our channels open soon.</p></div>
+  </div>
+  <div class="f13word" aria-hidden="true">SILAVU</div>
+  <div class="f13bot"><span dir="ltr">© SILAVU ${new Date().getFullYear()}</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
+</div></section>`;
+  const edit = h => {
+    h = cut(cut(h, "soul3d"), "guide");
+    /* the opening's line says what the house makes; the film's piece is named at the other corner */
+    h = h.replace(/(<p class="p rv late d2") data-en="Crafted with intention\. Made to leave an impression\." data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="18K gold and diamonds, signed with one knot. Seen in private, in Dubai and Tel Aviv." data-he="זהב 18K ויהלומים, חתומים בקשר אחד. בפגישה פרטית, בדובאי ובתל אביב.">18K gold and diamonds, signed with one knot. Seen in private, in Dubai and Tel Aviv.</p>`)
+      .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="18K white gold · pavé diamonds" data-he="זהב לבן 18K · יהלומי פאווה">18K white gold · pavé diamonds</span></a>\n<div class="hseam"`);
+    const e = h.indexOf('<section id="end"'), ee = e < 0 ? -1 : h.indexOf("</section>", e);
+    if (e >= 0 && ee > 0) h = h.slice(0, e) + foot + h.slice(ee + "</section>".length);
+    return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
+  };
+  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), edit };
+})();
+heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
 /* The home page takes /test3/'s chapters (the house's choice, 1 Nov 2026):
    the live page as built above (its film, its words, its tracking, its
    address), with the 3D emblem, the layout, the close-ups, SOUL in three
