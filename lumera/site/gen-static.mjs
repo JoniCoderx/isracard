@@ -597,8 +597,30 @@ const T13 = (() => {
   <div class="f13word" aria-hidden="true"><svg viewBox="0 0 1200 200" focusable="false"><defs><linearGradient id="f13g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ece8df" stop-opacity=".2"/><stop offset=".92" stop-color="#ece8df" stop-opacity="0"/></linearGradient></defs><text x="600" y="178" text-anchor="middle" textLength="1176" lengthAdjust="spacing" fill="url(#f13g)" font-family="'Silavu Name', Jost, sans-serif" font-weight="500" font-size="220">SILAVU</text></svg></div>
   <div class="f13bot"><span dir="ltr">© SILAVU ${new Date().getFullYear()}</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
 </div></section>`;
+  /* the bracelet and its signature: the house's emerald-cut line in white
+     gold (public/line, the builder's own photograph on black), the name
+     written by hand in one line inside it (the signature chapter's own
+     line, its long approach trimmed), and a white tide that rises at the end
+     and takes the bracelet into the collection */
+  const SIGP = fs.readFileSync(path.join(dir, "sig13-path.txt"), "utf8").trim();
+  const SIG13 = `<section id="sig13" data-n="" data-title-en="The signature" data-title-he="החתימה" aria-label="The SILAVU line, signed">
+  <div class="s13pin"><div class="s13stage">
+    <div class="s13light" aria-hidden="true"></div>
+    <div class="s13obj">
+      <img class="s13img" src="line/emerald-white-1600.jpg" srcset="line/emerald-white-1000.jpg 1000w, line/emerald-white-1600.jpg 1600w" sizes="(max-width: 760px) 118vw, min(1120px, 78vw)" width="1600" height="1195" alt="The SILAVU line bracelet: emerald-cut diamonds in white gold, with the name SILAVU written by hand inside it" data-alt-he="צמיד SILAVU: יהלומים בליטוש אמרלד בזהב לבן, והשם SILAVU כתוב בכתב יד בתוכו" decoding="async" loading="lazy">
+      <img class="s13glint" src="line/emerald-white-1600.jpg" srcset="line/emerald-white-1000.jpg 1000w, line/emerald-white-1600.jpg 1600w" sizes="(max-width: 760px) 118vw, min(1120px, 78vw)" width="1600" height="1195" alt="" aria-hidden="true" decoding="async" loading="lazy">
+      <svg class="s13sig" viewBox="80 10 1150 380" aria-hidden="true" focusable="false"><defs><linearGradient id="s13ink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9dbe0" stop-opacity="0"/><stop offset=".12" stop-color="#eef0f3"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd2d8"/></linearGradient></defs>
+        <path class="s13line" d="${SIGP}"/><circle class="s13dot" cx="473" cy="187" r="4.2"/><circle class="s13tip" r="3"/></svg>
+    </div>
+    <svg class="s13tide" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0,140 C240,92 420,70 640,96 C880,124 1060,40 1260,48 C1350,52 1410,70 1440,80 L1440,320 L0,320 Z"/></svg>
+  </div></div>
+</section>`;
   const edit = h => {
     h = cut(cut(h, "soul3d"), "guide");
+    /* the signature, written inside the bracelet: replaces the signature
+       chapter under the film (the house's brief of 3 Nov 2026) */
+    { const i = h.indexOf('<section id="craft"'), j = i < 0 ? -1 : h.indexOf("</section>", i);
+      if (i >= 0 && j > 0) h = h.slice(0, i) + SIG13 + h.slice(j + "</section>".length); }
     /* the opening's line says what the house makes; the film's piece is named at the other corner */
     h = h.replace(/(<p class="p rv late d2") data-en="Crafted with intention\. Made to leave an impression\." data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Diamond bracelets and fine jewellery, designed around you and made to order by hand." data-he="צמידי יהלומים ותכשיטי יוקרה, מעוצבים סביבכם ונוצרים בהזמנה אישית, בעבודת יד.">Diamond bracelets and fine jewellery, designed around you and made to order by hand.</p>`)
       .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="Pavé diamonds" data-he="יהלומי פאווה">Pavé diamonds</span></a>\n<div class="hseam"`);
@@ -606,6 +628,8 @@ const T13 = (() => {
     if (e >= 0 && ee > 0) h = h.slice(0, e) + foot + h.slice(ee + "</section>".length);
     /* "About" leads to the About page redesigned with this one (/about13/) */
     h = h.replace(/href="about\/"/g, 'href="about13/"');
+    /* the collection's ivory turns to the box's black without an edge */
+    h = h.replace('<section id="inside"', '<div class="c13fade" aria-hidden="true"></div>\n<section id="inside"');
     /* the builder's place in the menu, said as what it is */
     h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');

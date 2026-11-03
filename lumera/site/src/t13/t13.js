@@ -78,19 +78,36 @@
   else setTimeout(init, 0);
 })();
 
-/* the collection: on a computer, the photograph zooms in under the pointer and
-   follows it, like a loupe inside the frame (the worn photograph stays one
-   arrow away instead of taking over on hover) */
+/* the collection: on a computer, hovering a piece shows it worn (the page's
+   own cross-fade) and a small round lens magnifies the photograph under the
+   pointer, whichever photograph is showing */
 (function () {
-  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  var Z = 2.4;
   function init() {
-    [].forEach.call(document.querySelectorAll(".pgrid .piece:not(.soon) .fig"), function (f) {
-      var raf = 0, x = 50, y = 50;
-      function set() { raf = 0; f.style.setProperty("--zx", x.toFixed(1) + "%"); f.style.setProperty("--zy", y.toFixed(1) + "%"); }
-      function at(e) { var r = f.getBoundingClientRect(); x = Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)); y = Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100)); if (!raf) raf = requestAnimationFrame(set); }
-      f.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; at(e); set(); f.classList.add("z13"); });
-      f.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse") at(e); });
-      f.addEventListener("pointerleave", function () { f.classList.remove("z13"); });
+    [].forEach.call(document.querySelectorAll(".pgrid .piece:not(.soon) .fig.swp"), function (f) {
+      if (f.querySelector(".lp13")) return;
+      var lens = document.createElement("i"); lens.className = "lp13"; lens.setAttribute("aria-hidden", "true"); f.appendChild(lens);
+      var raf = 0, ex = 0, ey = 0;
+      function shown() {
+        var w = f.querySelector(".im.hx.hvr.hvon img"); if (w && w.currentSrc) return w;
+        var all = f.querySelectorAll(".im img"), r = f.getBoundingClientRect(), best = null;
+        for (var i = 0; i < all.length; i++) { var b = all[i].getBoundingClientRect(); if (Math.abs(b.left - r.left) < r.width / 2 && getComputedStyle(all[i].parentNode).opacity !== "0") { best = all[i]; break; } }
+        return best || all[0];
+      }
+      function paint() {
+        raf = 0; var img = shown(); if (!img) return;
+        var r = f.getBoundingClientRect(), ir = img.getBoundingClientRect(), x = ex - r.left, y = ey - r.top;
+        lens.style.transform = ""; lens.style.left = x + "px"; lens.style.top = y + "px";
+        var src = img.currentSrc || img.src; if (lens.__src !== src) { lens.__src = src; lens.style.backgroundImage = "url(\"" + src + "\")"; }
+        lens.style.backgroundSize = (ir.width * Z).toFixed(0) + "px " + (ir.height * Z).toFixed(0) + "px";
+        lens.style.backgroundPosition = (75 - (ex - ir.left) * Z).toFixed(1) + "px " + (75 - (ey - ir.top) * Z).toFixed(1) + "px";
+      }
+      f.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; f.classList.add("lp13on"); paint(); });
+      f.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; if (!raf) raf = requestAnimationFrame(paint); });
+      f.addEventListener("pointerleave", function () { f.classList.remove("lp13on"); });
+      /* the worn photograph arrives a moment after the pointer: follow it */
+      f.addEventListener("transitionend", function () { if (f.classList.contains("lp13on") && !raf) raf = requestAnimationFrame(paint); });
     });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
@@ -144,10 +161,21 @@
       back.querySelector(".w13back").addEventListener("click", function (e) { e.stopPropagation(); w.classList.remove("flip"); });
       w.setAttribute("tabindex", "-1");
     });
-    if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) { sec.classList.add("dev"); return; }
-    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { sec.classList.add("dev"); io.disconnect(); } }); }, { threshold: 0.25 });
+    /* the table: the prints on dark leather, an envelope beneath, a warm side light over all */
+    var row = sec.querySelector(".wlkrow");
+    if (row && !sec.querySelector(".atl")) {
+      var atl = document.createElement("div"); atl.className = "atl";
+      row.parentNode.insertBefore(atl, row); atl.appendChild(row);
+      var env = document.createElement("div"); env.className = "env"; env.setAttribute("aria-hidden", "true"); env.innerHTML = "<b>SILAVU</b>";
+      atl.insertBefore(env, row);
+      var lt = document.createElement("i"); lt.className = "atlight"; lt.setAttribute("aria-hidden", "true"); atl.appendChild(lt);
+      sec.classList.add("atl13");
+    }
+    var settle = function () { sec.classList.add("dev"); setTimeout(function () { sec.classList.add("settled"); }, 1900); };
+    if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) { settle(); return; }
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { settle(); io.disconnect(); } }); }, { threshold: 0.25 });
     io.observe(sec.querySelector(".wlkrow") || sec);
-    setTimeout(function () { var r = sec.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) sec.classList.add("dev"); }, 3000);
+    setTimeout(function () { var r = sec.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0 && !sec.classList.contains("dev")) settle(); }, 3000);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
@@ -157,4 +185,57 @@
 (function () {
   function go() { var i = document.getElementById("intro"), b = document.getElementById("enterBtn"); if (i && b && !i.classList.contains("gone") && !i.classList.contains("off")) b.click(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(go, 0); }); else setTimeout(go, 0);
+})();
+
+/* the signature in the bracelet (#sig13). When the stage comes into view the
+   bracelet arrives and the name writes itself inside it in one line; then the
+   scroll is the camera: the bracelet leans back, a band of light crosses its
+   stones, and at the end it falls away into the white that rises to meet the
+   collection. Transform and opacity only; the scroll is followed smoothly. */
+(function () {
+  var sec = document.getElementById("sig13"); if (!sec) return;
+  var pin = sec.querySelector(".s13pin"), obj = sec.querySelector(".s13obj"), line = sec.querySelector(".s13line"), tip = sec.querySelector(".s13tip"), tide = sec.querySelector(".s13tide"), sig = sec.querySelector(".s13sig");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var L = line.getTotalLength(); line.style.strokeDasharray = L; line.style.strokeDashoffset = reduce ? 0 : L;
+  if (reduce) { sec.classList.add("in", "signed"); return; }
+  var drawn = 0, t0 = 0, writing = false, p = -1, target = 0, raf = 0, last = 0;
+  var c01 = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+  var ease = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  var seg = function (a, b) { return c01((p - a) / (b - a)); };
+  function setDraw(d) {
+    drawn = d; line.style.strokeDashoffset = (L * (1 - d)).toFixed(1);
+    if (d > 0 && d < 1) { var pt = line.getPointAtLength(L * d); tip.setAttribute("cx", pt.x.toFixed(1)); tip.setAttribute("cy", pt.y.toFixed(1)); tip.style.opacity = .9; }
+    else tip.style.opacity = 0;
+    if (d >= .999) sec.classList.add("signed");
+  }
+  function place() {
+    /* 0 to .22: still; .22 to .7: it leans back and turns a little, the light crosses; .7 to 1: it falls into the tide */
+    var lean = ease(seg(.18, .56)), fall = ease(seg(.56, 1)), sweep = seg(.2, .62);
+    var y = lean * 6 + fall * 46, rx = lean * 22 + fall * 30, rz = -lean * 5 - fall * 8, s = 1 + lean * .05 - fall * .1;
+    obj.style.transform = "translate3d(0," + y.toFixed(2) + "vh,0) rotateX(" + rx.toFixed(2) + "deg) rotateZ(" + rz.toFixed(2) + "deg) scale(" + s.toFixed(4) + ")";
+    obj.style.setProperty("--sx", (-40 + sweep * 180).toFixed(1) + "%");
+    sig.style.opacity = (1 - seg(.62, .82)).toFixed(3);
+    tide.style.setProperty("--ty", (101 - ease(seg(.5, .96)) * 101).toFixed(2) + "%");
+    /* a reader who scrolls on before the name is finished sees it finished by the scroll */
+    var byScroll = c01(p / .18); if (byScroll > drawn) setDraw(byScroll);
+  }
+  function frame(now) {
+    raf = 0;
+    var dt = last ? Math.min(100, now - last) : 16.7; last = now;
+    if (writing) { var d = c01((now - t0) / 2600); d = ease(d); if (d > drawn) setDraw(d); if (d >= 1) writing = false; }
+    var k = 1 - Math.pow(.86, dt / 16.667);
+    p = p < 0 ? target : p + (target - p) * k; if (Math.abs(target - p) < .0005) p = target;
+    place();
+    if (writing || p !== target) raf = requestAnimationFrame(frame); else last = 0;
+  }
+  function measure() {
+    var r = pin.getBoundingClientRect(), span = r.height - innerHeight;
+    target = c01(-r.top / Math.max(1, span));
+    if (r.top < innerHeight * .6 && r.bottom > 0 && !sec.classList.contains("in")) {
+      sec.classList.add("in"); setTimeout(function () { if (drawn < 1) { writing = true; t0 = performance.now(); if (!raf) raf = requestAnimationFrame(frame); } }, 700);
+    }
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+  addEventListener("scroll", measure, { passive: true }); addEventListener("resize", measure);
+  measure();
 })();
