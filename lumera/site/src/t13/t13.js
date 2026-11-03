@@ -77,3 +77,21 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 0); });
   else setTimeout(init, 0);
 })();
+
+/* the collection: on a computer, the photograph zooms in under the pointer and
+   follows it, like a loupe inside the frame (the worn photograph stays one
+   arrow away instead of taking over on hover) */
+(function () {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  function init() {
+    [].forEach.call(document.querySelectorAll(".pgrid .piece:not(.soon) .fig"), function (f) {
+      var raf = 0, x = 50, y = 50;
+      function set() { raf = 0; f.style.setProperty("--zx", x.toFixed(1) + "%"); f.style.setProperty("--zy", y.toFixed(1) + "%"); }
+      function at(e) { var r = f.getBoundingClientRect(); x = Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)); y = Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100)); if (!raf) raf = requestAnimationFrame(set); }
+      f.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; at(e); set(); f.classList.add("z13"); });
+      f.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse") at(e); });
+      f.addEventListener("pointerleave", function () { f.classList.remove("z13"); });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();

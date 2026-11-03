@@ -239,3 +239,13 @@ html body #configure #opts .opt.open .chips { width: 100% !important; box-sizing
 /* the tiles are large enough: no enlarged hit area spilling onto a neighbour */
 html body #configure #opts .opt.open .chip { position: relative !important; }
 html body #configure #opts .opt.open .chip::before, html body #configure #opts .opt.open .chip::after { display: none !important; content: none !important; }
+
+/* ── the collection's loupe: the photograph zooms in under the pointer (t13.js) ── */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html body .pgrid .piece .fig.swp .im.hx.hvr, html body .pgrid .piece .fig.swp .im.hx.hvr.hvon { opacity: 0 !important; }
+  html body .pgrid .piece:not(.soon) .fig.swp { overflow: hidden !important; cursor: zoom-in; }
+  html body .pgrid .piece:not(.soon) .fig.swp .im img { transform-origin: var(--zx, 50%) var(--zy, 50%) !important; transition: transform .55s cubic-bezier(.2,.8,.2,1) !important; }
+  html body .pgrid .piece:not(.soon):hover .fig.swp.z13 .im img,
+  html body .pgrid .piece:not(.soon):hover .fig.swp.z13.rv.in .im img { transform: scale(2.1) !important; }
+  html body .pgrid .piece .fig.swp.z13 .swd { opacity: 0; transition: opacity .2s ease; }
+}
