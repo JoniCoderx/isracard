@@ -636,6 +636,9 @@ const T13 = (() => {
     /* the builder's place in the menu, said as what it is */
     h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
     h = h.replace('<section id="build" data-n="03" data-title-en="The Line" data-title-he="הקו" aria-label="The Line">', '<section id="build" data-n="03" data-title-en="Design yours" data-title-he="עצבו בעצמכם" aria-label="Design your bracelet">');
+    /* the phone menu in the page's own order, with the builder's new name */
+    h = h.replace('<a href="#inside"><span class="k">01</span><span data-en="The box" data-he="הקופסה">The box</span></a>\n    <a href="#collection"><span class="k">02</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>\n    <a href="#build"><span class="k">03</span><span data-en="The Line" data-he="הקו">The Line</span></a>',
+      '<a href="#collection"><span class="k">01</span><span data-en="Collection" data-he="הקולקציה">Collection</span></a>\n    <a href="#inside"><span class="k">02</span><span data-en="The box" data-he="הקופסה">The box</span></a>\n    <a href="#build"><span class="k">03</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
   };
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; window.__assemble = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };

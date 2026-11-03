@@ -10,7 +10,7 @@ em { font-style: normal; color: var(--gold); }
 
 /* the bar */
 .bar { position: fixed; z-index: 20; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: max(18px, env(safe-area-inset-top)) var(--pad) 18px;
-  background: linear-gradient(to bottom, rgba(5,5,5,.75), rgba(5,5,5,0)); }
+  background: rgba(5,5,5,.8); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(246,241,230,.06); }
 .back { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
 .back svg { height: 34px; width: auto; }
 .wm { font-family: 'Silavu Name', Jost, sans-serif; font-weight: 500; font-size: 15px; letter-spacing: .34em; }
