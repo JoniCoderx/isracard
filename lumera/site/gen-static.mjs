@@ -610,7 +610,7 @@ const T13 = (() => {
     h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
   };
-  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1;</script>\n"]] };
+  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
 })();
 heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */

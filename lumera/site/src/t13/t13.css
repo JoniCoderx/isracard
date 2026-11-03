@@ -450,3 +450,6 @@ html body #pmodal .mbuy .mprice { order: 0; flex: 0 0 auto; }
 html body #pmodal .mbuy .mprice .pv { white-space: nowrap; }
 html body #pmodal .mbuy #pmPage { order: 1; display: inline-block !important; width: auto !important; height: auto !important; min-height: 0 !important; flex: 0 0 auto !important; margin: 0 !important; padding: 0 0 4px !important; border: 0 !important; border-bottom: 1px solid rgba(20,19,15,.35) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #1a1916 !important; }
 html body #pmodal .mbuy #pmPage::before { display: none !important; }
+
+/* ── no logo screen on the way in (the film and the words come first) ── */
+html body #intro { display: none !important; }

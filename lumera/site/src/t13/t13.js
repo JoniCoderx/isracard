@@ -151,3 +151,10 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
+
+/* no logo screen on the way in: if the browser would not remember that the
+   page has been seen, enter it at once anyway */
+(function () {
+  function go() { var i = document.getElementById("intro"), b = document.getElementById("enterBtn"); if (i && b && !i.classList.contains("gone") && !i.classList.contains("off")) b.click(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(go, 0); }); else setTimeout(go, 0);
+})();
