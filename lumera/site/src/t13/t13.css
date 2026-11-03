@@ -468,7 +468,7 @@ html body .c13fade::after { content: ""; position: absolute; inset: 0; opacity: 
    the next; the name, written inside it, leaves as it starts to move; at the end the bracelet falls out of the bottom
    of the screen and the black gives way to the collection's ivory ════ */
 html body #sig13 { position: relative; background: #000; padding: 0 !important; margin: 0; }
-#sig13 .s13pin { position: relative; height: 340svh; }
+#sig13 .s13pin { position: relative; height: 270svh; }
 #sig13 .s13stage { position: sticky; top: 0; z-index: 2; height: 100svh; overflow: hidden; display: grid; place-items: center; }
 #sig13 .s13light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 50% 42% at 50% 46%, rgba(214,218,226,.08), rgba(0,0,0,0) 72%); }
 #sig13 .s13view { position: relative; width: min(94vw, 1240px, 132svh); aspect-ratio: 1120 / 840; will-change: transform, opacity; }
@@ -490,7 +490,7 @@ html.s13on #where { opacity: 0 !important; visibility: hidden; transition: opaci
 html body .s13fade { display: block; position: relative; z-index: 1; height: 72svh; margin-top: -66svh; pointer-events: none;
   background: linear-gradient(to bottom, #000 0%, #0a0908 10%, #1b1a18 22%, #36332f 34%, #5d5a54 46%, #8b877f 58%, #b9b4ab 70%, #dcd8d1 82%, #f3f1ed 92%, #fff 100%); }
 @media (max-width: 760px) {
-  #sig13 .s13pin { height: 300svh; }
+  #sig13 .s13pin { height: 240svh; }
   #sig13 .s13view { width: 100vw; }
   #sig13 .s13line { stroke-width: 3; }
   html body .s13fade { height: 60svh; margin-top: -56svh; }
@@ -778,4 +778,23 @@ html[data-ns] body #hero .hcap .hacts .btn.solid { letter-spacing: 0 !important;
   html body #hero .hcap .hacts { gap: 18px !important; }
   html body #hero .hcap .hacts .btn.solid { width: 100% !important; padding: 18px 24px !important; }
   html body #hero .hcap .hacts .lnk.hsec { align-self: center !important; margin-inline: auto !important; }
+}
+
+/* ════ second review (3 Nov 2026): calmer, shorter ════ */
+/* no small ornaments over the headings: the heading says it */
+html body #collection > .chap, html body #collection .sechead > .k, html body #details .dthd > .k { display: none !important; }
+/* the collection on a phone: the four signature pieces two by two, the specials as rows, the coming pieces as small tiles */
+@media (max-width: 759px) {
+  html body #collection .pgrid:has(> .piece.soon.spc) { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; column-gap: 12px !important; }
+  html body #collection .pgrid:has(> .piece.soon.spc) > .piece.sig { grid-column: span 3 !important; }
+  html body #collection .pgrid:has(> .piece.soon.spc) > .piece.soon.spc { grid-column: span 2 !important; }
+  html body #collection .pgrid > .piece.sig .bd .p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: .74rem !important; line-height: 1.5 !important; }
+  html body #collection .pgrid > .piece.sig .bd .t, html body #collection .pgrid > .piece.sig .bd .nm { font-size: .7rem !important; letter-spacing: .12em !important; }
+  html body #collection .pgrid > .piece.sig .acts, html body #collection .pgrid > .piece.sig .lks { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+}
+/* the footer on a phone: the link lists side by side */
+@media (max-width: 520px) {
+  #end .f13top { grid-template-columns: 1fr 1fr !important; column-gap: 20px !important; row-gap: 34px !important; }
+  #end .f13house { grid-column: 1 / -1; }
+  #end .f13top > :last-child { grid-column: 1 / -1; }
 }

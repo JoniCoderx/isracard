@@ -616,7 +616,8 @@ const T13 = (() => {
 </section>
 <div class="s13fade" aria-hidden="true"></div>`;
   const edit = h => {
-    h = cut(cut(h, "soul3d"), "guide");
+    /* the drawn stones on leather ("Light goes in") are taken out too: the weakest, most illustrated screen of the page */
+    h = cut(cut(cut(h, "soul3d"), "guide"), "macro");
     /* the signature, written inside the bracelet: replaces the signature
        chapter under the film (the house's brief of 3 Nov 2026) */
     { const i = h.indexOf('<section id="craft"'), j = i < 0 ? -1 : h.indexOf("</section>", i);
