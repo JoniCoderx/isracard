@@ -142,3 +142,100 @@ html body #enquire .csub .btn.solid, html body #enquire #cform .btn.solid { bord
 @media (min-width: 1000px) { html body #inside #stonepin.pin { height: 320svh !important; } }
 @media (max-width: 999px) { html body #inside #stonepin.pin { height: 260svh !important; } }
 html body #inside .beat .h2 { font-size: clamp(1.5rem, 2.5vw, 2.5rem) !important; letter-spacing: .12em !important; }
+
+/* ── the builder as a studio: five bars, one question at a time, large tiles,
+   Back and Next, the line written on the stage (src/t13/t13.js) ── */
+html body #configure .opt > .opthead { display: none !important; }
+html body #configure .opt:not(.open) { display: none !important; }
+html body #configure #opts .opt.open { display: block !important; border: 0 !important; padding: 0 !important; margin: 0 !important; }
+html body #configure #opts .opt.open .chips { display: grid !important; gap: 10px !important; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible !important; flex-wrap: wrap; padding: 0 !important; margin: 0 !important; max-height: none !important; }
+html body #configure .b13nav { margin-bottom: 22px; }
+html body #configure .b13bars { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+html body #configure .b13bar { all: unset; cursor: pointer; display: grid; gap: 6px; padding: 0 0 4px; min-width: 0; }
+html body #configure .b13bar i { display: block; height: 2px; border-radius: 2px; background: rgba(246,241,230,.14); transition: background-color .25s ease; }
+html body #configure .b13bar.done i { background: rgba(246,241,230,.5); }
+html body #configure .b13bar.on i { background: #f1e3c4; }
+html body #configure .b13bar .b13bl { font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(246,241,230,.42); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body #configure .b13bar .b13ba { font-size: .8rem; color: rgba(246,241,230,.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body #configure .b13bar.on .b13bl { color: #f1e3c4; }
+html body #configure .b13bar:focus-visible { outline: 1px solid #f1e3c4; outline-offset: 4px; }
+html body #configure .b13head { display: flex; align-items: baseline; gap: 14px; margin-top: 26px; }
+html body #configure .b13n { font-size: .58rem; letter-spacing: .28em; color: rgba(246,241,230,.45); }
+html body #configure .b13t { font-family: var(--display); font-size: clamp(1.15rem, 1.6vw, 1.45rem); font-weight: 300; letter-spacing: .1em; text-transform: uppercase; color: #f6f1e6; }
+html[data-ns] body #configure .b13t, html[data-ns] body #configure .b13bar .b13bl { letter-spacing: 0; text-transform: none; }
+
+/* tiles */
+html body #configure #opts .opt.open .chip { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; align-content: center; gap: 10px; min-height: 64px; padding: 14px 10px; text-align: center;
+  border: 1px solid rgba(246,241,230,.14); border-radius: 14px; background: rgba(255,255,255,.025); color: rgba(246,241,230,.78);
+  font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+html body #configure #opts .opt.open .chip:hover { border-color: rgba(246,241,230,.36); color: #fff; }
+html body #configure #opts .opt.open .chip.on { border-color: #f1e3c4; background: rgba(241,227,196,.08); color: #fff; box-shadow: 0 0 0 1px rgba(241,227,196,.35) inset, 0 10px 30px -18px rgba(241,227,196,.6); }
+html body #configure #opts .opt.open .chip:focus-visible { outline: 1px solid #f1e3c4; outline-offset: 3px; }
+html body #configure #opts .opt.open .chip:active { transform: scale(.97); }
+html[data-ns] body #configure .opt.open .chip { letter-spacing: 0; text-transform: none; font-size: .82rem; }
+html body #configure #opts .opt.open .chips.cuts .chip { min-height: 96px; }
+html body #configure #opts .opt.open .chips.cuts .chip svg { width: 28px !important; height: 28px !important; opacity: .9; }
+/* metal: a real swatch */
+html body #configure #opts .opt.mcol.open .chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+html body #configure #opts .opt.mcol.open .chip { grid-auto-flow: column; justify-content: start; gap: 14px; min-height: 68px; padding-inline: 16px; text-align: start; }
+html body #configure #opts .opt.mcol.open .chip .sw { width: 30px !important; height: 30px !important; border-radius: 50% !important; box-shadow: 0 0 0 1px rgba(255,255,255,.18) inset, 0 4px 12px rgba(0,0,0,.4); }
+html body #configure #opts .opt.mcol .chip[data-v="white"] .sw { background: radial-gradient(circle at 32% 28%, #ffffff, #d9dbe0 45%, #a6a9b0 100%) !important; }
+html body #configure #opts .opt.mcol .chip[data-v="yellow"] .sw { background: radial-gradient(circle at 32% 28%, #fff4c6, #e6c66a 45%, #a9822b 100%) !important; }
+html body #configure #opts .opt.mcol .chip[data-v="rose"] .sw { background: radial-gradient(circle at 32% 28%, #ffe6da, #e4b096 45%, #a86d55 100%) !important; }
+html body #configure #opts .opt.mcol .chip[data-v="platinum"] .sw { background: radial-gradient(circle at 32% 28%, #ffffff, #cfd3da 45%, #8f949c 100%) !important; }
+/* type: two cards */
+html body #configure #opts .opt.sorigin.open .chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+html body #configure #opts .opt.sorigin.open .chip { min-height: 72px; }
+/* carats and wrist: one row of equal steps */
+html body #configure #opts .opt.open .chips:not(.cuts) .chip[data-k="ct"], html body #configure #opts .opt.open .chips .chip[data-k="wrist"] { min-height: 56px; letter-spacing: .08em; font-size: .78rem; text-transform: none; }
+html body #configure #opts .opt.open .chips:has(.chip[data-k="ct"]) { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px !important; }
+html body #configure #opts .opt.open .chips:has(.chip[data-k="wrist"]) { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px !important; }
+
+/* Back and Next */
+html body #configure .b13ft { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; }
+html body #configure .b13back { all: unset; cursor: pointer; padding: 12px 4px; font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: rgba(246,241,230,.6); }
+html body #configure .b13back:disabled { opacity: 0; pointer-events: none; }
+html body #configure .b13back:hover { color: #fff; }
+html body #configure .b13next { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; padding: 13px 22px; border-radius: 999px; border: 1px solid rgba(241,227,196,.55); color: #f6f1e6; font-size: .6rem; letter-spacing: .24em; text-transform: uppercase; transition: background-color .2s ease, color .2s ease; }
+html body #configure .b13next i { width: 14px; height: 1px; background: currentColor; position: relative; }
+html body #configure .b13next i::after { content: ""; position: absolute; right: 0; top: -3px; width: 6px; height: 6px; border: solid currentColor; border-width: 1px 1px 0 0; transform: rotate(45deg); }
+html[dir="rtl"] body #configure .b13next i { transform: scaleX(-1); }
+html body #configure .b13next:hover { background: #f1e3c4; color: #111; }
+html body #configure .b13next:active { transform: scale(.97); }
+html body #configure .b13back:focus-visible, html body #configure .b13next:focus-visible { outline: 1px solid #f1e3c4; outline-offset: 3px; }
+html[data-ns] body #configure .b13back, html[data-ns] body #configure .b13next { letter-spacing: 0; }
+html body #configure #reserve.b13ping { box-shadow: 0 0 0 4px rgba(241,227,196,.35); transition: box-shadow .3s ease; }
+html body #configure .total { margin-top: 26px !important; }
+
+/* the line on the stage */
+html body #configure .b13live { position: absolute; z-index: 6; left: clamp(18px, 2.4vw, 32px); bottom: clamp(18px, 2.4vw, 30px); display: grid; gap: 4px; pointer-events: none; max-width: 60%; }
+html body #configure .b13live .k { font-size: .55rem; letter-spacing: .28em; color: rgba(241,227,196,.75); }
+html body #configure .b13live b { font-weight: 300; font-size: .82rem; letter-spacing: .06em; color: rgba(246,241,230,.88); }
+html body #configure .vposwrap { z-index: 7; }
+
+@media (max-width: 759px) {
+  html body #configure .b13bars { gap: 4px; }
+  html body #configure .b13bar .b13ba { font-size: .68rem; }
+  html body #configure .b13bar .b13bl { font-size: .5rem; letter-spacing: .14em; }
+  html body #configure .b13head { margin-top: 18px; }
+  html body #configure #opts .opt.open .chips { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px !important; }
+  html body #configure #opts .opt.open .chips.cuts .chip { min-height: 78px; font-size: .5rem; letter-spacing: .12em; padding: 10px 4px; }
+  html body #configure #opts .opt.open .chips:has(.chip[data-k="ct"]) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  html body #configure #opts .opt.open .chips:has(.chip[data-k="wrist"]) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  html body #configure #opts .opt.mcol.open .chips { grid-template-columns: 1fr 1fr; }
+  html body #configure #opts .opt.mcol.open .chip { padding-inline: 10px; gap: 10px; font-size: .52rem; letter-spacing: .12em; }
+  html body #configure .b13live { display: none; }
+}
+html body #configure #opts { display: block !important; overflow: visible !important; white-space: normal !important; grid-template-columns: none !important; flex-direction: column !important; padding-inline: 0 !important; mask: none !important; -webkit-mask: none !important; }
+html body #configure #opts > .b13nav, html body #configure #opts > .opt.open, html body #configure #opts > .b13ft { width: 100% !important; max-width: none !important; flex: none !important; min-width: 0 !important; }
+@media (max-width: 759px) {
+  html body #configure #opts { padding: 22px 0 0 !important; }
+  html body #configure .b13head { flex-direction: column; gap: 6px; }
+  html body #configure .b13ft { margin-top: 18px; }
+  html body #configure .b13next { padding: 12px 18px; font-size: .56rem; letter-spacing: .18em; }
+}
+html body #configure #opts .opt.open .chip { min-width: 0 !important; width: auto !important; max-width: none !important; flex: none !important; }
+html body #configure #opts .opt.open .chips { width: 100% !important; box-sizing: border-box; }
+/* the tiles are large enough: no enlarged hit area spilling onto a neighbour */
+html body #configure #opts .opt.open .chip { position: relative !important; }
+html body #configure #opts .opt.open .chip::before, html body #configure #opts .opt.open .chip::after { display: none !important; content: none !important; }

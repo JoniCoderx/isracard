@@ -606,7 +606,7 @@ const T13 = (() => {
     if (e >= 0 && ee > 0) h = h.slice(0, e) + foot + h.slice(ee + "</section>".length);
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
   };
-  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1;</script>\n"]] };
+  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1;</script>\n"]] };
 })();
 heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
 /* The home page takes /test3/'s chapters (the house's choice, 1 Nov 2026):
