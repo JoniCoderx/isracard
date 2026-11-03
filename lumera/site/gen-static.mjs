@@ -630,11 +630,14 @@ const T13 = (() => {
     h = h.replace(/href="about\/"/g, 'href="about13/"');
     /* the collection's ivory turns to the box's black without an edge */
     h = h.replace('<section id="inside"', '<div class="c13fade" aria-hidden="true"></div>\n<section id="inside"');
+    /* the builder's heading, as the house wrote it for the bench */
+    h = h.replace(/(<h2 class="h2 sp rv") data-en="Design <em>your bracelet\.<\/em>" data-he="[^"]*">Design <em>your bracelet\.<\/em><\/h2>/, '$1 data-en="Design your bracelet" data-he="עצבו את הצמיד שלכם">Design your bracelet</h2>')
+      .replace(/(<p class="p rv d2" data-en-no3d="[^"]*" data-he-no3d="[^"]*") data-en="Choose the shape, the carat weight[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Create a piece tailored to you." data-he="תכשיט שנוצר במיוחד עבורכם.">Create a piece tailored to you.</p>');
     /* the builder's place in the menu, said as what it is */
     h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
   };
-  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
+  return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; window.__assemble = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
 })();
 heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */

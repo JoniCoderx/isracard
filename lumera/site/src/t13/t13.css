@@ -582,3 +582,111 @@ html body #details.atl13 .env b { right: auto; left: 14%; bottom: 13%; transform
   html body #details.atl13 .env { left: -30%; top: 30%; width: 95%; }
 }
 html body #details.atl13 .atlight { mix-blend-mode: normal !important; background: linear-gradient(118deg, rgba(255,214,168,.12) 0%, rgba(255,214,168,.05) 28%, rgba(0,0,0,0) 52%) !important; }
+
+/* ════ the builder as a jeweller's bench (the house's reference, 3 Nov 2026): the views as a rail on the left, the real
+   3D bracelet always in the middle under a warm light, the five questions in a glass panel on the right with numbered
+   steps, and the line being built in a bar along the foot. Every choice changes the real bracelet (script8, __assemble). ════ */
+html body #build .ed.solo .copy > .k { display: none !important; }
+html body #build .ed.solo .copy .h2 { font-size: clamp(1.25rem, 1.9vw, 1.8rem) !important; letter-spacing: .34em !important; }
+html body #build .ed.solo .copy .p { font-size: .92rem !important; color: rgba(246,241,230,.7) !important; margin-top: 12px !important; }
+html body #build .chap { display: none !important; }
+@media (min-width: 1000px) {
+  html body #configure { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(380px, 440px) !important; grid-template-areas: "stage panel" "vpos panel" "bar bar" "acts acts" !important;
+    column-gap: 28px !important; row-gap: 0 !important; align-items: start; padding: 22px !important; border-radius: 32px !important; border: 1px solid rgba(246,241,230,.08) !important;
+    background: radial-gradient(ellipse 60% 70% at 18% 0%, rgba(255,214,168,.10), rgba(0,0,0,0) 60%), linear-gradient(180deg, #0f0e0c, #070706) !important; box-shadow: 0 40px 100px -40px rgba(0,0,0,.9) !important; }
+  html body #configure > #stripwrap { grid-area: stage !important; height: min(600px, 66svh) !important; min-height: 460px; width: auto !important; margin: 0 !important; border-radius: 24px !important; overflow: hidden;
+    background: radial-gradient(ellipse 70% 60% at 30% 10%, rgba(255,214,168,.09), rgba(0,0,0,0) 60%), radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255,255,255,.035), rgba(0,0,0,0) 70%), #0a0908 !important; }
+  html body #configure > .vposwrap { grid-area: vpos !important; justify-self: center; margin: 18px 0 6px !important; }
+  html body #configure > .handbar { grid-area: vpos !important; justify-self: center; margin: 18px 0 6px !important; }
+  html body #configure > #opts { grid-area: panel !important; align-self: stretch; margin: 0 !important; padding: 26px 26px 24px !important; border-radius: 24px; border: 1px solid rgba(246,241,230,.1);
+    background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)) !important; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  html body #configure > .total { grid-area: bar !important; }
+  html body #configure > .cacts { grid-area: acts !important; }
+}
+/* the rail: the three views, with their drawings */
+html body #configure #stripwrap .vbg, html body #configure #stripwrap .bgmk, html body #configure .b13live { display: none !important; }
+@media (min-width: 1000px) {
+  html body #configure #stripwrap .vt { position: absolute !important; z-index: 8; left: 18px !important; top: 50% !important; right: auto !important; bottom: auto !important; transform: translateY(-50%) !important;
+    display: flex !important; flex-direction: column !important; gap: 10px !important; padding: 0 !important; border: 0 !important; background: none !important; border-radius: 0 !important; width: auto !important; }
+  html body #configure #stripwrap .vt .vtb { display: grid !important; justify-items: center; gap: 8px; width: 76px; padding: 14px 4px 12px !important; border-radius: 16px !important; border: 1px solid transparent !important; background: transparent !important;
+    color: rgba(246,241,230,.66) !important; font-size: .5rem !important; letter-spacing: .14em !important; line-height: 1.2; white-space: normal; text-align: center; transition: background-color .2s ease, border-color .2s ease, color .2s ease !important; }
+  html body #configure #stripwrap .vt .vtb::before { content: ""; width: 22px; height: 22px; background: currentColor; -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+  html body #configure #stripwrap .vt .vtb.on, html body #configure #stripwrap .vt .vtb[aria-selected="true"] { color: #f6f1e6 !important; border-color: rgba(241,227,196,.55) !important; background: rgba(241,227,196,.07) !important; box-shadow: 0 0 24px -8px rgba(241,227,196,.35); }
+  html body #configure #stripwrap .vt .vtb:hover { color: #fff !important; }
+}
+html body #configure .vtb[data-view="line"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Cpath d='M12 2.8l8 4.4v9.6l-8 4.4-8-4.4V7.2z'/%3E%3Cpath d='M4 7.2l8 4.6 8-4.6M12 11.8v9.4'/%3E%3C/svg%3E"); }
+html body #configure .vtb[data-view="photo"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Crect x='3' y='6.5' width='18' height='13' rx='2.5'/%3E%3Cpath d='M8.5 6.5l1.4-2.3h4.2l1.4 2.3'/%3E%3Ccircle cx='12' cy='13' r='3.6'/%3E%3C/svg%3E"); }
+html body #configure .vtb[data-view="wrist"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M8 13V5.5a1.4 1.4 0 012.8 0V11M10.8 10V4a1.4 1.4 0 012.8 0v6M13.6 10.5V5.2a1.4 1.4 0 012.8 0V12M16.4 11.5V8.4a1.4 1.4 0 012.8 0v6.1c0 4-2.7 6.7-6.6 6.7-2.6 0-4.4-1.2-5.7-3.3L5 14.2a1.4 1.4 0 012.3-1.5L8 14'/%3E%3C/svg%3E"); }
+/* the views of the bracelet: one pill */
+html body #configure .vposwrap .vpos { display: inline-flex !important; gap: 2px !important; padding: 5px !important; border-radius: 999px !important; border: 1px solid rgba(246,241,230,.12) !important; background: rgba(255,255,255,.03) !important; }
+html body #configure .vposwrap .vp { border-radius: 999px !important; padding: 10px 20px !important; font-size: .56rem !important; letter-spacing: .2em !important; color: rgba(246,241,230,.7) !important; background: transparent !important; border: 0 !important; transition: background-color .2s ease, color .2s ease !important; }
+html body #configure .vposwrap .vp.on { background: linear-gradient(180deg, #efe6d4, #d8cbb2) !important; color: #141310 !important; }
+html body #configure .vposwrap .vp:hover:not(.on) { color: #fff !important; }
+html body #configure .vposwrap .vsep { opacity: .3; }
+/* the steps: numbered, joined by a line */
+html body #configure .b13bars { position: relative; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 0 !important; }
+html body #configure .b13bars::before { content: ""; position: absolute; left: 10%; right: 10%; top: 16px; height: 1px; background: rgba(246,241,230,.14); }
+html body #configure .b13bar { position: relative; justify-items: center; text-align: center; gap: 8px !important; padding: 0 !important; }
+html body #configure .b13bar i { display: none !important; }
+html body #configure .b13bar .b13num { position: relative; z-index: 1; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(246,241,230,.3); background: #0d0c0b; color: rgba(246,241,230,.75); font-size: .74rem; font-weight: 400; font-style: normal; transition: background-color .25s ease, color .25s ease, border-color .25s ease; }
+html body #configure .b13bar.done .b13num { border-color: rgba(241,227,196,.6); color: #f1e3c4; }
+html body #configure .b13bar.on .b13num { background: #f3ecdd; border-color: #f3ecdd; color: #141310; box-shadow: 0 0 0 4px rgba(241,227,196,.12); }
+html body #configure .b13bar .b13bl { font-size: .62rem !important; letter-spacing: .06em !important; text-transform: none !important; color: rgba(246,241,230,.6) !important; }
+html body #configure .b13bar.on .b13bl { color: #f6f1e6 !important; }
+html body #configure .b13bar .b13ba { display: none !important; }
+html body #configure .b13head { flex-direction: column; align-items: flex-start !important; gap: 6px !important; margin-top: 26px !important; padding-top: 22px; border-top: 1px solid rgba(246,241,230,.08); }
+html body #configure .b13head .b13n { display: none; }
+html body #configure .b13t { font-size: 1.15rem !important; letter-spacing: .04em !important; text-transform: none !important; font-weight: 300 !important; }
+html body #configure .b13sub { margin: 0; font-size: .82rem; color: rgba(246,241,230,.55); }
+html body #configure #opts .opt.open .chip { font-size: .64rem !important; letter-spacing: .06em !important; text-transform: none !important; }
+html body #configure #opts .opt.open .chips.cuts .chip svg { width: 26px !important; height: 26px !important; }
+html body #configure .b13ft { flex-direction: column-reverse; align-items: stretch !important; gap: 10px !important; margin-top: 22px !important; }
+html body #configure .b13next { justify-content: space-between !important; padding: 16px 24px !important; border: 0 !important; background: linear-gradient(180deg, #f3ecdd, #dccfb6) !important; color: #141310 !important; font-size: .64rem !important; letter-spacing: .14em !important; text-transform: none !important; }
+html body #configure .b13next:hover { background: #fff !important; }
+html body #configure .b13back { align-self: flex-start; padding: 2px 0 !important; }
+/* the line being built: a bar along the foot */
+html body #configure > .total { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 24px; margin: 18px 0 0 !important; padding: 16px 22px !important; border: 1px solid rgba(246,241,230,.1) !important; border-radius: 22px !important;
+  background: rgba(255,255,255,.025) !important; }
+html body #configure > .total .tot { display: flex !important; align-items: center; gap: 22px; flex-wrap: wrap; min-width: 0; }
+html body #configure > .total .t13thumb { width: 74px; height: 40px; object-fit: cover; border-radius: 10px; flex: 0 0 auto; background: #000; }
+html body #configure > .total .ltk { margin: 0 !important; font-size: .74rem !important; letter-spacing: .06em !important; text-transform: none !important; color: #f6f1e6 !important; }
+html body #configure > .total .lsum { margin: 0 !important; padding-left: 22px; border-left: 1px solid rgba(246,241,230,.12); font-size: .84rem !important; color: rgba(246,241,230,.8) !important; }
+html body #configure > .total .pricerow { margin: 0 !important; padding-left: 22px; border-left: 1px solid rgba(246,241,230,.12); }
+html body #configure > .total .cur, html body #configure > .total .estnote { display: none !important; }
+html body #configure > .total #reserve { margin: 0 !important; background: transparent !important; color: #f6f1e6 !important; border: 1px solid rgba(246,241,230,.55) !important; padding: 14px 26px !important; font-size: .6rem !important; letter-spacing: .16em !important; text-transform: none !important; }
+html body #configure > .total #reserve:hover { background: #f6f1e6 !important; color: #111 !important; }
+html body #configure > .total .trustline, html body #configure > .total .sdet { grid-column: 1 / -1; }
+html body #configure > .total .trustline { margin: 12px 0 0 !important; }
+html body #configure > .cacts { display: flex !important; justify-content: center; gap: 24px; margin-top: 14px !important; opacity: .8; }
+/* a phone: the bracelet first, the views over it, the steps below, the line at the foot */
+@media (max-width: 999px) {
+  html body #configure { padding: 0 !important; }
+  html body #configure #stripwrap .vt { top: 14px !important; left: 50% !important; transform: translateX(-50%) !important; display: inline-flex !important; gap: 2px !important; padding: 4px !important; border-radius: 999px !important; border: 1px solid rgba(246,241,230,.14) !important; background: rgba(10,9,8,.6) !important; }
+  html body #configure #stripwrap .vt .vtb { display: inline-flex !important; align-items: center; gap: 6px; border-radius: 999px !important; padding: 8px 12px !important; font-size: .5rem !important; }
+  html body #configure #stripwrap .vt .vtb::before { content: ""; width: 14px; height: 14px; background: currentColor; -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+  html body #configure #stripwrap .vt .vtb.on { background: #f3ecdd !important; color: #141310 !important; }
+  html body #configure > #opts { padding: 22px 4px 0 !important; }
+  html body #configure .b13bar .b13num { width: 28px; height: 28px; font-size: .66rem; }
+  html body #configure .b13bars::before { top: 14px; }
+  html body #configure .b13bar .b13bl { font-size: .52rem !important; }
+  html body #configure > .total { grid-template-columns: 1fr; row-gap: 14px; }
+  html body #configure > .total .tot { gap: 12px; }
+  html body #configure > .total .lsum, html body #configure > .total .pricerow { padding-left: 0; border-left: 0; flex: 1 1 100%; }
+  html body #configure > .total #reserve { width: 100% !important; justify-content: center; }
+}
+html body #build .ed.solo .copy .h2 { max-width: none !important; white-space: nowrap; }
+@media (max-width: 560px) { html body #build .ed.solo .copy .h2 { white-space: normal; letter-spacing: .24em !important; } }
+html body #configure #stripwrap .vt::before, html body #configure #stripwrap .vt::after, html body #configure #stripwrap .vt .vtb::after { display: none !important; content: none !important; }
+html body #configure #stripwrap .vt .vtb { height: auto !important; min-height: 0 !important; min-width: 0 !important; flex: none !important; position: relative !important; }
+@media (min-width: 1000px) { html body #configure #stripwrap .vhint { display: none !important; } }
+html body #configure #stripwrap .vt, html body #configure #stripwrap .vt .vtb { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+@media (min-width: 1000px) {
+  html body #configure #stripwrap #bcv, html body #configure #stripwrap #stripcv, html body #configure #stripwrap .bph, html body #configure #stripwrap .glfb { left: 104px !important; width: calc(100% - 104px) !important; right: auto !important; }
+}
+@media (max-width: 999px) {
+  html body #configure > #opts { width: auto !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box; overflow: hidden; }
+  html body #configure #opts .opt.open .chips { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  html body #configure #opts .opt.open .chips.cuts .chip { font-size: .56rem !important; padding: 10px 2px !important; }
+  html body #configure #opts .opt.open .chip span { overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+}
+html body #configure #opts .opt.open .chips, html body #configure #opts .opt.open .chips.cuts { grid-auto-flow: row !important; grid-auto-columns: auto !important; justify-content: stretch !important; overflow: visible !important; scroll-snap-type: none !important; padding-inline: 0 !important; margin-inline: 0 !important; }

@@ -1228,6 +1228,15 @@
     ci.set([cf.T[0], cf.T[1], cf.T[2], cf.U[0], cf.U[1], cf.U[2], cf.A[0], cf.A[1], cf.A[2], cf.pos[0] + cf.U[0] * cd, cf.pos[1] + cf.U[1] * cd, cf.pos[2] + cf.U[2] * cd], 0);
     pStone.instances(si2); pHead.instances(hi); pLink.instances(li); pClasp.instances(ci);
     state.frames = frames; state.step = step; state.depth = depth;
+    /* where the page asks for it (window.__assemble, /test13/): when the
+       stones change (their cut, their size, their number, the wrist), the
+       new ones come down into their settings one after another around the
+       line; a change of metal alone does not move them (see draw) */
+    if (window.__assemble && !reduce) {
+      var akey = cut + "|" + n + "|" + L + "|" + W + "|" + wrist;
+      if (state.akey && state.akey !== akey) state.asm = { t0: performance.now(), base: si2, n: n, depth: depth };
+      state.akey = akey;
+    }
     if (snake) snakeRing();
     dirty = true;
   }
@@ -1378,6 +1387,13 @@
     gl.uniform2f(U.res, W2, H2);
     gl.uniform1f(U.fade, 1);
     var mc = METAL[window.__preview || state.metal] || METAL.white;
+    /* the metal turns into the new one over a moment rather than switching (window.__assemble) */
+    if (window.__assemble && !reduce) {
+      if (!state.mcol) state.mcol = mc.slice();
+      var mch = false;
+      for (var mz = 0; mz < 3; mz++) { var md = mc[mz] - state.mcol[mz]; if (Math.abs(md) > 0.002) { state.mcol[mz] += md * 0.11; mch = true; } else state.mcol[mz] = mc[mz]; }
+      mc = state.mcol; if (mch) dirty = true;
+    }
     if (hand.on) {
       var sk = SKINS[hand.skin] || SKINS[1];
       gl.uniform1f(U.bandY, 0); gl.uniform1f(U.bandW, state.thick * 0.9 + 2);
@@ -1409,6 +1425,15 @@
     }
     requestAnimationFrame(tick);
     if (snake) { snakeStep(performance.now()); dirty = true; }
+    if (state.asm) {
+      var A = state.asm, anow = performance.now(), aarr = new Float32Array(A.base), adone = true;
+      for (var aq = 0; aq < A.n; aq++) {
+        var au = Math.min(1, Math.max(0, (anow - A.t0 - aq / A.n * 560) / 520)); if (au < 1) adone = false;
+        var ae = 1 - Math.pow(1 - au, 3), aoff = (1 - ae) * A.depth * 2.4, ao = aq * 12;
+        aarr[ao + 9] += aarr[ao + 3] * aoff; aarr[ao + 10] += aarr[ao + 4] * aoff + (1 - ae) * A.depth * 1.4; aarr[ao + 11] += aarr[ao + 5] * aoff;
+      }
+      pStone.instances(adone ? A.base : aarr); dirty = true; if (adone) state.asm = null;
+    }
     if (!drag) {
       if (Math.abs(cam.vth) > 1e-5 || Math.abs(cam.vph) > 1e-5) {
         cam.th += cam.vth; cam.ph += cam.vph; cam.vth *= 0.90; cam.vph *= 0.90;

@@ -14,14 +14,19 @@
     var W = { step: ["Step", "שלב"], of: ["of", "מתוך"], back: ["Back", "חזרה"], next: ["Next", "הבא"], done: ["Review and reserve", "לסיכום ולשריון"] };
     var t = function (k) { return W[k][he() ? 1 : 0]; };
     var title = function (g) { var k = g.querySelector(".opthead > .k"); return k ? k.textContent.trim() : ""; };
+    var short = function (g) { var k = g.querySelector(".opthead > .k"); return (k && k.getAttribute("data-short")) || title(g); };
+    var SUB = { cut: ["Choose the cut for your bracelet.", "בחרו את הליטוש של הצמיד."], origin: ["The same diamond: formed in the earth, or grown in a laboratory.", "אותו יהלום: שנוצר באדמה, או שגודל במעבדה."],
+      ct: ["The total weight of every diamond in the line.", "המשקל הכולל של כל היהלומים בצמיד."], wrist: ["Your wrist, measured snugly. We add the comfort.", "היקף פרק היד, נמדד צמוד. את הנוחות נוסיף אנחנו."],
+      metal: ["The metal that holds every stone.", "המתכת שמחזיקה כל אבן."] };
+    var sub = function (g) { var c = g.querySelector(".chip[data-k]"), k = c && c.getAttribute("data-k"); return SUB[k] ? SUB[k][he() ? 1 : 0] : ""; };
     var answer = function (g) { var on = g.querySelector(".chip.on"); return on ? on.textContent.trim() : ""; };
 
     var nav = document.createElement("div"); nav.className = "b13nav";
-    nav.innerHTML = '<div class="b13bars" role="tablist"></div><div class="b13head"><span class="b13n k"></span><span class="b13t"></span></div>';
+    nav.innerHTML = '<div class="b13bars" role="tablist"></div><div class="b13head"><span class="b13n k"></span><span class="b13t"></span><p class="b13sub"></p></div>';
     var bars = nav.querySelector(".b13bars");
     groups.forEach(function (g, i) {
       var b = document.createElement("button"); b.type = "button"; b.className = "b13bar"; b.setAttribute("role", "tab");
-      b.innerHTML = '<i></i><span class="b13bl"></span><span class="b13ba"></span>';
+      b.innerHTML = '<i></i><b class="b13num">' + (i + 1) + '</b><span class="b13bl"></span><span class="b13ba"></span>';
       b.addEventListener("click", function () { go(i); });
       bars.appendChild(b);
     });
@@ -42,13 +47,14 @@
       [].forEach.call(bars.children, function (b, i) {
         b.classList.toggle("on", i === c); b.classList.toggle("done", i < c);
         b.setAttribute("aria-selected", i === c ? "true" : "false");
-        b.querySelector(".b13bl").textContent = title(groups[i]);
+        b.querySelector(".b13bl").textContent = short(groups[i]);
         b.querySelector(".b13ba").textContent = answer(groups[i]);
       });
       nav.querySelector(".b13n").textContent = t("step") + " " + (c + 1) + " " + t("of") + " " + groups.length;
       nav.querySelector(".b13t").textContent = title(groups[c]);
+      nav.querySelector(".b13sub").textContent = sub(groups[c]);
       back.textContent = t("back"); back.disabled = c === 0;
-      next.querySelector("span").textContent = c < groups.length - 1 ? t("next") + " · " + title(groups[c + 1]) : t("done");
+      next.querySelector("span").textContent = c < groups.length - 1 ? t("next") + ": " + short(groups[c + 1]) : t("done");
       opts.setAttribute("data-step", String(c));
     }
     back.addEventListener("click", function () { go(cur() - 1); });
@@ -63,6 +69,15 @@
     addEventListener("silavu:build", paint);
     if (window.MutationObserver) new MutationObserver(function () { setTimeout(paint, 0); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
+    /* the bar at the foot carries a small picture of the line, in the cut and metal chosen */
+    var tot = document.querySelector("#configure .total .tot");
+    if (tot && !tot.querySelector(".t13thumb")) {
+      var th = document.createElement("img"); th.className = "t13thumb"; th.alt = ""; th.setAttribute("aria-hidden", "true"); th.decoding = "async";
+      tot.insertBefore(th, tot.firstChild);
+      var thumb = function () { var b = window.__build || {}, on = function (k, d) { var x = opts.querySelector('.chip.on[data-k="' + k + '"]'); return (x && x.getAttribute("data-v")) || b[k] || d; };
+        var src = "line/" + on("cut", "round") + "-" + on("metal", "white") + "-1000.jpg"; if (th.getAttribute("src") !== src) th.src = src; };
+      thumb(); opts.addEventListener("click", function (e) { if (e.target.closest(".chip")) setTimeout(thumb, 0); }); addEventListener("silavu:build", thumb);
+    }
     /* the line being built, written small on the stage */
     var lsum = document.getElementById("lsum");
     if (stage && lsum) {
