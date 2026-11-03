@@ -25,6 +25,7 @@
     var STEP = o.step || 1, WIN = o.win || N, SKEL = o.skel || 0, STILL = o.still == null ? 0.5 : o.still;
     var held = 0, peak = 0;
     var W = 0, H = 0, DPR = 1, drawn = -1, started = false, lastP = -1, lastZoom = -1, lastT = 0;
+    var BLEND = !!window.__boxBlend, lastKey = -1;
     function src(i) { return o.dir + SET + "-" + (i < 10 ? "0" : "") + i + (o.ext || ".jpg"); }
     /* Letting go has to mean the ones already on their way as well. A frame
        asked for before the strip was released still fires its onload after it,
@@ -156,8 +157,25 @@
       /* the cinematic push: a very small scale and drift on top of the camera's own move */
       var z = o.zoom ? o.zoom(cur) : null;
       var zk = z ? z.s : 1, zy = z ? z.y : 0;
+      /* where the page asks for it (window.__boxBlend, /test13/): the playhead
+         falls between two frames, and the second is laid over the first by how
+         far between them it is, so the box moves as a film rather than in
+         ninety-six steps. Only when both frames are already decoded. */
+      if (BLEND && !reduce && STEP === 1) {
+        var fp = Math.max(0, Math.min(N - 1, cur * (N - 1))), a0 = Math.floor(fp), a1 = Math.min(N - 1, a0 + 1), fr = fp - a0;
+        if (frames[a0] && (a1 === a0 || frames[a1])) {
+          var key = a0 + (a1 === a0 ? 0 : fr);
+          if (!force && Math.abs(key - lastKey) < 0.01 && Math.abs(zk - lastZoom) < 0.0004) return;
+          lastKey = key; lastZoom = zk; drawn = Math.round(fp);
+          var i0 = frames[a0], bw = i0.naturalWidth, bh = i0.naturalHeight;
+          var bs = Math.max(W / bw, H / bh) * zk, bdw = bw * bs, bdh = bh * bs, bx = (W - bdw) / 2, by = (H - bdh) / 2 + zy * DPR;
+          ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H); ctx.drawImage(i0, bx, by, bdw, bdh);
+          if (a1 !== a0 && fr > 0.02) { ctx.globalAlpha = fr; ctx.drawImage(frames[a1], bx, by, bdw, bdh); ctx.globalAlpha = 1; }
+          return;
+        }
+      }
       if (!force && have === drawn && Math.abs(zk - lastZoom) < 0.0004) return;
-      drawn = have; lastZoom = zk;
+      drawn = have; lastZoom = zk; lastKey = -1;
       var im = frames[have], iw = im.naturalWidth, ih = im.naturalHeight;
       var sc = Math.max(W / iw, H / ih) * zk, dw = iw * sc, dh = ih * sc;
       var ox = (W - dw) / 2, oy = (H - dh) / 2 + zy * DPR;
@@ -172,7 +190,7 @@
          direction: a reader who scrolls back up above a chapter has left it
          just as surely as one who scrolled down past it. */
       var gone = r.bottom < -innerHeight * 2.5 || r.top > innerHeight * 3.5;
-      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(free); frames = new Array(N); asked = new Array(N); fetched = new Array(N); pfOn = false; loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; }
+      if (o.release && started && gone) { gen++; clearTimeout(timer); frames.forEach(free); frames = new Array(N); asked = new Array(N); fetched = new Array(N); pfOn = false; loaded = 0; requested = 0; held = 0; started = false; sized = false; drawn = -1; lastP = -1; lastZoom = -1; lastT = 0; lastKey = -1; }
       if (r.bottom < -innerHeight || r.top > innerHeight * 2.5) return false;
       /* the strip waits for the reader: it starts once the page has loaded and
          the reader has begun to move (or the chapter is already at hand), so a
@@ -185,7 +203,8 @@
          slower, which is where it matters most. Same 0.2 at 60fps, same feel at
          20. */
       var now = performance.now(), dt = lastT ? Math.min(100, now - lastT) : 16.7; lastT = now;
-      var k = 1 - Math.pow(0.8, dt / 16.667);
+      /* with the frames blended, a softer catch-up: the box glides to where the scroll is */
+      var k = 1 - Math.pow(BLEND ? 0.87 : 0.8, dt / 16.667);
       var p = reduce ? target : (lastP < 0 ? target : lastP + (target - lastP) * k); if (Math.abs(target - p) < 0.0008) p = target;
       if (p !== lastP) { lastP = p; cur = p; if (!reduce || drawn < 0) draw(p < 0.16); if (o.at) o.at(p); }
       else if (drawn < 0 || (!reduce && nearest(at(cur), 0) !== drawn)) draw(false);
@@ -238,7 +257,7 @@
   }
   /* the decoded window, set by measurement (tools/boxwin.mjs); a 4K frame is
      four times the bitmap of a phone frame, so the widest screens hold fewer */
-  var wide4k = !phone && innerWidth * Math.min(devicePixelRatio || 1, 2) >= 3200;
+  var wide4k = !phone && !window.__boxBlend && innerWidth * Math.min(devicePixelRatio || 1, 2) >= 3200;
   /* measured (tools/boxwin.mjs, real-weight frames, throttled phone and
      desktop, slow, reading-speed and flick scrolls both ways): a window of 18
      with every third frame kept never shows a frame more than two away from
@@ -268,7 +287,8 @@
     set: function () {
       if (phone) return "m";
       var px = innerWidth * Math.min(devicePixelRatio || 1, 2);
-      return px >= 3200 ? "xx" : px >= 2400 ? "x" : "d";
+      /* blended, two frames are drawn at once: the 2560 tier is the ceiling (motion-taste §3) */
+      return px >= 3200 && !window.__boxBlend ? "xx" : px >= 2400 ? "x" : "d";
     },
     src: function (set) { return set === "m" ? 1080 : set === "xx" ? 3840 : set === "x" ? 2560 : 1920; },
     at: beatsAt

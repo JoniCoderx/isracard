@@ -136,3 +136,9 @@ html body .pgrid .piece.soon.spc .p { font-size: .82rem; color: rgba(20,19,15,.4
 #end .f13soc svg { width: 14px; height: 14px; }
 html body main .h2 em, html body main .h2 b { font-weight: 300 !important; }
 html body #enquire .csub .btn.solid, html body #enquire #cform .btn.solid { border-radius: 999px !important; padding: 14px 30px !important; min-height: 0 !important; font-size: .62rem !important; letter-spacing: .28em !important; }
+
+/* ── the box: a little more scroll for its ninety-six frames, so each one is
+   shown long enough to blend into the next; its words calmer ── */
+@media (min-width: 1000px) { html body #inside #stonepin.pin { height: 320svh !important; } }
+@media (max-width: 999px) { html body #inside #stonepin.pin { height: 260svh !important; } }
+html body #inside .beat .h2 { font-size: clamp(1.5rem, 2.5vw, 2.5rem) !important; letter-spacing: .12em !important; }
