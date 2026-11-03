@@ -1,0 +1,99 @@
+/* ════ /test14/: the house's reference of 3 Nov 2026, five screens on one warm dark ground: the film, the signature
+   collections as three large cards, the builder, the craft, the enquiry. One ink (warm ivory), one ground (warm black). ════ */
+:root { --g14: #0e0b09; --g14b: #16110d; --i14: #f3ece0; --m14: rgba(243,236,224,.62); --l14: rgba(243,236,224,.14); }
+html body { background: var(--g14) !important; }
+html body #build, html body #enquire, html body #end { background-color: var(--g14) !important; }
+html body .k14 { display: block; font-size: .6rem; letter-spacing: .42em; text-transform: uppercase; color: var(--m14); text-align: center; margin: 0; }
+html body .h14 { font-family: var(--display, 'Jost'), 'Jost', sans-serif; font-weight: 300; text-transform: uppercase; letter-spacing: .16em; line-height: 1.25;
+  font-size: clamp(1.3rem, 2.3vw, 2rem); color: var(--i14); text-align: center; margin: 14px 0 0; text-wrap: balance; }
+html body .h14 em { font-style: normal; }
+html[data-ns] body .k14, html[data-ns] body .h14 { letter-spacing: 0; }
+
+/* the opening: one line, a short rule, one way in, and a chevron */
+html body #hero .hcap > .k, html body #hero .h13tag, html body #hero .hfacts { display: none !important; }
+html body #hero .hcap .hacts { flex-direction: column !important; align-items: flex-start !important; gap: 22px !important; margin-top: 28px !important; }
+html body #hero .h14rule { display: block; width: 56px; height: 1px; background: rgba(255,255,255,.55); }
+html body #hero .h14go { display: inline-flex; align-items: center; gap: 12px; color: #fff !important; font-size: .64rem !important; letter-spacing: .3em !important; text-transform: uppercase; text-decoration: none !important; padding: 6px 0 !important; }
+html body #hero .hcap .hacts a.h14go::after { content: "" !important; position: static !important; display: inline-block !important; opacity: 1 !important; left: auto !important; right: auto !important; bottom: auto !important; transform: none; width: 16px !important; height: 10px !important; background: currentColor !important; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 5h15M11 1l4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 5h15M11 1l4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s ease; }
+html body #hero .hcap .hacts a.h14go:hover::after { transform: translateX(3px); }
+html body #hero .h14go::before { display: none !important; }
+html[dir="rtl"] body #hero .hcap .hacts a.h14go::after { transform: scaleX(-1); }
+html[data-ns] body #hero .h14go { letter-spacing: 0 !important; font-size: .8rem !important; }
+html body #hero .h14down { position: absolute; z-index: 5; left: 50%; bottom: 26px; width: 44px; height: 44px; margin-left: -22px; display: grid; place-items: center; color: rgba(255,255,255,.75); }
+html body #hero .h14down::before { content: ""; width: 14px; height: 14px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: translateY(-4px) rotate(45deg); }
+html body #hero .h14down:hover { color: #fff; }
+
+/* the signature collections: three large cards */
+html body #collection.c14col { position: relative; padding: clamp(72px, 9vw, 120px) 0 clamp(56px, 7vw, 96px) !important; margin: 0 !important;
+  background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(140,104,70,.16), rgba(0,0,0,0) 70%), var(--g14) !important; color: var(--i14); }
+html body .c14wrap { max-width: 1240px; margin: 0 auto; padding: 0 max(20px, 4vw); }
+html body .c14cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: clamp(32px, 4vw, 52px); }
+html body .c14card { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; border: 1px solid var(--l14); background: var(--g14b); color: var(--i14) !important; text-decoration: none !important; isolation: isolate; }
+html body .c14card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.86) saturate(.85) sepia(.14) contrast(1.04); transform: scale(1.001); transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+html body .c14card::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(14,11,9,.94) 0%, rgba(14,11,9,.5) 34%, rgba(14,11,9,0) 62%); }
+html body .c14card:hover img { transform: scale(1.04); }
+html body .c14t { position: absolute; z-index: 2; left: 24px; right: 72px; bottom: 24px; display: grid; gap: 6px; }
+html body .c14t b { font-weight: 400; font-size: 1rem; letter-spacing: .32em; }
+html body .c14t span { font-size: .84rem; color: var(--m14); }
+html body .c14go { position: absolute; z-index: 2; right: 22px; bottom: 22px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(243,236,224,.5); transition: background-color .15s ease, border-color .15s ease; }
+html body .c14go::before { content: ""; position: absolute; inset: 0; background: var(--i14); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Cpath d='M7 12h10M13 8l4 4-4 4'/%3E%3C/svg%3E") center / 18px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Cpath d='M7 12h10M13 8l4 4-4 4'/%3E%3C/svg%3E") center / 18px no-repeat; }
+html[dir="rtl"] body .c14go::before { transform: scaleX(-1); }
+html body .c14card:hover .c14go { background: rgba(243,236,224,.12); border-color: var(--i14); }
+html[dir="rtl"] body .c14t { left: 72px; right: 24px; }
+html[dir="rtl"] body .c14go { right: auto; left: 22px; }
+html body .c14all { display: table; margin: 36px auto 0; color: var(--i14) !important; font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; text-decoration: none !important; padding: 8px 0; border-bottom: 1px solid rgba(243,236,224,.35); }
+html body .c14all:hover { border-color: var(--i14); }
+html[data-ns] body .c14t b, html[data-ns] body .c14all { letter-spacing: 0; }
+
+/* the builder: the reference's order on a phone (the bracelet, its views, the steps, the shapes three by three) */
+html body #build .ed.solo .copy .h2 { color: var(--i14) !important; }
+html body #configure .b13pre { display: none !important; }
+html body #configure .b13next { justify-content: center !important; gap: 12px !important; text-transform: uppercase !important; letter-spacing: .24em !important; font-weight: 500 !important; }
+@media (max-width: 999px) {
+  html body #configure #opts .opt.open .chips.cuts { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  html body #configure > .vposwrap, html body #configure #stripwrap .vhint, html body #configure #stripwrap .turnit, html body #configure #stripwrap [data-turn] { display: none !important; }
+}
+
+/* the craft: the bracelet close, the words, and a short film */
+html body #craft14 { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 80px);
+  max-width: 1240px; margin: 0 auto; padding: clamp(72px, 9vw, 120px) max(20px, 4vw); color: var(--i14); }
+html body #craft14 .crpic { margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 5; border: 1px solid var(--l14); }
+html body #craft14 .crpic img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; display: block; filter: sepia(.18) saturate(.9); }
+html body #craft14 .crtxt { display: grid; justify-items: center; text-align: center; }
+html body #craft14 .crtxt p.crp { margin: 18px 0 0; max-width: 34ch; font-size: .95rem; line-height: 1.7; color: rgba(243,236,224,.82); }
+html body #craft14 .crvid { position: relative; display: block; width: 100%; max-width: 440px; aspect-ratio: 16 / 10; margin-top: 36px; padding: 0; border: 1px solid var(--l14); border-radius: 14px; overflow: hidden; background: #000; cursor: pointer; }
+html body #craft14 .crvid video { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) contrast(1.05) brightness(.8); transition: filter .3s ease; }
+html body #craft14 .crvid.playing video { filter: none; }
+html body #craft14 .crvid .play { position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; border: 1px solid rgba(255,255,255,.8); background: rgba(14,11,9,.35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: opacity .2s ease, transform .12s ease; }
+html body #craft14 .crvid .play::before { content: ""; position: absolute; left: 23px; top: 19px; border-left: 15px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; }
+html body #craft14 .crvid:active .play { transform: scale(.97); }
+html body #craft14 .crvid.playing .play { opacity: 0; }
+html body #craft14 .crvid.playing:hover .play { opacity: .8; }
+
+/* the enquiry: one line of welcome, boxed fields, one ivory button, three promises */
+html body #enquire .clocks { display: none !important; }
+html body #enquire .field { border: 1px solid rgba(243,236,224,.18) !important; border-radius: 10px !important; padding: 4px 16px 2px !important; background: rgba(255,255,255,.02) !important; transition: border-color .15s ease; }
+html body #enquire .field:focus-within { border-color: rgba(243,236,224,.55) !important; }
+html body #enquire .field input, html body #enquire .field textarea { border: 0 !important; box-shadow: none !important; background: transparent !important; }
+html body #enquire .field::after, html body #enquire .field::before { display: none !important; }
+html body #enquire #cform .btn.solid, html body #enquire .csub .btn.solid { background: linear-gradient(180deg, #f3ecdd, #dccfb6) !important; color: #141310 !important; border: 0 !important; padding: 18px 34px !important; font-weight: 500 !important; }
+html body #enquire #cform .btn.solid:hover { background: #fff !important; }
+html body .tr14 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 40px 0 0; padding: 0; list-style: none; color: var(--i14); }
+html body .tr14 li { display: grid; justify-items: center; gap: 10px; text-align: center; font-size: .7rem; letter-spacing: .06em; color: rgba(243,236,224,.8); padding: 4px 10px; }
+html body .tr14 li + li { border-inline-start: 1px solid var(--l14); }
+html body .tr14 svg { width: 26px; height: 26px; }
+
+/* a phone */
+@media (max-width: 899px) {
+  html body .c14cards { grid-template-columns: 1fr; gap: 14px; }
+  html body .c14card { aspect-ratio: 3 / 2; }
+  html body .c14card::after { background: linear-gradient(90deg, rgba(14,11,9,.92) 0%, rgba(14,11,9,.55) 42%, rgba(14,11,9,0) 72%); }
+  html[dir="rtl"] body .c14card::after { background: linear-gradient(270deg, rgba(14,11,9,.92) 0%, rgba(14,11,9,.55) 42%, rgba(14,11,9,0) 72%); }
+  html body .c14card img { object-position: 70% 50%; }
+  html body .c14t { left: 18px; bottom: 18px; }
+  html body #craft14 { grid-template-columns: 1fr; padding-top: 0; }
+  html body #craft14 .crpic { margin: 0 calc(-1 * max(20px, 4vw)); border-radius: 0; border: 0; aspect-ratio: 4 / 5; }
+  html body #hero .h14down { bottom: 10px; }
+  html body #hero .hcap { padding-bottom: 64px !important; }
+  html body #configure #stripwrap .stbtn { display: none !important; }
+}

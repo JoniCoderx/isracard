@@ -647,6 +647,64 @@ const T13 = (() => {
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; window.__assemble = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
 })();
 heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
+/* /test14/: the house's reference of 3 Nov 2026 (five phone screens: the film, the signature collections as three
+   large cards, the builder, the craft, the enquiry), built on /test13/ with the box, Up close and the full grid taken
+   out. Every picture is the house's own; src/t14/ holds the look and the film's play button. */
+const T14 = (() => {
+  const dir = path.join(path.dirname(path.resolve(src)), "src", "t14");
+  const cut = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return h; const j = h.indexOf("</section>", i); return j < 0 ? h : h.slice(0, i) + h.slice(j + "</section>".length); };
+  const swap = (h, id, html) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return h; const j = h.indexOf("</section>", i); return j < 0 ? h : h.slice(0, i) + html + h.slice(j + "</section>".length); };
+  const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><img src="img/${img}-1254.jpg" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
+  const COL = `<section id="collection" class="c14col" data-n="01" data-title-en="Collection" data-title-he="הקולקציה" aria-labelledby="c14h">
+  <div class="c14wrap">
+    <p class="k14" data-en="Collections" data-he="קולקציות">Collections</p>
+    <h2 class="h14" id="c14h" data-en="Our signature collections" data-he="קולקציות החתימה שלנו">Our signature collections</h2>
+    <div class="c14cards">
+      ${card("knot", "knot-worn", "MOMENT", "Everyday elegance.", "אלגנטיות לכל יום.", "SILAVU MOMENT, the signature bracelet, worn")}
+      ${card("ring", "ring-worn", "ICON", "A modern signature.", "חתימה מודרנית.", "SILAVU ICON, the signature ring, worn")}
+      ${card("pave", "necklace-worn", "SOUL", "Personal, timeless, yours.", "אישי, נצחי, שלכם.", "SILAVU SOUL, the signature pendant, worn")}
+    </div>
+    <a class="c14all" href="collection/" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</a>
+  </div>
+</section>`;
+  const CRAFT = `<section id="craft14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
+  <figure class="crpic"><img src="img/tennis-1600.jpg" srcset="img/tennis-1200.jpg 1200w, img/tennis-1600.jpg 1600w" sizes="(min-width: 900px) 50vw, 100vw" loading="lazy" decoding="async" alt="A SILAVU line bracelet of round diamonds in white gold, close, on black" data-alt-he="צמיד SILAVU של יהלומים עגולים בזהב לבן, מקרוב, על רקע שחור"></figure>
+  <div class="crtxt">
+    <p class="k14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
+    <h2 class="h14" id="crh" data-en="Each stone, set by hand" data-he="כל אבן, משובצת ביד">Each stone, set by hand</h2>
+    <p class="crp" data-en="Every diamond is chosen by eye and set by hand in Dubai, then finished to your measure." data-he="כל יהלום נבחר בעין ומשובץ ביד בדובאי, ואז מוגמר לפי המידה שלכם.">Every diamond is chosen by eye and set by hand in Dubai, then finished to your measure.</p>
+    <button class="crvid" type="button" aria-label="Play the film" data-play="Play the film" data-pause="Pause the film"><video muted playsinline loop preload="none" poster="v7/marble.jpg" data-src="v7/marble.mp4"></video><span class="play" aria-hidden="true"></span></button>
+  </div>
+</section>
+`;
+  const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const TRUST = `<ul class="tr14">
+  <li>${ic('<path d="M3 9l4-5h10l4 5-9 11z"/><path d="M3 9h18M9 4l3 5 3-5M12 20L9 9m3 11l3-11"/>')}<span data-en="Certified diamonds" data-he="יהלומים מאושרים">Certified diamonds</span></li>
+  <li>${ic('<path d="M12 12c-2-2.7-3.6-4-5.5-4a4 4 0 000 8c1.9 0 3.5-1.3 5.5-4zm0 0c2 2.7 3.6 4 5.5 4a4 4 0 000-8c-1.9 0-3.5 1.3-5.5 4z"/>')}<span data-en="Bespoke designs" data-he="עיצובים אישיים">Bespoke designs</span></li>
+  <li>${ic('<path d="M12 3l7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>')}<span data-en="Insured delivery" data-he="משלוח מבוטח">Insured delivery</span></li>
+</ul>`;
+  const edit = h => {
+    h = h.replace('<div class="h13fade" aria-hidden="true"></div>', "").replace('<div class="c13fade" aria-hidden="true"></div>', "");
+    h = cut(cut(h, "inside"), "details");
+    h = swap(h, "collection", COL);
+    h = h.replace('<section id="enquire"', CRAFT + '<section id="enquire"');
+    /* the opening's words and its one way in */
+    h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery, designed with intention." data-he="תכשיטי יוקרה, מעוצבים מתוך כוונה.">Fine jewellery, designed with intention.</p>');
+    h = h.replace(/<div class="hacts rv late d3">[\s\S]*?<\/div>/, '<div class="hacts rv late d3"><i class="h14rule" aria-hidden="true"></i><a class="lnk h14go" href="#collection" data-en="Explore the collection" data-he="לגלות את הקולקציה">Explore the collection</a></div>');
+    h = h.replace('<div class="hseam"', '<a class="h14down" href="#collection" aria-label="To the collection" data-aria-he="אל הקולקציה"></a>\n<div class="hseam"');
+    /* the enquiry: the reference's welcome, and three promises under the form */
+    h = h.replace('data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו <em>על מה חשבתם.</em>">Tell us what <em>you have in mind.</em>', `data-en="Let&#39;s create <em>your piece.</em>" data-he="בואו ניצור <em>את התכשיט שלכם.</em>">Let's create <em>your piece.</em>`);
+    h = h.replace(/(<p class="fine rv d3"[^>]*) data-en="Every message[^"]*" data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Tell us what you have in mind. Our concierge will guide you personally." data-he="ספרו לנו על מה חשבתם. הקונסיירז' שלנו ילווה אתכם באופן אישי.">Tell us what you have in mind. Our concierge will guide you personally.</p>`);
+    { const f = h.indexOf('<form id="cform"'), e = f < 0 ? -1 : h.indexOf("</form>", f); if (e > 0) h = h.slice(0, e + 7) + "\n" + TRUST + h.slice(e + 7); }
+    /* the menu and the footer follow the five screens */
+    h = h.replace('<a href="#inside"><span class="k">02</span><span data-en="The box" data-he="הקופסה">The box</span></a>\n    <a href="#build"><span class="k">03</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>',
+      '<a href="#build"><span class="k">02</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>\n    <a href="#craft14"><span class="k">03</span><span data-en="Craftsmanship" data-he="אומנות">Craftsmanship</span></a>');
+    h = h.replace('href="#inside" data-en="The box" data-he="הקופסה">The box</a>', 'href="#craft14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</a>');
+    return h;
+  };
+  return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit };
+})();
+heroTest("test14", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
