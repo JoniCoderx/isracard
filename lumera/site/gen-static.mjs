@@ -503,7 +503,9 @@ const HERO_ALT = {
   "hero-choice": { en: "The SILAVU bracelet, ring and earrings on white marble in morning light, as a woman's hand lifts the SOUL necklace",
                    he: "צמיד, טבעת ועגילים של SILAVU על שיש לבן באור בוקר, ויד של אישה מרימה את שרשרת SOUL" },
   "hero-lumiere": { en: "The SILAVU SOUL pendant on a woman's skin, above the neckline of a black silk dress, its pavé diamonds catching the light",
-                    he: "תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור" }
+                    he: "תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור" },
+  "hero-dunes": { en: "A woman in a long black silk gown on the crest of a desert dune at sunset, the silk lifted by the wind, the SILAVU SOUL pendant at her throat",
+                  he: "אישה בשמלת משי שחורה ארוכה על רכס דיונה במדבר בשקיעה, הרוח מרימה את המשי, תליון SILAVU SOUL על צווארה" }
 };
 /* a test page's chapters (extras: css, js, inject, swap, edit) applied to a
    page. A swap is made in the page, or in the page's own script file that
@@ -558,6 +560,13 @@ heroTest("test2", "hero-cloche", "", true, [EMB3D, T2, LAYOUT]);
 /* /test3/ tries "LUMIÈRE" (hero-lumiere-assets.sh; "The Choice",
    hero-choice-assets.sh, came before it), with the words in ink (INK, WHOLE) */
 heroTest("test3", "hero-lumiere", INK + "\n" + WHOLE + "\n" + ULTRA, true, [EMB3D, T2, LAYOUT, T3, { edit: ultraCut("hero-lumiere") }]);
+/* /test13/: the page of /test3/ with "Golden dunes" as its opening film, to
+   see how the film sits under the words, the mark and the menu (3 Nov 2026).
+   The film is the draft (854x480, in lumera/site/public/v/), not yet the
+   finished one; the words stand in white on the film's own light. */
+/* the shade behind the words fades to nothing inside its own box, so no edge shows on the sand */
+const DUNES = `html body #hero .hcap::before{inset:-110px -170px -110px -150px!important;background:radial-gradient(closest-side,rgba(0,0,0,.5) 0%,rgba(0,0,0,.3) 50%,rgba(0,0,0,0) 100%)!important}`;
+heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3]);
 /* The home page takes /test3/'s chapters (the house's choice, 1 Nov 2026):
    the live page as built above (its film, its words, its tracking, its
    address), with the 3D emblem, the layout, the close-ups, SOUL in three
