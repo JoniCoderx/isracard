@@ -652,54 +652,64 @@ heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT,
    out. Every picture is the house's own; src/t14/ holds the look and the film's play button. */
 const T14 = (() => {
   const dir = path.join(path.dirname(path.resolve(src)), "src", "t14");
-  const cut = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return h; const j = h.indexOf("</section>", i); return j < 0 ? h : h.slice(0, i) + h.slice(j + "</section>".length); };
-  const swap = (h, id, html) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return h; const j = h.indexOf("</section>", i); return j < 0 ? h : h.slice(0, i) + html + h.slice(j + "</section>".length); };
+  const grab = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return ["", h]; const j = h.indexOf("</section>", i); if (j < 0) return ["", h]; return [h.slice(i, j + 10), h.slice(0, i) + h.slice(j + 10)]; };
+  const swap = (h, id, html) => { const [x, rest] = grab(h, id); if (!x) return h; const i = h.indexOf(`<section id="${id}"`); return h.slice(0, i) + html + h.slice(i + x.length); };
   const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><img src="img/${img}-1254.jpg" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
   const COL = `<section id="collection" class="c14col" data-n="01" data-title-en="Collection" data-title-he="הקולקציה" aria-labelledby="c14h">
   <div class="c14wrap">
-    <p class="k14" data-en="Collections" data-he="קולקציות">Collections</p>
-    <h2 class="h14" id="c14h" data-en="Our signature collections" data-he="קולקציות החתימה שלנו">Our signature collections</h2>
+    <h2 class="k14 c14k" id="c14h" data-en="Collections" data-he="קולקציות">Collections</h2>
     <div class="c14cards">
-      ${card("knot", "knot-worn", "MOMENT", "Everyday elegance.", "אלגנטיות לכל יום.", "SILAVU MOMENT, the signature bracelet, worn")}
-      ${card("ring", "ring-worn", "ICON", "A modern signature.", "חתימה מודרנית.", "SILAVU ICON, the signature ring, worn")}
-      ${card("pave", "necklace-worn", "SOUL", "Personal, timeless, yours.", "אישי, נצחי, שלכם.", "SILAVU SOUL, the signature pendant, worn")}
+      ${card("knot", "knot-worn", "MOMENT", "Everyday icons", "אייקונים לכל יום", "SILAVU MOMENT, the signature bracelet, worn")}
+      ${card("ring", "ring-worn", "ICON", "Signature pieces", "תכשיטי חתימה", "SILAVU ICON, the signature ring, worn")}
+      ${card("pave", "necklace-worn", "SOUL", "Personal expressions", "ביטוי אישי", "SILAVU SOUL, the signature pendant, worn")}
     </div>
     <a class="c14all" href="collection/" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</a>
   </div>
 </section>`;
+  const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
   const CRAFT = `<section id="craft14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
   <figure class="crpic"><img src="img/tennis-1600.jpg" srcset="img/tennis-1200.jpg 1200w, img/tennis-1600.jpg 1600w" sizes="(min-width: 900px) 50vw, 100vw" loading="lazy" decoding="async" alt="A SILAVU line bracelet of round diamonds in white gold, close, on black" data-alt-he="צמיד SILAVU של יהלומים עגולים בזהב לבן, מקרוב, על רקע שחור"></figure>
   <div class="crtxt">
     <p class="k14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-    <h2 class="h14" id="crh" data-en="Each stone, set by hand" data-he="כל אבן, משובצת ביד">Each stone, set by hand</h2>
-    <p class="crp" data-en="Every diamond is chosen by eye and set by hand in Dubai, then finished to your measure." data-he="כל יהלום נבחר בעין ומשובץ ביד בדובאי, ואז מוגמר לפי המידה שלכם.">Every diamond is chosen by eye and set by hand in Dubai, then finished to your measure.</p>
-    <button class="crvid" type="button" aria-label="Play the film" data-play="Play the film" data-pause="Pause the film"><video muted playsinline loop preload="none" poster="v7/marble.jpg" data-src="v7/marble.mp4"></video><span class="play" aria-hidden="true"></span></button>
+    <h2 class="h14" id="crh" data-en="Handcrafted in Dubai" data-he="נוצר ביד בדובאי">Handcrafted in Dubai</h2>
+    <p class="crp" data-en="Designed, set and finished by skilled artisans, using only 18k gold." data-he="מעוצב, משובץ ומוגמר בידי אומנים מיומנים, בזהב 18 קראט בלבד.">Designed, set and finished by skilled artisans, using only 18k gold.</p>
+    <ul class="tr14">
+      <li>${ic('<path d="M8 13V5.5a1.4 1.4 0 012.8 0V11M10.8 10V4a1.4 1.4 0 012.8 0v6M13.6 10.5V5.2a1.4 1.4 0 012.8 0V12M16.4 11.5V8.4a1.4 1.4 0 012.8 0v6.1c0 4-2.7 6.7-6.6 6.7-2.6 0-4.4-1.2-5.7-3.3L5 14.4a1.4 1.4 0 012.3-1.6L8 13.8"/>')}<span data-en="Handmade" data-he="עבודת יד">Handmade</span></li>
+      <li><b class="tr18">18K</b><span data-en="18k gold only" data-he="זהב 18K בלבד">18k gold only</span></li>
+      <li>${ic('<path d="M3 9l4-5h10l4 5-9 11z"/><path d="M3 9h18M9 4l3 5 3-5M12 20L9 9m3 11l3-11"/>')}<span data-en="Certified diamonds" data-he="יהלומים מאושרים">Certified diamonds</span></li>
+    </ul>
   </div>
 </section>
 `;
-  const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  const TRUST = `<ul class="tr14">
-  <li>${ic('<path d="M3 9l4-5h10l4 5-9 11z"/><path d="M3 9h18M9 4l3 5 3-5M12 20L9 9m3 11l3-11"/>')}<span data-en="Certified diamonds" data-he="יהלומים מאושרים">Certified diamonds</span></li>
-  <li>${ic('<path d="M12 12c-2-2.7-3.6-4-5.5-4a4 4 0 000 8c1.9 0 3.5-1.3 5.5-4zm0 0c2 2.7 3.6 4 5.5 4a4 4 0 000-8c-1.9 0-3.5 1.3-5.5 4z"/>')}<span data-en="Bespoke designs" data-he="עיצובים אישיים">Bespoke designs</span></li>
-  <li>${ic('<path d="M12 3l7 3v5c0 4.6-3 8.3-7 10-4-1.7-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>')}<span data-en="Insured delivery" data-he="משלוח מבוטח">Insured delivery</span></li>
-</ul>`;
+  const ABOUT = `<section id="about14" data-n="05" data-title-en="The founder" data-title-he="המייסד" aria-labelledby="abh">
+  <figure class="abpic"><img src="ariel-silas-1100.jpg" srcset="ariel-silas-800.jpg 800w, ariel-silas-1100.jpg 1100w" sizes="(min-width: 900px) 46vw, 100vw" width="1100" height="1375" loading="lazy" decoding="async" alt="Ariel Silas, founder of SILAVU" data-alt-he="אריאל סיילס, מייסד SILAVU"></figure>
+  <div class="abtxt">
+    <p class="k14" data-en="The founder" data-he="המייסד">The founder</p>
+    <h2 class="ab14n" id="abh" data-en="Ariel Silas" data-he="אריאל סיילס">Ariel Silas</h2>
+    <p class="abp" data-en="Designer and founder of SILAVU, with a background in 3D and visual design and creative collaborations with Jacob &amp; Co." data-he="מעצב ומייסד SILAVU, עם רקע בעיצוב תלת־ממדי וחזותי ושיתופי פעולה יצירתיים עם Jacob &amp; Co.">Designer and founder of SILAVU, with a background in 3D and visual design and creative collaborations with Jacob &amp; Co.</p>
+    <a class="ab14go" href="about13/" data-en="About SILAVU" data-he="אודות SILAVU">About SILAVU</a>
+  </div>
+</section>
+`;
   const edit = h => {
     h = h.replace('<div class="h13fade" aria-hidden="true"></div>', "").replace('<div class="c13fade" aria-hidden="true"></div>', "");
-    h = cut(cut(h, "inside"), "details");
+    /* the reference's order: the film, the collections, the builder, the box, the craft, up close, the founder, the enquiry */
+    let box, up; [box, h] = grab(h, "inside"); [up, h] = grab(h, "details");
     h = swap(h, "collection", COL);
-    h = h.replace('<section id="enquire"', CRAFT + '<section id="enquire"');
-    /* the opening's words and its one way in */
-    h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery, designed with intention." data-he="תכשיטי יוקרה, מעוצבים מתוך כוונה.">Fine jewellery, designed with intention.</p>');
-    h = h.replace(/<div class="hacts rv late d3">[\s\S]*?<\/div>/, '<div class="hacts rv late d3"><i class="h14rule" aria-hidden="true"></i><a class="lnk h14go" href="#collection" data-en="Explore the collection" data-he="לגלות את הקולקציה">Explore the collection</a></div>');
-    h = h.replace('<div class="hseam"', '<a class="h14down" href="#collection" aria-label="To the collection" data-aria-he="אל הקולקציה"></a>\n<div class="hseam"');
-    /* the enquiry: the reference's welcome, and three promises under the form */
-    h = h.replace('data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו <em>על מה חשבתם.</em>">Tell us what <em>you have in mind.</em>', `data-en="Let&#39;s create <em>your piece.</em>" data-he="בואו ניצור <em>את התכשיט שלכם.</em>">Let's create <em>your piece.</em>`);
-    h = h.replace(/(<p class="fine rv d3"[^>]*) data-en="Every message[^"]*" data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Tell us what you have in mind. Our concierge will guide you personally." data-he="ספרו לנו על מה חשבתם. הקונסיירז' שלנו ילווה אתכם באופן אישי.">Tell us what you have in mind. Our concierge will guide you personally.</p>`);
-    { const f = h.indexOf('<form id="cform"'), e = f < 0 ? -1 : h.indexOf("</form>", f); if (e > 0) h = h.slice(0, e + 7) + "\n" + TRUST + h.slice(e + 7); }
-    /* the menu and the footer follow the five screens */
-    h = h.replace('<a href="#inside"><span class="k">02</span><span data-en="The box" data-he="הקופסה">The box</span></a>\n    <a href="#build"><span class="k">03</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>',
-      '<a href="#build"><span class="k">02</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>\n    <a href="#craft14"><span class="k">03</span><span data-en="Craftsmanship" data-he="אומנות">Craftsmanship</span></a>');
-    h = h.replace('href="#inside" data-en="The box" data-he="הקופסה">The box</a>', 'href="#craft14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</a>');
+    h = h.replace('<section id="enquire"', box + "\n" + CRAFT + up + "\n" + ABOUT + '<section id="enquire"');
+    /* the opening: the name, one line, and the way down */
+    h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery, made to be lived in." data-he="תכשיטי יוקרה, שנולדו להיענד.">Fine jewellery, made to be lived in.</p>');
+    h = h.replace(/<div class="hacts rv late d3">[\s\S]*?<\/div>/, "");
+    h = h.replace('<div class="hseam"', '<a class="h14down" href="#collection" aria-label="To the collections" data-aria-he="אל הקולקציות"></a>\n<div class="hseam"');
+    /* the builder's name in the reference */
+    h = h.replace(/data-en="Design your bracelet" data-he="([^"]*)">Design your bracelet</, 'data-en="Build your bracelet" data-he="$1">Build your bracelet<');
+    /* the enquiry: one word, one line, four fields */
+    h = h.replace('data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו <em>על מה חשבתם.</em>">Tell us what <em>you have in mind.</em>', 'data-en="Enquire" data-he="פנייה">Enquire');
+    h = h.replace(/(<p class="fine rv d3"[^>]*) data-en="Every message[^"]*" data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Tell us what you have in mind. A member of our team will be in touch personally." data-he="ספרו לנו על מה חשבתם. מישהו מהצוות שלנו ייצור איתכם קשר באופן אישי.">Tell us what you have in mind. A member of our team will be in touch personally.</p>`);
+    h = h.replace('<label for="fName" data-en="Name" data-he="שם">Name</label>', '<label for="fName" data-en="Full name" data-he="שם מלא">Full name</label>');
+    h = h.replace('<label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label>', '<label for="fContact" data-en="Email or phone" data-he="אימייל או טלפון">Email or phone</label>');
+    /* the menu: the founder's page by its name */
+    h = h.replace('<a href="#build"><span class="k">03</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>', '<a href="#build"><span class="k">03</span><span data-en="Build your bracelet" data-he="בנו את הצמיד">Build your bracelet</span></a>');
     return h;
   };
   return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit };
