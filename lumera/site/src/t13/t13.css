@@ -455,48 +455,51 @@ html body #pmodal .mbuy #pmPage::before { display: none !important; }
 /* ── no logo screen on the way in (the film and the words come first) ── */
 html body #intro { display: none !important; }
 
-/* ════ the signature in the bracelet (#sig13): a pinned stage; the scroll tilts the bracelet, sweeps a light across its stones and lets it fall into a rising white tide ════ */
-html body #sig13 { position: relative; background: #000; padding: 0 !important; margin: 0; }
-#sig13 .s13pin { position: relative; height: 300svh; }
-#sig13 .s13stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; place-items: center; perspective: 1500px; perspective-origin: 50% 40%; }
-#sig13 .s13light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 46% 38% at 50% 50%, rgba(214,218,226,.07), rgba(0,0,0,0) 70%); }
-#sig13 .s13obj { position: relative; width: min(1120px, 78vw); will-change: transform, opacity; transform-origin: 50% 60%; }
-#sig13 .s13img { display: block; width: 100%; height: auto; border-radius: 0; -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 52%, #000 72%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse 58% 62% at 50% 52%, #000 72%, rgba(0,0,0,0) 100%); }
-/* a slow band of light passing over the stones only: overlay leaves the black black */
-#sig13 .s13glint { position: absolute; inset: 0; width: 100%; height: auto; pointer-events: none; filter: brightness(1.75) contrast(1.15); opacity: .55;
-  -webkit-mask-image: linear-gradient(105deg, rgba(0,0,0,0) calc(var(--sx, -40%) - 12%), #000 var(--sx, -40%), rgba(0,0,0,0) calc(var(--sx, -40%) + 12%));
-  mask-image: linear-gradient(105deg, rgba(0,0,0,0) calc(var(--sx, -40%) - 12%), #000 var(--sx, -40%), rgba(0,0,0,0) calc(var(--sx, -40%) + 12%)); }
-/* the name, inside the bracelet, in one fine line of white gold */
-#sig13 .s13sig { position: absolute; left: 22%; top: 33%; width: 56%; height: auto; overflow: visible; pointer-events: none; }
-#sig13 .s13line { fill: none; stroke: url(#s13ink); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(255,255,255,.18)); }
-#sig13 .s13dot { fill: #f4f5f7; opacity: 0; transition: opacity .6s ease; }
-#sig13 .s13tip { fill: #fff; opacity: 0; filter: drop-shadow(0 0 8px rgba(255,255,255,.9)); }
-#sig13.signed .s13dot { opacity: 1; }
-/* the tide that takes the bracelet into the collection */
-#sig13 .s13tide { position: absolute; left: -2%; width: 104%; bottom: 0; height: 46svh; transform: translateY(var(--ty, 101%)); fill: #fff; pointer-events: none; z-index: 3; will-change: transform; }
-/* arrival */
-html.js #sig13 .s13obj { opacity: 0; }
-html.js #sig13.in .s13obj { opacity: 1; transition: opacity 1.4s cubic-bezier(.2,.8,.2,1); }
-@media (max-width: 760px) {
-  #sig13 .s13pin { height: 260svh; }
-  #sig13 .s13obj { width: 118vw; }
-  #sig13 .s13line { stroke-width: 2.6; }
-  #sig13 .s13tide { height: 34svh; }
-}
-@media (prefers-reduced-motion: reduce) {
-  #sig13 .s13pin { height: auto; }
-  #sig13 .s13stage { position: relative; height: 100svh; }
-  html.js #sig13 .s13obj { opacity: 1; transform: none !important; }
-  #sig13 .s13tide { transform: none; height: 18svh; }
-  #sig13 .s13dot { opacity: 1; }
-}
-
 /* ── the collection's ivory into the box's black, with no edge: a long, eased fall of light ── */
 html body .c13fade { display: block; height: 46svh; margin-top: -1px; pointer-events: none; position: relative;
   background: linear-gradient(to bottom, #f8f7f5 0%, #f1efeb 8%, #dcd8d1 18%, #b9b4ab 30%, #8a857d 42%, #5c5852 54%, #34312d 66%, #191816 78%, #0a0908 89%, #000 100%); }
 html body .c13fade::after { content: ""; position: absolute; inset: 0; opacity: .06; mix-blend-mode: overlay;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @media (max-width: 760px) { html body .c13fade { height: 34svh; } }
+
+/* ════ the signature in the bracelet (#sig13): a pinned stage on black; the bracelet (the line, modelled and rendered in
+   Blender: website/tools/line-blender.py, 48 frames) is played by the scroll, forwards and back, each frame blended into
+   the next; the name, written inside it, leaves as it starts to move; at the end the bracelet falls out of the bottom
+   of the screen and the black gives way to the collection's ivory ════ */
+html body #sig13 { position: relative; background: #000; padding: 0 !important; margin: 0; }
+#sig13 .s13pin { position: relative; height: 340svh; }
+#sig13 .s13stage { position: sticky; top: 0; z-index: 2; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+#sig13 .s13light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 50% 42% at 50% 46%, rgba(214,218,226,.08), rgba(0,0,0,0) 72%); }
+#sig13 .s13view { position: relative; width: min(94vw, 1240px, 132svh); aspect-ratio: 1120 / 840; will-change: transform, opacity; }
+#sig13 .s13first, #sig13 .s13cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#sig13 .s13cv { opacity: 0; }
+#sig13.live .s13cv { opacity: 1; }
+#sig13.live .s13first { visibility: hidden; }
+#sig13 .s13sig { position: absolute; left: var(--sl, 27%); top: var(--st, 36%); width: var(--sw, 46%); height: auto; overflow: visible; pointer-events: none; will-change: opacity, transform, filter; }
+#sig13 .s13line { fill: none; stroke: url(#s13ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px rgba(255,255,255,.22)); }
+#sig13 .s13dot { fill: #f4f5f7; opacity: 0; transition: opacity .6s ease; }
+#sig13 .s13tip { fill: #fff; opacity: 0; filter: drop-shadow(0 0 8px rgba(255,255,255,.9)); }
+#sig13.signed .s13dot { opacity: 1; }
+html.js #sig13 .s13view { opacity: 0; transition: opacity 1.2s cubic-bezier(.2,.8,.2,1); }
+html.js #sig13.in .s13view { opacity: 1; }
+#sig13.in .s13view.moving { transition: none; }
+html.s13on #where { opacity: 0 !important; visibility: hidden; transition: opacity .2s ease, visibility 0s .2s; }
+/* after the stage: black into the collection's ivory, long and eased */
+/* it overlaps the end of the stage and rises under the falling bracelet (the stage paints above it) */
+html body .s13fade { display: block; position: relative; z-index: 1; height: 72svh; margin-top: -66svh; pointer-events: none;
+  background: linear-gradient(to bottom, #000 0%, #0a0908 10%, #1b1a18 22%, #36332f 34%, #5d5a54 46%, #8b877f 58%, #b9b4ab 70%, #dcd8d1 82%, #f3f1ed 92%, #fff 100%); }
+@media (max-width: 760px) {
+  #sig13 .s13pin { height: 300svh; }
+  #sig13 .s13view { width: 100vw; }
+  #sig13 .s13line { stroke-width: 3; }
+  html body .s13fade { height: 60svh; margin-top: -56svh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #sig13 .s13pin { height: auto; }
+  #sig13 .s13stage { position: relative; height: 100svh; }
+  html.js #sig13 .s13view { opacity: 1; transform: none !important; }
+  #sig13 .s13dot { opacity: 1; }
+}
 
 /* ════ Up close, on the atelier table (#details.atl13): dark leather under a warm side light, an embossed SILAVU envelope
    beneath, three thick ivory prints laid so that they overlap and shadow one another; they are placed as the table
@@ -690,3 +693,34 @@ html body #configure #stripwrap .vt, html body #configure #stripwrap .vt .vtb { 
   html body #configure #opts .opt.open .chip span { overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 }
 html body #configure #opts .opt.open .chips, html body #configure #opts .opt.open .chips.cuts { grid-auto-flow: row !important; grid-auto-columns: auto !important; justify-content: stretch !important; overflow: visible !important; scroll-snap-type: none !important; padding-inline: 0 !important; margin-inline: 0 !important; }
+
+/* ── the builder's stones: rendered tiles, a large preview in the panel, the close-up on the stage ── */
+html body #configure > #opts { align-self: start !important; }
+html body #configure #opts .opt.open .chips.cuts .chip { min-height: 104px !important; padding: 10px 6px 12px !important; gap: 6px !important; }
+html body #configure #opts .opt.open .chip .c13img { width: 62px; height: 62px; object-fit: contain; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+html body #configure #opts .opt.open .chip:hover .c13img { transform: scale(1.07); }
+html body #configure .b13pre { display: grid; grid-template-columns: 132px minmax(0, 1fr); align-items: center; gap: 18px; margin: 18px 0 20px; padding: 12px; border-radius: 18px;
+  background: radial-gradient(ellipse 60% 80% at 20% 50%, rgba(255,255,255,.06), rgba(255,255,255,.015) 70%); border: 1px solid rgba(246,241,230,.06); }
+html body #configure .b13pre .b13pic { display: grid; place-items: center; width: 132px; height: 132px; border-radius: 14px; background: radial-gradient(circle at 50% 45%, #1d1c1a, #0a0a09 70%); overflow: hidden; }
+html body #configure .b13pre img { width: 118%; height: 118%; object-fit: contain; opacity: 0; transform: scale(.94); transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
+html body #configure .b13pre.in img { opacity: 1; transform: none; }
+html body #configure .b13pre .b13cap { display: grid; gap: 6px; }
+html body #configure .b13pre .b13cap b { font-weight: 400; font-size: 1rem; letter-spacing: .04em; color: #f6f1e6; }
+html body #configure .b13pre .b13cap > span { font-size: .8rem; line-height: 1.55; color: rgba(246,241,230,.6); }
+html body #configure .cz13 { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; align-content: center; gap: 10px; pointer-events: none; opacity: 0; visibility: hidden;
+  background: radial-gradient(ellipse 55% 60% at 50% 48%, rgba(10,9,8,.86), rgba(10,9,8,.6) 70%, rgba(10,9,8,0)); transition: opacity .35s ease, visibility 0s linear .35s; }
+html body #configure .cz13.on { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+html body #configure .cz13.on.out { opacity: 0; transition: opacity .5s ease; }
+html body #configure .cz13 img { width: min(46%, 340px); aspect-ratio: 1; object-fit: contain; transform: scale(.9) translateY(8px); transition: transform 1.25s cubic-bezier(.2,.8,.2,1); filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+html body #configure .cz13.on img { transform: scale(1) translateY(0); }
+html body #configure .cz13.on.out img { transform: scale(.62) translateY(40px); transition: transform .5s cubic-bezier(.4,0,.6,1); }
+html body #configure .cz13 b { font-weight: 300; font-size: .7rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(246,241,230,.8); }
+html[data-ns] body #configure .cz13 b { letter-spacing: 0; }
+@media (max-width: 999px) {
+  html body #configure .b13pre { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; }
+  html body #configure .b13pre .b13pic { width: 96px; height: 96px; }
+  html body #configure #opts .opt.open .chips.cuts .chip { min-height: 88px !important; }
+  html body #configure #opts .opt.open .chip .c13img { width: 46px; height: 46px; }
+}
+@media (prefers-reduced-motion: reduce) { html body #configure .cz13 { display: none; } }
+html body #configure #stripwrap .cz13 { z-index: 40 !important; }

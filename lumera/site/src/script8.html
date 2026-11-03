@@ -1235,7 +1235,7 @@
     if (window.__assemble && !reduce) {
       var akey = cut + "|" + n + "|" + L + "|" + W + "|" + wrist;
       if (state.akey && state.akey !== akey) state.asm = { t0: performance.now(), base: si2, n: n, depth: depth };
-      state.akey = akey;
+      state.akey = akey; state.sBase = si2; state.sN = n; state.sDepth = depth;
     }
     if (snake) snakeRing();
     dirty = true;
@@ -1540,6 +1540,8 @@
 
   size(); build(); requestAnimationFrame(tick);
   addEventListener("silavu:build", build);
+  /* the page can ask to see the stones set again (after the close-up of a new cut, /test13/) */
+  addEventListener("silavu:reassemble", function () { if (window.__assemble && !reduce && state.sBase) { state.asm = { t0: performance.now(), base: state.sBase, n: state.sN, depth: state.sDepth }; dirty = true; if (asleep8) { asleep8 = false; requestAnimationFrame(tick); } } });
   /* ── the stage ──────────────────────────────────────────────────────────
      A surface where a drag can only mean one thing. The chapter moves into a
      fixed panel — the same canvas, the same state, no second renderer to keep

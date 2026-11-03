@@ -603,18 +603,18 @@ const T13 = (() => {
      line, its long approach trimmed), and a white tide that rises at the end
      and takes the bracelet into the collection */
   const SIGP = fs.readFileSync(path.join(dir, "sig13-path.txt"), "utf8").trim();
-  const SIG13 = `<section id="sig13" data-n="" data-title-en="The signature" data-title-he="החתימה" aria-label="The SILAVU line, signed">
+  const SIG13 = `<section id="sig13" aria-label="The SILAVU line, signed">
   <div class="s13pin"><div class="s13stage">
     <div class="s13light" aria-hidden="true"></div>
-    <div class="s13obj">
-      <img class="s13img" src="line/emerald-white-1600.jpg" srcset="line/emerald-white-1000.jpg 1000w, line/emerald-white-1600.jpg 1600w" sizes="(max-width: 760px) 118vw, min(1120px, 78vw)" width="1600" height="1195" alt="The SILAVU line bracelet: emerald-cut diamonds in white gold, with the name SILAVU written by hand inside it" data-alt-he="צמיד SILAVU: יהלומים בליטוש אמרלד בזהב לבן, והשם SILAVU כתוב בכתב יד בתוכו" decoding="async" loading="lazy">
-      <img class="s13glint" src="line/emerald-white-1600.jpg" srcset="line/emerald-white-1000.jpg 1000w, line/emerald-white-1600.jpg 1600w" sizes="(max-width: 760px) 118vw, min(1120px, 78vw)" width="1600" height="1195" alt="" aria-hidden="true" decoding="async" loading="lazy">
-      <svg class="s13sig" viewBox="80 10 1150 380" aria-hidden="true" focusable="false"><defs><linearGradient id="s13ink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9dbe0" stop-opacity="0"/><stop offset=".12" stop-color="#eef0f3"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd2d8"/></linearGradient></defs>
+    <div class="s13view">
+      <img class="s13first" src="line13/d/f000.webp" srcset="line13/m/f000.webp 720w, line13/d/f000.webp 1120w" sizes="(max-width: 760px) 100vw, min(94vw, 1240px)" width="1120" height="840" alt="The SILAVU line bracelet: emerald-cut diamonds in white gold, with the name SILAVU written by hand inside it" data-alt-he="צמיד SILAVU: יהלומים בליטוש אמרלד בזהב לבן, והשם SILAVU כתוב בכתב יד בתוכו" decoding="async" loading="lazy">
+      <canvas class="s13cv" aria-hidden="true"></canvas>
+      <svg class="s13sig" style="--sl:22%;--st:39%;--sw:56%" viewBox="80 10 1150 380" aria-hidden="true" focusable="false"><defs><linearGradient id="s13ink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9dbe0" stop-opacity="0"/><stop offset=".12" stop-color="#eef0f3"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd2d8"/></linearGradient></defs>
         <path class="s13line" d="${SIGP}"/><circle class="s13dot" cx="473" cy="187" r="4.2"/><circle class="s13tip" r="3"/></svg>
     </div>
-    <svg class="s13tide" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0,140 C240,92 420,70 640,96 C880,124 1060,40 1260,48 C1350,52 1410,70 1440,80 L1440,320 L0,320 Z"/></svg>
   </div></div>
-</section>`;
+</section>
+<div class="s13fade" aria-hidden="true"></div>`;
   const edit = h => {
     h = cut(cut(h, "soul3d"), "guide");
     /* the signature, written inside the bracelet: replaces the signature
@@ -635,6 +635,7 @@ const T13 = (() => {
       .replace(/(<p class="p rv d2" data-en-no3d="[^"]*" data-he-no3d="[^"]*") data-en="Choose the shape, the carat weight[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Create a piece tailored to you." data-he="תכשיט שנוצר במיוחד עבורכם.">Create a piece tailored to you.</p>');
     /* the builder's place in the menu, said as what it is */
     h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
+    h = h.replace('<section id="build" data-n="03" data-title-en="The Line" data-title-he="הקו" aria-label="The Line">', '<section id="build" data-n="03" data-title-en="Design yours" data-title-he="עצבו בעצמכם" aria-label="Design your bracelet">');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
   };
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; window.__assemble = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
