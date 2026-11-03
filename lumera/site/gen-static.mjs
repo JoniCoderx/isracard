@@ -594,7 +594,7 @@ const T13 = (() => {
       <ul class="f13soc">${SOC.map(n => `<li class="soon" title="${n} · soon">${icon(n)}<span class="vh">${n}, coming soon</span></li>`).join("")}</ul>
       <p class="f13soon" data-en="Our channels open soon." data-he="הערוצים שלנו ייפתחו בקרוב.">Our channels open soon.</p></div>
   </div>
-  <div class="f13word" aria-hidden="true">SILAVU</div>
+  <div class="f13word" aria-hidden="true"><svg viewBox="0 0 1200 200" focusable="false"><defs><linearGradient id="f13g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ece8df" stop-opacity=".2"/><stop offset=".92" stop-color="#ece8df" stop-opacity="0"/></linearGradient></defs><text x="600" y="178" text-anchor="middle" textLength="1176" lengthAdjust="spacing" fill="url(#f13g)" font-family="'Silavu Name', Jost, sans-serif" font-weight="500" font-size="220">SILAVU</text></svg></div>
   <div class="f13bot"><span dir="ltr">© SILAVU ${new Date().getFullYear()}</span><a href="#hero" data-en="Back to the top" data-he="חזרה למעלה">Back to the top</a></div>
 </div></section>`;
   const edit = h => {
@@ -604,6 +604,8 @@ const T13 = (() => {
       .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="18K white gold · pavé diamonds" data-he="זהב לבן 18K · יהלומי פאווה">18K white gold · pavé diamonds</span></a>\n<div class="hseam"`);
     const e = h.indexOf('<section id="end"'), ee = e < 0 ? -1 : h.indexOf("</section>", e);
     if (e >= 0 && ee > 0) h = h.slice(0, e) + foot + h.slice(ee + "</section>".length);
+    /* the builder's place in the menu, said as what it is */
+    h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
   };
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1;</script>\n"]] };

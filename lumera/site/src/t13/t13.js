@@ -95,3 +95,59 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
+
+/* the kind of each piece, written small on its photograph */
+(function () {
+  function init() {
+    [].forEach.call(document.querySelectorAll(".pgrid .piece:not(.soon)"), function (pc) {
+      var kd = pc.querySelector(".bd .t .kd"), fig = pc.querySelector(".fig");
+      if (!kd || !fig || fig.querySelector(".k13")) return;
+      var tag = document.createElement("span"); tag.className = "k13"; tag.setAttribute("aria-hidden", "true");
+      var paint = function () { tag.textContent = kd.textContent.trim(); };
+      paint(); fig.appendChild(tag);
+      if (window.MutationObserver) new MutationObserver(paint).observe(kd, { childList: true, characterData: true, subtree: true });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+
+/* Up close: three prints on the table. They develop as they arrive, and a
+   tap turns one over to what it shows and the way to the piece. */
+(function () {
+  function init() {
+    var sec = document.getElementById("details"); if (!sec) return;
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    [].forEach.call(sec.querySelectorAll(".wlk"), function (w) {
+      if (w.querySelector(".w13")) return;
+      var pic = w.querySelector(".wlkpic"), cap = w.querySelector("figcaption"), nm = w.querySelector(".wlknm"), kd = cap && cap.querySelector(".k");
+      if (!pic || !cap || !nm) return;
+      var href = pic.getAttribute("href"), alt = (pic.querySelector("img") || {}).alt || "";
+      var inner = document.createElement("div"); inner.className = "w13";
+      var front = document.createElement("div"); front.className = "w13f";
+      front.appendChild(pic); front.appendChild(cap);
+      var back = document.createElement("div"); back.className = "w13b";
+      back.innerHTML = '<button type="button" class="w13back"></button><span class="k"></span><b></b><p></p><a></a>';
+      back.querySelector("a").href = href;
+      inner.appendChild(front); inner.appendChild(back); w.appendChild(inner);
+      var paint = function () {
+        back.querySelector(".k").textContent = kd ? kd.textContent.trim() : "";
+        back.querySelector("b").textContent = nm.textContent.trim();
+        back.querySelector("p").textContent = alt;
+        back.querySelector("a").textContent = he() ? "לצפייה בתכשיט" : "View the piece";
+        back.querySelector(".w13back").textContent = he() ? "חזרה" : "Turn back";
+      };
+      paint();
+      if (window.MutationObserver) new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+      /* the photograph no longer leaves the page: it turns the print over */
+      pic.addEventListener("click", function (e) { e.preventDefault(); w.classList.add("flip"); });
+      nm.addEventListener("click", function (e) { e.preventDefault(); w.classList.add("flip"); });
+      back.querySelector(".w13back").addEventListener("click", function (e) { e.stopPropagation(); w.classList.remove("flip"); });
+      w.setAttribute("tabindex", "-1");
+    });
+    if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) { sec.classList.add("dev"); return; }
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { sec.classList.add("dev"); io.disconnect(); } }); }, { threshold: 0.25 });
+    io.observe(sec.querySelector(".wlkrow") || sec);
+    setTimeout(function () { var r = sec.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) sec.classList.add("dev"); }, 3000);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
