@@ -585,7 +585,7 @@ const T13 = (() => {
   const foot = `<section id="end" data-n="" aria-label="Footer"><div class="f13">
   <div class="f13top">
     <div class="f13house"><a class="f13brand" href="#hero" aria-label="SILAVU, back to the top">${markUse("f13mk")}</a>
-      <p class="f13line" data-en="Fine jewellery in 18K gold and diamonds, signed with one knot and finished by hand. Seen in private, in Dubai and Tel Aviv." data-he="תכשיטי יוקרה בזהב 18K ויהלומים, חתומים בקשר אחד ומוגמרים בעבודת יד. בפגישה פרטית, בדובאי ובתל אביב.">Fine jewellery in 18K gold and diamonds, signed with one knot and finished by hand. Seen in private, in Dubai and Tel Aviv.</p>
+      <p class="f13line" data-en="Diamond jewellery and bespoke bracelets, designed around you and finished by hand. Seen in private, by appointment, in Dubai and Tel Aviv." data-he="תכשיטי יהלומים וצמידים בעיצוב אישי, מעוצבים סביבכם ומוגמרים בעבודת יד. בפגישה פרטית, בתיאום מראש, בדובאי ובתל אביב.">Diamond jewellery and bespoke bracelets, designed around you and finished by hand. Seen in private, by appointment, in Dubai and Tel Aviv.</p>
       <a class="f13cta" href="#concierge" data-en="Book a private viewing" data-he="קביעת פגישה פרטית">Book a private viewing</a></div>
     <nav class="f13col" aria-label="Explore"><p class="k" data-en="Explore" data-he="גלו">Explore</p>${a2("#collection", "Collection", "הקולקציה")}${a2("#build", "Design your bracelet", "עצבו את הצמיד שלכם")}${a2("#inside", "The box", "הקופסה")}${a2("about/", "About SILAVU", "אודות SILAVU")}</nav>
     <nav class="f13col" aria-label="Client care"><p class="k" data-en="Client care" data-he="שירות לקוחות">Client care</p>${FOOTER_DOCS.map(d => a2(d.slug + "/", d.title.en, d.title.he)).join("")}</nav>
@@ -600,10 +600,12 @@ const T13 = (() => {
   const edit = h => {
     h = cut(cut(h, "soul3d"), "guide");
     /* the opening's line says what the house makes; the film's piece is named at the other corner */
-    h = h.replace(/(<p class="p rv late d2") data-en="Crafted with intention\. Made to leave an impression\." data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="18K gold and diamonds, signed with one knot. Seen in private, in Dubai and Tel Aviv." data-he="זהב 18K ויהלומים, חתומים בקשר אחד. בפגישה פרטית, בדובאי ובתל אביב.">18K gold and diamonds, signed with one knot. Seen in private, in Dubai and Tel Aviv.</p>`)
-      .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="18K white gold · pavé diamonds" data-he="זהב לבן 18K · יהלומי פאווה">18K white gold · pavé diamonds</span></a>\n<div class="hseam"`);
+    h = h.replace(/(<p class="p rv late d2") data-en="Crafted with intention\. Made to leave an impression\." data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Diamond bracelets and fine jewellery, designed around you and made to order by hand." data-he="צמידי יהלומים ותכשיטי יוקרה, מעוצבים סביבכם ונוצרים בהזמנה אישית, בעבודת יד.">Diamond bracelets and fine jewellery, designed around you and made to order by hand.</p>`)
+      .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="Pavé diamonds" data-he="יהלומי פאווה">Pavé diamonds</span></a>\n<div class="hseam"`);
     const e = h.indexOf('<section id="end"'), ee = e < 0 ? -1 : h.indexOf("</section>", e);
     if (e >= 0 && ee > 0) h = h.slice(0, e) + foot + h.slice(ee + "</section>".length);
+    /* "About" leads to the About page redesigned with this one (/about13/) */
+    h = h.replace(/href="about\/"/g, 'href="about13/"');
     /* the builder's place in the menu, said as what it is */
     h = h.replace(/(<a href="#build"[^>]*?) data-en="The Line" data-he="[^"]*">The Line<\/a>/g, '$1 data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a>');
     return h.replace('<div class="allc">', [1, 2, 3].map(soon).join("\n") + '<div class="allc">');
@@ -611,6 +613,12 @@ const T13 = (() => {
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1;</script>\n"]] };
 })();
 heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
+/* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
+{ const { markDefs } = await import("./src/body.mjs");
+  const { about13Page } = await import("./src/t13/about13.mjs");
+  const page = about13Page({ ABOUT, PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)) });
+  if (page) { fs.mkdirSync(path.join(outDir, "about13"), { recursive: true }); fs.writeFileSync(path.join(outDir, "about13", "index.html"), page); console.log("test page written: about13"); }
+  else console.warn("about13 skipped: its fonts, portrait or pieces are missing"); }
 /* The home page takes /test3/'s chapters (the house's choice, 1 Nov 2026):
    the live page as built above (its film, its words, its tracking, its
    address), with the 3D emblem, the layout, the close-ups, SOUL in three
