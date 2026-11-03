@@ -621,7 +621,9 @@ const T13 = (() => {
     /* the signature, written inside the bracelet: replaces the signature
        chapter under the film (the house's brief of 3 Nov 2026) */
     { const i = h.indexOf('<section id="craft"'), j = i < 0 ? -1 : h.indexOf("</section>", i);
-      if (i >= 0 && j > 0) h = h.slice(0, i) + SIG13 + h.slice(j + "</section>".length); }
+      /* the house's note of 3 Nov 2026: the falling bracelet is taken out. The film runs straight into the
+         collection through one soft fade, black into ivory (SIG13 is kept above, unused, for reference) */
+      if (i >= 0 && j > 0) h = h.slice(0, i) + '<div class="h13fade" aria-hidden="true"></div>' + h.slice(j + "</section>".length); }
     /* the opening's line says what the house makes; the film's piece is named at the other corner */
     h = h.replace(/(<p class="p rv late d2") data-en="Crafted with intention\. Made to leave an impression\." data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Diamond bracelets and fine jewellery, designed around you and made to order by hand." data-he="צמידי יהלומים ותכשיטי יוקרה, מעוצבים סביבכם ונוצרים בהזמנה אישית, בעבודת יד.">Diamond bracelets and fine jewellery, designed around you and made to order by hand.</p>`)
       .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="Pavé diamonds" data-he="יהלומי פאווה">Pavé diamonds</span></a>\n<div class="hseam"`);

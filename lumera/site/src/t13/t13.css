@@ -798,3 +798,7 @@ html body #collection > .chap, html body #collection .sechead > .k, html body #d
   #end .f13house { grid-column: 1 / -1; }
   #end .f13top > :last-child { grid-column: 1 / -1; }
 }
+/* the film into the collection: one soft fade from the film's black into the collection's ivory */
+html body .h13fade { display: block; height: 46svh; margin-top: -1px; pointer-events: none;
+  background: linear-gradient(to bottom, #000 0%, #0a0908 10%, #1d1b18 22%, #3a3631 34%, #625e57 46%, #8f8a82 58%, #bbb6ad 70%, #ddd9d2 82%, #f3f1ed 92%, #fff 100%); }
+@media (max-width: 760px) { html body .h13fade { height: 34svh; } }
