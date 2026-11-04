@@ -1,0 +1,67 @@
+/* ════ /about14/: "Behind SILAVU" in /test14/'s black (the house's note of 4 Nov 2026: make the About page itself the best).
+   The founder full height beside the words, the vision said once, SILAVU in five facts, the making, the three collections
+   as worn photographs, and the way in with the mark. ════ */
+:root { --bg: #000; --line: rgba(236,232,223,.08); }
+html, body { background: #000; }
+.bar { background: rgba(0,0,0,.72); }
+/* the opening: Ariel full height on the right, the words on the left; the photograph settles as it arrives */
+.open { grid-template-columns: minmax(0, 1fr); min-height: 100svh; padding: 0 var(--pad); align-items: end; }
+.open::before { display: none; }
+.por { position: absolute; top: 0; right: 0; bottom: 0; width: min(62vw, 980px); max-width: none; justify-self: auto; order: 0; margin: 0; }
+.por img { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0; object-position: 50% 28%; filter: grayscale(1) contrast(1.08) brightness(.92);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 38%), linear-gradient(to top, transparent 0, #000 22%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0, #000 38%), linear-gradient(to top, transparent 0, #000 22%); mask-composite: intersect; }
+.por figcaption { position: absolute; right: var(--pad); bottom: 40px; margin: 0; gap: 18px; }
+.otxt { position: relative; z-index: 2; max-width: 560px; padding: 0 0 clamp(70px, 12svh, 140px); }
+.otxt h1 { font-size: clamp(2.2rem, 4.4vw, 4.2rem); letter-spacing: .14em; }
+.otxt .lead { font-size: 1.06rem; color: rgba(236,232,223,.78); }
+.js .open .por img { clip-path: none; opacity: 0; transform: scale(1.08); transition: opacity 1.6s ease, transform 3.2s cubic-bezier(.2,.8,.2,1); }
+.js .open.in .por img { clip-path: none; opacity: 1; transform: scale(1); }
+.scroll { display: none; }
+/* no lines between the chapters: the black carries */
+.vision, .three, .end, .foot { border-top: 0; }
+.vision { min-height: 80svh; }
+.vline { font-size: clamp(1.8rem, 3.6vw, 3.3rem); max-width: 20ch; }
+/* SILAVU in five facts */
+.facts { padding: 0 var(--pad) clamp(40px, 6vw, 90px); }
+.facts ul { list-style: none; margin: 0 auto; padding: 28px 0; max-width: 1240px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.facts li { display: grid; gap: 8px; align-content: start; padding: 4px 22px; text-align: center; }
+.facts li + li { border-inline-start: 1px solid var(--line); }
+.facts b { font-weight: 300; font-size: clamp(1rem, 1.4vw, 1.3rem); letter-spacing: .06em; color: var(--ink); }
+.facts span { font-size: .78rem; line-height: 1.55; color: var(--ink2); }
+.js .facts li { opacity: 0; transform: translateY(12px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--n, 0) * 90ms); }
+.js .facts.in li { opacity: 1; transform: none; }
+/* the making: the pavé large */
+.mpic img { border-radius: 22px; }
+/* the three collections as worn photographs, the names on them */
+.cols { max-width: 1400px; gap: clamp(10px, 1.4vw, 20px); }
+.col { position: relative; gap: 0; }
+.colpic { position: relative; border-radius: 18px; background: #0b0b0b; }
+.colpic img { aspect-ratio: 3 / 4; filter: saturate(.85) brightness(.9); }
+.colpic::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.88), rgba(0,0,0,0) 48%); }
+.colk, .coln { position: absolute; left: 24px; z-index: 2; margin: 0; }
+.colk { bottom: 58px; }
+.coln { bottom: 26px; font-size: .95rem; letter-spacing: .32em; }
+/* the way in, with the mark */
+.c14all { position: relative; display: flex; align-items: center; gap: 16px; width: max-content; padding: 9px 30px 9px 9px; border: 1px solid rgba(243,236,224,.38); border-radius: 999px;
+  color: var(--ink); text-decoration: none; font-size: .64rem; letter-spacing: .3em; text-transform: uppercase; overflow: hidden; isolation: isolate; transition: color .45s cubic-bezier(.2,.8,.2,1), border-color .45s ease; }
+.c14all::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: linear-gradient(180deg, #f6f0e4, #ddd0b6); transform: scaleX(0); transform-origin: 0 50%; transition: transform .55s cubic-bezier(.77,0,.175,1); }
+.c14all:hover, .c14all:focus-visible { color: #111; border-color: #efe5d2; }
+.c14all:hover::before, .c14all:focus-visible::before { transform: scaleX(1); }
+.c14all:active { transform: scale(.97); }
+.c14allmk { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(243,236,224,.38); }
+.c14allmk svg { height: 24px; width: auto; }
+.c14allar { width: 22px; height: 12px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 6h21M16 1l5 5-5 5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 6h21M16 1l5 5-5 5'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.c14all:hover .c14allar { transform: translateX(5px); }
+@media (max-width: 860px) {
+  .open { padding: 0 var(--pad); min-height: 100svh; }
+  .por { left: 0; width: 100%; bottom: 30%; }
+  .por img { -webkit-mask-image: linear-gradient(to top, transparent 0, #000 40%); mask-image: linear-gradient(to top, transparent 0, #000 40%); -webkit-mask-composite: source-over; mask-composite: add; }
+  .por figcaption { display: none; }
+  .otxt { padding-bottom: 60px; }
+  .facts ul { grid-template-columns: 1fr 1fr; row-gap: 22px; }
+  .facts li:nth-child(odd) { border-inline-start: 0; }
+  .facts li:last-child { grid-column: 1 / -1; }
+  .cols { max-width: none; }
+  .colpic img { aspect-ratio: 4 / 4.4; }
+}
+@media (prefers-reduced-motion: reduce) { .js .open .por img, .js .facts li { transition: none; opacity: 1; transform: none; } }

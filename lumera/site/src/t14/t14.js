@@ -50,3 +50,82 @@
     requestAnimationFrame(function () { close(); if (!reduce) setTimeout(function () { dispatchEvent(new Event("silavu:reassemble")); }, 120); });
   });
 })();
+
+/* the collections: each card opens as it arrives (a curtain lifting, the photograph settling), drifts a little with the
+   scroll, and carries a round loupe that shows the piece closer under the pointer, or under a held finger on a phone */
+(function () {
+  var cards = [].slice.call(document.querySelectorAll(".c14card")); if (!cards.length) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, Z = 2.4, R = 90;
+  cards.forEach(function (c, i) { c.style.setProperty("--i", i); });
+  if (reduce || !("IntersectionObserver" in window)) cards.forEach(function (c) { c.classList.add("in", "live"); });
+  else {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { var c = e.target; c.classList.add("in"); io.unobserve(c);
+      setTimeout(function () { c.classList.add("live"); }, 1700 + (+c.style.getPropertyValue("--i") || 0) * 110); } }); }, { threshold: .18 });
+    cards.forEach(function (c) { io.observe(c); });
+    var tick = 0;
+    function drift() { tick = 0; var vh = innerHeight; cards.forEach(function (c) { var r = c.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
+      var k = ((r.top + r.height / 2) - vh / 2) / vh; c.style.setProperty("--py", (k * -26).toFixed(1) + "px"); }); }
+    addEventListener("scroll", function () { if (!tick) tick = requestAnimationFrame(drift); }, { passive: true }); drift();
+  }
+  cards.forEach(function (c) {
+    var pic = c.querySelector(".c14pic"), img = pic && pic.querySelector("img"); if (!img) return;
+    var lens = document.createElement("i"); lens.className = "c14lens"; lens.setAttribute("aria-hidden", "true"); c.appendChild(lens);
+    var ex = 0, ey = 0, raf = 0, held = false, holdT = 0, suppress = false;
+    function paint() { raf = 0; var r = c.getBoundingClientRect(), ir = img.getBoundingClientRect(), x = ex - r.left, y = ey - r.top - (held ? 110 : 0);
+      lens.style.left = x + "px"; lens.style.top = y + "px";
+      var src = img.currentSrc || img.src; if (lens.__s !== src) { lens.__s = src; lens.style.backgroundImage = 'url("' + src + '")'; }
+      lens.style.backgroundSize = (ir.width * Z).toFixed(0) + "px " + (ir.height * Z).toFixed(0) + "px";
+      lens.style.backgroundPosition = (R - (ex - ir.left) * Z).toFixed(1) + "px " + (R - (ey - ir.top) * Z).toFixed(1) + "px"; }
+    c.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; c.classList.add("lens"); paint(); });
+    c.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; if (!raf) raf = requestAnimationFrame(paint); });
+    c.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") c.classList.remove("lens"); });
+    /* a phone: hold a finger on the picture for a moment and the loupe appears above it; slide to look around */
+    c.addEventListener("touchstart", function (e) { var t = e.touches[0]; ex = t.clientX; ey = t.clientY; clearTimeout(holdT);
+      holdT = setTimeout(function () { held = true; suppress = true; c.classList.add("lens"); paint(); }, 280); }, { passive: true });
+    c.addEventListener("touchmove", function (e) { var t = e.touches[0];
+      if (!held) { if (Math.abs(t.clientX - ex) > 8 || Math.abs(t.clientY - ey) > 8) clearTimeout(holdT); return; }
+      e.preventDefault(); ex = t.clientX; ey = t.clientY; if (!raf) raf = requestAnimationFrame(paint); }, { passive: false });
+    var end = function () { clearTimeout(holdT); if (held) { held = false; c.classList.remove("lens"); } };
+    c.addEventListener("touchend", end); c.addEventListener("touchcancel", end);
+    c.addEventListener("click", function (e) { if (suppress) { e.preventDefault(); suppress = false; } });
+    c.addEventListener("contextmenu", function (e) { if (held) e.preventDefault(); });
+  });
+})();
+
+/* the builder, laid out like the house's fix (4 Nov 2026): the five steps named above the stage, the views small inside
+   it with a zoom and a full screen, a true macro of the chosen stone in a circle, and the line summed up in one row.
+   Nothing is rebuilt: the same buttons are moved, so every handler they carry keeps working. */
+(function () {
+  function init() {
+    var conf = document.getElementById("configure"), opts = document.getElementById("opts"), stage = document.getElementById("stripwrap");
+    var bars = opts && opts.querySelector(".b13bars");
+    if (!conf || !stage || !bars) return setTimeout(init, 150);
+    if (conf.querySelector(".b14top")) return;
+    conf.classList.add("b14");
+    var top = document.createElement("div"); top.className = "b14top"; top.appendChild(bars); conf.insertBefore(top, conf.firstChild);
+    var vp = conf.querySelector(".vposwrap");
+    if (vp) {
+      stage.appendChild(vp);
+      var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+      var tools = document.createElement("span"); tools.className = "b14tools";
+      tools.innerHTML = '<button type="button" class="b14zoom" aria-label="Look closer"></button><button type="button" class="b14full" aria-label="Full screen"></button>';
+      vp.querySelector(".vpos").appendChild(tools);
+      tools.querySelector(".b14zoom").addEventListener("click", function () {
+        var on = vp.querySelector('[data-vpos="detail"].on'), t = vp.querySelector(on ? '[data-vpos="front"]' : '[data-vpos="detail"]'); if (t) t.click();
+      });
+      tools.querySelector(".b14full").addEventListener("click", function () { var b = stage.querySelector(".stbtn"); if (b) b.click(); });
+    }
+    /* the macro: the chosen stone, rendered and seen close, in a circle on the stage */
+    var mac = document.createElement("figure"); mac.className = "b14macro"; mac.setAttribute("aria-hidden", "true");
+    mac.innerHTML = '<img alt="" decoding="async"><figcaption></figcaption>'; stage.appendChild(mac);
+    var NAMES = { round: "Round", oval: "Oval", cushion: "Cushion", princess: "Princess", emerald: "Emerald", marquise: "Marquise", pear: "Pear", baguette: "Baguette" };
+    function cut() { var c = opts.querySelector('.chip.on[data-k="cut"]'); return c ? c.getAttribute("data-v") : "round"; }
+    function paint() { var c = cut(), im = mac.querySelector("img"), s = "cuts13/" + c + "-600.webp";
+      if (im.getAttribute("src") !== s) { mac.classList.remove("in"); im.onload = function () { mac.classList.add("in"); }; im.src = s; }
+      mac.querySelector("figcaption").textContent = NAMES[c] || ""; }
+    paint();
+    opts.addEventListener("click", function () { setTimeout(paint, 30); });
+    addEventListener("silavu:build", paint);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 80); }); else setTimeout(init, 80);
+})();

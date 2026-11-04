@@ -656,7 +656,7 @@ const T14 = (() => {
   const dir = path.join(path.dirname(path.resolve(src)), "src", "t14");
   const grab = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return ["", h]; const j = h.indexOf("</section>", i); if (j < 0) return ["", h]; return [h.slice(i, j + 10), h.slice(0, i) + h.slice(j + 10)]; };
   const swap = (h, id, html) => { const [x, rest] = grab(h, id); if (!x) return h; const i = h.indexOf(`<section id="${id}"`); return h.slice(0, i) + html + h.slice(i + x.length); };
-  const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><img src="img/${img}-1254.jpg" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
+  const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><span class="c14pic"><img src="img/${img}-1254.jpg" srcset="img/${img}-900.jpg 900w, img/${img}-1254.jpg 1254w" sizes="(min-width: 900px) 33vw, 94vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"></span><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
   const COL = `<section id="collection" class="c14col" data-n="01" data-title-en="Collection" data-title-he="הקולקציה" aria-labelledby="c14h">
   <div class="c14wrap">
     <h2 class="k14 c14k" id="c14h" data-en="Collections" data-he="קולקציות">Collections</h2>
@@ -665,7 +665,7 @@ const T14 = (() => {
       ${card("ring", "ring-worn", "ICON", "Signature pieces", "תכשיטי חתימה", "SILAVU ICON, the signature ring, worn")}
       ${card("pave", "necklace-worn", "SOUL", "Personal expressions", "ביטוי אישי", "SILAVU SOUL, the signature pendant, worn")}
     </div>
-    <a class="c14all" href="collection/" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</a>
+    <a class="c14all" href="collection14/"><span class="c14allmk" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000"><use href="#symb"/></svg></span><span class="c14allt" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</span><i class="c14allar" aria-hidden="true"></i></a>
   </div>
 </section>`;
   const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -698,7 +698,9 @@ const T14 = (() => {
     /* the reference's order: the film, the collections, the builder, the box, the craft, up close, the founder, the enquiry */
     let box, up; [box, h] = grab(h, "inside"); [up, h] = grab(h, "details");
     h = swap(h, "collection", COL);
-    h = h.replace('<section id="enquire"', box + "\n" + CRAFT + up + "\n" + ABOUT + '<section id="enquire"');
+    /* the founder lives on the About page (the house's note of 4 Nov 2026), not on the home page */
+    h = h.replace('<section id="enquire"', box + "\n" + CRAFT + up + "\n" + '<section id="enquire"');
+    h = h.replace(/href="about13\//g, 'href="about14/');
     /* the opening: the name, one line, and the way down */
     h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery, made to be lived in." data-he="תכשיטי יוקרה, שנולדו להיענד.">Fine jewellery, made to be lived in.</p>');
     h = h.replace(/<div class="hacts rv late d3">[\s\S]*?<\/div>/, "");
@@ -710,11 +712,17 @@ const T14 = (() => {
     h = h.replace(/(<p class="fine rv d3"[^>]*) data-en="Every message[^"]*" data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Tell us what you have in mind. A member of our team will be in touch personally." data-he="ספרו לנו על מה חשבתם. מישהו מהצוות שלנו ייצור איתכם קשר באופן אישי.">Tell us what you have in mind. A member of our team will be in touch personally.</p>`);
     h = h.replace('<label for="fName" data-en="Name" data-he="שם">Name</label>', '<label for="fName" data-en="Full name" data-he="שם מלא">Full name</label>');
     h = h.replace('<label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label>', '<label for="fContact" data-en="Email or phone" data-he="אימייל או טלפון">Email or phone</label>');
+    /* the builder's views, said shortly */
+    h = h.replace('data-view="line" data-en="In 3D" data-he="בתלת־ממד">In 3D<', 'data-view="line" data-en="3D" data-he="תלת־ממד">3D<')
+      .replace('data-view="photo" data-en="Photograph" data-he="צילום">Photograph<', 'data-view="photo" data-en="Photo" data-he="צילום">Photo<')
+      .replace('data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist<', 'data-view="wrist" data-en="Try on" data-he="על היד">Try on<');
     /* the menu: the founder's page by its name */
     h = h.replace('<a href="#build"><span class="k">03</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>', '<a href="#build"><span class="k">03</span><span data-en="Build your bracelet" data-he="בנו את הצמיד">Build your bracelet</span></a>');
     return h;
   };
-  return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit };
+  return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit,
+    /* the builder's camera for this page (src/script8.html reads it): the line seen low and large */
+    inject: [['<header class="sh"', "<script>window.__frame14 = 1</script>"]] };
 })();
 heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
@@ -723,6 +731,16 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
   const page = about13Page({ ABOUT, PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)) });
   if (page) { fs.mkdirSync(path.join(outDir, "about13"), { recursive: true }); fs.writeFileSync(path.join(outDir, "about13", "index.html"), page); console.log("test page written: about13"); }
   else console.warn("about13 skipped: its fonts, portrait or pieces are missing"); }
+/* /collection14/: the whole collection in /test14/'s black, built for search (src/t14/collection14.mjs) */
+{ const { markDefs } = await import("./src/body.mjs");
+  const { collection14Page } = await import("./src/t14/collection14.mjs");
+  const page = collection14Page({ PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), base });
+  if (page) { fs.mkdirSync(path.join(outDir, "collection14"), { recursive: true }); fs.writeFileSync(path.join(outDir, "collection14", "index.html"), page); console.log("test page written: collection14"); } }
+/* /about14/: the same page in /test14/'s black, made the best it can be (the house's note of 4 Nov 2026) */
+{ const { markDefs } = await import("./src/body.mjs");
+  const { about13Page } = await import("./src/t13/about13.mjs");
+  const page = about13Page({ ABOUT, PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), v14: true });
+  if (page) { fs.mkdirSync(path.join(outDir, "about14"), { recursive: true }); fs.writeFileSync(path.join(outDir, "about14", "index.html"), page); console.log("test page written: about14"); } }
 /* The home page takes /test3/'s chapters (the house's choice, 1 Nov 2026):
    the live page as built above (its film, its words, its tracking, its
    address), with the 3D emblem, the layout, the close-ups, SOUL in three

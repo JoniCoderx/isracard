@@ -1,7 +1,8 @@
 /* /about13/: each section comes up once as it enters the screen; the opening
    arrives as soon as its portrait is ready. Without this, everything is shown. */
 (function () {
-  var secs = [].slice.call(document.querySelectorAll(".open, .vision, .make, .three"));
+  var secs = [].slice.call(document.querySelectorAll(".open, .vision, .facts, .make, .three"));
+  [].forEach.call(document.querySelectorAll(".facts li"), function (li, i) { li.style.setProperty("--n", i); });
   var open = document.querySelector(".open"), img = open && open.querySelector("img");
   var show = function (s) { s.classList.add("in"); };
   if (open) { if (img && !img.complete) { img.addEventListener("load", function () { requestAnimationFrame(function () { show(open); }); }, { once: true }); setTimeout(function () { show(open); }, 1600); } else requestAnimationFrame(function () { show(open); }); }

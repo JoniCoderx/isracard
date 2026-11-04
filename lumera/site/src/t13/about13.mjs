@@ -8,8 +8,9 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export function about13Page({ ABOUT, PIECES, markDefs, markUse, root }) {
-  const a = ABOUT, R = "../";
+export function about13Page({ ABOUT, PIECES, markDefs, markUse, root, v14 = false }) {
+  /* v14: the same page in /test14/'s black, with the founder full height, the facts in a line, the worn pieces and the way in with the mark */
+  const a = ABOUT, R = "../", HOME = v14 ? "test14/" : "test13/", COLL = v14 ? "collection14/" : "test13/#collection";
   const fontsDir = path.join(root, "public/fonts");
   const ff = re => fs.readdirSync(fontsDir).find(x => re.test(x));
   const jost = ff(/^jost-normal-latin-[0-9a-f]{6}\.woff2$/), jostx = ff(/^jost-normal-latin-ext-[0-9a-f]{6}\.woff2$/), urb = ff(/^urbanist-normal-all-[0-9a-f]{6}\.woff2$/);
@@ -24,10 +25,11 @@ export function about13Page({ ABOUT, PIECES, markDefs, markUse, root }) {
   let vision = (L[1].split(": ")[1] || L[1]).split(". ")[0].replace(/\.$/, "") + ".";
   vision = vision.charAt(0).toUpperCase() + vision.slice(1);
   const visionWords = vision.split(" ").map((w, i) => `<span style="--i:${i}">${q(w)}</span>`).join(" ");
-  const css = fs.readFileSync(path.join(root, "src", "t13", "about13.css"), "utf8");
+  const css = fs.readFileSync(path.join(root, "src", "t13", "about13.css"), "utf8") + (v14 ? "\n" + fs.readFileSync(path.join(root, "src", "t14", "about14.css"), "utf8") : "");
 
+  const WORN = { knot: "knot-worn", ring: "ring-worn", pave: "necklace-worn" };
   const card = ({ p, w }) => `<a class="col" href="${R}pieces/${p.id}/">
-      <span class="colpic"><img src="${R}studio6/${p.id}-a-700.webp" srcset="${R}studio6/${p.id}-a-700.webp 700w, ${R}studio6/${p.id}-a-1200.webp 1200w" sizes="(max-width: 760px) 80vw, 30vw" width="1200" height="1200" alt="${q(plain(p.name.en))}" loading="lazy" decoding="async"></span>
+      <span class="colpic">${v14 ? `<img src="${R}img/${WORN[p.id]}-1254.jpg" srcset="${R}img/${WORN[p.id]}-900.jpg 900w, ${R}img/${WORN[p.id]}-1254.jpg 1254w"` : `<img src="${R}studio6/${p.id}-a-700.webp" srcset="${R}studio6/${p.id}-a-700.webp 700w, ${R}studio6/${p.id}-a-1200.webp 1200w"`} sizes="(max-width: 760px) 80vw, 30vw" width="1200" height="1200" alt="${q(plain(p.name.en))}" loading="lazy" decoding="async"></span>
       <span class="colk">${q(p.kind.en)}</span><span class="coln">SILAVU <b>${w}</b></span></a>`;
 
   return `<!doctype html>
@@ -51,8 +53,8 @@ ${css}</style>
 <body>
 ${markDefs()}
 <header class="bar">
-  <a class="back" href="${R}test13/">${markUse("")}<span class="wm">SILAVU</span></a>
-  <a class="pill" href="${R}test13/#concierge">Book a private viewing</a>
+  <a class="back" href="${R}${HOME}">${markUse("")}<span class="wm">SILAVU</span></a>
+  <a class="pill" href="${R}${HOME}#concierge">Book a private viewing</a>
 </header>
 <main>
   <section class="open" aria-labelledby="ah">
@@ -72,6 +74,13 @@ ${markDefs()}
     <p class="vrest">${q(L[1].split(". ").slice(1).join(". "))}</p>
   </section>
 
+  ${v14 ? `<section class="facts" aria-label="SILAVU in brief"><ul>
+    <li><b>Ariel Silas</b><span>Founder and designer</span></li>
+    <li><b>3D</b><span>A background in 3D and visual design</span></li>
+    <li><b>Jacob &amp; Co.</b><span>Creative collaborations</span></li>
+    <li><b>Dubai</b><span>Made by hand by skilled craftsmen</span></li>
+    <li><b>By appointment</b><span>Seen in private in Dubai and Tel Aviv</span></li>
+  </ul></section>` : ""}
   <section class="make" aria-labelledby="mh">
     <figure class="mpic"><img src="${R}img/ring-macro-1254.jpg" srcset="${R}img/ring-macro-900.jpg 900w, ${R}img/ring-macro-1254.jpg 1254w" sizes="(max-width: 860px) 100vw, 46vw" width="1254" height="1254" loading="lazy" decoding="async" alt="The pavé signature of SILAVU ICON, close"></figure>
     <div class="mtxt">
@@ -89,10 +98,10 @@ ${markDefs()}
 
   <section class="end">
     ${markUse("emk")}
-    <div class="acts"><a class="btn" href="${R}test13/#collection">${q(a.cta1.en)}</a><a class="lnk" href="${R}test13/#concierge">${q(a.cta2.en)}</a></div>
+    <div class="acts">${v14 ? `<a class="c14all" href="${R}${COLL}"><span class="c14allmk" aria-hidden="true">${markUse("")}</span><span>${q(a.cta1.en)}</span><i class="c14allar" aria-hidden="true"></i></a>` : `<a class="btn" href="${R}${HOME}#collection">${q(a.cta1.en)}</a>`}<a class="lnk" href="${R}${HOME}#concierge">${q(a.cta2.en)}</a></div>
   </section>
 </main>
-<footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}test13/">Back to the house</a></footer>
+<footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}${HOME}">Back to the house</a></footer>
 <script>${fs.readFileSync(path.join(root, "src", "t13", "about13.js"), "utf8")}</script>
 </body>
 </html>

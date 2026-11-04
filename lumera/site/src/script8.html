@@ -1285,7 +1285,9 @@
 
   /* ─────────────────────────── camera ─────────────────────────── */
   var portrait = innerWidth < 760;
-  var cam = { th: -0.62, ph: portrait ? 0.90 : 0.42, d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
+  /* /test14/ (window.__frame14): a lower camera, so the line is seen as a piece across the frame rather than a ring from above */
+  var F14 = !!window.__frame14;
+  var cam = { th: -0.62, ph: F14 ? (portrait ? 0.56 : 0.27) : (portrait ? 0.90 : 0.42), d: 1, vth: 0, vph: 0, td: 1 }, fitD = 100;
   /* the toy: while it is held the bracelet has a place in the frame, a spin and a fall */
   var toy = null, lastPrev = "";
   /* Nothing about the bracelet changes while the page is moving, and the
@@ -1342,7 +1344,7 @@
          two controls are 213 and 90 wide: the ring ran under both of them,
          which is what made the builder look like a pile rather than a piece.
          A phone pulls the camera back far enough to clear its own furniture. */
-      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (coarse && !staged ? 1.30 : 1.12);
+      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (F14 ? (coarse && !staged ? 1.04 : 0.96) : (coarse && !staged ? 1.30 : 1.12));
     }
     var R = state.R, dist = fitD * cam.d, th0 = cam.th, ph0 = cam.ph;
     if (snake) {
@@ -1534,6 +1536,8 @@
     cam.th = p === "side" ? -1.57 : p === "detail" ? -0.30 : -0.62;
     cam.ph = p === "under" ? -0.88 : p === "side" ? 0.05 : p === "detail" ? 0.34 : (portrait ? 0.90 : 0.42);
     cam.fT = p === "detail" ? 1 : 0; cam.td = p === "detail" ? 0.34 : 1;
+    /* /test14/: the side is seen a little from above so the stones read; the detail is a true close look at the front stones */
+    if (F14) { cam.ph = p === "side" ? 0.17 : p === "detail" ? 0.13 : (portrait ? 0.56 : 0.27); cam.td = p === "detail" ? 0.24 : p === "side" ? 0.92 : 1; }
     v.parentNode.querySelectorAll("[data-vpos]").forEach(function (o) { o.classList.toggle("on", o === v); });
     dirty = true;
   });
