@@ -1522,3 +1522,39 @@ html[dir="rtl"] body #configure .b14pv { right: auto; left: clamp(16px, 2vw, 28p
   html body #configure .b14pvk { display: none; }
   html body #configure .b14pvi { width: 26px; height: 26px; }
 }
+
+/* ════ the footer, after the house's reference (4 Nov): black, thin ivory capitals, four quiet columns on a wide
+   screen; on a phone the mark centred, three folded sections, the copyright and the way back up ════ */
+html body #end { background: #000 !important; }
+html body #end .f13top { border-top: 0 !important; position: relative; }
+html body #end .f13top::before { content: "" !important; display: block !important; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, rgba(222,200,156,0), rgba(222,200,156,.55) 50%, rgba(222,200,156,0)) !important; }
+html body #end .f13col .k { font-weight: 400 !important; font-size: .62rem !important; letter-spacing: .42em !important; color: #efe5d2 !important; text-transform: uppercase; }
+html body #end .f13col a, html body #end .f13col .f13city { font-weight: 300 !important; font-size: .66rem !important; letter-spacing: .2em !important; text-transform: uppercase; line-height: 2.6 !important; color: rgba(243,236,224,.82) !important; }
+html body #end .f13col a:hover { color: #fff !important; }
+html body #end .f13house::after { font-weight: 300; }
+html body #end .f13bot, html body #end .f13bot a { font-weight: 300 !important; font-size: .6rem !important; letter-spacing: .38em !important; text-transform: uppercase; color: rgba(243,236,224,.7) !important; }
+html body #end .f13bot { border-top: 1px solid rgba(222,200,156,.22) !important; }
+/* no social circles until the house's accounts are live */
+html body #end .f13soc.none { display: none !important; }
+html body #end .f13acc { display: contents; }
+html[data-ns] body #end .f13col a, html[data-ns] body #end .f13col .k, html[data-ns] body #end .f13bot { letter-spacing: 0 !important; text-transform: none; font-size: .82rem !important; }
+@media (max-width: 899px) {
+  html body #end .f13 { padding: 0 20px !important; }
+  html body #end .f13top { display: block !important; padding: 44px 0 10px !important; }
+  html body #end .f13top > * { padding: 0 !important; border: 0 !important; }
+  html body #end .f13house { display: grid !important; justify-items: center; margin-bottom: 30px; }
+  html body #end .f13house .f13mk { height: 40px; }
+  html body #end .f13col { display: block !important; border-top: 1px solid rgba(243,236,224,.1) !important; }
+  html body #end .f13col:last-child { border-bottom: 1px solid rgba(243,236,224,.1) !important; }
+  html body #end .f13col .k { position: relative; display: flex !important; align-items: center; justify-content: space-between; width: 100%; min-height: 56px; margin: 0 !important; padding: 0 4px !important; cursor: pointer; border: 0; background: none; text-align: start; }
+  html body #end .f13col .k::after { content: ""; width: 8px; height: 8px; border-right: 1px solid #e3d3b2; border-bottom: 1px solid #e3d3b2; transform: translateY(-3px) rotate(45deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  html body #end .f13col.open .k::after { transform: translateY(2px) rotate(-135deg); }
+  html body #end .f13col > :not(.k) { display: none !important; }
+  html body #end .f13col.open > :not(.k):not(.f13fk) { display: flex !important; }
+  html body #end .f13col.open > a, html body #end .f13col.open > .f13city { padding: 0 4px; min-height: 44px; align-items: center; line-height: 1.4 !important; }
+  html body #end .f13col.open { padding-bottom: 12px; }
+  html body #end .f13col.open .f13soc.none { display: none !important; }
+  html body #end .f13top > :nth-child(3) { display: block !important; }
+  html body #end .f13bot { flex-direction: column !important; gap: 16px; align-items: center; justify-content: center !important; text-align: center; padding: 26px 0 max(30px, env(safe-area-inset-bottom)) !important; border-top: 0 !important; }
+}
+html body #end .f13fk { display: none !important; }

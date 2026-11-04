@@ -698,3 +698,16 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 400); }); else setTimeout(init, 400);
 })();
+
+/* the footer: social circles stay hidden until an account is live; on a phone each column folds under its heading */
+(function () {
+  var end = document.getElementById("end"); if (!end) return;
+  [].forEach.call(end.querySelectorAll(".f13soc"), function (u) { var live = [].filter.call(u.querySelectorAll("li"), function (li) { return !li.classList.contains("soon") && !li.hidden; }); if (!live.length) u.classList.add("none"); });
+  var phone = matchMedia("(max-width: 899px)");
+  [].forEach.call(end.querySelectorAll(".f13col"), function (col, i) {
+    var k = col.querySelector(".k"); if (!k) return;
+    k.setAttribute("role", "button"); k.setAttribute("tabindex", "0"); k.setAttribute("aria-expanded", "false");
+    var tog = function () { if (!phone.matches) return; var o = !col.classList.contains("open"); col.classList.toggle("open", o); k.setAttribute("aria-expanded", o ? "true" : "false"); };
+    k.addEventListener("click", tog); k.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } });
+  });
+})();
