@@ -663,14 +663,14 @@ const T14 = (() => {
       <p class="c14eyb"><span>SILAVU</span><i>/</i><span data-en="Collections" data-he="קולקציות">Collections</span></p>
       <h2 class="c14h" id="c14h" data-en="Our signature collections" data-he="קולקציות החתימה שלנו">Our signature collections</h2>
       <i class="c14rule" aria-hidden="true"></i>
-      <p class="c14lead" data-en="Three collections joined by one signature: the SILAVU knot, set in white gold and diamonds and worn every day." data-he="שלוש קולקציות שמחברת חתימה אחת: הקשר של SILAVU, בזהב לבן ויהלומים, לענידה בכל יום.">Three collections joined by one signature: the SILAVU knot, set in white gold and diamonds and worn every day.</p>
+      <p class="c14lead" data-en="One signature, the SILAVU knot, in three collections." data-he="חתימה אחת, הקשר של SILAVU, בשלוש קולקציות.">One signature, the SILAVU knot, in three collections.</p>
+  <a class="c14all" href="collection14/"><span class="c14allmk" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000"><use href="#symb"/></svg></span><span class="c14allt" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</span><i class="c14allar" aria-hidden="true"></i></a>
     </div>
     <div class="c14cards">
       ${card("knot", "models/bracelet", "MOMENT", "Everyday icons", "אייקונים לכל יום", "SILAVU MOMENT, the signature bracelet, worn")}
       ${card("ring", "ring-worn", "ICON", "Signature pieces", "תכשיטי חתימה", "SILAVU ICON, the signature ring, worn")}
       ${card("pave", "necklace-worn", "SOUL", "Personal expressions", "ביטוי אישי", "SILAVU SOUL, the signature pendant, worn")}
     </div>
-    <a class="c14all" href="collection14/"><span class="c14allmk" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000"><use href="#symb"/></svg></span><span class="c14allt" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</span><i class="c14allar" aria-hidden="true"></i></a>
   </div>
 </section>`;
   const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;

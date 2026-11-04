@@ -55,7 +55,7 @@
    scroll, and carries a round loupe that shows the piece closer under the pointer, or under a held finger on a phone */
 (function () {
   var cards = [].slice.call(document.querySelectorAll(".c14card")); if (!cards.length) return;
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, Z = 2.4, R = 90;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, Z = 2.2, R = 100;
   cards.forEach(function (c, i) { c.style.setProperty("--i", i); });
   if (reduce || !("IntersectionObserver" in window)) cards.forEach(function (c) { c.classList.add("in", "live"); });
   else {
@@ -71,13 +71,22 @@
     var pic = c.querySelector(".c14pic"), img = pic && pic.querySelector("img"); if (!img) return;
     var lens = document.createElement("i"); lens.className = "c14lens"; lens.setAttribute("aria-hidden", "true"); c.appendChild(lens);
     var ex = 0, ey = 0, raf = 0, held = false, holdT = 0, suppress = false;
-    function paint() { raf = 0; var r = c.getBoundingClientRect(), ir = img.getBoundingClientRect(), x = ex - r.left, y = ey - r.top - (held ? 110 : 0);
+    /* the glass shows the photograph as it is drawn (object-fit: cover), never the file squeezed into the frame, and
+       only over the upper picture: the name and the arrow below stay free to read and to press */
+    function paint() { raf = 0; var r = c.getBoundingClientRect(), ir = img.getBoundingClientRect();
+      var x = ex - r.left, y = ey - r.top - (held ? 120 : 0);
+      var off = !held && (y > r.height * 0.64 || (e2 && e2.closest && e2.closest(".c14go, .c14t")));
+      c.classList.toggle("off", !!off);
+      x = Math.max(R, Math.min(r.width - R, x)); y = Math.max(R, Math.min(r.height - R, y));
       lens.style.left = x + "px"; lens.style.top = y + "px";
       var src = img.currentSrc || img.src; if (lens.__s !== src) { lens.__s = src; lens.style.backgroundImage = 'url("' + src + '")'; }
-      lens.style.backgroundSize = (ir.width * Z).toFixed(0) + "px " + (ir.height * Z).toFixed(0) + "px";
-      lens.style.backgroundPosition = (R - (ex - ir.left) * Z).toFixed(1) + "px " + (R - (ey - ir.top) * Z).toFixed(1) + "px"; }
+      var nw = img.naturalWidth || 1, nh = img.naturalHeight || 1, k = Math.max(ir.width / nw, ir.height / nh), dw = nw * k, dh = nh * k;
+      var dx = ir.left + (ir.width - dw) / 2, dy = ir.top + (ir.height - dh) / 2, px = r.left + x, py = r.top + y;
+      lens.style.backgroundSize = (dw * Z).toFixed(0) + "px " + (dh * Z).toFixed(0) + "px";
+      lens.style.backgroundPosition = (R - (px - dx) * Z).toFixed(1) + "px " + (R - (py - dy) * Z).toFixed(1) + "px"; }
+    var e2 = null;
     c.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; c.classList.add("lens"); paint(); });
-    c.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; if (!raf) raf = requestAnimationFrame(paint); });
+    c.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; e2 = e.target; if (!raf) raf = requestAnimationFrame(paint); });
     c.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") c.classList.remove("lens"); });
     /* a phone: hold a finger on the picture for a moment and the loupe appears above it; slide to look around */
     c.addEventListener("touchstart", function (e) { var t = e.touches[0]; ex = t.clientX; ey = t.clientY; clearTimeout(holdT);

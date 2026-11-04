@@ -592,3 +592,43 @@ html.js body .cr14.in .cr14txt > :nth-child(2) { transition-delay: .12s; } html.
   html body .cr14stage { padding: 0 clamp(20px, 4vw, 70px) 0 clamp(20px, 6vw, 110px); }
   html body .cr14view { width: 100%; margin-inline-start: 0; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, rgba(0,0,0,0) 98%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, rgba(0,0,0,0) 98%); }
 }
+
+/* collections, round 3 (the house, 4 Nov): wider, a shorter line, and the way on as a quiet campaign link that sits
+   at the foot of the intro, level with the foot of the pictures, not a shop button under them */
+@media (min-width: 900px) {
+  html body .c14wrap { max-width: 1900px !important; grid-template-columns: minmax(200px, 240px) minmax(0, 1fr) !important; column-gap: clamp(28px, 3vw, 60px) !important; padding: 0 clamp(18px, 2.6vw, 52px) !important; align-items: stretch !important; }
+  html body .c14intro { display: flex; flex-direction: column; align-items: flex-start; padding-top: 4px; }
+  html body .c14intro .c14all { margin: auto 0 4px !important; grid-column: auto; }
+}
+html body .c14lead { max-width: 24ch; }
+html body .c14all { gap: 14px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; overflow: visible !important; font-size: .6rem !important; letter-spacing: .34em !important; color: #f3ecdd !important; }
+html body .c14all::before { display: none !important; }
+html body .c14all .c14allmk { width: 42px; height: 42px; flex: 0 0 auto; border-color: rgba(243,236,224,.32); transition: border-color .3s ease, background-color .3s ease; }
+html body .c14all .c14allmk svg { height: 20px; }
+html body .c14all .c14allt { position: relative; padding: 6px 0; }
+html body .c14all .c14allt::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(243,236,224,.4); transform-origin: 0 50%; transform: scaleX(.35); transition: transform .5s cubic-bezier(.2,.8,.2,1), background-color .3s ease; }
+html[dir="rtl"] body .c14all .c14allt::after { transform-origin: 100% 50%; }
+html body .c14all:hover, html body .c14all:focus-visible { color: #fff !important; }
+html body .c14all:hover .c14allt::after, html body .c14all:focus-visible .c14allt::after { transform: scaleX(1); background: #f3ecdd; }
+html body .c14all:hover .c14allmk { border-color: rgba(243,236,224,.8); background: rgba(243,236,224,.06); }
+html[data-ns] body .c14all { letter-spacing: 0 !important; font-size: .82rem !important; }
+@media (max-width: 899px) {
+  html body .c14intro { display: contents; }
+  html body .c14intro > :not(.c14all) { order: 0; justify-self: center; text-align: center; }
+  html body .c14cards { order: 1; }
+  html body .c14intro .c14all { order: 2; justify-self: center; margin: 8px auto 0 !important; }
+}
+/* the loupe never covers the name or the arrow: it lives over the upper picture only, and stays whole inside the card */
+html body .c14lens { width: 200px; height: 200px; margin: -100px 0 0 -100px; }
+html body .c14card.lens.off .c14lens { opacity: 0; transform: scale(.85); }
+@media (hover: hover) and (pointer: fine) { html body .c14card.lens.off { cursor: pointer; } }
+@media (min-width: 900px) {
+  html body .c14wrap { grid-template-columns: minmax(250px, 300px) minmax(0, 1fr) !important; }
+  html body .c14card { aspect-ratio: 4 / 5 !important; max-height: 80svh !important; }
+}
+@media (max-width: 899px) {
+  html body .c14wrap { row-gap: 0 !important; }
+  html body .c14intro .c14eyb { margin: 0; } html body .c14intro .c14h { margin: 12px 0 0; }
+  html body .c14intro .c14rule { margin: 18px auto; } html body .c14intro .c14lead { margin: 0 auto; }
+  html body .c14cards { margin-top: 30px !important; } html body .c14intro .c14all { margin-top: 30px !important; }
+}
