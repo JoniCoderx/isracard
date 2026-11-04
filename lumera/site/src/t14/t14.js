@@ -468,3 +468,16 @@
     });
   };
 })();
+
+/* the enquiry's field errors, short and calm (the house, 4 Nov: "why is it so big — make it calm and easy"): one
+   short line under the field instead of a paragraph inside it */
+(function () {
+  var form = document.getElementById("cform"); if (!form) return;
+  var SHORT = [[/^Please write your name/, "Your name, please", "נא לכתוב שם"], [/^נא לכתוב את שמכם/, "Your name, please", "נא לכתוב שם"],
+    [/^Please add a phone/, "A phone or an email, please", "טלפון או אימייל, בבקשה"], [/^נא להוסיף טלפון/, "A phone or an email, please", "טלפון או אימייל, בבקשה"],
+    [/^This does not look like/, "That is not a phone or an email", "זה לא טלפון או אימייל"], [/^זה לא נראה כמו/, "That is not a phone or an email", "זה לא טלפון או אימייל"]];
+  var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+  function tidy() { [].forEach.call(form.querySelectorAll(".ferr"), function (m) { var t = m.textContent;
+    SHORT.forEach(function (s) { if (s[0].test(t)) { var v = he() ? s[2] : s[1]; if (t !== v) m.textContent = v; } }); }); }
+  new MutationObserver(tidy).observe(form, { subtree: true, childList: true, characterData: true });
+})();

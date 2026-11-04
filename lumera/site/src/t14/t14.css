@@ -1181,3 +1181,13 @@ html body #details.atl13.x14 .wlk.hov .w13f { box-shadow: inset 0 1px 0 rgba(255
 html body #details.atl13.x14 .wlk .wlkpic img { transition: filter .45s ease; }
 html body #details.atl13.x14 .wlk.hov .wlkpic img { filter: brightness(1.07) contrast(1.04) saturate(1.04); }
 html body #details.atl13.x14 .wlk.hov .x14glare { opacity: 1; }
+
+/* the enquiry's errors: one short line under the field, the field's outline turning a soft rose */
+html body #enquire #cform .field { position: relative; }
+html body #enquire #cform .field .ferr { position: absolute !important; left: 16px; right: 0; top: calc(100% + 7px); margin: 0 !important; padding: 0 0 0 14px !important; font-size: .74rem !important; line-height: 1.3 !important;
+  letter-spacing: .02em; color: #e7b0a5 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: start; background: none !important; border: 0 !important; }
+html body #enquire #cform .field .ferr::before { content: ""; position: absolute; left: 0; top: .5em; width: 5px; height: 5px; border-radius: 50%; background: #e7b0a5; }
+html[dir="rtl"] body #enquire #cform .field .ferr { left: 0; right: 16px; padding: 0 14px 0 0 !important; }
+html[dir="rtl"] body #enquire #cform .field .ferr::before { left: auto; right: 0; }
+html body #enquire #cform .field.err { border-color: rgba(231,176,165,.55) !important; margin-bottom: 20px; }
+html body #enquire #cform .field.err::before { background: #e7b0a5 !important; }

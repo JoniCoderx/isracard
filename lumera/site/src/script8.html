@@ -711,7 +711,14 @@
       for (i = -1; i <= 1; i += 2) {
         tube(m, [[-hx * 1.04, depth * 0.10, i * hz * 1.03], [hx * 1.04, depth * 0.10, i * hz * 1.03]], wire * 1.25, 8, true, true);
         tube(m, [[-hx * 1.04, -depth * 0.30, i * hz * 1.02], [hx * 1.04, -depth * 0.30, i * hz * 1.02]], wire * 1.05, 7, true, true);
-        for (var q = -1; q <= 1; q += 2) tube(m, [[q * hx * 0.98, depth * 0.10, i * hz * 1.03], [q * hx * 0.98, -depth * 0.62, i * hz * 0.80]], wire * 0.9, 7, false, false);
+        /* (test14) a channel is two rails and nothing between the stones: the posts at each end read as bars */
+        if (!window.__frame14) for (var q = -1; q <= 1; q += 2) tube(m, [[q * hx * 0.98, depth * 0.10, i * hz * 1.03], [q * hx * 0.98, -depth * 0.62, i * hz * 0.80]], wire * 0.9, 7, false, false);
+      }
+      /* (test14) and no basket under it: the stones sit side by side between the rails, their pavilions in a plain
+         channel, so the line reads as a ribbon of light rather than a chain of loops */
+      if (window.__frame14) {
+        for (i = -1; i <= 1; i += 2) tube(m, [[-hx * 1.04, -depth * 0.58, i * hz * 0.86], [hx * 1.04, -depth * 0.58, i * hz * 0.86]], wire * 0.95, 7, true, true);
+        return m;
       }
     }
     for (i = 0; i < corners.length; i++) {
@@ -1187,6 +1194,10 @@
     var b = window.__build || {}, spec = window.__lineSpec || {};
     var cut = b.cut || "round", n = Math.max(8, Math.min(120, spec.n || 36));
     var L = spec.L || 3.6, W = spec.W || L, wrist = b.wrist || 17;
+    /* (test14) a stone set across the line (the baguette) lies with its length across the wrist: the engine takes
+       L along the line, so it is turned here; laid lengthwise each stone was twice as long as its place and the
+       line overlapped itself */
+    if (window.__frame14 && spec.orient === "across") { var t2 = L; L = W; W = t2; }
     state.n = n; state.L = L; state.W = W; state.cut = cut; state.metal = b.metal || "white"; state.wrist = wrist;
     /* the line is the inner circumference of the bracelet, in millimetres */
     var C = (wrist + 1) * 10, k = 1.30;
@@ -1217,7 +1228,17 @@
     pHead.geometry(headMesh(L, W, depth, cut));
     var gap = Math.max(0.35, step - L * 0.98);
     var wire = Math.max(0.16, Math.min(L, W) * 0.105);
-    pLink.geometry(linkMesh(gap, W, wire * 0.8));
+    if (window.__frame14 && cut === "baguette") {
+      /* (test14) a channel's links are the rails themselves: short lengths that close the gap between one stone's
+         rails and the next, at the same heights, so the two rails run unbroken round the wrist */
+      var lm = new Mesh(), hw = Math.max(0.085, Math.min(L, W) * 0.062), lz = W / 2, off = depth * (0.335 + (window.__neatHeads ? 0.44 : 0.36)), sp = gap * 0.5 + L * 0.06;
+      for (var sd = -1; sd <= 1; sd += 2) {
+        tube(lm, [[-sp, off + depth * 0.10, sd * lz * 1.03], [sp, off + depth * 0.10, sd * lz * 1.03]], hw * 1.25, 8, true, true);
+        tube(lm, [[-sp, off - depth * 0.30, sd * lz * 1.02], [sp, off - depth * 0.30, sd * lz * 1.02]], hw * 1.05, 7, true, true);
+        tube(lm, [[-sp, off - depth * 0.58, sd * lz * 0.86], [sp, off - depth * 0.58, sd * lz * 0.86]], hw * 0.95, 7, true, true);
+      }
+      pLink.geometry(lm);
+    } else pLink.geometry(linkMesh(gap, W, wire * 0.8));
     pClasp.geometry(claspMesh(step * 1.15, W * 1.02, depth * 0.48));
     /* instances: the head sits at the girdle, the stone rides just above the basket */
     var si2 = new Float32Array(n * 12), hi = new Float32Array(n * 12), li = new Float32Array(n * 12), ci = new Float32Array(12);
@@ -1360,7 +1381,7 @@
          two controls are 213 and 90 wide: the ring ran under both of them,
          which is what made the builder look like a pile rather than a piece.
          A phone pulls the camera back far enough to clear its own furniture. */
-      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (F14 ? (coarse && !staged ? 1.04 : 1.2) : (coarse && !staged ? 1.30 : 1.12));
+      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (F14 ? (coarse && !staged ? 1.04 : 1.1) : (coarse && !staged ? 1.30 : 1.12));
     }
     var R = state.R, dist = fitD * cam.d, th0 = cam.th, ph0 = cam.ph;
     if (snake) {
