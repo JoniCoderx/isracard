@@ -948,3 +948,25 @@ html body #end .f13 { max-width: 1900px !important; padding: 0 clamp(24px, 4vw, 
 }
 /* the leather photograph is darker at its own edges, so tiling it drew seams: one sheet, stretched over the table */
 html body #details.atl13::before { background: radial-gradient(ellipse 30% 26% at 50% 34%, rgba(255,222,180,.24), rgba(0,0,0,0) 80%), url("desk/leather-1600.jpg") 50% 40% / cover no-repeat, #100e0d !important; }
+
+/* Up close on a phone: flat and light. No 3D table, no scroll-driven scene; each print settles onto the leather as
+   it arrives (from a little larger, a little turned, to its place), the prints apart so none hides another */
+@media (max-width: 760px) {
+  html body #details.atl13.m14 .atl { transform: none !important; transform-style: flat !important; margin: 0 auto !important; padding: 10px 0 30px !important; }
+  html body #details.atl13.m14 .wlkrow { transform-style: flat !important; gap: 0 !important; }
+  html body #details.atl13.m14 .wlk { width: min(80vw, 360px) !important; opacity: 1 !important;
+    transform: translate3d(0, var(--my, 0px), 0) rotate(calc(var(--r) + var(--mr, 0deg))) scale(var(--ms, 1)) !important;
+    transition: transform 1s cubic-bezier(.16,.84,.24,1), opacity .6s ease !important; transition-delay: 0s !important; }
+  html body #details.atl13.m14 .wlk:not(.in) { --my: 54px; --ms: 1.08; --mr: 5deg; opacity: 0 !important; }
+  html body #details.atl13.m14 .wlk:nth-child(2):not(.in) { --mr: -5deg; }
+  html body #details.atl13.m14 .wlk + .wlk { margin-top: 26px !important; }
+  html body #details.atl13.m14 .wlk:nth-child(1) { --r: -3deg; align-self: flex-start; margin-left: 6vw !important; }
+  html body #details.atl13.m14 .wlk:nth-child(2) { --r: 2.5deg; align-self: flex-end; margin-right: 6vw !important; }
+  html body #details.atl13.m14 .wlk:nth-child(3) { --r: -1.5deg; align-self: center; }
+  html body #details.atl13.m14 .wlk .w13f, html body #details.atl13.m14 .wlk .w13b { box-shadow: 0 1px 0 #dcd3c1, 0 2px 0 #c4b9a4, 0 18px 30px -12px rgba(0,0,0,.85) !important; }
+  html body #details.atl13.m14 .wlk .w13f::before { transition: background-position 1.4s cubic-bezier(.4,0,.2,1) .5s !important; background-position: 130% 0, 0 0 !important; }
+  html body #details.atl13.m14 .wlk.in .w13f::before { background-position: -60% 0, 0 0 !important; }
+  html body #details.atl13.m14::before { opacity: 1 !important; }
+  html body #details.atl13.m14 .w14hint { display: none !important; }
+}
+@media (max-width: 760px) { html body #details.atl13.m14::after { background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 10%) !important; } html body #details.atl13.m14 { padding-bottom: 40px !important; } }

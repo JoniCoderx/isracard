@@ -269,7 +269,21 @@
     ws.forEach(function (w) { var f = w.querySelector(".w13f"); if (f && !f.querySelector(".w14hint")) { var h = document.createElement("span"); h.className = "w14hint"; f.appendChild(h); } });
     function words() { ws.forEach(function (w) { var h = w.querySelector(".w14hint"); if (h) h.textContent = he() ? "להפוך" : "Turn over"; }); }
     words(); new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
-    sec.classList.add("dev", "settled", "s14");
+    sec.classList.add("dev", "settled");
+    /* a phone gets a lighter landing: each print settles onto the leather as it comes into view, in 2D only, so the
+       scroll is never asked to recompute a 3D scene (it stuck on an iPhone), and a tap made while scrolling never
+       turns a print over */
+    var phone = matchMedia("(max-width: 760px)");
+    if (phone.matches) {
+      sec.classList.add("m14");
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: 0.22 });
+      ws.forEach(function (w) { io.observe(w); });
+      var lastScroll = 0; addEventListener("scroll", function () { lastScroll = Date.now(); }, { passive: true });
+      sec.addEventListener("click", function (e) { if (Date.now() - lastScroll < 250 && e.target.closest(".wlkpic, .wlknm")) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+      [].forEach.call(sec.querySelectorAll("img"), function (im) { im.loading = "eager"; });
+      return;
+    }
+    sec.classList.add("s14");
     [].forEach.call(sec.querySelectorAll("img"), function (im) { im.loading = "eager"; });
     var env = sec.querySelector(".env"), FROM = [[-80, -16, 10, -14], [-110, -20, -6, 9], [-90, -14, -12, 15]], raf = 0;
     var cl = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; }, ease = function (t) { return 1 - Math.pow(1 - t, 3); };
