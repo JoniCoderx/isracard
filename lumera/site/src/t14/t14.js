@@ -256,3 +256,48 @@
     var w = b.closest(".wlk"); if (w && w.classList.contains("flip")) { e.preventDefault(); w.classList.remove("flip"); }
   });
 })();
+
+/* Up close, round 4: the prints are laid on the table by the scroll itself. As the table comes up the screen each print
+   falls from above, turning flat, one after another; scrolling back lifts them away again. The leather and the
+   envelope come with them and the light crosses each print as it lands. A hint on hover says a click turns it over. */
+(function () {
+  var sec = document.getElementById("details"); if (!sec) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  function init() {
+    var ws = [].slice.call(sec.querySelectorAll(".wlk")); if (!ws.length || !sec.classList.contains("atl13")) return setTimeout(init, 200);
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    ws.forEach(function (w) { var f = w.querySelector(".w13f"); if (f && !f.querySelector(".w14hint")) { var h = document.createElement("span"); h.className = "w14hint"; f.appendChild(h); } });
+    function words() { ws.forEach(function (w) { var h = w.querySelector(".w14hint"); if (h) h.textContent = he() ? "להפוך" : "Turn over"; }); }
+    words(); new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+    sec.classList.add("dev", "settled", "s14");
+    [].forEach.call(sec.querySelectorAll("img"), function (im) { im.loading = "eager"; });
+    var env = sec.querySelector(".env"), FROM = [[-80, -16, 10, -14], [-110, -20, -6, 9], [-90, -14, -12, 15]], raf = 0;
+    var cl = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; }, ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+    function frame() {
+      raf = 0; var vh = innerHeight, r = sec.getBoundingClientRect(), wide = innerWidth > 760;
+      /* the section's own arrival: 0 when its top is at the bottom of the screen, 1 when the table sits in view */
+      var p = cl((vh - r.top) / (vh * (wide ? 0.95 : 0.7)));
+      sec.style.setProperty("--p14", cl(p * 1.6).toFixed(3));
+      var last = 0;
+      ws.forEach(function (w, i) {
+        var k;
+        if (wide) { var order = [0, 2, 1][i]; k = cl((p - 0.3 - order * 0.11) / 0.4); }
+        else { var top = r.top + w.offsetTop; k = cl((vh * 0.98 - top) / (vh * 0.45)); }
+        var e = ease(k), q = 1 - e, f = FROM[i];
+        w.style.setProperty("--fz", (q * (wide ? 340 : 200)).toFixed(1) + "px");
+        w.style.setProperty("--fy", (q * f[0]).toFixed(1) + "px");
+        w.style.setProperty("--tx", (q * f[1]).toFixed(2) + "deg");
+        w.style.setProperty("--ty", (q * f[2]).toFixed(2) + "deg");
+        w.style.setProperty("--rd", (q * f[3]).toFixed(2) + "deg");
+        w.style.opacity = cl((k - 0.08) * 2.6).toFixed(3);
+        var fr = w.querySelector(".w13f"); if (fr) fr.style.setProperty("--sw", cl((k - 0.7) / 0.3).toFixed(3));
+        w.classList.toggle("on", k >= 1); if (k > last) last = k;
+      });
+      if (env) sec.style.setProperty("--pe", cl((p - 0.5) / 0.3).toFixed(3));
+    }
+    addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(frame); }, { passive: true });
+    addEventListener("resize", function () { if (!raf) raf = requestAnimationFrame(frame); });
+    frame();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 120); }); else setTimeout(init, 120);
+})();

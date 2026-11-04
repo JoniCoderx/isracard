@@ -900,3 +900,51 @@ html body header.sh#header .btn.hbook:active, html body header.sh#header .lang:a
 html body header.sh#header .btn.hbook .x-ring, html body header.sh#header .btn.hbook .x-sheen { display: none !important; }
 @media (hover: none) { html body header.sh#header .btn.hbook::before, html body header.sh#header .lang::before { display: none !important; } }
 @media (prefers-reduced-motion: reduce) { html body header.sh#header .btn.hbook::before, html body header.sh#header .lang::before { transition: none !important; } }
+
+/* Up close, round 4 (the house, 4 Nov): bigger; the prints land as the reader scrolls into the table (and lift away
+   again going back); a quick, obvious hover; and a leather that is flat in the picture and masked on every side, so
+   at any width no edge of it can be seen */
+html body #details.atl13::before { left: 0 !important; right: 0 !important; top: 8% !important; bottom: 0 !important; transform: none !important; filter: brightness(1.2) contrast(1.12) saturate(.55) !important;
+  background: radial-gradient(ellipse 30% 26% at 50% 34%, rgba(255,222,180,.24), rgba(0,0,0,0) 80%), url("desk/leather-1600.jpg") center / 700px auto repeat, #100e0d !important;
+  -webkit-mask-image: radial-gradient(ellipse 44% 46% at 50% 46%, #000 34%, rgba(0,0,0,.55) 62%, rgba(0,0,0,0) 86%) !important; mask-image: radial-gradient(ellipse 44% 46% at 50% 46%, #000 34%, rgba(0,0,0,.55) 62%, rgba(0,0,0,0) 86%) !important;
+  opacity: var(--p14, 1) !important; transition: none !important; }
+html body #details.atl13::after { background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 18%), linear-gradient(to top, #000 0%, rgba(0,0,0,0) 14%) !important; }
+@media (min-width: 761px) {
+  html body #details.atl13 .atl { width: min(1560px, 94vw) !important; aspect-ratio: 1560 / 1000 !important; transform: perspective(2000px) rotateX(40deg) !important; margin: -3% auto -10% !important; }
+  html body #details.atl13 .wlk { width: 29.5% !important; }
+  html body #details.atl13 .wlk:nth-child(1) { left: 1.5% !important; top: 4% !important; }
+  html body #details.atl13 .wlk:nth-child(2) { left: 35.25% !important; top: 0% !important; }
+  html body #details.atl13 .wlk:nth-child(3) { left: 69% !important; top: 5% !important; }
+  html body #details.atl13 .env { top: 66% !important; left: 34% !important; width: 32% !important; }
+}
+/* driven by the scroll: no transition on the way in, the page's position is the animation */
+html body #details.atl13.s14 .wlk { transform: translate3d(var(--fx, 0px), var(--fy, 0px), calc(var(--z, 0px) + var(--fz, 0px) + var(--lz, 0px))) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg)) rotateZ(calc(var(--r) + var(--rd, 0deg))) scale(var(--sc, 1)) !important;
+  transition: transform .2s cubic-bezier(.2,.8,.2,1), opacity .15s linear, box-shadow .2s ease !important; transition-delay: 0s !important; }
+html body #details.atl13.s14 .env { opacity: var(--pe, 1) !important; transition: none !important; }
+html body #details.atl13.s14 .wlk .w13f::before { transition: none !important; background-position: calc(130% - var(--sw, 0) * 190%) 0, 0 0 !important; }
+/* the hover: quick, plain — the print rises, straightens and grows a little, the others step back, and it says what a click does */
+@media (hover: hover) and (pointer: fine) {
+  html body #details.atl13.s14 .wlk.on:hover { --lz: 46px !important; --tx: 0deg !important; --rd: calc(var(--r) * -1) !important; --sc: 1.035; z-index: 8; cursor: pointer; }
+  html body #details.atl13.s14 .wlk { transition: transform .2s cubic-bezier(.2,.8,.2,1), opacity .15s linear !important; }
+}
+html body #details.atl13 .w14hint { position: absolute; z-index: 4; left: 50%; top: 42%; transform: translate(-50%, 6px); display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; pointer-events: none;
+  background: rgba(12,11,10,.62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(243,236,224,.35); color: #f6f1e6; font-size: .58rem; letter-spacing: .26em; text-transform: uppercase; white-space: nowrap;
+  opacity: 0; transition: opacity .15s ease, transform .2s cubic-bezier(.2,.8,.2,1); }
+html body #details.atl13 .w14hint::before { content: "↻"; letter-spacing: 0; font-size: .85rem; }
+html[data-ns] body #details.atl13 .w14hint { letter-spacing: 0; font-size: .74rem; }
+@media (hover: hover) and (pointer: fine) { html body #details.atl13 .wlk.on:hover:not(.flip) .w14hint { opacity: 1; transform: translate(-50%, 0); } }
+
+/* the footer, round 4 (the house, 4 Nov: "wider, less tight"): the whole width, more air between the columns and
+   between the lines, client care given the room its two columns need */
+html body #end .f13 { max-width: 1900px !important; padding: 0 clamp(24px, 4vw, 80px) !important; }
+@media (min-width: 900px) {
+  html body #end .f13top { grid-template-columns: minmax(0, .8fr) minmax(0, 1fr) minmax(0, 1.75fr) minmax(0, 1.3fr) !important; padding: 80px 0 72px !important; }
+  html body #end .f13top > * { padding: 0 clamp(28px, 3.6vw, 76px) !important; }
+  html body #end .f13top > :nth-child(3) { grid-template-columns: repeat(2, minmax(0, max-content)) !important; column-gap: clamp(40px, 4.4vw, 88px) !important; }
+  html body #end .f13col .k { margin-bottom: 22px !important; }
+  html body #end .f13col a, html body #end .f13col .f13city { line-height: 2.25 !important; font-size: .92rem !important; letter-spacing: .02em; }
+  html body #end .f13soc { margin-top: 26px !important; padding-top: 26px !important; gap: 14px !important; }
+  html body #end .f13bot { padding-top: 32px !important; }
+}
+/* the leather photograph is darker at its own edges, so tiling it drew seams: one sheet, stretched over the table */
+html body #details.atl13::before { background: radial-gradient(ellipse 30% 26% at 50% 34%, rgba(255,222,180,.24), rgba(0,0,0,0) 80%), url("desk/leather-1600.jpg") 50% 40% / cover no-repeat, #100e0d !important; }
