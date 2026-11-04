@@ -505,7 +505,9 @@ const HERO_ALT = {
   "hero-lumiere": { en: "The SILAVU SOUL pendant on a woman's skin, above the neckline of a black silk dress, its pavé diamonds catching the light",
                     he: "תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור" },
   "hero-dunes": { en: "A woman in a long black silk gown on the crest of a desert dune at sunset, the silk lifted by the wind, the SILAVU SOUL pendant at her throat",
-                  he: "אישה בשמלת משי שחורה ארוכה על רכס דיונה במדבר בשקיעה, הרוח מרימה את המשי, תליון SILAVU SOUL על צווארה" }
+                  he: "אישה בשמלת משי שחורה ארוכה על רכס דיונה במדבר בשקיעה, הרוח מרימה את המשי, תליון SILAVU SOUL על צווארה" },
+  "hero-loop": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
+                 he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" }
 };
 /* a test page's chapters (extras: css, js, inject, swap, edit) applied to a
    page. A swap is made in the page, or in the page's own script file that
@@ -626,7 +628,7 @@ const T13 = (() => {
       if (i >= 0 && j > 0) h = h.slice(0, i) + '<div class="h13fade" aria-hidden="true"></div>' + h.slice(j + "</section>".length); }
     /* the opening's line says what the house makes; the film's piece is named at the other corner */
     h = h.replace(/(<p class="p rv late d2") data-en="Crafted with intention\. Made to leave an impression\." data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Diamond bracelets and fine jewellery, designed around you and made to order by hand." data-he="צמידי יהלומים ותכשיטי יוקרה, מעוצבים סביבכם ונוצרים בהזמנה אישית, בעבודת יד.">Diamond bracelets and fine jewellery, designed around you and made to order by hand.</p>`)
-      .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="pieces/pave/"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b>SILAVU SOUL</b><span class="k" data-en="Pavé diamonds" data-he="יהלומי פאווה">Pavé diamonds</span></a>\n<div class="hseam"`);
+      .replace('<div class="hseam"', `<a class="h13tag rv late d4" href="#build"><span class="k" data-en="In the film" data-he="בסרט">In the film</span><b data-en="The tennis line" data-he="צמיד הטניס">The tennis line</b><span class="k" data-en="Round brilliant diamonds" data-he="יהלומי בריליאנט עגולים">Round brilliant diamonds</span></a>\n<div class="hseam"`);
     const e = h.indexOf('<section id="end"'), ee = e < 0 ? -1 : h.indexOf("</section>", e);
     if (e >= 0 && ee > 0) h = h.slice(0, e) + foot + h.slice(ee + "</section>".length);
     /* "About" leads to the About page redesigned with this one (/about13/) */
@@ -646,7 +648,7 @@ const T13 = (() => {
   };
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; window.__assemble = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
 })();
-heroTest("test13", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
+heroTest("test13", "hero-loop", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
 /* /test14/: the house's reference of 3 Nov 2026 (five phone screens: the film, the signature collections as three
    large cards, the builder, the craft, the enquiry), built on /test13/ with the box, Up close and the full grid taken
    out. Every picture is the house's own; src/t14/ holds the look and the film's play button. */
@@ -714,7 +716,7 @@ const T14 = (() => {
   };
   return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit };
 })();
-heroTest("test14", "hero-dunes", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
+heroTest("test14", "hero-loop", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
