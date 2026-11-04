@@ -1191,3 +1191,82 @@ html[dir="rtl"] body #enquire #cform .field .ferr { left: 0; right: 16px; paddin
 html[dir="rtl"] body #enquire #cform .field .ferr::before { left: auto; right: 0; }
 html body #enquire #cform .field.err { border-color: rgba(231,176,165,.55) !important; margin-bottom: 20px; }
 html body #enquire #cform .field.err::before { background: #e7b0a5 !important; }
+
+/* the collections' symbol, round 2 (the house, 4 Nov: "make it unique, the effects and hovers WOW"): larger, in a
+   living gold whose highlight moves across it and follows the pointer; it turns in space with the pointer; a ring of
+   light orbits it with a point of light running round; small diamonds twinkle near it; on hover it lifts and glows */
+html body .c14sym { width: 120px !important; height: 138px !important; perspective: 700px; color: #dcc8a0; }
+html body .c14sym .c14symin { position: absolute; inset: 0; z-index: 2; display: block; transform-style: preserve-3d; transform: rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg)) translateZ(var(--tz, 0px)) scale(var(--ts, 1)); will-change: transform; }
+html body .c14sym .c14symin svg { width: 100%; height: 100%; display: block; clip-path: inset(100% 0 0 0); transition: clip-path 1.9s cubic-bezier(.65,0,.35,1) .2s, filter .5s ease;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.7)) drop-shadow(0 0 16px rgba(230,205,150,.16)); }
+html body .c14sym.in .c14symin svg { clip-path: inset(0 0 0 0); }
+html body .c14sym > svg { display: none !important; }
+html body .c14sym.hot .c14symin svg { filter: drop-shadow(0 6px 14px rgba(0,0,0,.75)) drop-shadow(0 0 26px rgba(236,214,170,.45)) drop-shadow(0 0 60px rgba(236,214,170,.18)); }
+/* the orbit: an ellipse lying under the symbol, a point of light running round it */
+html body .c14sym .c14orb { position: absolute; z-index: 1; left: 50%; top: 62%; width: 190px; height: 190px; margin: -95px 0 0 -95px; border-radius: 50%; pointer-events: none;
+  transform: rotateX(74deg) rotateZ(0deg); opacity: 0; transition: opacity 1.2s ease 1.2s;
+  background: conic-gradient(from 0deg, rgba(240,220,180,0) 0deg, rgba(240,220,180,0) 280deg, rgba(240,220,180,.9) 350deg, rgba(255,250,236,1) 358deg, rgba(240,220,180,0) 360deg);
+  -webkit-mask: radial-gradient(circle, transparent 66%, #000 67.5%, #000 69%, transparent 70.5%); mask: radial-gradient(circle, transparent 66%, #000 67.5%, #000 69%, transparent 70.5%);
+  animation: c14orb 6s linear infinite; }
+html body .c14sym .c14orb::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(232,212,170,.22); }
+html body .c14sym.in .c14orb { opacity: 1; }
+html body .c14sym.hot .c14orb { animation-duration: 2.4s; }
+@keyframes c14orb { to { transform: rotateX(74deg) rotateZ(360deg); } }
+html body .c14sym::before { display: none !important; }
+/* the twinkle: small four-pointed lights near the symbol */
+html body .c14sym .c14spk { position: absolute; z-index: 3; width: 14px; height: 14px; margin: -7px 0 0 -7px; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #fff 0, rgba(255,246,224,.9) 12%, rgba(255,246,224,0) 30%), linear-gradient(90deg, transparent 46%, rgba(255,246,224,.9) 50%, transparent 54%), linear-gradient(0deg, transparent 46%, rgba(255,246,224,.9) 50%, transparent 54%);
+  transform: translate(var(--sx, 0px), var(--sy, 0px)) scale(0) rotate(0deg); }
+html body .c14sym.in .c14spk { animation: c14tw 3.6s ease-in-out infinite; }
+html body .c14sym .s1 { left: 8%; top: 22%; animation-delay: 2.4s !important; }
+html body .c14sym .s2 { left: 92%; top: 30%; animation-delay: 3.3s !important; }
+html body .c14sym .s3 { left: 84%; top: 82%; animation-delay: 4.1s !important; }
+html body .c14sym .s4 { left: 14%; top: 74%; animation-delay: 5s !important; }
+html body .c14sym .s5 { left: 54%; top: 4%; animation-delay: 2.9s !important; }
+html body .c14sym.hot .c14spk { animation-duration: 1.6s; }
+@keyframes c14tw { 0%, 70%, 100% { opacity: 0; transform: translate(var(--sx, 0px), var(--sy, 0px)) scale(0) rotate(0deg); } 82% { opacity: 1; transform: translate(var(--sx, 0px), var(--sy, 0px)) scale(1) rotate(45deg); } }
+@media (max-width: 899px) { html body .c14intro .c14sym { width: 96px !important; height: 110px !important; margin: 40px 0 10px; } html body .c14sym .c14orb { width: 150px; height: 150px; margin: -75px 0 0 -75px; } }
+@media (prefers-reduced-motion: reduce) { html body .c14sym .c14orb, html body .c14sym .c14spk { animation: none !important; } html body .c14sym .c14symin svg { clip-path: none; transition: none; } }
+html body .c14sym .c14symin svg, html body .c14sym.hot .c14symin svg { filter: none !important; }
+html body .c14sym .c14symin::before { content: ""; position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%; pointer-events: none; z-index: -1;
+  background: radial-gradient(circle, rgba(236,214,170,.16), rgba(236,214,170,.05) 40%, rgba(236,214,170,0) 68%); opacity: .55; transition: opacity .5s ease, transform .5s ease; transform: translateZ(-10px); }
+html body .c14sym.hot .c14symin::before { opacity: 1; background: radial-gradient(circle, rgba(236,214,170,.32), rgba(236,214,170,.09) 42%, rgba(236,214,170,0) 70%); }
+
+/* the builder, round 4 (the house, 4 Nov: "too much dead space — make the whole thing a little smaller; more
+   realistic diamond icons"): a narrower frame, a shorter stage, a tighter panel; the shapes drawn larger and sharper,
+   catching a light on hover, the chosen one ringed in gold */
+@media (min-width: 1000px) {
+  html body #build > .wrap { width: min(1480px, calc(100% - 2 * clamp(16px, 2.6vw, 52px))) !important; }
+  html body #configure.b14.b14v3 { grid-template-columns: minmax(0, 1fr) clamp(340px, 24vw, 390px) !important; }
+  html body #configure.b14v3 > #stripwrap { min-height: min(600px, calc(100svh - 220px)) !important; }
+  html body #configure.b14v3 > #opts { padding: 20px 22px 20px !important; }
+  html body #configure .b14steps { margin-bottom: 16px !important; }
+  html body #configure .b14steps .b13bar { padding-bottom: 10px !important; }
+  html body #configure.b14v3 #opts .b13nav { margin-bottom: 12px !important; }
+  html body #configure.b14v3 #opts .b13t { font-size: 1.15rem !important; }
+  html body #configure.b14v3 #opts .b13sub { font-size: .8rem !important; margin-top: 4px !important; }
+  /* the recap as two columns: each choice small above its value */
+  html body #configure .b14sumu { grid-template-columns: 1fr 1fr; column-gap: 18px; }
+  html body #configure .b14sumu button { display: grid; justify-items: start; gap: 2px; padding: 7px 0; text-align: start; }
+  html body #configure .b14sumu span { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  html body #configure .b14sumu b { font-size: .86rem; text-align: start; }
+  html body #configure .b14sumu li:nth-last-child(2) button { border-bottom: 0; }
+  html body #configure .total { gap: 14px !important; padding-top: 16px !important; margin-top: 18px !important; }
+  html body #configure .total #reserve { padding: 15px 24px !important; }
+}
+/* the shapes */
+html body #configure #opts .chips.cuts { gap: 7px !important; }
+html body #configure #opts .chips.cuts .chip { position: relative; overflow: hidden; padding: 10px 4px 8px !important; border-radius: 14px !important; border: 1px solid rgba(243,236,224,.09) !important;
+  background: radial-gradient(ellipse 80% 60% at 50% 34%, rgba(255,255,255,.06), rgba(255,255,255,0) 70%), rgba(255,255,255,.015) !important; transition: border-color .2s ease, background-color .2s ease, transform .2s cubic-bezier(.2,.8,.2,1) !important; }
+html body #configure #opts .chips.cuts .chip .c13img { width: 52px !important; height: 52px !important; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,.6)) contrast(1.08) brightness(1.04); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+html body #configure #opts .chips.cuts .chip span { font-size: .7rem !important; margin-top: 6px; color: rgba(243,236,224,.7) !important; }
+html body #configure #opts .chips.cuts .chip::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transform: translateX(-70%);
+  background: linear-gradient(105deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.16) 50%, rgba(255,255,255,0) 65%); }
+@media (hover: hover) and (pointer: fine) {
+  html body #configure #opts .chips.cuts .chip:hover { border-color: rgba(243,236,224,.24) !important; transform: translateY(-2px); }
+  html body #configure #opts .chips.cuts .chip:hover .c13img { transform: scale(1.1) rotate(-6deg); }
+  html body #configure #opts .chips.cuts .chip:hover::after { animation: c14glint .9s cubic-bezier(.4,0,.2,1) 1 both; }
+}
+html body #configure #opts .chips.cuts .chip.on { border-color: rgba(232,212,170,.75) !important; background: radial-gradient(ellipse 80% 60% at 50% 34%, rgba(236,214,170,.14), rgba(236,214,170,0) 70%), rgba(255,255,255,.03) !important;
+  box-shadow: 0 0 0 1px rgba(232,212,170,.18), 0 10px 26px -14px rgba(236,214,170,.5) !important; }
+html body #configure #opts .chips.cuts .chip.on span { color: #f6f1e6 !important; }

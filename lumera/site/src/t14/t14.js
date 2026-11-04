@@ -481,3 +481,35 @@
     SHORT.forEach(function (s) { if (s[0].test(t)) { var v = he() ? s[2] : s[1]; if (t !== v) m.textContent = v; } }); }); }
   new MutationObserver(tidy).observe(form, { subtree: true, childList: true, characterData: true });
 })();
+
+/* the symbol's life: its gold highlight drifts slowly by itself and follows the pointer when it is near; the symbol
+   turns in space toward the pointer anywhere over the intro, and lifts and glows when the pointer is on it */
+(function () {
+  var s = document.querySelector(".c14sym"), intro = document.querySelector(".c14intro"); if (!s || !intro) return;
+  var inner = s.querySelector(".c14symin"), g = s.querySelector("#c14gold"); if (!inner || !g) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, cur = { x: 0, y: 0, h: 0 }, tgt = { x: 0, y: 0, h: 0 }, pointer = false, vis = false, raf = 0, T0 = performance.now();
+  function frame(now) {
+    raf = 0; var t = (now - T0) / 1000;
+    cur.x += (tgt.x - cur.x) * .09; cur.y += (tgt.y - cur.y) * .09; cur.h += (tgt.h - cur.h) * .1;
+    var ix = pointer ? cur.x : Math.sin(t * .45) * .35, iy = pointer ? cur.y : Math.cos(t * .33) * .25;
+    inner.style.setProperty("--tx", (-iy * 22).toFixed(2) + "deg"); inner.style.setProperty("--ty", (ix * 26).toFixed(2) + "deg");
+    inner.style.setProperty("--tz", (cur.h * 22).toFixed(2) + "px"); inner.style.setProperty("--ts", (1 + cur.h * .08).toFixed(4));
+    /* the highlight: a diagonal band whose place is the pointer (or a slow drift) */
+    var k = .5 + ix * .6 + Math.sin(t * .8) * .06;
+    g.setAttribute("x1", (k - .9).toFixed(3)); g.setAttribute("y1", (-.2 + iy * .4).toFixed(3)); g.setAttribute("x2", (k + .9).toFixed(3)); g.setAttribute("y2", (1.2 + iy * .4).toFixed(3));
+    if (vis && !reduce) raf = requestAnimationFrame(frame);
+  }
+  var go = function () { if (!raf) raf = requestAnimationFrame(frame); };
+  new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) go(); }).observe(s);
+  intro.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = s.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    tgt.x = Math.max(-1, Math.min(1, (e.clientX - cx) / 260)); tgt.y = Math.max(-1, Math.min(1, (e.clientY - cy) / 260));
+    var near = Math.hypot(e.clientX - cx, e.clientY - cy) < 110; tgt.h = near ? 1 : 0; s.classList.toggle("hot", near); pointer = true; go(); });
+  intro.addEventListener("pointerleave", function () { tgt.x = 0; tgt.y = 0; tgt.h = 0; pointer = false; s.classList.remove("hot"); go(); });
+  if (reduce) frame(performance.now());
+})();
+
+/* the shapes in the builder are drawn from the larger renders, so they stay sharp at their new size */
+(function () {
+  function up() { [].forEach.call(document.querySelectorAll('#opts .chip[data-k="cut"] .c13img'), function (im) { var s = im.getAttribute("src") || ""; if (/-240\.webp$/.test(s)) im.src = s.replace(/-240\.webp$/, "-600.webp"); }); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(up, 500); }); else setTimeout(up, 500);
+})();

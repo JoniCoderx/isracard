@@ -664,7 +664,7 @@ const T14 = (() => {
       <h2 class="c14h" id="c14h" data-en="Our signature collections" data-he="קולקציות החתימה שלנו">Our signature collections</h2>
       <i class="c14rule" aria-hidden="true"></i>
       <p class="c14lead" data-en="One signature, the SILAVU knot, in three collections." data-he="חתימה אחת, הקשר של SILAVU, בשלוש קולקציות.">One signature, the SILAVU knot, in three collections.</p>
-  <span class="c14sym" aria-hidden="true"><svg viewBox="0 0 875 1000"><use href="#symb"/></svg></span>
+  <span class="c14sym" aria-hidden="true"><i class="c14orb"></i><i class="c14spk s1"></i><i class="c14spk s2"></i><i class="c14spk s3"></i><i class="c14spk s4"></i><i class="c14spk s5"></i><span class="c14symin"><svg viewBox="0 0 875 1000"><defs><linearGradient id="c14gold" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8e7046"/><stop offset=".38" stop-color="#d9c08e"/><stop class="g1" offset=".5" stop-color="#fff6df"/><stop offset=".62" stop-color="#d4b884"/><stop offset="1" stop-color="#8a6b42"/></linearGradient></defs><use href="#symb" fill="url(#c14gold)"/></svg></span></span>
       <a class="c14all" href="collection14/"><span class="c14allmk" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000"><use href="#symb"/></svg></span><span class="c14allt" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</span><i class="c14allar" aria-hidden="true"></i></a>
     </div>
     <div class="c14cards">
