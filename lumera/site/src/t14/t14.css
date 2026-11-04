@@ -817,3 +817,69 @@ html body #end .f13 { max-width: 1760px !important; padding: 0 clamp(20px, 3.4vw
   html body #end .f13col a, html body #end .f13col .f13city { white-space: nowrap; }
   html body #end .f13soc { flex-wrap: nowrap !important; }
 }
+
+/* Up close, round 3 (the house, 4 Nov: "the leather is a rectangle on black", "the prints stand up", "the envelope is
+   hardly seen and its name is cut", "they hide each other's jewellery", "click the print to turn it back").
+   The leather is now one floor under the whole section, drawn in perspective and dissolving into the black on every
+   side, so no edge of it exists; the table tilts far enough for the prints to lie on it; the prints are spread so
+   each piece is seen whole; the envelope lies in front of them with its name entire; and a warm key light pools on
+   the leather where they land. */
+html body #details.atl13 { position: relative; overflow: hidden; }
+html body #details.atl13::before { content: "" !important; display: block !important; position: absolute; z-index: 0; left: -30%; right: -30%; top: 18%; bottom: -30%; pointer-events: none;
+  transform: perspective(900px) rotateX(58deg); transform-origin: 50% 0;
+  background: radial-gradient(ellipse 34% 30% at 50% 26%, rgba(255,222,180,.24), rgba(0,0,0,0) 70%), url("desk/leather-1600.jpg") center top / 760px auto repeat, #100e0d;
+  filter: brightness(1.05) contrast(1.18) saturate(.55);
+  -webkit-mask-image: radial-gradient(ellipse 42% 46% at 50% 30%, #000 30%, rgba(0,0,0,.6) 55%, rgba(0,0,0,0) 78%); mask-image: radial-gradient(ellipse 42% 46% at 50% 30%, #000 30%, rgba(0,0,0,.6) 55%, rgba(0,0,0,0) 78%);
+  opacity: 0; transition: opacity 1.6s ease; }
+html body #details.atl13.dev::before { opacity: 1; }
+html body #details.atl13 .atl::before { display: none !important; }
+html body #details.atl13 .dthd { position: relative; z-index: 3; }
+@media (min-width: 761px) {
+  html body #details.atl13 .atl { width: min(1240px, 90vw) !important; aspect-ratio: 1240 / 860 !important; transform-origin: 50% 46%; transform: perspective(1700px) rotateX(46deg) !important; margin: -4% auto -9% !important; }
+  html body #details.atl13 .wlk { width: 28.5% !important; }
+  html body #details.atl13 .wlk:nth-child(1) { left: 2.5% !important; top: 6% !important; --r: -5deg; }
+  html body #details.atl13 .wlk:nth-child(2) { left: 35.75% !important; top: 1% !important; --r: 1.2deg; }
+  html body #details.atl13 .wlk:nth-child(3) { left: 69% !important; top: 7% !important; --r: 4.5deg; }
+  html body #details.atl13 .env { display: block !important; left: 27% !important; top: 70% !important; width: 46% !important; transform: rotate(-3deg) translateZ(0px) !important; }
+  html body #details.atl13 .env b { left: auto !important; right: 50% !important; transform: translateX(50%) !important; bottom: 18% !important; font-size: clamp(16px, 1.7vw, 26px) !important; white-space: nowrap; }
+}
+/* the light on the prints: a warm sheen that crosses each once as it lands */
+html body #details.atl13 .wlk .w13f::before { background: linear-gradient(110deg, rgba(255,240,215,0) 30%, rgba(255,240,215,.34) 46%, rgba(255,240,215,0) 62%), linear-gradient(118deg, rgba(255,240,215,.14), rgba(255,240,215,0) 40%, rgba(0,0,0,.1)) !important;
+  background-size: 260% 100%, 100% 100% !important; background-position: 130% 0, 0 0 !important; background-repeat: no-repeat !important; }
+html body #details.atl13.dev .wlk .w13f::before { transition: background-position 1.6s cubic-bezier(.4,0,.2,1) !important; background-position: -60% 0, 0 0 !important; }
+html body #details.atl13.dev .wlk:nth-child(1) .w13f::before { transition-delay: 1.2s !important; }
+html body #details.atl13.dev .wlk:nth-child(3) .w13f::before { transition-delay: 1.45s !important; }
+html body #details.atl13.dev .wlk:nth-child(2) .w13f::before { transition-delay: 1.7s !important; }
+/* the landing: from above the table, each turning flat as it falls, one after another, with a breath of settle */
+html.js body #details.atl13:not(.dev) .wlk { --fz: 420px !important; }
+html body #details.atl13 .wlk { transition: transform 1.7s cubic-bezier(.2,1.04,.3,1), opacity .9s ease !important; }
+html body #details.atl13.dev .wlk:nth-child(1) { transition-delay: .1s, .1s !important; }
+html body #details.atl13.dev .wlk:nth-child(3) { transition-delay: .4s, .4s !important; }
+html body #details.atl13.dev .wlk:nth-child(2) { transition-delay: .7s, .7s !important; }
+html body #details.atl13 .env { opacity: 0; transition: opacity 1.2s ease .2s !important; }
+html body #details.atl13.dev .env { opacity: 1; }
+/* a turned print turns back with a touch anywhere on it */
+html body #details.atl13 .wlk.flip .w13b { cursor: pointer; }
+@media (max-width: 760px) {
+  html body #details.atl13::before { top: 12%; left: -60%; right: -60%; transform: perspective(700px) rotateX(40deg); background-size: auto, 520px auto, auto;
+    -webkit-mask-image: radial-gradient(ellipse 46% 50% at 50% 34%, #000 34%, rgba(0,0,0,0) 80%); mask-image: radial-gradient(ellipse 46% 50% at 50% 34%, #000 34%, rgba(0,0,0,0) 80%); }
+  html body #details.atl13 .atl { transform: perspective(1100px) rotateX(16deg) !important; }
+  html body #details.atl13 .wlk + .wlk { margin-top: -3vw !important; }
+  html body #details.atl13 .wlk { width: min(70vw, 320px) !important; }
+}
+html body #details.atl13::before { -webkit-mask-image: none !important; mask-image: none !important;
+  background: radial-gradient(ellipse 27% 32% at 50% 30%, rgba(0,0,0,0) 18%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.9) 82%, #000 100%), radial-gradient(ellipse 22% 20% at 50% 24%, rgba(255,222,180,.26), rgba(0,0,0,0) 80%), url("desk/leather-1600.jpg") center top / 820px auto repeat, #100e0d !important; }
+@media (min-width: 761px) {
+  html body #details.atl13 .env { left: 33% !important; top: 69% !important; width: 34% !important; background: #1b1814 linear-gradient(165deg, #2a251f, #14110e 70%) !important; box-shadow: inset 0 1px 0 rgba(255,235,200,.08), 0 1px 0 #2e2923, 0 3px 4px rgba(0,0,0,.7), 0 24px 40px -14px rgba(0,0,0,.95) !important; }
+  html body #details.atl13 .env b { color: #d3bc8f !important; bottom: 20% !important; font-size: clamp(18px, 1.9vw, 30px) !important; letter-spacing: .55em !important; padding-left: .55em; text-shadow: 0 1px 0 rgba(0,0,0,.7), 0 0 18px rgba(211,188,143,.18) !important; }
+}
+html body #details.atl13::before { background: radial-gradient(ellipse 33% 38% at 50% 30%, rgba(0,0,0,0) 26%, rgba(0,0,0,.5) 58%, rgba(0,0,0,.9) 84%, #000 100%), radial-gradient(ellipse 24% 22% at 50% 25%, rgba(255,222,180,.3), rgba(0,0,0,0) 80%), url("desk/leather-1600.jpg") center top / 820px auto repeat, #100e0d !important; filter: brightness(1.3) contrast(1.15) saturate(.55) !important; }
+@media (min-width: 761px) { html body #details.atl13 .env { top: 64% !important; } html body #details.atl13 { padding-bottom: clamp(70px, 8vw, 120px) !important; } }
+@media (max-width: 760px) { html body #details.atl13::before { background: radial-gradient(ellipse 30% 36% at 50% 32%, rgba(0,0,0,0) 26%, rgba(0,0,0,.6) 62%, #000 100%), radial-gradient(ellipse 24% 22% at 50% 25%, rgba(255,222,180,.28), rgba(0,0,0,0) 80%), url("desk/leather-1600.jpg") center top / 560px auto repeat, #100e0d !important; } }
+/* a vignette in screen space, above the leather and below the table: whatever the floor does in perspective, its
+   edges are always already in the black */
+html body #details.atl13::after { content: "" !important; display: block !important; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 26%), linear-gradient(to top, #000 0%, rgba(0,0,0,0) 18%), radial-gradient(ellipse 48% 56% at 50% 52%, rgba(0,0,0,0) 46%, rgba(0,0,0,.82) 78%, #000 96%) !important; }
+html body #details.atl13 .atl { z-index: 2 !important; }
+html body #details.atl13 .dthd { z-index: 3 !important; }
+@media (max-width: 760px) { html body #details.atl13::after { background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 12%), linear-gradient(to top, #000 0%, rgba(0,0,0,0) 10%), radial-gradient(ellipse 70% 52% at 50% 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,.85) 85%, #000 100%) !important; } }

@@ -247,3 +247,12 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 })();
+
+/* Up close: a turned print turns back with a touch anywhere on it, not only on its small "Turn back" (the house, 4 Nov) */
+(function () {
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("#details .w13b"); if (!b) return;
+    if (e.target.closest("a")) return;
+    var w = b.closest(".wlk"); if (w && w.classList.contains("flip")) { e.preventDefault(); w.classList.remove("flip"); }
+  });
+})();
