@@ -281,8 +281,10 @@
       var lastScroll = 0; addEventListener("scroll", function () { lastScroll = Date.now(); }, { passive: true });
       sec.addEventListener("click", function (e) { if (Date.now() - lastScroll < 250 && e.target.closest(".wlkpic, .wlknm")) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
       [].forEach.call(sec.querySelectorAll("img"), function (im) { im.loading = "eager"; });
+      if (window.__dust14) window.__dust14(sec, true);
       return;
     }
+    if (window.__x14) return window.__x14(sec, ws);
     sec.classList.add("s14");
     [].forEach.call(sec.querySelectorAll("img"), function (im) { im.loading = "eager"; });
     var env = sec.querySelector(".env"), FROM = [[-80, -16, 10, -14], [-110, -20, -6, 9], [-90, -14, -12, 15]], raf = 0;
@@ -354,4 +356,98 @@
     sheet.addEventListener("touchmove", function (e) { if (y0 === null) return; var d = e.touches[0].clientY - y0; if (d < -70) { y0 = null; close.click(); } }, { passive: true });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+
+/* the collections' small symbol is revealed once, as the section comes into view */
+(function () {
+  var s = document.querySelector(".c14sym"); if (!s) return;
+  if (!("IntersectionObserver" in window)) { s.classList.add("in"); return; }
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { s.classList.add("in"); io.disconnect(); } }); }, { threshold: .6 });
+  io.observe(s);
+})();
+
+/* Up close, round 5 (the house, 4 Nov: "the landing feels stuck", "the hover is not ultra smooth", "the background
+   looks bad — make it live"). The leather goes; the prints lie on darkness filled with a fine dust of champagne and
+   silver that drifts slowly, and around the pointer the nearest points join in hairlines like a constellation under
+   a faint warm light. The landing is no longer tied to the scroll: when the table comes into view the prints fall
+   onto it, one after another, in one smooth timed motion. The hover is eased every frame: the print lifts towards
+   the pointer, tilts with it, straightens, and a highlight follows the pointer across it. */
+(function () {
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.__dust14 = function (sec, phone) {
+    if (sec.querySelector(".x14cv")) return;
+    var cv = document.createElement("canvas"); cv.className = "x14cv"; cv.setAttribute("aria-hidden", "true"); sec.insertBefore(cv, sec.firstChild);
+    var ctx = cv.getContext("2d"), W = 0, H = 0, DPR = Math.min(devicePixelRatio || 1, phone ? 1 : 1.5), P = [], on = false, raf = 0, last = 0;
+    var mx = -1e4, my = -1e4, tx = -1e4, ty = -1e4, lastMove = 0, t0 = performance.now();
+    function size() { var r = sec.getBoundingClientRect(); W = r.width; H = r.height; cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      var n = Math.round(Math.min(phone ? 80 : 260, W * H / (phone ? 5200 : 6500))); P = [];
+      for (var i = 0; i < n; i++) { var z = .35 + Math.random() * .65; P.push({ x: Math.random() * W, y: Math.random() * H, z: z, vx: (Math.random() - .5) * .012 * z, vy: (-.004 - Math.random() * .01) * z, r: .55 + z * 1.45, a: .26 + z * .6, ph: Math.random() * 6.28, gold: Math.random() < .62 }); } }
+    function frame(now) {
+      raf = on ? requestAnimationFrame(frame) : 0;
+      if (phone && now - last < 32) return; var dt = Math.min(50, now - (last || now)); last = now;
+      /* the pointer, or on a phone (or a still mouse) a slow guide that wanders the table */
+      if (phone || now - lastMove > 2600) { var k = (now - t0) / 1000; tx = W * (.5 + .34 * Math.sin(k * .21)); ty = H * (.5 + .26 * Math.sin(k * .33 + 1.2)); }
+      mx += (tx - mx) * (phone ? .05 : .12); my += (ty - my) * (phone ? .05 : .12);
+      ctx.clearRect(0, 0, W, H);
+      var R = phone ? 140 : 230, R2 = R * R, near = [], ox = (mx - W / 2) * .03, oy = (my - H / 2) * .03;
+      /* the warm light under the pointer */
+      var g = ctx.createRadialGradient(mx, my, 0, mx, my, R * 1.6); g.addColorStop(0, "rgba(255,226,186,.1)"); g.addColorStop(1, "rgba(255,226,186,0)"); ctx.fillStyle = g; ctx.fillRect(mx - R * 1.6, my - R * 1.6, R * 3.2, R * 3.2);
+      for (var i = 0; i < P.length; i++) { var p = P[i];
+        p.x += p.vx * dt; p.y += p.vy * dt; if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; } if (p.x < -4) p.x = W + 4; else if (p.x > W + 4) p.x = -4;
+        var px = p.x - ox * p.z, py = p.y - oy * p.z, dx = px - mx, dy = py - my, d2 = dx * dx + dy * dy, lit = d2 < R2 ? 1 - Math.sqrt(d2) / R : 0;
+        /* the darkness keeps its edges: points fade toward the sides and the foot */
+        var ex = Math.abs(p.x / W - .5) * 2, ey = Math.abs(p.y / H - .5) * 2, edge = Math.max(0, 1 - Math.pow(Math.max(ex * .9, ey), 3));
+        var tw = .65 + .35 * Math.sin(now * .0012 * (1 + p.z) + p.ph), a = (p.a * tw + lit * .55) * edge;
+        if (a < .02) continue;
+        var col = p.gold ? "rgba(236,214,172," : "rgba(222,228,238,";
+        if (p.z > .82 || lit > .5) { ctx.beginPath(); ctx.arc(px, py, p.r * (3.2 + lit * 2), 0, 6.283); ctx.fillStyle = col + (a * .12).toFixed(3) + ")"; ctx.fill(); }
+        ctx.beginPath(); ctx.arc(px, py, p.r * (1 + lit * .7), 0, 6.283); ctx.fillStyle = col + Math.min(1, a).toFixed(3) + ")"; ctx.fill();
+        if (lit > 0) near.push({ x: px, y: py }, lit);
+      }
+      /* the constellation: the points near the pointer joined by hairlines, and to the pointer itself */
+      ctx.lineWidth = .6;
+      for (var j = 0; j < near.length; j += 2) { var A = near[j], la = near[j + 1];
+        for (var k2 = j + 2; k2 < near.length; k2 += 2) { var B = near[k2], lb = near[k2 + 1], ddx = A.x - B.x, ddy = A.y - B.y, dd = ddx * ddx + ddy * ddy;
+          if (dd < 14000) { ctx.strokeStyle = "rgba(236,220,190," + (Math.min(la, lb) * (1 - dd / 14000) * .7).toFixed(3) + ")"; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); } }
+        if (la > .4) { ctx.strokeStyle = "rgba(236,220,190," + ((la - .4) * .45).toFixed(3) + ")"; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(mx, my); ctx.stroke(); }
+      }
+    }
+    size(); addEventListener("resize", size);
+    if (!phone) sec.addEventListener("pointermove", function (e) { var r = sec.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; lastMove = performance.now(); if (mx < -1e3) { mx = tx; my = ty; } }, { passive: true });
+    if (reduce) { on = false; frame(performance.now()); return; }
+    new IntersectionObserver(function (es) { on = es[0].isIntersecting; if (on && !raf) { last = 0; raf = requestAnimationFrame(frame); } }, { rootMargin: "100px" }).observe(sec);
+  };
+
+  window.__x14 = function (sec, ws) {
+    sec.classList.add("x14");
+    window.__dust14(sec, false);
+    ws.forEach(function (w) { var f = w.querySelector(".w13f"); if (f && !f.querySelector(".x14glare")) { var g = document.createElement("i"); g.className = "x14glare"; g.setAttribute("aria-hidden", "true"); f.appendChild(g); } });
+    /* the landing: once, when the table is well in view */
+    var zero = function () { ws.forEach(function (w) { ["--lz", "--hx", "--hy", "--rd"].forEach(function (k) { w.style.setProperty(k, k === "--lz" ? "0px" : "0deg"); }); w.style.setProperty("--sc", "1"); }); };
+    var land = function () { sec.classList.add("land"); setTimeout(function () { zero(); sec.classList.add("ready"); }, 1900); };
+    if (reduce) { zero(); sec.classList.add("land", "ready"); }
+    else { var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { land(); io.disconnect(); } }, { threshold: .35 }); io.observe(sec.querySelector(".atl") || sec); }
+    /* the hover, eased every frame */
+    var S = ws.map(function () { return { lz: 0, hx: 0, hy: 0, st: 0, sc: 1, tlz: 0, thx: 0, thy: 0, tst: 0, tsc: 1 }; }), raf = 0;
+    function tick() {
+      raf = 0; var moving = false;
+      ws.forEach(function (w, i) { var s = S[i], e = .16;
+        s.lz += (s.tlz - s.lz) * e; s.hx += (s.thx - s.hx) * e; s.hy += (s.thy - s.hy) * e; s.st += (s.tst - s.st) * e; s.sc += (s.tsc - s.sc) * e;
+        if (Math.abs(s.tlz - s.lz) + Math.abs(s.thx - s.hx) + Math.abs(s.thy - s.hy) + Math.abs(s.tst - s.st) * 10 + Math.abs(s.tsc - s.sc) * 100 > .02) moving = true;
+        var r = parseFloat(getComputedStyle(w).getPropertyValue("--r")) || 0;
+        w.style.setProperty("--lz", s.lz.toFixed(2) + "px"); w.style.setProperty("--hx", s.hx.toFixed(3) + "deg"); w.style.setProperty("--hy", s.hy.toFixed(3) + "deg");
+        w.style.setProperty("--rd", (-r * s.st).toFixed(3) + "deg"); w.style.setProperty("--sc", s.sc.toFixed(4)); });
+      if (moving) raf = requestAnimationFrame(tick);
+    }
+    var go = function () { if (!raf) raf = requestAnimationFrame(tick); };
+    ws.forEach(function (w, i) {
+      var f = w.querySelector(".w13f");
+      w.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse" || !sec.classList.contains("ready") || w.classList.contains("flip")) return;
+        var b = w.getBoundingClientRect(), nx = (e.clientX - b.left) / b.width - .5, ny = (e.clientY - b.top) / b.height - .5, s = S[i];
+        s.tlz = 54; s.thx = -ny * 9; s.thy = nx * 11; s.tst = 1; s.tsc = 1.04; w.classList.add("hov");
+        if (f) { f.style.setProperty("--gx", ((nx + .5) * 100).toFixed(1) + "%"); f.style.setProperty("--gy", ((ny + .5) * 100).toFixed(1) + "%"); }
+        go(); });
+      w.addEventListener("pointerleave", function () { var s = S[i]; s.tlz = 0; s.thx = 0; s.thy = 0; s.tst = 0; s.tsc = 1; w.classList.remove("hov"); go(); });
+    });
+  };
 })();
