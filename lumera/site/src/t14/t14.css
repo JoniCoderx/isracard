@@ -548,3 +548,46 @@ html body .c14card[href="pieces/knot/"] { --zs: 1.6; --z0: 1.8; }
 html body .c14card[href="pieces/knot/"] .c14pic img { transform-origin: 54% 80% !important; object-position: 50% 80% !important; }
 @media (min-width: 900px) { html body .c14card { aspect-ratio: 3 / 4 !important; } }
 @media (max-width: 899px) { html body .c14wrap { grid-template-columns: 1fr !important; } html body .c14intro { padding: 0 6px; } }
+
+/* ════ craftsmanship, scroll-driven (4 Nov 2026): pure black; the words on the left, the diamond being set on the right,
+   drawn frame by frame from the scroll, forwards and back; the picture dissolves into the black at every edge ════ */
+html body #craft14.cr14 { display: block !important; max-width: none !important; padding: 0 !important; margin: 0 !important; background: #000 !important; }
+html body .cr14pin { position: relative; height: 240svh; }
+html body .cr14stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.5fr); align-items: center; gap: clamp(20px, 3vw, 60px);
+  max-width: 1600px; margin: 0 auto; padding: 0 0 0 clamp(20px, 6vw, 110px); box-sizing: border-box; }
+html body .cr14txt { position: relative; z-index: 2; display: grid; justify-items: start; text-align: start; }
+html body .cr14txt .k14 { text-align: start; display: flex; align-items: center; gap: 18px; }
+html body .cr14txt .k14::after { content: ""; width: 70px; height: 1px; background: linear-gradient(90deg, rgba(239,229,210,.6), rgba(239,229,210,0)); }
+html body .cr14txt .h14 { text-align: start; font-size: clamp(1.6rem, 2.8vw, 2.7rem); letter-spacing: .16em; margin-top: 18px; }
+html body .cr14txt .crp { margin: 20px 0 0; max-width: 34ch; font-size: .98rem; line-height: 1.75; color: rgba(243,236,224,.8); }
+html body .cr14txt .tr14 { margin-top: 34px; max-width: 400px; }
+html body .cr14txt .tr14 li:first-child { padding-inline-start: 0; }
+html body .cr14view { position: relative; width: 112%; margin-inline-start: -6%; aspect-ratio: 16 / 9; align-self: center;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 52% 50%, #000 58%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse 50% 50% at 52% 50%, #000 58%, rgba(0,0,0,0) 100%); }
+html body .cr14view img, html body .cr14view canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+html body .cr14cv { opacity: 0; }
+html body .cr14.live .cr14cv { opacity: 1; }
+html body .cr14.live .cr14first { visibility: hidden; }
+/* the words arrive with the stage */
+html.js body .cr14txt > * { opacity: 0; transform: translateY(14px); transition: opacity .9s ease, transform 1s cubic-bezier(.2,.8,.2,1); }
+html.js body .cr14.in .cr14txt > * { opacity: 1; transform: none; }
+html.js body .cr14.in .cr14txt > :nth-child(2) { transition-delay: .12s; } html.js body .cr14.in .cr14txt > :nth-child(3) { transition-delay: .24s; } html.js body .cr14.in .cr14txt > :nth-child(4) { transition-delay: .36s; }
+@media (max-width: 899px) {
+  html body .cr14pin { height: 210svh; }
+  html body .cr14stage { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: center; gap: 4px; padding: 0 20px; }
+  html body .cr14txt { justify-items: center; text-align: center; }
+  html body .cr14txt .k14 { justify-content: center; } html body .cr14txt .k14::after { display: none; }
+  html body .cr14txt .h14 { text-align: center; font-size: 1.45rem; margin-top: 12px; }
+  html body .cr14txt .crp { font-size: .9rem; margin-top: 12px; }
+  html body .cr14txt .tr14 { margin-top: 20px; }
+  html body .cr14view { width: calc(100% + 40px); margin: 0 -20px; aspect-ratio: 16 / 10.5; -webkit-mask-image: radial-gradient(ellipse 54% 50% at 50% 50%, #000 52%, rgba(0,0,0,0) 100%); mask-image: radial-gradient(ellipse 54% 50% at 50% 50%, #000 52%, rgba(0,0,0,0) 100%); }
+  html body .cr14view img, html body .cr14view canvas { object-fit: cover; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body .cr14pin { height: auto; } html body .cr14stage { position: relative; height: auto; min-height: 100svh; }
+  html.js body .cr14txt > * { opacity: 1; transform: none; }
+}
+@media (min-width: 900px) {
+  html body .cr14stage { padding: 0 clamp(20px, 4vw, 70px) 0 clamp(20px, 6vw, 110px); }
+  html body .cr14view { width: 100%; margin-inline-start: 0; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, rgba(0,0,0,0) 98%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, rgba(0,0,0,0) 98%); }
+}

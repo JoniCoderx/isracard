@@ -148,3 +148,39 @@
   var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); setTimeout(write, 250); } }, { threshold: .4 });
   io.observe(sg);
 })();
+
+/* craftsmanship: 49 frames of the diamond being set, drawn from the scroll position (forwards and back), decoded off the
+   main thread and eased so a flick of the wheel or a thumb never jumps */
+(function () {
+  var sec = document.getElementById("craft14"); if (!sec || !sec.classList.contains("cr14")) return;
+  var pin = sec.querySelector(".cr14pin"), view = sec.querySelector(".cr14view"), cv = sec.querySelector(".cr14cv"), ctx = cv.getContext("2d");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, phone = matchMedia("(max-width: 899px)").matches;
+  var N = 49, DIR = "craft14/" + (phone ? "m" : "d") + "/", frames = new Array(N), started = false, W = 0, H = 0, IW = phone ? 854 : 1280, IH = phone ? 480 : 720;
+  var io0 = "IntersectionObserver" in window ? new IntersectionObserver(function (es) { if (es[0].isIntersecting) { sec.classList.add("in"); io0.disconnect(); } }, { threshold: .2 }) : null;
+  if (io0) io0.observe(sec); else sec.classList.add("in");
+  if (reduce) return;
+  function size() { var r = view.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); W = Math.round(r.width * d); H = Math.round(r.height * d); if (cv.width !== W) cv.width = W; if (cv.height !== H) cv.height = H; dirty = true; }
+  function load() { if (started) return; started = true;
+    var order = [0]; for (var s = 24; s >= 1; s = Math.floor(s / 2)) for (var i = s; i < N; i += s) if (order.indexOf(i) < 0) order.push(i);
+    var q = order.slice(), fl = 0;
+    (function more() { while (fl < 4 && q.length) (function (i) { fl++;
+      fetch(DIR + "f" + ("00" + i).slice(-3) + ".webp").then(function (r) { return r.blob(); }).then(function (b) { return createImageBitmap(b); })
+        .then(function (bm) { frames[i] = bm; if (i === 0) { size(); sec.classList.add("live"); } dirty = true; kick(); }, function () {})
+        .then(function () { fl--; more(); }); })(q.shift()); })(); }
+  function near(i) { for (var d = 0; d < N; d++) { if (frames[i - d]) return i - d; if (frames[i + d]) return i + d; } return -1; }
+  function draw(fp) { if (!W) return; var a = Math.round(fp), k = frames[a] ? a : near(a); if (k < 0) return;
+    /* cover the box, as the picture does on a phone */
+    var s = Math.max(W / IW, H / IH), dw = IW * s, dh = IH * s;
+    ctx.clearRect(0, 0, W, H); ctx.drawImage(frames[k], (W - dw) / 2, (H - dh) / 2, dw, dh); }
+  var p = -1, target = 0, raf = 0, last = 0, dirty = true, shown = -1;
+  function frame(now) { raf = 0; var dt = last ? Math.min(100, now - last) : 16.7; last = now;
+    var k = 1 - Math.pow(.82, dt / 16.667); p = p < 0 ? target : p + (target - p) * k; if (Math.abs(target - p) < .0005) p = target;
+    var fp = Math.max(0, Math.min(1, (p - .1) / .78)) * (N - 1);
+    if (dirty || Math.round(fp) !== shown) { dirty = false; shown = Math.round(fp); draw(fp); }
+    if (p !== target) kick(); else last = 0; }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  function measure() { var r = pin.getBoundingClientRect(), span = r.height - innerHeight; target = Math.max(0, Math.min(1, -r.top / Math.max(1, span)));
+    if (!started && r.top < innerHeight * 2.5 && r.bottom > -innerHeight) load(); kick(); }
+  addEventListener("scroll", measure, { passive: true }); addEventListener("resize", function () { size(); measure(); });
+  measure();
+})();

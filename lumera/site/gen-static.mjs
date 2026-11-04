@@ -674,18 +674,20 @@ const T14 = (() => {
   </div>
 </section>`;
   const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  const CRAFT = `<section id="craft14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
-  <figure class="crpic"><img src="img/tennis-1600.jpg" srcset="img/tennis-1200.jpg 1200w, img/tennis-1600.jpg 1600w" sizes="(min-width: 900px) 50vw, 100vw" loading="lazy" decoding="async" alt="A SILAVU line bracelet of round diamonds in white gold, close, on black" data-alt-he="צמיד SILAVU של יהלומים עגולים בזהב לבן, מקרוב, על רקע שחור"></figure>
-  <div class="crtxt">
-    <p class="k14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-    <h2 class="h14" id="crh" data-en="Handcrafted in Dubai" data-he="נוצר ביד בדובאי">Handcrafted in Dubai</h2>
-    <p class="crp" data-en="Designed, set and finished by skilled artisans, using only 18k gold." data-he="מעוצב, משובץ ומוגמר בידי אומנים מיומנים, בזהב 18 קראט בלבד.">Designed, set and finished by skilled artisans, using only 18k gold.</p>
-    <ul class="tr14">
-      <li>${ic('<path d="M8 13V5.5a1.4 1.4 0 012.8 0V11M10.8 10V4a1.4 1.4 0 012.8 0v6M13.6 10.5V5.2a1.4 1.4 0 012.8 0V12M16.4 11.5V8.4a1.4 1.4 0 012.8 0v6.1c0 4-2.7 6.7-6.6 6.7-2.6 0-4.4-1.2-5.7-3.3L5 14.4a1.4 1.4 0 012.3-1.6L8 13.8"/>')}<span data-en="Handmade" data-he="עבודת יד">Handmade</span></li>
-      <li><b class="tr18">18K</b><span data-en="18k gold only" data-he="זהב 18K בלבד">18k gold only</span></li>
-      <li>${ic('<path d="M3 9l4-5h10l4 5-9 11z"/><path d="M3 9h18M9 4l3 5 3-5M12 20L9 9m3 11l3-11"/>')}<span data-en="Certified diamonds" data-he="יהלומים מאושרים">Certified diamonds</span></li>
-    </ul>
-  </div>
+  const CRAFT = `<section id="craft14" class="cr14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
+  <div class="cr14pin"><div class="cr14stage">
+    <div class="cr14txt">
+      <p class="k14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
+      <h2 class="h14" id="crh" data-en="Each stone, set by hand" data-he="כל אבן, משובצת ביד">Each stone, set by hand</h2>
+      <p class="crp" data-en="Handcrafted in Dubai: every diamond chosen by eye, set by hand, and held by its prongs for life." data-he="נוצר ביד בדובאי: כל יהלום נבחר בעין, משובץ ביד ומוחזק בשיניו לכל החיים.">Handcrafted in Dubai: every diamond chosen by eye, set by hand, and held by its prongs for life.</p>
+      <ul class="tr14">
+        <li>${ic('<path d="M8 13V5.5a1.4 1.4 0 012.8 0V11M10.8 10V4a1.4 1.4 0 012.8 0v6M13.6 10.5V5.2a1.4 1.4 0 012.8 0V12M16.4 11.5V8.4a1.4 1.4 0 012.8 0v6.1c0 4-2.7 6.7-6.6 6.7-2.6 0-4.4-1.2-5.7-3.3L5 14.4a1.4 1.4 0 012.3-1.6L8 13.8"/>')}<span data-en="Handmade" data-he="עבודת יד">Handmade</span></li>
+        <li><b class="tr18">18K</b><span data-en="18k gold only" data-he="זהב 18K בלבד">18k gold only</span></li>
+        <li>${ic('<path d="M3 9l4-5h10l4 5-9 11z"/><path d="M3 9h18M9 4l3 5 3-5M12 20L9 9m3 11l3-11"/>')}<span data-en="Certified diamonds" data-he="יהלומים מאושרים">Certified diamonds</span></li>
+      </ul>
+    </div>
+    <div class="cr14view" aria-hidden="true"><img class="cr14first" src="craft14/d/f000.webp" srcset="craft14/m/f000.webp 854w, craft14/d/f000.webp 1280w" sizes="(max-width: 899px) 100vw, 60vw" width="1280" height="720" alt="" decoding="async" loading="lazy"><canvas class="cr14cv"></canvas></div>
+  </div></div>
 </section>
 `;
   const ABOUT = `<section id="about14" data-n="05" data-title-en="The founder" data-title-he="המייסד" aria-labelledby="abh">
