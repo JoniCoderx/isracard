@@ -1558,3 +1558,84 @@ html[data-ns] body #end .f13col a, html[data-ns] body #end .f13col .k, html[data
   html body #end .f13bot { flex-direction: column !important; gap: 16px; align-items: center; justify-content: center !important; text-align: center; padding: 26px 0 max(30px, env(safe-area-inset-bottom)) !important; border-top: 0 !important; }
 }
 html body #end .f13fk { display: none !important; }
+
+/* ════ the builder as an atelier ════ */
+html body #configure.b14atl { background: radial-gradient(ellipse 60% 70% at 30% 55%, rgba(255,236,206,.05), rgba(0,0,0,0) 70%), linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.008)) !important;
+  border: 1px solid rgba(214,219,226,.12) !important; border-radius: 26px !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.04) !important; }
+/* the steps across the head */
+html body #configure.b14atl > .b14top { display: flex !important; justify-content: center; padding: 22px 20px 0 !important; }
+html body #configure.b14atl .b14top .b13bars { display: flex !important; gap: clamp(22px, 3.4vw, 64px) !important; border: 0 !important; }
+html body #configure.b14atl .b14top .b13bar { display: flex !important; align-items: baseline; gap: 8px !important; padding: 8px 2px 14px !important; position: relative; }
+html body #configure.b14atl .b14top .b13bar .b13num { font-size: .78rem !important; color: rgba(243,236,224,.5) !important; }
+html body #configure.b14atl .b14top .b13bar .b13bl { display: inline !important; font-size: .9rem !important; font-weight: 300; color: rgba(243,236,224,.55) !important; }
+html body #configure.b14atl .b14top .b13bar.on .b13bl, html body #configure.b14atl .b14top .b13bar.on .b13num { color: #f6f1e6 !important; }
+html body #configure.b14atl .b14top .b13bar.done .b13bl { color: rgba(243,236,224,.82) !important; }
+html body #configure.b14atl .b14top .b13bar::after { content: "" !important; position: absolute; left: -10%; right: -10%; bottom: 0; height: 1px; transform: scaleX(0); transition: transform .35s cubic-bezier(.2,.8,.2,1);
+  background: linear-gradient(90deg, rgba(232,212,170,0), #e8d4aa 50%, rgba(232,212,170,0)) !important; box-shadow: 0 0 10px rgba(232,212,170,.5); display: block !important; }
+html body #configure.b14atl .b14top .b13bar.on::after { transform: scaleX(1); }
+html body #configure.b14atl .b14top .b13bar .b13ba, html body #configure.b14atl .b14top .b13bar > i { display: none !important; }
+html body #configure.b14atl .b14steps { display: none !important; }
+/* the stage: no box, the bracelet in a pool of light; its views along the foot */
+html body #configure.b14atl > #stripwrap { background: radial-gradient(ellipse 55% 45% at 50% 56%, rgba(255,238,210,.07), rgba(0,0,0,0) 72%) !important; border: 0 !important; box-shadow: none !important; }
+html body #configure.b14atl #stripwrap .b14foot { position: absolute; z-index: 9; left: clamp(16px, 2vw, 28px); right: clamp(16px, 2vw, 28px); bottom: clamp(14px, 1.8vw, 24px); display: flex; align-items: center; justify-content: space-between; gap: 16px; pointer-events: none; }
+html body #configure.b14atl #stripwrap .b14foot > * { pointer-events: auto; }
+html body #configure.b14atl #stripwrap .b14foot .vt { position: static !important; transform: none !important; margin: 0 !important; }
+html body #configure.b14atl #stripwrap .b14fr { display: flex; align-items: center; gap: clamp(14px, 1.6vw, 26px); }
+html body #configure.b14atl #stripwrap .b14fr .vposwrap { position: static !important; transform: none !important; margin: 0 !important; }
+html body #configure.b14atl #stripwrap .b14fr > .b14tools { position: static !important; display: flex; gap: 8px; }
+/* the choices: no box, a hairline between them and the bracelet */
+html body #configure.b14atl > #opts { background: none !important; border: 0 !important; border-left: 1px solid rgba(214,219,226,.1) !important; border-radius: 0 !important; padding: 22px 6px 22px clamp(24px, 2.4vw, 40px) !important; }
+html[dir="rtl"] body #configure.b14atl > #opts { border-left: 0 !important; border-right: 1px solid rgba(214,219,226,.1) !important; }
+html body #configure.b14atl #opts .b13t { font-weight: 300 !important; font-size: clamp(1.5rem, 2vw, 2rem) !important; letter-spacing: .02em !important; color: #f6f1e6 !important; }
+html body #configure.b14atl #opts .b13sub { margin-top: 10px !important; font-size: .62rem !important; letter-spacing: .3em !important; text-transform: uppercase; color: rgba(243,236,224,.62) !important; }
+html[data-ns] body #configure.b14atl #opts .b13sub { letter-spacing: 0 !important; font-size: .82rem !important; text-transform: none; }
+html body #configure.b14atl #opts .chips.cuts { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+html body #configure.b14atl #opts .chips.cuts .chip { background: rgba(255,255,255,.02) !important; border-color: rgba(214,219,226,.1) !important; }
+/* the summary in one line, each choice under its label, each leading back to its step */
+html body #configure.b14atl .b14sumk { display: none; }
+html body #configure.b14atl .b14sumu { grid-template-columns: repeat(5, minmax(0, auto)) !important; justify-content: space-between; column-gap: 10px !important; }
+html body #configure.b14atl .b14sumu button { border: 0 !important; padding: 2px 0 !important; gap: 4px !important; }
+html body #configure.b14atl .b14sumu li + li button { border-left: 0; }
+html body #configure.b14atl .b14sumu span { font-size: .54rem !important; letter-spacing: .26em !important; }
+html body #configure.b14atl .b14sumu b { font-size: .84rem !important; white-space: nowrap; }
+html body #configure.b14atl .total .pricerow { padding-top: 12px !important; border-top: 1px solid rgba(214,219,226,.08) !important; }
+/* the lead: Next while there are steps; at the last one, the reservation */
+html body #configure.b14atl:not(.b14last) .total #reserve { background: none !important; color: #f3ecdd !important; border: 1px solid rgba(220,206,178,.45) !important; }
+html body #configure.b14atl:not(.b14last) .total #reserve:hover { border-color: rgba(236,214,170,.9) !important; color: #fff !important; }
+html body #configure.b14atl.b14last .b13next { background: none !important; color: #f3ecdd !important; border: 1px solid rgba(220,206,178,.45) !important; }
+html body #configure.b14atl.b14last .total #reserve { box-shadow: 0 14px 34px -14px rgba(236,214,170,.45) !important; }
+@media (min-width: 1000px) {
+  html body #configure.b14.b14v3.b14atl { grid-template-areas: "top top" "stage panel" "acts acts" !important; row-gap: 8px !important; padding: 0 22px 18px !important; }
+  html body #configure.b14atl > .b14top { grid-area: top !important; }
+  html body #configure.b14atl > #stripwrap { min-height: min(640px, calc(100svh - 230px)) !important; }
+}
+@media (max-width: 999px) {
+  html body #configure.b14atl { padding: 0 14px 16px !important; border-radius: 22px !important; }
+  html body #configure.b14atl > .b14top { order: 1 !important; justify-content: space-between; padding: 6px 4px 0 !important; overflow: visible; -webkit-mask: none !important; mask: none !important; }
+  html body #configure.b14atl > #stripwrap { order: 0 !important; margin: 0 -14px !important; width: calc(100% + 28px) !important; max-width: none !important; }
+  html body #configure.b14atl .b14top .b13bars { gap: 0 !important; justify-content: space-between; width: 100%; }
+  html body #configure.b14atl .b14top .b13bar .b13bl { display: none !important; }
+  html body #configure.b14atl .b14top .b13bar { min-width: 44px; justify-content: center; padding: 10px 6px 12px !important; }
+  html body #configure.b14atl .b14top .b13bar .b13num { font-size: .82rem !important; }
+  html body #configure.b14atl > #opts { border-left: 0 !important; padding: 16px 4px 0 !important; }
+  html body #configure.b14atl #stripwrap .b14foot { left: 10px; right: 10px; bottom: 10px; }
+  html body #configure.b14atl #stripwrap .b14foot .vt { display: flex !important; }
+  html body #configure.b14atl .b14sumu { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; row-gap: 10px !important; }
+}
+@media (max-width: 999px) {
+  html body #configure.b14atl, html body #configure.b14atl > * { box-sizing: border-box !important; }
+  html body #configure.b14atl > #opts { width: 100% !important; max-width: 100% !important; overflow: visible !important; }
+  html body #configure.b14atl #opts .chips.cuts { width: 100% !important; gap: 6px !important; }
+  html body #configure.b14atl #opts .chips.cuts .chip { min-width: 0 !important; padding: 8px 2px 6px !important; }
+  html body #configure.b14atl #opts .chips.cuts .chip .c13img { width: 42px !important; height: 42px !important; }
+  html body #configure.b14atl #opts .chips.cuts .chip span { font-size: .64rem !important; }
+  html body #configure.b14atl #stripwrap > .vt { position: absolute !important; z-index: 9; top: 10px !important; left: 10px !important; right: auto !important; bottom: auto !important; transform: none !important; margin: 0 !important; }
+  html body #configure.b14atl #stripwrap .b14foot { justify-content: flex-end; }
+  html body #configure.b14atl #stripwrap .b14fr { width: 100%; justify-content: space-between; }
+  html body #configure.b14atl .b14sumu button { display: grid !important; justify-items: start; gap: 2px; text-align: start; padding: 4px 0 !important; border: 0 !important; }
+  html body #configure.b14atl .b14sumu span { font-size: .5rem !important; letter-spacing: .2em !important; text-transform: uppercase; }
+  html body #configure.b14atl .b14sumu b { font-size: .8rem !important; text-align: start; }
+}
+html body #configure .total #reserve { align-items: center !important; }
+html body #configure .total #reserve::after { position: static !important; inset: auto !important; transform: none !important; margin: 0 !important; line-height: 1 !important; }
+html body #configure .total #reserve:hover::after { transform: translateX(4px) !important; }

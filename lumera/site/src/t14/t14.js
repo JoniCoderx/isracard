@@ -224,7 +224,8 @@
     /* the steps: over the stage on a phone, at the head of the panel on a wide screen */
     var head = document.createElement("div"); head.className = "b14steps"; opts.insertBefore(head, opts.firstChild);
     var wide = matchMedia("(min-width: 1000px)");
-    function place() { (wide.matches ? head : top).appendChild(bars); }
+    /* (atelier) the steps head the whole builder, over the bracelet and the choices alike */
+    function place() { top.appendChild(bars); }
     place(); (wide.addEventListener ? wide.addEventListener("change", place) : wide.addListener(place));
     /* the piece so far, as a short list that leads back to each step */
     opts.appendChild(total);
@@ -710,4 +711,29 @@
     var tog = function () { if (!phone.matches) return; var o = !col.classList.contains("open"); col.classList.toggle("open", o); k.setAttribute("aria-expanded", o ? "true" : "false"); };
     k.addEventListener("click", tog); k.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } });
   });
+})();
+
+/* the builder as an atelier (the house's reference, 4 Nov): one quiet glass frame; the steps across its head; the
+   bracelet large on the left with its views along the foot; the choices on the right. Next leads while there are
+   steps to go; at the last step the reservation takes the lead. */
+(function () {
+  function init() {
+    var conf = document.getElementById("configure"), stage = document.getElementById("stripwrap"), bars = conf && conf.querySelector(".b13bars");
+    if (!conf || !stage || !bars || !conf.classList.contains("b14v3")) return setTimeout(init, 250);
+    if (conf.classList.contains("b14atl")) return;
+    conf.classList.add("b14atl");
+    /* the views at the foot of the stage: 3D, Photo, Try on to the left; Front, Side, Detail, Inspect and the two
+       rings to the right, in one bar */
+    var foot = document.createElement("div"); foot.className = "b14foot"; stage.appendChild(foot);
+    var vt = stage.querySelector(".vt"), vp = stage.querySelector(".vposwrap"), tools = stage.querySelector(".b14tools");
+    var right = document.createElement("div"); right.className = "b14fr";
+    /* on a phone 3D / Photo / Try on sit at the stage's top, the views along its foot; on a wide screen, one foot bar */
+    var mq = matchMedia("(max-width: 999px)");
+    function seat() { if (!vt) return; if (mq.matches) stage.insertBefore(vt, stage.firstChild); else foot.insertBefore(vt, right); }
+    foot.appendChild(right); seat(); (mq.addEventListener ? mq.addEventListener("change", seat) : mq.addListener(seat));
+    if (vp) right.appendChild(vp); if (tools) right.appendChild(tools);
+    function last() { var all = bars.querySelectorAll(".b13bar"), on = bars.querySelector(".b13bar.on"); conf.classList.toggle("b14last", !!on && on === all[all.length - 1]); }
+    last(); new MutationObserver(last).observe(bars, { subtree: true, attributes: true, attributeFilter: ["class"] });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 700); }); else setTimeout(init, 700);
 })();
