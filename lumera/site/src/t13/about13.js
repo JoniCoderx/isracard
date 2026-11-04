@@ -11,3 +11,5 @@
   secs.forEach(function (s) { if (s !== open) io.observe(s); });
   setTimeout(function () { secs.forEach(function (s) { var r = s.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) show(s); }); }, 2500);
 })();
+/* the header takes a glass band once the page moves */
+(function () { var b = document.querySelector(".bar14"); if (!b) return; var f = function () { b.classList.toggle("sc", scrollY > 30); }; addEventListener("scroll", f, { passive: true }); f(); })();

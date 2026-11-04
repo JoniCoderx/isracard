@@ -65,3 +65,73 @@ html, body { background: #000; }
   .colpic img { aspect-ratio: 4 / 4.4; }
 }
 @media (prefers-reduced-motion: reduce) { .js .open .por img, .js .facts li { transition: none; opacity: 1; transform: none; } }
+
+/* ════ round 2 (the house, 4 Nov, on a 34-inch screen: "it is far apart, the menu is not like the house's, people do
+   not know where to go — bring it to the middle"). One centred frame for the whole page, the house's own header,
+   and an ending that says where to go next. ════ */
+:root { --frame: 1520px; }
+/* the header, as on the house page: the way around on the left, the mark in the middle, the viewing on the right */
+.bar.bar14 { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 24px; padding: max(18px, env(safe-area-inset-top)) clamp(20px, 3.4vw, 64px) 16px;
+  background: linear-gradient(to bottom, rgba(0,0,0,.7), rgba(0,0,0,0)); -webkit-backdrop-filter: none; backdrop-filter: none; transition: background-color .4s ease; border: 0; }
+.bar.bar14.sc { background: rgba(8,8,9,.62); -webkit-backdrop-filter: blur(18px) saturate(1.15); backdrop-filter: blur(18px) saturate(1.15); box-shadow: 0 1px 0 rgba(214,219,226,.1); }
+.bar14 .tnav { grid-column: 1; grid-row: 1; justify-self: start; display: flex; gap: clamp(22px, 2.2vw, 36px); }
+.bar14 .tnav a { position: relative; font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: rgba(246,243,237,.86); text-decoration: none; padding: 8px 0; transition: color .15s ease; }
+.bar14 .tnav a:hover { color: #fff; }
+.bar14 .tnav a[aria-current]::after { content: ""; position: absolute; left: 0; right: .26em; bottom: 0; height: 1px; background: rgba(246,243,237,.7); }
+.bar14 .back { grid-column: 2; grid-row: 1; justify-self: center; }
+.bar14 .pill { grid-column: 3; grid-row: 1; justify-self: end; height: 42px; padding: 0 24px; border: 1px solid rgba(214,219,226,.34); background: rgba(255,255,255,.045); font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: #f4f2ee; }
+.bar14 .pill:hover { background: rgba(255,255,255,.09); border-color: rgba(232,236,242,.8); color: #fff; }
+.bar14 .hback { display: none; }
+/* the opening, in the frame: the words and Ariel side by side, centred however wide the screen */
+.open { max-width: var(--frame); margin: 0 auto; box-sizing: border-box; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr) !important; align-items: center !important; gap: clamp(32px, 4vw, 80px) !important;
+  min-height: min(100svh, 1080px); padding: 110px clamp(20px, 3.4vw, 64px) 40px !important; overflow: visible; }
+.por { position: relative !important; inset: auto !important; width: 100% !important; height: min(82svh, 920px); order: 2; }
+.por figcaption { right: 24px; bottom: 26px; }
+.otxt { order: 1; align-self: center; padding: 0 !important; max-width: 520px; }
+/* every chapter in the same frame */
+.vision { max-width: var(--frame); margin: 0 auto; box-sizing: border-box; min-height: 70svh; }
+.make { max-width: var(--frame); margin: 0 auto; box-sizing: border-box; padding-inline: clamp(20px, 3.4vw, 64px) !important; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr) !important; gap: clamp(40px, 6vw, 120px) !important; }
+.mpic img { max-height: 78svh; }
+.three, .facts { max-width: var(--frame); margin-inline: auto; box-sizing: border-box; }
+/* where next: three clear ways on, as pictures */
+.end { max-width: var(--frame); margin: 0 auto; box-sizing: border-box; padding-inline: clamp(20px, 3.4vw, 64px) !important; }
+.endk { margin: 0; }
+.ways { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 28px); }
+.way { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; text-decoration: none; color: #f6f1e6; background: #0b0b0b; isolation: isolate; }
+.way img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.8) brightness(.72); transition: transform .9s cubic-bezier(.2,.8,.2,1), filter .4s ease; }
+.way::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,0) 60%); }
+.way .wk, .way b { position: absolute; z-index: 2; left: 24px; right: 24px; }
+.way .wk { bottom: 56px; font-size: .58rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(243,236,224,.7); }
+.way b { bottom: 24px; font-weight: 300; font-size: clamp(1rem, 1.3vw, 1.25rem); letter-spacing: .08em; display: flex; justify-content: space-between; align-items: center; }
+.way b::after { content: "→"; font-size: 1rem; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.way:hover img { transform: scale(1.04); filter: saturate(.9) brightness(.85); }
+.way:hover b::after { transform: translateX(5px); }
+/* the footer: the mark, the way around, the house's line */
+.foot.foot14 { display: block; padding: 0 clamp(20px, 3.4vw, 64px); border-top: 1px solid var(--line); }
+.foot14 .fin { max-width: var(--frame); margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 32px; padding: 34px 0 max(34px, env(safe-area-inset-bottom)); }
+.foot14 .fmk { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; }
+.foot14 .fmk svg { height: 28px; width: auto; }
+.foot14 nav { display: flex; justify-content: center; gap: clamp(20px, 2.6vw, 44px); }
+.foot14 nav a { font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: var(--ink2); text-decoration: none; }
+.foot14 nav a:hover { color: var(--ink); }
+.foot14 .fc { font-size: .56rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink3); }
+@media (max-width: 860px) {
+  .bar14 .tnav { display: none; }
+  .bar14 .hback { display: grid; grid-column: 1; grid-row: 1; justify-self: start; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(214,219,226,.34); place-items: center; }
+  .bar14 .hback i { width: 9px; height: 9px; border-left: 1px solid #f4f2ee; border-bottom: 1px solid #f4f2ee; transform: translateX(2px) rotate(45deg); }
+  .bar14 .back .wm { display: none; }
+  .bar14 .pill { padding: 0 16px; font-size: .52rem; letter-spacing: .18em; }
+  .open { grid-template-columns: 1fr !important; padding: 90px 20px 30px !important; min-height: 0; }
+  .por { height: 62svh; order: 0; }
+  .otxt { order: 1; }
+  .make { grid-template-columns: 1fr !important; }
+  .ways { grid-template-columns: 1fr; }
+  .way { aspect-ratio: 16 / 9; }
+  .foot14 .fin { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 22px; }
+  .foot14 nav { flex-wrap: wrap; gap: 16px 22px; }
+}
+.bar.bar14 { padding-inline: max(clamp(20px, 3.4vw, 64px), calc((100vw - 1880px) / 2)); }
+/* the mark's definitions are not content: they took 150px at the top of the page */
+body > svg:first-of-type { position: absolute; width: 0; height: 0; overflow: hidden; }
+@media (max-width: 860px) { .bar14 .pill { display: inline-flex !important; height: 38px; } .open { padding-top: 84px !important; } }
+@media (max-width: 860px) { .bar14 .pill { white-space: nowrap; letter-spacing: .14em; padding: 0 14px; } }

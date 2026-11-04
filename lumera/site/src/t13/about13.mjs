@@ -52,10 +52,15 @@ ${css}</style>
 </head>
 <body>
 ${markDefs()}
-<header class="bar">
+${v14 ? `<header class="bar bar14">
+  <nav class="tnav" aria-label="Main"><a href="${R}${COLL}">Collection</a><a href="${R}${HOME}#build">Design yours</a><a href="${R}about14/" aria-current="page">About</a></nav>
+  <a class="hback" href="${R}${HOME}" aria-label="Back to the house"><i aria-hidden="true"></i></a>
+  <a class="back" href="${R}${HOME}" aria-label="SILAVU, the house">${markUse("")}<span class="wm">SILAVU</span></a>
+  <a class="pill" href="${R}${HOME}#concierge">Book a private viewing</a>
+</header>` : `<header class="bar">
   <a class="back" href="${R}${HOME}">${markUse("")}<span class="wm">SILAVU</span></a>
   <a class="pill" href="${R}${HOME}#concierge">Book a private viewing</a>
-</header>
+</header>`}
 <main>
   <section class="open" aria-labelledby="ah">
     <figure class="por"><img src="${R}${a.portrait}-1100.jpg" srcset="${R}${a.portrait}-800.jpg 800w, ${R}${a.portrait}-1100.jpg 1100w" sizes="(max-width: 860px) 100vw, 50vw" width="1100" height="1375" alt="${q(a.name.en)}, ${q(a.role.en)} of SILAVU, in Dubai at night"><figcaption><b>${q(a.name.en)}</b><span>${q(a.role.en)}</span></figcaption></figure>
@@ -98,10 +103,17 @@ ${markDefs()}
 
   <section class="end">
     ${markUse("emk")}
-    <div class="acts">${v14 ? `<a class="c14all" href="${R}${COLL}"><span class="c14allmk" aria-hidden="true">${markUse("")}</span><span>${q(a.cta1.en)}</span><i class="c14allar" aria-hidden="true"></i></a>` : `<a class="btn" href="${R}${HOME}#collection">${q(a.cta1.en)}</a>`}<a class="lnk" href="${R}${HOME}#concierge">${q(a.cta2.en)}</a></div>
+    ${v14 ? `<p class="endk k">Where next</p>
+    <div class="ways">
+      <a class="way" href="${R}${COLL}"><img src="${R}img/ring-worn-900.jpg" alt="" loading="lazy" decoding="async"><span class="wk">The collection</span><b>Discover the pieces</b></a>
+      <a class="way" href="${R}${HOME}#build"><img src="${R}models/bracelet-900.jpg" alt="" loading="lazy" decoding="async"><span class="wk">Bespoke</span><b>Design your bracelet</b></a>
+      <a class="way" href="${R}${HOME}#concierge"><img src="${R}models/necklace-900.jpg" alt="" loading="lazy" decoding="async"><span class="wk">By appointment</span><b>${q(a.cta2.en)}</b></a>
+    </div>` : `<div class="acts"><a class="btn" href="${R}${HOME}#collection">${q(a.cta1.en)}</a><a class="lnk" href="${R}${HOME}#concierge">${q(a.cta2.en)}</a></div>`}
   </section>
 </main>
-<footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}${HOME}">Back to the house</a></footer>
+${v14 ? `<footer class="foot foot14"><div class="fin"><a class="fmk" href="${R}${HOME}" aria-label="SILAVU">${markUse("")}<span class="wm">SILAVU</span></a>
+  <nav aria-label="Explore"><a href="${R}${COLL}">Collection</a><a href="${R}${HOME}#build">Design yours</a><a href="${R}${HOME}#inside">The box</a><a href="${R}${HOME}#concierge">Enquire</a></nav>
+  <span class="fc">© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span></div></footer>` : `<footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}${HOME}">Back to the house</a></footer>`}
 <script>${fs.readFileSync(path.join(root, "src", "t13", "about13.js"), "utf8")}</script>
 </body>
 </html>
