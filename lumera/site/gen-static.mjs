@@ -679,7 +679,7 @@ const T14 = (() => {
   <div class="cr14pin"><div class="cr14stage">
     <div class="cr14txt">
       <p class="k14" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-      <h2 class="h14" id="crh" data-en="Each stone, set by hand" data-he="כל אבן, משובצת ביד">Each stone, set by hand</h2>
+      <h2 class="h14 cr14h" id="crh" data-en="Each&lt;br&gt;stone,&lt;br&gt;&lt;em&gt;by hand.&lt;/em&gt;" data-he="כל אבן,&lt;br&gt;&lt;em&gt;ביד.&lt;/em&gt;">Each<br>stone,<br><em>by hand.</em></h2>
       <p class="crp" data-en="Handcrafted in Dubai: every diamond chosen by eye, set by hand, and held by its prongs for life." data-he="נוצר ביד בדובאי: כל יהלום נבחר בעין, משובץ ביד ומוחזק בשיניו לכל החיים.">Handcrafted in Dubai: every diamond chosen by eye, set by hand, and held by its prongs for life.</p>
       <ul class="tr14">
         <li>${ic('<path d="M8 13V5.5a1.4 1.4 0 012.8 0V11M10.8 10V4a1.4 1.4 0 012.8 0v6M13.6 10.5V5.2a1.4 1.4 0 012.8 0V12M16.4 11.5V8.4a1.4 1.4 0 012.8 0v6.1c0 4-2.7 6.7-6.6 6.7-2.6 0-4.4-1.2-5.7-3.3L5 14.4a1.4 1.4 0 012.3-1.6L8 13.8"/>')}<span data-en="Handmade" data-he="עבודת יד">Handmade</span></li>
@@ -687,6 +687,8 @@ const T14 = (() => {
         <li>${ic('<path d="M3 9l4-5h10l4 5-9 11z"/><path d="M3 9h18M9 4l3 5 3-5M12 20L9 9m3 11l3-11"/>')}<span data-en="Certified diamonds" data-he="יהלומים מאושרים">Certified diamonds</span></li>
       </ul>
     </div>
+    <p class="cr14scene" aria-hidden="true"><span class="cr14sn">01</span><i></i><span class="cr14st">Chosen by eye</span></p>
+    <div class="cr14prog" aria-hidden="true"><i></i></div>
     <div class="cr14view" aria-hidden="true"><img class="cr14first" src="craft14/d/f000.webp" srcset="craft14/m/f000.webp 854w, craft14/d/f000.webp 1280w" sizes="(max-width: 899px) 100vw, 60vw" width="1280" height="720" alt="" decoding="async" loading="lazy"><canvas class="cr14cv"></canvas></div>
   </div></div>
 </section>

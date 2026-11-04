@@ -1298,3 +1298,97 @@ html body #langmenu { background: radial-gradient(ellipse 75% 65% at 70% 50%, rg
 html body #langmenu::after { right: 2px; }
 html body #langmenu button.on::after { right: -21px; }
 html body #langmenu button { color: rgba(246,242,234,.74) !important; }
+
+/* craftsmanship as cinema (the house chose D, 4 Nov): the film fills the screen between two black bars, the words
+   stand at the left like a film's title with the last line in outline, a scene caption at the top right follows the
+   setting as it happens, the three facts stand at the bottom right on gold hairlines, a line of progress at the foot */
+html body .cr14pin { height: 280svh !important; }
+html body .cr14stage { display: block !important; padding: 0 !important; }
+html body .cr14view { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; margin: 0 !important; aspect-ratio: auto !important; -webkit-mask-image: none !important; mask-image: none !important; }
+html body .cr14view img, html body .cr14view canvas { transform: scale(calc(1.1 - var(--cp, 0) * .1)); transform-origin: 62% 50%; object-fit: cover; }
+html body .cr14view::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, #000 0%, rgba(0,0,0,.86) 20%, rgba(0,0,0,.25) 44%, rgba(0,0,0,0) 60%), radial-gradient(ellipse 60% 70% at 66% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,.6) 100%), linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 14%, rgba(0,0,0,0) 86%, #000 100%); }
+html body .cr14stage::before, html body .cr14stage::after { content: ""; position: absolute; left: 0; right: 0; z-index: 3; height: 7svh; background: #000; pointer-events: none; }
+html body .cr14stage::before { top: 0; } html body .cr14stage::after { bottom: 0; }
+html body .cr14txt { position: absolute !important; z-index: 4; left: clamp(24px, 7vw, 140px); top: 50%; transform: translateY(-52%); max-width: min(560px, 44vw); }
+html body .cr14txt .k14 { font-size: .62rem !important; letter-spacing: .5em !important; }
+html body .cr14txt .cr14h { margin-top: 22px !important; font-weight: 200 !important; font-size: clamp(3rem, 7vw, 8rem) !important; line-height: .95 !important; letter-spacing: .05em !important; color: #f6f1e6 !important; text-transform: uppercase; }
+html body .cr14txt .cr14h em { font-style: normal; color: transparent; -webkit-text-stroke: 1px rgba(232,212,170,.9); }
+html body .cr14txt .crp { margin-top: 28px !important; max-width: 36ch; font-size: 1rem !important; }
+/* the facts at the bottom right, each on a gold hairline */
+html body .cr14txt .tr14 { position: fixed; }
+html body #craft14 .cr14txt .tr14 { position: absolute; left: auto; right: calc(-1 * (100vw - min(560px, 44vw) - clamp(24px, 7vw, 140px) - clamp(24px, 5vw, 90px))); top: auto; bottom: -26svh; margin: 0 !important; max-width: none; display: grid !important; gap: 16px; justify-items: end; border: 0 !important; }
+html body #craft14 .cr14txt .tr14 li { display: grid !important; justify-items: end; gap: 3px; padding: 0 18px 0 0 !important; border: 0 !important; border-right: 1px solid rgba(232,212,170,.65) !important; text-align: right; }
+html body #craft14 .cr14txt .tr14 li svg { display: none !important; }
+html body #craft14 .cr14txt .tr14 li span { font-size: .58rem !important; letter-spacing: .3em !important; text-transform: uppercase; color: rgba(243,236,224,.62) !important; }
+html body #craft14 .cr14txt .tr14 li::before { font-weight: 300; font-size: 1.2rem; letter-spacing: .08em; color: #f6f1e6; }
+html body #craft14 .cr14txt .tr14 li:nth-child(1)::before { content: "Handmade"; } html body #craft14 .cr14txt .tr14 li:nth-child(3)::before { content: "Certified"; }
+html body #craft14 .cr14txt .tr14 .tr18 { font-weight: 300; font-size: 1.2rem; letter-spacing: .08em; color: #f6f1e6; }
+html[data-lang="he"] body #craft14 .cr14txt .tr14 li:nth-child(1)::before { content: "עבודת יד"; } html[data-lang="he"] body #craft14 .cr14txt .tr14 li:nth-child(3)::before { content: "מאושרים"; }
+/* the scene caption and the line of progress */
+html body .cr14scene { position: absolute; z-index: 4; right: clamp(24px, 5vw, 90px); top: calc(7svh + 26px); display: flex; align-items: center; gap: 14px; margin: 0; font-size: .6rem; letter-spacing: .32em; text-transform: uppercase; color: #e8d4aa; }
+html body .cr14scene i { width: 40px; height: 1px; background: rgba(232,212,170,.6); }
+html body .cr14scene .cr14st { color: rgba(246,241,230,.85); transition: opacity .35s ease; }
+html body .cr14scene.sw .cr14st { opacity: 0; }
+html body .cr14prog { position: absolute; z-index: 4; left: clamp(24px, 7vw, 140px); bottom: calc(7svh + 30px); width: min(320px, 30vw); height: 1px; background: rgba(243,236,224,.18); }
+html body .cr14prog i { position: absolute; left: 0; top: -1px; height: 3px; width: calc(var(--cp, 0) * 100%); background: linear-gradient(90deg, #b99a64, #f6e7c5); box-shadow: 0 0 10px rgba(246,231,197,.4); }
+/* the title arrives line by line */
+html.js body .cr14txt .cr14h { clip-path: inset(0 0 100% 0); transition: clip-path 1.4s cubic-bezier(.65,0,.35,1) .1s !important; opacity: 1 !important; transform: none !important; }
+html.js body .cr14.in .cr14txt .cr14h { clip-path: inset(0 0 0 0); }
+@media (max-width: 899px) {
+  html body .cr14pin { height: 230svh !important; }
+  html body .cr14view::after { background: linear-gradient(to top, #000 0%, rgba(0,0,0,.85) 30%, rgba(0,0,0,0) 62%), linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 16%) !important; }
+  html body .cr14view img, html body .cr14view canvas { transform-origin: 60% 40%; }
+  html body .cr14stage::before, html body .cr14stage::after { height: 5svh; }
+  html body .cr14txt { left: 22px !important; right: 22px; top: auto !important; bottom: calc(5svh + 70px); transform: none !important; max-width: none; justify-items: start !important; text-align: start !important; }
+  html body .cr14txt .k14 { justify-content: flex-start !important; }
+  html body .cr14txt .cr14h { font-size: clamp(2.6rem, 13vw, 3.6rem) !important; text-align: start !important; margin-top: 14px !important; }
+  html body .cr14txt .crp { font-size: .9rem !important; margin-top: 16px !important; }
+  html body #craft14 .cr14txt .tr14 { position: static; display: flex !important; gap: 22px; margin-top: 22px !important; justify-items: start; }
+  html body #craft14 .cr14txt .tr14 li { border-right: 0 !important; border-left: 1px solid rgba(232,212,170,.65) !important; padding: 0 0 0 12px !important; justify-items: start; text-align: left; }
+  html body #craft14 .cr14txt .tr14 li::before, html body #craft14 .cr14txt .tr14 .tr18 { font-size: .95rem; }
+  html body .cr14scene { right: 22px; top: calc(5svh + 18px); }
+  html body .cr14prog { left: 22px; bottom: calc(5svh + 34px); width: calc(100% - 44px); }
+}
+/* cinema, refined: the facts as three quiet lines in the stage's corner, no doubled words; the header is the top bar */
+html body #craft14 .tr14 li::before { content: none !important; }
+html body #craft14 .tr14 .tr18 { display: none !important; }
+html body #craft14 .cr14stage > .tr14 { position: absolute !important; z-index: 4; right: clamp(24px, 5vw, 90px) !important; left: auto !important; top: auto !important; bottom: calc(7svh + 30px) !important; margin: 0 !important; display: grid !important; gap: 14px !important; justify-items: end; list-style: none; padding: 0; }
+html body #craft14 .cr14stage > .tr14 li { display: block !important; padding: 2px 16px 2px 0 !important; border: 0 !important; border-right: 1px solid rgba(232,212,170,.7) !important; }
+html body #craft14 .cr14stage > .tr14 li span { font-size: .62rem !important; letter-spacing: .32em !important; text-transform: uppercase; color: rgba(246,241,230,.82) !important; }
+html body #craft14 .cr14stage > .tr14 li svg { display: none !important; }
+html body .cr14stage::before { display: none !important; }
+html body .cr14scene { top: 112px !important; }
+html body .cr14view .cr14first { visibility: visible !important; }
+html body .cr14.live .cr14view .cr14first { opacity: 0; transition: opacity .3s ease; }
+@media (max-width: 899px) {
+  html body #craft14 .cr14stage > .tr14 { right: auto !important; left: 22px !important; bottom: calc(5svh + 52px) !important; display: flex !important; gap: 18px !important; }
+  html body #craft14 .cr14stage > .tr14 li { border-right: 0 !important; border-left: 1px solid rgba(232,212,170,.7) !important; padding: 0 0 0 10px !important; }
+  html body #craft14 .cr14stage > .tr14 li span { font-size: .52rem !important; letter-spacing: .2em !important; }
+  html body .cr14txt { bottom: calc(5svh + 100px) !important; }
+  html body .cr14scene { top: 92px !important; }
+}
+/* the title of Up close always stays above the prints */
+html body #details.atl13 .dthd { position: relative; z-index: 20 !important; transform: translateZ(0); }
+
+/* the language choice, option 1 "Capsule" (the house's choice, 4 Nov): the EN ring grows down into a slim capsule of
+   four, the chosen one filled ivory at the top, the language's own name beside the one under the pointer */
+html body #langmenu { flex-direction: column !important; align-items: center !important; gap: 2px !important; width: 44px !important; padding: 4px !important; margin: 0 !important;
+  border-radius: 999px !important; border: 1px solid rgba(214,219,226,.45) !important; background: #0c0c0d !important; box-shadow: 0 16px 34px -14px rgba(0,0,0,.9) !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important; -webkit-mask-image: none !important; mask-image: none !important; overflow: visible !important; }
+html body #langmenu::after { display: none !important; }
+html body #langmenu.open { animation: lm14cap .32s cubic-bezier(.2,.8,.2,1) both !important; transform-origin: 50% 0 !important; }
+@keyframes lm14cap { from { clip-path: inset(0 0 calc(100% - 44px) 0 round 999px); } to { clip-path: inset(0 0 0 0 round 999px); } }
+html body #langmenu button { position: relative; width: 34px !important; height: 34px !important; min-height: 0 !important; padding: 0 !important; border-radius: 50% !important; justify-content: center !important;
+  background: none !important; color: rgba(243,239,230,.7) !important; text-shadow: none !important; transform: none !important; transition: background-color .18s ease, color .18s ease !important; }
+html body #langmenu button .lc { display: block !important; font-size: 10px !important; letter-spacing: .06em !important; opacity: 1 !important; min-width: 0 !important; color: inherit !important; }
+html body #langmenu button.on { order: -1; background: linear-gradient(180deg, #f6f0e4, #ddd0b6) !important; color: #111 !important; }
+html body #langmenu button.on::after { display: none !important; }
+html body #langmenu button .ln { position: absolute; right: calc(100% + 12px); top: 50%; transform: translate(6px, -50%); padding: 7px 14px; border-radius: 999px; background: #0c0c0d; border: 1px solid rgba(214,219,226,.25);
+  font-size: 12.5px !important; letter-spacing: .02em !important; color: #f3ecdd; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s ease, transform .2s cubic-bezier(.2,.8,.2,1); }
+html body #langmenu button:hover .ln, html body #langmenu button:focus-visible .ln { opacity: 1; transform: translate(0, -50%); }
+@media (hover: hover) and (pointer: fine) { html body #langmenu button:not(.on):hover { background: rgba(255,255,255,.1) !important; color: #fff !important; } }
+html body #langmenu.open button { animation: lm14d2 .3s cubic-bezier(.2,.8,.2,1) both !important; }
+@keyframes lm14d2 { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+html body #langmenu button.on .lc { color: #111 !important; opacity: 1 !important; }
+@keyframes lm14cap { from { clip-path: inset(0 -320px calc(100% - 44px) -320px round 999px); } to { clip-path: inset(-20px -320px -20px -320px round 0); } }

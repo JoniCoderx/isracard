@@ -190,9 +190,16 @@
   function frame(now) { raf = 0; var dt = last ? Math.min(100, now - last) : 16.7; last = now;
     var k = 1 - Math.pow(.82, dt / 16.667); p = p < 0 ? target : p + (target - p) * k; if (Math.abs(target - p) < .0005) p = target;
     var fp = Math.max(0, Math.min(1, (p - .1) / .78)) * (N - 1);
+    sec.style.setProperty("--cp", (fp / (N - 1)).toFixed(4)); scene(fp / (N - 1));
     if (dirty || Math.round(fp) !== shown) { dirty = false; shown = Math.round(fp); draw(fp); }
     if (p !== target) kick(); else last = 0; }
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  /* the scene caption follows the setting: chosen, lowered, closed, set */
+  var ul = sec.querySelector(".cr14txt .tr14"), stg = sec.querySelector(".cr14stage"); if (ul && stg) stg.appendChild(ul);
+  var SC = [["01", "Chosen by eye", "נבחרת בעין"], ["02", "Lowered into its seat", "יורדת אל מושבה"], ["03", "The prongs close", "השיניים נסגרות"], ["04", "Held for life", "מוחזקת לכל החיים"]];
+  var scEl = sec.querySelector(".cr14scene"), scN = scEl && scEl.querySelector(".cr14sn"), scT = scEl && scEl.querySelector(".cr14st"), scI = -1, scTo = 0;
+  function scene(q) { if (!scEl) return; var i = Math.min(3, Math.floor(q * 4 + .02)); if (i === scI) return; scI = i; clearTimeout(scTo); scEl.classList.add("sw");
+    scTo = setTimeout(function () { var he = document.documentElement.getAttribute("data-lang") === "he"; scN.textContent = SC[i][0]; scT.textContent = he ? SC[i][2] : SC[i][1]; scEl.classList.remove("sw"); }, 180); }
   function measure() { var r = pin.getBoundingClientRect(), span = r.height - innerHeight; target = Math.max(0, Math.min(1, -r.top / Math.max(1, span)));
     if (!started && r.top < innerHeight * 2.5 && r.bottom > -innerHeight) load(); kick(); }
   addEventListener("scroll", measure, { passive: true }); addEventListener("resize", function () { size(); measure(); });
@@ -450,7 +457,7 @@
         if (Math.abs(s.tlz - s.lz) + Math.abs(s.thx - s.hx) + Math.abs(s.thy - s.hy) + Math.abs(s.tst - s.st) * 10 + Math.abs(s.tsc - s.sc) * 100 > .02) moving = true;
         if (s.r == null) s.r = parseFloat(getComputedStyle(w).getPropertyValue("--r")) || 0;
         /* at rest each print floats a little in its own time, as if held in the air above the table */
-        var calm = 1 - s.st, fz = calm * (7 * Math.sin(t * .7 + i * 2.1)), fx = calm * (1.1 * Math.sin(t * .5 + i * 1.3)), fy = calm * (1.3 * Math.sin(t * .6 + i * .7 + 1));
+        var calm = 1 - s.st, fz = calm * (4 * Math.sin(t * .7 + i * 2.1)), fx = calm * (.6 * Math.sin(t * .5 + i * 1.3)), fy = calm * (.7 * Math.sin(t * .6 + i * .7 + 1));
         if (!sec.classList.contains("ready")) { fz = 0; fx = 0; fy = 0; }
         w.style.setProperty("--lz", (s.lz + fz).toFixed(2) + "px"); w.style.setProperty("--hx", (s.hx + fx).toFixed(3) + "deg"); w.style.setProperty("--hy", (s.hy + fy).toFixed(3) + "deg");
         w.style.setProperty("--rd", (-s.r * s.st + calm * .5 * Math.sin(t * .4 + i)).toFixed(3) + "deg"); w.style.setProperty("--sc", s.sc.toFixed(4)); });
@@ -461,7 +468,7 @@
       var f = w.querySelector(".w13f");
       w.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse" || !sec.classList.contains("ready") || w.classList.contains("flip")) return;
         var b = w.getBoundingClientRect(), nx = (e.clientX - b.left) / b.width - .5, ny = (e.clientY - b.top) / b.height - .5, s = S[i];
-        s.tlz = 110; s.thx = -ny * 10; s.thy = nx * 12; s.tst = 1; s.tsc = 1.07; w.classList.add("hov");
+        s.tlz = 34; s.thx = -ny * 5; s.thy = nx * 6; s.tst = 1; s.tsc = 1.035; w.classList.add("hov");
         if (f) { f.style.setProperty("--gx", ((nx + .5) * 100).toFixed(1) + "%"); f.style.setProperty("--gy", ((ny + .5) * 100).toFixed(1) + "%"); }
         go(); });
       w.addEventListener("pointerleave", function () { var s = S[i]; s.tlz = 0; s.thx = 0; s.thy = 0; s.tst = 0; s.tsc = 1; w.classList.remove("hov"); go(); });
@@ -519,6 +526,8 @@
   function init() { var m = document.getElementById("langmenu"); if (!m) return setTimeout(init, 300);
     new MutationObserver(function () { if (!m.classList.contains("open")) return;
       var b = [].filter.call(document.querySelectorAll("#langBtn, #langBtn2, #langBtn3, .lang"), function (x) { return x.getAttribute("aria-expanded") === "true"; })[0]; if (!b) return;
-      var r = b.getBoundingClientRect(); m.style.left = Math.max(8, r.right - m.offsetWidth + 2) + "px"; m.style.top = (r.bottom + 6) + "px"; }).observe(m, { attributes: true, attributeFilter: ["class", "style"] }); }
+      /* the capsule grows out of the button itself: its top ring sits where the button is */
+      var r = b.getBoundingClientRect(), L = Math.round(r.left + r.width / 2 - m.offsetWidth / 2) + "px", T = Math.round(r.top + r.height / 2 - 22) + "px";
+      if (m.style.left !== L) m.style.left = L; if (m.style.top !== T) m.style.top = T; }).observe(m, { attributes: true, attributeFilter: ["class", "style"] }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 })();
