@@ -664,3 +664,132 @@ html[data-ns] body header.sh #topnav a, html[data-ns] body header.sh .btn.hbook 
   html body header.sh .hr .hbook { display: none !important; }
   html body header.sh .lang { width: 40px !important; height: 40px !important; }
 }
+
+/* the builder, round 3: one stage and one panel of the same height, the steps heading the panel, the piece summed up
+   at the panel's foot, the views as large quiet words, and the macro as the Detail view itself */
+html body #configure .b14macro { display: none !important; }
+html body #configure .b14steps { display: none; }
+html body #configure .total .b13pre, html body #configure .total .ltk, html body #configure .total .lsum, html body #configure .total .cur, html body #configure .total .seal, html body #configure .total .trustline { display: none !important; }
+html body #configure .b14sum { display: grid; gap: 10px; }
+html body #configure .b14sumk { margin: 0; font-size: .6rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(243,236,224,.55); }
+html body #configure .b14sumu { list-style: none; margin: 0; padding: 0; display: grid; }
+html body #configure .b14sumu button { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 9px 0; border: 0; border-bottom: 1px solid rgba(243,236,224,.08); background: none; color: inherit; font: inherit; cursor: pointer; text-align: start; transition: color .15s ease; }
+html body #configure .b14sumu li:last-child button { border-bottom: 0; }
+html body #configure .b14sumu span { font-size: .78rem; color: rgba(243,236,224,.55); }
+html body #configure .b14sumu b { font-weight: 400; font-size: .9rem; color: #f3ecdd; text-align: end; }
+html body #configure .b14sumu button:hover b { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(243,236,224,.35); }
+html body #configure .total { display: grid !important; grid-template-columns: 1fr !important; gap: 18px !important; border: 0 !important; border-top: 1px solid rgba(243,236,224,.12) !important; border-radius: 0 !important; background: none !important; padding: 22px 0 0 !important; margin: 26px 0 0 !important; box-shadow: none !important; }
+html body #configure .total .tot { display: block !important; }
+html body #configure .total .pricerow { display: flex !important; align-items: baseline; justify-content: space-between; margin: 0 !important; padding: 0 !important; }
+html body #configure .total .pwrap { display: flex !important; align-items: baseline; justify-content: space-between; width: 100%; gap: 16px; }
+html body #configure .total .estk { display: block !important; font-size: .6rem !important; letter-spacing: .3em !important; text-transform: uppercase; color: rgba(243,236,224,.55) !important; }
+html body #configure .total .price { font-family: var(--display, 'Jost'), 'Jost', sans-serif !important; font-weight: 300 !important; font-size: clamp(1.15rem, 1.5vw, 1.45rem) !important; letter-spacing: .02em !important; color: #f6f1e6 !important; margin: 0 !important; }
+html body #configure .total .estnote { margin: 8px 0 0 !important; font-size: .74rem !important; line-height: 1.6; color: rgba(243,236,224,.5) !important; }
+html body #configure .total #reserve { grid-row: auto !important; grid-column: auto !important; width: 100% !important; box-sizing: border-box; justify-content: space-between !important; display: flex !important; align-items: center; padding: 17px 26px !important; border-radius: 999px !important; border: 0 !important;
+  background: linear-gradient(180deg, #f6f0e4, #ddd0b6) !important; color: #111 !important; font-size: .64rem !important; letter-spacing: .3em !important; text-transform: uppercase; box-shadow: none !important; transition: background-color .2s ease, transform .15s ease; }
+html body #configure .total #reserve::after { content: "→"; letter-spacing: 0; font-size: .9rem; }
+html[dir="rtl"] body #configure .total #reserve::after { content: "←"; }
+html body #configure .total #reserve:hover { background: #fff !important; }
+html body #configure .total #reserve:active { transform: scale(.98); }
+html body #configure .total .sdet { margin: 0 !important; grid-column: auto !important; border: 0 !important; }
+html body #configure .total .sdet summary { font-size: .6rem !important; letter-spacing: .26em !important; color: rgba(243,236,224,.55) !important; padding: 2px 0 !important; }
+html[data-ns] body #configure .b14sumk, html[data-ns] body #configure .total .estk, html[data-ns] body #configure .total #reserve, html[data-ns] body #configure .total .sdet summary { letter-spacing: 0 !important; font-size: .8rem !important; }
+
+/* the views: large quiet words with a line under the one in use, bottom left; zoom and full screen as two rings, bottom right */
+html body #configure #stripwrap .vposwrap { left: clamp(20px, 2.4vw, 34px) !important; right: auto !important; bottom: clamp(16px, 2vw, 28px) !important; transform: none !important; }
+html[dir="rtl"] body #configure #stripwrap .vposwrap { left: auto !important; right: clamp(20px, 2.4vw, 34px) !important; }
+html body #configure #stripwrap .vposwrap .vpos { background: none !important; border: 0 !important; padding: 0 !important; gap: clamp(18px, 2vw, 30px) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+html body #configure #stripwrap .vposwrap .vpos .vp, html body #configure #stripwrap .vposwrap .vpos button.vp { position: relative; padding: 10px 0 !important; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+  font-size: .66rem !important; letter-spacing: .3em !important; text-transform: uppercase; color: rgba(243,236,224,.5) !important; transition: color .2s ease; }
+html body #configure #stripwrap .vposwrap .vpos .vp::after { content: ""; position: absolute; left: 0; right: .3em; bottom: 2px; height: 1px; background: #f3ecdd; transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+html body #configure #stripwrap .vposwrap .vpos .vp:hover { color: rgba(243,236,224,.85) !important; }
+html body #configure #stripwrap .vposwrap .vpos .vp.on { color: #f6f1e6 !important; }
+html body #configure #stripwrap .vposwrap .vpos .vp.on::after { transform: scaleX(1); }
+html body #configure #stripwrap .vposwrap .vsep { display: none !important; }
+html body #configure #stripwrap > .b14tools { position: absolute; z-index: 9; right: clamp(16px, 2vw, 28px); bottom: clamp(14px, 1.8vw, 24px); display: flex; gap: 10px; margin: 0; padding: 0; border: 0; }
+html[dir="rtl"] body #configure #stripwrap > .b14tools { right: auto; left: clamp(16px, 2vw, 28px); }
+html body #configure #stripwrap > .b14tools button { width: 42px; height: 42px; border: 1px solid rgba(214,219,226,.3); background: rgba(255,255,255,.04); }
+html body #configure #stripwrap > .b14tools button::before { inset: 12px; }
+html body #configure #stripwrap > .b14tools button:hover { border-color: rgba(226,230,236,.7); }
+html[data-ns] body #configure #stripwrap .vposwrap .vpos .vp { letter-spacing: 0 !important; font-size: .82rem !important; }
+
+/* Detail: the stone itself, large, opening on the right of the stage and fading into its black */
+html body #configure .b14det { position: absolute; z-index: 7; top: 0; right: 0; bottom: 0; width: 46%; margin: 0; pointer-events: none; opacity: 0; transform: translateX(24px); transition: opacity .5s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+html body #configure .b14det.in { opacity: 1; transform: none; }
+html body #configure .b14det img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(1.18);
+  -webkit-mask: radial-gradient(ellipse 62% 62% at 58% 50%, #000 52%, transparent 100%); mask: radial-gradient(ellipse 62% 62% at 58% 50%, #000 52%, transparent 100%); }
+html body #configure .b14det figcaption { position: absolute; right: clamp(20px, 2.4vw, 34px); top: clamp(18px, 2.2vw, 30px); display: grid; gap: 6px; text-align: end; }
+html body #configure .b14det .b14detk { font-size: .58rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(243,236,224,.6); }
+html body #configure .b14det figcaption b { font-family: var(--display, 'Jost'), 'Jost', sans-serif; font-weight: 300; font-size: clamp(1.05rem, 1.4vw, 1.35rem); letter-spacing: .04em; color: #f6f1e6; }
+html[dir="rtl"] body #configure .b14det { right: auto; left: 0; transform: translateX(-24px); }
+html[dir="rtl"] body #configure .b14det.in { transform: none; }
+html[dir="rtl"] body #configure .b14det figcaption { right: auto; left: clamp(20px, 2.4vw, 34px); text-align: start; }
+
+@media (min-width: 1000px) {
+  html body #configure.b14.b14v3 { display: grid !important; grid-template-columns: minmax(0, 1fr) clamp(360px, 25vw, 420px) !important; grid-template-areas: "stage panel" "acts acts" !important; column-gap: clamp(14px, 1.4vw, 22px) !important; row-gap: 18px !important; align-items: stretch !important; }
+  html body #configure.b14v3 > .b14top { display: none !important; }
+  html body #configure.b14v3 > #stripwrap { grid-area: stage !important; aspect-ratio: auto !important; height: auto !important; min-height: 620px !important; max-height: none !important; align-self: stretch !important; border-radius: 18px; overflow: hidden; }
+  html body #configure.b14v3 > #opts { grid-area: panel !important; display: flex !important; flex-direction: column; height: auto !important; max-height: none !important; overflow: visible !important; padding: 26px 28px 28px !important; border-radius: 18px !important; border: 1px solid rgba(243,236,224,.08) !important; background: rgba(255,255,255,.022) !important; box-sizing: border-box; }
+  html body #configure.b14v3 > .cacts { grid-area: acts !important; }
+  html body #configure.b14v3 > .handbar { display: none !important; }
+  html body #configure.b14v3 #opts .total { margin-top: auto !important; }
+  html body #configure.b14v3 #opts .b13ft { margin-bottom: 4px; }
+  html body #configure .b14steps { display: block; margin: 0 0 22px; padding-bottom: 0; border-bottom: 1px solid rgba(243,236,224,.1); }
+  html body #configure .b14steps .b13bars { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 0 !important; border: 0 !important; padding: 0 !important; margin: 0 !important; }
+  html body #configure .b14steps .b13bar { display: grid !important; justify-items: start; gap: 4px !important; padding: 0 0 14px !important; background: none !important; border: 0 !important; position: relative; cursor: pointer; text-align: start; }
+  html body #configure .b14steps .b13bar .b13num { font-size: .58rem !important; letter-spacing: .14em !important; color: rgba(243,236,224,.4) !important; padding: 0 !important; }
+  html body #configure .b14steps .b13bar .b13num::after { display: none !important; }
+  html body #configure .b14steps .b13bar .b13bl { display: block !important; font-size: .74rem !important; color: rgba(243,236,224,.55) !important; }
+  html body #configure .b14steps .b13bar.on .b13bl, html body #configure .b14steps .b13bar.on .b13num { color: #f6f1e6 !important; }
+  html body #configure .b14steps .b13bar.done .b13bl { color: rgba(243,236,224,.8) !important; }
+  html body #configure .b14steps .b13bar::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #f3ecdd; transform: scaleX(0); transform-origin: 0 50%; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  html body #configure .b14steps .b13bar.on::after { transform: scaleX(1); }
+  html body #configure .b14steps .b13bar .b13ba, html body #configure .b14steps .b13bar > i { display: none !important; }
+}
+@media (max-width: 999px) {
+  html body #configure .b14det { width: 58%; }
+  html body #configure .b14det figcaption { top: 14px; right: 14px; }
+  html body #configure #stripwrap .vposwrap .vpos { gap: 16px !important; }
+  html body #configure #stripwrap .vposwrap .vpos .vp, html body #configure #stripwrap .vposwrap .vpos button.vp { font-size: .56rem !important; letter-spacing: .22em !important; padding: 8px 0 !important; }
+  html body #configure #stripwrap .vposwrap { left: 16px !important; bottom: 12px !important; }
+  html body #configure #stripwrap > .b14tools { right: 12px; bottom: 10px; gap: 8px; }
+  html body #configure #stripwrap > .b14tools button { width: 36px; height: 36px; }
+  html body #configure #stripwrap > .b14tools button::before { inset: 10px; }
+  html body #configure.b14 > #opts .total { margin: 22px 0 0 !important; }
+}
+html body #configure .total .t13thumb { display: none !important; }
+html body #configure.b14v3 #opts .b13nav { margin: 0 0 18px !important; padding: 0 !important; border: 0 !important; min-height: 0 !important; }
+html body #configure.b14v3 #opts .b13head { padding: 0 !important; margin: 0 !important; }
+html body #configure .b14sumu button { padding: 7px 0; }
+html body #configure .total .tot { margin: 0 !important; padding: 0 !important; }
+@media (min-width: 1000px) {
+  html body #configure.b14v3 > #stripwrap > canvas#bcv { position: absolute !important; inset: 0 !important; left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; transform: none !important; }
+  html body #configure.b14v3 > #stripwrap { min-height: min(760px, calc(100svh - 150px)) !important; }
+}
+@media (min-width: 1000px) {
+  html body #build > .wrap { width: min(1720px, calc(100% - 2 * clamp(16px, 2.6vw, 52px))) !important; max-width: none !important; }
+  /* 3D, Photo, Try on: one quiet row at the stage's top left, so the bracelet has the whole width */
+  html body #configure.b14v3 #stripwrap .vt { position: absolute !important; z-index: 9; left: clamp(20px, 2.4vw, 34px) !important; top: clamp(18px, 2.2vw, 28px) !important; bottom: auto !important; right: auto !important; transform: none !important;
+    display: flex !important; flex-direction: row !important; gap: 6px !important; padding: 4px !important; width: auto !important; height: auto !important; border-radius: 999px !important; border: 1px solid rgba(214,219,226,.18) !important; background: rgba(0,0,0,.35) !important; }
+  html body #configure.b14v3 #stripwrap .vt .vtb { width: auto !important; height: 36px !important; min-height: 0 !important; display: inline-flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; padding: 0 16px !important;
+    border-radius: 999px !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: .6rem !important; letter-spacing: .22em !important; color: rgba(243,236,224,.6) !important; }
+  html body #configure.b14v3 #stripwrap .vt .vtb.on { background: rgba(243,236,224,.12) !important; color: #f6f1e6 !important; }
+  html body #configure.b14v3 #stripwrap .vt .vtb svg, html body #configure.b14v3 #stripwrap .vt .vtb::before { width: 14px !important; height: 14px !important; margin: 0 !important; }
+}
+html[dir="rtl"] body #configure.b14v3 #stripwrap .vt { left: auto !important; right: clamp(20px, 2.4vw, 34px) !important; }
+@media (max-width: 999px) {
+  html body #configure.b14 > #opts { width: 100% !important; align-self: stretch !important; }
+  html body #configure #stripwrap .vposwrap::before, html body #configure #stripwrap .vposwrap::after, html body #configure #stripwrap .vpos::before, html body #configure #stripwrap .vpos::after { display: none !important; }
+}
+html body #configure #stripwrap .vposwrap .vpos .vp::after { top: auto !important; bottom: 0 !important; height: 1px !important; width: auto !important; }
+html body #configure .total #reserve::after { position: static !important; transform: none !important; inset: auto !important; }
+html body #configure .total #reserve .x-sheen, html body #configure .total #reserve .x-ring { display: none !important; }
+html body #configure .total #reserve::after { line-height: 1 !important; align-self: center; }
+html body #configure .b14det { width: 44%; }
+html body #configure .b14det img { inset: 14% 6% 12% 4%; width: 90%; height: 74%; object-fit: contain; transform: none;
+  -webkit-mask: radial-gradient(circle at 50% 50%, #000 58%, transparent 71%); mask: radial-gradient(circle at 50% 50%, #000 58%, transparent 71%); filter: drop-shadow(0 30px 60px rgba(0,0,0,.6)); }
+html body #configure.b14v3 #stripwrap.b14detail::after { content: ""; position: absolute; inset: 0 0 0 auto; width: 56%; z-index: 6; pointer-events: none; background: radial-gradient(ellipse 60% 70% at 70% 50%, rgba(0,0,0,.82), rgba(0,0,0,0) 75%); }
+/* Detail as a split: the line on the left runs into black, the stone holds the right */
+html body #configure .b14det { width: 52%; background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,.88) 26%, #000 46%); }
+html[dir="rtl"] body #configure .b14det { background: linear-gradient(to left, rgba(0,0,0,0), rgba(0,0,0,.88) 26%, #000 46%); }
+html body #configure .b14det img { inset: 18% 6% 16% 22%; width: 72%; height: 66%; }

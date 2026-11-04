@@ -193,3 +193,57 @@
   addEventListener("scroll", measure, { passive: true }); addEventListener("resize", function () { size(); measure(); });
   measure();
 })();
+
+/* the builder, round 3 (the house, 4 Nov: "too much empty black", "the round macro feels pasted on", "the right panel is
+   long and empty", "the views are too small and technical", "the bottom row is crowded"). On a wide screen the steps
+   head the panel, and the panel carries the whole piece to its end: the choices made so far, the price and the
+   reservation, so the stage and the panel are one height and nothing hangs below. The macro is no longer a bubble: it
+   is what the Detail view shows, a large close-up of the chosen stone opening beside the bracelet. The same buttons
+   are moved, never rebuilt, so every handler they carry keeps working. */
+(function () {
+  function init() {
+    var conf = document.getElementById("configure"), opts = document.getElementById("opts"), stage = document.getElementById("stripwrap");
+    var top = conf && conf.querySelector(".b14top"), bars = conf && conf.querySelector(".b13bars"), total = conf && conf.querySelector(".total");
+    if (!conf || !opts || !stage || !top || !bars || !total) return setTimeout(init, 200);
+    if (conf.classList.contains("b14v3")) return;
+    conf.classList.add("b14v3");
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    /* the steps: over the stage on a phone, at the head of the panel on a wide screen */
+    var head = document.createElement("div"); head.className = "b14steps"; opts.insertBefore(head, opts.firstChild);
+    var wide = matchMedia("(min-width: 1000px)");
+    function place() { (wide.matches ? head : top).appendChild(bars); }
+    place(); (wide.addEventListener ? wide.addEventListener("change", place) : wide.addListener(place));
+    /* the piece so far, as a short list that leads back to each step */
+    opts.appendChild(total);
+    var sum = document.createElement("div"); sum.className = "b14sum";
+    sum.innerHTML = '<p class="b14sumk"></p><ul class="b14sumu"></ul>';
+    total.insertBefore(sum, total.firstChild);
+    function recap() {
+      sum.querySelector(".b14sumk").textContent = he() ? "הצמיד שלכם" : "Your bracelet";
+      var ul = sum.querySelector(".b14sumu"), list = bars.querySelectorAll(".b13bar"), html = "";
+      [].forEach.call(list, function (b, i) { var l = b.querySelector(".b13bl"), a = b.querySelector(".b13ba");
+        html += '<li><button type="button" data-i="' + i + '"><span>' + (l ? l.textContent : "") + '</span><b>' + (a ? a.textContent : "") + '</b></button></li>'; });
+      if (ul.innerHTML !== html) ul.innerHTML = html;
+    }
+    sum.addEventListener("click", function (e) { var b = e.target.closest("button[data-i]"); if (!b) return;
+      var bar = bars.querySelectorAll(".b13bar")[+b.getAttribute("data-i")]; if (bar) { bar.click(); if (!wide.matches) opts.scrollIntoView({ behavior: "smooth", block: "start" }); } });
+    recap(); new MutationObserver(recap).observe(bars, { subtree: true, childList: true, characterData: true });
+    addEventListener("silavu:build", recap); document.addEventListener("click", function () { setTimeout(recap, 40); });
+    /* the zoom and the full screen: a pair of round buttons in the stage's corner, apart from the views */
+    var tools = stage.querySelector(".b14tools"); if (tools) stage.appendChild(tools);
+    /* Detail: the chosen stone, close, opening beside the bracelet */
+    var NAMES = { round: ["Round brilliant", "בריליאנט עגול"], oval: ["Oval", "אובאלי"], cushion: ["Cushion", "קושן"], princess: ["Princess", "פרינסס"], emerald: ["Emerald cut", "אמרלד"], marquise: ["Marquise", "מרקיז"], pear: ["Pear", "טיפה"], baguette: ["Baguette", "בגט"] };
+    var det = document.createElement("figure"); det.className = "b14det"; det.setAttribute("aria-hidden", "true");
+    det.innerHTML = '<img alt="" decoding="async"><figcaption><span class="b14detk"></span><b></b></figcaption>'; stage.appendChild(det);
+    function cut() { var c = opts.querySelector('.chip.on[data-k="cut"]'); return c ? c.getAttribute("data-v") : "round"; }
+    function paint() { var c = cut(), im = det.querySelector("img"), s = "cuts13/" + c + "-600.webp", n = NAMES[c] || ["", ""];
+      if (im.getAttribute("src") !== s) im.src = s;
+      det.querySelector(".b14detk").textContent = he() ? "במבט מקרוב" : "Seen at the loupe";
+      det.querySelector("b").textContent = he() ? n[1] : n[0];
+      var on = !!stage.querySelector('[data-vpos="detail"].on'); det.classList.toggle("in", on); stage.classList.toggle("b14detail", on); }
+    paint();
+    new MutationObserver(paint).observe(stage.querySelector(".vpos") || stage, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    opts.addEventListener("click", function () { setTimeout(paint, 30); }); addEventListener("silavu:build", paint);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 300); }); else setTimeout(init, 300);
+})();

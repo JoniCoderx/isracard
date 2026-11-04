@@ -863,11 +863,19 @@
        is only ever a mosaic of the bright and the black it reflects — a soft
        grey room turns it into grey glass. */
     "vec3 envS(vec3 d){",
+    "#if defined(F14) && defined(FINE)",
+    "  vec3 c = env(d) * 0.34;",
+    "#else",
     "  vec3 c = env(d) * 0.5 + vec3(0.03);",
+    "#endif",
     "  float y = d.y, az = atan(d.z, d.x);",
     "  float band = smoothstep(-0.05, 0.18, y) * smoothstep(0.92, 0.62, y);",
     "  float pan = smoothstep(0.30, 0.38, abs(fract(az * 1.909859) - 0.5));",
+    "#if defined(F14) && defined(FINE)",
+    "  c += vec3(1.0, 0.985, 0.96) * band * pan * 3.0;",
+    "#else",
     "  c += vec3(1.0, 0.985, 0.96) * band * pan * 2.2;",
+    "#endif",
     "  float pan2 = smoothstep(0.40, 0.46, abs(fract(az * 3.183099 + 0.21) - 0.5));",
     "  c += vec3(0.92, 0.95, 1.0) * smoothstep(0.55, 0.75, y) * smoothstep(0.97, 0.88, y) * pan2 * 1.4;",
     "  c += vec3(1.0) * smoothstep(0.955, 0.985, y) * 4.0;",
@@ -882,7 +890,12 @@
     "vec3 envM(vec3 d){",
     "  vec3 e = env(d); e = e / (1.0 + e * 0.6);",
     "  float y = d.y, az = atan(d.z, d.x);",
+    "#ifdef F14",
+    "  e += vec3(0.46) * smoothstep(-0.25, 0.85, y) * 0.75;",
+    "  e *= 0.62 + 0.55 * smoothstep(-0.35, 0.55, y);",
+    "#else",
     "  e += vec3(0.62) * smoothstep(-0.25, 0.85, y) * 0.75;",
+    "#endif",
     "  e += vec3(0.30) * smoothstep(0.55, 0.0, abs(y)) * (0.6 + 0.4 * sin(az * 3.0));",
     "  e += vec3(0.05);",
     "  return e;",
@@ -970,6 +983,9 @@
     "    }",
     "    col += (1.0 - F) * inside;",
     "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.20;",
+    "#if defined(F14) && defined(FINE)",
+    "    col += col * col * 0.30;",
+    "#endif",
     "  } else if (uMode < -0.5) {",
     /* Skin.
        Six things separate skin from a moulded surface, and the old branch had
@@ -1104,7 +1120,7 @@
   /* (phone3d) a phone traces three bounces inside a stone, not five: the
      last two are a few per cent of the light and most of the cost, and
      that saving pays for drawing it at the phone's sharpness (1.75x) */
-  var FSRC = (matchMedia("(pointer:coarse)").matches ? "" : "#define FINE\n") + "#define BOUNCES " + (window.__phone3d && coarse ? 3 : 5) + "\n" + FS;
+  var FSRC = (window.__frame14 ? "#define F14\n" : "") + (matchMedia("(pointer:coarse)").matches ? "" : "#define FINE\n") + "#define BOUNCES " + (window.__phone3d && coarse ? 3 : 5) + "\n" + FS;
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FSRC)); gl.linkProgram(prog);
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error("SILAVU: the bracelet program did not link — " + gl.getProgramInfoLog(prog)); cv.style.display = "none"; return; }
   gl.useProgram(prog);
@@ -1344,7 +1360,7 @@
          two controls are 213 and 90 wide: the ring ran under both of them,
          which is what made the builder look like a pile rather than a piece.
          A phone pulls the camera back far enough to clear its own furniture. */
-      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (F14 ? (coarse && !staged ? 1.04 : 0.96) : (coarse && !staged ? 1.30 : 1.12));
+      fitD = Math.max(state.fit / (tanF * asp), vHalf / tanF) * (F14 ? (coarse && !staged ? 1.04 : 1.2) : (coarse && !staged ? 1.30 : 1.12));
     }
     var R = state.R, dist = fitD * cam.d, th0 = cam.th, ph0 = cam.ph;
     if (snake) {
