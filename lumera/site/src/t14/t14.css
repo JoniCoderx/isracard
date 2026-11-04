@@ -1702,3 +1702,44 @@ html[data-ns] body .fl14k, html[data-ns] body .fl14h { letter-spacing: .02em; }
   html body .fl14neck { left: -14%; right: auto; width: 128%; top: 34%; }
 }
 @media (min-width: 900px) { html body .fl14neck { top: 17%; } html body .fl14txt { top: 10%; } }
+
+/* ════ builder, final refinements: larger small text, lighter lines, the lead button by step ════ */
+html body #cbar:not(.lastst) .cbr { display: none !important; }
+html body #cbar.lastst .cbn { display: none !important; }
+html body #cbar .cbn { display: inline-flex; align-items: center; justify-content: center; }
+/* the smallest words, readable */
+html body #configure.b14atl .b14sumu span { font-size: .64rem !important; letter-spacing: .2em !important; }
+html body #configure.b14atl .b14sumu b { font-size: .92rem !important; }
+html body #configure.b14atl #opts .b13sub { font-size: .7rem !important; letter-spacing: .24em !important; }
+html body #configure.b14atl #opts .chips.cuts .chip span { font-size: .78rem !important; }
+html body #configure.b14atl #opts .chip span { font-size: .84rem; }
+html body #configure.b14atl .total .estk, html body #configure.b14atl .total .sdet summary { font-size: .68rem !important; letter-spacing: .24em !important; }
+html body #configure.b14atl .total .estnote { font-size: .8rem !important; }
+html body #configure.b14atl #stripwrap .vt .vtb { font-size: .68rem !important; letter-spacing: .18em !important; }
+html body #configure.b14atl #stripwrap .vposwrap .vpos .vp, html body #configure.b14atl #stripwrap .vposwrap .vpos button.vp { font-size: .72rem !important; letter-spacing: .24em !important; }
+html body #configure.b14atl .b14top .b13bar .b13num { font-size: .84rem !important; }
+html body #configure.b14atl .b14top .b13bar .b13bl { font-size: .98rem !important; }
+html body #configure.b14atl .b14pvk { font-size: .6rem !important; }
+html body #configure.b14atl > .cacts .clink { font-size: .7rem !important; }
+/* lighter: hairlines instead of boxes */
+html body #configure.b14atl { border-color: rgba(214,219,226,.07) !important; }
+html body #configure.b14atl #opts .chips.cuts .chip { border-color: rgba(214,219,226,.06) !important; background: rgba(255,255,255,.015) !important; }
+html body #configure.b14atl #opts .chips.cuts .chip:hover { border-color: rgba(214,219,226,.2) !important; }
+html body #configure.b14atl #opts .chip:not(.on) { border-color: rgba(214,219,226,.08) !important; }
+html body #configure.b14atl #stripwrap .vt { border-color: rgba(214,219,226,.1) !important; background: rgba(0,0,0,.2) !important; }
+html body #configure.b14atl > #opts { border-left-color: rgba(214,219,226,.06) !important; }
+html body #configure.b14atl .b14pv { border-color: rgba(214,219,226,.14) !important; }
+html body #configure.b14atl > .cacts .clink { border-color: rgba(214,219,226,.08) !important; }
+/* the lead: Next is the ivory button for steps 1–4 and the reservation a quiet outline; at step 5 the reservation is
+   the ivory one with a soft light under it, and Next steps back */
+html body #configure.b14atl:not(.b14last) .b13next { background: linear-gradient(180deg, #f6f0e4, #ddd0b6) !important; color: #111 !important; border: 0 !important; box-shadow: 0 12px 30px -14px rgba(236,214,170,.45) !important; }
+html body #configure.b14atl:not(.b14last) .total #reserve { border-color: rgba(220,206,178,.28) !important; color: rgba(243,236,224,.82) !important; font-size: .62rem !important; }
+html body #configure.b14atl.b14last .total #reserve { background: linear-gradient(180deg, #f6f0e4, #ddd0b6) !important; color: #111 !important; border: 0 !important; padding-top: 19px !important; padding-bottom: 19px !important; box-shadow: 0 16px 40px -14px rgba(236,214,170,.55) !important; }
+html body #configure.b14atl.b14last .b13next { border-color: rgba(220,206,178,.3) !important; }
+@media (max-width: 999px) {
+  html body #configure.b14atl .b14sumu span { font-size: .6rem !important; }
+  html body #configure.b14atl .b14sumu b { font-size: .86rem !important; }
+  html body #configure.b14atl #opts .chips.cuts .chip span { font-size: .72rem !important; }
+  html body #configure.b14atl #stripwrap .vposwrap .vpos .vp, html body #configure.b14atl #stripwrap .vposwrap .vpos button.vp { font-size: .66rem !important; letter-spacing: .18em !important; }
+}
+html body #configure .total #reserve::after { height: auto !important; align-self: center !important; }

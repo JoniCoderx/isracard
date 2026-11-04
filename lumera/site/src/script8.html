@@ -989,6 +989,18 @@
     "      if (!left) inside += envS(R * d) * energy * 0.72;",
     "    }",
     "    col += (1.0 - F) * inside;",
+    /* (test14) a stone seen from behind, through the open basket, shows its pavilion: total internal reflection makes
+       those facets mirrors of the room, bright and broken into planes, never the dark cup the simple path gave */
+    "#ifdef F14",
+    "    float pav = smoothstep(0.08, -0.30, Vl.y);",
+    "    if (pav > 0.0) {",
+    "      vec3 m1 = envS(R * reflect(-Vl, Nf));",
+    "      vec3 fa = normalize(vec3(sign(Nf.x) * 0.7, 0.5, sign(Nf.z) * 0.7));",
+    "      vec3 m2 = envS(R * reflect(-Vl, fa));",
+    "      vec3 pv = (m1 * 0.75 + m2 * 0.55) * vec3(0.98, 0.99, 1.0) + vec3(0.05);",
+    "      col = mix(col, pv, pav * 0.9);",
+    "    }",
+    "#endif",
     "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.20;",
     "#if defined(F14) && defined(FINE)",
     "    col += col * col * 0.30;",
@@ -1111,6 +1123,9 @@
     "    vec3 Rf = reflect(-Vw, Nf);",
     "    vec3 F = uCol + (vec3(1.0) - uCol) * pow(1.0 - c, 5.0);",
     "    col = mix(envM(Rf), envM(Nf), uRough * 0.45) * F * 0.95;",
+    /* (test14) the inside of a setting, seen from behind the bracelet, mirrored the dark floor and read as an empty
+       cup; polished white gold there catches the light from above, so the inner walls take the room's upper half */
+
     "    col += uCol * uCol * 0.05;",
     "  }",
     "  col *= uFade;",
@@ -1447,7 +1462,11 @@
     pHead.draw(0, mc, 0.30); pLink.draw(0, mc, 0.26); pClasp.draw(0, mc, 0.20);
     var onScreen = state.L / (state.halfH || state.fit) * H2 * 0.5;
     gl.uniform1f(U.trace, onScreen > 26 ? 1 : 0);
+    /* (test14) a stone is seen from every side: from behind the bracelet its pavilion faces the eye, and with
+       back faces culled those stones were drawn as empty settings */
+    if (F14) gl.disable(gl.CULL_FACE);
     pStone.draw(1, [1, 1, 1], 0);
+    if (F14) gl.enable(gl.CULL_FACE);
   }
   /* asleep while the bracelet is off screen or the wrist view is showing;
      the shared loop wakes it on the next scroll, touch or press */

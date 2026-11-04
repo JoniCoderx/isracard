@@ -773,3 +773,18 @@
   if (reduce) { paint(1); return; }
   addEventListener("scroll", measure, { passive: true }); addEventListener("resize", measure); measure();
 })();
+
+/* the lead button follows the steps everywhere, the phone's bottom bar included: Next for steps 1–4, Reserve at 5 */
+(function () {
+  function init() {
+    var bar = document.getElementById("cbar"), conf = document.getElementById("configure"); if (!bar || !conf || !conf.classList.contains("b14atl")) return setTimeout(init, 400);
+    if (bar.querySelector(".cbn")) return;
+    var nb = document.createElement("button"); nb.type = "button"; nb.className = "btn solid cbn"; bar.appendChild(nb);
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    function paint() { var last = conf.classList.contains("b14last"); bar.classList.toggle("lastst", last); nb.textContent = he() ? "הבא" : "Next"; }
+    nb.addEventListener("click", function () { var n = document.querySelector("#opts .b13next"); if (n) n.click(); });
+    paint(); new MutationObserver(paint).observe(conf, { attributes: true, attributeFilter: ["class"] });
+    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 900); }); else setTimeout(init, 900);
+})();
