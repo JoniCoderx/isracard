@@ -656,12 +656,17 @@ const T14 = (() => {
   const dir = path.join(path.dirname(path.resolve(src)), "src", "t14");
   const grab = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return ["", h]; const j = h.indexOf("</section>", i); if (j < 0) return ["", h]; return [h.slice(i, j + 10), h.slice(0, i) + h.slice(j + 10)]; };
   const swap = (h, id, html) => { const [x, rest] = grab(h, id); if (!x) return h; const i = h.indexOf(`<section id="${id}"`); return h.slice(0, i) + html + h.slice(i + x.length); };
-  const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><span class="c14pic"><img src="img/${img}-1254.jpg" srcset="img/${img}-900.jpg 900w, img/${img}-1254.jpg 1254w" sizes="(min-width: 900px) 33vw, 94vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"></span><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
+  const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><span class="c14pic"><img src="${img.startsWith("models/") ? img + "-1400.jpg" : "img/" + img + "-1254.jpg"}" srcset="${img.startsWith("models/") ? img + "-900.jpg 900w, " + img + "-1400.jpg 1400w" : "img/" + img + "-900.jpg 900w, img/" + img + "-1254.jpg 1254w"}" sizes="(min-width: 900px) 33vw, 94vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"></span><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
   const COL = `<section id="collection" class="c14col" data-n="01" data-title-en="Collection" data-title-he="הקולקציה" aria-labelledby="c14h">
   <div class="c14wrap">
-    <h2 class="k14 c14k" id="c14h" data-en="Collections" data-he="קולקציות">Collections</h2>
+    <div class="c14intro">
+      <p class="c14eyb"><span>SILAVU</span><i>/</i><span data-en="Collections" data-he="קולקציות">Collections</span></p>
+      <h2 class="c14h" id="c14h" data-en="Our signature collections" data-he="קולקציות החתימה שלנו">Our signature collections</h2>
+      <i class="c14rule" aria-hidden="true"></i>
+      <p class="c14lead" data-en="Three collections joined by one signature: the SILAVU knot, set in white gold and diamonds and worn every day." data-he="שלוש קולקציות שמחברת חתימה אחת: הקשר של SILAVU, בזהב לבן ויהלומים, לענידה בכל יום.">Three collections joined by one signature: the SILAVU knot, set in white gold and diamonds and worn every day.</p>
+    </div>
     <div class="c14cards">
-      ${card("knot", "knot-worn", "MOMENT", "Everyday icons", "אייקונים לכל יום", "SILAVU MOMENT, the signature bracelet, worn")}
+      ${card("knot", "models/bracelet", "MOMENT", "Everyday icons", "אייקונים לכל יום", "SILAVU MOMENT, the signature bracelet, worn")}
       ${card("ring", "ring-worn", "ICON", "Signature pieces", "תכשיטי חתימה", "SILAVU ICON, the signature ring, worn")}
       ${card("pave", "necklace-worn", "SOUL", "Personal expressions", "ביטוי אישי", "SILAVU SOUL, the signature pendant, worn")}
     </div>
