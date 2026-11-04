@@ -129,3 +129,22 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 80); }); else setTimeout(init, 80);
 })();
+
+/* the signature writes itself when the enquiry comes into view: the line drawn by a point of light, then the dot,
+   the wordmark, the line under it */
+(function () {
+  var sg = document.querySelector(".sg14"); if (!sg) return;
+  var line = sg.querySelector(".sg14line"), glow = sg.querySelector(".sg14glowp"), tip = sg.querySelector(".sg14tip");
+  var L = line.getTotalLength(), reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  [line, glow].forEach(function (p) { p.style.strokeDasharray = L; p.style.strokeDashoffset = reduce ? 0 : L; });
+  if (reduce) { sg.classList.add("done"); return; }
+  var ease = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  function write() { var t0 = performance.now(), D = 2800;
+    (function f(now) { var k = Math.min(1, (now - t0) / D), e = ease(k), off = (L * (1 - e)).toFixed(1);
+      line.style.strokeDashoffset = off; glow.style.strokeDashoffset = off;
+      if (k < 1) { var pt = line.getPointAtLength(L * e); tip.setAttribute("cx", pt.x.toFixed(1)); tip.setAttribute("cy", pt.y.toFixed(1)); tip.style.opacity = .95; requestAnimationFrame(f); }
+      else { tip.style.opacity = 0; sg.classList.add("done"); } })(t0); }
+  if (!("IntersectionObserver" in window)) return write();
+  var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); setTimeout(write, 250); } }, { threshold: .4 });
+  io.observe(sg);
+})();
