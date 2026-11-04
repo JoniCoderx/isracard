@@ -1639,3 +1639,66 @@ html body #configure.b14atl.b14last .total #reserve { box-shadow: 0 14px 34px -1
 html body #configure .total #reserve { align-items: center !important; }
 html body #configure .total #reserve::after { position: static !important; inset: auto !important; transform: none !important; margin: 0 !important; line-height: 1 !important; }
 html body #configure .total #reserve:hover::after { transform: translateX(4px) !important; }
+
+/* ════ FROM LINE TO LIGHT (the house, 4 Nov): a design sheet unfolds, the SILAVU knot is drawn on it, the real SOUL
+   necklace comes down on its chain and settles, a platinum light crosses it, and the sketch fades — the idea become
+   the jewel. Everything is the scroll's: forwards and back. ════ */
+html body #craft14.fl14 { display: block !important; max-width: none !important; padding: 0 !important; margin: 0 !important; background: #000 !important; }
+html body .fl14pin { position: relative; height: 330svh; }
+html body .fl14stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: radial-gradient(ellipse 45% 55% at 66% 58%, rgba(255,236,206,.06), rgba(0,0,0,0) 70%), #000; }
+/* the sheet */
+html body .fl14paper { position: absolute; left: 4%; top: 12%; width: 40%; height: 78%; border-radius: 3px; transform-origin: 0 50%;
+  transform: perspective(1400px) rotateY(calc((1 - var(--pp, 0)) * 62deg)) rotate(-3deg); clip-path: inset(0 calc((1 - var(--pp, 0)) * 100%) 0 0);
+  background: radial-gradient(ellipse 70% 60% at 40% 35%, rgba(255,255,255,.18), rgba(255,255,255,0) 70%), linear-gradient(115deg, #ece5d8 0%, #ddd4c5 55%, #c9bfae 100%);
+  box-shadow: 0 40px 80px -30px rgba(0,0,0,.9), inset -30px 0 60px -30px rgba(0,0,0,.25); filter: brightness(calc(1 - var(--pf, 0) * .45)); }
+html body .fl14paper::before { content: ""; position: absolute; inset: 0; opacity: .5; mix-blend-mode: multiply; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .44 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+html body .fl14draw { position: absolute; inset: 6% 6%; width: 88%; height: 88%; overflow: visible; opacity: calc(1 - var(--pf, 0) * .82); }
+html body .fl14guide { fill: none; stroke: rgba(60,52,42,.28); stroke-width: 1.6; stroke-dasharray: 2600; stroke-dashoffset: calc((1 - var(--pg, 0)) * 2600); }
+html body .fl14line { fill: none; stroke: #3c342b; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+html body .fl14seats circle { fill: rgba(255,255,255,.35); stroke: rgba(60,52,42,.62); stroke-width: 2; }
+html body .fl14seats { opacity: var(--ps, 0); }
+html body .fl14note { opacity: var(--pn, 0); }
+html body .fl14note path { fill: none; stroke: rgba(60,52,42,.55); stroke-width: 1.6; }
+html body .fl14note text { font: italic 44px Georgia, "Times New Roman", serif; fill: #3c342b; }
+/* the necklace: from above on its chain, the chain fading into the dark it hangs from */
+html body .fl14neck { position: absolute; right: -2%; top: 4%; width: 64%; transform: translate3d(0, calc((1 - var(--pd, 0)) * -78svh), 0); opacity: min(1, calc(var(--pd, 0) * 4)); will-change: transform; }
+html body .fl14sw { position: relative; transform-origin: 50% -55%; }
+html body .fl14img { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 34%); mask-image: linear-gradient(to bottom, transparent 0%, #000 34%);
+  filter: drop-shadow(0 26px 30px rgba(0,0,0,.65)) brightness(1.02) contrast(1.04); }
+html body .fl14glint { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(105deg, rgba(255,255,255,0) 42%, rgba(236,240,246,.85) 50%, rgba(255,255,255,0) 58%) no-repeat; background-size: 320% 100%; background-position: calc(140% - var(--pr, 0) * 180%) 0;
+  opacity: calc(var(--pr, 0) * (1 - var(--pr, 0)) * 4);
+  -webkit-mask: url("cut8/pave-clean-1200.webp") center / 100% 100% no-repeat; mask: url("cut8/pave-clean-1200.webp") center / 100% 100% no-repeat; }
+/* landing: a little give under the weight, a few small swings, still */
+html body .fl14.land .fl14sw { animation: fl14swing 3.2s cubic-bezier(.3,.1,.3,1) both; }
+@keyframes fl14swing { 0% { transform: translateY(0) rotate(0); } 10% { transform: translateY(9px) rotate(1.1deg); } 26% { transform: translateY(-2px) rotate(-.8deg); } 44% { transform: translateY(1px) rotate(.45deg); } 64% { transform: rotate(-.22deg); } 82% { transform: rotate(.08deg); } 100% { transform: none; } }
+/* the words */
+html body .fl14txt { position: absolute; z-index: 3; right: 8%; top: 13%; width: min(520px, 40%); display: grid; justify-items: center; text-align: center; opacity: var(--pt, 0); transform: translateY(calc((1 - var(--pt, 0)) * 16px)); }
+html body .fl14k { display: flex; align-items: center; gap: 18px; margin: 0; font-size: .62rem; letter-spacing: .5em; text-transform: uppercase; color: #d8c49c; }
+html body .fl14k::before, html body .fl14k::after { content: ""; width: 60px; height: 1px; background: rgba(216,196,156,.5); }
+html body .fl14h { margin: 22px 0 0; font-weight: 200; font-size: clamp(2.2rem, 3.8vw, 4rem); line-height: 1.15; letter-spacing: .2em; text-transform: uppercase; color: #f6f1e6; }
+html body .fl14s { margin: 18px 0 0; font: italic 400 clamp(.95rem, 1.2vw, 1.15rem) Georgia, "Times New Roman", serif; letter-spacing: .03em; color: rgba(243,236,224,.82); }
+html body .fl14rule { display: block; width: 72px; height: 1px; margin-top: 22px; background: linear-gradient(90deg, rgba(232,212,170,0), #e8d4aa, rgba(232,212,170,0)); }
+html[data-ns] body .fl14k, html[data-ns] body .fl14h { letter-spacing: .02em; }
+@media (max-width: 899px) {
+  html body .fl14pin { height: 280svh; }
+  html body .fl14paper { left: 6%; top: 22%; width: 62%; height: 44%; }
+  html body .fl14neck { right: -18%; top: 40%; width: 118%; transform: translate3d(0, calc((1 - var(--pd, 0)) * -60svh), 0); }
+  html body .fl14txt { left: 6%; right: 6%; width: auto; top: 9%; }
+  html body .fl14h { font-size: clamp(1.7rem, 8vw, 2.3rem); margin-top: 14px; }
+  html body .fl14k::before, html body .fl14k::after { width: 34px; }
+  html body .fl14note text { font-size: 56px; }
+}
+@media (prefers-reduced-motion: reduce) { html body .fl14pin { height: auto; } html body .fl14stage { position: relative; min-height: 100svh; } html body .fl14.land .fl14sw { animation: none; } }
+/* composition: the sheet to the left, the necklace centred under the words, the chain passing either side of them */
+@media (min-width: 900px) {
+  html body .fl14paper { left: 3%; width: 35%; top: 14%; height: 74%; }
+  html body .fl14neck { left: 40%; right: auto; width: 58%; top: 2%; }
+  html body .fl14txt { left: 52%; right: auto; width: 34%; top: 13%; }
+}
+@media (max-width: 899px) {
+  html body .fl14paper { left: 19%; width: 62%; top: 24%; height: 42%; }
+  html body .fl14neck { left: -14%; right: auto; width: 128%; top: 34%; }
+}
+@media (min-width: 900px) { html body .fl14neck { top: 17%; } html body .fl14txt { top: 10%; } }

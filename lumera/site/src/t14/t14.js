@@ -737,3 +737,39 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 700); }); else setTimeout(init, 700);
 })();
+
+/* From line to light: the scroll is the timeline. The knot is the house's own path (read from the page), drawn as a
+   graphite line with its diamond seats; the necklace is the real SOUL, cut from its own photograph. */
+(function () {
+  var sec = document.querySelector("#craft14.fl14"); if (!sec) return;
+  var pin = sec.querySelector(".fl14pin"), line = sec.querySelector(".fl14line"), seats = sec.querySelector(".fl14seats"), src = document.querySelector("#symb path");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, L = 1;
+  if (src) { line.setAttribute("d", src.getAttribute("d")); L = line.getTotalLength();
+    line.style.strokeDasharray = L; line.style.strokeDashoffset = L;
+    /* the seats: small circles set just inside the outline, one every so often along both edges of the band */
+    var n = Math.round(L / 46), ns = "http://www.w3.org/2000/svg", frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) { var a = line.getPointAtLength(i * L / n), b = line.getPointAtLength(Math.min(L, i * L / n + 2)), tx = b.x - a.x, ty = b.y - a.y, tl = Math.hypot(tx, ty) || 1, nx = -ty / tl, ny = tx / tl;
+      var pt = line.ownerSVGElement.createSVGPoint(); pt.x = a.x + nx * 22; pt.y = a.y + ny * 22; var inside = line.isPointInFill ? line.isPointInFill(pt) : true;
+      var cx = inside ? pt.x : a.x - nx * 22, cy = inside ? pt.y : a.y - ny * 22, c = document.createElementNS(ns, "circle"); c.setAttribute("cx", cx.toFixed(1)); c.setAttribute("cy", cy.toFixed(1)); c.setAttribute("r", "12"); frag.appendChild(c); }
+    seats.appendChild(frag); }
+  var cl = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; }, ease = function (t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }, outE = function (t) { return 1 - Math.pow(1 - t, 3); };
+  var seg = function (p, a, b) { return cl((p - a) / (b - a)); };
+  var target = 0, cur = 0, raf = 0, last = 0;
+  function paint(p) {
+    var st = sec.style;
+    st.setProperty("--pp", ease(seg(p, .02, .2)).toFixed(4));
+    st.setProperty("--pg", seg(p, .1, .3).toFixed(4));
+    var dl = ease(seg(p, .17, .48)); line.style.strokeDashoffset = (L * (1 - dl)).toFixed(1);
+    st.setProperty("--ps", seg(p, .42, .52).toFixed(3)); st.setProperty("--pn", seg(p, .4, .5).toFixed(3));
+    st.setProperty("--pd", outE(seg(p, .48, .7)).toFixed(4));
+    st.setProperty("--pr", seg(p, .72, .88).toFixed(4));
+    st.setProperty("--pf", ease(seg(p, .72, .9)).toFixed(4));
+    st.setProperty("--pt", ease(seg(p, .78, .92)).toFixed(4));
+    if (p > .705 && !sec.classList.contains("land")) sec.classList.add("land"); else if (p < .66) sec.classList.remove("land");
+  }
+  function frame(now) { raf = 0; var dt = last ? Math.min(100, now - last) : 16.7; last = now; var k = 1 - Math.pow(.84, dt / 16.667);
+    cur += (target - cur) * k; if (Math.abs(target - cur) < .0006) cur = target; paint(cur); if (cur !== target) raf = requestAnimationFrame(frame); else last = 0; }
+  function measure() { var r = pin.getBoundingClientRect(), span = r.height - innerHeight; target = cl(-r.top / Math.max(1, span)); if (!raf) raf = requestAnimationFrame(frame); }
+  if (reduce) { paint(1); return; }
+  addEventListener("scroll", measure, { passive: true }); addEventListener("resize", measure); measure();
+})();
