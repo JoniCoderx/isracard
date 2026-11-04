@@ -675,24 +675,20 @@ const T14 = (() => {
   </div>
 </section>`;
   const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  const CRAFT = `<section id="craft14" class="fl14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="flh">
-  <div class="fl14pin"><div class="fl14stage">
-    <div class="fl14paper" aria-hidden="true">
-      <svg class="fl14draw" viewBox="-260 -170 1395 1340" preserveAspectRatio="xMidYMid meet">
-        <g class="fl14guide"><path d="M-200 0H1075M-200 1000H1075M0 -120V1120M875 -120V1120M437.5 -140V1140M-200 500H1075"/><circle cx="437.5" cy="500" r="520"/><circle cx="437.5" cy="250" r="190"/><circle cx="437.5" cy="760" r="190"/><path d="M60 130L815 870M815 130L60 870"/></g>
-        <path class="fl14line" d=""/>
-        <g class="fl14seats"></g>
-        <g class="fl14note"><path d="M-160 -60L120 210"/><text x="-215" y="-80">Proportions</text><path d="M880 620L1010 760"/><text x="880" y="810">Diamond setting</text><path d="M300 980L60 1080"/><text x="-215" y="1110">Signature form</text></g>
-      </svg>
+  const CRAFT = `<section id="craft14" class="lt14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="lth">
+  <div class="lt14stage">
+    <div class="lt14piece">
+      <img class="lt14dim" src="cut8/pave-hero-1200.webp" srcset="cut8/pave-hero-700.webp 700w, cut8/pave-hero-1200.webp 1200w" sizes="(max-width: 899px) 130vw, 66vw" width="1134" height="978" alt="" aria-hidden="true" decoding="async" loading="lazy">
+      <img class="lt14lit" src="cut8/pave-hero-1200.webp" srcset="cut8/pave-hero-700.webp 700w, cut8/pave-hero-1200.webp 1200w" sizes="(max-width: 899px) 130vw, 66vw" width="1134" height="978" alt="SOUL, the SILAVU knot in diamonds, on its chain" data-alt-he="SOUL, הקשר של SILAVU ביהלומים, על השרשרת שלו" decoding="async" loading="lazy">
+      <i class="lt14loupe" aria-hidden="true"></i>
     </div>
-    <div class="fl14neck" aria-hidden="true"><div class="fl14sw"><img class="fl14img" src="cut8/pave-clean-1200.webp" srcset="cut8/pave-clean-700.webp 700w, cut8/pave-clean-1200.webp 1200w" sizes="(max-width: 899px) 130vw, 62vw" width="1200" height="731" alt="" decoding="async"><i class="fl14glint"></i></div></div>
-    <div class="fl14txt">
-      <p class="fl14k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-      <h2 class="fl14h" id="flh" data-en="From line &lt;br&gt;to light" data-he="מקו &lt;br&gt;לאור">From line <br>to light</h2>
-      <p class="fl14s" data-en="A signature, brought to life." data-he="חתימה, שקמה לחיים.">A signature, brought to life.</p>
-      <i class="fl14rule" aria-hidden="true"></i>
+    <div class="lt14txt">
+      <p class="lt14k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
+      <h2 class="lt14h" id="lth" data-en="Bring it &lt;br&gt;to light" data-he="להביא אותו &lt;br&gt;אל האור">Bring it <br>to light</h2>
+      <p class="lt14s" data-en="A signature, brought to life." data-he="חתימה, שקמה לחיים.">A signature, brought to life.</p>
     </div>
-  </div></div>
+    <p class="lt14hint" aria-hidden="true"><span class="f" data-en="Move the light across the stones" data-he="הזיזו את האור על פני האבנים">Move the light across the stones</span><span class="c" data-en="Drag the light across the stones" data-he="גררו את האור על פני האבנים">Drag the light across the stones</span></p>
+  </div>
 </section>
 `;
   const ABOUT = `<section id="about14" data-n="05" data-title-en="The founder" data-title-he="המייסד" aria-labelledby="abh">

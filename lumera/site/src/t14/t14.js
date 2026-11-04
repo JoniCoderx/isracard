@@ -738,42 +738,6 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 700); }); else setTimeout(init, 700);
 })();
 
-/* From line to light: the scroll is the timeline. The knot is the house's own path (read from the page), drawn as a
-   graphite line with its diamond seats; the necklace is the real SOUL, cut from its own photograph. */
-(function () {
-  var sec = document.querySelector("#craft14.fl14"); if (!sec) return;
-  var pin = sec.querySelector(".fl14pin"), line = sec.querySelector(".fl14line"), seats = sec.querySelector(".fl14seats"), src = document.querySelector("#symb path");
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, L = 1;
-  if (src) { line.setAttribute("d", src.getAttribute("d")); L = line.getTotalLength();
-    line.style.strokeDasharray = L; line.style.strokeDashoffset = L;
-    /* the seats: small circles set just inside the outline, one every so often along both edges of the band */
-    var n = Math.round(L / 46), ns = "http://www.w3.org/2000/svg", frag = document.createDocumentFragment();
-    for (var i = 0; i < n; i++) { var a = line.getPointAtLength(i * L / n), b = line.getPointAtLength(Math.min(L, i * L / n + 2)), tx = b.x - a.x, ty = b.y - a.y, tl = Math.hypot(tx, ty) || 1, nx = -ty / tl, ny = tx / tl;
-      var pt = line.ownerSVGElement.createSVGPoint(); pt.x = a.x + nx * 22; pt.y = a.y + ny * 22; var inside = line.isPointInFill ? line.isPointInFill(pt) : true;
-      var cx = inside ? pt.x : a.x - nx * 22, cy = inside ? pt.y : a.y - ny * 22, c = document.createElementNS(ns, "circle"); c.setAttribute("cx", cx.toFixed(1)); c.setAttribute("cy", cy.toFixed(1)); c.setAttribute("r", "12"); frag.appendChild(c); }
-    seats.appendChild(frag); }
-  var cl = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; }, ease = function (t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }, outE = function (t) { return 1 - Math.pow(1 - t, 3); };
-  var seg = function (p, a, b) { return cl((p - a) / (b - a)); };
-  var target = 0, cur = 0, raf = 0, last = 0;
-  function paint(p) {
-    var st = sec.style;
-    st.setProperty("--pp", ease(seg(p, .02, .2)).toFixed(4));
-    st.setProperty("--pg", seg(p, .1, .3).toFixed(4));
-    var dl = ease(seg(p, .17, .48)); line.style.strokeDashoffset = (L * (1 - dl)).toFixed(1);
-    st.setProperty("--ps", seg(p, .42, .52).toFixed(3)); st.setProperty("--pn", seg(p, .4, .5).toFixed(3));
-    st.setProperty("--pd", outE(seg(p, .48, .7)).toFixed(4));
-    st.setProperty("--pr", seg(p, .72, .88).toFixed(4));
-    st.setProperty("--pf", ease(seg(p, .72, .9)).toFixed(4));
-    st.setProperty("--pt", ease(seg(p, .78, .92)).toFixed(4));
-    if (p > .705 && !sec.classList.contains("land")) sec.classList.add("land"); else if (p < .66) sec.classList.remove("land");
-  }
-  function frame(now) { raf = 0; var dt = last ? Math.min(100, now - last) : 16.7; last = now; var k = 1 - Math.pow(.84, dt / 16.667);
-    cur += (target - cur) * k; if (Math.abs(target - cur) < .0006) cur = target; paint(cur); if (cur !== target) raf = requestAnimationFrame(frame); else last = 0; }
-  function measure() { var r = pin.getBoundingClientRect(), span = r.height - innerHeight; target = cl(-r.top / Math.max(1, span)); if (!raf) raf = requestAnimationFrame(frame); }
-  if (reduce) { paint(1); return; }
-  addEventListener("scroll", measure, { passive: true }); addEventListener("resize", measure); measure();
-})();
-
 /* the lead button follows the steps everywhere, the phone's bottom bar included: Next for steps 1–4, Reserve at 5 */
 (function () {
   function init() {
@@ -787,4 +751,32 @@
     new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 900); }); else setTimeout(init, 900);
+})();
+
+/* Bring it to light: the pendant lies almost in the dark and a light wakes the stones where it passes. The pointer
+   steers it (a finger on a phone, sideways, so the page still scrolls); left alone, it wanders the knot slowly. It runs
+   only while the section is on screen, and holds still for anyone who asks for less motion. */
+(function () {
+  var sec = document.querySelector("#craft14.lt14"); if (!sec) return;
+  var piece = sec.querySelector(".lt14piece"); if (!piece) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var cx = 30, cy = 44, tx = 30, ty = 44, r = 0, rt = 0, steer = 0, raf = 0, last = 0, t0 = performance.now(), on = false, used = false;
+  var box = null; function measure() { box = piece.getBoundingClientRect(); rt = box.width * (innerWidth < 900 ? .2 : .155); if (!r) r = rt; }
+  function aim(e) { if (!box) measure(); tx = (e.clientX - box.left) / box.width * 100; ty = (e.clientY - box.top) / box.height * 100;
+    tx = Math.max(-8, Math.min(108, tx)); ty = Math.max(-8, Math.min(108, ty)); steer = performance.now();
+    if (!used) { used = true; setTimeout(function () { sec.classList.add("used"); }, 1600); } wake(); }
+  sec.addEventListener("pointermove", function (e) { if (e.pointerType === "touch" && !e.isPrimary) return; aim(e); });
+  sec.addEventListener("pointerdown", function (e) { aim(e); press = 1; });
+  var press = 0; addEventListener("pointerup", function () { press = 0; wake(); });
+  sec.addEventListener("pointerleave", function () { steer = 0; press = 0; });
+  addEventListener("resize", function () { box = null; }); addEventListener("scroll", function () { box = null; }, { passive: true });
+  function frame(now) { raf = 0; if (!on) return;
+    var dt = Math.min(.05, (now - (last || now)) / 1000); last = now; if (!box) measure();
+    if (!steer || now - steer > 2400) { var t = (now - t0) / 1000; tx = 43.5 + 19 * Math.sin(t * .33); ty = 63 + 22 * Math.sin(t * .47 + 1.1); }
+    var k = 1 - Math.exp(-dt * (steer ? 9 : 2.2)); cx += (tx - cx) * k; cy += (ty - cy) * k;
+    r += (rt * (press ? 1.28 : 1) - r) * (1 - Math.exp(-dt * 10));
+    piece.style.setProperty("--lx", cx.toFixed(2) + "%"); piece.style.setProperty("--ly", cy.toFixed(2) + "%"); piece.style.setProperty("--lr", r.toFixed(1) + "px");
+    raf = requestAnimationFrame(frame); }
+  function wake() { if (on && !raf) { last = 0; raf = requestAnimationFrame(frame); } }
+  new IntersectionObserver(function (es) { on = es[0].isIntersecting; if (on) { box = null; wake(); } }, { rootMargin: "80px 0px" }).observe(sec);
 })();
