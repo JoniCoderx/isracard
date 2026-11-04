@@ -513,3 +513,12 @@
   function up() { [].forEach.call(document.querySelectorAll('#opts .chip[data-k="cut"] .c13img'), function (im) { var s = im.getAttribute("src") || ""; if (/-240\.webp$/.test(s)) im.src = s.replace(/-240\.webp$/, "-600.webp"); }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(up, 500); }); else setTimeout(up, 500);
 })();
+
+/* the language column stands under its button with its right edge on the button's right edge */
+(function () {
+  function init() { var m = document.getElementById("langmenu"); if (!m) return setTimeout(init, 300);
+    new MutationObserver(function () { if (!m.classList.contains("open")) return;
+      var b = [].filter.call(document.querySelectorAll("#langBtn, #langBtn2, #langBtn3, .lang"), function (x) { return x.getAttribute("aria-expanded") === "true"; })[0]; if (!b) return;
+      var r = b.getBoundingClientRect(); m.style.left = Math.max(8, r.right - m.offsetWidth + 2) + "px"; m.style.top = (r.bottom + 6) + "px"; }).observe(m, { attributes: true, attributeFilter: ["class", "style"] }); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 300); }); else setTimeout(init, 300);
+})();

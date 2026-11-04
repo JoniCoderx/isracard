@@ -1270,3 +1270,31 @@ html body #configure #opts .chips.cuts .chip::after { content: ""; position: abs
 html body #configure #opts .chips.cuts .chip.on { border-color: rgba(232,212,170,.75) !important; background: radial-gradient(ellipse 80% 60% at 50% 34%, rgba(236,214,170,.14), rgba(236,214,170,0) 70%), rgba(255,255,255,.03) !important;
   box-shadow: 0 0 0 1px rgba(232,212,170,.18), 0 10px 26px -14px rgba(236,214,170,.5) !important; }
 html body #configure #opts .chips.cuts .chip.on span { color: #f6f1e6 !important; }
+
+/* the language choice, option B (the house's choice, 4 Nov): no card — the four languages stand in a column under
+   the button, right-aligned against a thin gold line, the chosen one bright with a point of light on the line */
+html body #langmenu { flex-direction: column !important; align-items: flex-end !important; gap: 12px !important; width: auto !important; padding: 8px 18px 8px 28px !important; margin-top: 8px !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  background: radial-gradient(ellipse 70% 60% at 80% 50%, rgba(0,0,0,.5), rgba(0,0,0,0) 75%) !important; }
+html body #langmenu::after { content: ""; position: absolute; right: 0; top: 6px; bottom: 6px; width: 1px; background: linear-gradient(to bottom, rgba(232,212,170,0), rgba(232,212,170,.7) 15%, rgba(232,212,170,.7) 85%, rgba(232,212,170,0)); transform-origin: 50% 0; }
+html body #langmenu.open { animation: lm14c .2s ease both !important; }
+html body #langmenu.open::after { animation: lm14l .45s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes lm14c { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lm14l { from { transform: scaleY(0); } to { transform: none; } }
+html body #langmenu button { position: relative; height: auto !important; min-height: 0 !important; padding: 2px 0 !important; border-radius: 0 !important; background: none !important; justify-content: flex-end !important;
+  color: rgba(243,239,230,.58) !important; text-shadow: 0 1px 10px rgba(0,0,0,.9); transition: color .2s ease, transform .25s cubic-bezier(.2,.8,.2,1) !important; }
+html body #langmenu button .ln { font-size: 13.5px !important; letter-spacing: .03em !important; }
+html body #langmenu button.on { background: none !important; color: #fff !important; }
+html body #langmenu button.on::after { display: block !important; content: "" !important; position: absolute; right: -21px; top: 50%; width: 5px !important; height: 5px !important; margin-top: -2.5px; border-radius: 50%; background: #e9d3a6 !important; box-shadow: 0 0 10px rgba(233,211,166,.85) !important; }
+html body #langmenu.open button { animation: lm14d .35s cubic-bezier(.2,.8,.2,1) both !important; }
+html body #langmenu.open button:nth-child(1) { animation-delay: .05s !important; } html body #langmenu.open button:nth-child(2) { animation-delay: .1s !important; }
+html body #langmenu.open button:nth-child(4) { animation-delay: .15s !important; } html body #langmenu.open button:nth-child(5) { animation-delay: .2s !important; }
+@keyframes lm14d { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+@media (hover: hover) and (pointer: fine) { html body #langmenu button:not(.on):hover { background: none !important; color: #fff !important; transform: translateX(-3px); } }
+html body #langmenu { background: radial-gradient(ellipse 75% 65% at 70% 50%, rgba(0,0,0,.72), rgba(0,0,0,.35) 60%, rgba(0,0,0,0) 85%) !important;
+  -webkit-backdrop-filter: blur(10px) !important; backdrop-filter: blur(10px) !important;
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 60% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 100% 100% at 60% 50%, #000 62%, transparent 100%);
+  padding: 14px 20px 14px 46px !important; }
+html body #langmenu::after { right: 2px; }
+html body #langmenu button.on::after { right: -21px; }
+html body #langmenu button { color: rgba(246,242,234,.74) !important; }
