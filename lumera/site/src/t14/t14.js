@@ -12,6 +12,7 @@
     pear: ["Pear", "A teardrop: round at one end, pointed at the other.", "טיפה", "טיפה: עגולה בקצה אחד, מחודדת בשני."],
     baguette: ["Baguette", "Slim and rectangular: quiet, architectural light.", "באגט", "צר ומלבני: אור שקט וארכיטקטוני."]
   };
+  window.__dd14D = D;
   var W = { en: ["Brilliance", "Timeless", "Versatile", "Select", "Back"], he: ["ברק", "על־זמני", "רב־גוני", "בחירה", "חזרה"] };
   var ic = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
   var I = [ic('<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.6 5.6l1.9 1.9M16.5 16.5l1.9 1.9M5.6 18.4l1.9-1.9M16.5 7.5l1.9-1.9"/>'),
@@ -37,7 +38,7 @@
   }
   function close() { sh.classList.remove("on"); sh.setAttribute("aria-hidden", "true"); document.documentElement.classList.remove("dd14on"); if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); }
   document.addEventListener("click", function (e) {
-    if (passing || !e.isTrusted) return;
+    if (passing || !e.isTrusted || window.__dd14off) return;
     var ch = e.target.closest && e.target.closest('#opts .chip[data-k="cut"]'); if (!ch || ch.classList.contains("on")) return;
     if (open(ch)) { e.stopImmediatePropagation(); e.preventDefault(); }
   }, true);
@@ -657,4 +658,43 @@
     var html = want.replace(/</g, "&lt;") + (m ? '<span class="cthref" dir="ltr">' + m[0] + "</span>" : "");
     if (p.innerHTML === html) return; busy = true; p.innerHTML = html; busy = false; }
   new MutationObserver(tidy).observe(p, { childList: true, characterData: true, subtree: true });
+})();
+
+/* Instant diamond preview (the house, 4 Nov): touching a shape sets it in the bracelet at once — no window, no
+   "Select". Beside the bracelet a small macro of the chosen stone shows its name; its ⓘ opens a short line about it
+   in place, only for whoever wants it. Next still moves on, and every choice is kept. */
+(function () {
+  window.__dd14off = true;
+  function init() {
+    var stage = document.getElementById("stripwrap"), opts = document.getElementById("opts"), D = window.__dd14D;
+    if (!stage || !opts || !D) return setTimeout(init, 200);
+    if (stage.querySelector(".b14pv")) return;
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    var pv = document.createElement("div"); pv.className = "b14pv";
+    pv.innerHTML = '<span class="b14pvpic"><img alt="" decoding="async"><i></i></span><span class="b14pvt"><span class="b14pvk"></span><b class="b14pvn"></b></span>' +
+      '<button type="button" class="b14pvi" aria-expanded="false"><span>i</span></button><p class="b14pvd" hidden></p>';
+    stage.appendChild(pv);
+    var img = pv.querySelector("img"), info = pv.querySelector(".b14pvi"), desc = pv.querySelector(".b14pvd");
+    function cut() { var c = opts.querySelector('.chip.on[data-k="cut"]'); return c ? c.getAttribute("data-v") : "round"; }
+    var shown = "";
+    function paint(flash) {
+      var v = cut(), d = D[v] || D.round, h = he();
+      pv.querySelector(".b14pvk").textContent = h ? "היהלום שלכם" : "Your stone";
+      pv.querySelector(".b14pvn").textContent = h ? d[2] : d[0];
+      desc.textContent = h ? d[3] : d[1];
+      info.setAttribute("aria-label", h ? "על היהלום" : "About this stone");
+      if (shown !== v) { shown = v; pv.classList.remove("swap"); void pv.offsetWidth; if (flash) pv.classList.add("swap"); img.src = "cuts13/" + v + "-600.webp"; img.alt = h ? d[2] : d[0]; }
+      var step1 = !!opts.querySelector('.opt.open .chips.cuts'); pv.classList.toggle("s1", step1);
+      pv.classList.toggle("off", !!stage.querySelector('[data-vpos="detail"].on'));
+    }
+    info.addEventListener("click", function (e) { e.stopPropagation(); var open = desc.hidden; desc.hidden = !open; info.setAttribute("aria-expanded", open ? "true" : "false"); pv.classList.toggle("open", open); });
+    document.addEventListener("click", function (e) { if (pv.classList.contains("open") && !pv.contains(e.target)) { desc.hidden = true; info.setAttribute("aria-expanded", "false"); pv.classList.remove("open"); } });
+    opts.addEventListener("click", function (e) { var f = !!(e.target.closest && e.target.closest('.chip[data-k="cut"]')); setTimeout(function () { paint(f); }, 20); });
+    addEventListener("silavu:build", function () { paint(false); });
+    new MutationObserver(function () { paint(false); }).observe(opts, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    new MutationObserver(function () { paint(false); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+    var vp = stage.querySelector(".vpos"); if (vp) new MutationObserver(function () { paint(false); }).observe(vp, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    paint(false);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 400); }); else setTimeout(init, 400);
 })();
