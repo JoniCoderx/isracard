@@ -70,15 +70,20 @@
   cards.forEach(function (c) {
     var pic = c.querySelector(".c14pic"), img = pic && pic.querySelector("img"); if (!img) return;
     var lens = document.createElement("i"); lens.className = "c14lens"; lens.setAttribute("aria-hidden", "true"); c.appendChild(lens);
+    var glare = document.createElement("i"); glare.className = "c14glare"; glare.setAttribute("aria-hidden", "true"); pic.appendChild(glare);
     var ex = 0, ey = 0, raf = 0, held = false, holdT = 0, suppress = false;
     /* the glass shows the photograph as it is drawn (object-fit: cover), never the file squeezed into the frame, and
        only over the upper picture: the name and the arrow below stay free to read and to press */
     function paint() { raf = 0; var r = c.getBoundingClientRect(), ir = img.getBoundingClientRect();
       var x = ex - r.left, y = ey - r.top - (held ? 120 : 0);
-      var off = !held && (y > r.height * 0.64 || (e2 && e2.closest && e2.closest(".c14go, .c14t")));
+      /* only a small quiet spot around the arrow is left without the glass, so the arrow can be pressed; everywhere
+         else, the pendant at the foot of SOUL included, the glass shows the piece */
+      var go = c.querySelector(".c14go"), gr = go && go.getBoundingClientRect(), pad = 16;
+      var off = !held && !!gr && ex > gr.left - pad && ex < gr.right + pad && ey > gr.top - pad && ey < gr.bottom + pad;
       c.classList.toggle("off", !!off);
       x = Math.max(R, Math.min(r.width - R, x)); y = Math.max(R, Math.min(r.height - R, y));
       lens.style.left = x + "px"; lens.style.top = y + "px";
+      c.style.setProperty("--gx", ((ex - r.left) / r.width * 100).toFixed(1) + "%"); c.style.setProperty("--gy", ((ey - r.top) / r.height * 100).toFixed(1) + "%");
       var src = img.currentSrc || img.src; if (lens.__s !== src) { lens.__s = src; lens.style.backgroundImage = 'url("' + src + '")'; }
       var nw = img.naturalWidth || 1, nh = img.naturalHeight || 1, k = Math.max(ir.width / nw, ir.height / nh), dw = nw * k, dh = nh * k;
       var dx = ir.left + (ir.width - dw) / 2, dy = ir.top + (ir.height - dh) / 2, px = r.left + x, py = r.top + y;
@@ -401,7 +406,14 @@
         if (a < .02) continue;
         var col = p.gold ? "rgba(236,214,172," : "rgba(222,228,238,";
         if (p.z > .82 || lit > .5) { ctx.beginPath(); ctx.arc(px, py, p.r * (3.2 + lit * 2), 0, 6.283); ctx.fillStyle = col + (a * .12).toFixed(3) + ")"; ctx.fill(); }
-        ctx.beginPath(); ctx.arc(px, py, p.r * (1 + lit * .7), 0, 6.283); ctx.fillStyle = col + Math.min(1, a).toFixed(3) + ")"; ctx.fill();
+        var rr = p.r * (1 + lit * .7);
+        ctx.fillStyle = col + Math.min(1, a).toFixed(3) + ")";
+        if (p.z > .55) { /* a tiny diamond: taller than wide, like a stone seen from the side */
+          ctx.beginPath(); ctx.moveTo(px, py - rr * 1.7); ctx.lineTo(px + rr * 1.05, py); ctx.lineTo(px, py + rr * 1.7); ctx.lineTo(px - rr * 1.05, py); ctx.closePath(); ctx.fill();
+          if (tw > .96 || lit > .7) { /* and now and then it catches the light */
+            var fl = rr * (4 + lit * 4); ctx.strokeStyle = col + (Math.min(1, a) * .6).toFixed(3) + ")"; ctx.lineWidth = .6;
+            ctx.beginPath(); ctx.moveTo(px - fl, py); ctx.lineTo(px + fl, py); ctx.moveTo(px, py - fl); ctx.lineTo(px, py + fl); ctx.stroke(); }
+        } else { ctx.beginPath(); ctx.arc(px, py, rr, 0, 6.283); ctx.fill(); }
         if (lit > 0) near.push({ x: px, y: py }, lit);
       }
       /* the constellation: the points near the pointer joined by hairlines, and to the pointer itself */
@@ -423,20 +435,25 @@
     window.__dust14(sec, false);
     ws.forEach(function (w) { var f = w.querySelector(".w13f"); if (f && !f.querySelector(".x14glare")) { var g = document.createElement("i"); g.className = "x14glare"; g.setAttribute("aria-hidden", "true"); f.appendChild(g); } });
     /* the landing: once, when the table is well in view */
-    var zero = function () { ws.forEach(function (w) { ["--lz", "--hx", "--hy", "--rd"].forEach(function (k) { w.style.setProperty(k, k === "--lz" ? "0px" : "0deg"); }); w.style.setProperty("--sc", "1"); }); };
+    var zero = function () { go(); ws.forEach(function (w) { ["--lz", "--hx", "--hy", "--rd"].forEach(function (k) { w.style.setProperty(k, k === "--lz" ? "0px" : "0deg"); }); w.style.setProperty("--sc", "1"); }); };
     var land = function () { sec.classList.add("land"); setTimeout(function () { zero(); sec.classList.add("ready"); }, 1900); };
     if (reduce) { zero(); sec.classList.add("land", "ready"); }
     else { var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { land(); io.disconnect(); } }, { threshold: .35 }); io.observe(sec.querySelector(".atl") || sec); }
     /* the hover, eased every frame */
     var S = ws.map(function () { return { lz: 0, hx: 0, hy: 0, st: 0, sc: 1, tlz: 0, thx: 0, thy: 0, tst: 0, tsc: 1 }; }), raf = 0;
+    var vis = false, T0 = performance.now();
+    new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) go(); }, { rootMargin: "80px" }).observe(sec);
     function tick() {
-      raf = 0; var moving = false;
+      raf = 0; var moving = vis && !reduce, t = (performance.now() - T0) / 1000;
       ws.forEach(function (w, i) { var s = S[i], e = .16;
         s.lz += (s.tlz - s.lz) * e; s.hx += (s.thx - s.hx) * e; s.hy += (s.thy - s.hy) * e; s.st += (s.tst - s.st) * e; s.sc += (s.tsc - s.sc) * e;
         if (Math.abs(s.tlz - s.lz) + Math.abs(s.thx - s.hx) + Math.abs(s.thy - s.hy) + Math.abs(s.tst - s.st) * 10 + Math.abs(s.tsc - s.sc) * 100 > .02) moving = true;
-        var r = parseFloat(getComputedStyle(w).getPropertyValue("--r")) || 0;
-        w.style.setProperty("--lz", s.lz.toFixed(2) + "px"); w.style.setProperty("--hx", s.hx.toFixed(3) + "deg"); w.style.setProperty("--hy", s.hy.toFixed(3) + "deg");
-        w.style.setProperty("--rd", (-r * s.st).toFixed(3) + "deg"); w.style.setProperty("--sc", s.sc.toFixed(4)); });
+        if (s.r == null) s.r = parseFloat(getComputedStyle(w).getPropertyValue("--r")) || 0;
+        /* at rest each print floats a little in its own time, as if held in the air above the table */
+        var calm = 1 - s.st, fz = calm * (7 * Math.sin(t * .7 + i * 2.1)), fx = calm * (1.1 * Math.sin(t * .5 + i * 1.3)), fy = calm * (1.3 * Math.sin(t * .6 + i * .7 + 1));
+        if (!sec.classList.contains("ready")) { fz = 0; fx = 0; fy = 0; }
+        w.style.setProperty("--lz", (s.lz + fz).toFixed(2) + "px"); w.style.setProperty("--hx", (s.hx + fx).toFixed(3) + "deg"); w.style.setProperty("--hy", (s.hy + fy).toFixed(3) + "deg");
+        w.style.setProperty("--rd", (-s.r * s.st + calm * .5 * Math.sin(t * .4 + i)).toFixed(3) + "deg"); w.style.setProperty("--sc", s.sc.toFixed(4)); });
       if (moving) raf = requestAnimationFrame(tick);
     }
     var go = function () { if (!raf) raf = requestAnimationFrame(tick); };
@@ -444,7 +461,7 @@
       var f = w.querySelector(".w13f");
       w.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse" || !sec.classList.contains("ready") || w.classList.contains("flip")) return;
         var b = w.getBoundingClientRect(), nx = (e.clientX - b.left) / b.width - .5, ny = (e.clientY - b.top) / b.height - .5, s = S[i];
-        s.tlz = 54; s.thx = -ny * 9; s.thy = nx * 11; s.tst = 1; s.tsc = 1.04; w.classList.add("hov");
+        s.tlz = 110; s.thx = -ny * 10; s.thy = nx * 12; s.tst = 1; s.tsc = 1.07; w.classList.add("hov");
         if (f) { f.style.setProperty("--gx", ((nx + .5) * 100).toFixed(1) + "%"); f.style.setProperty("--gy", ((ny + .5) * 100).toFixed(1) + "%"); }
         go(); });
       w.addEventListener("pointerleave", function () { var s = S[i]; s.tlz = 0; s.thx = 0; s.thy = 0; s.tst = 0; s.tsc = 1; w.classList.remove("hov"); go(); });
