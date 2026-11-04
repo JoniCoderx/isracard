@@ -1392,3 +1392,53 @@ html body #langmenu.open button { animation: lm14d2 .3s cubic-bezier(.2,.8,.2,1)
 @keyframes lm14d2 { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 html body #langmenu button.on .lc { color: #111 !important; opacity: 1 !important; }
 @keyframes lm14cap { from { clip-path: inset(0 -320px calc(100% - 44px) -320px round 999px); } to { clip-path: inset(-20px -320px -20px -320px round 0); } }
+
+/* the white-gold emblem: a canvas in place of the flat symbol, a soft contact shadow under it that breathes with the
+   float, a quiet hint until the first touch */
+html body .c14sym.gl { width: clamp(220px, 17vw, 300px) !important; height: clamp(240px, 19vw, 330px) !important; perspective: none; }
+html body .c14sym.gl > :not(.c14gl):not(.c14hint) { display: none !important; }
+html body .c14sym .c14gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; z-index: 2; }
+html body .c14sym.held .c14gl { cursor: grabbing; }
+html body .c14sym.gl::after { content: "" !important; display: block !important; position: absolute; z-index: 1; left: 50%; bottom: 4%; width: 46%; height: 16px; margin-left: -23%; border-radius: 50%; mix-blend-mode: normal; opacity: 1; animation: none !important;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.85), rgba(0,0,0,0) 70%), radial-gradient(ellipse at center, rgba(236,220,190,.08), rgba(0,0,0,0) 72%);
+  transform: scaleX(calc(1 - var(--fl, 0) * .04)) !important; }
+html body .c14hint { position: absolute; z-index: 3; left: 50%; bottom: -10px; transform: translateX(-50%); white-space: nowrap; font-size: .54rem; letter-spacing: .26em; text-transform: uppercase; color: rgba(243,236,224,.42); pointer-events: none; transition: opacity .6s ease; }
+html body .c14sym.used .c14hint { opacity: 0; }
+html[data-ns] body .c14hint { letter-spacing: .04em; font-size: .7rem; }
+@media (max-width: 899px) { html body .c14sym.gl { width: 210px !important; height: 230px !important; } }
+
+/* the way to the collection keeps clear of the cards: a wider intro column, a larger gap, tighter letters */
+@media (min-width: 900px) {
+  html body .c14wrap { grid-template-columns: minmax(310px, 340px) minmax(0, 1fr) !important; column-gap: clamp(40px, 3.6vw, 76px) !important; }
+  html body .c14intro .c14all { align-self: flex-start !important; max-width: 100%; box-sizing: border-box; }
+}
+html body .c14intro .c14all { letter-spacing: .24em !important; padding-left: 24px !important; gap: 16px !important; }
+html[data-ns] body .c14intro .c14all { letter-spacing: 0 !important; }
+
+/* the hero's title in brushed platinum: fine horizontal grain over a cool silver, one soft light crossing it as it
+   arrives, and a shadow under the letters so it reads over every frame of the film */
+html body #hero #hcap.hcap .h { color: #e9eaec !important; -webkit-text-fill-color: transparent; -webkit-background-clip: text; background-clip: text;
+  background-image: linear-gradient(100deg, rgba(255,255,255,0) 40%, rgba(255,255,255,.95) 50%, rgba(255,255,255,0) 60%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, rgba(0,0,0,.05) 1px 2px),
+    linear-gradient(180deg, #f6f7f8 0%, #d9dcdf 38%, #f1f2f3 55%, #c3c7cb 100%) !important;
+  background-size: 260% 100%, 100% 3px, 100% 100% !important; background-repeat: no-repeat, repeat, no-repeat !important; background-position: 135% 0, 0 0, 0 0;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.55)) drop-shadow(0 4px 18px rgba(0,0,0,.45)); }
+html body #hero #hcap.hcap .h em { -webkit-text-fill-color: transparent; color: inherit !important; }
+html body #hero #hcap.hcap .h.in, html body #hero.in #hcap.hcap .h { animation: h14sweep 1.9s cubic-bezier(.4,0,.2,1) .9s 1 both; }
+@keyframes h14sweep { from { background-position: 135% 0, 0 0, 0 0; } to { background-position: -35% 0, 0 0, 0 0; } }
+@media (prefers-reduced-motion: reduce) { html body #hero #hcap.hcap .h { animation: none !important; background-position: 135% 0, 0 0, 0 0 !important; } }
+/* the scroll arrow answers the scroll: it sinks a little, its chevron lengthening, and fades as the film leaves */
+html body #hero .h14down { transform: translateY(calc(var(--hs, 0) * 22px)); opacity: calc(1 - var(--hs, 0) * 1.3); transition: background-color .15s ease; }
+html body #hero .h14down::before { transform: translateY(calc(-2px + var(--hs, 0) * 3px)) rotate(45deg) scale(calc(1 + var(--hs, 0) * .35)); }
+/* the title's words are animated blocks of their own, so each word carries the platinum, and the light crosses them in turn */
+html body #hero #hcap.hcap .h, html body #hero #hcap.hcap .h.in { background: none !important; -webkit-text-fill-color: currentColor; animation: none !important; color: #e9eaec !important; }
+html body #hero #hcap.hcap .h .w > span { -webkit-text-fill-color: transparent; color: transparent; -webkit-background-clip: text; background-clip: text; padding: 0 .02em;
+  background-image: linear-gradient(100deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.95) 50%, rgba(255,255,255,0) 62%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, rgba(0,0,0,.05) 1px 2px),
+    linear-gradient(180deg, #f6f7f8 0%, #d9dcdf 38%, #f1f2f3 55%, #c3c7cb 100%);
+  background-size: 300% 100%, 100% 3px, 100% 100%; background-repeat: no-repeat, repeat, no-repeat; background-position: 150% 0, 0 0, 0 0; }
+html body #hero #hcap.hcap .h.in .w > span { animation: h14sweep 1.1s cubic-bezier(.4,0,.2,1) 1 both; }
+html body #hero #hcap.hcap .h.in .w:nth-of-type(1) > span { animation-delay: 1.0s; } html body #hero #hcap.hcap .h.in .w:nth-of-type(2) > span { animation-delay: 1.18s; }
+html body #hero #hcap.hcap .h.in .w:nth-of-type(3) > span { animation-delay: 1.36s; } html body #hero #hcap.hcap .h.in em .w > span { animation-delay: 1.54s; }
+@keyframes h14sweep { from { background-position: 150% 0, 0 0, 0 0; } to { background-position: -50% 0, 0 0, 0 0; } }
+@media (prefers-reduced-motion: reduce) { html body #hero #hcap.hcap .h .w > span { animation: none !important; } }

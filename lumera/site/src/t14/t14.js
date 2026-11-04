@@ -531,3 +531,114 @@
       if (m.style.left !== L) m.style.left = L; if (m.style.top !== T) m.style.top = T; }).observe(m, { attributes: true, attributeFilter: ["class", "style"] }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 })();
+
+/* the emblem as a piece of white gold (the house, 4 Nov): the SILAVU symbol itself — its own path, read from the page,
+   never redrawn or mirrored — given thickness and a polished bevel, lit by a photographer's studio so the light moves
+   across the metal as it turns. Drag to turn it any way; let go and it carries on with its own weight, slows, and
+   settles into a slow float. Double-click (or double-tap) for a slow showcase turn. three.js is fetched only when the
+   collections come near; until then, and without WebGL, the flat gold symbol stays. */
+(function () {
+  var host = document.querySelector(".c14sym"); if (!host || !window.WebGLRenderingContext) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, started = false;
+  function start() {
+    if (started) return; started = true;
+    import("./vendor14/three.module.min.js").then(build, function () {});
+  }
+  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); start(); } }, { rootMargin: "120% 0px" }).observe(host);
+
+  function build(T) {
+    var d = (document.querySelector("#symb path") || {}).getAttribute && document.querySelector("#symb path").getAttribute("d"); if (!d) return;
+    /* the symbol's own path, as shapes: x as drawn, y turned up (the page draws downward), nothing else changed */
+    var sp = new T.ShapePath(), tok = d.match(/[MCLZ]|-?\d*\.?\d+(?:e-?\d+)?/gi), i = 0, cmd = "", n = function () { return parseFloat(tok[i++]); };
+    while (i < tok.length) {
+      if (/[MCLZ]/i.test(tok[i])) cmd = tok[i++].toUpperCase();
+      if (cmd === "M") { sp.moveTo(n(), -n()); cmd = "L"; }
+      else if (cmd === "L") sp.lineTo(n(), -n());
+      else if (cmd === "C") { var a = n(), b = -n(), c = n(), e = -n(), f = n(), g = -n(); sp.bezierCurveTo(a, b, c, e, f, g); }
+      else if (cmd === "Z") { var cp = sp.currentPath; if (cp && cp.curves.length) { var s0 = cp.curves[0].getPoint(0), pe = cp.currentPoint; if (s0.distanceTo(pe) > .01) sp.lineTo(s0.x, s0.y); } }
+      else i++;
+    }
+    var shapes = sp.toShapes(T.ShapeUtils.isClockWise(sp.subPaths[0].getPoints()));
+    var geo = new T.ExtrudeGeometry(shapes, { depth: 64, bevelEnabled: true, bevelThickness: 18, bevelSize: 9, bevelOffset: -2, bevelSegments: 8, curveSegments: 40 });
+    geo.center(); var S = 1 / 1000; geo.scale(S, S, S); geo.computeVertexNormals();
+
+    var W = 0, H = 0, cv = document.createElement("canvas"); cv.className = "c14gl"; cv.setAttribute("aria-label", "The SILAVU emblem in white gold. Drag to turn it."); cv.setAttribute("role", "img");
+    var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, powerPreference: "high-performance" });
+    r.setPixelRatio(Math.min(2, devicePixelRatio || 1)); r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.05; r.outputColorSpace = T.SRGBColorSpace;
+    var scene = new T.Scene(), cam = new T.PerspectiveCamera(30, 1, .1, 20); cam.position.set(0, 0, 3.15);
+    /* the studio the metal reflects: tall softboxes left and right, a wide one overhead, a warm card low, black between */
+    var studio = new T.Scene(); studio.background = new T.Color(0x050505);
+    var box = function (w, h, x, y, z, col, k) { var m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: new T.Color(col).multiplyScalar(k), side: T.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); studio.add(m); };
+    box(1.4, 4, -3.2, .4, 1.2, 0xffffff, 3.2); box(1.1, 4, 3.4, .2, .4, 0xf2f5ff, 2.4); box(5, 1.2, 0, 3.4, .8, 0xffffff, 2.2);
+    box(3, .7, 0, -2.6, 1.8, 0xffe7c4, .9); box(1.2, 2.4, .6, .4, -3.4, 0xffffff, 1.6); box(.5, 3, -1.6, 0, -3.2, 0xffffff, 1.2);
+    /* and a large soft one behind the viewer, graded, so a face turned to the camera reads as polished white gold, not black */
+    var back = new T.Mesh(new T.PlaneGeometry(7, 4.5), new T.ShaderMaterial({ side: T.DoubleSide, vertexShader: "varying vec2 v; void main(){ v = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+      fragmentShader: "varying vec2 v; void main(){ float g = smoothstep(0.0, 1.0, v.y) * 0.9 + 0.25; float e = 1.0 - smoothstep(0.25, 0.5, abs(v.x - 0.5)); gl_FragColor = vec4(vec3(g * e * 1.25), 1.0); }" }));
+    back.position.set(.3, .5, 4.2); back.lookAt(0, 0, 0); studio.add(back);
+    studio.background = new T.Color(0x121212);
+    var pm = new T.PMREMGenerator(r); scene.environment = pm.fromScene(studio, .02).texture; pm.dispose();
+    var gold = new T.MeshPhysicalMaterial({ color: 0xece8e1, metalness: 1, roughness: .2, clearcoat: .35, clearcoatRoughness: .1, envMapIntensity: 1.35 });
+    var mesh = new T.Mesh(geo, gold), rig = new T.Group(); rig.add(mesh); scene.add(rig);
+    var key = new T.DirectionalLight(0xffffff, .6); key.position.set(-2, 3, 4); scene.add(key);
+    /* the orbit: a hairline of the same metal, tilted, with one bead of light travelling it */
+    var ring = new T.Mesh(new T.TorusGeometry(.72, .0035, 8, 220), new T.MeshPhysicalMaterial({ color: 0xe8dcc4, metalness: 1, roughness: .25 }));
+    var bead = new T.Mesh(new T.SphereGeometry(.011, 16, 12), new T.MeshBasicMaterial({ color: 0xfff6e2 }));
+    var orbit = new T.Group(); orbit.add(ring); orbit.add(bead); orbit.rotation.set(1.28, .18, -.32); scene.add(orbit);
+
+    host.classList.add("gl"); host.insertBefore(cv, host.firstChild);
+    var hint = document.createElement("span"); hint.className = "c14hint"; hint.setAttribute("aria-hidden", "true"); host.appendChild(hint);
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    var coarse = matchMedia("(pointer: coarse)").matches;
+    var words = function () { hint.textContent = he() ? (coarse ? "גררו לסובב · הקישו פעמיים" : "גררו לסובב · לחיצה כפולה") : (coarse ? "Drag to turn · double-tap" : "Drag to turn · double-click"); };
+    words(); new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+    function size() { var b = cv.getBoundingClientRect(); if (!b.width) return; W = b.width; H = b.height; r.setSize(W, H, false); cam.aspect = W / H; cam.updateProjectionMatrix(); }
+    size(); addEventListener("resize", size);
+
+    /* motion: an orientation, an angular velocity that decays like a heavy thing, and a resting pose it returns to */
+    var q = new T.Quaternion(), w = new T.Vector3(), rest = new T.Quaternion(), tmp = new T.Quaternion(), ax = new T.Vector3(), eu = new T.Euler();
+    var drag = null, lastUp = 0, lastTap = 0, show = null, vis = false, raf = 0, t0 = performance.now(), last = 0;
+    q.setFromEuler(eu.set(-.08, -.5, 0));
+    function turn(dx, dy, k) { /* a drag turns the piece about the axis across the drag, in the camera's frame */
+      var len = Math.hypot(dx, dy); if (!len) return; ax.set(dy, dx, 0).normalize(); tmp.setFromAxisAngle(ax, len * k); q.premultiply(tmp); }
+    cv.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY, t: performance.now(), vx: 0, vy: 0 }; show = null; cv.setPointerCapture(e.pointerId); host.classList.add("held", "used"); w.set(0, 0, 0); go(); });
+    cv.addEventListener("pointermove", function (e) { if (!drag) return; var now = performance.now(), dx = e.clientX - drag.x, dy = e.clientY - drag.y, dt = Math.max(8, now - drag.t);
+      turn(dx, dy, .011); drag.vx = drag.vx * .5 + dx / dt * .5; drag.vy = drag.vy * .5 + dy / dt * .5; drag.x = e.clientX; drag.y = e.clientY; drag.t = now; go(); });
+    var up = function () { if (!drag) return; if (performance.now() - drag.t < 90) { w.set(drag.vy, drag.vx, 0).multiplyScalar(11); if (w.length() > 14) w.setLength(14); } drag = null; lastUp = performance.now(); host.classList.remove("held"); go(); };
+    cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
+    var showcase = function () { show = { t: performance.now(), q0: q.clone() }; w.set(0, 0, 0); host.classList.add("used"); go(); };
+    cv.addEventListener("dblclick", function (e) { e.preventDefault(); showcase(); });
+    cv.addEventListener("touchend", function () { var now = performance.now(); if (now - lastTap < 320) showcase(); lastTap = now; }, { passive: true });
+
+    var ease = function (p) { return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; };
+    function frame(now) {
+      raf = 0; var dt = Math.min(.05, (now - (last || now)) / 1000), t = (now - t0) / 1000; last = now;
+      /* the pose it floats in: turned a little, breathing, never still */
+      var f = reduce ? 0 : 1;
+      rest.setFromEuler(eu.set(-.06 + f * Math.sin(t * .37) * .07, -.42 + f * Math.sin(t * .23) * .32, f * Math.sin(t * .29) * .035));
+      if (show) {
+        var p = Math.min(1, (now - show.t) / 5200), a = ease(p) * Math.PI * 2;
+        tmp.setFromAxisAngle(ax.set(0, 1, 0), a); var tq = rest.clone().multiply(tmp);
+        q.copy(show.q0).slerp(tq, Math.min(1, p / .14)); if (p >= 1) show = null;
+      } else if (!drag) {
+        if (w.lengthSq() > 1e-6) { var wl = w.length(); tmp.setFromAxisAngle(ax.copy(w).divideScalar(wl), wl * dt); q.premultiply(tmp); w.multiplyScalar(Math.exp(-dt * 1.5)); if (wl < .05) w.set(0, 0, 0); }
+        var since = (now - lastUp) / 1000, pull = since > .9 ? 1 - Math.exp(-dt * (w.lengthSq() > .01 ? .25 : 1.1)) : 0;
+        if (pull) q.slerp(rest, pull);
+      }
+      rig.quaternion.copy(q); rig.position.y = f * Math.sin(t * .8) * .028;
+      host.style.setProperty("--fl", (rig.position.y * 100).toFixed(2));
+      orbit.rotation.z = -.32 + t * (reduce ? 0 : .12); bead.position.set(Math.cos(t * .9) * .72, Math.sin(t * .9) * .72, 0);
+      r.render(scene, cam);
+      if (vis && (!reduce || drag || show || w.lengthSq() > 1e-6)) go();
+    }
+    function go() { if (!raf) raf = requestAnimationFrame(frame); }
+    new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { size(); last = 0; go(); } }).observe(host);
+    go();
+  }
+})();
+
+/* the hero's arrow follows the first part of the scroll */
+(function () {
+  var hero = document.getElementById("hero"); if (!hero || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var raf = 0; function f() { raf = 0; var v = Math.max(0, Math.min(1, scrollY / (innerHeight * .6))); hero.style.setProperty("--hs", v.toFixed(3)); }
+  addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(f); }, { passive: true }); f();
+})();
