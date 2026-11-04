@@ -632,3 +632,35 @@ html body .c14card.lens.off .c14lens { opacity: 0; transform: scale(.85); }
   html body .c14intro .c14rule { margin: 18px auto; } html body .c14intro .c14lead { margin: 0 auto; }
   html body .c14cards { margin-top: 30px !important; } html body .c14intro .c14all { margin-top: 30px !important; }
 }
+
+/* the header, refined (the house, 4 Nov): the three links on the left, the mark dead centre, the private viewing and
+   then the language on the far right; quiet silver outlines on restrained glass, one rhythm of spacing, and a glass
+   band that keeps it readable over the film and while the page scrolls */
+html body header.sh { --hs-line: rgba(214,219,226,.34); --hs-glass: rgba(255,255,255,.045);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important; align-items: center !important; column-gap: 24px !important;
+  padding: max(18px, env(safe-area-inset-top)) clamp(20px, 3.4vw, 64px) 16px !important; transition: opacity 1.2s cubic-bezier(.2,.8,.2,1), background-color .4s ease, box-shadow .4s ease !important; }
+html body header.sh::before { background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.18) 65%, rgba(0,0,0,0)) !important; }
+html body header.sh.scrolled { background: rgba(8,8,9,.58) !important; -webkit-backdrop-filter: blur(18px) saturate(1.15) !important; backdrop-filter: blur(18px) saturate(1.15) !important; box-shadow: 0 1px 0 rgba(214,219,226,.10) !important; }
+html body header.sh #topnav { grid-column: 1; grid-row: 1; justify-self: start; display: flex !important; align-items: center; gap: clamp(22px, 2.2vw, 36px) !important; margin: 0 !important; }
+html body header.sh #topnav a { font-size: .64rem !important; letter-spacing: .26em !important; color: rgba(246,243,237,.86) !important; padding: 8px 0 !important; transition: color .15s ease; }
+html body header.sh #topnav a:hover { color: #fff !important; }
+html body header.sh .mark { grid-column: 2; grid-row: 1; justify-self: center; margin: 0 !important; }
+html body header.sh .hr { grid-column: 3; grid-row: 1; justify-self: end; display: flex !important; align-items: center; gap: 12px !important; margin: 0 !important; }
+html body header.sh .hr .lang { order: 2; }
+html body header.sh .hr .hbook { order: 1; }
+html body header.sh .lang, html body header.sh .btn.hbook { height: 42px !important; min-height: 0 !important; box-sizing: border-box !important; border: 1px solid var(--hs-line) !important; background: var(--hs-glass) !important;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #f4f2ee !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important; transition: border-color .2s ease, background-color .2s ease, color .2s ease !important; }
+html body header.sh .lang { width: 42px !important; padding: 0 !important; border-radius: 50% !important; font-size: .6rem !important; letter-spacing: .12em !important; display: grid !important; place-items: center !important; }
+html body header.sh .btn.hbook { padding: 0 24px !important; border-radius: 999px !important; font-size: .6rem !important; letter-spacing: .26em !important; display: inline-flex !important; align-items: center !important; }
+html body header.sh .btn.hbook .x-sheen { display: none !important; }
+html body header.sh .lang:hover, html body header.sh .btn.hbook:hover { border-color: rgba(226,230,236,.7) !important; background: rgba(255,255,255,.09) !important; color: #fff !important; }
+html[data-ns] body header.sh #topnav a, html[data-ns] body header.sh .btn.hbook { letter-spacing: 0 !important; font-size: .8rem !important; }
+@media (max-width: 999px) {
+  html body header.sh { padding: max(12px, env(safe-area-inset-top)) 16px 10px !important; column-gap: 12px !important; }
+  html body header.sh.scrolled { background: rgba(6,6,7,.78) !important; }
+  html body header.sh #topnav { display: none !important; }
+  html body header.sh .mark, html body header.sh .hr, html body header.sh .menubtn { grid-row: 1; }
+  html body header.sh .menubtn { grid-column: 1; justify-self: start; border: 1px solid var(--hs-line) !important; border-radius: 50% !important; background: var(--hs-glass) !important; width: 42px; height: 42px; display: grid !important; place-items: center; }
+  html body header.sh .hr .hbook { display: none !important; }
+  html body header.sh .lang { width: 40px !important; height: 40px !important; }
+}
