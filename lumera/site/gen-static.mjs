@@ -719,7 +719,7 @@ const T14 = (() => {
     h = h.replace(/data-en="Design your bracelet" data-he="([^"]*)">Design your bracelet</, 'data-en="Build your bracelet" data-he="$1">Build your bracelet<');
     /* the enquiry: one word, one line, four fields */
     h = h.replace('data-en="Tell us what <em>you have in mind.</em>" data-he="ספרו לנו <em>על מה חשבתם.</em>">Tell us what <em>you have in mind.</em>', 'data-en="Enquire" data-he="פנייה">Enquire');
-    h = h.replace(/(<p class="fine rv d3"[^>]*) data-en="Every message[^"]*" data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Tell us about the moment it is for, the stones you dream of, the wrist it will live on. We take it from there, in person." data-he="ספרו לנו לאיזה רגע הוא נועד, על האבנים שאתם חולמים עליהן ועל פרק היד שיענוד אותו. מכאן נמשיך יחד, באופן אישי.">Tell us about the moment it is for, the stones you dream of, the wrist it will live on. We take it from there, in person.</p>`);
+    h = h.replace(/(<p class="fine rv d3"[^>]*) data-en="Every message[^"]*" data-he="[^"]*">[^<]*<\/p>/, `$1 data-en="Tell us what you envision. We'll take care of the rest." data-he="ספרו לנו מה אתם מדמיינים. את השאר נעשה אנחנו.">Tell us what you envision. We'll take care of the rest.</p>`);
     h = h.replace('<label for="fName" data-en="Name" data-he="שם">Name</label>', '<label for="fName" data-en="Full name" data-he="שם מלא">Full name</label>');
     h = h.replace('<label for="fContact" data-en="Phone or email" data-he="טלפון או אימייל">Phone or email</label>', '<label for="fContact" data-en="Email or phone" data-he="אימייל או טלפון">Email or phone</label>');
     /* the enquiry and the footer (the house's reference of 4 Nov 2026): a private-concierge line, fields with their

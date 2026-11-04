@@ -1442,3 +1442,50 @@ html body #hero #hcap.hcap .h.in .w:nth-of-type(1) > span { animation-delay: 1.0
 html body #hero #hcap.hcap .h.in .w:nth-of-type(3) > span { animation-delay: 1.36s; } html body #hero #hcap.hcap .h.in em .w > span { animation-delay: 1.54s; }
 @keyframes h14sweep { from { background-position: 150% 0, 0 0, 0 0; } to { background-position: -50% 0, 0 0, 0 0; } }
 @media (prefers-reduced-motion: reduce) { html body #hero #hcap.hcap .h .w > span { animation: none !important; } }
+
+/* the enquiry, final polish (the house, 4 Nov): the button closer to the form, in the house's outlined style with its
+   arrow in a ring; once the concierge has the enquiry, the form gives way to a compact thank-you */
+html body #enquire .csub { margin-top: 14px !important; gap: 18px; }
+html body #enquire #cform .csub .btn.solid { height: 56px; min-width: 0 !important; padding: 0 8px 0 28px !important; gap: 22px !important; border-radius: 999px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)) !important; color: #f3ecdd !important; border: 1px solid rgba(220,206,178,.5) !important;
+  font-size: .62rem !important; letter-spacing: .3em !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important; transition: border-color .25s ease, box-shadow .3s ease, color .2s ease !important; }
+html body #enquire #cform .csub .btn.solid::after { width: 40px !important; height: 40px !important; border-radius: 50%; flex: 0 0 auto; -webkit-mask: none !important; mask: none !important; background: none !important;
+  border: 1px solid rgba(220,206,178,.5); box-sizing: border-box; content: "→" !important; display: grid !important; place-items: center; font-size: .95rem; letter-spacing: 0; color: #f3ecdd;
+  transition: background-color .3s ease, color .3s ease, transform .35s cubic-bezier(.2,.8,.2,1) !important; }
+html[dir="rtl"] body #enquire #cform .csub .btn.solid::after { content: "←" !important; }
+html body #enquire #cform .csub .btn.solid:hover, html body #enquire #cform .csub .btn.solid:focus-visible { background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)) !important; border-color: rgba(236,214,170,.9) !important; color: #fff !important; box-shadow: 0 14px 34px -14px rgba(236,214,170,.45) !important; }
+html body #enquire #cform .csub .btn.solid:hover::after { background: linear-gradient(180deg, #f6f0e4, #ddd0b6) !important; color: #111; border-color: transparent; transform: translateX(3px); }
+html body #enquire #cform .csub .btn.solid[aria-busy="true"]::after { content: "" !important; border-top-color: transparent; animation: c14spin .8s linear infinite; }
+@keyframes c14spin { to { transform: rotate(360deg); } }
+html[data-ns] body #enquire #cform .csub .btn.solid { letter-spacing: 0 !important; font-size: .82rem !important; }
+/* a failure keeps everything typed and says so plainly, with the way to try again */
+html body #enquire #cform .cerr:not([hidden]) { display: block; margin: 14px 0 0 !important; padding: 12px 16px !important; border-radius: 12px; border: 1px solid rgba(231,176,165,.4); background: rgba(231,176,165,.06); color: #ecc2b8 !important; font-size: .82rem !important; line-height: 1.6; }
+html body #enquire #cform .cerr .lnk { color: #f3ecdd !important; margin-inline-start: 6px; }
+/* delivered: only the thank-you, compact */
+html body #enquire #cform.delivered > :not(.cthanks) { display: none !important; }
+html body #enquire #cform.delivered .cthanks { max-width: 440px !important; gap: 10px !important; padding: 26px 28px !important; border-radius: 18px !important; }
+html body #enquire #cform .cthanks .cthk { width: 34px !important; height: 34px !important; }
+html body #enquire #cform .cthanks .cthh { margin: 4px 0 0 !important; font-weight: 300 !important; font-size: clamp(1.25rem, 1.8vw, 1.6rem) !important; letter-spacing: .14em !important; line-height: 1.25 !important; text-transform: uppercase; }
+html body #enquire #cform .cthanks .cthp { margin: 0 !important; font-size: .9rem !important; line-height: 1.7 !important; color: rgba(243,236,224,.78) !important; }
+html body #enquire #cform .cthanks .cthref { display: inline-block; white-space: nowrap; color: #f3ecdd; letter-spacing: .04em; }
+html body #enquire #cform .cthanks .cthagain { margin-top: 6px !important; padding: 0 !important; border: 0 !important; background: none !important; font-size: .74rem !important; letter-spacing: .02em !important; text-transform: none !important;
+  color: rgba(243,236,224,.6) !important; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(243,236,224,.25); }
+html body #enquire #cform .cthanks .cthagain::after { display: none !important; }
+html body #enquire #cform .cthanks .cthagain:hover { color: #f3ecdd !important; text-decoration-color: rgba(243,236,224,.6); }
+/* right-to-left: the words and the fields read from the right */
+html[dir="rtl"] body #enquire .cbody, html[dir="rtl"] body #enquire #cform { text-align: right; }
+html[dir="rtl"] body #enquire #cform .field input, html[dir="rtl"] body #enquire #cform .field textarea { text-align: right; }
+html body #enquire #cform .csub .btn.solid { align-items: center !important; }
+html body #enquire #cform .csub .btn.solid::after { position: static !important; inset: auto !important; margin: 0 !important; align-self: center !important; transform: none; }
+html body #enquire #cform .chan { margin: 0 !important; }
+html body #enquire #cform .fields { margin-bottom: 0 !important; }
+html body #enquire .csub { margin-top: 6px !important; }
+html body #enquire #cform .cerr:not([hidden]) { text-align: start; }
+/* the capsule in the header's own glass (the house, 4 Nov: "keep it transparent like before I clicked it") */
+html body #langmenu { background: rgba(255,255,255,.06) !important; -webkit-backdrop-filter: blur(16px) saturate(1.15) !important; backdrop-filter: blur(16px) saturate(1.15) !important;
+  border: 1px solid rgba(214,219,226,.42) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 30px -18px rgba(0,0,0,.6) !important; }
+html body #langmenu button { color: rgba(246,243,237,.82) !important; text-shadow: 0 1px 6px rgba(0,0,0,.45) !important; }
+html body #langmenu button.on { background: rgba(255,255,255,.16) !important; color: #fff !important; box-shadow: inset 0 0 0 1px rgba(232,236,242,.55) !important; }
+html body #langmenu button.on .lc { color: #fff !important; }
+@media (hover: hover) and (pointer: fine) { html body #langmenu button:not(.on):hover { background: rgba(255,255,255,.1) !important; } }
+html body #langmenu button .ln { background: rgba(20,19,18,.55) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-color: rgba(214,219,226,.3) !important; }

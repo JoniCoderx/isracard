@@ -648,3 +648,13 @@
   var raf = 0; function f() { raf = 0; var v = Math.max(0, Math.min(1, scrollY / (innerHeight * .6))); hero.style.setProperty("--hs", v.toFixed(3)); }
   addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(f); }, { passive: true }); f();
 })();
+
+/* the thank-you: a shorter line, and the reference kept on one line */
+(function () {
+  var p = document.getElementById("cthp"); if (!p) return; var busy = false;
+  function tidy() { if (busy) return; var t = p.textContent, m = t.match(/[A-Z]-\d{3,5}-\d{3,6}/), he = document.documentElement.getAttribute("data-lang") === "he";
+    var want = (he ? "הפנייה שלכם התקבלה, ונחזור אליכם באופן אישי." : "Your enquiry is with our concierge. We will be in touch personally.") + (m ? " " + (he ? "מספר הפנייה:" : "Reference") + " " : "");
+    var html = want.replace(/</g, "&lt;") + (m ? '<span class="cthref" dir="ltr">' + m[0] + "</span>" : "");
+    if (p.innerHTML === html) return; busy = true; p.innerHTML = html; busy = false; }
+  new MutationObserver(tidy).observe(p, { childList: true, characterData: true, subtree: true });
+})();
