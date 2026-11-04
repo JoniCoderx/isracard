@@ -506,7 +506,7 @@ const HERO_ALT = {
                     he: "תליון SILAVU SOUL על עורה של אישה, מעל מחשוף שמלת משי שחורה, יהלומי הפאווה שלו תופסים את האור" },
   "hero-dunes": { en: "A woman in a long black silk gown on the crest of a desert dune at sunset, the silk lifted by the wind, the SILAVU SOUL pendant at her throat",
                   he: "אישה בשמלת משי שחורה ארוכה על רכס דיונה במדבר בשקיעה, הרוח מרימה את המשי, תליון SILAVU SOUL על צווארה" },
-  "hero-loop": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
+  "hero-desire": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
                  he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" }
 };
 /* a test page's chapters (extras: css, js, inject, swap, edit) applied to a
@@ -648,7 +648,7 @@ const T13 = (() => {
   };
   return { css: fs.readFileSync(path.join(dir, "t13.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t13.js"), "utf8") + "</script>", edit, inject: [['<header class="sh"', "<script>window.__boxBlend = 1; window.__assemble = 1; /* no logo screen on the way in: the film and the words are the first thing seen */ try { localStorage.setItem(\"silavu-seen\", \"1\"); } catch (e) {}</script>\n"]] };
 })();
-heroTest("test13", "hero-loop", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
+heroTest("test13", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13]);
 /* /test14/: the house's reference of 3 Nov 2026 (five phone screens: the film, the signature collections as three
    large cards, the builder, the craft, the enquiry), built on /test13/ with the box, Up close and the full grid taken
    out. Every picture is the house's own; src/t14/ holds the look and the film's play button. */
@@ -716,7 +716,7 @@ const T14 = (() => {
   };
   return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit };
 })();
-heroTest("test14", "hero-loop", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
+heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
