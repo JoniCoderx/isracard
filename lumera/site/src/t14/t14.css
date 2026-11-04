@@ -1686,10 +1686,10 @@ html body #configure .total #reserve::after { height: auto !important; align-sel
    knot by itself. ════ */
 html body #craft14.lt14 { display: block !important; max-width: none !important; padding: 0 !important; margin: 0 !important; background: #000 !important; }
 html body .lt14stage { position: relative; height: 100svh; min-height: 640px; max-height: 1100px; overflow: hidden; background: #000; }
-html body .lt14piece { --lx: 44%; --ly: 60%; --lr: 180px; position: absolute; left: 56%; top: 50%; height: min(86svh, 940px); aspect-ratio: 1134 / 978; transform: translate(-43.7%, -50%); touch-action: pan-y; }
+html body .lt14piece { --lx: 50%; --ly: 60%; --lr: 180px; position: absolute; left: 56%; top: 52%; height: min(96svh, 1040px); aspect-ratio: 1; transform: translate(-50%, -50%); touch-action: pan-y; }
 html body .lt14piece img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
-html body .lt14dim { filter: brightness(.14) contrast(1.15); }
-html body .lt14lit { filter: brightness(1.1) contrast(1.04);
+html body .lt14dim { filter: brightness(.24) contrast(1.12); }
+html body .lt14lit { filter: brightness(1.18) contrast(1.06);
   -webkit-mask: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 34%, rgba(0,0,0,.45) 66%, transparent 100%);
           mask: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 34%, rgba(0,0,0,.45) 66%, transparent 100%); }
 html body .lt14piece::before { content: ""; position: absolute; inset: -10%; background: radial-gradient(circle calc(var(--lr) * 1.5) at calc(10% / 1.2 + var(--lx) / 1.2) calc(10% / 1.2 + var(--ly) / 1.2), rgba(255,240,214,.075), rgba(0,0,0,0) 70%); pointer-events: none; }
@@ -1708,8 +1708,8 @@ html[dir="rtl"] body .lt14piece { left: 44%; }
 @media (pointer: coarse) { html body .lt14hint .f { display: none; } html body .lt14hint .c { display: inline; } }
 @media (max-width: 899px) {
   html body .lt14stage { height: 100svh; min-height: 600px; }
-  html body .lt14piece, html[dir="rtl"] body .lt14piece { left: 50%; top: 58%; height: auto; width: 124vw; }
-  html body .lt14dim { filter: brightness(.18) contrast(1.15); }
+  html body .lt14piece, html[dir="rtl"] body .lt14piece { left: 50%; top: 60%; height: auto; width: 120vw; }
+  html body .lt14dim { filter: brightness(.28) contrast(1.12); }
   html body .lt14txt, html[dir="rtl"] body .lt14txt { left: 24px; right: 24px; top: 104px; bottom: auto; transform: none; gap: 12px; }
   html body .lt14hint { bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); }
   html body .lt14h { font-size: 1.9rem; }

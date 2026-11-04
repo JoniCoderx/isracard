@@ -678,8 +678,8 @@ const T14 = (() => {
   const CRAFT = `<section id="craft14" class="lt14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="lth">
   <div class="lt14stage">
     <div class="lt14piece">
-      <img class="lt14dim" src="cut8/pave-hero-1200.webp" srcset="cut8/pave-hero-700.webp 700w, cut8/pave-hero-1200.webp 1200w" sizes="(max-width: 899px) 130vw, 66vw" width="1134" height="978" alt="" aria-hidden="true" decoding="async" loading="lazy">
-      <img class="lt14lit" src="cut8/pave-hero-1200.webp" srcset="cut8/pave-hero-700.webp 700w, cut8/pave-hero-1200.webp 1200w" sizes="(max-width: 899px) 130vw, 66vw" width="1134" height="978" alt="SOUL, the SILAVU knot in diamonds, on its chain" data-alt-he="SOUL, הקשר של SILAVU ביהלומים, על השרשרת שלו" decoding="async" loading="lazy">
+      <img class="lt14dim" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 140vw, 100svh" width="1728" height="1728" alt="" aria-hidden="true" decoding="async" loading="lazy">
+      <img class="lt14lit" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 140vw, 100svh" width="1728" height="1728" alt="SOUL, the SILAVU knot in diamonds, on its chain" data-alt-he="SOUL, הקשר של SILAVU ביהלומים, על השרשרת שלו" decoding="async" loading="lazy">
       <i class="lt14loupe" aria-hidden="true"></i>
     </div>
     <div class="lt14txt">

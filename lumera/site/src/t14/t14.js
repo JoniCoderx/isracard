@@ -760,7 +760,7 @@
   var sec = document.querySelector("#craft14.lt14"); if (!sec) return;
   var piece = sec.querySelector(".lt14piece"); if (!piece) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var cx = 30, cy = 44, tx = 30, ty = 44, r = 0, rt = 0, steer = 0, raf = 0, last = 0, t0 = performance.now(), on = false, used = false;
+  var cx = 36, cy = 44, tx = 36, ty = 44, r = 0, rt = 0, steer = 0, raf = 0, last = 0, t0 = performance.now(), on = false, used = false;
   var box = null; function measure() { box = piece.getBoundingClientRect(); rt = box.width * (innerWidth < 900 ? .2 : .155); if (!r) r = rt; }
   function aim(e) { if (!box) measure(); tx = (e.clientX - box.left) / box.width * 100; ty = (e.clientY - box.top) / box.height * 100;
     tx = Math.max(-8, Math.min(108, tx)); ty = Math.max(-8, Math.min(108, ty)); steer = performance.now();
@@ -772,7 +772,7 @@
   addEventListener("resize", function () { box = null; }); addEventListener("scroll", function () { box = null; }, { passive: true });
   function frame(now) { raf = 0; if (!on) return;
     var dt = Math.min(.05, (now - (last || now)) / 1000); last = now; if (!box) measure();
-    if (!steer || now - steer > 2400) { var t = (now - t0) / 1000; tx = 43.5 + 19 * Math.sin(t * .33); ty = 63 + 22 * Math.sin(t * .47 + 1.1); }
+    if (!steer || now - steer > 2400) { var t = (now - t0) / 1000; tx = 49 + 20 * Math.sin(t * .33); ty = 50 + 24 * Math.sin(t * .47 + 1.1); }
     var k = 1 - Math.exp(-dt * (steer ? 9 : 2.2)); cx += (tx - cx) * k; cy += (ty - cy) * k;
     r += (rt * (press ? 1.28 : 1) - r) * (1 - Math.exp(-dt * 10));
     piece.style.setProperty("--lx", cx.toFixed(2) + "%"); piece.style.setProperty("--ly", cy.toFixed(2) + "%"); piece.style.setProperty("--lr", r.toFixed(1) + "px");
