@@ -1688,34 +1688,29 @@ html body #craft14.lt14 { display: block !important; max-width: none !important;
 html body .lt14stage { position: relative; height: 100svh; min-height: 640px; max-height: 1100px; overflow: hidden; background: #000; }
 html body .lt14piece { --lx: 50%; --ly: 60%; --lr: 180px; position: absolute; left: 56%; top: 52%; height: min(96svh, 1040px); aspect-ratio: 1; transform: translate(-50%, -50%); touch-action: pan-y; }
 html body .lt14piece img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
-html body .lt14dim { filter: brightness(.24) contrast(1.12); }
-html body .lt14lit { filter: brightness(1.18) contrast(1.06);
-  -webkit-mask: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 34%, rgba(0,0,0,.45) 66%, transparent 100%);
-          mask: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 34%, rgba(0,0,0,.45) 66%, transparent 100%); }
-html body .lt14piece::before { content: ""; position: absolute; inset: -10%; background: radial-gradient(circle calc(var(--lr) * 1.5) at calc(10% / 1.2 + var(--lx) / 1.2) calc(10% / 1.2 + var(--ly) / 1.2), rgba(255,240,214,.075), rgba(0,0,0,0) 70%); pointer-events: none; }
-html body .lt14loupe { position: absolute; left: var(--lx); top: var(--ly); width: calc(var(--lr) * 1.42); aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); border: 1px solid rgba(239,233,221,.26); box-shadow: 0 0 60px 4px rgba(255,244,222,.06), inset 0 0 36px rgba(255,244,222,.05); pointer-events: none; }
+html body .lt14dim { filter: brightness(.64) contrast(1.02) saturate(.92); }
+html body .lt14lit { filter: brightness(1.2) contrast(1.05);
+  -webkit-mask: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 0%, rgba(0,0,0,.62) 34%, rgba(0,0,0,.22) 66%, transparent 100%);
+          mask: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 0%, rgba(0,0,0,.62) 34%, rgba(0,0,0,.22) 66%, transparent 100%); }
+html body .lt14piece::before { content: ""; position: absolute; inset: -10%; background: radial-gradient(circle calc(var(--lr) * 1.5) at calc(10% / 1.2 + var(--lx) / 1.2) calc(10% / 1.2 + var(--ly) / 1.2), rgba(255,240,214,.04), rgba(0,0,0,0) 72%); pointer-events: none; }
 html body .lt14txt { position: absolute; left: max(6vw, 24px); top: 50%; transform: translateY(-50%); display: grid; gap: 18px; max-width: 30ch; z-index: 2; pointer-events: none; }
 html body .lt14k { margin: 0; font-size: .7rem; letter-spacing: .32em; text-transform: uppercase; color: rgba(239,233,221,.62); }
 html body .lt14h { margin: 0; font-weight: 300; font-size: clamp(2rem, 3.4vw, 3.3rem); letter-spacing: .14em; line-height: 1.12; text-transform: uppercase; color: #f3ede2; }
 html body .lt14s { margin: 0; font-size: 1.02rem; color: rgba(239,233,221,.74); }
 html body .lt14hint { position: absolute; left: 0; right: 0; bottom: 5svh; margin: 0; text-align: center; font-size: .68rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(239,233,221,.5); pointer-events: none; transition: opacity .6s ease; }
-html body .lt14hint .c { display: none; }
 html body #craft14.lt14.used .lt14hint { opacity: 0; }
 html[data-ns] body .lt14k, html[data-ns] body .lt14h, html[data-ns] body .lt14hint { letter-spacing: 0 !important; }
 html[dir="rtl"] body .lt14txt { left: auto; right: max(6vw, 24px); text-align: right; }
 html[dir="rtl"] body .lt14piece { left: 44%; }
-@media (pointer: fine) { html body .lt14piece { cursor: none; } }
-@media (pointer: coarse) { html body .lt14hint .f { display: none; } html body .lt14hint .c { display: inline; } }
+@media (pointer: coarse) { html body .lt14hint { display: none; } }
 @media (max-width: 899px) {
   html body .lt14stage { height: 100svh; min-height: 600px; }
   html body .lt14piece, html[dir="rtl"] body .lt14piece { left: 50%; top: 60%; height: auto; width: 120vw; }
-  html body .lt14dim { filter: brightness(.28) contrast(1.12); }
   html body .lt14txt, html[dir="rtl"] body .lt14txt { left: 24px; right: 24px; top: 104px; bottom: auto; transform: none; gap: 12px; }
   html body .lt14hint { bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); }
   html body .lt14h { font-size: 1.9rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   html body .lt14lit { -webkit-mask: none; mask: none; }
-  html body .lt14loupe, html body .lt14hint { display: none; }
-  html body .lt14piece { cursor: auto; }
+  html body .lt14hint { display: none; }
 }

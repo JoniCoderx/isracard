@@ -753,28 +753,37 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 900); }); else setTimeout(init, 900);
 })();
 
-/* Bring it to light: the pendant lies almost in the dark and a light wakes the stones where it passes. The pointer
-   steers it (a finger on a phone, sideways, so the page still scrolls); left alone, it wanders the knot slowly. It runs
-   only while the section is on screen, and holds still for anyone who asks for less motion. */
+/* Bring it to light: the whole pendant and chain are always visible; a soft light passes over them and wakes the
+   stones in more detail. On a computer it follows the pointer, gently; left alone it wanders the knot. On a phone it
+   needs no mouse: the light travels down the knot as the page scrolls, and a touch on the pendant draws it there for
+   a moment. It runs only while the section is on screen, and holds still for anyone who asks for less motion. */
 (function () {
   var sec = document.querySelector("#craft14.lt14"); if (!sec) return;
   var piece = sec.querySelector(".lt14piece"); if (!piece) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var cx = 36, cy = 44, tx = 36, ty = 44, r = 0, rt = 0, steer = 0, raf = 0, last = 0, t0 = performance.now(), on = false, used = false;
-  var box = null; function measure() { box = piece.getBoundingClientRect(); rt = box.width * (innerWidth < 900 ? .2 : .155); if (!r) r = rt; }
+  var coarse = matchMedia("(pointer: coarse)").matches;
+  var cx = 40, cy = 32, tx = 40, ty = 32, r = 0, rt = 0, steer = 0, raf = 0, last = 0, t0 = performance.now(), on = false, used = false;
+  var box = null; function measure() { box = piece.getBoundingClientRect(); rt = box.width * (innerWidth < 900 ? .3 : .25); if (!r) r = rt; }
   function aim(e) { if (!box) measure(); tx = (e.clientX - box.left) / box.width * 100; ty = (e.clientY - box.top) / box.height * 100;
     tx = Math.max(-8, Math.min(108, tx)); ty = Math.max(-8, Math.min(108, ty)); steer = performance.now();
     if (!used) { used = true; setTimeout(function () { sec.classList.add("used"); }, 1600); } wake(); }
-  sec.addEventListener("pointermove", function (e) { if (e.pointerType === "touch" && !e.isPrimary) return; aim(e); });
-  sec.addEventListener("pointerdown", function (e) { aim(e); press = 1; });
-  var press = 0; addEventListener("pointerup", function () { press = 0; wake(); });
-  sec.addEventListener("pointerleave", function () { steer = 0; press = 0; });
+  if (!coarse) { sec.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse" || e.pointerType === "pen") aim(e); });
+    sec.addEventListener("pointerleave", function () { steer = 0; }); }
+  /* a touch (or a sideways drag) draws the light to the finger; the page keeps scrolling vertically */
+  sec.addEventListener("pointerdown", function (e) { if (e.pointerType === "touch") aim(e); });
+  sec.addEventListener("pointermove", function (e) { if (e.pointerType === "touch") aim(e); });
   addEventListener("resize", function () { box = null; }); addEventListener("scroll", function () { box = null; }, { passive: true });
   function frame(now) { raf = 0; if (!on) return;
     var dt = Math.min(.05, (now - (last || now)) / 1000); last = now; if (!box) measure();
-    if (!steer || now - steer > 2400) { var t = (now - t0) / 1000; tx = 49 + 20 * Math.sin(t * .33); ty = 50 + 24 * Math.sin(t * .47 + 1.1); }
-    var k = 1 - Math.exp(-dt * (steer ? 9 : 2.2)); cx += (tx - cx) * k; cy += (ty - cy) * k;
-    r += (rt * (press ? 1.28 : 1) - r) * (1 - Math.exp(-dt * 10));
+    var t = (now - t0) / 1000, hold = coarse ? 2600 : 2400;
+    if (!steer || now - steer > hold) {
+      if (coarse) { /* the scroll is the guide: from the top loop, down through the crossing, to the point */
+        var sb = sec.getBoundingClientRect(), p = Math.max(0, Math.min(1, (innerHeight - sb.top) / (innerHeight + sb.height) * 1.5 - .25));
+        tx = 49 + 17 * Math.sin(p * Math.PI * 2.2 - .4) + 2.5 * Math.sin(t * .6); ty = 22 + 58 * p + 2 * Math.sin(t * .5);
+      } else { tx = 49 + 20 * Math.sin(t * .27); ty = 50 + 24 * Math.sin(t * .39 + 1.1); }
+    }
+    var k = 1 - Math.exp(-dt * (steer && now - steer <= hold ? 4.5 : 1.8)); cx += (tx - cx) * k; cy += (ty - cy) * k;
+    r += (rt - r) * (1 - Math.exp(-dt * 6));
     piece.style.setProperty("--lx", cx.toFixed(2) + "%"); piece.style.setProperty("--ly", cy.toFixed(2) + "%"); piece.style.setProperty("--lr", r.toFixed(1) + "px");
     raf = requestAnimationFrame(frame); }
   function wake() { if (on && !raf) { last = 0; raf = requestAnimationFrame(frame); } }

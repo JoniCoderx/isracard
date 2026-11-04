@@ -680,14 +680,13 @@ const T14 = (() => {
     <div class="lt14piece">
       <img class="lt14dim" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 140vw, 100svh" width="1728" height="1728" alt="" aria-hidden="true" decoding="async" loading="lazy">
       <img class="lt14lit" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 140vw, 100svh" width="1728" height="1728" alt="SOUL, the SILAVU knot in diamonds, on its chain" data-alt-he="SOUL, הקשר של SILAVU ביהלומים, על השרשרת שלו" decoding="async" loading="lazy">
-      <i class="lt14loupe" aria-hidden="true"></i>
     </div>
     <div class="lt14txt">
       <p class="lt14k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
       <h2 class="lt14h" id="lth" data-en="Bring it &lt;br&gt;to light" data-he="להביא אותו &lt;br&gt;אל האור">Bring it <br>to light</h2>
       <p class="lt14s" data-en="A signature, brought to life." data-he="חתימה, שקמה לחיים.">A signature, brought to life.</p>
     </div>
-    <p class="lt14hint" aria-hidden="true"><span class="f" data-en="Move the light across the stones" data-he="הזיזו את האור על פני האבנים">Move the light across the stones</span><span class="c" data-en="Drag the light across the stones" data-he="גררו את האור על פני האבנים">Drag the light across the stones</span></p>
+    <p class="lt14hint" aria-hidden="true"><span class="f" data-en="Move the light across the stones" data-he="הזיזו את האור על פני האבנים">Move the light across the stones</span></p>
   </div>
 </section>
 `;
