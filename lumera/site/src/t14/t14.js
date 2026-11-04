@@ -315,3 +315,43 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 120); }); else setTimeout(init, 120);
 })();
+
+/* the phone menu as a sheet (the house chose "C", 4 Nov): a rounded glass panel that drops from the top with the page
+   still there behind it, blurred; the three collections as photographs to tap; the house's six places in two
+   columns; the private viewing; a touch outside closes it. The same close and language buttons are moved in, so
+   their handlers keep working; in-page links already close the menu (script1). */
+(function () {
+  function init() {
+    var menu = document.getElementById("menu"), close = document.getElementById("menuClose");
+    if (!menu || !close) return setTimeout(init, 150);
+    if (menu.querySelector(".msheet")) return;
+    menu.classList.add("m14c");
+    var lang = menu.querySelector("#langBtn3"), cta = menu.querySelector(".mfoot .btn.solid");
+    var sheet = document.createElement("div"); sheet.className = "msheet";
+    var top = document.createElement("div"); top.className = "m14top";
+    var mk = document.createElement("span"); mk.className = "m14mk"; mk.setAttribute("aria-hidden", "true");
+    mk.innerHTML = '<svg viewBox="0 0 875 1000"><use href="#symb"/></svg><b>SILAVU</b>';
+    top.appendChild(close); top.appendChild(mk); if (lang) top.appendChild(lang);
+    var card = function (href, img, pos, name) { return '<a href="' + href + '"><img src="models/' + img + '-900.jpg" alt="" loading="lazy" decoding="async" style="object-position:' + pos + '"><b>' + name + '</b></a>'; };
+    var cards = document.createElement("div"); cards.className = "m14cards";
+    cards.innerHTML = card("pieces/knot/", "bracelet", "45% 60%", "MOMENT") + card("pieces/ring/", "ring", "55% 50%", "ICON") + card("pieces/pave/", "necklace", "50% 55%", "SOUL");
+    var hd = document.createElement("p"); hd.className = "m14k"; hd.setAttribute("data-en", "The house"); hd.setAttribute("data-he", "הבית"); hd.textContent = "The house";
+    var L = [["#collection", "Collection", "הקולקציה"], ["#build", "Design yours", "עצבו בעצמכם"], ["#inside", "The box", "הקופסה"], ["#details", "Up close", "מקרוב"], ["about14/", "About", "אודות"], ["#concierge", "Enquire", "פנייה"]];
+    var grid = document.createElement("nav"); grid.className = "m14grid"; grid.setAttribute("aria-label", "Main");
+    grid.innerHTML = L.map(function (l) { return '<a href="' + l[0] + '" data-en="' + l[1] + '" data-he="' + l[2] + '">' + l[1] + '</a>'; }).join("");
+    var foot = document.createElement("div"); foot.className = "m14cta"; if (cta) foot.appendChild(cta);
+    var handle = document.createElement("i"); handle.className = "m14handle"; handle.setAttribute("aria-hidden", "true");
+    [top, cards, hd, grid, foot, handle].forEach(function (n) { sheet.appendChild(n); });
+    menu.insertBefore(sheet, menu.firstChild);
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    function words() { [].forEach.call(sheet.querySelectorAll("[data-en]"), function (n) { if (n.closest(".btn")) return; n.textContent = he() ? n.getAttribute("data-he") : n.getAttribute("data-en"); }); }
+    words(); new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+    /* a touch on the page around the sheet closes it */
+    menu.addEventListener("click", function (e) { if (e.target === menu) close.click(); });
+    /* swipe the sheet up to put it away */
+    var y0 = null;
+    sheet.addEventListener("touchstart", function (e) { y0 = sheet.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+    sheet.addEventListener("touchmove", function (e) { if (y0 === null) return; var d = e.touches[0].clientY - y0; if (d < -70) { y0 = null; close.click(); } }, { passive: true });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
