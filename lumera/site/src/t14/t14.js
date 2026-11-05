@@ -931,3 +931,231 @@
   });
   addEventListener("resize", function () { if (open && !open.closing && open.fly.classList.contains("pd14on")) { var tg = target(open.w, open.h); open.fly.style.transform = hom(open.w, open.h, tg); open.fly.style.setProperty("--inv", (open.w / Math.max(1, tg[1][0] - tg[0][0])).toFixed(4)); } });
 })();
+
+/* Craftsmanship · from the first line (the house's brief of 5 Nov 2026). SOUL is built here in true 3D from the
+   house's own data (public/craft15/soul.json: the mark as drawn, never mirrored; the pavé map; the jump rings), as
+   the house's Blender model is: the knot in white gold 1.6 mm deep with polished rounded edges, each pavé stone a
+   round brilliant set in its top face between beads, a cable chain with two bezel-set stations hanging from the jump
+   rings. Two interactions that never fight: the scroll alone carries the sketch to the finished piece (the same
+   geometry drawn as lines, so the two meet exactly, and a seam of light sweeps the metal into being); the pointer
+   alone moves the piece, a few degrees, through a critically damped spring (inertia, no overshoot), and the chain
+   follows it as a hanging chain does. Away from the pointer it comes slowly back to rest; on a phone it sways a
+   little by itself; with reduced motion it holds still. Nothing runs while the section is off screen. */
+(function () {
+  var sec = document.getElementById("craft14"); if (!sec || !sec.classList.contains("cr15") || !window.WebGLRenderingContext) return;
+  var stage = sec.querySelector(".cr15stage"), started = false;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  function start() { if (started) return; started = true;
+    Promise.all([import("./vendor14/three.module.min.js"), fetch("craft15/soul.json").then(function (r) { return r.json(); })]).then(function (a) { build(a[0], a[1]); }, function () {}); }
+  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); start(); } }, { rootMargin: "150% 0px" }).observe(sec);
+
+  function build(T, D) {
+    var S = .02, MW = D.W, DEPTH = 1.6, BT = .22;
+    var P = function (x, y) { return [(x - MW / 2) * S, (500 - y) * S]; };
+    /* ── the knot, from the mark exactly as drawn (y turned up for 3D, x untouched) */
+    var sp = new T.ShapePath(), tok = D.mark.match(/[MCLZ]|-?\d*\.?\d+(?:e-?\d+)?/gi), i = 0, cmd = "";
+    var n2 = function () { var a = P(parseFloat(tok[i]), parseFloat(tok[i + 1])); i += 2; return a; };
+    while (i < tok.length) {
+      if (/[MCLZ]/i.test(tok[i])) cmd = tok[i++].toUpperCase();
+      if (cmd === "M") { var m = n2(); sp.moveTo(m[0], m[1]); cmd = "L"; }
+      else if (cmd === "L") { var l = n2(); sp.lineTo(l[0], l[1]); }
+      else if (cmd === "C") { var c1 = n2(), c2 = n2(), c3 = n2(); sp.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], c3[0], c3[1]); }
+      else if (cmd === "Z") { var cp = sp.currentPath; if (cp && cp.curves.length) { var s0 = cp.curves[0].getPoint(0), pe = cp.currentPoint; if (s0.distanceTo(pe) > 1e-4) sp.lineTo(s0.x, s0.y); } cmd = ""; }
+      else i++;
+    }
+    var shapes = sp.toShapes(T.ShapeUtils.isClockWise(sp.subPaths[0].getPoints()));
+    var geo = new T.ExtrudeGeometry(shapes, { depth: DEPTH - 2 * BT, bevelEnabled: true, bevelThickness: BT, bevelSize: .13, bevelOffset: -.05, bevelSegments: 6, curveSegments: 6 });
+    geo.translate(0, 0, BT); geo.computeVertexNormals();
+
+    /* ── renderer, camera, and the jeweller's studio the metal reflects */
+    var cv = document.createElement("canvas"), W = 0, H = 0;
+    var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, powerPreference: "high-performance" });
+    r.setClearColor(0x000000, 1); r.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+    r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.05; r.outputColorSpace = T.SRGBColorSpace; r.localClippingEnabled = true;
+    var scene = new T.Scene(), cam = new T.PerspectiveCamera(24, 1, 1, 2000);
+    var studio = new T.Scene(), softV = "varying vec2 v; void main(){ v = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
+    var box = function (w, h, x, y, z, col, k, e) { var cc = new T.Color(col).multiplyScalar(k);
+      var mm = new T.Mesh(new T.PlaneGeometry(w, h), new T.ShaderMaterial({ side: T.DoubleSide, uniforms: { c: { value: cc }, e: { value: e } }, vertexShader: softV,
+        fragmentShader: "uniform vec3 c; uniform float e; varying vec2 v; void main(){ vec2 d = min(v, 1.0 - v); gl_FragColor = vec4(c * smoothstep(0.0, e, d.x) * smoothstep(0.0, e, d.y), 1.0); }" }));
+      mm.position.set(x, y, z); mm.lookAt(0, 0, 0); studio.add(mm); };
+    box(1.6, 4.2, -3.1, .5, 1.4, 0xffffff, 3.0, .3); box(1.3, 4, 3.3, .1, .6, 0xf7f3ec, 2.1, .3); box(5.4, 1.4, 0, 3.5, .6, 0xffffff, 2.3, .35);
+    box(3.2, .6, 0, -2.7, 1.6, 0xffe2b8, 1.0, .4); box(.22, 3.8, -1.25, .2, 2.9, 0xffffff, 3.6, .45); box(.18, 3.6, 1.55, -.1, 2.8, 0xffffff, 2.8, .45);
+    box(1.4, 2.6, .5, .4, -3.4, 0xffffff, 1.7, .3); box(.5, 3, -1.7, 0, -3.1, 0xffffff, 1.2, .4); box(2.4, 1.6, .2, .3, 3.6, 0xffffff, 1.4, .4);
+    studio.add(new T.Mesh(new T.SphereGeometry(9, 32, 16), new T.ShaderMaterial({ side: T.BackSide, vertexShader: "varying vec3 p; void main(){ p = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+      fragmentShader: "varying vec3 p; void main(){ float g = 0.06 + 0.12 * smoothstep(-0.6, 0.9, p.y); gl_FragColor = vec4(vec3(g * 1.02, g, g * 0.97), 1.0); }" })));
+    var pm = new T.PMREMGenerator(r); scene.environment = pm.fromScene(studio, .02).texture; pm.dispose();
+    var key = new T.DirectionalLight(0xffffff, .5); key.position.set(-30, 50, 80); scene.add(key);
+
+    /* the finished piece shows only left of the seam, the sketch only right of it (planes in the world, so the seam
+       sweeps the screen evenly whatever the piece's tilt) */
+    var cutDone = new T.Plane(new T.Vector3(-1, 0, 0), -40), cutSketch = new T.Plane(new T.Vector3(1, 0, 0), 40);
+    var gold = new T.MeshPhysicalMaterial({ color: 0xe9e5dd, metalness: 1, roughness: .15, clearcoat: .3, clearcoatRoughness: .1, envMapIntensity: 1.1, clippingPlanes: [cutDone] });
+    var dia = new T.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: .015, envMapIntensity: 3.6, flatShading: true, clippingPlanes: [cutDone] });
+
+    var rig = new T.Group(); scene.add(rig);
+    rig.add(new T.Mesh(geo, gold));
+
+    /* a round brilliant: table, crown, girdle and pavilion, flat-faceted so each facet catches the studio on its own */
+    function brilliant() { var N = 16, pos = [], tb = .56, ch = .3, pd = .86, gi = .03, k, a0, a1, tr = function (x) { pos.push(x[0], x[1], x[2]); };
+      var at = function (r0, a, z) { return [Math.cos(a) * r0, Math.sin(a) * r0, z]; };
+      for (k = 0; k < N; k++) { a0 = k / N * Math.PI * 2; a1 = (k + 1) / N * Math.PI * 2; var am = (a0 + a1) / 2;
+        tr([0, 0, ch]); tr(at(tb, a0, ch)); tr(at(tb, a1, ch));                                  /* table */
+        tr(at(tb, a0, ch)); tr(at(1, a0, gi)); tr(at(1, am, gi)); tr(at(tb, a0, ch)); tr(at(1, am, gi)); tr(at(tb, a1, ch));   /* crown */
+        tr(at(tb, a1, ch)); tr(at(1, am, gi)); tr(at(1, a1, gi));
+        tr(at(1, a0, gi)); tr(at(1, a0, -gi)); tr(at(1, a1, -gi)); tr(at(1, a0, gi)); tr(at(1, a1, -gi)); tr(at(1, a1, gi)); /* girdle */
+        tr(at(1, a0, -gi)); tr([0, 0, -pd]); tr(at(1, a1, -gi)); }                                 /* pavilion */
+      var g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); g.computeVertexNormals(); return g; }
+    var BRIL = brilliant();
+    var stones = new T.InstancedMesh(BRIL, dia, D.pave.length), mtx = new T.Matrix4(), q = new T.Quaternion(), v = new T.Vector3(), sc = new T.Vector3(), ez = new T.Vector3(0, 0, 1);
+    var rnd = (function () { var s = 7; return function () { s = (s * 16807) % 2147483647; return s / 2147483647; }; })();
+    D.pave.forEach(function (st, k) { var p = P(st[0], st[1]), dd = st[2] * S * 2 * .98; /* the map holds radii */
+      q.setFromAxisAngle(ez, rnd() * Math.PI); mtx.compose(v.set(p[0], p[1], DEPTH - .06 * dd), q, sc.set(dd / 2, dd / 2, dd / 2)); stones.setMatrixAt(k, mtx); });
+    rig.add(stones);
+    /* the beads that hold them, between each stone and the next */
+    var beadPos = [];
+    for (var b = 1; b < D.pave.length; b++) { var A = D.pave[b - 1], B = D.pave[b];
+      if (Math.hypot(B[0] - A[0], B[1] - A[1]) > 1.6 * (A[2] + B[2])) continue;
+      var mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, ang = Math.atan2(B[1] - A[1], B[0] - A[0]), off = (A[2] + B[2]) / 2 * .86, br = Math.max(.035, (A[2] + B[2]) / 2 * S * .2);
+      [1, -1].forEach(function (sg) { var p = P(mx - Math.sin(ang) * off * sg, my + Math.cos(ang) * off * sg); beadPos.push([p[0], p[1], DEPTH + br * .15, br]); }); }
+    var beads = new T.InstancedMesh(new T.SphereGeometry(1, 12, 8), gold, beadPos.length);
+    beadPos.forEach(function (bp, k) { mtx.compose(v.set(bp[0], bp[1], bp[2]), q.identity(), sc.set(bp[3], bp[3], bp[3])); beads.setMatrixAt(k, mtx); });
+    rig.add(beads);
+    /* the jump rings, through the outer top of each crescent */
+    var ringsLocal = D.rings.map(function (rr) { var p = P(rr[0], rr[1]); return new T.Vector3(p[0], p[1], DEPTH / 2); });
+    var jr = new T.TorusGeometry(.62, .13, 10, 28);
+    ringsLocal.forEach(function (p, k) { var o = new T.Mesh(jr, gold); o.position.copy(p); o.rotation.set(0, Math.PI / 2, (k ? -1 : 1) * .35); rig.add(o); });
+
+    /* ── the sketch: the same outlines, the stones as circles, and a few construction lines */
+    var ink = function (op, dashed) { return dashed ? new T.LineDashedMaterial({ color: 0xd8d0c0, transparent: true, opacity: op, dashSize: .5, gapSize: .45, depthWrite: false, clippingPlanes: [cutSketch] })
+      : new T.LineBasicMaterial({ color: 0xe6dfd2, transparent: true, opacity: op, depthWrite: false, clippingPlanes: [cutSketch] }); };
+    var outlinePts = [];
+    shapes.forEach(function (s) { [s].concat(s.holes).forEach(function (pth) { var pts = pth.getPoints(6); for (var k = 0; k < pts.length; k++) { var a = pts[k], c = pts[(k + 1) % pts.length]; outlinePts.push(a.x, a.y, DEPTH, c.x, c.y, DEPTH); } }); });
+    var outG = new T.BufferGeometry(); outG.setAttribute("position", new T.Float32BufferAttribute(outlinePts, 3));
+    var outM = ink(.85), outline = new T.LineSegments(outG, outM); rig.add(outline);
+    var cir = [], seg = 20;
+    D.pave.forEach(function (st) { var p = P(st[0], st[1]), rr = st[2] * S; for (var k = 0; k < seg; k++) { var a0 = k / seg * Math.PI * 2, a1 = (k + 1) / seg * Math.PI * 2;
+      cir.push(p[0] + Math.cos(a0) * rr, p[1] + Math.sin(a0) * rr, DEPTH, p[0] + Math.cos(a1) * rr, p[1] + Math.sin(a1) * rr, DEPTH); } });
+    var cirG = new T.BufferGeometry(); cirG.setAttribute("position", new T.Float32BufferAttribute(cir, 3));
+    var cirM = ink(.5), circles = new T.LineSegments(cirG, cirM); rig.add(circles);
+    /* construction: the axes, and the circles the knot's four lobes are drawn on */
+    var con = [], ring = function (cx, cy, rr) { var c = P(cx, cy); rr *= S; for (var k = 0; k < 64; k++) { var a0 = k / 64 * Math.PI * 2, a1 = (k + 1) / 64 * Math.PI * 2;
+      con.push(c[0] + Math.cos(a0) * rr, c[1] + Math.sin(a0) * rr, DEPTH, c[0] + Math.cos(a1) * rr, c[1] + Math.sin(a1) * rr, DEPTH); } };
+    con.push(0, 13, DEPTH, 0, -13, DEPTH, -13, 0, DEPTH, 13, 0, DEPTH);
+    ring(125, 468, 182); ring(747, 468, 182); ring(437, 172, 212); ring(437, 800, 212);
+    var conG = new T.BufferGeometry(); conG.setAttribute("position", new T.Float32BufferAttribute(con, 3));
+    var conM = ink(.2, true), cons = new T.LineSegments(conG, conM); cons.computeLineDistances(); rig.add(cons);
+
+    /* ── the chain: two ropes from the jump rings up to anchors beyond the frame, simulated as a hanging chain
+       (verlet points, fixed lengths), dressed with cable links a quarter turn apart and two bezel-set stations */
+    var NR = 46, ropes = [];
+    ringsLocal.forEach(function (p, k) { var sg = k ? 1 : -1, end = p.clone(), anc = new T.Vector3(p.x + sg * 58, p.y + 150, p.z - 16);
+      var len = end.distanceTo(anc) * 1.006, pts = [], prev = [];
+      for (var j = 0; j < NR; j++) { var t = j / (NR - 1), pp = end.clone().lerp(anc, t); pts.push(pp); prev.push(pp.clone()); }
+      ropes.push({ sg: sg, local: p, anc: anc, seg: len / (NR - 1), pts: pts, prev: prev }); });
+    var LINK = new T.TorusGeometry(.42, .13, 8, 20); LINK.scale(1.42, 1, 1);
+    var perRope = Math.ceil(170 / 1.18), links = new T.InstancedMesh(LINK, gold, perRope * 2); links.instanceMatrix.setUsage(T.DynamicDrawUsage); rig.parent.add(links);
+    var cupG = new T.CylinderGeometry(1, 1, .9, 32, 1, true); cupG.rotateX(Math.PI / 2);
+    var cups = new T.InstancedMesh(cupG, gold, 4), cupStones = new T.InstancedMesh(BRIL, dia, 4); cups.instanceMatrix.setUsage(T.DynamicDrawUsage); cupStones.instanceMatrix.setUsage(T.DynamicDrawUsage);
+    scene.add(cups); scene.add(cupStones);
+    var ropeLineG = new T.BufferGeometry(); ropeLineG.setAttribute("position", new T.Float32BufferAttribute(new Float32Array(NR * 2 * 2 * 3), 3));
+    var ropeLine = new T.LineSegments(ropeLineG, ink(.45)); scene.add(ropeLine);
+    var X = new T.Vector3(1, 0, 0), tg = new T.Vector3(), qa = new T.Quaternion(), qb = new T.Quaternion(), wEnd = new T.Vector3();
+    /* each side of the chain is a gentle curve from the jump ring up to its anchor; its middle is a weight on a
+       critically damped spring, so when the pendant moves the chain follows a moment later and settles, as a real
+       chain does, without swinging past */
+    ropes.forEach(function (R) { R.mid = new T.Vector3(); R.vel = new T.Vector3(); R.init = false; });
+    var aim = new T.Vector3(), acc = new T.Vector3();
+    function stepRopes(dt) {
+      rig.updateMatrixWorld(true);
+      ropes.forEach(function (R) {
+        wEnd.copy(R.local).applyMatrix4(rig.matrixWorld);
+        aim.copy(wEnd).lerp(R.anc, .5); aim.x += R.sg * 3.5; aim.y -= 5; aim.z += 1;
+        if (!R.init) { R.mid.copy(aim); R.init = true; }
+        var k = 26, c = 2 * Math.sqrt(k);
+        acc.copy(aim).sub(R.mid).multiplyScalar(k).addScaledVector(R.vel, -c); R.vel.addScaledVector(acc, dt); R.mid.addScaledVector(R.vel, dt);
+        for (var j = 0; j < NR; j++) { var t = j / (NR - 1), u = 1 - t;
+          R.pts[j].set(u * u * wEnd.x + 2 * u * t * R.mid.x + t * t * R.anc.x, u * u * wEnd.y + 2 * u * t * R.mid.y + t * t * R.anc.y, u * u * wEnd.z + 2 * u * t * R.mid.z + t * t * R.anc.z); }
+      });
+    }
+    function dressRopes() {
+      var li = 0, ci = 0, rl = ropeLineG.attributes.position.array, ri = 0;
+      ropes.forEach(function (R) {
+        var L = [0]; for (var j = 1; j < NR; j++) L.push(L[j - 1] + R.pts[j].distanceTo(R.pts[j - 1]));
+        for (var j3 = 0; j3 < NR - 1; j3++) { var a = R.pts[j3], c = R.pts[j3 + 1]; rl[ri++] = a.x; rl[ri++] = a.y; rl[ri++] = a.z; rl[ri++] = c.x; rl[ri++] = c.y; rl[ri++] = c.z; }
+        var s = .9, k = 0, j = 0;
+        while (s < L[NR - 1] && li < links.count) {
+          while (L[j + 1] < s) j++;
+          var u = (s - L[j]) / Math.max(1e-9, L[j + 1] - L[j]); v.copy(R.pts[j]).lerp(R.pts[j + 1], u); tg.copy(R.pts[j + 1]).sub(R.pts[j]).normalize();
+          if ((Math.abs(s - 24) < 1.3 || Math.abs(s - 56) < 1.3) && ci < 4) {
+            if (Math.abs(s - 24) < .6 || Math.abs(s - 56) < .6) { mtx.compose(v, q.identity(), sc.set(1, 1, 1)); cups.setMatrixAt(ci, mtx); mtx.compose(v.clone().add(new T.Vector3(0, 0, .12)), qa.setFromAxisAngle(ez, ci), sc.set(.78, .78, .78)); cupStones.setMatrixAt(ci, mtx); ci++; }
+          } else { qa.setFromUnitVectors(X, tg); qb.setFromAxisAngle(X, k % 2 ? Math.PI / 2 : 0); qa.multiply(qb); mtx.compose(v, qa, sc.set(1, 1, 1)); links.setMatrixAt(li++, mtx); }
+          s += 1.18; k++;
+        }
+      });
+      for (; ci < 4; ci++) { mtx.makeScale(0, 0, 0); cups.setMatrixAt(ci, mtx); cupStones.setMatrixAt(ci, mtx); }
+      for (; li < links.count; li++) { mtx.makeScale(0, 0, 0); links.setMatrixAt(li, mtx); }
+      links.instanceMatrix.needsUpdate = true; cups.instanceMatrix.needsUpdate = true; cupStones.instanceMatrix.needsUpdate = true; ropeLineG.attributes.position.needsUpdate = true;
+    }
+    [links, cups, cupStones].forEach(function (o) { o.frustumCulled = false; }); ropeLine.frustumCulled = false;
+    ropeLine.material.clippingPlanes = [cutSketch];
+    for (var z0 = 0; z0 < 4; z0++) { mtx.makeScale(0, 0, 0); cups.setMatrixAt(z0, mtx); cupStones.setMatrixAt(z0, mtx); }
+    stepRopes(1 / 60); dressRopes();
+
+    /* the seam of light that makes the metal: a soft vertical band at the sweep */
+    var seam = new T.Mesh(new T.PlaneGeometry(2.4, 44), new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, uniforms: { a: { value: 0 } }, vertexShader: softV,
+      fragmentShader: "uniform float a; varying vec2 v; void main(){ float x = abs(v.x - 0.5) * 2.0; float y = abs(v.y - 0.5) * 2.0; float g = exp(-x * x * 18.0) * (1.0 - smoothstep(0.2, 1.0, y)); gl_FragColor = vec4(vec3(1.0, 0.94, 0.84) * g * a, g * a); }" }));
+    seam.position.z = 3; scene.add(seam);
+
+    sec.classList.add("gl"); stage.appendChild(cv);
+    var phone = function () { return innerWidth < 900; }, rtl = function () { return document.documentElement.getAttribute("dir") === "rtl"; };
+    function size() { var b = stage.getBoundingClientRect(); if (!b.width) return; W = b.width; H = b.height; r.setSize(W, H, false); cam.aspect = W / H;
+      var d = Math.max(96, 34 / (2 * Math.tan(12 * Math.PI / 180) * cam.aspect));
+      cam.position.set(0, 1.5, d); cam.lookAt(0, 1.5, 0);
+      if (phone()) cam.setViewOffset(W, H, 0, -H * .16, W, H); else cam.setViewOffset(W, H, (rtl() ? 1 : -1) * W * .09, -H * .02, W, H);
+      cam.updateProjectionMatrix(); dirty = true; }
+
+    /* ── the two hands: scroll (the making) and pointer (the moving) */
+    var prog = -1, want = { x: 0, y: 0 }, rot = { x: 0, y: 0 }, vel = { x: 0, y: 0 }, inside = false, dirty = true, vis = false, raf = 0, last = 0, t0 = performance.now();
+    function measure() { var b = sec.getBoundingClientRect(), span = b.height - innerHeight; var p = span > 0 ? Math.min(1, Math.max(0, -b.top / span)) : 1; if (Math.abs(p - prog) > 1e-4) { prog = p; dirty = true; } }
+    var sm = function (a, b2, x) { var t = Math.min(1, Math.max(0, (x - a) / (b2 - a))); return t * t * (3 - 2 * t); };
+    var eio = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+    function apply(p) {
+      var draw = sm(0, .3, p);
+      outG.setDrawRange(0, Math.floor(outlinePts.length / 3 * draw / 2) * 2);
+      cirG.setDrawRange(0, Math.floor(cir.length / 3 * sm(.12, .34, p) / 2) * 2);
+      conM.opacity = .2 * sm(.04, .26, p); outM.opacity = .85; cirM.opacity = .5;
+      var sw = -48 + 96 * eio(sm(.32, .8, p)); cutDone.constant = sw; cutSketch.constant = -sw; seam.position.x = sw;
+      seam.material.uniforms.a.value = sm(.32, .4, p) * (1 - sm(.74, .8, p)) * (.35 + .65 * (1 - Math.min(1, Math.abs(sw) / 14)));
+    }
+    if (fine && !reduce) {
+      sec.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var b = stage.getBoundingClientRect();
+        var nx = Math.max(-1, Math.min(1, (e.clientX - (b.left + b.width * (rtl() ? .42 : .58))) / (b.width * .32))), ny = Math.max(-1, Math.min(1, (e.clientY - (b.top + b.height * .5)) / (b.height * .4)));
+        want.y = nx * .2; want.x = ny * .12; inside = true; go(); });
+      sec.addEventListener("pointerleave", function () { want.x = 0; want.y = 0; inside = false; go(); });
+    }
+    function frame(now) {
+      raf = 0; var dt = Math.min(.033, (now - (last || now)) / 1000), t = (now - t0) / 1000; last = now;
+      measure();
+      var done = sm(.62, .9, prog), live = !reduce;
+      /* the pointer's hold grows as the piece is finished; on a phone a slow sway of its own */
+      var tx = want.x * done, ty = want.y * done;
+      if (!fine && live) { tx = Math.sin(t * .27) * .045 * done; ty = Math.sin(t * .33) * .11 * done; }
+      var k = inside ? 9 : 3.2, cdamp = 2 * Math.sqrt(k);
+      ["x", "y"].forEach(function (a) { vel[a] += (k * ((a === "x" ? tx : ty) - rot[a]) - cdamp * vel[a]) * dt; rot[a] += vel[a] * dt; });
+      rig.rotation.set(rot.x, rot.y, live ? Math.sin(t * .41) * .006 * done : 0);
+      rig.position.y = live ? Math.sin(t * .62) * .28 * done : 0;
+      if (dirty) apply(prog);
+      stepRopes(dt);
+      dressRopes();
+      r.render(scene, cam); dirty = false;
+      var moving = Math.abs(vel.x) + Math.abs(vel.y) > 1e-4 || Math.abs(rot.x - tx) + Math.abs(rot.y - ty) > 1e-4;
+      if (vis && (live && (done > 0 || moving) || dirty)) go();
+    }
+    function go() { if (!raf && vis) raf = requestAnimationFrame(frame); }
+    addEventListener("scroll", function () { if (vis) { dirty = true; go(); } }, { passive: true });
+    addEventListener("resize", function () { size(); go(); });
+    new MutationObserver(function () { size(); go(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["dir"] });
+    new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { size(); last = 0; go(); } }).observe(sec);
+    size(); measure(); apply(Math.max(0, prog)); r.render(scene, cam);
+  }
+})();

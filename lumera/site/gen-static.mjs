@@ -694,18 +694,22 @@ const T14 = (() => {
   </div>
 </section>`;
   const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  const CRAFT = `<section id="craft14" class="lt14" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="lth">
-  <div class="lt14stage">
-    <div class="lt14piece">
-      <img class="lt14dim" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 140vw, 100svh" width="1728" height="1728" alt="" aria-hidden="true" decoding="async" loading="lazy">
-      <img class="lt14lit" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 140vw, 100svh" width="1728" height="1728" alt="SOUL, the SILAVU knot in diamonds, on its chain" data-alt-he="SOUL, הקשר של SILAVU ביהלומים, על השרשרת שלו" decoding="async" loading="lazy">
+  /* Craftsmanship (the house's brief of 5 Nov 2026): SOUL in true 3D, built in the page from the house's own mark and
+     pavé map (public/craft15/soul.json, the same data the house's Blender model is built from). The scroll draws the
+     technical sketch and turns it, line for line, into the finished necklace; the pointer tilts the piece, which
+     follows with weight and comes slowly back to rest. Without WebGL the house's render of SOUL stands in. */
+  const CRAFT = `<section id="craft14" class="cr15" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
+  <div class="cr15pin">
+    <div class="cr15stage" aria-hidden="true">
+      <img class="cr15still" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 120vw, 90svh" width="1728" height="1728" alt="" decoding="async" loading="lazy">
     </div>
-    <div class="lt14txt">
-      <p class="lt14k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-      <h2 class="lt14h" id="lth" data-en="Bring it &lt;br&gt;to light" data-he="להביא אותו &lt;br&gt;אל האור">Bring it <br>to light</h2>
-      <p class="lt14s" data-en="A signature, brought to life." data-he="חתימה, שקמה לחיים.">A signature, brought to life.</p>
+    <div class="cr15txt">
+      <p class="cr15k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
+      <h2 class="cr15h" id="crh" data-en="From the &lt;br&gt;first line." data-he="מהקו &lt;br&gt;הראשון.">From the <br>first line.</h2>
+      <i class="cr15rule" aria-hidden="true"></i>
+      <p class="cr15s" data-en="A signature, brought to life." data-he="חתימה, שקמה לחיים.">A signature, brought to life.</p>
     </div>
-    <p class="lt14hint" aria-hidden="true"><span class="f" data-en="Move the light across the stones" data-he="הזיזו את האור על פני האבנים">Move the light across the stones</span></p>
+    <p class="cr15sr">SOUL, the SILAVU knot in white gold and pavé diamonds on its chain, drawn first as a technical sketch and then made, as the page scrolls.</p>
   </div>
 </section>
 `;
