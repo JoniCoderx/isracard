@@ -9,7 +9,7 @@
 #   final   the still the house approved (path traced; deterministic, so the same script gives the same picture)
 #   masks   each piece's exact silhouette in that still (hover and click)
 #   plate   the still without the jewellery (what shows where a piece is lifted)
-#   heroes  each piece alone at 3x, from the same camera and light, cropped to it (the piece as it comes forward)
+#   heroes  each piece alone at 2x, from the same camera and light, cropped to it (the piece as it comes forward)
 #   seq     the drawer opening: N frames from closed to the still, scrubbed by the scroll
 #   pack    webp, the id map, the patches under each piece, the manifest
 import json, os, subprocess, sys
@@ -21,7 +21,7 @@ BL, LAY, WORK = sys.argv[1], sys.argv[2], os.path.abspath(sys.argv[3])
 STEPS = sys.argv[4].split(",") if len(sys.argv) > 4 else ["prints", "final", "masks", "plate", "heroes", "seq", "pack"]
 CFG = {"d": dict(res=(1920, 1080), seq_res=(1280, 720), n=24), "m": dict(res=(1080, 1920), seq_res=(720, 1280), n=24)}[LAY]
 PIECES = {1: "ring", 2: "pave", 3: "aura", 4: "knot"}; PRINTS = {5: "ring", 6: "pave", 7: "knot"}
-W, H = CFG["res"]; os.makedirs(WORK, exist_ok=True); PR = os.path.join(WORK, "prints")
+W, H = CFG["res"]; HS = 2; os.makedirs(WORK, exist_ok=True); PR = os.path.join(WORK, "prints")
 OUT = os.path.join(PUB, "archive15", LAY); os.makedirs(OUT, exist_ok=True)
 
 def blender(out, w, h, samples, mode="frame"):
@@ -39,22 +39,19 @@ def hero_box(pid):
     return [round(v) for v in (x0, y0, x1, y1)]
 
 if "prints" in STEPS:
-    ttf = os.path.join(WORK, "jost.ttf")
-    if not os.path.exists(ttf):
-        from fontTools.ttLib import TTFont
-        f = TTFont(os.path.join(PUB, "fonts/jost-normal-latin-b58a58.woff2")); f.flavor = None; f.save(ttf)
+    # the house's Jost, straight from the site's own font file (Pillow and Blender read WOFF2 as they read the TTF)
     os.makedirs(PR, exist_ok=True)
-    subprocess.run([sys.executable, os.path.join(HERE, "archive-prints.py"), PUB, ttf, PR], check=True)
+    subprocess.run([sys.executable, os.path.join(HERE, "archive-prints.py"), PUB, os.path.join(PUB, "fonts/jost-normal-latin-b58a58.woff2"), PR], check=True)
 if "final" in STEPS: blender(os.path.join(WORK, "final.png"), W, H, 160)
 if "masks" in STEPS: blender(os.path.join(WORK, "masks") + "/", W, H, 1, "masks")
-if "plate" in STEPS: blender(os.path.join(WORK, "plate.png"), W, H, 128, "plate")
+if "plate" in STEPS: blender(os.path.join(WORK, "plate.png"), W, H, 96, "plate")
 if "heroes" in STEPS:
     for pid in PIECES:
         x0, y0, x1, y1 = hero_box(pid)
-        blender(os.path.join(WORK, f"hero{pid}.png"), W * 3, H * 3, 128, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
+        blender(os.path.join(WORK, f"hero{pid}.png"), W * HS, H * HS, 96, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
 if "seq" in STEPS:
     os.makedirs(os.path.join(WORK, "seq"), exist_ok=True); sw, sh = CFG["seq_res"]; n = CFG["n"]
-    blender(os.path.join(WORK, "seq", "f####.png"), sw, sh, 40, f"seq:{n}:0:{n - 1}")
+    blender(os.path.join(WORK, "seq", "f####.png"), sw, sh, 36, f"seq:{n}:0:{n - 1}")
 if "pack" in STEPS:
     man = {"layout": LAY, "res": [W, H], "final": f"archive15/{LAY}/final.webp", "pieces": [], "prints": []}
     Image.open(os.path.join(WORK, "final.png")).convert("RGB").save(os.path.join(OUT, "final.webp"), quality=90, method=6)

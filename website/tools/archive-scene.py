@@ -371,7 +371,7 @@ def build_moment(at, turn, arm_a, arm_b, ext):
     inst("tring", torus_mesh("tring", .55, .12, 1, GOLD), r, end_e + dir_e * .6 + Vector((0, 0, .12)))
     # the engraving: SILAVU, as the tag carries it
     tc = bpy.data.curves.new("eng", "FONT"); tc.body = "SILAVU"; tc.size = 1.0; tc.space_character = 1.3; tc.align_x = "CENTER"; tc.align_y = "CENTER"; tc.extrude = .2
-    try: tc.font = bpy.data.fonts.load(PRINTS + "../jost.ttf")
+    try: tc.font = bpy.data.fonts.load(PUB + "fonts/jost-normal-latin-b58a58.woff2")   # the house's Jost
     except Exception: pass
     txt = link(bpy.data.objects.new("eng", tc)); own(txt, r); txt.matrix_basis = to.matrix_basis @ Matrix.Translation((.5, 0, .28))
     bpy.context.view_layer.update()
