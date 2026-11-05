@@ -789,3 +789,28 @@
   function wake() { if (on && !raf) { last = 0; raf = requestAnimationFrame(frame); } }
   new IntersectionObserver(function (es) { on = es[0].isIntersecting; if (on) { box = null; wake(); } }, { rootMargin: "80px 0px" }).observe(sec);
 })();
+
+/* the phone's top strip: Safari paints the bar above the page in the page's theme colour, which was a dead black over
+   a bright film. While the opening film is at the top of the screen, the strip takes the colour of the film right
+   under it (sampled from the playing video a few times a second, eased); once the film has scrolled away it goes
+   back to black. The page itself is untouched: the body stays black. */
+(function () {
+  var v = document.getElementById("herovid"), meta = document.querySelector('meta[name="theme-color"]'); if (!v || !meta) return;
+  var cv = document.createElement("canvas"); cv.width = 8; cv.height = 2;
+  var cx = cv.getContext("2d", { willReadFrequently: true }); if (!cx) return;
+  var cur = null, on = false, timer = 0, last = "";
+  function put(c) { var s = "rgb(" + c.map(Math.round).join(",") + ")"; if (s === last) return; last = s; meta.setAttribute("content", s); document.documentElement.style.backgroundColor = s; }
+  function atTop() { var r = v.getBoundingClientRect(); return r.top <= 2 && r.bottom > 24 && r.height > 0; }
+  function leave() { on = false; clearTimeout(timer); cur = null; last = ""; meta.setAttribute("content", "#000000"); document.documentElement.style.backgroundColor = ""; }
+  function sample() {
+    clearTimeout(timer); if (!atTop()) return leave(); timer = setTimeout(sample, 300);
+    if (v.readyState < 2 || !v.videoWidth) return;
+    var r = v.getBoundingClientRect(), w = v.videoWidth, h = v.videoHeight;
+    var fr = Math.min(1, (r.width / r.height) * h / w), sw = w * fr * .6, sx = (w - sw) / 2, sy = Math.min(.95, Math.max(0, -r.top / r.height)) * h;
+    try { cx.drawImage(v, sx, sy, sw, h * .04, 0, 0, 8, 2); var d = cx.getImageData(0, 0, 8, 2).data, s = [0, 0, 0];
+      for (var i = 0; i < d.length; i += 4) { s[0] += d[i]; s[1] += d[i + 1]; s[2] += d[i + 2]; }
+      s = s.map(function (x) { return x / 16; }); if (!cur) cur = s; else for (var k = 0; k < 3; k++) cur[k] += (s[k] - cur[k]) * .55; put(cur); } catch (e) { leave(); }
+  }
+  function check() { var t = atTop(); if (t && !on) { on = true; sample(); } else if (!t && on) leave(); }
+  addEventListener("scroll", check, { passive: true }); v.addEventListener("playing", check); check();
+})();
