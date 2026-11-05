@@ -1,0 +1,167 @@
+{
+ "layout": "m",
+ "res": [
+  1080,
+  1920
+ ],
+ "final": "archive15/m/final.webp",
+ "pieces": [
+  {
+   "pid": 1,
+   "id": "ring",
+   "box": [
+    128,
+    1203,
+    330,
+    1408
+   ],
+   "patch": {
+    "src": "archive15/m/patch-ring.webp",
+    "rect": [
+     116,
+     1191,
+     342,
+     1420
+    ]
+   },
+   "hero": {
+    "src": "archive15/m/hero-ring.webp",
+    "rect": [
+     94,
+     1168,
+     364,
+     1443
+    ]
+   }
+  },
+  {
+   "pid": 2,
+   "id": "pave",
+   "box": [
+    499,
+    655,
+    838,
+    1153
+   ],
+   "patch": {
+    "src": "archive15/m/patch-pave.webp",
+    "rect": [
+     487,
+     643,
+     850,
+     1165
+    ]
+   },
+   "hero": {
+    "src": "archive15/m/hero-pave.webp",
+    "rect": [
+     446,
+     579,
+     891,
+     1229
+    ]
+   }
+  },
+  {
+   "pid": 3,
+   "id": "aura",
+   "box": [
+    77,
+    741,
+    351,
+    823
+   ],
+   "patch": {
+    "src": "archive15/m/patch-aura.webp",
+    "rect": [
+     65,
+     729,
+     363,
+     835
+    ]
+   },
+   "hero": {
+    "src": "archive15/m/hero-aura.webp",
+    "rect": [
+     33,
+     724,
+     395,
+     840
+    ]
+   }
+  },
+  {
+   "pid": 4,
+   "id": "knot",
+   "box": [
+    359,
+    1294,
+    1058,
+    1782
+   ],
+   "patch": {
+    "src": "archive15/m/patch-knot.webp",
+    "rect": [
+     347,
+     1282,
+     1070,
+     1794
+    ]
+   },
+   "hero": {
+    "src": "archive15/m/hero-knot.webp",
+    "rect": [
+     255,
+     1220,
+     1080,
+     1856
+    ]
+   }
+  }
+ ],
+ "prints": [
+  {
+   "pid": 5,
+   "piece": "ring",
+   "box": [
+    80,
+    257,
+    415,
+    680
+   ]
+  },
+  {
+   "pid": 6,
+   "piece": "pave",
+   "box": [
+    331,
+    213,
+    661,
+    616
+   ]
+  },
+  {
+   "pid": 7,
+   "piece": "knot",
+   "box": [
+    519,
+    158,
+    898,
+    565
+   ]
+  }
+ ],
+ "ids": {
+  "src": "archive15/m/ids.png",
+  "scale": 0.5,
+  "step": 32
+ },
+ "seq": {
+  "n": 24,
+  "res": [
+   720,
+   1280
+  ],
+  "src": "archive15/m/seq/%02d.webp"
+ }
+}

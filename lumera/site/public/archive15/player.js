@@ -58,16 +58,26 @@ export async function mount(sec) {
   }
 
   /* ── the scroll: 0 closed … 1 open; the last part of the runway holds the drawer open for looking */
-  let t = reduce ? 1 : 0, shown = -1, dirty = true, raf = 0, open = false;
+  let t = reduce ? 1 : 0, shown = "", dirty = true, raf = 0, open = false;
+  /* 24 frames carry a long camera move, so two neighbours laid over each other read as a double image. While the
+     scroll moves, the next frame comes in over a short stretch around the midpoint only (it reads as motion); once the
+     scroll rests, the drawer settles on the nearer whole frame (snap 0 → 1), so a paused drawer is always one picture. */
+  let snap = 1, snapT = 0, snapA = 0;
+  const steep = a => { const x = clamp((a - .3) / .4, 0, 1); return x * x * (3 - 2 * x); };
+  function settle() { const t0 = performance.now(); cancelAnimationFrame(snapA);
+    const step = now => { snap = clamp((now - t0) / 220, 0, 1); snap = 1 - Math.pow(1 - snap, 3); draw(); if (snap < 1) snapA = requestAnimationFrame(step); };
+    snapA = requestAnimationFrame(step); }
+  function moved() { if (snap !== 0) { cancelAnimationFrame(snapA); snap = 0; } clearTimeout(snapT); snapT = setTimeout(settle, 140); }
   function progress() { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; return span > 0 ? clamp(-r.top / span / .78, 0, 1) : 1; }
   function draw() {
     if (!M) return;
-    const n = M.seq.n, f = t * (n - 1), i = Math.floor(f), a = f - i, g = cv.getContext("2d");
-    if (!reduce && (dirty || shown !== f)) {
+    const n = M.seq.n, f = t * (n - 1), i = Math.floor(f), a0 = f - i, g = cv.getContext("2d");
+    const a = steep(a0) * (1 - snap) + (a0 >= .5 ? 1 : 0) * snap, key = i + "|" + a.toFixed(3);
+    if (!reduce && (dirty || shown !== key)) {
       const A = frames[i] || frames[0], B = frames[Math.min(n - 1, i + 1)];
       if (A) { g.globalAlpha = 1; g.drawImage(A, 0, 0, cv.width, cv.height); }
       if (B && a > .001) { g.globalAlpha = a; g.drawImage(B, 0, 0, cv.width, cv.height); g.globalAlpha = 1; }
-      shown = f; dirty = false;
+      shown = key; dirty = false;
     }
     const s = reduce ? 1 : clamp((t - .93) / .07, 0, 1); still.style.opacity = s;
     const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (!open) { hover(null); if (cur) close(true); } }
@@ -151,7 +161,7 @@ export async function mount(sec) {
     const p = M && M.pieces.find(x => x.id === b.dataset.id); if (!p) return;
     if (!open) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; draw(); }
     show(p, b); }));
-  let y0 = scrollY; addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY; tick(); }, { passive: true });
+  let y0 = scrollY; addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY; moved(); tick(); }, { passive: true });
   addEventListener("resize", () => { const l = pickLayout(); if (l !== L) { L = l; close(true); load().then(() => { layout(); tick(); }); } else { layout(); if (cur) { close(true); } tick(); } });
   new MutationObserver(() => { if (hot) { const h = hot; hot = null; hover(h); } }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
