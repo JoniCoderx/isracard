@@ -556,6 +556,11 @@ elif MODE.startswith("hero:"):
     target = [p for p in pieces if p["pid"] == pid][0]; keep = set(target.children_recursive)
     for o in sc.objects:
         if o.type in ("MESH", "CURVE", "FONT") and o not in keep: o.visible_camera = False
+    # the studs keep their stand as an invisible mask: what it hides in the drawer (the posts) stays hidden
+    if pid == 3:
+        for o in sc.objects:
+            if o.name.startswith("stand"): o.visible_camera = True; o.is_holdout = True
+    cd.dof.use_dof = False   # a piece brought forward is seen in focus
     sc.render.film_transparent = True; sc.render.image_settings.color_mode = "RGBA"
     sc.render.use_border = True; sc.render.use_crop_to_border = True
     sc.render.border_min_x, sc.render.border_min_y, sc.render.border_max_x, sc.render.border_max_y = x0, y0, x1, y1

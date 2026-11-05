@@ -47,8 +47,8 @@ if "masks" in STEPS: blender(os.path.join(WORK, "masks") + "/", W, H, 1, "masks"
 if "plate" in STEPS: blender(os.path.join(WORK, "plate.png"), W, H, 96, "plate")
 if "heroes" in STEPS:
     for pid in PIECES:
-        x0, y0, x1, y1 = hero_box(pid)
-        blender(os.path.join(WORK, f"hero{pid}.png"), W * HS, H * HS, 96, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
+        x0, y0, x1, y1 = hero_box(pid); hs = max(HS, min(6, round(1400 / max(x1 - x0, y1 - y0), 2)))   # small pieces finer
+        blender(os.path.join(WORK, f"hero{pid}.png"), round(W * hs), round(H * hs), 96, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
 if "seq" in STEPS:
     os.makedirs(os.path.join(WORK, "seq"), exist_ok=True); sw, sh = CFG["seq_res"]; n = CFG["n"]
     blender(os.path.join(WORK, "seq", "f####.png"), sw, sh, 36, f"seq:{n}:0:{n - 1}")
