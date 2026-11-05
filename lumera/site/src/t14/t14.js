@@ -256,7 +256,7 @@
    falls from above, turning flat, one after another; scrolling back lifts them away again. The leather and the
    envelope come with them and the light crosses each print as it lands. A hint on hover says a click turns it over. */
 (function () {
-  var sec = document.getElementById("details"); if (!sec || sec.classList.contains("pd14")) return;
+  var sec = document.getElementById("details"); if (!sec || sec.classList.contains("pd14") || sec.classList.contains("ar15")) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   function init() {
     var ws = [].slice.call(sec.querySelectorAll(".wlk")); if (!ws.length || !sec.classList.contains("atl13")) return setTimeout(init, 200);
@@ -1158,4 +1158,14 @@
     new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { size(); last = 0; go(); } }).observe(sec);
     size(); measure(); apply(Math.max(0, prog)); r.render(scene, cam);
   }
+})();
+
+/* Up close · the private archive (the house's brief of 5 Nov 2026, hybrid: a path-traced drawer with the jewellery and
+   the prints live in 3D over it, public/archive15/). This first step is the proof frame: the drawer open, two pieces
+   and the prints. The live layer loads only when the section comes near, and never without WebGL. */
+(function () {
+  var sec = document.querySelector("#details.ar15"); if (!sec) return;
+  var stage = sec.querySelector(".ar15stage"); if (!stage || !window.WebGLRenderingContext) return;
+  var go = function () { import("./archive15/archive.js").then(function (m) { return m.mount(stage, { scene: "d" }); }).then(function () { sec.classList.add("live"); }, function (e) { sec.classList.add("nolive"); if (window.console) console.warn("archive15", e); }); };
+  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); go(); } }, { rootMargin: "120% 0px" }).observe(sec);
 })();

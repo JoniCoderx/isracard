@@ -1,0 +1,17 @@
+{
+  "about": "Up close · the private archive (test14). The drawer is a Blender render (website/tools/archive-drawer.py); everything listed here is drawn live in 3D over it with the render's own camera, so each entry can be changed here alone. Positions are millimetres on the drawer's floor: x to the right, y towards the back, from the floor's centre. turn is degrees about the vertical.",
+  "exposure": 0.92,
+  "scenes": {
+    "d": { "bg": "archive15/open-d.webp", "meta": "archive15/open-d.json", "env": "archive15/env-d.hdr" }
+  },
+  "pieces": [
+    { "id": "ring", "model": "icon", "name": "SILAVU ICON", "kind": { "en": "Ring", "he": "טבעת" }, "href": "pieces/ring/", "at": [-104, -50], "turn": 14 },
+    { "id": "pave", "model": "soul", "name": "SILAVU SOUL", "kind": { "en": "Necklace", "he": "שרשרת" }, "href": "pieces/pave/", "at": [-2, -44], "turn": -5,
+      "chain": [ [[-24, -12], [-30, 4], [-24, 22], [-10, 40]], [[22, -14], [30, 2], [30, 20], [24, 40]] ] }
+  ],
+  "prints": [
+    { "img": "models/ring-900.jpg", "caption": "SILAVU ICON", "piece": "ring", "at": [-112, 44], "turn": 7 },
+    { "img": "models/necklace-900.jpg", "caption": "SILAVU SOUL", "piece": "pave", "at": [14, 52], "turn": -4, "lift": 0.8 },
+    { "img": "models/bracelet-900.jpg", "caption": "SILAVU MOMENT", "piece": "knot", "at": [112, 40], "turn": 6 }
+  ]
+}

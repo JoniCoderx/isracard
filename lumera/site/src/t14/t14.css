@@ -2094,3 +2094,22 @@ html[data-ns] .cr15k, html[data-ns] .cr15h { letter-spacing: .02em; }
   .cr15rule { margin: 18px auto 16px; }
   .cr15still { left: 50%; top: 62%; width: 112vw; }
 }
+
+/* ════════ UP CLOSE · THE PRIVATE ARCHIVE (proof frame) ════════ */
+html body #details.ar15 { position: relative; display: block !important; max-width: none !important; margin: 0 !important; padding: clamp(70px, 9vh, 120px) 0 clamp(50px, 7vh, 90px) !important; background: #000 !important; }
+html body #details.ar15::before, html body #details.ar15::after { content: none !important; }
+.ar15hd { position: relative; z-index: 2; display: grid; justify-items: center; gap: 14px; text-align: center; padding: 0 24px; }
+.ar15k { margin: 0; font-size: .64rem; letter-spacing: .36em; text-transform: uppercase; color: rgba(230,214,186,.7); }
+.ar15h { margin: 0; font-weight: 300; font-size: clamp(1.6rem, 2.6vw, 2.5rem); letter-spacing: .02em; color: #f1ebdf; }
+.ar15hd::after { content: ""; width: 44px; height: 1px; margin-top: 4px; background: rgba(230,214,186,.4); }
+html[data-ns] .ar15k { letter-spacing: .04em; font-size: .85rem; }
+.ar15stage { position: relative; width: 100%; max-width: 1920px; margin: clamp(-30px, -2vw, -10px) auto 0; aspect-ratio: 16 / 9; overflow: hidden; background: #000; direction: ltr; }
+.ar15bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ar15gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ar15tag { position: absolute; z-index: 3; transform: translate(-50%, calc(-100% - 46px)); display: grid; justify-items: center; gap: 4px; padding: 0; pointer-events: none; opacity: 0; transition: opacity .2s ease; white-space: nowrap; }
+.ar15tag.on { opacity: 1; }
+.ar15tag b { font-weight: 400; font-size: .7rem; letter-spacing: .3em; color: #f6f1e6; text-shadow: 0 1px 8px rgba(0,0,0,.8); }
+.ar15tag span { font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(236,226,206,.7); text-shadow: 0 1px 8px rgba(0,0,0,.8); }
+.ar15nav { display: flex; justify-content: center; gap: clamp(28px, 5vw, 70px); margin-top: clamp(14px, 2vw, 26px); }
+.ar15nav a { color: rgba(236,226,206,.6) !important; text-decoration: none !important; font-size: .66rem; letter-spacing: .34em; transition: color .2s ease; }
+.ar15nav a:hover, .ar15nav a:focus-visible { color: #f6f1e6 !important; }
