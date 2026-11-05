@@ -53,7 +53,7 @@
 })();
 
 /* the collections: each card opens as it arrives (a curtain lifting, the photograph settling), drifts a little with the
-   scroll, and carries a round loupe that shows the piece closer under the pointer, or under a held finger on a phone */
+   scroll, and turns toward the pointer on hover */
 (function () {
   var cards = [].slice.call(document.querySelectorAll(".c14card")); if (!cards.length) return;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, Z = 2.2, R = 100;
@@ -68,42 +68,23 @@
       var k = ((r.top + r.height / 2) - vh / 2) / vh; c.style.setProperty("--py", (k * -26).toFixed(1) + "px"); }); }
     addEventListener("scroll", function () { if (!tick) tick = requestAnimationFrame(drift); }, { passive: true }); drift();
   }
+  /* the hover (the house, 5 Nov 2026): no loupe. The whole card turns a few degrees toward the pointer, rises a
+     little, its shadow deepens, the photograph moves against the turn as though it sat behind glass, and a warm light
+     follows the pointer. Only with a mouse, and never when the reader asks for less motion. */
+  var fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
   cards.forEach(function (c) {
-    var pic = c.querySelector(".c14pic"), img = pic && pic.querySelector("img"); if (!img) return;
-    var lens = document.createElement("i"); lens.className = "c14lens"; lens.setAttribute("aria-hidden", "true"); c.appendChild(lens);
+    var pic = c.querySelector(".c14pic"); if (!pic) return;
     var glare = document.createElement("i"); glare.className = "c14glare"; glare.setAttribute("aria-hidden", "true"); pic.appendChild(glare);
-    var ex = 0, ey = 0, raf = 0, held = false, holdT = 0, suppress = false;
-    /* the glass shows the photograph as it is drawn (object-fit: cover), never the file squeezed into the frame, and
-       only over the upper picture: the name and the arrow below stay free to read and to press */
-    function paint() { raf = 0; var r = c.getBoundingClientRect(), ir = img.getBoundingClientRect();
-      var x = ex - r.left, y = ey - r.top - (held ? 120 : 0);
-      /* only a small quiet spot around the arrow is left without the glass, so the arrow can be pressed; everywhere
-         else, the pendant at the foot of SOUL included, the glass shows the piece */
-      var go = c.querySelector(".c14go"), gr = go && go.getBoundingClientRect(), pad = 16;
-      var off = !held && !!gr && ex > gr.left - pad && ex < gr.right + pad && ey > gr.top - pad && ey < gr.bottom + pad;
-      c.classList.toggle("off", !!off);
-      x = Math.max(R, Math.min(r.width - R, x)); y = Math.max(R, Math.min(r.height - R, y));
-      lens.style.left = x + "px"; lens.style.top = y + "px";
-      c.style.setProperty("--gx", ((ex - r.left) / r.width * 100).toFixed(1) + "%"); c.style.setProperty("--gy", ((ey - r.top) / r.height * 100).toFixed(1) + "%");
-      var src = img.currentSrc || img.src; if (lens.__s !== src) { lens.__s = src; lens.style.backgroundImage = 'url("' + src + '")'; }
-      var nw = img.naturalWidth || 1, nh = img.naturalHeight || 1, k = Math.max(ir.width / nw, ir.height / nh), dw = nw * k, dh = nh * k;
-      var dx = ir.left + (ir.width - dw) / 2, dy = ir.top + (ir.height - dh) / 2, px = r.left + x, py = r.top + y;
-      lens.style.backgroundSize = (dw * Z).toFixed(0) + "px " + (dh * Z).toFixed(0) + "px";
-      lens.style.backgroundPosition = (R - (px - dx) * Z).toFixed(1) + "px " + (R - (py - dy) * Z).toFixed(1) + "px"; }
-    var e2 = null;
-    c.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; c.classList.add("lens"); paint(); });
-    c.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; e2 = e.target; if (!raf) raf = requestAnimationFrame(paint); });
-    c.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") c.classList.remove("lens"); });
-    /* a phone: hold a finger on the picture for a moment and the loupe appears above it; slide to look around */
-    c.addEventListener("touchstart", function (e) { var t = e.touches[0]; ex = t.clientX; ey = t.clientY; clearTimeout(holdT);
-      holdT = setTimeout(function () { held = true; suppress = true; c.classList.add("lens"); paint(); }, 280); }, { passive: true });
-    c.addEventListener("touchmove", function (e) { var t = e.touches[0];
-      if (!held) { if (Math.abs(t.clientX - ex) > 8 || Math.abs(t.clientY - ey) > 8) clearTimeout(holdT); return; }
-      e.preventDefault(); ex = t.clientX; ey = t.clientY; if (!raf) raf = requestAnimationFrame(paint); }, { passive: false });
-    var end = function () { clearTimeout(holdT); if (held) { held = false; c.classList.remove("lens"); } };
-    c.addEventListener("touchend", end); c.addEventListener("touchcancel", end);
-    c.addEventListener("click", function (e) { if (suppress) { e.preventDefault(); suppress = false; } });
-    c.addEventListener("contextmenu", function (e) { if (held) e.preventDefault(); });
+    if (!fine || reduce) return;
+    var raf = 0, ex = 0, ey = 0;
+    function paint() { raf = 0; var r = c.getBoundingClientRect(); if (!r.width) return;
+      var x = Math.max(0, Math.min(1, (ex - r.left) / r.width)), y = Math.max(0, Math.min(1, (ey - r.top) / r.height));
+      c.style.setProperty("--rx", ((.5 - y) * 8).toFixed(2) + "deg"); c.style.setProperty("--ry", ((x - .5) * 10).toFixed(2) + "deg");
+      c.style.setProperty("--mx", ((.5 - x) * 10).toFixed(1) + "px"); c.style.setProperty("--my", ((.5 - y) * 8).toFixed(1) + "px");
+      c.style.setProperty("--gx", (x * 100).toFixed(1) + "%"); c.style.setProperty("--gy", (y * 100).toFixed(1) + "%"); }
+    c.addEventListener("pointerenter", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; c.classList.add("c15on"); paint(); });
+    c.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; ex = e.clientX; ey = e.clientY; if (!raf) raf = requestAnimationFrame(paint); });
+    c.addEventListener("pointerleave", function () { cancelAnimationFrame(raf); raf = 0; c.classList.remove("c15on"); ["--rx", "--ry", "--mx", "--my"].forEach(function (k) { c.style.removeProperty(k); }); });
   });
 })();
 
@@ -561,25 +542,36 @@
       else i++;
     }
     var shapes = sp.toShapes(T.ShapeUtils.isClockWise(sp.subPaths[0].getPoints()));
-    var geo = new T.ExtrudeGeometry(shapes, { depth: 64, bevelEnabled: true, bevelThickness: 18, bevelSize: 9, bevelOffset: -2, bevelSegments: 8, curveSegments: 40 });
+    var geo = new T.ExtrudeGeometry(shapes, { depth: 58, bevelEnabled: true, bevelThickness: 22, bevelSize: 11, bevelOffset: -3, bevelSegments: 14, curveSegments: 72 });
     geo.center(); var S = 1 / 1000; geo.scale(S, S, S); geo.computeVertexNormals();
 
     var W = 0, H = 0, cv = document.createElement("canvas"); cv.className = "c14gl"; cv.setAttribute("aria-label", "The SILAVU emblem in white gold. Drag to turn it."); cv.setAttribute("role", "img");
     var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, powerPreference: "high-performance" });
-    r.setPixelRatio(Math.min(2, devicePixelRatio || 1)); r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.outputColorSpace = T.SRGBColorSpace;
+    r.setPixelRatio(Math.min(2.5, Math.max(1.5, devicePixelRatio || 1))); r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.outputColorSpace = T.SRGBColorSpace;
     var scene = new T.Scene(), cam = new T.PerspectiveCamera(30, 1, .1, 20); cam.position.set(0, 0, 3.15);
     /* the studio the metal reflects: tall softboxes left and right, a wide one overhead, a warm card low, black between */
     var studio = new T.Scene(); studio.background = new T.Color(0x050505);
-    var box = function (w, h, x, y, z, col, k) { var m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: new T.Color(col).multiplyScalar(k), side: T.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); studio.add(m); };
-    box(1.8, 4, -3.2, .4, 1.2, 0xffffff, 2.2); box(1.5, 4, 3.4, .2, .4, 0xf6f3ee, 1.6); box(5, 1.6, 0, 3.4, .8, 0xffffff, 1.6);
-    box(3, .7, 0, -2.6, 1.8, 0xffe7c4, .9); box(1.2, 2.4, .6, .4, -3.4, 0xffffff, 1.6); box(.5, 3, -1.6, 0, -3.2, 0xffffff, 1.2);
-    /* and a large soft one behind the viewer, graded, so a face turned to the camera reads as polished white gold, not black */
-    var back = new T.Mesh(new T.PlaneGeometry(7, 4.5), new T.ShaderMaterial({ side: T.DoubleSide, vertexShader: "varying vec2 v; void main(){ v = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
-      fragmentShader: "varying vec2 v; void main(){ float g = smoothstep(0.0, 1.0, v.y) * 0.9 + 0.25; float e = 1.0 - smoothstep(0.25, 0.5, abs(v.x - 0.5)); gl_FragColor = vec4(vec3(g * e * 1.25), 1.0); }" }));
+    /* a jeweller's studio, as polished white gold sees it: soft-edged boxes (their light falls off toward the rims, as a
+       diffuser's does), long strips that draw the bright lines down the curves, a warm card low, deep black between
+       them so the metal keeps its contrast, and a soft graded wall behind the viewer for the faces turned to camera */
+    var softV = "varying vec2 v; void main(){ v = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }";
+    var box = function (w, h, x, y, z, col, k, edge) { var c = new T.Color(col).multiplyScalar(k);
+      var m = new T.Mesh(new T.PlaneGeometry(w, h), new T.ShaderMaterial({ side: T.DoubleSide, uniforms: { c: { value: c }, e: { value: edge || .22 } }, vertexShader: softV,
+        fragmentShader: "uniform vec3 c; uniform float e; varying vec2 v; void main(){ vec2 d = min(v, 1.0 - v); float f = smoothstep(0.0, e, d.x) * smoothstep(0.0, e, d.y); gl_FragColor = vec4(c * f, 1.0); }" }));
+      m.position.set(x, y, z); m.lookAt(0, 0, 0); studio.add(m); };
+    box(1.6, 4.2, -3.1, .5, 1.4, 0xffffff, 3.2, .3); box(1.3, 4, 3.3, .1, .6, 0xf7f3ec, 2.2, .3); box(5.4, 1.4, 0, 3.5, .6, 0xffffff, 2.4, .35);
+    box(3.2, .6, 0, -2.7, 1.6, 0xffe2b8, 1.1, .4); box(.22, 3.8, -1.25, .2, 2.9, 0xffffff, 4.0, .45); box(.18, 3.6, 1.55, -.1, 2.8, 0xffffff, 3.0, .45);
+    box(1.4, 2.6, .5, .4, -3.4, 0xffffff, 1.8, .3); box(.5, 3, -1.7, 0, -3.1, 0xffffff, 1.3, .4);
+    var back = new T.Mesh(new T.PlaneGeometry(7, 4.5), new T.ShaderMaterial({ side: T.DoubleSide, vertexShader: softV,
+      fragmentShader: "varying vec2 v; void main(){ float g = smoothstep(0.0, 1.0, v.y) * 0.75 + 0.18; float e = 1.0 - smoothstep(0.22, 0.5, abs(v.x - 0.5)); gl_FragColor = vec4(vec3(g * e * 1.05), 1.0); }" }));
     back.position.set(.3, .5, 4.2); back.lookAt(0, 0, 0); studio.add(back);
-    studio.background = new T.Color(0x121212);
+    /* a dim room all round, so no turn of the piece ever shows a face of pure black */
+    var room = new T.Mesh(new T.SphereGeometry(9, 32, 16), new T.ShaderMaterial({ side: T.BackSide, vertexShader: "varying vec3 p; void main(){ p = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+      fragmentShader: "varying vec3 p; void main(){ float g = 0.10 + 0.16 * smoothstep(-0.6, 0.9, p.y); gl_FragColor = vec4(vec3(g * 1.02, g, g * 0.97), 1.0); }" }));
+    studio.add(room);
+    studio.background = new T.Color(0x0c0c0c);
     var pm = new T.PMREMGenerator(r); scene.environment = pm.fromScene(studio, .02).texture; pm.dispose();
-    var gold = new T.MeshPhysicalMaterial({ color: 0xece8e1, metalness: 1, roughness: .27, clearcoat: .2, clearcoatRoughness: .2, envMapIntensity: 1.05 });
+    var gold = new T.MeshPhysicalMaterial({ color: 0xebe7df, metalness: 1, roughness: .13, clearcoat: .35, clearcoatRoughness: .08, envMapIntensity: 1.15 });
     var mesh = new T.Mesh(geo, gold), rig = new T.Group(); rig.add(mesh); scene.add(rig);
     /* a coin is struck on both faces: from behind, the symbol reads true, never as its mirror. The reverse is the same
        piece drawn reflected across its own height, shown only while its face is turned to the viewer (the swap happens
@@ -587,10 +579,7 @@
     var meshB = new T.Mesh(geo, gold); meshB.scale.x = -1; meshB.visible = false; rig.add(meshB);
     var fz = new T.Vector3();
     var key = new T.DirectionalLight(0xffffff, .6); key.position.set(-2, 3, 4); scene.add(key);
-    /* the orbit: a hairline of the same metal, tilted, with one bead of light travelling it */
-    var ring = new T.Mesh(new T.TorusGeometry(.62, .0018, 6, 220), new T.MeshPhysicalMaterial({ color: 0xcfc6b6, metalness: 1, roughness: .4, transparent: true, opacity: .55 }));
-    var bead = new T.Mesh(new T.SphereGeometry(.0075, 12, 10), new T.MeshBasicMaterial({ color: 0xf3ead8 }));
-    var orbit = new T.Group(); orbit.add(ring); orbit.add(bead); orbit.rotation.set(1.28, .18, -.32); scene.add(orbit);
+    /* no orbit and no glow (the house, 5 Nov 2026): only the piece itself */
 
     host.classList.add("gl"); host.insertBefore(cv, host.firstChild);
     var hint = document.createElement("span"); hint.className = "c14hint"; hint.setAttribute("aria-hidden", "true"); host.appendChild(hint);
@@ -634,7 +623,6 @@
       fz.set(0, 0, 1).applyQuaternion(q); var front = fz.z >= 0; mesh.visible = front; meshB.visible = !front;
       rig.quaternion.copy(q); rig.position.y = f * Math.sin(t * .62) * .02;
       host.style.setProperty("--fl", (rig.position.y * 100).toFixed(2));
-      orbit.rotation.z = -.32 + t * (reduce ? 0 : .05); bead.position.set(Math.cos(t * .5) * .62, Math.sin(t * .5) * .62, 0);
       r.render(scene, cam);
       if (vis && (!reduce || drag || show || w.lengthSq() > 1e-6)) go();
     }

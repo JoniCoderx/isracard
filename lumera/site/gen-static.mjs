@@ -658,21 +658,39 @@ const T14 = (() => {
   const grab = (h, id) => { const i = h.indexOf(`<section id="${id}"`); if (i < 0) return ["", h]; const j = h.indexOf("</section>", i); if (j < 0) return ["", h]; return [h.slice(i, j + 10), h.slice(0, i) + h.slice(j + 10)]; };
   const swap = (h, id, html) => { const [x, rest] = grab(h, id); if (!x) return h; const i = h.indexOf(`<section id="${id}"`); return h.slice(0, i) + html + h.slice(i + x.length); };
   const card = (id, img, name, en, he, alt) => `<a class="c14card" href="pieces/${id}/"><span class="c14pic"><img src="${img.startsWith("models/") ? img + "-1400.jpg" : "img/" + img + "-1254.jpg"}" srcset="${img.startsWith("models/") ? img + "-900.jpg 900w, " + img + "-1400.jpg 1400w" : "img/" + img + "-900.jpg 900w, img/" + img + "-1254.jpg 1254w"}" sizes="(min-width: 900px) 33vw, 94vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${alt}"></span><span class="c14t"><b>${name}</b><span data-en="${en}" data-he="${he}">${en}</span></span><i class="c14go" aria-hidden="true"></i></a>`;
-  const COL = `<section id="collection" class="c14col" data-n="01" data-title-en="Collection" data-title-he="הקולקציה" aria-labelledby="c14h">
+  /* a glimpse of every kind the house makes, below the three collections (the house, 5 Nov 2026): each is the house's
+     own cut-out photograph of a real piece; a kind the house has not yet shown (bangles) is a drawn outline marked
+     "Coming soon" until the house's own design arrives. Nothing is presented as a piece that does not exist. */
+  const STRIP = [
+    { en: "Rings", he: "טבעות", id: "ring", img: "cut8/ring", w: 700, h: 315, name: "ICON" },
+    { en: "Earrings", he: "עגילים", id: "aura", img: "cut8/aura", w: 700, h: 396, name: "AURA" },
+    { en: "Bracelets", he: "צמידים", id: "knot", img: "cut8/knot", w: 700, h: 464, name: "MOMENT" },
+    { en: "Necklaces", he: "שרשראות", id: "pave", img: "cut8/pave-hero", w: 700, h: 604, name: "SOUL" },
+    { en: "Bangles", he: "צמידים קשיחים", soon: true },
+    { en: "Tennis", he: "טניס", id: "cadence", img: "cut8/cadence-clean", w: 700, h: 316, name: "CADENCE" }
+  ];
+  const BANGLE = `<svg class="c15ph" viewBox="0 0 240 120" aria-hidden="true"><defs><linearGradient id="c15m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5d5952"/><stop offset=".22" stop-color="#d9d5cd"/><stop offset=".42" stop-color="#8b867d"/><stop offset=".6" stop-color="#f4f1ea"/><stop offset=".8" stop-color="#9a958c"/><stop offset="1" stop-color="#4c4842"/></linearGradient></defs><ellipse cx="120" cy="62" rx="98" ry="34" fill="none" stroke="url(#c15m)" stroke-width="9"/><ellipse cx="120" cy="62" rx="98" ry="34" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1" transform="translate(0 -3.5)"/></svg>`;
+  const peek = s => s.soon
+    ? `<span class="c15it c15soon" role="group" aria-label="${s.en}, coming soon" data-aria-he="${s.he}, בקרוב"><span class="c15pic">${BANGLE}</span><b data-en="${s.en}" data-he="${s.he}">${s.en}</b><small data-en="Coming soon" data-he="בקרוב">Coming soon</small></span>`
+    : `<a class="c15it" href="pieces/${s.id}/"><span class="c15pic"><img src="${s.img}-700.webp" width="${s.w}" height="${s.h}" loading="lazy" decoding="async" alt="SILAVU ${s.name}"></span><b data-en="${s.en}" data-he="${s.he}">${s.en}</b><small>SILAVU ${s.name}</small></a>`;
+  const COL = `<section id="collection" class="c14col c15" data-n="01" data-title-en="Collection" data-title-he="הקולקציה" aria-labelledby="c14h">
   <div class="c14wrap">
     <div class="c14intro">
       <p class="c14eyb"><span>SILAVU</span><i>/</i><span data-en="Collections" data-he="קולקציות">Collections</span></p>
       <h2 class="c14h" id="c14h" data-en="Our signature collections" data-he="קולקציות החתימה שלנו">Our signature collections</h2>
       <i class="c14rule" aria-hidden="true"></i>
       <p class="c14lead" data-en="One signature, the SILAVU knot, in three collections." data-he="חתימה אחת, הקשר של SILAVU, בשלוש קולקציות.">One signature, the SILAVU knot, in three collections.</p>
-  <span class="c14sym" aria-hidden="true"><i class="c14orb"></i><i class="c14spk s1"></i><i class="c14spk s2"></i><i class="c14spk s3"></i><i class="c14spk s4"></i><i class="c14spk s5"></i><span class="c14symin"><svg viewBox="0 0 875 1000"><defs><linearGradient id="c14gold" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8e7046"/><stop offset=".38" stop-color="#d9c08e"/><stop class="g1" offset=".5" stop-color="#fff6df"/><stop offset=".62" stop-color="#d4b884"/><stop offset="1" stop-color="#8a6b42"/></linearGradient></defs><use href="#symb" fill="url(#c14gold)"/></svg></span></span>
-      <a class="c14all" href="collection14/"><span class="c14allmk" aria-hidden="true"><svg class="sy" viewBox="0 0 875 1000"><use href="#symb"/></svg></span><span class="c14allt" data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</span><i class="c14allar" aria-hidden="true"></i></a>
+  <span class="c14sym" aria-hidden="true"><span class="c14symin"><svg viewBox="0 0 875 1000"><defs><linearGradient id="c14gold" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8e7046"/><stop offset=".38" stop-color="#d9c08e"/><stop class="g1" offset=".5" stop-color="#fff6df"/><stop offset=".62" stop-color="#d4b884"/><stop offset="1" stop-color="#8a6b42"/></linearGradient></defs><use href="#symb" fill="url(#c14gold)"/></svg></span></span>
     </div>
     <div class="c14cards">
       ${card("knot", "models/bracelet", "MOMENT", "Everyday icons", "אייקונים לכל יום", "SILAVU MOMENT, the signature bracelet, worn")}
       ${card("ring", "ring-worn", "ICON", "Signature pieces", "תכשיטי חתימה", "SILAVU ICON, the signature ring, worn")}
       ${card("pave", "necklace-worn", "SOUL", "Personal expressions", "ביטוי אישי", "SILAVU SOUL, the signature pendant, worn")}
     </div>
+    <a class="c15all" href="collection14/"><span data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</span><i aria-hidden="true"></i></a>
+    <nav class="c15strip" aria-label="The house's jewellery, by kind" data-aria-he="התכשיטים של הבית, לפי סוג">
+      ${STRIP.map(peek).join("\n      ")}
+    </nav>
   </div>
 </section>`;
   const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
