@@ -493,18 +493,19 @@ def panel(loc, size, strength, aim):
     e = nt.nodes.new("ShaderNodeEmission"); e.inputs["Strength"].default_value = strength; e.inputs["Color"].default_value = (1, .97, .93, 1); nt.links.new(e.outputs[0], nt.nodes["Material Output"].inputs[0])
     o.data.materials.append(m); o.visible_camera = False; o.visible_diffuse = False; o.visible_shadow = False; o.visible_volume_scatter = False
     return o
-panel(W2((0, -260, 520)), mm(520), 1.6, W2((0, 0)))
-panel(W2((0, -560, 190)), mm(420), 1.3, W2((SX, SY, 25)))      # low in front, unseen: what the standing studs look into
+panel(W2((0, -260, 520)), mm(520), 3.6, W2((0, 0)))
+panel(W2((0, -560, 190)), mm(420), 4.5, W2((SX, SY, 25)))
+panel(W2((SX, SY - 200, 260)), mm(220), 3.0, W2((SX, SY, 25)))      # low in front, unseen: what the standing studs look into
 light("SPOT", W2((SX - 30, SY - 280, 170)), 1.6, W2((SX, SY, 26)), spot_size=math.radians(9), spot_blend=.8, shadow_soft_size=mm(25), color=NEUT)
 # small hot lamps that only the metal and the stones see: the glints of pavé under real lights
 for i in range(12):
     a = i * 2.399; zz = .45 + .5 * ((i * .618) % 1); rr = math.sqrt(1 - zz * zz)
-    l = bpy.data.lights.new(f"spark{i}", "POINT"); l.energy = .5; l.shadow_soft_size = mm(1.5); l.color = NEUT
+    l = bpy.data.lights.new(f"spark{i}", "POINT"); l.energy = .9; l.shadow_soft_size = mm(1.5); l.color = NEUT
     o = link(bpy.data.objects.new(f"spark{i}", l)); o.location = W2((math.cos(a) * rr * 520, 140 + abs(math.sin(a)) * rr * 420, zz * 520))
     o.visible_diffuse = False
     o.light_linking.receiver_collection = JEWELS   # only the jewellery receives them: no glint in the lacquer
-panel(W2((-380, 120, 300)), mm(300), 1.2, W2((0, 0)))
-panel(W2((360, 60, 320)), mm(280), 1.0, W2((0, 0)))
+panel(W2((-380, 120, 300)), mm(300), 2.4, W2((0, 0)))
+panel(W2((360, 60, 320)), mm(280), 2.0, W2((0, 0)))
 
 # ═════════ camera
 cd = bpy.data.cameras.new("cam"); cam = link(bpy.data.objects.new("cam", cd)); sc.camera = cam
