@@ -7,10 +7,12 @@
    knot; the way in. Dark, calm, Jost; the same chrome as /test13/. */
 import fs from "node:fs";
 import path from "node:path";
+import { phoneMenu } from "../t14/phonemenu.mjs";
 
 export function about13Page({ ABOUT, PIECES, markDefs, markUse, root, v14 = false }) {
   /* v14: the same page in /test14/'s black, with the founder full height, the facts in a line, the worn pieces and the way in with the mark */
   const a = ABOUT, R = "../", HOME = v14 ? "test14/" : "test13/", COLL = v14 ? "collection14/" : "test13/#collection";
+  const PM = phoneMenu(R, "about14/");
   const fontsDir = path.join(root, "public/fonts");
   const ff = re => fs.readdirSync(fontsDir).find(x => re.test(x));
   const jost = ff(/^jost-normal-latin-[0-9a-f]{6}\.woff2$/), jostx = ff(/^jost-normal-latin-ext-[0-9a-f]{6}\.woff2$/), urb = ff(/^urbanist-normal-all-[0-9a-f]{6}\.woff2$/);
@@ -48,7 +50,7 @@ export function about13Page({ ABOUT, PIECES, markDefs, markUse, root, v14 = fals
 <style>@font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jost}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jostx}) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:'Silavu Name';font-style:normal;font-weight:500;font-display:swap;src:url(${R}fonts/${urb}) format('woff2');unicode-range:U+41,U+49,U+4c,U+53,U+55-56,U+61,U+69,U+6c,U+73,U+75-76}
-${css}</style>
+${css}${v14 ? PM.css : ""}</style>
 </head>
 <body>
 ${markDefs()}
@@ -57,7 +59,8 @@ ${v14 ? `<header class="bar bar14">
   <a class="hback" href="${R}${HOME}" aria-label="Back to the house"><i aria-hidden="true"></i></a>
   <a class="back" href="${R}${HOME}" aria-label="SILAVU, the house">${markUse("")}<span class="wm">SILAVU</span></a>
   <a class="pill" href="${R}${HOME}#concierge">Book a private viewing</a>
-</header>` : `<header class="bar">
+</header>
+${PM.html}` : `<header class="bar">
   <a class="back" href="${R}${HOME}">${markUse("")}<span class="wm">SILAVU</span></a>
   <a class="pill" href="${R}${HOME}#concierge">Book a private viewing</a>
 </header>`}
@@ -114,7 +117,7 @@ ${v14 ? `<header class="bar bar14">
 ${v14 ? `<footer class="foot foot14"><div class="fin"><a class="fmk" href="${R}${HOME}" aria-label="SILAVU">${markUse("")}<span class="wm">SILAVU</span></a>
   <nav aria-label="Explore"><a href="${R}${COLL}">Collection</a><a href="${R}${HOME}#build">Design yours</a><a href="${R}${HOME}#inside">The box</a><a href="${R}${HOME}#concierge">Enquire</a></nav>
   <span class="fc">© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span></div></footer>` : `<footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}${HOME}">Back to the house</a></footer>`}
-<script>${fs.readFileSync(path.join(root, "src", "t13", "about13.js"), "utf8")}</script>
+<script>${fs.readFileSync(path.join(root, "src", "t13", "about13.js"), "utf8")}</script>${v14 ? `<script>${PM.js}</script>` : ""}
 </body>
 </html>
 `;

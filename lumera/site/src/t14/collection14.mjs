@@ -7,9 +7,11 @@
    a CollectionPage holding an ItemList of the Products, and the breadcrumb. Only the house's own words and photographs. */
 import fs from "node:fs";
 import path from "node:path";
+import { phoneMenu } from "./phonemenu.mjs";
 
 export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
   const R = "../";
+  const PM = phoneMenu(R, "collection14/");
   const fontsDir = path.join(root, "public/fonts");
   const ff = re => fs.readdirSync(fontsDir).find(x => re.test(x));
   const jost = ff(/^jost-normal-latin-[0-9a-f]{6}\.woff2$/), jostx = ff(/^jost-normal-latin-ext-[0-9a-f]{6}\.woff2$/), urb = ff(/^urbanist-normal-all-[0-9a-f]{6}\.woff2$/);
@@ -79,7 +81,8 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
 <style>@font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jost}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jostx}) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:'Silavu Name';font-style:normal;font-weight:500;font-display:swap;src:url(${R}fonts/${urb}) format('woff2');unicode-range:U+41,U+49,U+4c,U+53,U+55-56,U+61,U+69,U+6c,U+73,U+75-76}
-${css}</style>
+${css}${PM.css}
+@media (max-width: 899px) { header.bar { min-height: calc(max(16px, env(safe-area-inset-top)) + 60px); } header.bar .back { position: absolute; left: 50%; top: calc(max(16px, env(safe-area-inset-top)) + 22px); transform: translate(-50%, -50%); } }</style>
 </head>
 <body>
 ${markDefs()}
@@ -88,6 +91,7 @@ ${markDefs()}
   <nav class="tnav" aria-label="Main"><a href="${R}test14/#build">Design your bracelet</a><a href="${R}about14/">About</a></nav>
   <a class="pill" href="${R}test14/#concierge">Book a private viewing</a>
 </header>
+${PM.html}
 <main>
   <section class="ch14" aria-labelledby="ch">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="${R}test14/">SILAVU</a><i aria-hidden="true">/</i><span aria-current="page">The collection</span></nav>
@@ -115,7 +119,7 @@ ${markDefs()}
   </section>
 </main>
 <footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}test14/">Back to the house</a></footer>
-<script>${js}</script>
+<script>${js}</script><script>${PM.js}</script>
 </body>
 </html>
 `;
