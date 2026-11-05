@@ -2113,3 +2113,9 @@ html[data-ns] .ar15k { letter-spacing: .04em; font-size: .85rem; }
 .ar15nav { display: flex; justify-content: center; gap: clamp(28px, 5vw, 70px); margin-top: clamp(14px, 2vw, 26px); }
 .ar15nav a { color: rgba(236,226,206,.6) !important; text-decoration: none !important; font-size: .66rem; letter-spacing: .34em; transition: color .2s ease; }
 .ar15nav a:hover, .ar15nav a:focus-visible { color: #f6f1e6 !important; }
+/* the proof stills: the desktop frame wide, the phone's own frame on a phone */
+.ar15stage[data-mode="still"] picture { position: absolute; inset: 0; display: block; }
+@media (max-width: 899px) {
+  .ar15stage[data-mode="still"] { aspect-ratio: 9 / 16; max-height: none; margin-top: 18px; }
+  .ar15nav { flex-wrap: wrap; gap: 18px 28px; padding: 0 20px; }
+}

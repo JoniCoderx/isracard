@@ -1165,7 +1165,7 @@
    and the prints. The live layer loads only when the section comes near, and never without WebGL. */
 (function () {
   var sec = document.querySelector("#details.ar15"); if (!sec) return;
-  var stage = sec.querySelector(".ar15stage"); if (!stage || !window.WebGLRenderingContext) return;
+  var stage = sec.querySelector(".ar15stage"); if (!stage || stage.getAttribute("data-mode") === "still" || !window.WebGLRenderingContext) return;
   var go = function () { import("./archive15/archive.js").then(function (m) { return m.mount(stage, { scene: "d" }); }).then(function () { sec.classList.add("live"); }, function (e) { sec.classList.add("nolive"); if (window.console) console.warn("archive15", e); }); };
   new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); go(); } }, { rootMargin: "120% 0px" }).observe(sec);
 })();
