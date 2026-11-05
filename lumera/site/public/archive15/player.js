@@ -76,10 +76,16 @@ export async function mount(sec) {
   function tick() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (!reduce) t = progress(); draw(); }); }
 
   /* ── which piece is under a point of the screen (the id map) */
-  function at(cx, cy) {
+  function at(cx, cy, touch) {
     const b = stage.getBoundingClientRect(), x = (cx - b.left) / b.width, y = (cy - b.top) / b.height;
     if (!ids || x < 0 || y < 0 || x >= 1 || y >= 1) return null;
-    const v = ids[(Math.floor(y * idH) * idW + Math.floor(x * idW)) * 4], pid = Math.round(v / M.ids.step); if (!pid) return null;
+    /* the exact point first, then the nearest piece within a few pixels (a fingertip's width on a phone): the chains
+       are fine, and a near miss should still find them */
+    const px = Math.floor(x * idW), py = Math.floor(y * idH), rad = Math.ceil((touch ? 16 : 7) * idW / b.width);
+    const read = (u, v) => (u < 0 || v < 0 || u >= idW || v >= idH) ? 0 : Math.round(ids[(v * idW + u) * 4] / M.ids.step);
+    let pid = read(px, py);
+    for (let r = 1; !pid && r <= rad; r++) for (let k = -r; k <= r && !pid; k++) pid = read(px + k, py - r) || read(px + k, py + r) || read(px - r, py + k) || read(px + r, py + k);
+    if (!pid) return null;
     const pc = M.pieces.find(p => p.pid === pid); if (pc) return pc;
     const pr = M.prints.find(p => p.pid === pid); return pr ? M.pieces.find(p => p.id === pr.piece) : null;
   }
@@ -94,7 +100,7 @@ export async function mount(sec) {
   }
   stage.addEventListener("pointermove", e => { if (open && !cur && e.pointerType === "mouse") hover(at(e.clientX, e.clientY)); });
   stage.addEventListener("pointerleave", () => hover(null));
-  stage.addEventListener("click", e => { if (!open) return; if (cur) { close(); return; } const p = at(e.clientX, e.clientY); if (p) show(p, null); });
+  stage.addEventListener("click", e => { if (!open) return; if (cur) { close(); return; } const p = at(e.clientX, e.clientY, e.pointerType !== "mouse"); if (p) show(p, null); });
 
   /* ── the detail: the piece comes forward */
   let cur = null, heroEl = null, patchEl = null, anim = 0, back = null;
