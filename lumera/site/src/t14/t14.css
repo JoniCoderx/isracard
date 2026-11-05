@@ -2126,7 +2126,7 @@ html[data-ns] .ar15k { letter-spacing: .04em; font-size: .85rem; }
 .ar15pin .ar15stage { position: absolute; left: 0; top: 0; width: 100%; height: 100%; aspect-ratio: auto; max-width: none; margin: 0; overflow: hidden; background: #000; direction: ltr; }
 .ar15seq { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
 .ar15live .ar15seq { visibility: visible; }
-.ar15still { position: absolute; inset: 0; display: block; }
+.ar15still { position: absolute; inset: 0; display: block; background: none; }   /* style.css paints every picture #0a0a0b, which hid the opening frames beneath */
 .ar15still img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
 .ar15pool { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity .35s ease;
   background: radial-gradient(circle at var(--px, 50%) var(--py, 50%), rgba(0,0,0,0) calc(var(--pr, 80px) * .85), rgba(0,0,0,.42) calc(var(--pr, 80px) * 2.8)); }

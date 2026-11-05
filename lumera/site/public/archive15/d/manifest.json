@@ -1,0 +1,167 @@
+{
+ "layout": "d",
+ "res": [
+  1920,
+  1080
+ ],
+ "final": "archive15/d/final.webp",
+ "pieces": [
+  {
+   "pid": 1,
+   "id": "ring",
+   "box": [
+    300,
+    636,
+    472,
+    792
+   ],
+   "patch": {
+    "src": "archive15/d/patch-ring.webp",
+    "rect": [
+     280,
+     616,
+     492,
+     812
+    ]
+   },
+   "hero": {
+    "src": "archive15/d/hero-ring.webp",
+    "rect": [
+     270,
+     608,
+     502,
+     820
+    ]
+   }
+  },
+  {
+   "pid": 2,
+   "id": "pave",
+   "box": [
+    576,
+    192,
+    996,
+    737
+   ],
+   "patch": {
+    "src": "archive15/d/patch-pave.webp",
+    "rect": [
+     556,
+     172,
+     1016,
+     757
+    ]
+   },
+   "hero": {
+    "src": "archive15/d/hero-pave.webp",
+    "rect": [
+     511,
+     110,
+     1061,
+     819
+    ]
+   }
+  },
+  {
+   "pid": 3,
+   "id": "aura",
+   "box": [
+    282,
+    101,
+    499,
+    181
+   ],
+   "patch": {
+    "src": "archive15/d/patch-aura.webp",
+    "rect": [
+     262,
+     81,
+     519,
+     201
+    ]
+   },
+   "hero": {
+    "src": "archive15/d/hero-aura.webp",
+    "rect": [
+     246,
+     84,
+     535,
+     198
+    ]
+   }
+  },
+  {
+   "pid": 4,
+   "id": "knot",
+   "box": [
+    978,
+    465,
+    1722,
+    853
+   ],
+   "patch": {
+    "src": "archive15/d/patch-knot.webp",
+    "rect": [
+     958,
+     445,
+     1742,
+     873
+    ]
+   },
+   "hero": {
+    "src": "archive15/d/hero-knot.webp",
+    "rect": [
+     868,
+     405,
+     1832,
+     913
+    ]
+   }
+  }
+ ],
+ "prints": [
+  {
+   "pid": 5,
+   "piece": "ring",
+   "box": [
+    1014,
+    96,
+    1335,
+    468
+   ]
+  },
+  {
+   "pid": 6,
+   "piece": "pave",
+   "box": [
+    1198,
+    166,
+    1505,
+    533
+   ]
+  },
+  {
+   "pid": 7,
+   "piece": "knot",
+   "box": [
+    1350,
+    226,
+    1674,
+    627
+   ]
+  }
+ ],
+ "ids": {
+  "src": "archive15/d/ids.png",
+  "scale": 0.5,
+  "step": 32
+ },
+ "seq": {
+  "n": 24,
+  "res": [
+   1280,
+   720
+  ],
+  "src": "archive15/d/seq/%02d.webp"
+ }
+}
