@@ -75,7 +75,9 @@ export async function mount(sec) {
     const n = M.seq.n, f = t * (n - 1), i = Math.floor(f), a0 = f - i;
     const a = steep(a0) * (1 - snap) + (a0 >= .5 ? 1 : 0) * snap, key = i + "|" + a.toFixed(3);
     if (!reduce && (dirty || shown !== key)) {
-      const A = frames[i] || frames[0], B = frames[Math.min(n - 1, i + 1)];
+      // a frame not yet arrived (a fast scroll on a slow connection): the nearest earlier one that has, never a jump to closed
+      let A = frames[i]; for (let k = i - 1; !A && k >= 0; k--) A = frames[k];
+      const B = frames[i] ? frames[Math.min(n - 1, i + 1)] : null;
       if (A && !(B && a > .999)) { g.globalAlpha = 1; g.drawImage(A, 0, 0, cv.width, cv.height); }
       if (B && a > .001) { g.globalAlpha = a; g.drawImage(B, 0, 0, cv.width, cv.height); g.globalAlpha = 1; }
       shown = key; dirty = false;
