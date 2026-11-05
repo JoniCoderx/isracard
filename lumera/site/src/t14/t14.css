@@ -951,7 +951,7 @@ html body #details.atl13::before { background: radial-gradient(ellipse 30% 26% a
 
 /* Up close on a phone: flat and light. No 3D table, no scroll-driven scene; each print settles onto the leather as
    it arrives (from a little larger, a little turned, to its place), the prints apart so none hides another */
-@media (max-width: 760px) {
+@media (max-width: 999px) {
   html body #details.atl13.m14 .atl { transform: none !important; transform-style: flat !important; margin: 0 auto !important; padding: 10px 0 30px !important; }
   html body #details.atl13.m14 .wlkrow { transform-style: flat !important; gap: 0 !important; }
   html body #details.atl13.m14 .wlk { width: min(80vw, 360px) !important; opacity: 1 !important;
@@ -969,7 +969,7 @@ html body #details.atl13::before { background: radial-gradient(ellipse 30% 26% a
   html body #details.atl13.m14::before { opacity: 1 !important; }
   html body #details.atl13.m14 .w14hint { display: none !important; }
 }
-@media (max-width: 760px) { html body #details.atl13.m14::after { background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 10%) !important; } html body #details.atl13.m14 { padding-bottom: 40px !important; } }
+@media (max-width: 999px) { html body #details.atl13.m14::after { background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 10%) !important; } html body #details.atl13.m14 { padding-bottom: 40px !important; } }
 
 /* the phone menu as a sheet: rounded glass from the top, the page blurred behind it */
 html body #menu.m14c { background: rgba(0,0,0,.38) !important; -webkit-backdrop-filter: blur(14px) brightness(.7) !important; backdrop-filter: blur(14px) brightness(.7) !important;
@@ -1713,4 +1713,88 @@ html[dir="rtl"] body .lt14piece { left: 44%; }
 @media (prefers-reduced-motion: reduce) {
   html body .lt14lit { -webkit-mask: none; mask: none; }
   html body .lt14hint { display: none; }
+}
+
+/* ════ builder, alignment pass (5 Nov) ════ */
+/* the summary always inside its column: smaller values, and the longest may wrap rather than run out of the panel */
+html body #configure.b14atl .b14sumu { grid-template-columns: repeat(5, auto) !important; column-gap: 8px !important; }
+html body #configure.b14atl .b14sumu b { font-size: .8rem !important; white-space: normal !important; text-wrap: balance; }
+html body #configure.b14atl .b14sumu span { letter-spacing: .2em !important; }
+/* small laptops: 3D / Photo / Try on move to the stage's top corner so the views keep one line */
+@media (min-width: 1000px) and (max-width: 1180px) {
+  html body #configure.b14atl #stripwrap > .vt { position: absolute !important; z-index: 9; top: 16px !important; left: 16px !important; right: auto !important; bottom: auto !important; transform: none !important; margin: 0 !important; }
+  html body #configure.b14atl #stripwrap .b14foot { justify-content: flex-end; }
+  html body #configure.b14atl #stripwrap .b14fr { width: 100%; justify-content: space-between; }
+}
+/* shorter screens: the whole atelier within one screen (panel tightened, nothing removed) */
+@media (min-width: 1000px) and (max-height: 940px) {
+  html body #configure.b14atl > .b14top { padding-top: 12px !important; }
+  html body #configure.b14atl .b14top .b13bar { padding: 6px 2px 10px !important; }
+  html body #configure.b14atl > #opts { padding-top: 14px !important; padding-bottom: 12px !important; }
+  html body #configure.b14atl #opts .opt.open .chips.cuts .chip .c13img { width: 44px !important; height: 44px !important; }
+  html body #configure.b14atl #opts .b13ft { margin-top: 14px !important; }
+}
+@media (min-width: 1000px) and (max-height: 800px) {
+  html body #configure.b14atl #opts .b13t { font-size: 1.35rem !important; }
+  html body #configure.b14atl #opts .b13sub { margin-top: 4px !important; }
+  html body #configure.b14atl #opts .opt.open .chips.cuts { gap: 6px !important; }
+  html body #configure.b14atl #opts .opt.open .chips.cuts .chip { padding-top: 6px !important; padding-bottom: 5px !important; min-height: 0 !important; height: auto !important; aspect-ratio: auto !important; }
+  html body #configure.b14atl #opts .opt.open .chips.cuts .chip .c13img { width: 34px !important; height: 34px !important; }
+  html body #configure.b14atl #opts .b13ft { margin-top: 10px !important; }
+  html body #configure.b14atl #opts .b13next { min-height: 0 !important; height: 44px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+  html body #configure.b14atl #opts .b13nav { margin-bottom: 8px !important; }
+  html body #configure.b14atl .total #reserve { margin-top: 10px !important; }
+  html body #configure.b14atl .total .pricerow { padding-top: 8px !important; }
+  html body #configure.b14atl .total #reserve { min-height: 38px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+  html body #configure.b14atl > #stripwrap { min-height: 0 !important; }
+  html body #configure.b14atl > .b14top { padding-top: 6px !important; }
+  html body #configure.b14.b14v3.b14atl { row-gap: 2px !important; padding-bottom: 12px !important; }
+}
+/* phones: the stone as a round thumbnail in the stage's top corner, level with 3D / Photo / Try on; its name shows
+   for a moment under it whenever the cut changes; a tap on it opens the description */
+@media (max-width: 599px) {
+  html body #configure .b14pv { top: 10px !important; right: 10px; padding: 0 !important; gap: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; overflow: visible; grid-template-columns: auto !important; }
+  html body #configure .b14pv .b14pvi { display: none !important; }
+  html body #configure .b14pvpic { cursor: pointer; box-shadow: inset 0 0 0 1px rgba(214,219,226,.3), 0 6px 16px -6px rgba(0,0,0,.9); }
+  html body #configure .b14pv .b14pvt { display: block !important; position: absolute; top: calc(100% + 6px); right: 0; white-space: nowrap; pointer-events: none; opacity: 0; padding: 4px 9px; border-radius: 999px; background: rgba(10,10,11,.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  html body #configure .b14pv .b14pvk { display: none !important; }
+  html body #configure .b14pv .b14pvn { font-size: .78rem !important; }
+  html body #configure .b14pv.swap .b14pvt { animation: pvsay14 2.4s cubic-bezier(.2,.8,.2,1) both; }
+  html body #configure .b14pv.open { background: rgba(10,10,11,.86) !important; border-radius: 18px !important; padding: 8px !important; max-width: 240px; }
+  html body #configure .b14pv.open .b14pvpic { margin-left: auto; }
+  html[dir="rtl"] body #configure .b14pv .b14pvt { right: auto; left: 0; }
+  /* the three actions as one even row */
+  html body #configure.b14atl .cacts { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 8px !important; justify-items: stretch; padding: 14px 0 4px !important; }
+  html body #configure.b14atl .cacts .clink { display: grid !important; justify-items: center; align-content: start; gap: 7px !important; padding: 12px 6px !important; margin: 0 !important; border: 1px solid rgba(214,219,226,.1) !important; border-radius: 14px !important; background: rgba(255,255,255,.02) !important; text-align: center; white-space: normal !important; line-height: 1.35; font-size: .58rem !important; letter-spacing: .14em !important; }
+  html body #configure.b14atl .cacts .clink svg { width: 18px !important; height: 18px !important; margin: 0 !important; }
+  /* the bar at the foot of the screen: the whole line, no price placeholder */
+  html body #cbar .cbp { display: none !important; }
+  html body #cbar .cbs { white-space: normal !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.35; }
+}
+@keyframes pvsay14 { 0% { opacity: 0; transform: translateY(-4px); } 12%, 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+@media (prefers-reduced-motion: reduce) { html body #configure .b14pv.swap .b14pvt { animation: none; opacity: 0; } }
+/* tablets held upright: a calmer stage, not a tall empty box */
+@media (min-width: 600px) and (max-width: 999px) {
+  html body #configure.b14 > #stripwrap { aspect-ratio: 4 / 3 !important; }
+}
+/* carat and wrist: two even rows, each value on one line */
+html body #configure.b14atl #opts .opt.open .chips:has(> [data-k="ct"]), html body #configure.b14atl #opts .opt.open .chips:has(> [data-k="wrist"]) { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 8px !important; }
+html body #configure.b14atl #opts .opt.open .chips > [data-k="ct"], html body #configure.b14atl #opts .opt.open .chips > [data-k="wrist"] { min-width: 0 !important; width: auto !important; white-space: nowrap !important; justify-content: center !important; padding-left: 4px !important; padding-right: 4px !important; }
+html body #configure.b14atl #opts .opt.open .chips > [data-k="ct"] *, html body #configure.b14atl #opts .opt.open .chips > [data-k="wrist"] * { white-space: nowrap !important; }
+/* metal: the full name, on two lines if it must, never cut */
+html body #configure.b14atl #opts .opt.open .chips > [data-k="metal"] { min-width: 0 !important; }
+html body #configure.b14atl #opts .opt.open .chips > [data-k="metal"] span:not(.sw) { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; text-align: start; line-height: 1.25; }
+/* back: a quiet, deliberate link under the lead button */
+html body #configure.b14atl #opts .b13ft .b13back { display: inline-flex !important; align-items: center; gap: 8px; align-self: center; justify-self: center; margin: 2px auto 0 !important; padding: 8px 10px !important; font-size: .64rem !important; letter-spacing: .24em !important; color: rgba(243,236,224,.6) !important; }
+html body #configure.b14atl #opts .b13ft .b13back::before { content: "←"; letter-spacing: 0; font-size: .82rem; }
+html[dir="rtl"] body #configure.b14atl #opts .b13ft .b13back::before { content: "→"; }
+html body #configure.b14atl #opts .b13ft .b13back:hover { color: #f6f1e6 !important; }
+/* Up close on a tablet: the three prints side by side, small enough that all of them show, under the title */
+@media (min-width: 761px) and (max-width: 999px) {
+  html body #details.atl13.m14 .wlkrow { flex-direction: row !important; justify-content: center !important; align-items: flex-start !important; }
+  html body #details.atl13.m14 .wlk { width: min(31vw, 290px) !important; flex: 0 0 auto !important; }
+  html body #details.atl13.m14 .wlk + .wlk { margin-top: 0 !important; margin-left: -2vw !important; }
+  html body #details.atl13.m14 .wlk:nth-child(1), html body #details.atl13.m14 .wlk:nth-child(2), html body #details.atl13.m14 .wlk:nth-child(3) { align-self: flex-start !important; margin-right: 0 !important; }
+  html body #details.atl13.m14 .wlk:nth-child(1) { margin-left: 0 !important; }
+  html body #details.atl13.m14 .wlk:nth-child(2) { margin-top: 28px !important; }
 }

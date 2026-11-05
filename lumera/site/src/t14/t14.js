@@ -287,7 +287,7 @@
     /* a phone gets a lighter landing: each print settles onto the leather as it comes into view, in 2D only, so the
        scroll is never asked to recompute a 3D scene (it stuck on an iPhone), and a tap made while scrolling never
        turns a print over */
-    var phone = matchMedia("(max-width: 760px)");
+    var phone = matchMedia("(max-width: 999px)");
     if (phone.matches) {
       sec.classList.add("m14");
       var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { threshold: 0.22 });
@@ -676,6 +676,8 @@
       '<button type="button" class="b14pvi" aria-expanded="false"><span>i</span></button><p class="b14pvd" hidden></p>';
     stage.appendChild(pv);
     var img = pv.querySelector("img"), info = pv.querySelector(".b14pvi"), desc = pv.querySelector(".b14pvd");
+    /* on a phone the thumbnail itself opens the stone's description (the small i is folded away to keep the corner clear) */
+    pv.querySelector(".b14pvpic").addEventListener("click", function () { if (innerWidth < 600) info.click(); });
     function cut() { var c = opts.querySelector('.chip.on[data-k="cut"]'); return c ? c.getAttribute("data-v") : "round"; }
     var shown = "";
     function paint(flash) {
@@ -728,7 +730,7 @@
     var vt = stage.querySelector(".vt"), vp = stage.querySelector(".vposwrap"), tools = stage.querySelector(".b14tools");
     var right = document.createElement("div"); right.className = "b14fr";
     /* on a phone 3D / Photo / Try on sit at the stage's top, the views along its foot; on a wide screen, one foot bar */
-    var mq = matchMedia("(max-width: 999px)");
+    var mq = matchMedia("(max-width: 1180px)");
     function seat() { if (!vt) return; if (mq.matches) stage.insertBefore(vt, stage.firstChild); else foot.insertBefore(vt, right); }
     foot.appendChild(right); seat(); (mq.addEventListener ? mq.addEventListener("change", seat) : mq.addListener(seat));
     if (vp) right.appendChild(vp); if (tools) right.appendChild(tools);
