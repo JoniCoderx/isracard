@@ -2,6 +2,7 @@
 // Usage: node gen-static.mjs <silavu-page.html> <out dir> [public base URL for OG tags]
 import fs from "node:fs";
 import path from "node:path";
+import { drawer14 } from "./src/t14/drawer14.mjs";
 import { PIECES, PREVIEW, POLICIES, ABOUT, DOCPAGES, FOOTER_DOCS, SEO, SETTINGS, TRANSLATIONS, CONTENT_INFO, FUNCTIONS_URL, ANALYTICS, REDIRECTS, publicRelease } from "./src/content/load.mjs";
 import { toInline, safeHref, safeInline, HOUSE_EMAIL } from "./src/content/apply.mjs";
 import { priceWords, baseCurrency } from "./src/content/money.mjs";
@@ -706,7 +707,9 @@ const T14 = (() => {
     let box, up; [box, h] = grab(h, "inside"); [up, h] = grab(h, "details");
     h = swap(h, "collection", COL);
     /* the founder lives on the About page (the house's note of 4 Nov 2026), not on the home page */
-    h = h.replace('<section id="enquire"', box + "\n" + CRAFT + up + "\n" + '<section id="enquire"');
+    /* Up close becomes the private drawer (the house's brief of 5 Nov 2026) */
+    const DRAWER = drawer14(PIECES) || up;
+    h = h.replace('<section id="enquire"', box + "\n" + CRAFT + DRAWER + "\n" + '<section id="enquire"');
     h = h.replace(/href="about13\//g, 'href="about14/');
     /* the opening: the name, one line, and the way down */
     h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery, made to be lived in." data-he="תכשיטי יוקרה, שנולדו להיענד.">Fine jewellery, made to be lived in.</p>');

@@ -275,7 +275,7 @@
    falls from above, turning flat, one after another; scrolling back lifts them away again. The leather and the
    envelope come with them and the light crosses each print as it lands. A hint on hover says a click turns it over. */
 (function () {
-  var sec = document.getElementById("details"); if (!sec) return;
+  var sec = document.getElementById("details"); if (!sec || sec.classList.contains("pd14")) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   function init() {
     var ws = [].slice.call(sec.querySelectorAll(".wlk")); if (!ws.length || !sec.classList.contains("atl13")) return setTimeout(init, 200);
@@ -815,4 +815,131 @@
   }
   function check() { var t = atTop(); if (t && !on) { on = true; sample(); } else if (!t && on) leave(); }
   addEventListener("scroll", check, { passive: true }); v.addEventListener("playing", check); check();
+})();
+
+
+/* Up close · the private drawer (the house's brief of 5 Nov 2026). The drawer opens as it comes into view (a short
+   movement, not a scroll-driven scene); a print lifts under the pointer; a click carries that same print out of the
+   drawer: its four corners are read where the drawer's perspective puts them and travel to an upright frame in the
+   middle of the screen, so it leaves exactly from where it lay and returns exactly there. Inside, a hotspot on the
+   piece opens the house's own photograph of it. On a phone one print lies in front and a swipe brings the others. */
+(function () {
+  var sec = document.querySelector("#details.pd14"); if (!sec) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, phoneQ = matchMedia("(max-width: 899px)");
+  var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+  var rtl = function () { return document.documentElement.getAttribute("dir") === "rtl"; };
+  var items = [].slice.call(sec.querySelectorAll(".pd14it")), track = sec.querySelector(".pd14items"), dots = [].slice.call(sec.querySelectorAll(".pd14dot"));
+  var focus = sec.querySelector(".pd14focus"); if (!items.length || !focus) return;
+  document.body.appendChild(focus);   /* fixed above everything, whatever the section's own stacking */
+  var info = focus.querySelector(".pd14info"), xbtn = focus.querySelector(".pd14x"), cu = focus.querySelector(".pd14cu"), go = focus.querySelector(".pd14go"), bd = focus.querySelector(".pd14bd");
+  /* materials only when near; the drawer opens once a third of it is in view and closes again when it is gone below */
+  new IntersectionObserver(function (es) { if (es[0].isIntersecting) sec.classList.add("pd14near"); }, { rootMargin: "900px 0px" }).observe(sec);
+  var stage = sec.querySelector(".pd14stage");
+  if (reduce || !("IntersectionObserver" in window)) sec.classList.add("pd14open");
+  else new IntersectionObserver(function (es) { var e = es[0];
+    if (e.isIntersecting && e.intersectionRatio >= 0.32) sec.classList.add("pd14open");
+    else if (!e.isIntersecting && e.boundingClientRect.top > 0) sec.classList.remove("pd14open"); }, { threshold: [0, 0.32, 0.6] }).observe(stage);
+  /* the print answers the pointer with a very small turn */
+  items.forEach(function (it) { var pol = it.querySelector(".pd14pol");
+    pol.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse" || reduce) return; var r = pol.getBoundingClientRect();
+      pol.style.setProperty("--tx", (((e.clientX - r.left) / r.width - 0.5) * 7).toFixed(2) + "deg"); pol.style.setProperty("--ty", ((0.5 - (e.clientY - r.top) / r.height) * 7).toFixed(2) + "deg"); });
+    pol.addEventListener("pointerleave", function () { pol.style.setProperty("--tx", "0deg"); pol.style.setProperty("--ty", "0deg"); });
+    pol.addEventListener("pointerenter", function () { var b = new Image(); b.decoding = "async"; b.src = it.getAttribute("data-big"); });
+  });
+  /* ── a phone: one print in front ── */
+  var cur = 1, swallow = false;
+  function place() { if (!phoneQ.matches) { track.style.removeProperty("--mx"); items.forEach(function (it) { it.classList.remove("pd14cur"); }); return; }
+    track.style.setProperty("--mx", (-cur * items[0].offsetWidth) + "px");
+    items.forEach(function (it, k) { it.classList.toggle("pd14cur", k === cur); it.querySelector(".pd14pol").tabIndex = k === cur ? 0 : -1; }); }
+  function setCur(i) { cur = Math.max(0, Math.min(items.length - 1, i)); place(); dots.forEach(function (d, k) { d.classList.toggle("pd14on", k === cur); d.setAttribute("aria-current", k === cur ? "true" : "false"); }); }
+  setCur(1); (phoneQ.addEventListener ? phoneQ.addEventListener("change", place) : phoneQ.addListener(place)); addEventListener("resize", place);
+  var drag = null;
+  track.addEventListener("pointerdown", function (e) { if (!phoneQ.matches || open) return; drag = { x: e.clientX, y: e.clientY, on: false, id: e.pointerId, k: 1 }; });
+  track.addEventListener("pointermove", function (e) { if (!drag || e.pointerId !== drag.id) return; var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.2) return; drag.on = true; track.classList.add("pd14drag"); try { track.setPointerCapture(e.pointerId); } catch (x) {}
+      drag.k = items[0].offsetWidth / Math.max(1, items[0].getBoundingClientRect().width); }
+    track.style.setProperty("--mx", (-cur * items[0].offsetWidth + dx * drag.k) + "px"); });
+  function endDrag(e) { if (!drag) return; var d = drag; drag = null; if (!d.on) return; track.classList.remove("pd14drag"); swallow = true; setTimeout(function () { swallow = false; }, 60);
+    var dx = (e.clientX - d.x) * d.k, w = items[0].offsetWidth; setCur(cur + (dx < -w * 0.16 ? 1 : dx > w * 0.16 ? -1 : 0)); }
+  track.addEventListener("pointerup", endDrag); track.addEventListener("pointercancel", function () { if (drag && drag.on) { track.classList.remove("pd14drag"); place(); } drag = null; });
+  /* ── the focused view ── */
+  var open = null, lastFocus = null;
+  function corners(paper) { return [0, 1, 2, 3].map(function (c) { var r = paper.querySelector('.pd14m[data-c="' + c + '"]').getBoundingClientRect(); return [c === 1 || c === 2 ? r.right : r.left, c >= 2 ? r.bottom : r.top]; }); }
+  function hom(w, h, P) { /* the rectangle w x h onto the quad P (tl, tr, br, bl), as a matrix3d */
+    var x0 = P[0][0], y0 = P[0][1], x1 = P[1][0], y1 = P[1][1], x2 = P[2][0], y2 = P[2][1], x3 = P[3][0], y3 = P[3][1];
+    var dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3, dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3, a, b, c, d, e, f, g, hh;
+    if (Math.abs(dx3) < 1e-6 && Math.abs(dy3) < 1e-6) { a = x1 - x0; b = x2 - x1; c = x0; d = y1 - y0; e = y2 - y1; f = y0; g = 0; hh = 0; }
+    else { var den = dx1 * dy2 - dx2 * dy1; g = (dx3 * dy2 - dx2 * dy3) / den; hh = (dx1 * dy3 - dx3 * dy1) / den;
+      a = x1 - x0 + g * x1; b = x3 - x0 + hh * x3; c = x0; d = y1 - y0 + g * y1; e = y3 - y0 + hh * y3; f = y0; }
+    a /= w; d /= w; g /= w; b /= h; e /= h; hh /= h;
+    return "matrix3d(" + [a, d, 0, g, b, e, 0, hh, 0, 0, 1, 0, c, f, 0, 1].map(function (v) { return +v.toFixed(8); }).join(",") + ")"; }
+  function target(w, h) {
+    var W, H, cx, cy;
+    if (phoneQ.matches) { /* room below for the words (and, once opened, the piece's own photograph) */
+      var below = (open && open.cuOn) ? 470 : 300; W = Math.min(innerWidth * 0.84, 380); H = W * h / w; var maxH = innerHeight - below - 70;
+      if (H > maxH) { H = Math.max(180, maxH); W = H * w / h; } cx = innerWidth / 2; cy = 66 + Math.max(0, (innerHeight - below - 66 - H) / 2) + H / 2; }
+    else { H = Math.min(innerHeight * 0.8, 780); W = H * w / h; var iw = Math.min(380, innerWidth * 0.3) + 56; cx = innerWidth / 2 + (rtl() ? iw / 2 : -iw / 2); cy = innerHeight / 2; }
+    return [[cx - W / 2, cy - H / 2], [cx + W / 2, cy - H / 2], [cx + W / 2, cy + H / 2], [cx - W / 2, cy + H / 2]]; }
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function flyTo(fly, w, h, from, to, dur, done) {
+    if (reduce) { fly.style.transform = hom(w, h, to); return done && done(); }
+    var t0 = performance.now();
+    (function step(now) { var t = Math.min(1, (now - t0) / dur), k = ease(t), lift = Math.sin(Math.PI * t) * -14;
+      var P = from.map(function (p, i) { return [p[0] + (to[i][0] - p[0]) * k, p[1] + (to[i][1] - p[1]) * k + lift]; });
+      fly.style.transform = hom(w, h, P); if (t < 1) requestAnimationFrame(step); else if (done) done(); })(t0); }
+  function words() { if (!open) return; var it = open.it, h = he();
+    focus.querySelector(".pd14fk").textContent = it.getAttribute(h ? "data-kind-he" : "data-kind-en");
+    focus.querySelector(".pd14fn").textContent = it.getAttribute("data-name");
+    focus.querySelector(".pd14fs").textContent = it.getAttribute(h ? "data-sub-he" : "data-sub-en");
+    cu.querySelector("figcaption").textContent = (h ? "התכשיט עצמו" : "The piece itself");
+    xbtn.setAttribute("aria-label", h ? "סגירה" : "Close");
+    if (open.hot) open.hot.setAttribute("aria-label", h ? "תקריב של התכשיט" : "A close look at the piece"); }
+  new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  function show(i) {
+    if (open) return; var it = items[i], pol = it.querySelector(".pd14pol"), paper = pol.querySelector(".pd14paper"); lastFocus = pol;
+    var w = paper.offsetWidth, h = paper.offsetHeight, from = corners(paper), to = target(w, h);
+    var fly = document.createElement("div"); fly.className = "pd14fly"; fly.style.width = w + "px"; fly.style.height = h + "px";
+    fly.style.setProperty("--inv", (w / Math.max(1, to[1][0] - to[0][0])).toFixed(4));
+    var clone = paper.cloneNode(true); fly.appendChild(clone); fly.style.transform = hom(w, h, from);
+    var img = clone.querySelector("img"); img.removeAttribute("srcset"); img.removeAttribute("loading");
+    var big = new Image(); big.src = it.getAttribute("data-big"); (big.decode ? big.decode() : Promise.resolve()).then(function () { img.src = big.src; }, function () {});
+    var pic = clone.querySelector(".pd14pic"), hx = it.getAttribute("data-hx"), hy = it.getAttribute("data-hy");
+    pic.style.setProperty("--fx", hx + "%"); pic.style.setProperty("--fy", hy + "%"); img.style.setProperty("--fx", hx + "%"); img.style.setProperty("--fy", hy + "%");
+    var hot = document.createElement("button"); hot.type = "button"; hot.className = "pd14hot"; hot.style.left = hx + "%"; hot.style.top = hy + "%"; hot.setAttribute("aria-expanded", "false"); hot.setAttribute("aria-controls", "pd14cu"); pic.appendChild(hot);
+    cu.id = "pd14cu"; cu.hidden = true; cu.classList.remove("pd14in");
+    go.setAttribute("href", it.getAttribute("data-href"));
+    focus.insertBefore(fly, info);
+    open = { i: i, it: it, pol: pol, paper: paper, fly: fly, w: w, h: h, hot: hot }; words();
+    hot.addEventListener("click", function () { var on = hot.getAttribute("aria-expanded") !== "true"; hot.setAttribute("aria-expanded", on ? "true" : "false");
+      var o = open; if (!o) return; var was = target(o.w, o.h); o.cuOn = on;
+      if (on) { var ci = cu.querySelector("img"); ci.src = it.getAttribute("data-cut"); ci.alt = (he() ? "תקריב: " : "Close-up: ") + it.getAttribute("data-name"); cu.hidden = false; requestAnimationFrame(function () { cu.classList.add("pd14in"); }); }
+      else { cu.classList.remove("pd14in"); setTimeout(function () { if (hot.getAttribute("aria-expanded") !== "true") cu.hidden = true; }, 320); }
+      /* on a phone the print makes room for the photograph of the piece, and takes it back after */
+      if (phoneQ.matches) { var now = target(o.w, o.h); o.fly.style.setProperty("--inv", (o.w / Math.max(1, now[1][0] - now[0][0])).toFixed(4)); flyTo(o.fly, o.w, o.h, was, now, 420); } });
+    focus.hidden = false; sec.classList.add("pd14foc"); it.classList.add("pd14sel"); pol.classList.add("pd14away"); pol.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(function () { focus.classList.add("pd14in"); });
+    flyTo(fly, w, h, from, to, 640, function () { if (!open || open.fly !== fly) return; fly.classList.add("pd14on"); if (!reduce) fly.classList.add("pd14kb"); focus.classList.add("pd14rdy"); xbtn.focus({ preventScroll: true }); });
+  }
+  function hide() {
+    if (!open || open.closing) return; var o = open; o.closing = true;
+    focus.classList.remove("pd14rdy"); cu.classList.remove("pd14in"); o.fly.classList.remove("pd14kb", "pd14on"); focus.classList.remove("pd14in");
+    var back = corners(o.paper);
+    flyTo(o.fly, o.w, o.h, target(o.w, o.h), back, 560, function () {
+      o.pol.classList.remove("pd14away"); o.pol.setAttribute("aria-expanded", "false"); o.it.classList.remove("pd14sel"); sec.classList.remove("pd14foc");
+      o.fly.remove(); cu.hidden = true; focus.hidden = true; open = null;
+      if (lastFocus) lastFocus.focus({ preventScroll: true }); });
+  }
+  items.forEach(function (it, i) { it.querySelector(".pd14pol").addEventListener("click", function (e) { if (swallow) { e.preventDefault(); return; }
+    if (phoneQ.matches && i !== cur) { setCur(i); return; } show(i); }); });
+  dots.forEach(function (d, i) { d.addEventListener("click", function () { if (phoneQ.matches) { if (i === cur) show(i); else setCur(i); } else show(i); }); });
+  xbtn.addEventListener("click", hide); bd.addEventListener("click", hide);
+  focus.addEventListener("wheel", function (e) { e.preventDefault(); }, { passive: false });
+  focus.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
+  addEventListener("keydown", function (e) {
+    if (!open) return;
+    if (e.key === "Escape") { e.preventDefault(); hide(); return; }
+    if (e.key === "Tab") { var f = [open.hot, go, xbtn].filter(function (x) { return x && x.getClientRects().length > 0; }), k = f.indexOf(document.activeElement);
+      e.preventDefault(); f[(k + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus({ preventScroll: true }); }
+  });
+  addEventListener("resize", function () { if (open && !open.closing && open.fly.classList.contains("pd14on")) { var tg = target(open.w, open.h); open.fly.style.transform = hom(open.w, open.h, tg); open.fly.style.setProperty("--inv", (open.w / Math.max(1, tg[1][0] - tg[0][0])).toFixed(4)); } });
 })();
