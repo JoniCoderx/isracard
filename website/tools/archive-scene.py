@@ -570,6 +570,32 @@ elif MODE.startswith("seq:"):
     tgt_f, dist_f, el_f = tgt.copy(), dist, e
     tgt_s = Vector((0, -mm(FT) - mm(30), mm(DH * .55))); dist_s = dist_f * 1.55; el_s = el_f - math.radians(17)
     sm = lambda x: x * x * x * (x * (x * 6 - 15) + 10)
+    # As the drawer comes out, the pieces pass in front of the cabinet's lacquered rail, which would mirror them above
+    # the drawer (a mirrored knot among them). For the opening only, a piece is clear to any reflection ray that has
+    # travelled more than 30 mm to reach it: the rail sees the drawer without them, while each piece's reflections of
+    # itself and its contact with the suede (all well inside 30 mm) are untouched. The still is rendered without this.
+    mine = {o for p in pieces for o in p.children_recursive if o.type in ("MESH", "CURVE")}
+    users = {}
+    for o in sc.objects:
+        for s in getattr(o, "material_slots", []):
+            if s.material: users.setdefault(s.material.name, set()).add(o)
+    done = {}
+    for o in mine:
+        for s in o.material_slots:
+            m = s.material
+            if not m or not m.use_nodes: continue
+            if m.name not in done:
+                mm_ = m if users.get(m.name, set()) <= mine else m.copy()
+                t_ = mm_.node_tree; out = next(n for n in t_.nodes if n.type == "OUTPUT_MATERIAL" and n.is_active_output)
+                if out.inputs["Surface"].links:
+                    src = out.inputs["Surface"].links[0].from_socket
+                    lp = t_.nodes.new("ShaderNodeLightPath"); far = t_.nodes.new("ShaderNodeMath"); far.operation = "GREATER_THAN"; far.inputs[1].default_value = mm(30)
+                    t_.links.new(lp.outputs["Ray Length"], far.inputs[0])
+                    gl = t_.nodes.new("ShaderNodeMath"); gl.operation = "MULTIPLY"; t_.links.new(lp.outputs["Is Glossy Ray"], gl.inputs[0]); t_.links.new(far.outputs[0], gl.inputs[1])
+                    tr = t_.nodes.new("ShaderNodeBsdfTransparent"); mx = t_.nodes.new("ShaderNodeMixShader")
+                    t_.links.new(gl.outputs[0], mx.inputs[0]); t_.links.new(src, mx.inputs[1]); t_.links.new(tr.outputs[0], mx.inputs[2]); t_.links.new(mx.outputs[0], out.inputs["Surface"])
+                done[m.name] = mm_
+            s.material = done[m.name]
     for i in range(i0, i1 + 1):
         t = i / (N - 1); u = sm(t)
         drawer.location = (0, -mm(TRAVEL_OPEN * sm(min(1, t * 1.06))), 0)
