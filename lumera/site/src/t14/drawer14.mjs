@@ -9,6 +9,8 @@ export function drawer14(PIECES) {
   const plain = s => String(s).replace(/<[^>]+>/g, "");
   const E = x => `data-en="${q(x.en)}" data-he="${q(x.he)}"`;
   const items = [
+    // the pieces: the ring stands in the suede and the bracelet lies as photographed (both turned to face the camera, with
+    // their shadows cast on the suede); the necklace lies flat with its chain running under the print
     // hx / hy: where the piece is worn in the portrait, in % of the photograph (measured on models/*-900.jpg)
     { id: "ring", img: "ring", cut: "cut8/ring-1200.webp", cw: 940, ch: 423, r: -2.6, hx: 64, hy: 57,
       alt: { en: "A woman wearing the SILAVU ICON ring, her hand resting at her jaw", he: "אישה עונדת את טבעת SILAVU ICON, ידה מונחת על קו הלסת" } },
@@ -24,7 +26,7 @@ export function drawer14(PIECES) {
             <span class="pd14sh" aria-hidden="true"></span>
             <span class="pd14paper"><span class="pd14pic"><img src="models/${l.img}-900.jpg" srcset="models/${l.img}-900.jpg 900w, models/${l.img}-1400.jpg 1400w" sizes="(max-width: 899px) 70vw, 22vw" width="900" height="1126" loading="lazy" decoding="async" alt="${q(l.alt.en)}" data-alt-he="${q(l.alt.he)}"></span><span class="pd14cap">SILAVU ${q(short(l))}</span><i class="pd14m" data-c="0"></i><i class="pd14m" data-c="1"></i><i class="pd14m" data-c="2"></i><i class="pd14m" data-c="3"></i></span>
           </button>
-          <span class="pd14jw" aria-hidden="true"><img src="${l.cut}" width="${l.cw}" height="${l.ch}" alt="" loading="lazy" decoding="async"></span>
+          <span class="pd14jw" data-k="${l.id}" aria-hidden="true"><img class="pd14js" src="${l.cut}" width="${l.cw}" height="${l.ch}" alt="" loading="lazy" decoding="async"><img class="pd14js pd14jc" src="${l.cut}" width="${l.cw}" height="${l.ch}" alt="" loading="lazy" decoding="async"><img class="pd14ji" src="${l.cut}" width="${l.cw}" height="${l.ch}" alt="" loading="lazy" decoding="async"></span>
         </li>`;
   const dot = (l, i) => `<button class="pd14dot" type="button" data-i="${i}" aria-controls="pd14focus"><i aria-hidden="true"></i><span>${q(short(l))}</span></button>`;
   return `<section id="details" class="pd14" data-n="" data-title-en="Up close" data-title-he="מקרוב" aria-labelledby="pdh">

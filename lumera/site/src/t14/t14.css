@@ -1852,11 +1852,33 @@ html[data-ns] .pd14k { letter-spacing: 0; font-size: .85rem; }
 .pd14cap { display: block; padding: 9% 0 0; text-align: center; font-size: clamp(.5rem, .74vw, .72rem); letter-spacing: .34em; padding-left: .34em; color: #2b241d; white-space: nowrap; }
 .pd14m { position: absolute; width: 1px; height: 1px; pointer-events: none; }
 .pd14m[data-c="0"] { left: 0; top: 0; } .pd14m[data-c="1"] { right: 0; top: 0; } .pd14m[data-c="2"] { right: 0; bottom: 0; } .pd14m[data-c="3"] { left: 0; bottom: 0; }
-.pd14jw { position: absolute; left: 70%; top: 50%; width: 30%; transform: translateY(-40%) translateZ(.5px) rotateZ(calc(var(--r) * -3)); pointer-events: none; }
-.pd14it:nth-child(1) .pd14jw { width: 26%; left: 72%; }
-.pd14it:nth-child(2) .pd14jw { left: 71%; width: 30%; transform: translateY(-46%) translateZ(.5px) rotateZ(-8deg); }
-.pd14it:nth-child(3) .pd14jw { width: 30%; }
-.pd14jw img { display: block; width: 100%; height: auto; filter: drop-shadow(0 3px 2px rgba(20,12,6,.55)) drop-shadow(0 10px 10px rgba(20,12,6,.35)); }
+/* the pieces, laid in the drawer the way a jeweller would. The ring stands in the suede and the bracelet lies as it was
+   photographed, so both are turned to face the camera (rotateX by minus the drawer's tilt, from their foot) and keep
+   their own photographed perspective; each casts its shadow on the suede below it (a darkened copy of its own outline,
+   in the floor plane), and a tight contact line where it touches. The necklace lies flat (its photograph is taken from
+   above), its chain running under the print's edge. The light in the drawer comes from the upper left, so shadows
+   fall down and to the right, and the pieces further from the light are a touch dimmer. */
+#details.pd14 { --tilt: 44deg; --sy: 1.39; }
+.pd14jw { position: absolute; display: block; transform-style: preserve-3d; pointer-events: none; transform: translateZ(.5px); --g: 1; }
+.pd14jw img { position: absolute; left: 0; bottom: 0; display: block; width: 100%; height: auto; max-width: none; }
+.pd14ji { transform-origin: 50% 100%; transform: rotateX(calc(var(--tilt) * -1)) rotateZ(var(--jr, 0deg));
+  filter: sepia(.14) saturate(.85) brightness(calc(.97 * var(--g))) contrast(1.05); -webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,.35), #000 4%); mask-image: linear-gradient(0deg, rgba(0,0,0,.35), #000 4%); }
+.pd14js { transform-origin: 50% 100%; transform: translate(var(--sx, 5px), 3px) scaleY(calc(var(--sy) * var(--sk, 1))) rotateZ(var(--jr, 0deg)); filter: brightness(0) blur(var(--sb, 4px)); opacity: .42; }
+.pd14jc { transform: translate(1px, 0) scaleY(calc(var(--sy) * var(--sk, 1) * .96)) rotateZ(var(--jr, 0deg)); filter: brightness(0) blur(1.2px); opacity: .5; }
+/* the ring stands on its band: its shadow is short and close; the contact is a thin dark line along its foot */
+.pd14jw[data-k="ring"] { left: 61%; top: 70%; width: 30%; --sk: .2; --sx: 9px; --sb: 3px; --g: .98; }
+.pd14jw[data-k="ring"] .pd14jc { transform: scale(.82, .05); filter: brightness(0) blur(1.6px); opacity: .7; }
+/* the bracelet lies in a loose oval, as photographed */
+.pd14jw[data-k="knot"] { left: 59%; top: 77%; width: 40%; --jr: -3deg; --g: .9; --sk: .7; --sx: 4px; --sb: 3px; }
+.pd14jw[data-k="knot"] .pd14js { opacity: .5; }
+/* the necklace: the pendant out on the suede, the chain going in under the print */
+.pd14jw[data-k="pave"] { left: 50%; top: 50%; width: 34%; aspect-ratio: 1134 / 978; transform: translateY(-50%) translateZ(.3px) rotateZ(-90deg); --g: .95; }
+.pd14jw[data-k="pave"] img { bottom: auto; top: 0; }
+.pd14jw[data-k="pave"] .pd14ji { transform: none; -webkit-mask-image: none; mask-image: none; }
+.pd14jw[data-k="pave"] .pd14js { transform: translate(-4px, 4px); filter: brightness(0) blur(3px); opacity: .45; }
+.pd14jw[data-k="pave"] .pd14jc { transform: translate(-1px, 1px); filter: brightness(0) blur(.8px); opacity: .55; }
+/* the prints are a little smaller than before, so each piece has room beside its own portrait */
+.pd14pol, .pd14it:nth-child(2) .pd14pol { left: 3%; width: 55%; }
 /* hover: the print lifts a little, straightens, and its shadow deepens and softens */
 @media (hover: hover) and (pointer: fine) {
   .pd14pol:hover .pd14paper, .pd14pol:focus-visible .pd14paper { transform: translateZ(26px) rotateZ(calc(var(--r) * -1)) rotateX(var(--ty)) rotateY(var(--tx)); }
@@ -1929,8 +1951,11 @@ html body #details.pd14:not(.pd14near) .pd14w, html body #details.pd14:not(.pd14
   .pd14it { flex: 0 0 76%; height: 100%; }
   .pd14it:first-child { margin-left: 12%; }
   .pd14pol, .pd14it:nth-child(2) .pd14pol { left: 9%; top: 6%; width: 82%; transform: translateZ(.6px) rotateZ(var(--r)); }
-  .pd14jw, .pd14it:nth-child(1) .pd14jw, .pd14it:nth-child(2) .pd14jw, .pd14it:nth-child(3) .pd14jw { left: 52%; top: auto; bottom: 1%; width: 44%; transform: translateZ(.5px) rotateZ(calc(var(--r) * -4)); }
-  .pd14it:nth-child(2) .pd14jw { width: 32%; left: 60%; bottom: -2%; transform: translateZ(.5px) rotateZ(-6deg); }
+  #details.pd14 { --tilt: 24deg; --sy: 1.095; }
+  .pd14pol, .pd14it:nth-child(2) .pd14pol { left: 6%; top: 3%; width: 72%; }
+  .pd14jw[data-k="ring"] { left: 56%; top: 95%; width: 34%; }
+  .pd14jw[data-k="knot"] { left: 46%; top: 99%; width: 52%; }
+  .pd14jw[data-k="pave"] { left: 38%; top: 64%; width: 42%; transform: translateZ(.3px) rotateZ(-14deg); }
   .pd14it { transition: opacity .35s ease; }
   .pd14it:not(.pd14cur) { opacity: .7; }
   .pd14cap { font-size: .58rem; }
