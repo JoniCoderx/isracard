@@ -1798,3 +1798,6 @@ html body #configure.b14atl #opts .b13ft .b13back:hover { color: #f6f1e6 !import
   html body #details.atl13.m14 .wlk:nth-child(1) { margin-left: 0 !important; }
   html body #details.atl13.m14 .wlk:nth-child(2) { margin-top: 28px !important; }
 }
+/* the 3D stage on a touch screen: a sideways drag turns the bracelet, an up-or-down swipe scrolls the page (it used
+   to swallow every touch, and the page stopped dead under a thumb resting on the bracelet) */
+html body #configure #stripwrap:not(.wrist) #bcv { touch-action: pan-y !important; }

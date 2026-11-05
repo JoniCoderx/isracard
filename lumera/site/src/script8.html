@@ -183,6 +183,24 @@
   }
 
   /* a swept tube along a path, with a radius per sample */
+  /* (test14) a plain box, faces outward: the walls and floor of a channel setting */
+  function box14(m, x0, x1, y0, y1, z0, z1) {
+    var q = function (a, b, c, d) { m.tri(a, b, c); m.tri(a, c, d); };
+    q([x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]); q([x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [x0, y0, z0]);
+    q([x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0]); q([x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]);
+    q([x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]); q([x0, y0, z0], [x0, y1, z0], [x1, y1, z0], [x1, y0, z0]);
+  }
+  /* (test14) the channel for one span along the line: two polished walls with rounded tops either side of the stones
+     and a floor under them, so the line is held in metal, not threaded on wires; y0 shifts it into a link's frame */
+  function channel14(m, x0, x1, hz, depth, W, y0) {
+    var t = Math.max(0.11, W * 0.065), zi = hz * 1.01, top = depth * 0.10 + y0, bot = -depth * 0.40 + y0;
+    for (var sd = -1; sd <= 1; sd += 2) {
+      box14(m, x0, x1, bot, top, sd < 0 ? -zi - t : zi, sd < 0 ? -zi : zi + t);
+      tube(m, [[x0, top, sd * (zi + t / 2)], [x1, top, sd * (zi + t / 2)]], t * 0.58, 10, false, false);
+      /* the lip that the pavilion rests on, inside each wall */
+      box14(m, x0, x1, bot - t * 0.7, bot, sd < 0 ? -zi - t : zi - t * 1.6, sd < 0 ? -zi + t * 1.6 : zi + t);
+    }
+  }
   function tube(mesh, path, rad, seg, capA, capB) {
     var i, j, frames = [], up = [0, 1, 0];
     for (i = 0; i < path.length; i++) {
@@ -716,10 +734,7 @@
       }
       /* (test14) and no basket under it: the stones sit side by side between the rails, their pavilions in a plain
          channel, so the line reads as a ribbon of light rather than a chain of loops */
-      if (window.__frame14) {
-        for (i = -1; i <= 1; i += 2) tube(m, [[-hx * 1.04, -depth * 0.58, i * hz * 0.86], [hx * 1.04, -depth * 0.58, i * hz * 0.86]], wire * 0.95, 7, true, true);
-        return m;
-      }
+      if (window.__frame14) { var m2 = new Mesh(); channel14(m2, -hx * 1.04, hx * 1.04, hz, depth, W, 0); return m2; }
     }
     for (i = 0; i < corners.length; i++) {
       var cx = corners[i][0], cz = corners[i][1], sx = Math.sign(cx), sz = Math.sign(cz);
@@ -870,16 +885,20 @@
        is only ever a mosaic of the bright and the black it reflects — a soft
        grey room turns it into grey glass. */
     "vec3 envS(vec3 d){",
-    "#if defined(F14) && defined(FINE)",
-    "  vec3 c = env(d) * 0.34;",
+    "#if defined(F14)",
+    "  vec3 c = env(d) * 0.22;",
     "#else",
     "  vec3 c = env(d) * 0.5 + vec3(0.03);",
     "#endif",
     "  float y = d.y, az = atan(d.z, d.x);",
     "  float band = smoothstep(-0.05, 0.18, y) * smoothstep(0.92, 0.62, y);",
     "  float pan = smoothstep(0.30, 0.38, abs(fract(az * 1.909859) - 0.5));",
-    "#if defined(F14) && defined(FINE)",
-    "  c += vec3(1.0, 0.985, 0.96) * band * pan * 3.0;",
+    "#if defined(F14)",
+    "  c += vec3(1.0, 0.985, 0.96) * band * pan * 3.2;",
+    "  float pan3 = smoothstep(0.42, 0.47, abs(fract(az * 4.774648 + 0.37) - 0.5));",
+    "  c += vec3(1.0, 0.99, 0.97) * smoothstep(0.05, 0.35, y) * smoothstep(0.80, 0.50, y) * pan3 * 1.8;",
+    "  c += vec3(1.0) * smoothstep(0.986, 0.996, max(dot(d, normalize(vec3(0.30, 0.86, -0.41))), 0.0)) * 9.0;",
+    "  c += vec3(1.0) * smoothstep(0.988, 0.997, max(dot(d, normalize(vec3(-0.52, 0.70, 0.49))), 0.0)) * 8.0;",
     "#else",
     "  c += vec3(1.0, 0.985, 0.96) * band * pan * 2.2;",
     "#endif",
@@ -900,6 +919,10 @@
     "#ifdef F14",
     "  e += vec3(0.46) * smoothstep(-0.25, 0.85, y) * 0.75;",
     "  e *= 0.62 + 0.55 * smoothstep(-0.35, 0.55, y);",
+    /* (test14) polished white gold is a mirror: tall soft boxes it reflects as clean bright strips, darker between */
+    "  float mb = smoothstep(-0.02, 0.22, y) * smoothstep(0.90, 0.60, y);",
+    "  float mp = smoothstep(0.26, 0.36, abs(fract(az * 1.273240 + 0.08) - 0.5));",
+    "  e = e * (0.78 + 0.0 * mp) + vec3(1.0, 0.99, 0.97) * mb * mp * 1.35;",
     "#else",
     "  e += vec3(0.62) * smoothstep(-0.25, 0.85, y) * 0.75;",
     "#endif",
@@ -981,12 +1004,28 @@
     "        vec3 oB = refract(d, -hn, 2.500);",
     "        if (dot(oG, oG) < 1e-8) { d = reflect(d, hn); energy *= 0.985; continue; }",
     "        vec3 e = vec3(envS(R * (dot(oR,oR) > 1e-8 ? oR : oG)).r, envS(R * oG).g, envS(R * (dot(oB,oB) > 1e-8 ? oB : oG)).b);",
+    "#if defined(F14)",
+    /* (test14) light at an inner face does not simply leave: near the critical angle most of it is reflected back in
+       and goes on to the next facet. Splitting it there, as the physics does, is what turns a stone from bright glass
+       into a diamond's mosaic of white, black and fire; the last of it leaves where the loop runs out */
+    "        float ct = clamp(dot(oG, -hn) * -1.0, 0.0, 1.0); ct = max(ct, abs(dot(normalize(oG), hn)));",
+    "        float Tr = 1.0 - fres(ct, 0.172);",
+    "        inside += e * energy * Tr; left = true;",
+    "        energy *= (1.0 - Tr); d = reflect(d, hn);",
+    "        if (energy < 0.04) break;",
+    "        continue;",
+    "#else",
     "        inside += e * energy; left = true;",
     "        break;",
+    "#endif",
     "      }",
     /* still inside: it would leave somewhere bright soon enough; take the
        studio in the direction it is travelling, a little dimmed, not black */
+    "#if defined(F14)",
+    "      inside += envS(R * d) * energy * 0.32;",
+    "#else",
     "      if (!left) inside += envS(R * d) * energy * 0.72;",
+    "#endif",
     "    }",
     "    col += (1.0 - F) * inside;",
     /* (test14) a stone seen from behind, through the open basket, shows its pavilion: total internal reflection makes
@@ -1002,7 +1041,7 @@
     "    }",
     "#endif",
     "    col += vec3(0.90, 0.94, 1.0) * pow(1.0 - c, 6.0) * 0.20;",
-    "#if defined(F14) && defined(FINE)",
+    "#if defined(F14)",
     "    col += col * col * 0.30;",
     "#endif",
     "  } else if (uMode < -0.5) {",
@@ -1214,6 +1253,13 @@
        line overlapped itself */
     if (window.__frame14 && spec.orient === "across") { var t2 = L; L = W; W = t2; }
     state.n = n; state.L = L; state.W = W; state.cut = cut; state.metal = b.metal || "white"; state.wrist = wrist;
+    /* (test14) on an upright screen the camera looks down on the line; a channel of baguettes seen from above is all
+       wall, so for them it comes down toward the front, where their tables face the eye, and goes back up after */
+    if (window.__frame14 && typeof cam !== "undefined" && typeof portrait !== "undefined" && portrait && !page) {
+      if (cut === "baguette" && state.lastCut !== "baguette") cam.ph = Math.min(cam.ph, 0.28);
+      else if (cut !== "baguette" && state.lastCut === "baguette" && cam.ph < 0.4) cam.ph = 0.56;
+    }
+    state.lastCut = cut;
     /* the line is the inner circumference of the bracelet, in millimetres */
     var C = (wrist + 1) * 10, k = 1.30;
     var bRad = C / (Math.PI * (3 * (1 + k) - Math.sqrt((3 * k + 1) * (k + 3)))) ;
@@ -1246,12 +1292,8 @@
     if (window.__frame14 && cut === "baguette") {
       /* (test14) a channel's links are the rails themselves: short lengths that close the gap between one stone's
          rails and the next, at the same heights, so the two rails run unbroken round the wrist */
-      var lm = new Mesh(), hw = Math.max(0.085, Math.min(L, W) * 0.062), lz = W / 2, off = depth * (0.335 + (window.__neatHeads ? 0.44 : 0.36)), sp = gap * 0.5 + L * 0.06;
-      for (var sd = -1; sd <= 1; sd += 2) {
-        tube(lm, [[-sp, off + depth * 0.10, sd * lz * 1.03], [sp, off + depth * 0.10, sd * lz * 1.03]], hw * 1.25, 8, true, true);
-        tube(lm, [[-sp, off - depth * 0.30, sd * lz * 1.02], [sp, off - depth * 0.30, sd * lz * 1.02]], hw * 1.05, 7, true, true);
-        tube(lm, [[-sp, off - depth * 0.58, sd * lz * 0.86], [sp, off - depth * 0.58, sd * lz * 0.86]], hw * 0.95, 7, true, true);
-      }
+      var lm = new Mesh(), off = depth * (0.335 + (window.__neatHeads ? 0.44 : 0.36)), sp = gap * 0.5 + L * 0.08;
+      channel14(lm, -sp, sp, W / 2, depth, W, off);
       pLink.geometry(lm);
     } else pLink.geometry(linkMesh(gap, W, wire * 0.8));
     pClasp.geometry(claspMesh(step * 1.15, W * 1.02, depth * 0.48));
@@ -1354,6 +1396,9 @@
   var PH = !!window.__phone3d && coarse, half = 0;
   if (PH) addEventListener("touchstart", function (e) { if (!cv.contains(e.target)) moved0 = performance.now(); }, { passive: true });
   var drag = null, dirty = true, idle = !reduce, idleN = 0, W2 = 1, H2 = 1, DPR = 1, hoverOn = false, hoverT = 0;
+  /* (test14) the quality governor: q14 scales the pixel ratio; frame times are watched only while the bracelet is
+     moving, and the scale steps down when frames run long, back up when there is room */
+  var q14 = 1, ft14 = 0, ftN14 = 0, lastDraw14 = 0, lastTick14 = 0;
   /* a mouse resting on the bracelet holds it still; leaving lets it turn again a moment later */
   cv.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { clearTimeout(hoverT); hoverOn = true; } });
   cv.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { clearTimeout(hoverT); hoverT = setTimeout(function () { hoverOn = false; if (!reduce) idle = true; }, 700); } });
@@ -1362,6 +1407,8 @@
        it is drawn into a box a third of a screen tall: the pixels above this
        are work nobody can see */
     DPR = Math.min(devicePixelRatio || 1, coarse && hand.on ? (staged ? 1.35 : 1.2) : PH ? (staged ? 2 : 1.75) : 1.5);
+    /* (test14) a computer that cannot keep up draws the bracelet at fewer pixels rather than stuttering (see tick) */
+    if (window.__frame14) DPR = Math.max(0.6, DPR * q14);
     var r = page ? { width: innerWidth, height: innerHeight } : cv.getBoundingClientRect();
     W2 = Math.max(1, Math.round(r.width * DPR)); H2 = Math.max(1, Math.round(r.height * DPR));
     if (cv.width !== W2 || cv.height !== H2) { cv.width = W2; cv.height = H2; }
@@ -1503,7 +1550,8 @@
            that failed to load. The pointer resting on it holds it still, so
            it can be looked at; it turns again a moment after the pointer
            leaves. Dragging it turns it by hand, as before. */
-        idleN++; cam.th += staged ? 0.0011 : 0.0024; dirty = true;
+        var sp14 = window.__frame14 ? Math.min(3, Math.max(0.5, (performance.now() - (lastTick14 || performance.now())) / 16.67 || 1)) : 1;
+        idleN++; cam.th += (staged ? 0.0011 : 0.0024) * sp14; dirty = true;
       }
     }
     if (Math.abs(cam.d - cam.td) > 1e-4) { cam.d += (cam.td - cam.d) * 0.12; dirty = true; }
@@ -1527,8 +1575,17 @@
       dirty = true;
     }
     if ((window.__preview || "") !== lastPrev) { lastPrev = window.__preview || ""; dirty = true; }
+    var now14 = performance.now(); lastTick14 = now14;
     if (!dirty) return;
     dirty = false; draw(); placeGrab();
+    if (window.__frame14 && !snake && !window.__q14fix) {
+      var gap14 = now14 - lastDraw14; lastDraw14 = now14;
+      if (gap14 > 0 && gap14 < 120) {
+        ft14 = ft14 ? ft14 * 0.9 + gap14 * 0.1 : gap14; ftN14++;
+        if (ftN14 > 24 && ft14 > 26 && q14 > 0.62) { q14 = Math.max(0.6, q14 * 0.84); ftN14 = 0; ft14 = 0; size(); }
+        else if (ftN14 > 150 && ft14 < 15 && q14 < 1) { q14 = Math.min(1, q14 * 1.12); ftN14 = 0; ft14 = 0; size(); }
+      }
+    }
   }
 
   /* ─────────────────────────── the hand ─────────────────────────── */
@@ -1573,6 +1630,9 @@
   });
   cv.addEventListener("wheel", function (e) {
     if (page) return;
+    /* (test14) the wheel scrolls the page; the bracelet zooms to a pinch (ctrl + wheel) or its own zoom button. A big
+       stage that swallowed every wheel turn stopped the page dead whenever the pointer came to rest on it */
+    if (window.__frame14 && !e.ctrlKey && !e.metaKey) return;
     e.preventDefault(); idle = false; cam.td = Math.max(0.52, Math.min(1.45, cam.td + e.deltaY * 0.0009));
   }, { passive: false });
   var pinch = null;
