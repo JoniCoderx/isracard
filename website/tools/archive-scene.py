@@ -373,7 +373,7 @@ def build_print(name, img, at, turn, z, pid):
     bpy.ops.mesh.primitive_grid_add(x_subdivisions=10, y_subdivisions=26, size=1, calc_uvs=True)
     o = bpy.context.active_object; o.name = "print-" + name
     for v in o.data.vertices:
-        x, y = v.co.x * 40, v.co.y * 62; yy = abs(y) / 31; xx = x / 20
+        x, y = v.co.x * 38, v.co.y * 59; yy = abs(y) / 29.5; xx = x / 19
         v.co = Vector((x, y, .32 * yy ** 3 + .08 * xx * xx + .04 * math.sin(y / 9)))
     sd = o.modifiers.new("t", "SOLIDIFY"); sd.thickness = .3; sd.offset = 1
     bv = o.modifiers.new("b", "BEVEL"); bv.width = .06; bv.segments = 2; bv.limit_method = "ANGLE"
@@ -393,17 +393,17 @@ def build_print(name, img, at, turn, z, pid):
 if LAYOUT == "d":
     IX, IY = 214, 150
     LAY = dict(
-        stand=(-70, 44), prints=[("icon", "icon", (32, 38), -14, .0, 5), ("soul", "soul", (49, 42), -2, .5, 6), ("moment", "moment", (66, 37), 10, 1.0, 7)],
+        stand=(-70, 44), prints=[("moment", "moment", (68, 20), 9, .0, 7), ("soul", "soul", (51, 32), 2, .5, 6), ("icon", "icon", (31, 43), -6, 1.0, 5)],
         soul=dict(at=(-20, -18), turn=-5, arms=[[(-33, -11), (-41, 2), (-47, 18), (-44, 33), (-37, 45), (-27, 53), (-20, 56)], [(-5, -11), (1, 2), (4, 17), (6, 30), (1, 43), (-9, 52), (-16, 56)]], clasp=(-18, 57)),
-        ring=dict(at=(-70, -24), turn=24),
+        ring=dict(at=(-68, -24), turn=-6),
         moment=dict(at=(46, -30), turn=7, a=[(31, -35), (21, -43), (11, -41), (5, -33), (6, -22)], b=[(61, -33), (73, -38), (85, -33), (92, -21), (94, -9)], ext=[(95, -2), (96, 3)]))
     CAM = dict(tgt=(2, 0, 2), dist=470, elev=55, lens=70)
 else:
     IX, IY = 124, 220
     LAY = dict(
-        stand=(-33, 12), prints=[("icon", "icon", (-31, 72), -9, 0, 5), ("soul", "soul", (-4, 75), 3, .5, 6), ("moment", "moment", (23, 71), 12, 1.0, 7)],
+        stand=(-33, 12), prints=[("icon", "icon", (-32, 58), -6, 0, 5), ("soul", "soul", (-6, 69), 2, .5, 6), ("moment", "moment", (20, 80), 8, 1.0, 7)],
         soul=dict(at=(14, -16), turn=-6, arms=[[(4, -8), (-2, 6), (-4, 20), (2, 30), (10, 34)], [(24, -9), (31, 4), (33, 18), (28, 29), (18, 34)]], clasp=(14, 35)),
-        ring=dict(at=(-32, -42), turn=18),
+        ring=dict(at=(-32, -42), turn=-4),
         moment=dict(at=(16, -80), turn=-4, a=[(3, -84), (-7, -90), (-15, -86), (-17, -76), (-12, -67)], b=[(29, -84), (40, -88), (48, -80), (50, -68), (45, -58)], ext=[(40, -53), (37, -50)]))
     CAM = dict(tgt=(0, -4, 2), dist=292, elev=64, lens=50)
 
@@ -460,6 +460,12 @@ for p in pieces:
     p.parent = floor_root
 drawer.location = (0, -mm(TRAVEL), 0)
 
+# the jewellery, as one collection (for the lamps only the metal and the stones should see)
+JEWELS = bpy.data.collections.new("jewels")
+for p in pieces:
+    if not p["piece"].startswith("print"):
+        for o in p.children_recursive:
+            if o.type in ("MESH", "CURVE"): JEWELS.objects.link(o)
 # ═════════ light: a museum installation. A soft wash, a pin spot on each piece (its own pool, its sparkle), rims for
 # the lacquer, and unseen white panels above for the white gold to reflect
 ICY = mm(DD / 2 - TRAVEL); FZ = mm(FLOOR)
@@ -488,6 +494,15 @@ def panel(loc, size, strength, aim):
     o.data.materials.append(m); o.visible_camera = False; o.visible_diffuse = False; o.visible_shadow = False; o.visible_volume_scatter = False
     return o
 panel(W2((0, -260, 520)), mm(520), 1.6, W2((0, 0)))
+panel(W2((0, -560, 190)), mm(420), 1.3, W2((SX, SY, 25)))      # low in front, unseen: what the standing studs look into
+light("SPOT", W2((SX - 30, SY - 280, 170)), 1.6, W2((SX, SY, 26)), spot_size=math.radians(9), spot_blend=.8, shadow_soft_size=mm(25), color=NEUT)
+# small hot lamps that only the metal and the stones see: the glints of pavé under real lights
+for i in range(12):
+    a = i * 2.399; zz = .45 + .5 * ((i * .618) % 1); rr = math.sqrt(1 - zz * zz)
+    l = bpy.data.lights.new(f"spark{i}", "POINT"); l.energy = .5; l.shadow_soft_size = mm(1.5); l.color = NEUT
+    o = link(bpy.data.objects.new(f"spark{i}", l)); o.location = W2((math.cos(a) * rr * 520, 140 + abs(math.sin(a)) * rr * 420, zz * 520))
+    o.visible_diffuse = False
+    o.light_linking.receiver_collection = JEWELS   # only the jewellery receives them: no glint in the lacquer
 panel(W2((-380, 120, 300)), mm(300), 1.2, W2((0, 0)))
 panel(W2((360, 60, 320)), mm(280), 1.0, W2((0, 0)))
 
