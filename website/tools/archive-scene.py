@@ -10,13 +10,24 @@
 # The prints are the house's photographs as small editorial cards (made by archive-prints.py into prints/).
 # Each object carries its piece's id (pass_index and a custom property), so the page can take every piece as its own
 # layer: replaced, clicked and moved on its own.
-# Usage: blender -b -P archive-scene.py -- <out.png> <W> <H> <samples> <travel_mm|open> <d|m> <public_dir> <prints_dir> [only=<piece>]
+# Usage: blender -b -P archive-scene.py -- <out> <W> <H> <samples> <travel_mm|open> <d|m> <public_dir> <prints_dir> [mode]
+#   mode  frame              the still (default): <out>.png and <out>.json (camera, floor)
+#         plate              the same still with the jewellery taken out (the prints and the stand stay): what lies under
+#                            a piece when it is lifted
+#         masks              one sample, the object index: <out>/m<pid>_0001.png per piece (1 ICON, 2 SOUL, 3 AURA,
+#                            4 MOMENT, 5-7 the prints), for the page's hover and click
+#         hero:<pid>:x0,y0,x1,y1   one piece alone on transparent ground, from the same camera and in the same light (the
+#                            rest is still there for the light, unseen by the camera), cropped to the border given as
+#                            fractions of the frame (y up); W and H are the full frame at the hero's scale
+#         seq:<N>:<i0>:<i1>  frames i0..i1 of N: the drawer travelling from closed to open, the camera easing from the
+#                            closed cabinet to the still's camera; <out> is a pattern with #### for the frame
 import bpy, bmesh, math, sys, json, random, re
 from mathutils import Vector, Matrix, Quaternion, Euler
 
 argv = sys.argv[sys.argv.index("--") + 1:]
 OUT, W, H, SAMPLES = argv[0], int(argv[1]), int(argv[2]), int(argv[3])
 TRAVEL_ARG, LAYOUT, PUB, PRINTS = argv[4], argv[5], argv[6].rstrip("/") + "/", argv[7].rstrip("/") + "/"
+MODE = argv[8] if len(argv) > 8 else "frame"
 mm = lambda v: v / 1000
 SOUL = json.load(open(PUB + "craft15/soul.json")); ICONPAVE = json.load(open(PUB + "archive15/icon-pave.json"))
 MW = SOUL["W"]
@@ -401,7 +412,7 @@ if LAYOUT == "d":
 else:
     IX, IY = 124, 220
     LAY = dict(
-        stand=(-33, 12), prints=[("icon", "icon", (-32, 58), -6, 0, 5), ("soul", "soul", (-6, 69), 2, .5, 6), ("moment", "moment", (20, 80), 8, 1.0, 7)],
+        stand=(-33, 12), prints=[("icon", "icon", (-32, 64), -5, 0, 5), ("soul", "soul", (-6, 72), 2, .5, 6), ("moment", "moment", (20, 80), 7, 1.0, 7)],   # the ICON caption clear of the stand
         soul=dict(at=(14, -16), turn=-6, arms=[[(4, -8), (-2, 6), (-4, 20), (2, 30), (10, 34)], [(24, -9), (31, 4), (33, 18), (28, 29), (18, 34)]], clasp=(14, 35)),
         ring=dict(at=(-32, -42), turn=-4),
         moment=dict(at=(16, -80), turn=-4, a=[(3, -84), (-7, -90), (-15, -86), (-17, -76), (-12, -67)], b=[(29, -84), (40, -88), (48, -80), (50, -68), (45, -58)], ext=[(40, -53), (37, -50)]))
@@ -409,7 +420,8 @@ else:
 
 PT, WT, BT, LT = 5, 12, 10, 4
 DW, DD, DH = IX + 2 * PT + 2 * WT, IY + 2 * PT + 2 * WT, 46
-TRAVEL = (DD - 34) if TRAVEL_ARG == "open" else float(TRAVEL_ARG)
+TRAVEL_OPEN = DD - 34
+TRAVEL = TRAVEL_OPEN if TRAVEL_ARG == "open" else float(TRAVEL_ARG)
 drawer = link(bpy.data.objects.new("drawer", None))
 def dbox(name, c, s, mat, bev=1.2, seg=3):
     return box(name, (mm(c[0]), mm(c[1]), mm(c[2])), (mm(s[0]), mm(s[1]), mm(s[2])), mat, mm(bev), seg, drawer)
@@ -468,7 +480,7 @@ for p in pieces:
             if o.type in ("MESH", "CURVE"): JEWELS.objects.link(o)
 # ═════════ light: a museum installation. A soft wash, a pin spot on each piece (its own pool, its sparkle), rims for
 # the lacquer, and unseen white panels above for the white gold to reflect
-ICY = mm(DD / 2 - TRAVEL); FZ = mm(FLOOR)
+ICY = mm(DD / 2 - TRAVEL_OPEN); FZ = mm(FLOOR)
 def W2(p):   # floor millimetres to world metres
     return Vector((mm(p[0]), ICY + mm(p[1]), FZ + mm(p[2] if len(p) > 2 else 0)))
 def light(kind, loc, energy, aim=None, **kw):
@@ -514,9 +526,50 @@ cam.location = tgt + Vector((0, -math.cos(e) * dist, math.sin(e) * dist)); cam.r
 cd.lens = CAM["lens"]; cd.sensor_width = 36; cd.sensor_fit = "AUTO"; cd.clip_start = .005; cd.clip_end = 10
 cd.dof.use_dof = True; cd.dof.focus_distance = (tgt - cam.location).length; cd.dof.aperture_fstop = 7.1
 
-sc.render.filepath = OUT
-bpy.ops.render.render(write_still=True)
-bpy.context.view_layer.update()
-json.dump({ "res": [W, H], "lens": cd.lens, "sensor": cd.sensor_width, "fit": "AUTO", "cam": [list(r) for r in cam.matrix_world], "travel_mm": TRAVEL,
-  "floor": { "y": ICY, "z": FZ, "w": mm(IX), "d": mm(IY) } }, open(OUT.rsplit(".", 1)[0] + ".json", "w"), indent=1)
-print("DONE", OUT)
+# ═════════ the modes
+def jewellery():
+    return [o for p in pieces if not p["piece"].startswith("print") for o in p.children_recursive]
+def write_meta(path):
+    bpy.context.view_layer.update()
+    json.dump({ "res": [W, H], "lens": cd.lens, "sensor": cd.sensor_width, "fit": "AUTO", "cam": [list(r) for r in cam.matrix_world], "travel_mm": TRAVEL,
+      "floor": { "y": ICY, "z": FZ, "w": mm(IX), "d": mm(IY) } }, open(path, "w"), indent=1)
+
+if MODE == "frame":
+    sc.render.filepath = OUT; bpy.ops.render.render(write_still=True); write_meta(OUT.rsplit(".", 1)[0] + ".json")
+elif MODE == "plate":
+    for o in jewellery(): o.hide_render = True
+    sc.render.filepath = OUT; bpy.ops.render.render(write_still=True)
+elif MODE == "masks":
+    sc.cycles.samples = 1; sc.cycles.use_denoising = False
+    bpy.context.view_layer.use_pass_object_index = True
+    sc.use_nodes = True; tree = sc.node_tree
+    for n in list(tree.nodes): tree.nodes.remove(n)
+    rl = tree.nodes.new("CompositorNodeRLayers"); fo = tree.nodes.new("CompositorNodeOutputFile"); fo.base_path = OUT
+    fo.format.file_format = "PNG"; fo.format.color_mode = "BW"; fo.file_slots.clear()
+    for pid in range(1, 8):
+        idm = tree.nodes.new("CompositorNodeIDMask"); idm.index = pid; idm.use_antialiasing = True
+        tree.links.new(rl.outputs["IndexOB"], idm.inputs[0]); fo.file_slots.new(f"m{pid}_"); tree.links.new(idm.outputs[0], fo.inputs[-1])
+    comp = tree.nodes.new("CompositorNodeComposite"); tree.links.new(rl.outputs["Image"], comp.inputs[0])
+    sc.render.filepath = OUT.rstrip("/") + "/beauty.png"; bpy.ops.render.render(write_still=True)
+elif MODE.startswith("hero:"):
+    _, pid, box_ = MODE.split(":"); pid = int(pid); x0, y0, x1, y1 = [float(v) for v in box_.split(",")]
+    target = [p for p in pieces if p["pid"] == pid][0]; keep = set(target.children_recursive)
+    for o in sc.objects:
+        if o.type in ("MESH", "CURVE", "FONT") and o not in keep: o.visible_camera = False
+    sc.render.film_transparent = True; sc.render.image_settings.color_mode = "RGBA"
+    sc.render.use_border = True; sc.render.use_crop_to_border = True
+    sc.render.border_min_x, sc.render.border_min_y, sc.render.border_max_x, sc.render.border_max_y = x0, y0, x1, y1
+    sc.render.filepath = OUT; bpy.ops.render.render(write_still=True)
+elif MODE.startswith("seq:"):
+    _, N, i0, i1 = MODE.split(":"); N, i0, i1 = int(N), int(i0), int(i1)
+    tgt_f, dist_f, el_f = tgt.copy(), dist, e
+    tgt_s = Vector((0, -mm(FT) - mm(30), mm(DH * .55))); dist_s = dist_f * 1.55; el_s = el_f - math.radians(17)
+    sm = lambda x: x * x * x * (x * (x * 6 - 15) + 10)
+    for i in range(i0, i1 + 1):
+        t = i / (N - 1); u = sm(t)
+        drawer.location = (0, -mm(TRAVEL_OPEN * sm(min(1, t * 1.06))), 0)
+        tg = tgt_s.lerp(tgt_f, u); dd = dist_s + (dist_f - dist_s) * u; el = el_s + (el_f - el_s) * u
+        cam.location = tg + Vector((0, -math.cos(el) * dd, math.sin(el) * dd)); cam.rotation_euler = (tg - cam.location).to_track_quat("-Z", "Y").to_euler()
+        cd.dof.focus_distance = dd
+        sc.render.filepath = OUT.replace("####", "%04d" % i); bpy.ops.render.render(write_still=True)
+print("DONE", OUT, MODE)

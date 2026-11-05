@@ -2119,3 +2119,60 @@ html[data-ns] .ar15k { letter-spacing: .04em; font-size: .85rem; }
   .ar15stage[data-mode="still"] { aspect-ratio: 9 / 16; max-height: none; margin-top: 18px; }
   .ar15nav { flex-wrap: wrap; gap: 18px 28px; padding: 0 20px; }
 }
+
+/* ════════ UP CLOSE · THE PRIVATE ARCHIVE: the scroll opens the drawer, a click lifts the piece ════════ */
+.ar15run { position: relative; height: 270svh; }
+.ar15pin { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #000; }
+.ar15pin .ar15stage { position: absolute; left: 0; top: 0; width: 100%; height: 100%; aspect-ratio: auto; max-width: none; margin: 0; overflow: hidden; background: #000; direction: ltr; }
+.ar15seq { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
+.ar15live .ar15seq { visibility: visible; }
+.ar15still { position: absolute; inset: 0; display: block; }
+.ar15still img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+.ar15pool { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity .35s ease;
+  background: radial-gradient(circle at var(--px, 50%) var(--py, 50%), rgba(0,0,0,0) calc(var(--pr, 80px) * .85), rgba(0,0,0,.42) calc(var(--pr, 80px) * 2.8)); }
+.ar15pool.on { opacity: 1; }
+.ar15patch { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; pointer-events: none; }
+.ar15patch.on { opacity: 1; }
+.ar15dim { position: absolute; inset: 0; z-index: 2; background: rgba(0,0,0,.68); opacity: 0; transition: opacity .45s ease; pointer-events: none; }
+.ar15dim.on { opacity: 1; pointer-events: auto; cursor: zoom-out; }
+.ar15fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.ar15hero { position: absolute; left: 0; top: 0; transform-origin: 0 0; opacity: 0; will-change: transform; filter: drop-shadow(0 22px 34px rgba(0,0,0,.55)); }
+.ar15hero.on { opacity: 1; }
+.ar15pin .ar15tag { z-index: 4; transform: translate(-50%, calc(-100% - 14px)); }
+.ar15cue { position: absolute; left: 50%; bottom: max(6vh, 70px); transform: translateX(-50%); margin: 0; z-index: 4; font-size: .62rem; letter-spacing: .34em; text-transform: uppercase; color: rgba(236,226,206,.6); pointer-events: none; }
+.ar15cue::after { content: ""; display: block; width: 1px; height: 34px; margin: 12px auto 0; background: linear-gradient(rgba(236,226,206,.6), rgba(236,226,206,0)); }
+html[data-ns] .ar15cue { letter-spacing: .06em; font-size: .78rem; }
+.ar15detail { position: absolute; z-index: 5; top: 50%; right: 7vw; width: min(380px, 32vw); transform: translateY(-46%); opacity: 0; transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1); color: #f2ece0; }
+html[dir="rtl"] .ar15detail { right: auto; left: 7vw; text-align: right; }
+.ar15detail.on { opacity: 1; transform: translateY(-50%); }
+.ar15dk { margin: 0; font-size: .64rem; letter-spacing: .34em; text-transform: uppercase; color: rgba(230,214,186,.72); }
+.ar15dn { margin: 14px 0 0; font-weight: 300; font-size: clamp(1.6rem, 2.4vw, 2.4rem); letter-spacing: .16em; line-height: 1.2; }
+.ar15dl { margin: 14px 0 0; font-style: italic; font-size: clamp(1rem, 1.2vw, 1.15rem); color: rgba(243,236,224,.82); }
+.ar15go { display: inline-flex; align-items: center; gap: 18px; height: 54px; margin-top: 30px; padding: 0 8px 0 26px; border-radius: 999px; border: 1px solid rgba(236,226,206,.45); color: #f3ede2 !important; text-decoration: none !important; font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; transition: border-color .2s ease, background-color .2s ease; }
+.ar15go i { position: relative; width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(180deg, #f6f0e4, #ddd0b6); }
+.ar15go i::before { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1px; background: #111; transform: translate(-50%, -50%); }
+.ar15go i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; border-top: 1px solid #111; border-right: 1px solid #111; transform: translate(-10%, -50%) rotate(45deg); }
+html[dir="rtl"] .ar15go i { transform: scaleX(-1); }
+.ar15go:hover, .ar15go:focus-visible { border-color: rgba(236,214,170,.9); background: rgba(255,255,255,.05); }
+.ar15go:active { transform: scale(.97); }
+html[data-ns] .ar15dk, html[data-ns] .ar15go { letter-spacing: .04em; }
+.ar15x { position: fixed; z-index: 6; top: calc(var(--ar15top, 96px) + 14px); right: 20px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(236,226,206,.4); background: rgba(0,0,0,.35); cursor: pointer; padding: 0; }
+.ar15x::before, .ar15x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 1px; background: #f2ece0; }
+.ar15x::before { transform: translate(-50%, -50%) rotate(45deg); } .ar15x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.ar15detail:not(.on) .ar15x { visibility: hidden; }
+.ar15nav { display: flex; justify-content: center; gap: clamp(22px, 4vw, 60px); margin-top: clamp(16px, 2vw, 28px); }
+.ar15pick { background: none; border: 0; padding: 10px 4px; cursor: pointer; color: rgba(236,226,206,.6); font: inherit; font-size: .66rem; letter-spacing: .34em; transition: color .2s ease; }
+.ar15pick:hover, .ar15pick:focus-visible { color: #f6f1e6; }
+@media (max-width: 899px) {
+  .ar15run { height: 230svh; }
+  .ar15detail { left: 22px; right: 22px; width: auto; top: auto; bottom: calc(var(--ar15bot, 70px) + 16px); transform: translateY(12px); text-align: center; }
+  .ar15detail.on { transform: none; }
+  html[dir="rtl"] .ar15detail { left: 22px; right: 22px; text-align: center; }
+  .ar15dn { font-size: 1.5rem; margin-top: 10px; } .ar15dl { margin-top: 10px; } .ar15go { margin-top: 18px; height: 50px; }
+  .ar15nav { flex-wrap: wrap; gap: 6px 22px; padding: 0 16px; }
+}
+.ar15still-only .ar15run { height: auto; }
+.ar15still-only .ar15pin { position: relative; }
+@media (prefers-reduced-motion: reduce) { .ar15detail, .ar15dim, .ar15pool { transition: none; } }
+/* the pin needs no scroll container above it (an older Up close rule set overflow: hidden on #details) */
+html body #details.ar15 { overflow: visible !important; overflow-x: clip !important; }

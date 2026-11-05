@@ -1160,12 +1160,10 @@
   }
 })();
 
-/* Up close · the private archive (the house's brief of 5 Nov 2026, hybrid: a path-traced drawer with the jewellery and
-   the prints live in 3D over it, public/archive15/). This first step is the proof frame: the drawer open, two pieces
-   and the prints. The live layer loads only when the section comes near, and never without WebGL. */
+/* Up close · the private archive (the house's brief of 5 Nov 2026): a path-traced drawer the scroll opens and closes,
+   each piece lifted towards the viewer on a click (public/archive15/player.js). It loads as the section comes near. */
 (function () {
-  var sec = document.querySelector("#details.ar15"); if (!sec) return;
-  var stage = sec.querySelector(".ar15stage"); if (!stage || stage.getAttribute("data-mode") === "still" || !window.WebGLRenderingContext) return;
-  var go = function () { import("./archive15/archive.js").then(function (m) { return m.mount(stage, { scene: "d" }); }).then(function () { sec.classList.add("live"); }, function (e) { sec.classList.add("nolive"); if (window.console) console.warn("archive15", e); }); };
-  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); go(); } }, { rootMargin: "120% 0px" }).observe(sec);
+  var sec = document.querySelector("#details.ar15"); if (!sec || !sec.querySelector(".ar15run") || !window.createImageBitmap) return;
+  var go = function () { import("./archive15/player.js").then(function (m) { return m.mount(sec); }).catch(function (e) { sec.classList.add("ar15nojs"); if (window.console) console.warn("archive15", e); }); };
+  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); go(); } }, { rootMargin: "150% 0px" }).observe(sec);
 })();
