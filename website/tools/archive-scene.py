@@ -412,7 +412,7 @@ if LAYOUT == "d":
 else:
     IX, IY = 124, 220
     LAY = dict(
-        stand=(-33, 12), prints=[("icon", "icon", (-32, 64), -5, 0, 5), ("soul", "soul", (-6, 72), 2, .5, 6), ("moment", "moment", (20, 80), 7, 1.0, 7)],   # the ICON caption clear of the stand
+        stand=(-33, 4), prints=[("icon", "icon", (-32, 64), -5, 0, 5), ("soul", "soul", (-6, 72), 2, .5, 6), ("moment", "moment", (20, 80), 7, 1.0, 7)],   # the stand forward of the ICON print, so its caption shows over the tablet
         soul=dict(at=(14, -16), turn=-6, arms=[[(4, -8), (-2, 6), (-4, 20), (2, 30), (10, 34)], [(24, -9), (31, 4), (33, 18), (28, 29), (18, 34)]], clasp=(14, 35)),
         ring=dict(at=(-32, -42), turn=-4),
         moment=dict(at=(16, -80), turn=-4, a=[(3, -84), (-7, -90), (-15, -86), (-17, -76), (-12, -67)], b=[(29, -84), (40, -88), (48, -80), (50, -68), (45, -58)], ext=[(40, -53), (37, -50)]))
