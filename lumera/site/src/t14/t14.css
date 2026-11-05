@@ -2133,7 +2133,7 @@ html[data-ns] .ar15k { letter-spacing: .04em; font-size: .85rem; }
 .ar15pool.on { opacity: 1; }
 .ar15patch { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; pointer-events: none; }
 .ar15patch.on { opacity: 1; }
-.ar15dim { position: absolute; inset: 0; z-index: 2; background: rgba(0,0,0,.68); opacity: 0; transition: opacity .45s ease; pointer-events: none; }
+.ar15dim { position: absolute; inset: 0; z-index: 2; background: radial-gradient(circle at var(--hx, 50%) var(--hy, 50%), rgba(0,0,0,.9) 0, rgba(0,0,0,.86) var(--hr, 30%), rgba(0,0,0,.7) calc(var(--hr, 30%) * 2)); opacity: 0; transition: opacity .45s ease; pointer-events: none; }
 .ar15dim.on { opacity: 1; pointer-events: auto; cursor: zoom-out; }
 .ar15fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 .ar15hero { position: absolute; left: 0; top: 0; transform-origin: 0 0; opacity: 0; will-change: transform; filter: drop-shadow(0 22px 34px rgba(0,0,0,.55)); }
@@ -2156,21 +2156,23 @@ html[dir="rtl"] .ar15go i { transform: scaleX(-1); }
 .ar15go:hover, .ar15go:focus-visible { border-color: rgba(236,214,170,.9); background: rgba(255,255,255,.05); }
 .ar15go:active { transform: scale(.97); }
 html[data-ns] .ar15dk, html[data-ns] .ar15go { letter-spacing: .04em; }
-.ar15x { position: fixed; z-index: 6; top: calc(var(--ar15top, 96px) + 14px); right: 20px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(236,226,206,.4); background: rgba(0,0,0,.35); cursor: pointer; padding: 0; }
+.ar15x { position: absolute; z-index: 6; top: -70px; right: 0; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(236,226,206,.4); background: rgba(0,0,0,.35); cursor: pointer; padding: 0; }
 .ar15x::before, .ar15x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 1px; background: #f2ece0; }
 .ar15x::before { transform: translate(-50%, -50%) rotate(45deg); } .ar15x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+html[dir="rtl"] .ar15x { right: auto; left: 0; }
 .ar15detail:not(.on) .ar15x { visibility: hidden; }
 .ar15nav { display: flex; justify-content: center; gap: clamp(22px, 4vw, 60px); margin-top: clamp(16px, 2vw, 28px); }
 .ar15pick { background: none; border: 0; padding: 10px 4px; cursor: pointer; color: rgba(236,226,206,.6); font: inherit; font-size: .66rem; letter-spacing: .34em; transition: color .2s ease; }
 .ar15pick:hover, .ar15pick:focus-visible { color: #f6f1e6; }
 @media (max-width: 899px) {
   .ar15run { height: 230svh; }
-  .ar15detail { left: 22px; right: 22px; width: auto; top: auto; bottom: calc(var(--ar15bot, 70px) + 16px); transform: translateY(12px); text-align: center; }
-  .ar15detail.on { transform: none; }
-  html[dir="rtl"] .ar15detail { left: 22px; right: 22px; text-align: center; }
-  .ar15dn { font-size: 1.5rem; margin-top: 10px; } .ar15dl { margin-top: 10px; } .ar15go { margin-top: 18px; height: 50px; }
   .ar15nav { flex-wrap: wrap; gap: 6px 22px; padding: 0 16px; }
 }
+.ar15m .ar15detail { left: 22px; right: 22px; width: auto; top: auto; bottom: calc(var(--ar15bot, 70px) + 16px); transform: translateY(12px); text-align: center; }
+.ar15m .ar15detail.on { transform: none; }
+html[dir="rtl"] .ar15m .ar15detail { left: 22px; right: 22px; text-align: center; }
+.ar15m .ar15dn { font-size: 1.5rem; margin-top: 10px; } .ar15m .ar15dl { margin-top: 10px; } .ar15m .ar15go { margin-top: 18px; height: 50px; }
+.ar15m .ar15x, html[dir="rtl"] .ar15m .ar15x { position: fixed; top: calc(var(--ar15top, 96px) + 14px); right: 20px; left: auto; }   /* the panel is untransformed when open here */
 .ar15still-only .ar15run { height: auto; }
 .ar15still-only .ar15pin { position: relative; }
 @media (prefers-reduced-motion: reduce) { .ar15detail, .ar15dim, .ar15pool { transition: none; } }

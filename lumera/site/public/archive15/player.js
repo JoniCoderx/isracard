@@ -53,7 +53,7 @@ export async function mount(sec) {
     const aw = b.width, ah = b.height - top - bot, k = Math.min(aw / W, ah / H);
     R = { w: W * k, h: H * k, k }; R.x = (aw - R.w) / 2; R.y = top + (ah - R.h) / 2;
     Object.assign(stage.style, { left: R.x + "px", top: R.y + "px", width: R.w + "px", height: R.h + "px" });
-    sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px");
+    sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px"); sec.classList.toggle("ar15m", L === "m");
     const dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(R.w * dpr); cv.height = Math.round(R.h * dpr); dirty = true;
   }
 
@@ -107,7 +107,7 @@ export async function mount(sec) {
   function target(p) {
     const pr = toStage(p.hero.rect), ar = pr.w / pr.h, P = pin.getBoundingClientRect(), S = stage.getBoundingClientRect();
     let w, cx, cy;
-    if (L === "d") { const maxW = P.width * .46, maxH = P.height * .62; w = Math.min(maxW, maxH * ar); cx = P.width * (he() ? .66 : .34); cy = P.height * .5; }
+    if (L === "d") { const maxW = P.width * .52, maxH = P.height * .64; w = Math.min(maxW, maxH * ar); cx = P.width * (he() ? .66 : .34); cy = P.height * .5; }
     else { const maxW = P.width * .9, maxH = P.height * .44; w = Math.min(maxW, maxH * ar); cx = P.width * .5; cy = P.height * .36; }
     const h = w / ar; return { x: cx - w / 2 - (S.left - P.left), y: cy - h / 2 - (S.top - P.top), w, h };
   }
@@ -129,8 +129,11 @@ export async function mount(sec) {
     heroEl.style.transform = `translate(${from.x}px, ${from.y}px)`; fx.appendChild(heroEl);
     const x = text(p.id); panel.querySelector(".ar15dk").textContent = x.kind; panel.querySelector(".ar15dn").textContent = x.name;
     panel.querySelector(".ar15dl").textContent = x.line; go.href = x.href;
+    // the room darkens most just behind where the piece will hang, so nothing left in the drawer reads through it
+    const to = target(p); dim.style.setProperty("--hx", (to.x + to.w / 2) + "px"); dim.style.setProperty("--hy", (to.y + to.h / 2) + "px");
+    dim.style.setProperty("--hr", (Math.max(to.w, to.h) * .62) + "px");
     sec.classList.add("ar15sel"); dim.classList.add("on"); panel.hidden = false;
-    const startFly = () => { patchEl.classList.add("on"); heroEl.classList.add("on"); fly(from, target(p), 720, () => { panel.classList.add("on"); closeBtn.focus({ preventScroll: true }); }); };
+    const startFly = () => { patchEl.classList.add("on"); heroEl.classList.add("on"); fly(from, to, 720, () => { panel.classList.add("on"); closeBtn.focus({ preventScroll: true }); }); };
     (heroEl.decode ? heroEl.decode() : Promise.resolve()).then(startFly, startFly);
   }
   function close(now) {
