@@ -2176,5 +2176,10 @@ html[dir="rtl"] .ar15m .ar15detail { left: 22px; right: 22px; text-align: center
 .ar15still-only .ar15run { height: auto; }
 .ar15still-only .ar15pin { position: relative; }
 @media (prefers-reduced-motion: reduce) { .ar15detail, .ar15dim, .ar15pool { transition: none; } }
+/* the closed windows (the piece window, the try-on) wait hidden, not only transparent: each is a full-screen pane of
+   glass (a 16px backdrop blur) that was otherwise recomputed under everything that moves on the page, the drawer's frames
+   among them. They still fade out over .35s and appear at once. */
+html body .modal:not(.open) { visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
+html body .modal.open { visibility: visible; transition: opacity .35s ease, visibility 0s; }
 /* the pin needs no scroll container above it (an older Up close rule set overflow: hidden on #details) */
 html body #details.ar15 { overflow: visible !important; overflow-x: clip !important; }

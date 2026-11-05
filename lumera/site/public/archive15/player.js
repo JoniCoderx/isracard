@@ -19,7 +19,7 @@ export async function mount(sec) {
   const pickLayout = () => (innerWidth < 900 || innerHeight > innerWidth * 1.05) ? "m" : "d";
   let L = pickLayout();
   const run = sec.querySelector(".ar15run"), pin = sec.querySelector(".ar15pin"), stage = sec.querySelector(".ar15stage");
-  const cv = stage.querySelector(".ar15seq"), still = stage.querySelector(".ar15still img"), fx = stage.querySelector(".ar15fx");
+  const cv = stage.querySelector(".ar15seq"), g = cv.getContext("2d", { alpha: false }), still = stage.querySelector(".ar15still img"), fx = stage.querySelector(".ar15fx");
   const tag = stage.querySelector(".ar15tag"), dim = stage.querySelector(".ar15dim"), pool = stage.querySelector(".ar15pool");
   const panel = sec.querySelector(".ar15detail"), closeBtn = panel.querySelector(".ar15x"), go = panel.querySelector(".ar15go");
   const picks = [...sec.querySelectorAll(".ar15pick")], cue = sec.querySelector(".ar15cue");
@@ -46,7 +46,7 @@ export async function mount(sec) {
     let bot = 0;
     for (const el of document.querySelectorAll("#fab, #cbar, body > *")) { const cs = getComputedStyle(el); if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
       const r = el.getBoundingClientRect(); if (r.height && r.bottom >= innerHeight - 2 && r.top > innerHeight * .6) bot = Math.max(bot, innerHeight - r.top); }
-    return { top: L === "m" ? top : top * .5, bot };
+    return { top, bot };   // clear of the header: its glass (a backdrop blur) is then never redrawn over the moving frames
   }
   function layout() {
     const b = pin.getBoundingClientRect(), { top, bot } = insets(), W = M.res[0], H = M.res[1];
@@ -54,7 +54,8 @@ export async function mount(sec) {
     R = { w: W * k, h: H * k, k }; R.x = (aw - R.w) / 2; R.y = top + (ah - R.h) / 2;
     Object.assign(stage.style, { left: R.x + "px", top: R.y + "px", width: R.w + "px", height: R.h + "px" });
     sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px"); sec.classList.toggle("ar15m", L === "m");
-    const dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(R.w * dpr); cv.height = Math.round(R.h * dpr); dirty = true;
+    // the canvas no finer than the frames themselves (the composite scales it up): the fewest pixels to push per frame
+    const dpr = Math.min(2, devicePixelRatio || 1), cw = Math.min(R.w * dpr, M.seq.res[0]); cv.width = Math.round(cw); cv.height = Math.round(cw * R.h / R.w); dirty = true;
   }
 
   /* ── the scroll: 0 closed … 1 open; the last part of the runway holds the drawer open for looking */
@@ -71,11 +72,11 @@ export async function mount(sec) {
   function progress() { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; return span > 0 ? clamp(-r.top / span / .78, 0, 1) : 1; }
   function draw() {
     if (!M) return;
-    const n = M.seq.n, f = t * (n - 1), i = Math.floor(f), a0 = f - i, g = cv.getContext("2d");
+    const n = M.seq.n, f = t * (n - 1), i = Math.floor(f), a0 = f - i;
     const a = steep(a0) * (1 - snap) + (a0 >= .5 ? 1 : 0) * snap, key = i + "|" + a.toFixed(3);
     if (!reduce && (dirty || shown !== key)) {
       const A = frames[i] || frames[0], B = frames[Math.min(n - 1, i + 1)];
-      if (A) { g.globalAlpha = 1; g.drawImage(A, 0, 0, cv.width, cv.height); }
+      if (A && !(B && a > .999)) { g.globalAlpha = 1; g.drawImage(A, 0, 0, cv.width, cv.height); }
       if (B && a > .001) { g.globalAlpha = a; g.drawImage(B, 0, 0, cv.width, cv.height); g.globalAlpha = 1; }
       shown = key; dirty = false;
     }
