@@ -54,11 +54,11 @@ if "heroes" in STEPS:
     for pid in PIECES:
         x0, y0, x1, y1 = hero_box(pid); hs = max(HS, min(6, round(1400 / max(x1 - x0, y1 - y0), 2)))   # small pieces finer
         blender(os.path.join(WORK, f"hero{pid}.png"), round(W * hs), round(H * hs), 96, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
-SEQD = os.path.join(WORK, "seq%d" % CFG["n"])
+SEQD = os.path.join(WORK, "seq%du" % CFG["n"])
 for st in [x for x in STEPS if x == "seq" or x.startswith("seq:")]:
     os.makedirs(SEQD, exist_ok=True); sw, sh = CFG["seq_res"]; n = CFG["n"]
     i0, i1 = (0, n - 1) if st == "seq" else [int(v) for v in st.split(":")[1:3]]
-    blender(os.path.join(SEQD, "f####.png"), sw, sh, 36, f"seq:{n}:{i0}:{i1}")
+    blender(os.path.join(SEQD, "f####.png"), sw, sh, 36, f"seq:{n}:{i0}:{i1}:u")   # evenly spaced steps
 if "pack" in STEPS:
     man = {"layout": LAY, "res": [W, H], "final": f"archive15/{LAY}/final.webp", "pieces": [], "prints": []}
     Image.open(os.path.join(WORK, "final.png")).convert("RGB").save(os.path.join(OUT, "final.webp"), quality=90, method=6)
@@ -99,6 +99,6 @@ if "pack" in STEPS:
         for f in os.listdir(od): os.remove(os.path.join(od, f))
     os.makedirs(od, exist_ok=True)
     for k, f in enumerate(frames): Image.open(os.path.join(SEQD, f)).convert("RGB").save(os.path.join(od, "%02d.webp" % k), quality=88, method=6)
-    man["seq"] = {"n": len(frames), "res": list(CFG["seq_res"]), "src": f"archive15/{LAY}/seq/%02d.webp"}
+    man["seq"] = {"n": len(frames), "res": list(CFG["seq_res"]), "src": f"archive15/{LAY}/seq/%02d.webp", "space": "even"}
     json.dump(man, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     print("packed", OUT)

@@ -21,6 +21,8 @@
 #                            fractions of the frame (y up); W and H are the full frame at the hero's scale
 #         seq:<N>:<i0>:<i1>  frames i0..i1 of N: the drawer travelling from closed to open, the camera easing from the
 #                            closed cabinet to the still's camera; <out> is a pattern with #### for the frame
+#         seq:<N>:<i0>:<i1>:u  the same, the frames spaced evenly in how far the move has gone (not in its time), so
+#                            each is an equal step; the page adds its own gentle ease
 import bpy, bmesh, math, sys, json, random, re
 from mathutils import Vector, Matrix, Quaternion, Euler
 
@@ -566,7 +568,7 @@ elif MODE.startswith("hero:"):
     sc.render.border_min_x, sc.render.border_min_y, sc.render.border_max_x, sc.render.border_max_y = x0, y0, x1, y1
     sc.render.filepath = OUT; bpy.ops.render.render(write_still=True)
 elif MODE.startswith("seq:"):
-    _, N, i0, i1 = MODE.split(":"); N, i0, i1 = int(N), int(i0), int(i1)
+    _, N, i0, i1, *spc = MODE.split(":"); N, i0, i1 = int(N), int(i0), int(i1); even = spc == ["u"]
     tgt_f, dist_f, el_f = tgt.copy(), dist, e
     tgt_s = Vector((0, -mm(FT) - mm(30), mm(DH * .55))); dist_s = dist_f * 1.55; el_s = el_f - math.radians(17)
     sm = lambda x: x * x * x * (x * (x * 6 - 15) + 10)
@@ -597,7 +599,12 @@ elif MODE.startswith("seq:"):
                 done[m.name] = mm_
             s.material = done[m.name]
     for i in range(i0, i1 + 1):
-        t = i / (N - 1); u = sm(t)
+        t = i / (N - 1)
+        if even:   # the time at which the move has gone i/(N-1) of the way (smootherstep inverted, by halving)
+            lo, hi = 0.0, 1.0
+            for _ in range(50): mid = (lo + hi) / 2; lo, hi = (mid, hi) if sm(mid) < t else (lo, mid)
+            t = (lo + hi) / 2
+        u = sm(t)
         drawer.location = (0, -mm(TRAVEL_OPEN * sm(min(1, t * 1.06))), 0)
         tg = tgt_s.lerp(tgt_f, u); dd = dist_s + (dist_f - dist_s) * u; el = el_s + (el_f - el_s) * u
         cam.location = tg + Vector((0, -math.cos(el) * dd, math.sin(el) * dd)); cam.rotation_euler = (tg - cam.location).to_track_quat("-Z", "Y").to_euler()

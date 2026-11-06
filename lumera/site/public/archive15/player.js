@@ -125,7 +125,9 @@ export async function mount(sec) {
   function kick() { if (!loop) loop = requestAnimationFrame(frame); }
   function draw() {
     if (!M) return;
-    const n = M.seq.n, f = t * (n - 1), i = Math.round(f);
+    // frames spaced evenly along the move: a gentle ease of the page's own (70% of full speed at either end, never a
+    // dead stretch); a set spaced in time already carries its ease
+    const n = M.seq.n, v = M.seq.space === "even" ? t + .3 * (t * t * (3 - 2 * t) - t) : t, f = v * (n - 1), i = Math.round(f);
     if (i !== want) { dir = i > want ? 1 : -1; want = i; pump(); fetchMore(); }
     if (!reduce && n >= 48) {
       const k = nearest(i);   // a frame not yet decoded: the nearest one that is, never a jump to closed
