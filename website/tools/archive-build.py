@@ -6,6 +6,7 @@
 #   python3 archive-build.py <blender> <d|m> <work_dir> [steps]
 #   steps (default all, in order): prints final masks plate heroes seq pack
 #   seq may be given a frame range, seq:<i0>:<i1>, to render the opening in parts (each part is one Blender run)
+#   final2x plate2x (desktop, on request): the still and its plate at twice the size, for high-density screens
 #
 #   final   the still the house approved (path traced; deterministic, so the same script gives the same picture)
 #   masks   each piece's exact silhouette in that still (hover and click)
@@ -47,6 +48,8 @@ if "prints" in STEPS:
 if "final" in STEPS: blender(os.path.join(WORK, "final.png"), W, H, 160)
 if "masks" in STEPS: blender(os.path.join(WORK, "masks") + "/", W, H, 1, "masks")
 if "plate" in STEPS: blender(os.path.join(WORK, "plate.png"), W, H, 96, "plate")
+if "final2x" in STEPS: blender(os.path.join(WORK, "final-x.png"), W * 2, H * 2, 160)
+if "plate2x" in STEPS: blender(os.path.join(WORK, "plate-x.png"), W * 2, H * 2, 96, "plate")
 if "heroes" in STEPS:
     for pid in PIECES:
         x0, y0, x1, y1 = hero_box(pid); hs = max(HS, min(6, round(1400 / max(x1 - x0, y1 - y0), 2)))   # small pieces finer
@@ -60,6 +63,12 @@ if "pack" in STEPS:
     man = {"layout": LAY, "res": [W, H], "final": f"archive15/{LAY}/final.webp", "pieces": [], "prints": []}
     Image.open(os.path.join(WORK, "final.png")).convert("RGB").save(os.path.join(OUT, "final.webp"), quality=90, method=6)
     plate = Image.open(os.path.join(WORK, "plate.png")).convert("RGB")
+    # the twice-size still and plate, where rendered (the page sends them to high-density screens only)
+    fx, px_ = os.path.join(WORK, "final-x.png"), os.path.join(WORK, "plate-x.png")
+    plateX = Image.open(px_).convert("RGB") if os.path.exists(px_) and os.path.exists(fx) else None
+    if plateX:
+        Image.open(fx).convert("RGB").save(os.path.join(OUT, "final-x.webp"), quality=88, method=6)
+        man["finalX"] = {"src": f"archive15/{LAY}/final-x.webp", "res": [W * 2, H * 2]}
     # the id map, at half size: which piece (or print) is under each point of the still
     ids = Image.new("L", (W, H), 0)
     for pid in list(PIECES) + list(PRINTS):
@@ -74,9 +83,13 @@ if "pack" in STEPS:
         px0, py0, px1, py1 = max(0, x0 - grow * 2), max(0, y0 - grow * 2), min(W, x1 + grow * 2), min(H, y1 + grow * 2)
         patch = plate.crop((px0, py0, px1, py1)).convert("RGBA"); patch.putalpha(a.crop((px0, py0, px1, py1)))
         patch.save(os.path.join(OUT, f"patch-{pc}.webp"), quality=88, method=6)
+        if plateX:
+            ax = a.crop((px0, py0, px1, py1)).resize(((px1 - px0) * 2, (py1 - py0) * 2), Image.BILINEAR)
+            patchX = plateX.crop((px0 * 2, py0 * 2, px1 * 2, py1 * 2)).convert("RGBA"); patchX.putalpha(ax)
+            patchX.save(os.path.join(OUT, f"patch-{pc}-x.webp"), quality=88, method=6)
         hx0, hy0, hx1, hy1 = hero_box(pid)
         Image.open(os.path.join(WORK, f"hero{pid}.png")).save(os.path.join(OUT, f"hero-{pc}.webp"), quality=90, method=6)
-        man["pieces"].append({"pid": pid, "id": pc, "box": [x0, y0, x1, y1], "patch": {"src": f"archive15/{LAY}/patch-{pc}.webp", "rect": [px0, py0, px1, py1]},
+        man["pieces"].append({"pid": pid, "id": pc, "box": [x0, y0, x1, y1], "patch": {"src": f"archive15/{LAY}/patch-{pc}.webp", "rect": [px0, py0, px1, py1], **({"srcX": f"archive15/{LAY}/patch-{pc}-x.webp"} if plateX else {})},
                               "hero": {"src": f"archive15/{LAY}/hero-{pc}.webp", "rect": [hx0, hy0, hx1, hy1]}})
     for pid, pc in PRINTS.items(): man["prints"].append({"pid": pid, "piece": pc, "box": list(bbox(mask(pid)))})
     frames = sorted(f for f in os.listdir(SEQD) if f.endswith(".png"))

@@ -31,7 +31,7 @@ export async function mount(sec) {
   const text = id => { const b = picks.find(x => x.dataset.id === id); const l = he() ? "he" : "en";
     return b ? { name: b.dataset.name, kind: b.dataset["kind" + l[0].toUpperCase() + l[1]], line: b.dataset["line" + l[0].toUpperCase() + l[1]], href: b.dataset.href } : null; };
 
-  let M, ids = null, idW = 0, idH = 0, R = { x: 0, y: 0, w: 1, h: 1, k: 1 };
+  let M, X = false, ids = null, idW = 0, idH = 0, R = { x: 0, y: 0, w: 1, h: 1, k: 1 };
   let blobs = [], bmps = [], busy = new Set(), fetching = 0, want = 0, dir = 1, gen = 0, shownK = -1, near = true;
   // frames held decoded: so many ahead in the scroll's direction, so many behind, and every so many as a fallback
   let AHEAD = 12, BEHIND = 4, SKEL = 16;
@@ -39,16 +39,19 @@ export async function mount(sec) {
     gen++; bmps.forEach(b => b && b.close()); blobs = []; bmps = []; busy = new Set(); shownK = -1; want = 0;
     [AHEAD, BEHIND, SKEL] = L === "m" ? [10, 3, 24] : [12, 4, 16];   // the phone holds fewer: about 140 MB at most
     M = await fetch(`archive15/${L}/manifest.json`).then(r => r.json());
-    still.src = M.final; still.width = M.res[0]; still.height = M.res[1];
+    // a high-density screen wider than about 1200px takes the still at twice the size, where it was rendered
+    X = !!(M.finalX && innerWidth * Math.min(2, devicePixelRatio || 1) >= 2400);
+    still.src = X ? M.finalX.src : M.final; still.width = M.res[0]; still.height = M.res[1];
     const idImg = await bitmap(M.ids.src); idW = idImg.width; idH = idImg.height;
     const c = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(idW, idH) : Object.assign(document.createElement("canvas"), { width: idW, height: idH }), g = c.getContext("2d"); g.drawImage(idImg, 0, 0); ids = g.getImageData(0, 0, idW, idH).data;
     blobs = new Array(M.seq.n); bmps = new Array(M.seq.n);
     if (!reduce) { blobs[0] = await fetch(url(0)).then(r => r.blob()); fetchMore(); }
-    M.pieces.forEach(p => { new Image().src = p.hero.src; new Image().src = p.patch.src; });
+    M.pieces.forEach(p => { new Image().src = p.hero.src; new Image().src = patchSrc(p); });
   }
 
   /* ── the frames: fetched nearest first, four at a time; decoded two at a time, nearest first, at the canvas's size */
   const url = k => M.seq.src.replace("%02d", String(k).padStart(2, "0"));
+  const patchSrc = p => X && p.patch.srcX ? p.patch.srcX : p.patch.src;
   const keep = k => near && (k % SKEL === 0 || ((k - want) * dir <= AHEAD && (want - k) * dir <= BEHIND));
   function fetchMore() {
     const n = M.seq.n, my = gen;
@@ -191,7 +194,7 @@ export async function mount(sec) {
   }
   function show(p, opener) {
     if (cur) return; cur = p; back = opener || document.activeElement; hover(null);
-    patchEl = new Image(); patchEl.className = "ar15patch"; patchEl.alt = ""; patchEl.src = p.patch.src; place(patchEl, toStage(p.patch.rect)); stage.insertBefore(patchEl, pool);
+    patchEl = new Image(); patchEl.className = "ar15patch"; patchEl.alt = ""; patchEl.src = patchSrc(p); place(patchEl, toStage(p.patch.rect)); stage.insertBefore(patchEl, pool);
     heroEl = new Image(); heroEl.className = "ar15hero"; heroEl.alt = ""; heroEl.src = p.hero.src;
     const from = toStage(p.hero.rect); heroEl.style.width = from.w + "px"; heroEl.style.height = from.h + "px"; heroEl.style.transformOrigin = "0 0";
     heroEl.style.transform = `translate(${from.x}px, ${from.y}px)`; fx.appendChild(heroEl);
