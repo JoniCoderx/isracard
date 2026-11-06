@@ -3,6 +3,10 @@
    archive15/<layout>/manifest.json; nothing is drawn or guessed here, only placed.
    - The scroll alone opens the drawer: the section is pinned and its frames are scrubbed in both directions, never
      played on their own. At the end of the travel the full-resolution still takes over (the same picture).
+   - The frames are handled as the box sequence's are: the drawer eases towards the scroll's place (it glides, never
+     jumps), each frame's file is fetched once (compressed, a few MB in all), and only the frames near the drawer's place
+     are held decoded (off the main thread, at their own size: resizing as they decode was measured slower); the rest
+     are released.
    - Open, each piece answers the pointer exactly where it is (an id map rendered with the still): a soft pool of light
      and its name on hover; a click (or a tap) lifts that very piece towards the viewer, its own 3x render growing out
      of the place it lay, the drawer dims and the piece's details appear. The suede it lay on is rendered too (the
@@ -13,6 +17,7 @@ const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const he = () => document.documentElement.getAttribute("data-lang") === "he";
 const bitmap = url => fetch(url).then(r => r.blob()).then(b => createImageBitmap(b));
+
 
 export async function mount(sec) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -26,18 +31,54 @@ export async function mount(sec) {
   const text = id => { const b = picks.find(x => x.dataset.id === id); const l = he() ? "he" : "en";
     return b ? { name: b.dataset.name, kind: b.dataset["kind" + l[0].toUpperCase() + l[1]], line: b.dataset["line" + l[0].toUpperCase() + l[1]], href: b.dataset.href } : null; };
 
-  let M, frames = [], ids = null, idW = 0, idH = 0, R = { x: 0, y: 0, w: 1, h: 1, k: 1 };
+  let M, ids = null, idW = 0, idH = 0, R = { x: 0, y: 0, w: 1, h: 1, k: 1 };
+  let blobs = [], bmps = [], busy = new Set(), fetching = 0, want = 0, dir = 1, gen = 0, shownK = -1, near = true;
+  // frames held decoded: so many ahead in the scroll's direction, so many behind, and every so many as a fallback
+  let AHEAD = 12, BEHIND = 4, SKEL = 16;
   async function load() {
+    gen++; bmps.forEach(b => b && b.close()); blobs = []; bmps = []; busy = new Set(); shownK = -1; want = 0;
+    [AHEAD, BEHIND, SKEL] = L === "m" ? [10, 3, 24] : [12, 4, 16];   // the phone holds fewer: about 140 MB at most
     M = await fetch(`archive15/${L}/manifest.json`).then(r => r.json());
     still.src = M.final; still.width = M.res[0]; still.height = M.res[1];
     const idImg = await bitmap(M.ids.src); idW = idImg.width; idH = idImg.height;
     const c = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(idW, idH) : Object.assign(document.createElement("canvas"), { width: idW, height: idH }), g = c.getContext("2d"); g.drawImage(idImg, 0, 0); ids = g.getImageData(0, 0, idW, idH).data;
-    const want = reduce ? [] : [...Array(M.seq.n).keys()];
-    frames = new Array(M.seq.n);
-    /* the first frame, then the rest in order: decoded off the main thread, kept decoded */
-    if (want.length) { frames[0] = await bitmap(M.seq.src.replace("%02d", "00")); }
-    Promise.all(want.slice(1).map(k => bitmap(M.seq.src.replace("%02d", String(k).padStart(2, "0"))).then(b => { frames[k] = b; dirty = true; tick(); })));
+    blobs = new Array(M.seq.n); bmps = new Array(M.seq.n);
+    if (!reduce) { blobs[0] = await fetch(url(0)).then(r => r.blob()); fetchMore(); }
     M.pieces.forEach(p => { new Image().src = p.hero.src; new Image().src = p.patch.src; });
+  }
+
+  /* ── the frames: fetched nearest first, four at a time; decoded two at a time, nearest first, at the canvas's size */
+  const url = k => M.seq.src.replace("%02d", String(k).padStart(2, "0"));
+  const keep = k => near && (k % SKEL === 0 || ((k - want) * dir <= AHEAD && (want - k) * dir <= BEHIND));
+  function fetchMore() {
+    const n = M.seq.n, my = gen;
+    while (fetching < 4) {
+      let k = -1;
+      for (let d = 0; d < n && k < 0; d++) for (const j of [want + d * dir, want - d * dir]) if (j >= 0 && j < n && blobs[j] === undefined) { k = j; break; }
+      if (k < 0) return;
+      blobs[k] = null; fetching++;
+      fetch(url(k)).then(r => { if (!r.ok) throw 0; return r.blob(); }).then(b => { if (my === gen) blobs[k] = b; }, () => { if (my === gen) blobs[k] = undefined; })
+        .finally(() => { if (my !== gen) return; fetching--; pump(); fetchMore(); });
+    }
+  }
+  const decode = b => createImageBitmap(b);
+  function pump() {
+    if (!M || reduce) return; const n = M.seq.n, my = gen;
+    for (let k = 0; k < n; k++) if (bmps[k] && !keep(k) && k !== shownK) { bmps[k].close(); bmps[k] = null; }
+    while (busy.size < 2) {
+      let k = -1;
+      for (let d = 0; d <= AHEAD && k < 0; d++) for (const j of [want + d * dir, want - d * dir]) if (j >= 0 && j < n && keep(j) && !bmps[j] && !busy.has(j) && blobs[j]) { k = j; break; }
+      for (let j = 0; j < n && k < 0; j += SKEL) if (keep(j) && !bmps[j] && !busy.has(j) && blobs[j]) k = j;
+      if (k < 0) return;
+      busy.add(k);
+      decode(blobs[k]).then(b => { if (my !== gen) { b.close(); return; } busy.delete(k); if (keep(k) || k === want) { bmps[k] = b; kick(); } else b.close(); pump(); },
+                            () => { if (my === gen) { busy.delete(k); pump(); } });
+    }
+  }
+  function nearest(i) {
+    const n = M.seq.n; if (bmps[i]) return i;
+    for (let d = 1; d < n; d++) { const a = i - d * dir, b = i + d * dir; if (a >= 0 && a < n && bmps[a]) return a; if (b >= 0 && b < n && bmps[b]) return b; }
+    return -1;
   }
 
   /* the frame's place: the whole picture, contained, between the header and any bar fixed at the foot */
@@ -55,38 +96,52 @@ export async function mount(sec) {
     Object.assign(stage.style, { left: R.x + "px", top: R.y + "px", width: R.w + "px", height: R.h + "px" });
     sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px"); sec.classList.toggle("ar15m", L === "m");
     // the canvas no finer than the frames themselves (the composite scales it up): the fewest pixels to push per frame
-    const dpr = Math.min(2, devicePixelRatio || 1), cw = Math.min(R.w * dpr, M.seq.res[0]); cv.width = Math.round(cw); cv.height = Math.round(cw * R.h / R.w); dirty = true;
+    const dpr = Math.min(2, devicePixelRatio || 1), cw = Math.round(Math.min(R.w * dpr, M.seq.res[0]));
+    if (cw !== cv.width) { cv.width = cw; cv.height = Math.round(cw * R.h / R.w); }
+    dirty = true;
   }
 
   /* ── the scroll: 0 closed … 1 open; the last part of the runway holds the drawer open for looking */
-  let t = reduce ? 1 : 0, shown = "", dirty = true, raf = 0, open = false;
-  /* 24 frames carry a long camera move, so two neighbours laid over each other read as a double image. While the
-     scroll moves, the next frame comes in over a short stretch around the midpoint only (it reads as motion); once the
-     scroll rests, the drawer settles on the nearer whole frame (snap 0 → 1), so a paused drawer is always one picture. */
-  let snap = 1, snapT = 0, snapA = 0;
+  let t = reduce ? 1 : 0, dirty = true, loop = 0, last = 0, open = false, shown = "";
+  /* a short set (fewer than 48 frames) is too coarse to show frame by frame: there the next frame comes in over a short
+     stretch around the midpoint while the drawer moves, and once it rests it settles on the nearer whole frame */
+  let snap = 1, snapA = 0;
   const steep = a => { const x = clamp((a - .3) / .4, 0, 1); return x * x * (3 - 2 * x); };
   function settle() { const t0 = performance.now(); cancelAnimationFrame(snapA);
-    const step = now => { snap = clamp((now - t0) / 220, 0, 1); snap = 1 - Math.pow(1 - snap, 3); draw(); if (snap < 1) snapA = requestAnimationFrame(step); };
+    const step = now => { snap = 1 - Math.pow(1 - clamp((now - t0) / 220, 0, 1), 3); dirty = true; draw(); if (snap < 1) snapA = requestAnimationFrame(step); };
     snapA = requestAnimationFrame(step); }
-  function moved() { if (snap !== 0) { cancelAnimationFrame(snapA); snap = 0; } clearTimeout(snapT); snapT = setTimeout(settle, 140); }
   function progress() { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; return span > 0 ? clamp(-r.top / span / .78, 0, 1) : 1; }
+  // the drawer eases towards the scroll's place: about a quarter of the way each 60th of a second
+  function frame(now) {
+    loop = 0; const c = reduce ? 1 : progress(), dt = last ? Math.min(100, now - last) : 16.7; last = now;
+    const was = t; t = Math.abs(c - t) < 1e-4 ? c : t + (c - t) * (1 - Math.pow(.75, dt / 16.667));
+    if (t !== was && snap !== 0) { cancelAnimationFrame(snapA); snap = 0; }
+    draw();
+    if (t !== c) loop = requestAnimationFrame(frame); else { last = 0; if (M && M.seq.n < 48 && snap === 0) settle(); }
+  }
+  function kick() { if (!loop) loop = requestAnimationFrame(frame); }
   function draw() {
     if (!M) return;
-    const n = M.seq.n, f = t * (n - 1), i = Math.floor(f), a0 = f - i;
-    const a = steep(a0) * (1 - snap) + (a0 >= .5 ? 1 : 0) * snap, key = i + "|" + a.toFixed(3);
-    if (!reduce && (dirty || shown !== key)) {
-      // a frame not yet arrived (a fast scroll on a slow connection): the nearest earlier one that has, never a jump to closed
-      let A = frames[i]; for (let k = i - 1; !A && k >= 0; k--) A = frames[k];
-      const B = frames[i] ? frames[Math.min(n - 1, i + 1)] : null;
-      if (A && !(B && a > .999)) { g.globalAlpha = 1; g.drawImage(A, 0, 0, cv.width, cv.height); }
-      if (B && a > .001) { g.globalAlpha = a; g.drawImage(B, 0, 0, cv.width, cv.height); g.globalAlpha = 1; }
-      shown = key; dirty = false;
+    const n = M.seq.n, f = t * (n - 1), i = Math.round(f);
+    if (i !== want) { dir = i > want ? 1 : -1; want = i; pump(); fetchMore(); }
+    if (!reduce && n >= 48) {
+      const k = nearest(i);   // a frame not yet decoded: the nearest one that is, never a jump to closed
+      if (k >= 0 && (dirty || k !== shownK)) { g.drawImage(bmps[k], 0, 0, cv.width, cv.height); shownK = k; dirty = false; }
+    } else if (!reduce) {
+      const i0 = Math.floor(f), a0 = f - i0, a = steep(a0) * (1 - snap) + (a0 >= .5 ? 1 : 0) * snap, key = i0 + "|" + a.toFixed(3);
+      if (dirty || shown !== key) {
+        let A = bmps[i0]; for (let k = i0 - 1; !A && k >= 0; k--) A = bmps[k];
+        const B = bmps[i0] ? bmps[Math.min(n - 1, i0 + 1)] : null;
+        if (A && !(B && a > .999)) { g.globalAlpha = 1; g.drawImage(A, 0, 0, cv.width, cv.height); }
+        if (B && a > .001) { g.globalAlpha = a; g.drawImage(B, 0, 0, cv.width, cv.height); g.globalAlpha = 1; }
+        shown = key; dirty = false;
+      }
     }
     const s = reduce ? 1 : clamp((t - .93) / .07, 0, 1); still.style.opacity = s;
     const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (!open) { hover(null); if (cur) close(true); } }
     if (cue) cue.style.opacity = String(clamp(1 - t * 4, 0, 1));
   }
-  function tick() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (!reduce) t = progress(); draw(); }); }
+  const tick = kick;
 
   /* ── which piece is under a point of the screen (the id map) */
   function at(cx, cy, touch) {
@@ -162,12 +217,18 @@ export async function mount(sec) {
   addEventListener("keydown", e => { if (e.key === "Escape" && cur) close(); });
   picks.forEach(b => b.addEventListener("click", () => {
     const p = M && M.pieces.find(x => x.id === b.dataset.id); if (!p) return;
-    if (!open) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; draw(); }
+    if (!open) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
     show(p, b); }));
-  let y0 = scrollY; addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY; moved(); tick(); }, { passive: true });
-  addEventListener("resize", () => { const l = pickLayout(); if (l !== L) { L = l; close(true); load().then(() => { layout(); tick(); }); } else { layout(); if (cur) { close(true); } tick(); } });
+  let y0 = scrollY; addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY;
+    // far from the section, every decoded frame is let go (the files stay, compressed); back near, they are decoded again
+    const r = run.getBoundingClientRect(), nr = r.bottom > -2 * innerHeight && r.top < 3 * innerHeight;
+    if (nr !== near) { near = nr; if (!near) { bmps.forEach((b, k) => { if (b) { b.close(); bmps[k] = null; } }); shownK = -1; dirty = true; } else pump(); }
+    if (near) kick(); }, { passive: true });
+  addEventListener("resize", () => { const l = pickLayout(); if (l !== L) { L = l; close(true); load().then(() => { layout(); pump(); tick(); }); } else { layout(); if (cur) { close(true); } tick(); } });
   new MutationObserver(() => { if (hot) { const h = hot; hot = null; hover(h); } }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
-  await load(); layout(); sec.classList.add("ar15live"); if (reduce) sec.classList.add("ar15still-only"); t = reduce ? 1 : progress(); dirty = true; draw();
-  return { get t() { return t; } };
+  await load(); layout(); if (!reduce) bmps[0] = await decode(blobs[0]);   // the closed drawer, at the canvas's size, before anything shows
+  sec.classList.add("ar15live"); if (reduce) sec.classList.add("ar15still-only"); t = reduce ? 1 : progress(); dirty = true; draw(); pump();
+  const api = { get t() { return t; }, get frame() { return shownK; }, get held() { return bmps.filter(Boolean).length; }, get fetched() { return blobs.filter(Boolean).length; } };
+  sec.__ar15 = api; return api;
 }

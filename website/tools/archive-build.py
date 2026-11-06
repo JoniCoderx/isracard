@@ -5,12 +5,13 @@
 #
 #   python3 archive-build.py <blender> <d|m> <work_dir> [steps]
 #   steps (default all, in order): prints final masks plate heroes seq pack
+#   seq may be given a frame range, seq:<i0>:<i1>, to render the opening in parts (each part is one Blender run)
 #
 #   final   the still the house approved (path traced; deterministic, so the same script gives the same picture)
 #   masks   each piece's exact silhouette in that still (hover and click)
 #   plate   the still without the jewellery (what shows where a piece is lifted)
 #   heroes  each piece alone at 2x, from the same camera and light, cropped to it (the piece as it comes forward)
-#   seq     the drawer opening: N frames from closed to the still, scrubbed by the scroll
+#   seq     the drawer opening: N frames from closed to the still, scrubbed by the scroll, at the still's own size
 #   pack    webp, the id map, the patches under each piece, the manifest
 import json, os, subprocess, sys
 from PIL import Image, ImageFilter, ImageChops
@@ -19,7 +20,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(os.pat
 PUB = os.path.join(REPO, "lumera/site/public"); SCENE = os.path.join(HERE, "archive-scene.py")
 BL, LAY, WORK = sys.argv[1], sys.argv[2], os.path.abspath(sys.argv[3])
 STEPS = sys.argv[4].split(",") if len(sys.argv) > 4 else ["prints", "final", "masks", "plate", "heroes", "seq", "pack"]
-CFG = {"d": dict(res=(1920, 1080), seq_res=(1280, 720), n=24), "m": dict(res=(1080, 1920), seq_res=(720, 1280), n=24)}[LAY]
+# 96 frames, as the box sequence: about 12px of scroll each, so the drawer glides rather than steps
+CFG = {"d": dict(res=(1920, 1080), seq_res=(1920, 1080), n=96), "m": dict(res=(1080, 1920), seq_res=(1080, 1920), n=96)}[LAY]
 PIECES = {1: "ring", 2: "pave", 3: "aura", 4: "knot"}; PRINTS = {5: "ring", 6: "pave", 7: "knot"}
 W, H = CFG["res"]; HS = 2; os.makedirs(WORK, exist_ok=True); PR = os.path.join(WORK, "prints")
 OUT = os.path.join(PUB, "archive15", LAY); os.makedirs(OUT, exist_ok=True)
@@ -49,9 +51,11 @@ if "heroes" in STEPS:
     for pid in PIECES:
         x0, y0, x1, y1 = hero_box(pid); hs = max(HS, min(6, round(1400 / max(x1 - x0, y1 - y0), 2)))   # small pieces finer
         blender(os.path.join(WORK, f"hero{pid}.png"), round(W * hs), round(H * hs), 96, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
-if "seq" in STEPS:
-    os.makedirs(os.path.join(WORK, "seq"), exist_ok=True); sw, sh = CFG["seq_res"]; n = CFG["n"]
-    blender(os.path.join(WORK, "seq", "f####.png"), sw, sh, 36, f"seq:{n}:0:{n - 1}")
+SEQD = os.path.join(WORK, "seq%d" % CFG["n"])
+for st in [x for x in STEPS if x == "seq" or x.startswith("seq:")]:
+    os.makedirs(SEQD, exist_ok=True); sw, sh = CFG["seq_res"]; n = CFG["n"]
+    i0, i1 = (0, n - 1) if st == "seq" else [int(v) for v in st.split(":")[1:3]]
+    blender(os.path.join(SEQD, "f####.png"), sw, sh, 36, f"seq:{n}:{i0}:{i1}")
 if "pack" in STEPS:
     man = {"layout": LAY, "res": [W, H], "final": f"archive15/{LAY}/final.webp", "pieces": [], "prints": []}
     Image.open(os.path.join(WORK, "final.png")).convert("RGB").save(os.path.join(OUT, "final.webp"), quality=90, method=6)
@@ -75,9 +79,13 @@ if "pack" in STEPS:
         man["pieces"].append({"pid": pid, "id": pc, "box": [x0, y0, x1, y1], "patch": {"src": f"archive15/{LAY}/patch-{pc}.webp", "rect": [px0, py0, px1, py1]},
                               "hero": {"src": f"archive15/{LAY}/hero-{pc}.webp", "rect": [hx0, hy0, hx1, hy1]}})
     for pid, pc in PRINTS.items(): man["prints"].append({"pid": pid, "piece": pc, "box": list(bbox(mask(pid)))})
-    seqd = os.path.join(WORK, "seq"); frames = sorted(f for f in os.listdir(seqd) if f.endswith(".png"))
-    os.makedirs(os.path.join(OUT, "seq"), exist_ok=True)
-    for k, f in enumerate(frames): Image.open(os.path.join(seqd, f)).convert("RGB").save(os.path.join(OUT, "seq", "%02d.webp" % k), quality=84, method=6)
+    frames = sorted(f for f in os.listdir(SEQD) if f.endswith(".png"))
+    if len(frames) != CFG["n"]: sys.exit(f"pack: {len(frames)} opening frames in {SEQD}, expected {CFG['n']}")
+    od = os.path.join(OUT, "seq")
+    if os.path.isdir(od):
+        for f in os.listdir(od): os.remove(os.path.join(od, f))
+    os.makedirs(od, exist_ok=True)
+    for k, f in enumerate(frames): Image.open(os.path.join(SEQD, f)).convert("RGB").save(os.path.join(od, "%02d.webp" % k), quality=88, method=6)
     man["seq"] = {"n": len(frames), "res": list(CFG["seq_res"]), "src": f"archive15/{LAY}/seq/%02d.webp"}
     json.dump(man, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     print("packed", OUT)
