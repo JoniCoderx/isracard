@@ -28,7 +28,8 @@
      772,
      786,
      980
-    ]
+    ],
+    "srcX": "archive15/d/patch-ring-x.webp"
    },
    "hero": {
     "src": "archive15/d/hero-ring.webp",
@@ -56,7 +57,8 @@
      328,
      1309,
      925
-    ]
+    ],
+    "srcX": "archive15/d/patch-pave-x.webp"
    },
    "hero": {
     "src": "archive15/d/hero-pave.webp",
@@ -84,7 +86,8 @@
      237,
      813,
      369
-    ]
+    ],
+    "srcX": "archive15/d/patch-aura-x.webp"
    },
    "hero": {
     "src": "archive15/d/hero-aura.webp",
@@ -112,7 +115,8 @@
      601,
      2036,
      1041
-    ]
+    ],
+    "srcX": "archive15/d/patch-knot-x.webp"
    },
    "hero": {
     "src": "archive15/d/hero-knot.webp",
@@ -157,6 +161,13 @@
    ]
   }
  ],
+ "finalX": {
+  "src": "archive15/d/final-x.webp",
+  "res": [
+   4992,
+   2808
+  ]
+ },
  "ids": {
   "src": "archive15/d/ids.png",
   "scale": 0.5,
