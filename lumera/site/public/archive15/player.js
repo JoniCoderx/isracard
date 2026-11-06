@@ -143,7 +143,7 @@ export async function mount(sec) {
       }
     }
     const s = reduce ? 1 : clamp((t - .93) / .07, 0, 1); still.style.opacity = s;
-    const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (!open) { hover(null); if (cur) close(true); } }
+    const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (!open) { hover(null); if (cur) close(true); home.slice().forEach(land); stage.querySelectorAll(".ar15hero, .ar15patch").forEach(e => e.remove()); } }
     if (cue) cue.style.opacity = String(clamp(1 - t * 4, 0, 1));
   }
   const tick = kick;
@@ -175,8 +175,11 @@ export async function mount(sec) {
   stage.addEventListener("pointerleave", () => hover(null));
   stage.addEventListener("click", e => { if (!open) return; if (cur) { close(); return; } const p = at(e.clientX, e.clientY, e.pointerType !== "mouse"); if (p) show(p, null); });
 
-  /* ── the detail: the piece comes forward */
-  let cur = null, heroEl = null, patchEl = null, anim = 0, back = null;
+  /* ── the detail: the piece comes forward.
+     Each lift is its own object (its piece, its two images, its own animation), so a second click while the first piece
+     is still flying home can never strand it: the one on its way home lands at once, and a lift that was closed before
+     its image had decoded never starts. */
+  let cur = null, back = null, home = [];
   function target(p) {
     const pr = toStage(p.hero.rect), ar = pr.w / pr.h, P = pin.getBoundingClientRect(), S = stage.getBoundingClientRect();
     let w, cx, cy;
@@ -185,37 +188,39 @@ export async function mount(sec) {
     const h = w / ar; return { x: cx - w / 2 - (S.left - P.left), y: cy - h / 2 - (S.top - P.top), w, h };
   }
   function place(el, r) { el.style.transform = `translate(${r.x}px, ${r.y}px)`; el.style.width = r.w + "px"; el.style.height = r.h + "px"; }
-  function fly(from, to, dur, done) {
-    cancelAnimationFrame(anim); const t0 = performance.now();
+  function put(Lf, r) { Lf.r = r; Lf.hero.style.transform = `translate(${r.x}px, ${r.y}px) scale(${r.w / Lf.base.w}, ${r.h / Lf.base.h})`; }
+  function fly(Lf, to, dur, done) {
+    cancelAnimationFrame(Lf.anim); const from = Lf.r, t0 = performance.now();
     const step = now => { const k = reduce ? 1 : ease(clamp((now - t0) / dur, 0, 1)), lift = Math.sin(k * Math.PI) * -10;
-      const r = { x: from.x + (to.x - from.x) * k, y: from.y + (to.y - from.y) * k + lift, w: from.w + (to.w - from.w) * k, h: from.h + (to.h - from.h) * k };
-      const bw = parseFloat(heroEl.style.width), bh = parseFloat(heroEl.style.height);
-      heroEl.style.transform = `translate(${r.x}px, ${r.y}px) scale(${r.w / bw}, ${r.h / bh})`;
-      if (k < 1) anim = requestAnimationFrame(step); else done && done(); };
-    anim = requestAnimationFrame(step);
+      put(Lf, { x: from.x + (to.x - from.x) * k, y: from.y + (to.y - from.y) * k + lift, w: from.w + (to.w - from.w) * k, h: from.h + (to.h - from.h) * k });
+      if (k < 1) Lf.anim = requestAnimationFrame(step); else { Lf.anim = 0; done && done(); } };
+    Lf.anim = requestAnimationFrame(step);
   }
+  function land(Lf) { cancelAnimationFrame(Lf.anim); clearTimeout(Lf.wait); Lf.hero.remove(); Lf.patch.remove(); home = home.filter(x => x !== Lf); }
   function show(p, opener) {
-    if (cur) return; cur = p; back = opener || document.activeElement; hover(null);
-    patchEl = new Image(); patchEl.className = "ar15patch"; patchEl.alt = ""; patchEl.src = patchSrc(p); place(patchEl, toStage(p.patch.rect)); stage.insertBefore(patchEl, pool);
-    heroEl = new Image(); heroEl.className = "ar15hero"; heroEl.alt = ""; heroEl.src = p.hero.src;
-    const from = toStage(p.hero.rect); heroEl.style.width = from.w + "px"; heroEl.style.height = from.h + "px"; heroEl.style.transformOrigin = "0 0";
-    heroEl.style.transform = `translate(${from.x}px, ${from.y}px)`; fx.appendChild(heroEl);
+    if (cur) return; home.slice().forEach(land);   // anything still on its way home is set down at once
+    back = opener || document.activeElement; hover(null);
+    const from = toStage(p.hero.rect), Lf = { p, anim: 0, wait: 0, base: { w: from.w, h: from.h }, r: from, hero: new Image(), patch: new Image() };
+    cur = Lf;
+    Lf.patch.className = "ar15patch"; Lf.patch.alt = ""; Lf.patch.src = patchSrc(p); place(Lf.patch, toStage(p.patch.rect)); stage.insertBefore(Lf.patch, pool);
+    Lf.hero.className = "ar15hero"; Lf.hero.alt = ""; Lf.hero.src = p.hero.src; Lf.hero.style.width = from.w + "px"; Lf.hero.style.height = from.h + "px";
+    Lf.hero.style.transformOrigin = "0 0"; put(Lf, from); fx.appendChild(Lf.hero);
     const x = text(p.id); panel.querySelector(".ar15dk").textContent = x.kind; panel.querySelector(".ar15dn").textContent = x.name;
     panel.querySelector(".ar15dl").textContent = x.line; go.href = x.href;
     // the room darkens most just behind where the piece will hang, so nothing left in the drawer reads through it
     const to = target(p); dim.style.setProperty("--hx", (to.x + to.w / 2) + "px"); dim.style.setProperty("--hy", (to.y + to.h / 2) + "px");
     dim.style.setProperty("--hr", (Math.max(to.w, to.h) * .62) + "px");
     sec.classList.add("ar15sel"); dim.classList.add("on"); panel.hidden = false;
-    const startFly = () => { patchEl.classList.add("on"); heroEl.classList.add("on"); fly(from, to, 720, () => { panel.classList.add("on"); closeBtn.focus({ preventScroll: true }); }); };
-    (heroEl.decode ? heroEl.decode() : Promise.resolve()).then(startFly, startFly);
+    const go1 = () => { if (cur !== Lf) return; Lf.patch.classList.add("on"); Lf.hero.classList.add("on");
+      fly(Lf, to, 720, () => { if (cur !== Lf) return; panel.classList.add("on"); closeBtn.focus({ preventScroll: true }); }); };
+    (Lf.hero.decode ? Lf.hero.decode() : Promise.resolve()).then(go1, go1);
   }
   function close(now) {
-    if (!cur) return; const p = cur, h = heroEl, pa = patchEl; cur = null; panel.classList.remove("on"); dim.classList.remove("on"); sec.classList.remove("ar15sel");
-    const end = () => { h && h.remove(); pa && pa.remove(); panel.hidden = true; if (back && back.focus) back.focus({ preventScroll: true }); };
-    if (now || reduce || !h) { cancelAnimationFrame(anim); end(); return; }
-    const from = toStage(p.hero.rect), cs = h.style.transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\) scale\(([-\d.]+), ([-\d.]+)\)/);
-    const at0 = cs ? { x: +cs[1], y: +cs[2], w: from.w * +cs[3], h: from.h * +cs[4] } : target(p);
-    heroEl = h; fly(at0, from, 560, () => { pa.classList.remove("on"); setTimeout(end, 180); });
+    if (!cur) return; const Lf = cur; cur = null; panel.classList.remove("on"); dim.classList.remove("on"); sec.classList.remove("ar15sel");
+    const end = () => { land(Lf); if (!cur) { panel.hidden = true; if (back && back.focus) back.focus({ preventScroll: true }); } };
+    if (now || reduce || !Lf.hero.classList.contains("on")) { end(); return; }
+    home.push(Lf);
+    fly(Lf, toStage(Lf.p.hero.rect), 560, () => { Lf.patch.classList.remove("on"); Lf.wait = setTimeout(end, 180); });
   }
   closeBtn.addEventListener("click", () => close());
   dim.addEventListener("click", () => close());
@@ -229,7 +234,8 @@ export async function mount(sec) {
     const r = run.getBoundingClientRect(), nr = r.bottom > -2 * innerHeight && r.top < 3 * innerHeight;
     if (nr !== near) { near = nr; if (!near) { bmps.forEach((b, k) => { if (b) { b.close(); bmps[k] = null; } }); shownK = -1; dirty = true; } else pump(); }
     if (near) kick(); }, { passive: true });
-  addEventListener("resize", () => { const l = pickLayout(); if (l !== L) { L = l; close(true); load().then(() => { layout(); pump(); tick(); }); } else { layout(); if (cur) { close(true); } tick(); } });
+  addEventListener("resize", () => { const l = pickLayout(); home.slice().forEach(land);
+    if (l !== L) { L = l; close(true); load().then(() => { layout(); pump(); tick(); }); } else { layout(); if (cur) { close(true); } tick(); } });
   new MutationObserver(() => { if (hot) { const h = hot; hot = null; hover(h); } }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
   await load(); layout(); if (!reduce) bmps[0] = await decode(blobs[0]);   // the closed drawer, at the canvas's size, before anything shows
