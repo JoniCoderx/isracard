@@ -22,14 +22,17 @@ PUB = os.path.join(REPO, "lumera/site/public"); SCENE = os.path.join(HERE, "arch
 BL, LAY, WORK = sys.argv[1], sys.argv[2], os.path.abspath(sys.argv[3])
 STEPS = sys.argv[4].split(",") if len(sys.argv) > 4 else ["prints", "final", "masks", "plate", "heroes", "seq", "pack"]
 # 96 frames, as the box sequence: about 12px of scroll each, so the drawer glides rather than steps
-CFG = {"d": dict(res=(1920, 1080), seq_res=(1920, 1080), n=96), "m": dict(res=(1080, 1920), seq_res=(1080, 1920), n=96)}[LAY]
+# desktop: the view runs 1.3x wider and taller than the approved frame (2496x1404, the frame its exact middle), so on any
+# window the drawer sits in its cabinet and room instead of being cut by black bars
+CFG = {"d": dict(res=(2496, 1404), seq_res=(2496, 1404), n=96, over=1.3), "m": dict(res=(1080, 1920), seq_res=(1080, 1920), n=96, over=1)}[LAY]
+OVER = CFG["over"]; ENV = dict(os.environ, ARCH_OVER=str(OVER))
 PIECES = {1: "ring", 2: "pave", 3: "aura", 4: "knot"}; PRINTS = {5: "ring", 6: "pave", 7: "knot"}
 W, H = CFG["res"]; HS = 2; os.makedirs(WORK, exist_ok=True); PR = os.path.join(WORK, "prints")
-OUT = os.path.join(PUB, "archive15", LAY); os.makedirs(OUT, exist_ok=True)
+OUT = os.environ.get("ARCH_OUT") or os.path.join(PUB, "archive15", LAY); os.makedirs(OUT, exist_ok=True)   # ARCH_OUT: pack elsewhere (a test)
 
 def blender(out, w, h, samples, mode="frame"):
     cmd = [BL, "-b", "-P", SCENE, "--", out, str(w), str(h), str(samples), "open", LAY, PUB, PR, mode]
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, env=ENV)
     if "DONE" not in r.stdout: sys.exit("blender failed: " + " ".join(cmd) + "\n" + r.stdout[-3000:] + r.stderr[-2000:])
     print("rendered", mode, out, flush=True)
 
@@ -50,24 +53,44 @@ if "masks" in STEPS: blender(os.path.join(WORK, "masks") + "/", W, H, 1, "masks"
 if "plate" in STEPS: blender(os.path.join(WORK, "plate.png"), W, H, 96, "plate")
 if "final2x" in STEPS: blender(os.path.join(WORK, "final-x.png"), W * 2, H * 2, 160)
 if "plate2x" in STEPS: blender(os.path.join(WORK, "plate-x.png"), W * 2, H * 2, 96, "plate")
+
+# the approved frame inside the wider view, and a fall-off to black across the margin only (the frame itself untouched),
+# so the room dissolves into the page's black at its outer edge
+FW, FH = round(W / OVER), round(H / OVER); FX, FY = (W - FW) // 2, (H - FH) // 2
+def falloff(size):
+    w, h = size
+    if OVER <= 1: return None
+    import numpy as np
+    sx, sy = w / W, h / H
+    def axis(n, f0, f1):
+        v = np.arange(n) + .5; d = np.minimum(np.clip((v - 0) / max(1, f0), 0, 1), np.clip((n - v) / max(1, n - f1), 0, 1))
+        return d * d * (3 - 2 * d)
+    fx = axis(w, FX * sx, (FX + FW) * sx); fy = axis(h, FY * sy, (FY + FH) * sy)
+    return np.outer(fy, fx) ** .8
+def fade(im):
+    f = falloff(im.size)
+    if f is None: return im
+    import numpy as np
+    a = np.asarray(im.convert("RGB")).astype(np.float32) * f[..., None]
+    return Image.fromarray(np.clip(a + .5, 0, 255).astype("uint8"))
 if "heroes" in STEPS:
     for pid in PIECES:
         x0, y0, x1, y1 = hero_box(pid); hs = max(HS, min(6, round(1400 / max(x1 - x0, y1 - y0), 2)))   # small pieces finer
         blender(os.path.join(WORK, f"hero{pid}.png"), round(W * hs), round(H * hs), 96, f"hero:{pid}:{x0 / W:.5f},{1 - y1 / H:.5f},{x1 / W:.5f},{1 - y0 / H:.5f}")
-SEQD = os.path.join(WORK, "seq%du" % CFG["n"])
+SEQD = os.path.join(WORK, "seq%du%s" % (CFG["n"], "" if OVER == 1 else "o%g" % OVER))
 for st in [x for x in STEPS if x == "seq" or x.startswith("seq:")]:
     os.makedirs(SEQD, exist_ok=True); sw, sh = CFG["seq_res"]; n = CFG["n"]
     i0, i1 = (0, n - 1) if st == "seq" else [int(v) for v in st.split(":")[1:3]]
     blender(os.path.join(SEQD, "f####.png"), sw, sh, 36, f"seq:{n}:{i0}:{i1}:u")   # evenly spaced steps
 if "pack" in STEPS:
-    man = {"layout": LAY, "res": [W, H], "final": f"archive15/{LAY}/final.webp", "pieces": [], "prints": []}
-    Image.open(os.path.join(WORK, "final.png")).convert("RGB").save(os.path.join(OUT, "final.webp"), quality=90, method=6)
-    plate = Image.open(os.path.join(WORK, "plate.png")).convert("RGB")
+    man = {"layout": LAY, "res": [W, H], "frame": [FX, FY, FX + FW, FY + FH], "final": f"archive15/{LAY}/final.webp", "pieces": [], "prints": []}
+    fade(Image.open(os.path.join(WORK, "final.png")).convert("RGB")).save(os.path.join(OUT, "final.webp"), quality=90, method=6)
+    plate = fade(Image.open(os.path.join(WORK, "plate.png")).convert("RGB"))
     # the twice-size still and plate, where rendered (the page sends them to high-density screens only)
     fx, px_ = os.path.join(WORK, "final-x.png"), os.path.join(WORK, "plate-x.png")
-    plateX = Image.open(px_).convert("RGB") if os.path.exists(px_) and os.path.exists(fx) else None
+    plateX = fade(Image.open(px_).convert("RGB")) if os.path.exists(px_) and os.path.exists(fx) and Image.open(fx).size == (W * 2, H * 2) else None
     if plateX:
-        Image.open(fx).convert("RGB").save(os.path.join(OUT, "final-x.webp"), quality=88, method=6)
+        fade(Image.open(fx).convert("RGB")).save(os.path.join(OUT, "final-x.webp"), quality=88, method=6)
         man["finalX"] = {"src": f"archive15/{LAY}/final-x.webp", "res": [W * 2, H * 2]}
     # the id map, at half size: which piece (or print) is under each point of the still
     ids = Image.new("L", (W, H), 0)
@@ -98,7 +121,7 @@ if "pack" in STEPS:
     if os.path.isdir(od):
         for f in os.listdir(od): os.remove(os.path.join(od, f))
     os.makedirs(od, exist_ok=True)
-    for k, f in enumerate(frames): Image.open(os.path.join(SEQD, f)).convert("RGB").save(os.path.join(od, "%02d.webp" % k), quality=88, method=6)
+    for k, f in enumerate(frames): fade(Image.open(os.path.join(SEQD, f)).convert("RGB")).save(os.path.join(od, "%02d.webp" % k), quality=88, method=6)
     man["seq"] = {"n": len(frames), "res": list(CFG["seq_res"]), "src": f"archive15/{LAY}/seq/%02d.webp", "space": "even"}
     json.dump(man, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
     print("packed", OUT)

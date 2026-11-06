@@ -23,7 +23,7 @@
 #                            closed cabinet to the still's camera; <out> is a pattern with #### for the frame
 #         seq:<N>:<i0>:<i1>:u  the same, the frames spaced evenly in how far the move has gone (not in its time), so
 #                            each is an equal step; the page adds its own gentle ease
-import bpy, bmesh, math, sys, json, random, re
+import bpy, bmesh, math, os, sys, json, random, re
 from mathutils import Vector, Matrix, Quaternion, Euler
 
 argv = sys.argv[sys.argv.index("--") + 1:]
@@ -525,7 +525,10 @@ panel(W2((360, 60, 320)), mm(280), 2.0, W2((0, 0)))
 cd = bpy.data.cameras.new("cam"); cam = link(bpy.data.objects.new("cam", cd)); sc.camera = cam
 tgt = W2(CAM["tgt"]); e = math.radians(CAM["elev"]); dist = mm(CAM["dist"])
 cam.location = tgt + Vector((0, -math.cos(e) * dist, math.sin(e) * dist)); cam.rotation_euler = (tgt - cam.location).to_track_quat("-Z", "Y").to_euler()
-cd.lens = CAM["lens"]; cd.sensor_width = 36; cd.sensor_fit = "AUTO"; cd.clip_start = .005; cd.clip_end = 10
+# ARCH_OVER (default 1): render a wider and taller view around the same picture. W and H are then the overscanned size and
+# the approved frame is exactly the middle W/OVER x H/OVER of it (same camera, same pixel scale)
+OVER = float(os.environ.get("ARCH_OVER", "1"))
+cd.lens = CAM["lens"]; cd.sensor_width = 36 * OVER; cd.sensor_fit = "AUTO"; cd.clip_start = .005; cd.clip_end = 10
 cd.dof.use_dof = True; cd.dof.focus_distance = (tgt - cam.location).length; cd.dof.aperture_fstop = 7.1
 
 # ═════════ the modes
@@ -536,9 +539,39 @@ def write_meta(path):
     json.dump({ "res": [W, H], "lens": cd.lens, "sensor": cd.sensor_width, "fit": "AUTO", "cam": [list(r) for r in cam.matrix_world], "travel_mm": TRAVEL,
       "floor": { "y": ICY, "z": FZ, "w": mm(IX), "d": mm(IY) } }, open(path, "w"), indent=1)
 
+# The cabinet's lacquered rail mirrors whatever lies in front of it: the pieces as the drawer comes out, and the pieces and
+# prints in any view wide enough to show the rail (a mirrored knot among them). Where that can be seen, a piece or print is
+# clear to any reflection ray that has travelled more than 30 mm to reach it: the rail sees the drawer without them, while
+# each piece's reflections of itself and its contact with the suede (all well inside 30 mm) are untouched.
+def no_mirrors():
+    mine = {o for p in pieces for o in p.children_recursive if o.type in ("MESH", "CURVE")}
+    users = {}
+    for o in sc.objects:
+        for s in getattr(o, "material_slots", []):
+            if s.material: users.setdefault(s.material.name, set()).add(o)
+    done = {}
+    for o in mine:
+        for s in o.material_slots:
+            m = s.material
+            if not m or not m.use_nodes: continue
+            if m.name not in done:
+                mm_ = m if users.get(m.name, set()) <= mine else m.copy()
+                t_ = mm_.node_tree; out = next(n for n in t_.nodes if n.type == "OUTPUT_MATERIAL" and n.is_active_output)
+                if out.inputs["Surface"].links:
+                    src = out.inputs["Surface"].links[0].from_socket
+                    lp = t_.nodes.new("ShaderNodeLightPath"); far = t_.nodes.new("ShaderNodeMath"); far.operation = "GREATER_THAN"; far.inputs[1].default_value = mm(30)
+                    t_.links.new(lp.outputs["Ray Length"], far.inputs[0])
+                    gl = t_.nodes.new("ShaderNodeMath"); gl.operation = "MULTIPLY"; t_.links.new(lp.outputs["Is Glossy Ray"], gl.inputs[0]); t_.links.new(far.outputs[0], gl.inputs[1])
+                    tr = t_.nodes.new("ShaderNodeBsdfTransparent"); mx = t_.nodes.new("ShaderNodeMixShader")
+                    t_.links.new(gl.outputs[0], mx.inputs[0]); t_.links.new(src, mx.inputs[1]); t_.links.new(tr.outputs[0], mx.inputs[2]); t_.links.new(mx.outputs[0], out.inputs["Surface"])
+                done[m.name] = mm_
+            s.material = done[m.name]
+
 if MODE == "frame":
+    if OVER > 1: no_mirrors()
     sc.render.filepath = OUT; bpy.ops.render.render(write_still=True); write_meta(OUT.rsplit(".", 1)[0] + ".json")
 elif MODE == "plate":
+    if OVER > 1: no_mirrors()
     for o in jewellery(): o.hide_render = True
     sc.render.filepath = OUT; bpy.ops.render.render(write_still=True)
 elif MODE == "masks":
@@ -572,32 +605,7 @@ elif MODE.startswith("seq:"):
     tgt_f, dist_f, el_f = tgt.copy(), dist, e
     tgt_s = Vector((0, -mm(FT) - mm(30), mm(DH * .55))); dist_s = dist_f * 1.55; el_s = el_f - math.radians(17)
     sm = lambda x: x * x * x * (x * (x * 6 - 15) + 10)
-    # As the drawer comes out, the pieces pass in front of the cabinet's lacquered rail, which would mirror them above
-    # the drawer (a mirrored knot among them). For the opening only, a piece is clear to any reflection ray that has
-    # travelled more than 30 mm to reach it: the rail sees the drawer without them, while each piece's reflections of
-    # itself and its contact with the suede (all well inside 30 mm) are untouched. The still is rendered without this.
-    mine = {o for p in pieces for o in p.children_recursive if o.type in ("MESH", "CURVE")}
-    users = {}
-    for o in sc.objects:
-        for s in getattr(o, "material_slots", []):
-            if s.material: users.setdefault(s.material.name, set()).add(o)
-    done = {}
-    for o in mine:
-        for s in o.material_slots:
-            m = s.material
-            if not m or not m.use_nodes: continue
-            if m.name not in done:
-                mm_ = m if users.get(m.name, set()) <= mine else m.copy()
-                t_ = mm_.node_tree; out = next(n for n in t_.nodes if n.type == "OUTPUT_MATERIAL" and n.is_active_output)
-                if out.inputs["Surface"].links:
-                    src = out.inputs["Surface"].links[0].from_socket
-                    lp = t_.nodes.new("ShaderNodeLightPath"); far = t_.nodes.new("ShaderNodeMath"); far.operation = "GREATER_THAN"; far.inputs[1].default_value = mm(30)
-                    t_.links.new(lp.outputs["Ray Length"], far.inputs[0])
-                    gl = t_.nodes.new("ShaderNodeMath"); gl.operation = "MULTIPLY"; t_.links.new(lp.outputs["Is Glossy Ray"], gl.inputs[0]); t_.links.new(far.outputs[0], gl.inputs[1])
-                    tr = t_.nodes.new("ShaderNodeBsdfTransparent"); mx = t_.nodes.new("ShaderNodeMixShader")
-                    t_.links.new(gl.outputs[0], mx.inputs[0]); t_.links.new(src, mx.inputs[1]); t_.links.new(tr.outputs[0], mx.inputs[2]); t_.links.new(mx.outputs[0], out.inputs["Surface"])
-                done[m.name] = mm_
-            s.material = done[m.name]
+    no_mirrors()
     for i in range(i0, i1 + 1):
         t = i / (N - 1)
         if even:   # the time at which the move has gone i/(N-1) of the way (smootherstep inverted, by halving)

@@ -93,9 +93,11 @@ export async function mount(sec) {
     return { top, bot };   // clear of the header: its glass (a backdrop blur) is then never redrawn over the moving frames
   }
   function layout() {
-    const b = pin.getBoundingClientRect(), { top, bot } = insets(), W = M.res[0], H = M.res[1];
-    const aw = b.width, ah = b.height - top - bot, k = Math.min(aw / W, ah / H);
-    R = { w: W * k, h: H * k, k }; R.x = (aw - R.w) / 2; R.y = top + (ah - R.h) / 2;
+    // the approved frame is fitted whole between the header and any bar at the foot; where the render runs wider than
+    // that frame (manifest "frame"), the rest of the view fills the window around it, the room fading out at its edges
+    const b = pin.getBoundingClientRect(), { top, bot } = insets(), W = M.res[0], H = M.res[1], F = M.frame || [0, 0, W, H];
+    const aw = b.width, ah = b.height - top - bot, k = Math.min(aw / (F[2] - F[0]), ah / (F[3] - F[1]));
+    R = { w: W * k, h: H * k, k }; R.x = (aw - (F[2] - F[0]) * k) / 2 - F[0] * k; R.y = top + (ah - (F[3] - F[1]) * k) / 2 - F[1] * k;
     Object.assign(stage.style, { left: R.x + "px", top: R.y + "px", width: R.w + "px", height: R.h + "px" });
     sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px"); sec.classList.toggle("ar15m", L === "m");
     // the canvas no finer than the frames themselves (the composite scales it up): the fewest pixels to push per frame
