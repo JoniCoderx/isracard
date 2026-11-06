@@ -947,7 +947,16 @@
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
   function start() { if (started) return; started = true;
     Promise.all([import("./vendor14/three.module.min.js"), fetch("craft15/soul.json").then(function (r) { return r.json(); })]).then(function (a) { build(a[0], a[1]); }, function () {}); }
-  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); start(); } }, { rootMargin: "150% 0px" }).observe(sec);
+  /* the build (three.js, the pavé, the first render with its shaders) is the costliest thing on the page: it waits until
+     the reader has paused for 450ms within a screen of the section, and never runs while the drawer below is pinned on
+     screen (it stalled the drawer's scroll on a slow phone). Coming near only fetches the files; the still shows meanwhile. */
+  var near = false, idle = 0, warmed = false;
+  var drawerUp = function () { var r = document.querySelector("#details .ar15run"); if (!r) return false; var b = r.getBoundingClientRect(); return b.top < innerHeight * .5 && b.bottom > innerHeight * .5; };
+  var later = function () { clearTimeout(idle); if (near && !started) idle = setTimeout(function () { if (near && !started && !drawerUp()) start(); }, 450); };
+  new IntersectionObserver(function (es) { near = es[0].isIntersecting;
+    if (near && !warmed) { warmed = true; try { fetch("./vendor14/three.module.min.js"); fetch("craft15/soul.json"); } catch (e) {} }
+    later(); }, { rootMargin: "100% 0px" }).observe(sec);
+  addEventListener("scroll", function () { if (near && !started) later(); }, { passive: true });
 
   function build(T, D) {
     var S = .02, MW = D.W, DEPTH = 1.6, BT = .22;
