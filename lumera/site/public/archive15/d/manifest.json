@@ -157,11 +157,12 @@
   "step": 32
  },
  "seq": {
-  "n": 24,
+  "n": 96,
   "res": [
-   1280,
-   720
+   1920,
+   1080
   ],
-  "src": "archive15/d/seq/%02d.webp"
+  "src": "archive15/d/seq/%02d.webp",
+  "space": "even"
  }
 }
