@@ -21,7 +21,7 @@ const bitmap = url => fetch(url).then(r => r.blob()).then(b => createImageBitmap
 
 export async function mount(sec) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const pickLayout = () => (innerWidth < 900 || innerHeight > innerWidth * 1.05) ? "m" : "d";
+  const pickLayout = () => (innerWidth < 600 || innerHeight > innerWidth * 1.05) ? "m" : "d";   // a phone held sideways is landscape: the desktop composition
   let L = pickLayout();
   const run = sec.querySelector(".ar15run"), pin = sec.querySelector(".ar15pin"), stage = sec.querySelector(".ar15stage");
   const cv = stage.querySelector(".ar15seq"), g = cv.getContext("2d", { alpha: false }), still = stage.querySelector(".ar15still img"), fx = stage.querySelector(".ar15fx");
@@ -130,7 +130,7 @@ export async function mount(sec) {
     // frames spaced evenly along the move: a gentle ease of the page's own (70% of full speed at either end, never a
     // dead stretch); a set spaced in time already carries its ease
     const n = M.seq.n, v = M.seq.space === "even" ? t + .3 * (t * t * (3 - 2 * t) - t) : t, f = v * (n - 1), i = Math.round(f);
-    if (i !== want) { dir = i > want ? 1 : -1; want = i; pump(); fetchMore(); }
+    if (i !== want && !reduce) { dir = i > want ? 1 : -1; want = i; pump(); fetchMore(); }   // reduced motion: no frames at all
     if (!reduce && n >= 48) {
       const k = nearest(i);   // a frame not yet decoded: the nearest one that is, never a jump to closed
       if (k >= 0 && (dirty || k !== shownK)) { g.drawImage(bmps[k], 0, 0, cv.width, cv.height); shownK = k; dirty = false; }
@@ -181,11 +181,13 @@ export async function mount(sec) {
      Each lift is its own object (its piece, its two images, its own animation), so a second click while the first piece
      is still flying home can never strand it: the one on its way home lands at once, and a lift that was closed before
      its image had decoded never starts. */
-  let cur = null, back = null, home = [];
+  let cur = null, back = null, home = [], y0 = scrollY;
   function target(p) {
     const pr = toStage(p.hero.rect), ar = pr.w / pr.h, P = pin.getBoundingClientRect(), S = stage.getBoundingClientRect();
     let w, cx, cy;
-    if (L === "d") { const maxW = P.width * .52, maxH = P.height * .64; w = Math.min(maxW, maxH * ar); cx = P.width * (he() ? .66 : .34); cy = P.height * .5; }
+    // centred in the room between the header and any bar at the foot (a short window must not tuck it under either)
+    const { top, bot } = insets(), avail = P.height - top - bot;
+    if (L === "d") { const maxW = P.width * .52, maxH = avail * .74; w = Math.min(maxW, maxH * ar); cx = P.width * (he() ? .66 : .34); cy = top + avail * .5; }
     else { const maxW = P.width * .9, maxH = P.height * .44; w = Math.min(maxW, maxH * ar); cx = P.width * .5; cy = P.height * .36; }
     const h = w / ar; return { x: cx - w / 2 - (S.left - P.left), y: cy - h / 2 - (S.top - P.top), w, h };
   }
@@ -201,6 +203,7 @@ export async function mount(sec) {
   function land(Lf) { cancelAnimationFrame(Lf.anim); clearTimeout(Lf.wait); Lf.hero.remove(); Lf.patch.remove(); home = home.filter(x => x !== Lf); }
   function show(p, opener) {
     if (cur) return; home.slice().forEach(land);   // anything still on its way home is set down at once
+    y0 = scrollY;   // the scroll that brought it here (a name below the drawer scrolls it open) must not close it
     back = opener || document.activeElement; hover(null);
     const from = toStage(p.hero.rect), Lf = { p, anim: 0, wait: 0, base: { w: from.w, h: from.h }, r: from, hero: new Image(), patch: new Image() };
     cur = Lf;
@@ -231,7 +234,7 @@ export async function mount(sec) {
     const p = M && M.pieces.find(x => x.id === b.dataset.id); if (!p) return;
     if (!open) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
     show(p, b); }));
-  let y0 = scrollY; addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY;
+  addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY;
     // far from the section, every decoded frame is let go (the files stay, compressed); back near, they are decoded again
     const r = run.getBoundingClientRect(), nr = r.bottom > -2 * innerHeight && r.top < 3 * innerHeight;
     if (nr !== near) { near = nr; if (!near) { bmps.forEach((b, k) => { if (b) { b.close(); bmps[k] = null; } }); shownK = -1; dirty = true; } else pump(); }

@@ -21,7 +21,7 @@ export function archive15(PIECES) {
       <div class="ar15stage">
         <canvas class="ar15seq" aria-hidden="true"></canvas>
         <picture class="ar15still">
-          <source media="(max-width: 899px), (orientation: portrait)" srcset="archive15/m/final.webp" width="1080" height="1920">
+          <source media="(max-width: 599px), (orientation: portrait)" srcset="archive15/m/final.webp" width="1080" height="1920">
           <img src="archive15/d/final.webp" width="1920" height="1080" alt="The SILAVU private drawer, open: the AURA earrings on a dark suede stand, the SOUL necklace on champagne suede, the ICON ring resting on its band, the MOMENT bracelet lying open, and three prints of the house's campaign" data-alt-he="המגירה הפרטית של SILAVU, פתוחה: עגילי AURA על מעמד זמש כהה, שרשרת SOUL על זמש בגוון שמפניה, טבעת ICON נחה על הטבעת שלה, צמיד MOMENT שוכב פתוח, ושלושה הדפסים מהקמפיין של הבית" loading="lazy" decoding="async">
         </picture>
         <i class="ar15pool" aria-hidden="true"></i>
