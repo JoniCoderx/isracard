@@ -21,7 +21,9 @@ const bitmap = url => fetch(url).then(r => r.blob()).then(b => createImageBitmap
 
 export async function mount(sec) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const pickLayout = () => (innerWidth < 600 || innerHeight > innerWidth * 1.05) ? "m" : "d";   // a phone held sideways is landscape: the desktop composition
+  // phone (m) for narrow or upright phones, tablet (t: the phone's picture with room around it) for upright screens
+  // 600px and wider, desktop (d) for anything held landscape
+  const pickLayout = () => innerWidth < 600 ? "m" : innerHeight > innerWidth * 1.05 ? "t" : "d";   // a phone held sideways is landscape: the desktop composition
   let L = pickLayout();
   const run = sec.querySelector(".ar15run"), pin = sec.querySelector(".ar15pin"), stage = sec.querySelector(".ar15stage");
   const cv = stage.querySelector(".ar15seq"), g = cv.getContext("2d", { alpha: false }), still = stage.querySelector(".ar15still img"), fx = stage.querySelector(".ar15fx");
@@ -38,7 +40,8 @@ export async function mount(sec) {
   async function load() {
     gen++; bmps.forEach(b => b && b.close()); blobs = []; bmps = []; busy = new Set(); shownK = -1; want = 0;
     [AHEAD, BEHIND, SKEL] = L === "m" ? [10, 3, 24] : [12, 4, 16];   // the phone holds fewer: about 140 MB at most
-    M = await fetch(`archive15/${L}/manifest.json`).then(r => r.json());
+    M = await fetch(`archive15/${L}/manifest.json`).then(r => { if (!r.ok) throw 0; return r.json(); })
+      .catch(() => { if (L !== "t") throw new Error("archive15 manifest"); L = "m"; return fetch("archive15/m/manifest.json").then(r => r.json()); });
     // a high-density screen wider than about 1200px takes the still at twice the size, where it was rendered
     X = !!(M.finalX && innerWidth * Math.min(2, devicePixelRatio || 1) >= 2400);
     still.src = X ? M.finalX.src : M.final; still.width = M.res[0]; still.height = M.res[1];
@@ -99,7 +102,7 @@ export async function mount(sec) {
     const aw = b.width, ah = b.height - top - bot, k = Math.min(aw / (F[2] - F[0]), ah / (F[3] - F[1]));
     R = { w: W * k, h: H * k, k }; R.x = (aw - (F[2] - F[0]) * k) / 2 - F[0] * k; R.y = top + (ah - (F[3] - F[1]) * k) / 2 - F[1] * k;
     Object.assign(stage.style, { left: R.x + "px", top: R.y + "px", width: R.w + "px", height: R.h + "px" });
-    sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px"); sec.classList.toggle("ar15m", L === "m");
+    sec.style.setProperty("--ar15top", top + "px"); sec.style.setProperty("--ar15bot", bot + "px"); sec.classList.toggle("ar15m", L !== "d");
     // the canvas no finer than the frames themselves (the composite scales it up): the fewest pixels to push per frame
     const dpr = Math.min(2, devicePixelRatio || 1), cw = Math.round(Math.min(R.w * dpr, M.seq.res[0]));
     if (cw !== cv.width) { cv.width = cw; cv.height = Math.round(cw * R.h / R.w); }
@@ -245,6 +248,6 @@ export async function mount(sec) {
 
   await load(); layout(); if (!reduce) bmps[0] = await decode(blobs[0]);   // the closed drawer, at the canvas's size, before anything shows
   sec.classList.add("ar15live"); if (reduce) sec.classList.add("ar15still-only"); t = reduce ? 1 : progress(); dirty = true; draw(); pump();
-  const api = { get t() { return t; }, get frame() { return shownK; }, get held() { return bmps.filter(Boolean).length; }, get fetched() { return blobs.filter(Boolean).length; } };
+  const api = { get t() { return t; }, get frame() { return shownK; }, get held() { return bmps.filter(Boolean).length; }, get fetched() { return blobs.filter(Boolean).length; }, get manifest() { return M; } };
   sec.__ar15 = api; return api;
 }

@@ -24,14 +24,18 @@ STEPS = sys.argv[4].split(",") if len(sys.argv) > 4 else ["prints", "final", "ma
 # 96 frames, as the box sequence: about 12px of scroll each, so the drawer glides rather than steps
 # desktop: the view runs 1.3x wider and taller than the approved frame (2496x1404, the frame its exact middle), so on any
 # window the drawer sits in its cabinet and room instead of being cut by black bars
-CFG = {"d": dict(res=(2496, 1404), seq_res=(2496, 1404), n=96, over=1.3), "m": dict(res=(1080, 1920), seq_res=(1080, 1920), n=96, over=1)}[LAY]
+# t (tablet, upright): the phone's composition with the same 1.3x room around it as the desktop; phones keep m, which
+# already fills them, at the lighter size
+CFG = {"d": dict(res=(2496, 1404), seq_res=(2496, 1404), n=96, over=1.3, scene="d"),
+       "m": dict(res=(1080, 1920), seq_res=(1080, 1920), n=96, over=1, scene="m"),
+       "t": dict(res=(1404, 2496), seq_res=(1404, 2496), n=96, over=1.3, scene="m")}[LAY]
 OVER = CFG["over"]; ENV = dict(os.environ, ARCH_OVER=str(OVER))
 PIECES = {1: "ring", 2: "pave", 3: "aura", 4: "knot"}; PRINTS = {5: "ring", 6: "pave", 7: "knot"}
 W, H = CFG["res"]; HS = 2; os.makedirs(WORK, exist_ok=True); PR = os.path.join(WORK, "prints")
 OUT = os.environ.get("ARCH_OUT") or os.path.join(PUB, "archive15", LAY); os.makedirs(OUT, exist_ok=True)   # ARCH_OUT: pack elsewhere (a test)
 
 def blender(out, w, h, samples, mode="frame"):
-    cmd = [BL, "-b", "-P", SCENE, "--", out, str(w), str(h), str(samples), "open", LAY, PUB, PR, mode]
+    cmd = [BL, "-b", "-P", SCENE, "--", out, str(w), str(h), str(samples), "open", CFG["scene"], PUB, PR, mode]
     r = subprocess.run(cmd, capture_output=True, text=True, env=ENV)
     if "DONE" not in r.stdout: sys.exit("blender failed: " + " ".join(cmd) + "\n" + r.stdout[-3000:] + r.stderr[-2000:])
     print("rendered", mode, out, flush=True)
