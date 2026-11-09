@@ -1,0 +1,174 @@
+{
+ "layout": "t",
+ "res": [
+  1404,
+  2496
+ ],
+ "frame": [
+  162,
+  288,
+  1242,
+  2208
+ ],
+ "final": "archive15/t/final.webp",
+ "pieces": [
+  {
+   "pid": 1,
+   "id": "ring",
+   "box": [
+    290,
+    1490,
+    492,
+    1698
+   ],
+   "patch": {
+    "src": "archive15/t/patch-ring.webp",
+    "rect": [
+     276,
+     1476,
+     506,
+     1712
+    ]
+   },
+   "hero": {
+    "src": "archive15/t/hero-ring.webp",
+    "rect": [
+     256,
+     1455,
+     526,
+     1733
+    ]
+   }
+  },
+  {
+   "pid": 2,
+   "id": "pave",
+   "box": [
+    660,
+    943,
+    1000,
+    1441
+   ],
+   "patch": {
+    "src": "archive15/t/patch-pave.webp",
+    "rect": [
+     646,
+     929,
+     1014,
+     1455
+    ]
+   },
+   "hero": {
+    "src": "archive15/t/hero-pave.webp",
+    "rect": [
+     606,
+     867,
+     1054,
+     1517
+    ]
+   }
+  },
+  {
+   "pid": 3,
+   "id": "aura",
+   "box": [
+    240,
+    1030,
+    514,
+    1112
+   ],
+   "patch": {
+    "src": "archive15/t/patch-aura.webp",
+    "rect": [
+     226,
+     1016,
+     528,
+     1126
+    ]
+   },
+   "hero": {
+    "src": "archive15/t/hero-aura.webp",
+    "rect": [
+     196,
+     1013,
+     558,
+     1129
+    ]
+   }
+  },
+  {
+   "pid": 4,
+   "id": "knot",
+   "box": [
+    522,
+    1584,
+    1219,
+    2071
+   ],
+   "patch": {
+    "src": "archive15/t/patch-knot.webp",
+    "rect": [
+     508,
+     1570,
+     1233,
+     2085
+    ]
+   },
+   "hero": {
+    "src": "archive15/t/hero-knot.webp",
+    "rect": [
+     418,
+     1510,
+     1323,
+     2145
+    ]
+   }
+  }
+ ],
+ "prints": [
+  {
+   "pid": 5,
+   "piece": "ring",
+   "box": [
+    242,
+    544,
+    578,
+    969
+   ]
+  },
+  {
+   "pid": 6,
+   "piece": "pave",
+   "box": [
+    493,
+    501,
+    823,
+    903
+   ]
+  },
+  {
+   "pid": 7,
+   "piece": "knot",
+   "box": [
+    680,
+    446,
+    1060,
+    853
+   ]
+  }
+ ],
+ "ids": {
+  "src": "archive15/t/ids.png",
+  "scale": 0.5,
+  "step": 32
+ },
+ "seq": {
+  "n": 96,
+  "res": [
+   1404,
+   2496
+  ],
+  "src": "archive15/t/seq/%02d.webp",
+  "space": "even"
+ }
+}
