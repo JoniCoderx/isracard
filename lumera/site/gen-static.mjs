@@ -739,7 +739,7 @@ const T14 = (() => {
     h = h.replace('<section id="enquire"', box + "\n" + CRAFT + DRAWER + "\n" + '<section id="enquire"');
     h = h.replace(/href="about13\//g, 'href="about14/');
     /* the opening: the name, one line, and the way down */
-    h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery, made to be lived in." data-he="תכשיטי יוקרה, שנולדו להיענד.">Fine jewellery, made to be lived in.</p>');
+    h = h.replace(/(<p class="p rv late d2") data-en="[^"]*" data-he="[^"]*">[^<]*<\/p>/, '$1 data-en="Fine jewellery,<br>made to be lived in." data-he="תכשיטי יוקרה,<br>שנולדו להיענד.">Fine jewellery,<br>made to be lived in.</p>');
     h = h.replace(/<div class="hacts rv late d3">[\s\S]*?<\/div>/, "");
     h = h.replace('<div class="hseam"', '<a class="h14down" href="#collection" aria-label="To the collections" data-aria-he="אל הקולקציות"></a>\n<div class="hseam"');
     /* the builder's name in the reference */
