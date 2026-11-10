@@ -767,7 +767,7 @@ const T14 = (() => {
     /* the builder, round 16 (owner, 10 Nov 2026): fewer words on its actions */
     h = h.replace('data-en="Save the image" data-he="שמרו את התמונה">Save the image<', 'data-en="Save design" data-he="שמירת העיצוב">Save design<')
       .replace('data-en="Try it on your photo" data-he="נסו על תמונה שלכם">Try it on your photo<', 'data-en="Try on" data-he="מדידה">Try on<')
-      .replace('data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet<', 'data-en="Enquire about this bracelet" data-he="פנייה על הצמיד הזה">Enquire about this bracelet<');
+      .replace('data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet<', 'data-en="Enquire about this design" data-he="פנייה על העיצוב הזה">Enquire about this design<');
     /* the builder's views, said shortly */
     h = h.replace('data-view="line" data-en="In 3D" data-he="בתלת־ממד">In 3D<', 'data-view="line" data-en="3D" data-he="תלת־ממד">3D<')
       .replace('data-view="photo" data-en="Photograph" data-he="צילום">Photograph<', 'data-view="photo" data-en="Photo" data-he="צילום">Photo<')

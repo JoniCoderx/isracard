@@ -1260,10 +1260,13 @@
     var acts = conf.querySelector(".cacts"); if (acts) wrap.appendChild(acts);
     /* the specification, gathered */
     var det = document.createElement("details"); det.className = "b16spec";
-    det.innerHTML = '<summary><span class="b16st"></span><span class="b16ss"></span><i aria-hidden="true"></i></summary>';
+    det.innerHTML = '<summary><span class="b16st"></span><span class="b16ss"></span><i class="b16pm" aria-hidden="true"></i></summary>';
     total.parentNode.insertBefore(det, total); det.appendChild(total);
-    var wide = matchMedia("(min-width: 900px)"); var setOpen = function () { det.open = wide.matches; }; setOpen();
-    wide.addEventListener ? wide.addEventListener("change", setOpen) : wide.addListener(setOpen);
+    /* round 17 (owner, 10 Nov 2026): "Your design" folded everywhere; the price and the enquiry stay in view beneath it */
+    det.open = false;
+    var tot = total.querySelector(".tot"), resv = total.querySelector("#reserve");
+    if (resv) det.parentNode.insertBefore(resv, det.nextSibling);
+    if (tot) det.parentNode.insertBefore(tot, det.nextSibling);
     var put = function (el, t) { if (el.textContent !== t) el.textContent = t; };
     function sync() {
       var i = Math.max(0, bars.findIndex(function (b) { return b.classList.contains("on"); }));

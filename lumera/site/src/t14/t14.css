@@ -2736,3 +2736,85 @@ html body #craft14.sg16 .sg16reel { height: clamp(480px, 56vw, 920px) !important
   html body .c15 .c14intro .c14lead { font-size: .88rem !important; white-space: nowrap; }
   html body .c15 .c14card .c14t + *, html body .c15 .c14t i, html body .c15 .c14card .c14go { transform: scale(.9); }
 }
+
+/* ════════ THE BUILDER, ROUND 17 (owner's reference, 10 Nov 2026) ════════
+   One wide frame (min(92vw, 1680px)): the steps across the top on a hairline; the 3D stage free to grow on the left,
+   the options in a 420–480px panel on the right. The stone a small badge; the views, the save and the fullscreen at the
+   stage's foot; one Try on (in the 3D / Photo / Try on switch). The panel: 32px in, 12px between the eight shapes,
+   24–32px between groups; Next as the 48px primary; "Your design" folded; the price; the enquiry as an underlined link.
+   The renderer itself, its camera, rotation, zoom and every choice are untouched. */
+html body #build .h2, html body #build h2 { font-size: clamp(1.4rem, 1.9vw, 1.9rem) !important; letter-spacing: .42em !important; }
+html[data-ns] body #build h2 { letter-spacing: 0 !important; }
+@media (min-width: 900px) {
+  html body #configure.b16.b16.b16 { width: min(92vw, 1680px) !important; max-width: none !important; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box;
+    grid-template-columns: minmax(0, 1fr) clamp(420px, 30vw, 480px) !important; grid-template-areas: "top top" "stage panel" !important; column-gap: 0 !important; padding: 0 0 28px !important; }
+  html body #configure.b16.b16.b16 .b14top { border-bottom: 1px solid rgba(243,236,224,.16) !important; margin-bottom: 28px !important; padding-bottom: 0 !important; }
+  html body #configure.b16.b16.b16 .b13bar { padding-bottom: 18px !important; }
+  html body #configure.b16.b16.b16 .b13bar::after { left: -6% !important; right: -6% !important; bottom: -1px !important; height: 2px !important; background: #f3ecdd !important; }
+  html body #configure.b16.b16.b16 #stripwrap { min-height: clamp(520px, 40vw, 720px); border-right: 1px solid rgba(243,236,224,.14); }
+  /* the stone, a small badge */
+  html body #configure.b16.b16.b16 #stripwrap .b14pv { left: 28px !important; top: 28px !important; gap: 16px !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvpic { width: 40px !important; aspect-ratio: 1 / 1 !important; border: 0 !important; background: none !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvpic img { width: 100% !important; height: 100% !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvn { font-size: .7rem !important; letter-spacing: .36em !important; }
+  /* the stage's foot: the views on the left; save, zoom and fullscreen together on the right; one Try on (above) */
+  html body #configure.b16.b16.b16 #tryonBtn2 { display: none !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14foot .vposwrap { left: 28px !important; right: auto !important; bottom: 28px !important; transform: none !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14foot .b14tools { right: 28px !important; bottom: 28px !important; gap: 10px !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts { left: auto !important; right: 128px !important; bottom: 28px !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts .clink { height: 42px !important; padding: 0 20px !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts .clink span { display: inline !important; }
+  html body #configure.b16.b16.b16 .b16hint { bottom: 100px !important; }
+  /* the panel */
+  html body #configure.b16.b16.b16 #opts { padding: 4px 32px 8px !important; display: flex !important; flex-direction: column; gap: 0; min-width: 0; }
+  html body #configure.b16.b16.b16 #opts .b13nav { margin: 0 !important; padding: 0 !important; }
+  html body #configure.b16.b16.b16 #opts .b13t { font-size: clamp(1.7rem, 2vw, 2.2rem) !important; white-space: nowrap; }
+  html body #configure.b16.b16.b16 #opts .b13sub { margin-top: 8px !important; font-size: .95rem !important; }
+  html body #configure.b16.b16.b16 #opts .opt.open { margin-top: 24px !important; }
+  html body #configure.b16.b16.b16 #opts .chips.cuts { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 12px !important; }
+  html body #configure.b16.b16.b16 #opts .chips.cuts .chip { min-width: 0 !important; padding: 12px 4px 10px !important; border-radius: 10px !important; }
+  html body #configure.b16.b16.b16 #opts .chips .chip span, html body #configure.b16.b16.b16 #opts .chips .chip { white-space: nowrap; overflow: visible; text-overflow: clip; font-size: .86rem !important; }
+  html body #configure.b16.b16.b16 #opts .b13ft { margin-top: 28px !important; }
+  html body #configure.b16.b16.b16 #opts .b13ft .b13next { height: 48px !important; border-radius: 10px !important; background: rgba(255,255,255,.04) !important; border: 1px solid rgba(243,236,224,.62) !important; }
+  html body #configure.b16.b16.b16 #opts .b13ft .b13next:hover, html body #configure.b16.b16.b16 #opts .b13ft .b13next:focus-visible { background: rgba(255,255,255,.1) !important; border-color: #f3ecdd !important; }
+  html body #configure.b16.b16.b16 details.b16spec { margin-top: 28px !important; padding: 0 !important; border-top: 1px solid rgba(243,236,224,.16) !important; border-bottom: 1px solid rgba(243,236,224,.16) !important; }
+  html body #configure.b16.b16.b16 details.b16spec > summary { display: grid !important; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; min-height: 60px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; }
+  html body #configure.b16.b16.b16 details.b16spec > .total { padding: 4px 0 14px !important; border: 0 !important; margin: 0 !important; }
+  html body #configure.b16.b16.b16 #opts > .tot { margin: 28px 0 0 !important; padding: 0 !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 #opts > #reserve { margin-top: 14px !important; }
+}
+/* "Your design" (everywhere): its name, the choices on one line, and a plus that turns to a minus */
+html body #configure.b16.b16.b16 .b16st { font-size: 1.1rem; color: #f6f1e6; white-space: nowrap; }
+html body #configure.b16.b16.b16 .b16ss { justify-self: end; font-size: .86rem; color: rgba(243,236,224,.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+html body #configure.b16.b16.b16 details.b16spec > summary > i.b16pm { position: relative; width: 14px !important; height: 14px !important; border: 0 !important; transform: none !important; }
+html body #configure.b16.b16.b16 i.b16pm::before, html body #configure.b16.b16.b16 i.b16pm::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; margin-top: -.75px; background: #f3ede2; transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+html body #configure.b16.b16.b16 i.b16pm::after { transform: rotate(90deg); }
+html body #configure.b16.b16.b16 details.b16spec[open] i.b16pm::after { transform: rotate(0deg); }
+html body #configure.b16.b16.b16 details.b16spec > summary:focus-visible { outline: 1px solid rgba(243,236,224,.6); outline-offset: 4px; }
+/* the price, plain; the enquiry, an underlined line of words with an arrow (everywhere) */
+html body #configure.b16.b16.b16 #opts > .tot .estk, html body #configure.b16.b16.b16 #opts > .tot .ltk, html body #configure.b16.b16.b16 #opts > .tot .lsum, html body #configure.b16.b16.b16 #opts > .tot .cur, html body #configure.b16.b16.b16 #opts > .tot .estnote, html body #configure.b16.b16.b16 #opts > .tot .seal { display: none !important; }
+html body #configure.b16.b16.b16 #opts > .tot #est { font-size: 1.6rem !important; font-weight: 300 !important; color: #f6f1e6 !important; }
+html body #configure.b16.b16.b16 #opts > .tot .pwrap, html body #configure.b16.b16.b16 #opts > .tot .pricerow { justify-content: flex-start !important; padding: 0 !important; border: 0 !important; }
+html body #configure.b16.b16.b16 #opts > #reserve { display: inline-flex !important; align-self: flex-start; align-items: center; gap: 10px; height: auto !important; width: auto !important; padding: 0 0 6px !important; border: 0 !important; border-bottom: 1px solid rgba(243,236,224,.75) !important; border-radius: 0 !important; background: none !important; color: #f6f1e6 !important; font-size: .74rem !important; letter-spacing: .28em !important; box-shadow: none !important; }
+html body #configure.b16.b16.b16 #opts > #reserve::after { content: "\2192" !important; display: inline !important; position: static !important; width: auto !important; height: auto !important; background: none !important; -webkit-mask: none !important; mask: none !important; letter-spacing: 0; font-size: 1rem; transition: transform .25s ease; }
+html body #configure.b16.b16.b16 #opts > #reserve:hover { border-bottom-color: #fff !important; color: #fff !important; }
+html body #configure.b16.b16.b16 #opts > #reserve:hover::after { transform: translateX(4px); }
+html[data-ns] body #configure.b16.b16.b16 #opts > #reserve { letter-spacing: .02em !important; }
+html[dir="rtl"] body #configure.b16.b16.b16 #opts > #reserve::after { content: "\2190" !important; }
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 #opts > .tot { order: 5; margin: 22px 0 0 !important; padding: 0 !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 #opts > #reserve { order: 6; margin: 12px 0 4px !important; }
+  html body #configure.b16.b16.b16 #tryonBtn2 { display: none !important; }
+}
+/* the design's thumbnail belonged to the old summary card; the stage already shows the bracelet */
+html body #configure.b16.b16.b16 #opts > .tot .t13thumb { display: none !important; }
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 #opts > .b13ft { order: 4 !important; }
+  html body #configure.b16.b16.b16 #opts > details.b16spec { order: 5 !important; margin-top: 20px !important; }
+  html body #configure.b16.b16.b16 #opts > .tot { order: 6 !important; }
+  html body #configure.b16.b16.b16 #opts > #reserve { order: 7 !important; }
+  html body #configure.b16.b16.b16 #opts .chips.cuts { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 8px !important; overflow: visible !important; padding: 0 !important; }
+  html body #configure.b16.b16.b16 #opts .chips.cuts .chip { min-width: 0 !important; width: auto !important; padding: 10px 2px 8px !important; }
+  html body #configure.b16.b16.b16 #opts .chips.cuts .chip span { font-size: .78rem !important; white-space: nowrap; }
+}
+@media (max-width: 899px) { html body #configure.b16.b16.b16 #opts .chips.cuts { -webkit-mask-image: none !important; mask-image: none !important; } }
