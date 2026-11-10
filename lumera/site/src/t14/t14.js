@@ -1207,7 +1207,7 @@
   fitWord(); addEventListener("resize", fitWord); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWord);
   /* the glass shows the film's own frame, mirrored, drawn each frame from the one video (always in step with it) */
   var syncT = 0, drawA = 0; function sync() {}
-  function drawGlass() { drawA = 0; if (!gctx || !reel || reel.readyState < 2) { if (!reel.paused) drawA = requestAnimationFrame(drawGlass); return; }
+  function drawGlass() { drawA = 0; if (fig && fig.classList.contains("sg16gl")) return; if (!gctx || !reel || reel.readyState < 2) { if (!reel.paused) drawA = requestAnimationFrame(drawGlass); return; }
     var vw = reel.videoWidth, vh2 = reel.videoHeight, cw = Math.min(1280, vw), ch = Math.round(cw * vh2 / vw);
     if (gcv.width !== cw) { gcv.width = cw; gcv.height = ch; }
     gctx.setTransform(-1, 0, 0, 1, cw, 0); gctx.drawImage(reel, 0, 0, cw, ch);
@@ -1301,4 +1301,94 @@
     a.addEventListener("pointerleave", function () { a.style.setProperty("--mx", "0px"); a.style.setProperty("--my", "0px"); a.style.setProperty("--lx", "50%"); });
     a.addEventListener("focus", function () { size(); a.style.setProperty("--lx", "50%"); });
   });
+})();
+
+/* SILAVU in glass, round 2 (owner, 10 Nov 2026): real refraction. A WebGL pass draws the film inside the letters as it
+   would be seen through a thick, polished glass word: each stroke a lens (magnified at its middle, bent at its rims),
+   the colours parting faintly at the edges as light does in a diamond, a specular highlight that answers the pointer
+   (or the phone's tilt), and a bright rim. The word's shape is drawn once into two textures: the crisp letters, and the
+   same letters blurred into a height field whose slope bends the light. The film is uploaded each frame it plays.
+   Without WebGL the mirrored glass of round 1 stays. */
+(function () {
+  var fig = document.querySelector("#craft14.sg16 .sg16reel"); if (!fig) return;
+  var reel = fig.querySelector(":scope > video"), host = fig.querySelector(".sg16glass"); if (!reel || !host) return;
+  var cv = document.createElement("canvas"); cv.className = "sg16glc";
+  var gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false }); if (!gl) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var VS = "attribute vec2 p; varying vec2 vUv; void main(){ vUv = vec2(p.x * .5 + .5, .5 - p.y * .5); gl_Position = vec4(p, 0., 1.); }";
+  var FS = [
+    "precision mediump float;",
+    "uniform sampler2D uV, uM, uH; uniform vec2 uRes; uniform float uVA; uniform vec2 uTilt; uniform float uQ; uniform vec2 uLight;",
+    "varying vec2 vUv;",
+    "vec2 cover(vec2 uv){ float ca = uRes.x / uRes.y; vec2 s = ca > uVA ? vec2(1., uVA / ca) : vec2(ca / uVA, 1.); uv = (uv - .5) * s + .5;",
+    "  uv.y = uv.y * 1. + (.38 - .5) * (1. - s.y); uv = (uv - vec2(.5, .45)) * .56 + vec2(.56, .5); uv.x = 1. - uv.x; return clamp(uv, .001, .999); }",
+    "void main(){",
+    "  float m = texture2D(uM, vUv).r; if (m < .004) { gl_FragColor = vec4(0.); return; }",
+    "  vec2 px = 1. / uRes;",
+    "  float hx = texture2D(uH, vUv + vec2(px.x * 3., 0.)).r - texture2D(uH, vUv - vec2(px.x * 3., 0.)).r;",
+    "  float hy = texture2D(uH, vUv + vec2(0., px.y * 3.)).r - texture2D(uH, vUv - vec2(0., px.y * 3.)).r;",
+    "  vec2 n = vec2(hx, hy); float h = texture2D(uH, vUv).r;",
+    "  vec2 off = -n * .42 + uTilt * .022 + vec2(uQ * .035, uQ * -.012);",
+    "  vec2 b = vUv + (vUv - .5) * (-.05 * h);",
+    "  vec3 col = vec3(texture2D(uV, cover(b + off * 1.12)).r, texture2D(uV, cover(b + off)).g, texture2D(uV, cover(b + off * .88)).b);",
+    "  col = col * 1.04 + .025;",
+    "  vec3 N = normalize(vec3(-n * 22., 1.)); vec3 L = normalize(vec3(uLight, .75));",
+    "  float spec = pow(max(dot(N, L), 0.), 36.) * .7;",
+    "  float rim = clamp(length(n) * 9., 0., 1.); rim = rim * rim;",
+    "  col += spec + rim * .2 + (1. - h) * .05;",
+    "  gl_FragColor = vec4(min(col, 1.) * m, m);",
+    "}"].join("\n");
+  function sh(t, src) { var o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; }
+  var vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
+  var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+  gl.useProgram(pr);
+  var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  var ap = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
+  var U = {}; ["uV", "uM", "uH", "uRes", "uVA", "uTilt", "uQ", "uLight"].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+  function tex(unit) { var t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; }
+  var tV = tex(0), tM = tex(1), tH = tex(2); gl.uniform1i(U.uV, 0); gl.uniform1i(U.uM, 1); gl.uniform1i(U.uH, 2);
+  host.appendChild(cv); fig.classList.add("sg16gl");
+  var W = 0, H = 0, ready = false;
+  /* the word, drawn where the page's own SVG word stands (same face, size and place) */
+  function shape() {
+    var dpr = Math.min(1.5, devicePixelRatio || 1), w = fig.clientWidth, h = fig.clientHeight; if (!w || !h) return;
+    W = Math.round(w * dpr); H = Math.round(h * dpr); cv.width = W; cv.height = H; gl.viewport(0, 0, W, H);
+    var t = fig.querySelector(".sg16t"); if (!t) return;
+    var fsz = +t.getAttribute("font-size") * dpr, x = +t.getAttribute("x") * dpr, y = +t.getAttribute("y") * dpr, cs = getComputedStyle(t);
+    var a = document.createElement("canvas"); a.width = W; a.height = H; var c = a.getContext("2d");
+    c.fillStyle = "#000"; c.fillRect(0, 0, W, H); c.fillStyle = "#fff"; c.textAlign = "center"; c.textBaseline = "alphabetic";
+    c.font = cs.fontWeight + " " + fsz + "px " + cs.fontFamily; if ("letterSpacing" in c) c.letterSpacing = (fsz * .02).toFixed(1) + "px";
+    c.fillText("SILAVU", x, y);
+    var bl = document.createElement("canvas"); bl.width = W; bl.height = H; var d = bl.getContext("2d"), r = Math.max(4, fsz * .05);
+    if ("filter" in d) { d.filter = "blur(" + r + "px)"; d.drawImage(a, 0, 0); }
+    else { var sm = document.createElement("canvas"), k = 8; sm.width = W / k; sm.height = H / k; sm.getContext("2d").drawImage(a, 0, 0, W / k, H / k); d.imageSmoothingEnabled = true; d.drawImage(sm, 0, 0, W, H); }
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, tM); gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, a);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, tH); gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, bl);
+    gl.uniform2f(U.uRes, W, H); ready = true; draw();
+  }
+  /* the light: the pointer over the film (or the phone's tilt) moves where the highlight falls and how the glass bends */
+  var tx = 0, ty = 0, gx = 0, gy = 0, q = 0, raf = 0, vis = false, small = null, sctx = null;
+  fig.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = fig.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - .5) * 2; ty = ((e.clientY - r.top) / r.height - .5) * 2; kick(); });
+  fig.addEventListener("pointerleave", function () { tx = 0; ty = 0; kick(); });
+  addEventListener("deviceorientation", function (e) { if (e.gamma == null) return; tx = Math.max(-1, Math.min(1, e.gamma / 30)); ty = Math.max(-1, Math.min(1, (e.beta - 45) / 30)); kick(); });
+  addEventListener("scroll", function () { if (vis) kick(); }, { passive: true });
+  function kick() { if (!raf && vis) raf = requestAnimationFrame(draw); }
+  function draw() { raf = 0; if (!ready) return;
+    if (reel.readyState >= 2) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tV);
+      var src = reel; if (reel.videoWidth > 1024) { if (!small) { small = document.createElement("canvas"); sctx = small.getContext("2d"); }
+        var sw = 1024, shh = Math.round(sw * reel.videoHeight / reel.videoWidth); if (small.width !== sw) { small.width = sw; small.height = shh; } sctx.drawImage(reel, 0, 0, sw, shh); src = small; }
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
+      gl.uniform1f(U.uVA, reel.videoWidth / reel.videoHeight); }
+    var k = reduce ? 1 : .12; gx += (tx - gx) * k; gy += (ty - gy) * k;
+    var r = fig.getBoundingClientRect(), vh = innerHeight; q = reduce ? 0 : Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh / 2) / ((vh + r.height) / 2)));
+    gl.uniform2f(U.uTilt, gx, gy); gl.uniform1f(U.uQ, q); gl.uniform2f(U.uLight, -.35 + gx * .9, .55 - gy * .9);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if (vis && (!reel.paused || Math.abs(tx - gx) > .002 || Math.abs(ty - gy) > .002)) raf = requestAnimationFrame(draw); }
+  new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { if (!ready) shape(); kick(); } }, { rootMargin: "10% 0px" }).observe(fig);
+  reel.addEventListener("play", kick); reel.addEventListener("loadeddata", kick); reel.addEventListener("seeked", kick);
+  var rt = 0; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { setTimeout(shape, 60); }, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(shape, 80); });
 })();

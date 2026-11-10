@@ -2641,3 +2641,11 @@ html body #craft14.sg16 .sg16t { font-weight: 500 !important; letter-spacing: .0
 html body #craft14.sg16 .sg16reel::before { height: 9% !important; background: linear-gradient(rgba(0,0,0,.85), rgba(0,0,0,0)) !important; }
 html body #craft14.sg16 .sg16glass canvas { inset: -4% !important; width: 108% !important; height: 108% !important; filter: brightness(1.06) contrast(1.1) saturate(1.05) !important; }
 html body #craft14.sg16 .sg16edge { stroke: rgba(255,255,255,.85) !important; stroke-width: 1.3px !important; }
+/* the glass, drawn by WebGL: no clip (the word is its own alpha), no CSS movement (the shader bends the light); the
+   word's shadow a little deeper so the glass stands off the film */
+html body #craft14.sg16 .sg16gl .sg16glass { clip-path: none !important; -webkit-clip-path: none !important; }
+html body #craft14.sg16 .sg16gl .sg16glass > canvas:not(.sg16glc) { display: none !important; }
+html body #craft14.sg16 .sg16glass .sg16glc { position: absolute; inset: 0; width: 100%; height: 100%; transform: none !important; filter: none !important; }
+html body #craft14.sg16 .sg16gl .sg16edge { stroke: rgba(255,255,255,.55) !important; stroke-width: .9px !important; fill: url(#sg16sheen); fill-opacity: .6; }
+html body #craft14.sg16 .sg16shadow { fill: rgba(0,0,0,.3) !important; transform: translate(0, 16px) !important; }
+html body #craft14.sg16 .sg16gl .sg16edge { display: none !important; }
