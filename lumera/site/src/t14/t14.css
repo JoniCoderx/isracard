@@ -2233,11 +2233,17 @@ html body .c14more { margin: 18px 0 0; max-width: 34ch; font-size: .92rem; line-
 
 /* the hero title, a light passing (owner, 10 Nov 2026): the light that crosses the words once as they arrive now
    comes back every few seconds, warmer, running word to word, as light runs along polished metal */
-html body #hero #hcap.hcap .h .w > span { background-image: linear-gradient(100deg, rgba(255,250,236,0) 24%, rgba(255,244,218,.95) 38%, rgba(232,190,112,1) 47%, rgba(214,168,88,1) 50%, rgba(232,190,112,1) 53%, rgba(255,244,218,.95) 62%, rgba(255,250,236,0) 76%),
+html body #hero #hcap.hcap .h .w > span { background-image: linear-gradient(100deg, rgba(255,250,236,0) 14%, rgba(255,242,212,.95) 30%, rgba(234,192,114,1) 42%, rgba(216,170,90,1) 50%, rgba(234,192,114,1) 58%, rgba(255,242,212,.95) 70%, rgba(255,250,236,0) 86%),
     repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, rgba(0,0,0,.05) 1px 2px),
     linear-gradient(180deg, #f6f7f8 0%, #d9dcdf 38%, #f1f2f3 55%, #c3c7cb 100%) !important; }
 html body #hero #hcap.hcap .h.in .w > span { animation: h14gleam 6s cubic-bezier(.45,.05,.25,1) infinite both !important; }
 @keyframes h14gleam { 0% { background-position: 150% 0, 0 0, 0 0; filter: drop-shadow(0 0 0 rgba(236,200,130,0)); }
-  13% { filter: drop-shadow(0 0 14px rgba(236,200,130,.75)); }
+  14% { filter: drop-shadow(0 0 16px rgba(236,200,130,.8)); }
   28%, 100% { background-position: -50% 0, 0 0, 0 0; filter: drop-shadow(0 0 0 rgba(236,200,130,0)); } }
-@media (prefers-reduced-motion: reduce) { html body #hero #hcap.hcap .h.in .w > span { animation: none !important; } }
+/* the whole title at once (owner, 10 Nov 2026): every word lit together, one light over the line */
+html body #hero #hcap.hcap .h.in .w > span, html body #hero #hcap.hcap .h.in em .w > span { animation-delay: 1.2s !important; }
+/* and the whole line warms to gold together, glowing, then cools back to platinum */
+html body #hero #hcap.hcap h1.h.in { animation: h14wash 6s cubic-bezier(.45,.05,.35,1) 1.2s infinite both !important; }
+@keyframes h14wash { 0%, 46%, 100% { filter: none; }
+  14%, 24% { filter: sepia(.72) saturate(1.12) hue-rotate(-12deg) brightness(.97) drop-shadow(0 0 18px rgba(226,186,122,.5)); } }
+@media (prefers-reduced-motion: reduce) { html body #hero #hcap.hcap .h.in .w > span, html body #hero #hcap.hcap h1.h.in { animation: none !important; } }
