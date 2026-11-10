@@ -21,8 +21,11 @@ const he = () => document.documentElement.getAttribute("data-lang") === "he";
 const errs = [];
 const viaImg = b => { const u = URL.createObjectURL(b), i = new Image(); i.src = u;
   return i.decode().then(() => { URL.revokeObjectURL(u); i.close = () => { i.src = ""; }; return i; }, e => { URL.revokeObjectURL(u); throw e; }); };
-const toBitmap = b => { if (typeof createImageBitmap !== "function") return viaImg(b);
-  try { return createImageBitmap(b).catch(e => { errs.push("bitmap " + (e && e.name || e)); return viaImg(b); }); } catch (e) { return viaImg(b); } };
+const toBitmap = (b, w, h) => { if (typeof createImageBitmap !== "function") return viaImg(b);
+  // decoded straight at the canvas's size where asked (owner, 10 Nov 2026: the phone drawer): each draw is then a plain
+  // copy, not a scale, and a phone holds half the memory; a browser that refuses the options decodes at full size
+  const o = w && h ? { resizeWidth: w, resizeHeight: h, resizeQuality: "medium" } : undefined;
+  try { return createImageBitmap(b, o).catch(() => createImageBitmap(b)).catch(e => { errs.push("bitmap " + (e && e.name || e)); return viaImg(b); }); } catch (e) { return viaImg(b); } };
 const bitmap = url => fetch(url).then(r => r.blob()).then(toBitmap);
 
 
@@ -74,7 +77,7 @@ export async function mount(sec) {
         .finally(() => { if (my !== gen) return; fetching--; pump(); fetchMore(); });
     }
   }
-  const decode = b => toBitmap(b);
+  const decode = b => toBitmap(b, cv.width, cv.height);
   function pump() {
     if (!M || reduce) return; const n = M.seq.n, my = gen;
     for (let k = 0; k < n; k++) if (bmps[k] && !keep(k) && k !== shownK) { bmps[k].close(); bmps[k] = null; }

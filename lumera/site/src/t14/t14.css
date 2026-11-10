@@ -2818,3 +2818,16 @@ html body #configure.b16.b16.b16 #opts > .tot .t13thumb { display: none !importa
   html body #configure.b16.b16.b16 #opts .chips.cuts .chip span { font-size: .78rem !important; white-space: nowrap; }
 }
 @media (max-width: 899px) { html body #configure.b16.b16.b16 #opts .chips.cuts { -webkit-mask-image: none !important; mask-image: none !important; } }
+
+/* ════════ COLLECTIONS ON THE PHONE, ROUND 2 (owner, 10 Nov 2026) ════════
+   The knot and its three lines centred on the page: the knot larger, turning in 3D on top; the lines centred beneath. */
+@media (max-width: 899px) {
+  html body .c15 .c14intro .c14sym, html body .c15 .c14intro .c14sym.gl { grid-column: 1 / -1 !important; justify-self: center !important; width: min(56vw, 220px) !important; height: min(62vw, 240px) !important; margin: 30px auto 4px !important; }
+  html body .c15 .c14intro .c14lead { grid-column: 1 / -1 !important; justify-self: center !important; text-align: center !important; margin: 8px auto 34px !important; font-size: .95rem !important; white-space: normal !important; }
+}
+
+/* ════════ THE DRAWER ON THE PHONE (owner, 10 Nov 2026: "not working good") ════════
+   The 96 frames had less than one screen of scroll to play in, so a thumb's flick asked for frames faster than a phone
+   can decode them, and the opening jumped. A longer run gives each frame its own few pixels of scroll. */
+@media (max-width: 599px) { .ar15run { height: 380svh; } }
+@media (max-width: 599px) { html body .ar15nav .ar15pick { color: rgba(246,241,230,.88) !important; font-size: .72rem !important; min-height: 44px; } }

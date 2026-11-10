@@ -610,7 +610,7 @@
       raf = 0; var dt = Math.min(.05, (now - (last || now)) / 1000), t = (now - t0) / 1000; last = now;
       /* the pose it floats in: turned a little, breathing, never still */
       var f = reduce ? 0 : 1;
-      rest.setFromEuler(eu.set(-.05 + f * Math.sin(t * .31) * .05, -.36 + f * Math.sin(t * .19) * .26, f * Math.sin(t * .27) * .025));
+      rest.setFromEuler(eu.set(-.05 + f * Math.sin(t * .31) * .12, -.2 + f * Math.sin(t * .3) * .55, f * Math.sin(t * .27) * .04)); /* owner, 10 Nov: a wider sway, so the depth reads; never past side-on, so the knot is never seen from behind */
       if (show) {
         var p = Math.min(1, (now - show.t) / 5200), a = ease(p) * Math.PI * 2;
         tmp.setFromAxisAngle(ax.set(0, 1, 0), a); var tq = rest.clone().multiply(tmp);
@@ -1323,7 +1323,8 @@
   var gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false }); if (!gl) return;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var VS = "attribute vec2 p; varying vec2 vUv; void main(){ vUv = vec2(p.x * .5 + .5, .5 - p.y * .5); gl_Position = vec4(p, 0., 1.); }";
-  /* option 4 (owner, 10 Nov 2026): subtle clear glass. Inside the letters the film itself, a touch magnified and
+  /* round 3 (owner, 10 Nov 2026): no stroke; inside the letters the same film mirrored, left for right, so the word
+     reads as a looking-glass set into the scene. option 4 (owner, 10 Nov 2026): subtle clear glass. Inside the letters the film itself, a touch magnified and
      brighter, as through a clear slab; a fine bend at the rims, a soft sheen over the tops, a light that barely moves */
   var FS = [
     "precision mediump float;",
@@ -1341,14 +1342,14 @@
     "  float ey = texture2D(uM, vUv + vec2(0., px.y * 1.5)).r - texture2D(uM, vUv - vec2(0., px.y * 1.5)).r;",
     "  float rim = clamp(length(vec2(ex, ey)) * 1.2, 0., 1.);",
     /* inside: the film, a touch magnified and brighter, shifted a few pixels as through a clear slab */
-    "  vec2 b = (vUv - .5) / 1.08 + .5 + vec2(.009, 0.) + uTilt * .005 + vec2(uQ * .01, 0.);",
+    "  vec2 b = (vUv - .5) / 1.04 + .5 + uTilt * .005 + vec2(uQ * .01, 0.); b.x = 1. - b.x;",
     "  vec3 col = texture2D(uV, cover(b)).rgb * 1.08;",
     "  float sheen = smoothstep(uCapB, uCapT, vUv.y) * .2;",
     "  float hx = texture2D(uH, vUv + vec2(px.x * 3., 0.)).r - texture2D(uH, vUv - vec2(px.x * 3., 0.)).r;",
     "  float hy = texture2D(uH, vUv + vec2(0., px.y * 3.)).r - texture2D(uH, vUv - vec2(0., px.y * 3.)).r;",
     "  vec3 N = normalize(vec3(-vec2(hx, hy) * 10., 1.)); vec3 L = normalize(vec3(uLight, .9));",
     "  float spec = pow(max(dot(N, L), 0.), 60.) * .16;",
-    "  col += sheen + spec + rim * .85;",
+    "  col += sheen * .6 + spec;",
     "  gl_FragColor = vec4(min(col, 1.) * m, m);",
     "}"].join("\n");
   function sh(t, src) { var o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; }
