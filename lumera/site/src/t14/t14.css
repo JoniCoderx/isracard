@@ -2197,3 +2197,12 @@ html body #details.ar15 { overflow: visible !important; overflow-x: clip !import
   html body #enquire #concierge .cbody h2.h2 { font-size: clamp(2rem, 3.1vw, 3rem) !important; max-width: none; }
   html body #enquire .sg14 { justify-self: center; width: 100%; }
 }
+
+/* the footer mark, calmed (owner, 10 Nov 2026): the lift, the light sweep and the widening letters made the mark jump
+   and shift off centre; on hover now only the colour warms a little, nothing moves */
+html body #end .f13house .f13brand, html body #end .f13house:hover .f13brand { transform: none !important; transition: none !important; }
+html body #end .f13house .f13brand::after, html body #end .f13house:hover .f13brand::after { content: none !important; animation: none !important; }
+html body #end .f13house .f13mk { transition: color .25s ease !important; filter: none !important; }
+html body #end .f13house:hover .f13mk { color: #ecdcb6 !important; filter: none !important; }
+html body #end .f13house::after, html body #end .f13house:hover::after { letter-spacing: .6em !important; transition: color .25s ease !important; }
+html body #end .f13house:hover::after { color: #f6f1e6 !important; }
