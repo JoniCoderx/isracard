@@ -2509,3 +2509,22 @@ html body #configure.b16.b16.b16 details.b16spec > summary::-webkit-details-mark
   html body .c15 .c14wrap { grid-template-rows: auto auto !important; }
   html body .c15 .c14intro .c14sym.gl { min-height: 170px !important; max-height: 300px !important; margin: 18px 0 0 !important; }
 }
+
+/* SIGNATURE, round 3 (owner, 10 Nov 2026): the house's film of SOUL worn plays inside the letters of the word, then the
+   letters open until the film fills the frame; the film layer is its own picture (black outside the letters) laid over
+   the piece in "screen", so outside the letters the turning piece still shows */
+.sg16film { position: absolute; inset: 0; z-index: 1; isolation: isolate; mix-blend-mode: screen; opacity: var(--sgv, 0); pointer-events: none; }
+.sg16film video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+.sg16knock { position: absolute; inset: 0; background: rgba(0,0,0,var(--sgb, 1)); mix-blend-mode: multiply; overflow: hidden; }
+.sg16knock span { position: absolute; left: 0; right: 0; bottom: clamp(-6px, -.4vw, 0px); text-align: center; white-space: nowrap; color: #fff;
+  font-family: var(--display, 'Jost'), 'Jost', sans-serif; font-weight: 300; text-transform: uppercase; font-size: 15.2vw; line-height: .86; letter-spacing: .01em;
+  transform: translate3d(0, var(--sgt, 0px), 0) scale(var(--sgk, 1)); transform-origin: var(--sgox, 50%) var(--sgoy, 60%); }
+html[data-ns] .sg16knock span { text-transform: none; }
+.sg16pic { opacity: var(--sgpo, 1); }
+@media (max-width: 699px) { .sg16knock span { font-size: 16.4vw; bottom: 2vw; } }
+@media (prefers-reduced-motion: reduce) { .sg16film { display: none; } .sg16pic { opacity: 1 !important; } }
+@media (max-width: 699px) {
+  .sg16h, .sg16knock span { transform: scale(var(--sgk, 1)) !important; }
+  .sg16h { transform: none !important; }
+  .sg16go { bottom: auto !important; top: 52px; }
+}
