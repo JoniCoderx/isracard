@@ -1197,3 +1197,47 @@
   addEventListener("scroll", function () { if (on && !raf) raf = requestAnimationFrame(f); }, { passive: true });
   addEventListener("resize", function () { if (on) f(); }); f();
 })();
+
+/* the builder, round 16 (owner, 10 Nov 2026): one step at a time across the top (on a phone: its name, "1 of 5" and a
+   bar); the actions inside the picture; the specification gathered under "Your design", open beside the picture on a
+   wide screen and folded on a phone with the choices summed up on its line; the floating summary bar retired */
+(function () {
+  var conf = document.getElementById("configure"); if (!conf) return;
+  function init() {
+    var opts = document.getElementById("opts"), wrap = document.getElementById("stripwrap"), total = conf.querySelector(".total"), bars = [].slice.call(conf.querySelectorAll(".b13bar"));
+    if (!opts || !wrap || !total || !bars.length) return setTimeout(init, 400);
+    if (conf.classList.contains("b16")) return; conf.classList.add("b16");
+    var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+    /* the phone's step line */
+    var prog = document.createElement("div"); prog.className = "b16prog"; prog.innerHTML = '<span class="b16pl"></span><span class="b16pn"></span><i class="b16bar"><i></i></i>';
+    conf.insertBefore(prog, wrap);
+    /* the hint on the picture */
+    var hint = document.createElement("span"); hint.className = "b16hint"; hint.setAttribute("aria-hidden", "true"); wrap.appendChild(hint);
+    /* the actions, inside the picture */
+    var acts = conf.querySelector(".cacts"); if (acts) wrap.appendChild(acts);
+    /* the specification, gathered */
+    var det = document.createElement("details"); det.className = "b16spec";
+    det.innerHTML = '<summary><span class="b16st"></span><span class="b16ss"></span><i aria-hidden="true"></i></summary>';
+    total.parentNode.insertBefore(det, total); det.appendChild(total);
+    var wide = matchMedia("(min-width: 900px)"); var setOpen = function () { det.open = wide.matches; }; setOpen();
+    wide.addEventListener ? wide.addEventListener("change", setOpen) : wide.addListener(setOpen);
+    var put = function (el, t) { if (el.textContent !== t) el.textContent = t; };
+    function sync() {
+      var i = Math.max(0, bars.findIndex(function (b) { return b.classList.contains("on"); }));
+      var lbl = bars[i].querySelector(".b13bl"); put(prog.querySelector(".b16pl"), lbl ? lbl.textContent : "");
+      put(prog.querySelector(".b16pn"), he() ? (i + 1) + " מתוך " + bars.length : (i + 1) + " of " + bars.length);
+      prog.querySelector(".b16bar i").style.width = ((i + 1) / bars.length * 100) + "%";
+      put(det.querySelector(".b16st"), he() ? "העיצוב שלכם" : "Your design");
+      var vals = [].slice.call(conf.querySelectorAll(".b14sumu li b")).slice(0, 3).map(function (b) { return b.textContent.trim(); }).filter(Boolean);
+      put(det.querySelector(".b16ss"), vals.join(" · "));
+      var threeD = conf.querySelector(".vtb.on"); var is3d = !threeD || threeD === conf.querySelector(".vtb");
+      put(hint, he() ? "גררו לסובב" : "Drag to rotate"); if (hint.hidden !== !is3d) hint.hidden = !is3d;
+    }
+    var mo = new MutationObserver(sync); sync();
+    bars.forEach(function (b) { mo.observe(b, { attributes: true, attributeFilter: ["class"] }); });
+    [].forEach.call(conf.querySelectorAll(".vtb"), function (b) { mo.observe(b, { attributes: true, attributeFilter: ["class"] }); });
+    mo.observe(total, { subtree: true, childList: true, characterData: true });
+    new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  }
+  init();
+})();

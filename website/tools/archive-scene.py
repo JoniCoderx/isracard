@@ -119,6 +119,35 @@ MARBLES = {"verde": ((.004, .022, .013), (.011, .046, .028), (.26, .32, .27), (.
            "calacatta": ((.62, .6, .565), (.7, .68, .64), (.2, .18, .15), (.42, .33, .2))}
 LAC, SUEDE, STANDM, PIPE, STEEL, CAVE = lacquer(), suede("suede", LIN), suede("stand", (.045, .032, .025), .55, .1), suede("piping", (LIN[0] * 1.04, LIN[1] * 1.025, LIN[2] * 1.02), .7, .08), steel(), flat("cave", (.003, .0025, .002), .9)
 if os.environ.get("ARCH_MARBLE"): SUEDE = PIPE = marble("marble", *MARBLES[os.environ["ARCH_MARBLE"]])
+# ARCH_LOOK: "walnut" (owner, 10 Nov 2026, the default from then): espresso suede, a slim dark walnut frame, a brushed
+# silver handle and a concealed warm light along the back of the drawer; "lacquer" is the look approved before it
+LOOK = os.environ.get("ARCH_LOOK", "walnut")
+def walnut():
+    m, b, t = principled("walnut"); N, L = t.nodes, t.links
+    tc = N.new("ShaderNodeTexCoord")
+    # the grain: long rings drawn along the board, pulled by a slow noise, with the open pores of walnut across them
+    mp = N.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (1, 1, 7); mp.inputs["Rotation"].default_value = (math.pi / 2, 0, 0); L.new(tc.outputs["Object"], mp.inputs[0])
+    wn = N.new("ShaderNodeTexNoise"); wn.inputs["Scale"].default_value = 3; wn.inputs["Detail"].default_value = 4; L.new(mp.outputs[0], wn.inputs[0])
+    wv = N.new("ShaderNodeTexWave"); wv.wave_type = "RINGS"; wv.inputs["Scale"].default_value = 22; wv.inputs["Distortion"].default_value = 6; wv.inputs["Detail"].default_value = 3; wv.inputs["Detail Roughness"].default_value = .55
+    L.new(mp.outputs[0], wv.inputs[0])
+    rp = N.new("ShaderNodeValToRGB"); rp.color_ramp.elements[0].color = (.07, .032, .014, 1); rp.color_ramp.elements[1].color = (.2, .1, .046, 1)
+    rp.color_ramp.elements.new(.55).color = (.12, .058, .026, 1)
+    L.new(wv.outputs["Fac"], rp.inputs[0])
+    tone = N.new("ShaderNodeMix"); tone.data_type = "RGBA"; tone.blend_type = "MULTIPLY"; tone.inputs[0].default_value = .35; L.new(rp.outputs[0], tone.inputs[6]); L.new(wn.outputs["Color"], tone.inputs[7])
+    L.new(tone.outputs[2], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = .42; b.inputs["Coat Weight"].default_value = .35; b.inputs["Coat Roughness"].default_value = .22
+    po = N.new("ShaderNodeTexNoise"); po.inputs["Scale"].default_value = 1400; po.inputs["Detail"].default_value = 2; L.new(mp.outputs[0], po.inputs[0])
+    bp = N.new("ShaderNodeBump"); bp.inputs["Strength"].default_value = .12; bp.inputs["Distance"].default_value = .0002
+    gb = N.new("ShaderNodeMath"); gb.operation = "ADD"; L.new(wv.outputs["Fac"], gb.inputs[0]); L.new(po.outputs["Fac"], gb.inputs[1])
+    L.new(gb.outputs[0], bp.inputs["Height"]); L.new(bp.outputs[0], b.inputs["Normal"])
+    return m
+if LOOK == "walnut" and not os.environ.get("ARCH_SUEDE") and not os.environ.get("ARCH_MARBLE"):
+    ESP = (.03, .015, .0085)
+    SUEDE, PIPE = suede("suede", ESP), suede("piping", (ESP[0] * 1.08, ESP[1] * 1.06, ESP[2] * 1.05), .7, .08)
+    STANDM = suede("stand", (.04, .021, .0125), .6, .1)
+    LAC = walnut()
+    STEEL = principled("brushed")[0]; _sb = STEEL.node_tree.nodes["Principled BSDF"]
+    _sb.inputs["Base Color"].default_value = (.86, .855, .84, 1); _sb.inputs["Metallic"].default_value = 1; _sb.inputs["Roughness"].default_value = .3; _sb.inputs["Anisotropic"].default_value = .85
 GOLD, _gb, _ = principled("white gold"); _gb.inputs["Base Color"].default_value = (.87, .862, .845, 1); _gb.inputs["Metallic"].default_value = 1; _gb.inputs["Roughness"].default_value = .075
 GOLDP, _gp, _ = principled("white gold polished"); _gp.inputs["Base Color"].default_value = (.88, .872, .855, 1); _gp.inputs["Metallic"].default_value = 1; _gp.inputs["Roughness"].default_value = .05
 DIA, _d, _ = principled("diamond"); _d.inputs["Base Color"].default_value = (1, 1, 1, 1); _d.inputs["Roughness"].default_value = 0; _d.inputs["IOR"].default_value = 2.417; _d.inputs["Transmission Weight"].default_value = 1
@@ -538,6 +567,12 @@ panel(W2((0, -260, 520)), mm(520), 3.6, W2((0, 0)))
 panel(W2((0, -560, 190)), mm(420), 4.5, W2((SX, SY, 25)))
 panel(W2((SX, SY - 200, 260)), mm(220), 3.0, W2((SX, SY, 25)))      # low in front, unseen: what the standing studs look into
 light("SPOT", W2((SX - 30, SY - 280, 170)), 1.6, W2((SX, SY, 26)), spot_size=math.radians(9), spot_blend=.8, shadow_soft_size=mm(25), color=NEUT)
+# the concealed light (walnut look): a warm strip hidden under the lip of the back wall, washing the suede from behind;
+# it travels with the drawer, so it is dark while the drawer is shut and comes up as it opens
+if LOOK == "walnut":
+    ld = bpy.data.lights.new("strip", "AREA"); ld.shape = "RECTANGLE"; ld.size = mm(IW - 14); ld.size_y = mm(5); ld.energy = .24; ld.color = (1, .72, .45)
+    lo = link(bpy.data.objects.new("strip", ld)); lo.parent = drawer
+    lo.location = (0, mm(DD - WT - PT - 4), mm(BT + PH - 2)); lo.rotation_euler = (math.radians(-38), 0, 0)
 # small hot lamps that only the metal and the stones see: the glints of pavé under real lights
 for i in range(12):
     a = i * 2.399; zz = .45 + .5 * ((i * .618) % 1); rr = math.sqrt(1 - zz * zz)
@@ -564,7 +599,20 @@ def jewellery():
 def write_meta(path):
     bpy.context.view_layer.update()
     json.dump({ "res": [W, H], "lens": cd.lens, "sensor": cd.sensor_width, "fit": "AUTO", "cam": [list(r) for r in cam.matrix_world], "travel_mm": TRAVEL,
-      "floor": { "y": ICY, "z": FZ, "w": mm(IX), "d": mm(IY) } }, open(path, "w"), indent=1)
+      "floor": { "y": ICY, "z": FZ, "w": mm(IX), "d": mm(IY) }, "photos": photos() }, open(path, "w"), indent=1)
+# each print's photograph (its window in the card: 3 mm in, 3.5 mm down, 42 x 54 mm of the 48 x 74 card), as the four
+# corners on the picture in pixels (top left, top right, bottom right, bottom left): the page lays a film in it
+def photos():
+    from bpy_extras.object_utils import world_to_camera_view
+    bpy.context.view_layer.update(); out = {}
+    for o in sc.objects:
+        if not o.name.startswith("print-") or o.type != "MESH": continue
+        def at(u, v):   # card millimetres from its top left to the mesh's own coordinates, on its curved, solidified face
+            x, y = -19 + u / 48 * 38, 29.5 - v / 74 * 59; yy, xx = abs(y) / 29.5, x / 19
+            p = o.matrix_world @ Vector((x, y, .32 * yy ** 3 + .08 * xx * xx + .04 * math.sin(y / 9) + .3))
+            c = world_to_camera_view(sc, cam, p); return [round(c.x * W, 1), round((1 - c.y) * H, 1)]
+        out[o.name[6:].split(".")[0]] = [at(3, 3.5), at(45, 3.5), at(45, 57.5), at(3, 57.5)]
+    return out
 
 # The cabinet's lacquered rail mirrors whatever lies in front of it: the pieces as the drawer comes out, and the pieces and
 # prints in any view wide enough to show the rail (a mirrored knot among them). Where that can be seen, a piece or print is

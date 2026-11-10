@@ -756,6 +756,10 @@ const T14 = (() => {
       const SIG = `<div class="sg14" aria-hidden="true"><svg class="sg14svg" viewBox="80 10 1150 380" focusable="false"><defs><linearGradient id="sg14ink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b9a98c"/><stop offset=".45" stop-color="#f6efe0"/><stop offset=".7" stop-color="#d9c8a6"/><stop offset="1" stop-color="#f3ecdd"/></linearGradient><filter id="sg14glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter></defs><path class="sg14glowp" d="${SIGP}"/><path class="sg14line" d="${SIGP}"/><circle class="sg14dot" cx="473" cy="187" r="4.4"/><circle class="sg14tip" r="5"/></svg><p class="sg14tag" data-en="Every piece begins with a conversation." data-he="כל תכשיט מתחיל בשיחה.">Every piece begins with a conversation.</p><i class="sg14rule"></i></div>`;
       h = h.replace('<div class="emb" id="emb" aria-hidden="true">', SIG + '\n<div class="emb" id="emb" aria-hidden="true">');
       h = h.replace(/(<section id="enquire"[\s\S]*?)<div class="k gold rv ol" data-en="Enquire" data-he="פנייה">Enquire<\/div>/, '$1<div class="k gold rv ol eq14k" data-en="Private concierge" data-he="קונסיירז׳ פרטי">Private concierge</div>'); }
+    /* the builder, round 16 (owner, 10 Nov 2026): fewer words on its actions */
+    h = h.replace('data-en="Save the image" data-he="שמרו את התמונה">Save the image<', 'data-en="Save design" data-he="שמירת העיצוב">Save design<')
+      .replace('data-en="Try it on your photo" data-he="נסו על תמונה שלכם">Try it on your photo<', 'data-en="Try on" data-he="מדידה">Try on<')
+      .replace('data-en="Reserve this bracelet" data-he="שריינו את הצמיד">Reserve this bracelet<', 'data-en="Enquire about this bracelet" data-he="פנייה על הצמיד הזה">Enquire about this bracelet<');
     /* the builder's views, said shortly */
     h = h.replace('data-view="line" data-en="In 3D" data-he="בתלת־ממד">In 3D<', 'data-view="line" data-en="3D" data-he="תלת־ממד">3D<')
       .replace('data-view="photo" data-en="Photograph" data-he="צילום">Photograph<', 'data-view="photo" data-en="Photo" data-he="צילום">Photo<')

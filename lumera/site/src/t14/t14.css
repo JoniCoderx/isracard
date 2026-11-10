@@ -2275,3 +2275,182 @@ html[dir="rtl"] .sg16k { left: auto; right: clamp(20px, 4vw, 64px); }
   .sg16go { bottom: calc(16.4vw * .86 + 26px); height: 44px; padding: 0 22px; font-size: .6rem; }
 }
 @media (prefers-reduced-motion: reduce) { .sg16pic, .sg16h, .sg16go { transform: none !important; } .sg16go { transform: translateX(-50%) !important; } .sg16h { opacity: 1 !important; } }
+
+/* ════════ THE BUILDER, ROUND 16 (owner, 10 Nov 2026) ════════
+   One step at a time across the top; the picture carries its own controls (the stone, the views, the actions, the tools);
+   the panel says only what is needed: the step, the choices, the way on, then the design as a short list, the price
+   and the enquiry. On a phone: the step's name and "1 of 5" over a thin bar, the picture, the choices, the design
+   folded on one line, the way on. Less room left under it all. */
+html body #configure.b16.b16.b16 .b16prog { display: none; }
+html body #configure.b16.b16.b16 .b16hint { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); bottom: 96px; font-size: .78rem; letter-spacing: .04em; color: rgba(243,236,224,.6); pointer-events: none; white-space: nowrap; }
+html body #configure.b16.b16.b16 .b16hint::before { content: ""; display: inline-block; width: 22px; height: 10px; margin-right: 10px; vertical-align: -1px; border: 1px solid rgba(243,236,224,.55); border-radius: 50%; }
+html body #configure.b16.b16.b16 .b16hint[hidden] { display: none; }
+html body #configure.b16.b16.b16 .b14pv .b14pvk, html body #configure.b16.b16.b16 .b14pv .b14pvi { display: none !important; }
+html body #configure.b16.b16.b16 #sendSpec { display: none !important; }
+html body #cbar { display: none !important; }
+html body #configure.b16.b16.b16 details.b16spec > summary { list-style: none; cursor: pointer; }
+html body #configure.b16.b16.b16 details.b16spec > summary::-webkit-details-marker { display: none; }
+@media (min-width: 900px) {
+  html body #configure.b16.b16.b16 { padding-bottom: clamp(18px, 2vw, 28px) !important; margin-bottom: 0 !important; }
+  /* the steps */
+  html body #configure.b16.b16.b16 .b14top { display: flex !important; justify-content: center; border: 0 !important; background: none !important; }
+  html body #configure.b16.b16.b16 .b13bars { display: flex !important; gap: clamp(30px, 4.4vw, 72px) !important; }
+  html body #configure.b16.b16.b16 .b13bar { position: relative; display: inline-flex !important; align-items: baseline; gap: 8px; padding: 6px 2px 14px !important; background: none !important; border: 0 !important; color: rgba(243,236,224,.55) !important; font-size: 1.12rem !important; letter-spacing: .02em !important; text-transform: none !important; transition: color .15s ease; }
+  html body #configure.b16.b16.b16 .b13bar .b13num { font: inherit !important; color: inherit !important; background: none !important; border: 0 !important; width: auto !important; height: auto !important; min-width: 0 !important; padding: 0 !important; }
+  html body #configure.b16.b16.b16 .b13bar .b13num::before { content: "0"; }
+  html body #configure.b16.b16.b16 .b13bar .b13bl { font: inherit !important; color: inherit !important; letter-spacing: inherit !important; text-transform: none !important; }
+  html body #configure.b16.b16.b16 .b13bar:hover { color: rgba(243,236,224,.85) !important; }
+  html body #configure.b16.b16.b16 .b13bar.on { color: #f6f1e6 !important; }
+  html body #configure.b16.b16.b16 .b13bar::after { content: ""; position: absolute; left: -8%; right: -8%; bottom: 0; height: 1px; background: linear-gradient(90deg, rgba(243,236,224,0), rgba(243,236,224,.9), rgba(243,236,224,0)); opacity: 0; transition: opacity .2s ease; }
+  html body #configure.b16.b16.b16 .b13bar.on::after { opacity: 1; }
+  /* the picture's own controls */
+  html body #configure.b16.b16.b16 #stripwrap { position: relative; }
+  html body #configure.b16.b16.b16 .b14pv { left: 28px !important; top: 28px !important; right: auto !important; display: flex !important; align-items: center; gap: 22px; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  html body #configure.b16.b16.b16 .b14pv .b14pvpic { width: clamp(104px, 9vw, 150px) !important; height: clamp(104px, 9vw, 150px) !important; border-radius: 50% !important; border: 1px solid rgba(243,236,224,.28) !important; overflow: hidden; background: radial-gradient(circle at 50% 40%, #1c1c1c, #070707) !important; }
+  html body #configure.b16.b16.b16 .b14pv .b14pvpic img { width: 76% !important; height: 76% !important; margin: 12% !important; object-fit: contain; }
+  html body #configure.b16.b16.b16 .b14pv .b14pvn { font-size: .74rem !important; font-weight: 400 !important; letter-spacing: .34em !important; text-transform: uppercase; color: #efe7d8 !important; }
+  html body #configure.b16.b16.b16 .b14foot { position: absolute !important; inset: 0 !important; display: block !important; pointer-events: none; padding: 0 !important; background: none !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 .b14foot > *, html body #configure.b16.b16.b16 .b14foot .b14fr > * { pointer-events: auto; }
+  html body #configure.b16.b16.b16 .b14foot .vt { position: absolute; top: 28px; right: 28px; left: auto; bottom: auto; transform: scale(.92); transform-origin: right top; }
+  html body #configure.b16.b16.b16 .b14foot .b14fr { position: static !important; display: block !important; }
+  html body #configure.b16.b16.b16 .vposwrap { position: absolute !important; left: 50%; bottom: 28px; transform: translateX(-50%); }
+  html body #configure.b16.b16.b16 .vpos { display: inline-flex !important; gap: 0 !important; padding: 4px !important; border: 1px solid rgba(243,236,224,.24) !important; border-radius: 999px !important; background: rgba(10,10,10,.55) !important; }
+  html body #configure.b16.b16.b16 .vpos .vp { height: 38px !important; padding: 0 22px !important; border-radius: 999px !important; font-size: .9rem !important; letter-spacing: .02em !important; text-transform: none !important; color: rgba(243,236,224,.72) !important; background: none !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 .vpos .vp.on { color: #f6f1e6 !important; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05)) !important; box-shadow: inset 0 0 0 1px rgba(243,236,224,.22); }
+  html body #configure.b16.b16.b16 .vpos .vp::after, html body #configure.b16.b16.b16 .vpos::after { display: none !important; }
+  html body #configure.b16.b16.b16 .b14tools { position: absolute !important; right: 28px; bottom: 28px; display: flex !important; gap: 12px; border: 0 !important; padding: 0 !important; }
+  html body #configure.b16.b16.b16 .b14tools button { width: 42px !important; height: 42px !important; border-radius: 12px !important; border: 1px solid rgba(243,236,224,.28) !important; background: rgba(10,10,10,.55) !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts { position: absolute !important; z-index: 5; left: 28px; bottom: 28px; display: flex !important; gap: 12px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; width: auto !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts .clink { height: 42px !important; padding: 0 20px !important; border-radius: 999px !important; border: 1px solid rgba(243,236,224,.28) !important; background: rgba(10,10,10,.55) !important; font-size: .9rem !important; letter-spacing: .02em !important; text-transform: none !important; color: #f3ede2 !important; }
+  /* the panel */
+  html body #configure.b16.b16.b16 #opts .b13t { font-size: clamp(2rem, 2.5vw, 2.7rem) !important; font-weight: 300 !important; letter-spacing: .01em !important; line-height: 1.1 !important; }
+  html body #configure.b16.b16.b16 #opts .b13sub { margin-top: 10px !important; font-size: 1.02rem !important; letter-spacing: .02em !important; text-transform: none !important; color: rgba(243,236,224,.78) !important; }
+  html body #configure.b16.b16.b16 #opts .b13next { height: 56px !important; border-radius: 999px !important; background: rgba(255,255,255,.02) !important; border: 1px solid rgba(243,236,224,.5) !important; color: #f6f1e6 !important; box-shadow: none !important; }
+  html body #configure.b16.b16.b16 #opts .b13next span { color: #f6f1e6 !important; letter-spacing: .3em !important; font-size: .78rem !important; }
+  html body #configure.b16.b16.b16 #opts .b13next i { background: #f6f1e6 !important; }
+  html body #configure.b16.b16.b16 #opts .b13next:hover { background: rgba(255,255,255,.08) !important; border-color: rgba(243,236,224,.85) !important; }
+  html body #configure.b16.b16.b16 details.b16spec > summary { display: none; }
+  html body #configure.b16.b16.b16 details.b16spec { border-top: 1px solid rgba(243,236,224,.14); margin-top: 22px; padding-top: 10px; }
+  html body #configure.b16.b16.b16 .b14sum { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 .b14sumu { display: grid !important; grid-template-columns: 1fr !important; gap: 0 !important; }
+  html body #configure.b16.b16.b16 .b14sumu li button { display: grid !important; grid-template-columns: 10.5em 1fr; align-items: baseline; width: 100%; padding: 7px 10px !important; text-align: start; background: none !important; border: 0 !important; border-radius: 8px; }
+  html body #configure.b16.b16.b16 .b14sumu li button:hover { background: rgba(255,255,255,.04) !important; }
+  html body #configure.b16.b16.b16 .b14sumu li span { font-size: .66rem !important; letter-spacing: .3em !important; text-transform: uppercase; color: rgba(243,236,224,.62) !important; }
+  html body #configure.b16.b16.b16 .b14sumu li b { font-size: 1.05rem !important; font-weight: 400 !important; color: #f6f1e6 !important; }
+  html body #configure.b16.b16.b16 .total .tot { margin-top: 10px !important; padding-top: 16px !important; border-top: 1px solid rgba(243,236,224,.14) !important; }
+  html body #configure.b16.b16.b16 .total .estk { display: none !important; }
+  html body #configure.b16.b16.b16 .total #est { font-size: 1.6rem !important; font-weight: 300 !important; color: #f6f1e6 !important; }
+  html body #configure.b16.b16.b16 .total .pwrap { justify-content: flex-start !important; }
+  html body #configure.b16.b16.b16 .total #reserve { height: 54px !important; border-radius: 999px !important; background: none !important; border: 1px solid rgba(243,236,224,.6) !important; color: #f6f1e6 !important; letter-spacing: .3em !important; font-size: .74rem !important; justify-content: center !important; }
+  html body #configure.b16.b16.b16 .total #reserve::after { display: none !important; }
+  html body #configure.b16.b16.b16 .total #reserve:hover { background: #f6f1e6 !important; color: #111 !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 .b14top { display: none !important; }
+  html body #configure.b16.b16.b16 .b16prog { display: grid; grid-template-columns: 1fr auto; row-gap: 12px; align-items: baseline; margin: 4px 4px 16px; }
+  html body #configure.b16.b16.b16 .b16pl { font-size: 1.15rem; color: #f6f1e6; }
+  html body #configure.b16.b16.b16 .b16pn { font-size: .95rem; color: rgba(243,236,224,.75); font-variant-numeric: tabular-nums; }
+  html body #configure.b16.b16.b16 .b16bar { grid-column: 1 / -1; display: block; height: 2px; background: rgba(243,236,224,.14); border-radius: 2px; overflow: hidden; }
+  html body #configure.b16.b16.b16 .b16bar > i { display: block; height: 100%; background: linear-gradient(90deg, #cfc2a6, #f6f1e6); transition: width .3s cubic-bezier(.2,.8,.2,1); }
+  html body #configure.b16.b16.b16 .b16hint { bottom: 12px; font-size: .74rem; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts { display: none !important; }
+  html body #configure.b16.b16.b16 #opts { display: flex !important; flex-direction: column; }
+  html body #configure.b16.b16.b16 #opts > .b13nav { order: 1; } html body #configure.b16.b16.b16 #opts > .opt { order: 2; }
+  html body #configure.b16.b16.b16 #opts > details.b16spec { order: 3; margin-top: 22px; } html body #configure.b16.b16.b16 #opts > .b13ft { order: 4; margin-top: 18px !important; }
+  html body #configure.b16.b16.b16 #opts .b13sub { display: none !important; }
+  html body #configure.b16.b16.b16 details.b16spec > summary { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; min-height: 58px; padding: 0 20px; border: 1px solid rgba(243,236,224,.22); border-radius: 999px; background: rgba(255,255,255,.02); }
+  html body #configure.b16.b16.b16 details.b16spec[open] > summary { border-radius: 18px 18px 0 0; }
+  html body #configure.b16.b16.b16 .b16st { font-size: 1.05rem; color: #f6f1e6; white-space: nowrap; }
+  html body #configure.b16.b16.b16 .b16ss { justify-self: end; font-size: .86rem; color: rgba(243,236,224,.78); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  html body #configure.b16.b16.b16 details.b16spec > summary > i { width: 9px; height: 9px; border-right: 1.5px solid #f3ede2; border-bottom: 1.5px solid #f3ede2; transform: translateY(-3px) rotate(45deg); transition: transform .2s ease; }
+  html body #configure.b16.b16.b16 details.b16spec[open] > summary > i { transform: translateY(2px) rotate(-135deg); }
+  html body #configure.b16.b16.b16 details.b16spec > .total { margin: 0 !important; padding: 14px 18px 18px !important; border: 1px solid rgba(243,236,224,.22); border-top: 0; border-radius: 0 0 18px 18px; }
+  html body #configure.b16.b16.b16 #opts .b13next { height: 58px !important; border-radius: 999px !important; background: none !important; border: 1px solid rgba(243,236,224,.7) !important; color: #f6f1e6 !important; box-shadow: none !important; }
+  html body #configure.b16.b16.b16 #opts .b13next span { color: #f6f1e6 !important; letter-spacing: .3em !important; }
+  html body #configure.b16.b16.b16 #opts .b13next i { background: #f6f1e6 !important; }
+  html body #configure.b16.b16.b16 { padding-bottom: 18px !important; margin-bottom: 0 !important; }
+}
+@media (prefers-reduced-motion: reduce) { html body #configure.b16.b16.b16 .b16bar > i, html body #configure.b16.b16.b16 details.b16spec > summary > i { transition: none !important; } }
+/* round 16, fitted: the controls pinned to their corners, the panel kept compact so the builder is no taller than before */
+@media (min-width: 900px) {
+  html body #configure.b16.b16.b16 .vposwrap { top: auto !important; bottom: 28px !important; right: auto !important; left: 50% !important; transform: translateX(-50%) !important; margin: 0 !important; }
+  html body #configure.b16.b16.b16 .b14tools { top: auto !important; left: auto !important; right: 28px !important; bottom: 28px !important; margin: 0 !important; }
+  html body #configure.b16.b16.b16 .b14foot .vt { top: 28px !important; right: 28px !important; left: auto !important; bottom: auto !important; margin: 0 !important; }
+  html body #configure.b16.b16.b16 .b14pv .b14pvt { max-width: none !important; width: auto !important; overflow: visible !important; }
+  html body #configure.b16.b16.b16 .b14pv .b14pvn { white-space: nowrap; overflow: visible !important; text-overflow: clip !important; max-width: none !important; }
+  html body #configure.b16.b16.b16 .b16hint { bottom: 92px; }
+  html body #configure.b16.b16.b16 #opts .b13next { height: 52px !important; }
+  html body #configure.b16.b16.b16 #opts .b13ft { margin-top: 18px !important; gap: 8px !important; }
+  html body #configure.b16.b16.b16 details.b16spec { margin-top: 16px; padding-top: 6px; }
+  html body #configure.b16.b16.b16 .b14sumu li button { padding: 4px 10px !important; }
+  html body #configure.b16.b16.b16 .b14sumu li b { font-size: .98rem !important; }
+  html body #configure.b16.b16.b16 .total .tot { margin-top: 6px !important; padding-top: 12px !important; }
+  html body #configure.b16.b16.b16 .total #reserve { height: 50px !important; margin-top: 12px !important; }
+  html body #configure.b16.b16.b16 .total .trustline { margin-top: 10px !important; font-size: .72rem !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 .b16hint { bottom: 58px; }
+  html body #configure.b16.b16.b16 .vpos { display: inline-flex !important; gap: 0 !important; padding: 3px !important; border: 1px solid rgba(243,236,224,.24) !important; border-radius: 999px !important; background: rgba(10,10,10,.55) !important; }
+  html body #configure.b16.b16.b16 .vpos .vp { height: 34px !important; padding: 0 16px !important; border-radius: 999px !important; font-size: .86rem !important; letter-spacing: .02em !important; text-transform: none !important; color: rgba(243,236,224,.72) !important; background: none !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 .vpos .vp.on { color: #f6f1e6 !important; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05)) !important; box-shadow: inset 0 0 0 1px rgba(243,236,224,.22); }
+  html body #configure.b16.b16.b16 .vpos .vp::after, html body #configure.b16.b16.b16 .vpos::after { display: none !important; }
+  html body #configure.b16.b16.b16 #opts .b13next { height: 54px !important; }
+}
+@media (min-width: 900px) {
+  html body #configure.b16 #stripwrap .b14foot .vt { position: absolute !important; top: 28px !important; right: 28px !important; left: auto !important; bottom: auto !important; width: auto !important; }
+  html body #configure.b16 #stripwrap .b14foot .vposwrap { position: absolute !important; top: auto !important; bottom: 28px !important; left: 50% !important; right: auto !important; width: auto !important; transform: translateX(-50%) !important; }
+  html body #configure.b16 #stripwrap .b14foot .b14tools { position: absolute !important; top: auto !important; bottom: 28px !important; right: 28px !important; left: auto !important; width: auto !important; }
+  html body #configure.b16 #stripwrap .b14foot .vpos .vp { height: 38px !important; padding: 0 22px !important; border-radius: 999px !important; font-size: .9rem !important; letter-spacing: .02em !important; text-transform: none !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16 #stripwrap .b14foot .vpos { display: inline-flex !important; padding: 3px !important; border: 1px solid rgba(243,236,224,.24) !important; border-radius: 999px !important; background: rgba(10,10,10,.55) !important; }
+  html body #configure.b16 #stripwrap .b14foot .vpos .vp { height: 34px !important; padding: 0 16px !important; border-radius: 999px !important; font-size: .86rem !important; letter-spacing: .02em !important; text-transform: none !important; }
+  html body #configure.b16 #stripwrap .b14foot .vpos .vp.on { color: #f6f1e6 !important; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05)) !important; box-shadow: inset 0 0 0 1px rgba(243,236,224,.22); }
+}
+@media (min-width: 900px) {
+  html body #configure.b16 #opts .b13ft { display: flex !important; flex-direction: column; gap: 6px !important; }
+  html body #configure.b16 #opts .b13ft .b13next { min-height: 0 !important; height: 52px !important; padding: 0 24px !important; margin: 0 !important; }
+  html body #configure.b16 #opts .b13ft .b13back[disabled], html body #configure.b16 #opts .b13ft .b13back[hidden], html body #configure.b16 #opts .b13ft .b13back[aria-hidden="true"] { display: none !important; }
+  html body #configure.b16 #opts .b13ft .b13back { align-self: flex-start; height: 30px !important; padding: 0 !important; background: none !important; border: 0 !important; font-size: .8rem !important; letter-spacing: .04em !important; text-transform: none !important; color: rgba(243,236,224,.65) !important; }
+  html body #configure.b16 #opts .b13t { font-size: clamp(1.9rem, 2.2vw, 2.4rem) !important; }
+  html body #configure.b16 .b14sumu li button { padding: 2px 10px !important; }
+  html body #configure.b16 #opts .chips.cuts .chip { min-height: 0 !important; }
+  html body #configure.b16 .total .tot { margin-top: 4px !important; padding-top: 10px !important; }
+  html body #configure.b16 .total #est { font-size: 1.45rem !important; }
+}
+@media (min-width: 900px) {
+  html body #configure.b16 .b14sum .b14sumu li, html body #configure.b16 .b14sum .b14sumu li button { min-height: 0 !important; height: auto !important; line-height: 1.25 !important; }
+  html body #configure.b16 .b14sum .b14sumu li button { padding: 4px 10px !important; }
+  html body #configure.b16 #opts .b13nav { padding-top: 0 !important; margin-top: 0 !important; }
+}
+@media (min-width: 900px) {
+  html body #configure.b16 #opts .b14sumu li button { padding: 3px 10px !important; min-height: 0 !important; }
+  html body #configure.b16 #opts .b14sumu li button span, html body #configure.b16 #opts .b14sumu li button b { line-height: 1.25 !important; margin: 0 !important; padding: 0 !important; }
+  html body #configure.b16 #opts .total #carat { display: none !important; }
+}
+@media (min-width: 900px) {
+  html body #configure.b16 #stripwrap .b14foot .vpos { display: inline-flex !important; gap: 0 !important; padding: 4px !important; border: 1px solid rgba(243,236,224,.24) !important; border-radius: 999px !important; background: rgba(10,10,10,.6) !important; width: auto !important; }
+  html body #configure.b16 #stripwrap .b14foot .vpos .vp { height: 36px !important; padding: 0 16px !important; font-size: .86rem !important; letter-spacing: .01em !important; color: rgba(243,236,224,.72) !important; background: none !important; border: 0 !important; }
+  html body #configure.b16 #stripwrap .b14foot .vpos .vp.on { color: #f6f1e6 !important; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05)) !important; box-shadow: inset 0 0 0 1px rgba(243,236,224,.22); }
+  html body #configure.b16 #stripwrap .b14foot .vpos .vp::after, html body #configure.b16 #stripwrap .b14foot .vpos::after, html body #configure.b16 #stripwrap .b14foot .vpos::before { display: none !important; }
+}
+@media (min-width: 900px) and (max-width: 1360px) { html body #configure.b16 #stripwrap .cacts .clink span { display: none; } html body #configure.b16 #stripwrap .cacts .clink { width: 42px; padding: 0 !important; justify-content: center; } }
+@media (max-width: 899px) {
+  html body #configure.b16 #opts .b13ft { display: flex !important; flex-direction: column; gap: 4px !important; }
+  html body #configure.b16 #opts .b13ft .b13next { min-height: 0 !important; height: 56px !important; padding: 0 24px !important; margin: 0 !important; }
+  html body #configure.b16 #opts .b13ft .b13back[disabled], html body #configure.b16 #opts .b13ft .b13back[hidden], html body #configure.b16 #opts .b13ft .b13back[aria-hidden="true"] { display: none !important; }
+  html body #configure.b16 #opts .b13ft .b13back { align-self: center; height: 32px !important; padding: 0 !important; background: none !important; border: 0 !important; font-size: .82rem !important; text-transform: none !important; letter-spacing: .02em !important; color: rgba(243,236,224,.65) !important; }
+  html body #configure.b16 #opts { padding-bottom: 6px !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16 #opts .b14sum { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+  html body #configure.b16 #opts .b14sumu { display: grid !important; grid-template-columns: 1fr !important; gap: 0 !important; }
+  html body #configure.b16 #opts .b14sumu li button { display: grid !important; grid-template-columns: 8.5em 1fr; align-items: baseline; width: 100%; padding: 4px 0 !important; text-align: start; background: none !important; border: 0 !important; min-height: 0 !important; }
+  html body #configure.b16 #opts .b14sumu li span { font-size: .62rem !important; letter-spacing: .26em !important; text-transform: uppercase; color: rgba(243,236,224,.62) !important; }
+  html body #configure.b16 #opts .b14sumu li b { font-size: .98rem !important; font-weight: 400 !important; color: #f6f1e6 !important; }
+  html body #configure.b16 .total .estk { display: none !important; }
+  html body #configure.b16 .total #est { font-size: 1.3rem !important; font-weight: 300 !important; }
+  html body #configure.b16 .total .pwrap { justify-content: flex-start !important; }
+  html body #configure.b16 .total #reserve { height: 50px !important; border-radius: 999px !important; background: none !important; border: 1px solid rgba(243,236,224,.6) !important; color: #f6f1e6 !important; letter-spacing: .16em !important; font-size: .7rem !important; justify-content: center !important; white-space: nowrap; }
+  html body #configure.b16 .total #reserve::after { display: none !important; }
+}

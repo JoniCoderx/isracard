@@ -118,7 +118,12 @@ if "pack" in STEPS:
         Image.open(os.path.join(WORK, f"hero{pid}.png")).save(os.path.join(OUT, f"hero-{pc}.webp"), quality=90, method=6)
         man["pieces"].append({"pid": pid, "id": pc, "box": [x0, y0, x1, y1], "patch": {"src": f"archive15/{LAY}/patch-{pc}.webp", "rect": [px0, py0, px1, py1], **({"srcX": f"archive15/{LAY}/patch-{pc}-x.webp"} if plateX else {})},
                               "hero": {"src": f"archive15/{LAY}/hero-{pc}.webp", "rect": [hx0, hy0, hx1, hy1]}})
-    for pid, pc in PRINTS.items(): man["prints"].append({"pid": pid, "piece": pc, "box": list(bbox(mask(pid)))})
+    meta = os.path.join(WORK, "final.json"); ph = json.load(open(meta)).get("photos", {}) if os.path.exists(meta) else {}
+    NAMES = {"ring": "icon", "pave": "soul", "knot": "moment"}
+    for pid, pc in PRINTS.items():
+        e = {"pid": pid, "piece": pc, "box": list(bbox(mask(pid)))}
+        if NAMES[pc] in ph: e["photo"] = ph[NAMES[pc]]   # the photograph's four corners, for a film laid in it
+        man["prints"].append(e)
     frames = sorted(f for f in os.listdir(SEQD) if f.endswith(".png"))
     if len(frames) != CFG["n"]: sys.exit(f"pack: {len(frames)} opening frames in {SEQD}, expected {CFG['n']}")
     od = os.path.join(OUT, "seq")
