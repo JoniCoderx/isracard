@@ -700,18 +700,19 @@ const T14 = (() => {
      pavé map (public/craft15/soul.json, the same data the house's Blender model is built from). The scroll draws the
      technical sketch and turns it, line for line, into the finished necklace; the pointer tilts the piece, which
      follows with weight and comes slowly back to rest. Without WebGL the house's render of SOUL stands in. */
-  const CRAFT = `<section id="craft14" class="cr15" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
-  <div class="cr15pin">
-    <div class="cr15stage" aria-hidden="true">
-      <img class="cr15still" src="cut8/soul-render-1728.webp" srcset="cut8/soul-render-1000.webp 1000w, cut8/soul-render-1728.webp 1728w" sizes="(max-width: 899px) 120vw, 90svh" width="1728" height="1728" alt="" decoding="async" loading="lazy">
-    </div>
-    <div class="cr15txt">
-      <p class="cr15k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-      <h2 class="cr15h" id="crh" data-en="From the &lt;br&gt;first line." data-he="מהקו &lt;br&gt;הראשון.">From the <br>first line.</h2>
-      <i class="cr15rule" aria-hidden="true"></i>
-      <p class="cr15s" data-en="A signature, brought to life." data-he="חתימה, שקמה לחיים.">A signature, brought to life.</p>
-    </div>
-    <p class="cr15sr">SOUL, the SILAVU knot in white gold and pavé diamonds on its chain, drawn first as a technical sketch and then made, as the page scrolls.</p>
+  /* Craftsmanship as a macro (owner, 10 Nov 2026): SOUL full-bleed and close, path traced from the house's own model
+     (website/tools/soul-seq.py, SOUL_STILL), the oversized SIGNATURE set translucent over it; on scroll the piece and the
+     word move at different speeds and the word fades (src/t14/t14.js, "sg16") */
+  const CRAFT = `<section id="craft14" class="sg16" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
+  <div class="sg16frame">
+    <picture class="sg16pic">
+      <source media="(max-width: 699px)" srcset="craft16/soul-macro-m-1080.webp 1080w, craft16/soul-macro-m-720.webp 720w" sizes="100vw" width="1080" height="1920">
+      <img src="craft16/soul-macro-d-1920.webp" srcset="craft16/soul-macro-d-1280.webp 1280w, craft16/soul-macro-d-1920.webp 1920w, craft16/soul-macro-d-2560.webp 2560w" sizes="100vw" width="2560" height="1440" loading="lazy" decoding="async" alt="SOUL up close: the SILAVU knot in white gold, set with pavé diamonds" data-alt-he="SOUL מקרוב: הקשר של SILAVU בזהב לבן, משובץ יהלומי פאווה">
+    </picture>
+    <div class="sg16shade" aria-hidden="true"></div>
+    <p class="sg16k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
+    <a class="sg16go" href="pieces/pave/" data-en="Discover the signature" data-he="לגלות את החתימה">Discover the signature</a>
+    <h2 class="sg16h" id="crh" data-en="Signature" data-he="חתימה">Signature</h2>
   </div>
 </section>
 `;

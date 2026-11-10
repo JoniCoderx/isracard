@@ -218,6 +218,15 @@ bpy.context.view_layer.update()
 for o in list(sc.collection.objects):   # and so do the lights, the cards and reflectors: the piece turns under them
     if o is wall or o.type in ("LIGHT", "EMPTY") or o in (refl, refl2) or o.name.startswith("flag"):
         if o.parent is ROOT: mw = o.matrix_world.copy(); o.parent = None; o.matrix_world = mw
+# a single still, for a page's macro close-up: SOUL_STILL="spin,tilt,mm_across,pan,rise" (the move's own terms),
+# SOUL_WH="W,H" for a frame of any shape; written to <outdir>/still.png
+if os.environ.get("SOUL_STILL"):
+    spin, tilt, fr, pan, rise = (float(v) for v in os.environ["SOUL_STILL"].split(","))
+    if os.environ.get("SOUL_WH"): sc.render.resolution_x, sc.render.resolution_y = (int(v) for v in os.environ["SOUL_WH"].split(","))
+    PIV.rotation_euler = (tilt, 0, spin); PIV.location = UP @ Vector((0, 0.2, DEPTH / 2))
+    dist = fr / 2 / math.tan(math.atan(18 / LENS)); tgt = UP @ Vector((pan, 0.2 + rise, DEPTH / 2))
+    co.location = tgt + Vector((0, -dist, 0)); co.rotation_euler = (math.pi / 2, 0, 0)
+    sc.render.filepath = f"{OUTDIR}/still.png"; bpy.ops.render.render(write_still=True); print("STILL DONE", flush=True); sys.exit(0)
 for f in range(F0, F1 + 1, STEP):
     t = f / (NF - 1)
     spin = keys(t, [(0, -0.45), (0.11, 1.15), (0.21, -1.1), (0.3, -0.35), (0.55, 0.5), (0.78, -0.2), (1, 0)])   # sways on its upright axis (never far enough to show its back: the mark is never seen mirrored)

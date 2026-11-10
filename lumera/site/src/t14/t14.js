@@ -1181,3 +1181,19 @@
   var go = function () { import("./archive15/player.js").then(function (m) { return m.mount(sec); }).catch(function (e) { sec.classList.add("ar15nojs"); if (window.console) console.warn("archive15", e); if (/ar15debug/.test(location.search)) { var d = document.body.appendChild(document.createElement("pre")); d.style.cssText = "position:fixed;left:6px;bottom:70px;z-index:99999;padding:6px;font:11px monospace;color:#fff;background:#900"; d.textContent = "archive15 failed: " + (e && (e.stack || e.message) || e); } }); };
   new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); go(); } }, { rootMargin: "150% 0px" }).observe(sec);
 })();
+
+/* SIGNATURE: the piece and the word at different speeds as the section passes, the word fading; native scrolling,
+   transforms and opacity only, nothing while the section is off screen or the reader prefers less motion */
+(function () {
+  var sec = document.querySelector("#craft14.sg16"); if (!sec || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var raf = 0, on = false;
+  function f() { raf = 0; var r = sec.getBoundingClientRect(), vh = innerHeight;
+    var p = Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh / 2) / ((vh + r.height) / 2)));   // -1 below … 0 centred … 1 above
+    sec.style.setProperty("--sgp", (p * r.height * .07).toFixed(1) + "px");
+    sec.style.setProperty("--sgt", (p * r.height * .2).toFixed(1) + "px");
+    sec.style.setProperty("--sgg", (p * r.height * .12).toFixed(1) + "px");
+    sec.style.setProperty("--sgo", Math.max(.12, Math.min(1, 1 - Math.max(0, -p) * 1.1)).toFixed(3)); }
+  new IntersectionObserver(function (es) { on = es[0].isIntersecting; if (on) f(); }, { rootMargin: "10% 0px" }).observe(sec);
+  addEventListener("scroll", function () { if (on && !raf) raf = requestAnimationFrame(f); }, { passive: true });
+  addEventListener("resize", function () { if (on) f(); }); f();
+})();
