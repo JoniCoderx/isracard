@@ -2454,3 +2454,11 @@ html body #configure.b16.b16.b16 details.b16spec > summary::-webkit-details-mark
   html body #configure.b16 .total #reserve { height: 50px !important; border-radius: 999px !important; background: none !important; border: 1px solid rgba(243,236,224,.6) !important; color: #f6f1e6 !important; letter-spacing: .16em !important; font-size: .7rem !important; justify-content: center !important; white-space: nowrap; }
   html body #configure.b16 .total #reserve::after { display: none !important; }
 }
+
+/* the film in the ICON print: laid in the photograph's corners by the player; it comes up softly once the drawer rests
+   open, toned to sit in the paper like the print around it */
+.ar15film { position: absolute; left: 0; top: 0; width: 420px; height: 540px; transform-origin: 0 0; object-fit: cover; object-position: 50% 30%; pointer-events: none;
+  opacity: 0; transition: opacity .9s ease; filter: saturate(.88) contrast(.96) brightness(.97) sepia(.06); }
+.ar15film.on { opacity: 1; }
+.ar15film[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .ar15film { transition: none; } }

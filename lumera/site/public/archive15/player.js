@@ -113,7 +113,36 @@ export async function mount(sec) {
     // the canvas no finer than the frames themselves (the composite scales it up): the fewest pixels to push per frame
     const dpr = Math.min(2, devicePixelRatio || 1), cw = Math.round(Math.min(R.w * dpr, M.seq.res[0]));
     if (cw !== cv.width) { cv.width = cw; cv.height = Math.round(cw * R.h / R.w); }
-    dirty = true;
+    placeFilm(); dirty = true;
+  }
+
+  /* ── the film in a print (owner, 10 Nov 2026): the ICON print's photograph comes alive with the house's own film of the
+     ring worn, laid exactly in the photograph's four corners (the manifest's "photo", from the scene's camera), shown
+     only while the drawer rests open; reduced motion keeps its first frame still */
+  let film = null, filmOn = false;
+  function homography(w, h, q) {   // the CSS matrix that carries a w x h box onto the quad q (tl, tr, br, bl)
+    const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q;
+    const dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3, dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3;
+    const den = dx1 * dy2 - dx2 * dy1, g = (dx3 * dy2 - dx2 * dy3) / den, hh = (dx1 * dy3 - dx3 * dy1) / den;
+    const a = x1 - x0 + g * x1, b = x3 - x0 + hh * x3, d = y1 - y0 + g * y1, e = y3 - y0 + hh * y3;
+    const m = [a / w, d / w, 0, g / w, b / h, e / h, 0, hh / h, 0, 0, 1, 0, x0, y0, 0, 1];
+    return "matrix3d(" + m.map(v => +v.toFixed(9)).join(",") + ")";
+  }
+  function placeFilm() {
+    const pr = M && (M.prints || []).find(p => p.piece === "ring" && p.photo);
+    if (!pr) { if (film) film.hidden = true; return; }
+    if (!film) {
+      film = document.createElement("video"); film.className = "ar15film"; film.muted = true; film.loop = true; film.playsInline = true; film.setAttribute("playsinline", "");
+      film.setAttribute("aria-hidden", "true"); film.preload = "none"; film.poster = "v7/hand-v.jpg";
+      film.innerHTML = '<source src="v7/hand-v.mp4" type="video/mp4">'; stage.insertBefore(film, dim && dim.parentNode === stage ? dim : null);
+    }
+    film.hidden = false; const k = R.w / M.res[0], q = pr.photo.map(([x, y]) => [x * k, y * k]);
+    film.style.transform = homography(420, 540, q);
+  }
+  function showFilm(on) {
+    if (!film || on === filmOn) return; filmOn = on; film.classList.toggle("on", on);
+    if (on && !reduce) { if (film.preload === "none") { film.preload = "auto"; film.load(); } const p = film.play(); if (p && p.catch) p.catch(() => {}); }
+    else film.pause();
   }
 
   /* ── the scroll: 0 closed … 1 open; the last part of the runway holds the drawer open for looking */
@@ -155,6 +184,7 @@ export async function mount(sec) {
       }
     }
     const s = reduce ? 1 : clamp((t - .93) / .07, 0, 1); still.style.opacity = s;
+    showFilm(t > .985 && near);
     const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (!open) { hover(null); if (cur) close(true); home.slice().forEach(land); stage.querySelectorAll(".ar15hero, .ar15patch").forEach(e => e.remove()); } }
     if (cue) cue.style.opacity = String(clamp(1 - t * 4, 0, 1));
   }
