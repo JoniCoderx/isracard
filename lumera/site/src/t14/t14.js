@@ -1196,17 +1196,12 @@
     sec.style.setProperty("--sgr", (p * -9).toFixed(2) + "deg");              // the piece turns as the page passes
     sec.style.setProperty("--sgs", (1.1 + Math.abs(p) * .06).toFixed(3));      // and stays large enough to fill the frame
     sec.style.setProperty("--sgm", (50 + p * 75).toFixed(1) + "%");            // the reflection runs across the glass word
-    // the film: in the letters as the section comes to the middle, then the letters open until it fills the frame
-    var ss = function (a, b, x) { x = Math.max(0, Math.min(1, (x - a) / (b - a))); return x * x * (3 - 2 * x); };
-    var room = Math.max(1, vh - r.height), a = r.top / room;   // 1: the section just whole at the foot … 0: whole at the top
-    var inL = 1 - ss(.85, 1.35, a), open = 1 - ss(.12, .72, a);
-    sec.style.setProperty("--sgv", inL.toFixed(3));
-    sec.style.setProperty("--sgk", (1 + open * 2.2).toFixed(3)); sec.style.setProperty("--sgb", (1 - ss(.15, .85, open)).toFixed(3));
-    sec.style.setProperty("--sgpo", (1 - open * .92).toFixed(3));
-    sec.style.setProperty("--sgo", (Math.max(.12, Math.min(1, 1 - Math.max(0, -p) * 1.1)) * (1 - inL * .55) * Math.max(0, 1 - open * 4)).toFixed(3));
-    var vid = sec.querySelector(".sg16film video");
-    if (vid) { if (inL > .01 && on) { if (!vid.dataset.ready) { var m = innerWidth < 700; vid.src = m ? vid.dataset.srcM : vid.dataset.src; if (m) vid.poster = vid.dataset.posterM; vid.dataset.ready = 1; }
-      if (vid.paused) { var pr = vid.play(); if (pr && pr.catch) pr.catch(function () {}); } } else if (!vid.paused) vid.pause(); } }
+  }
+  /* the film of SOUL worn, under the piece: it plays only while it is on screen */
+  var reel = sec.querySelector(".sg16reel video");
+  if (reel) new IntersectionObserver(function (es) { var v = es[0].isIntersecting;
+    if (v) { if (!reel.dataset.ready) { var m = innerWidth < 700; reel.src = m ? reel.dataset.srcM : reel.dataset.src; if (m) reel.poster = reel.dataset.posterM; reel.dataset.ready = 1; }
+      var pr = reel.play(); if (pr && pr.catch) pr.catch(function () {}); } else reel.pause(); }, { threshold: .25 }).observe(reel);
   /* the letters open from inside a solid stroke (the stem of the T, or the word's last letter), so the film ends whole */
   function anchor() { var sp = sec.querySelector(".sg16knock span"); if (!sp || !sp.firstChild) return;
     var t = sp.firstChild.textContent, i = t.toUpperCase().lastIndexOf("T"); if (i < 0) i = Math.max(0, t.length - 1);

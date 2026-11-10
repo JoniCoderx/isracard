@@ -710,11 +710,14 @@ const T14 = (() => {
       <img src="craft16/soul-macro-d-1920.webp" srcset="craft16/soul-macro-d-1280.webp 1280w, craft16/soul-macro-d-1920.webp 1920w, craft16/soul-macro-d-2560.webp 2560w" sizes="100vw" width="2560" height="1440" loading="lazy" decoding="async" alt="SOUL up close: the SILAVU knot in white gold, set with pavé diamonds" data-alt-he="SOUL מקרוב: הקשר של SILAVU בזהב לבן, משובץ יהלומי פאווה">
     </picture>
     <div class="sg16shade" aria-hidden="true"></div>
-    <div class="sg16film" aria-hidden="true"><video muted loop playsinline preload="none" poster="img/hero-lumiere-1920.jpg" data-src="v/hero-lumiere.mp4" data-src-m="v/hero-lumiere-v.mp4" data-poster-m="img/hero-lumiere-v-1080.jpg"></video><div class="sg16knock"><span data-en="Signature" data-he="חתימה">Signature</span></div></div>
     <p class="sg16k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
     <a class="sg16go" href="pieces/pave/" data-en="Discover the signature" data-he="לגלות את החתימה">Discover the signature</a>
     <h2 class="sg16h" id="crh" data-en="Signature" data-he="חתימה">Signature</h2>
   </div>
+  <figure class="sg16reel">
+    <video muted loop playsinline preload="none" poster="img/hero-lumiere-1920.jpg" data-src="v/hero-lumiere.mp4" data-src-m="v/hero-lumiere-v.mp4" data-poster-m="img/hero-lumiere-v-1080.jpg" aria-label="SOUL, worn" data-aria-he="SOUL, על העור"></video>
+    <figcaption><span data-en="SOUL, worn" data-he="SOUL, על העור">SOUL, worn</span></figcaption>
+  </figure>
 </section>
 `;
   const ABOUT = `<section id="about14" data-n="05" data-title-en="The founder" data-title-he="המייסד" aria-labelledby="abh">

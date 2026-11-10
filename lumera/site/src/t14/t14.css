@@ -2528,3 +2528,41 @@ html[data-ns] .sg16knock span { text-transform: none; }
   .sg16h { transform: none !important; }
   .sg16go { bottom: auto !important; top: 52px; }
 }
+
+/* SIGNATURE, round 4 (owner, 10 Nov 2026: "Clean: pendant, then film"): the word solid ivory over the piece, as in the
+   house's mockup, no glass and no blending; the film of SOUL worn follows on its own, full width, nothing laid over it */
+html body #craft14.sg16 .sg16h { color: #f4efe5 !important; -webkit-text-fill-color: #f4efe5 !important; background: none !important; -webkit-text-stroke: 0 !important;
+  filter: none !important; text-shadow: 0 10px 40px rgba(0,0,0,.45); opacity: var(--sgo, 1); }
+html body #craft14.sg16 .sg16pic { opacity: 1 !important; }
+html body #craft14.sg16 .sg16reel { position: relative; margin: 0; height: clamp(420px, 52vw, 860px); overflow: hidden; background: #000; }
+html body #craft14.sg16 .sg16reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; display: block; }
+html body #craft14.sg16 .sg16reel::before { content: ""; position: absolute; z-index: 1; left: 0; right: 0; top: 0; height: 18%; background: linear-gradient(#000, rgba(0,0,0,0)); pointer-events: none; }
+html body #craft14.sg16 .sg16reel figcaption { position: absolute; z-index: 2; left: clamp(20px, 4vw, 64px); bottom: clamp(18px, 3vw, 44px); font-size: .66rem; letter-spacing: .42em; text-transform: uppercase; color: rgba(255,255,255,.86); text-shadow: 0 1px 12px rgba(0,0,0,.35); }
+html[data-ns] body #craft14.sg16 .sg16reel figcaption { letter-spacing: 0; }
+html[dir="rtl"] body #craft14.sg16 .sg16reel figcaption { left: auto; right: clamp(20px, 4vw, 64px); }
+@media (max-width: 699px) { html body #craft14.sg16 .sg16reel { height: auto; aspect-ratio: 4 / 5; } }
+
+/* the hero title (owner, 10 Nov 2026: the gold wash read as a filter): back to the single light that crosses the words as
+   they arrive, nothing repeating, no tint */
+html body #hero #hcap.hcap h1.h.in { animation: none !important; filter: none !important; }
+html body #hero #hcap.hcap .h.in .w > span { animation: h14sweep 1.1s cubic-bezier(.4,0,.2,1) 1 both !important; }
+html body #hero #hcap.hcap .h .w > span { background-image: linear-gradient(100deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.95) 50%, rgba(255,255,255,0) 62%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, rgba(0,0,0,.05) 1px 2px), linear-gradient(180deg, #f6f7f8 0%, #d9dcdf 38%, #f1f2f3 55%, #c3c7cb 100%) !important; }
+html body #hero #hcap.hcap .h.in .w:nth-of-type(1) > span { animation-delay: 1.0s !important; } html body #hero #hcap.hcap .h.in .w:nth-of-type(2) > span { animation-delay: 1.18s !important; }
+html body #hero #hcap.hcap .h.in .w:nth-of-type(3) > span { animation-delay: 1.36s !important; } html body #hero #hcap.hcap .h.in em .w > span { animation-delay: 1.54s !important; }
+
+/* the collections, tidied: one voice for the words, the knot larger and alone (its hint gone), the column calm */
+@media (min-width: 900px) {
+  html body .c15 .c14intro .c14lead, html body .c15 .c14intro .c14more { font-size: .95rem !important; line-height: 1.7 !important; color: rgba(243,236,224,.78) !important; max-width: 34ch; }
+  html body .c15 .c14intro .c14lead { margin-top: 0 !important; }
+  html body .c15 .c14intro .c14more { margin-top: 12px !important; }
+  html body .c15 .c14intro .c14sym.gl { min-height: 220px !important; max-height: 320px !important; }
+}
+html body .c14sym .c14hint { display: none !important; }
+@media (max-width: 899px) {
+  html body .c15 .c14intro .c14more { font-size: .9rem; line-height: 1.7; max-width: 30ch; color: rgba(243,236,224,.72); }
+}
+
+/* the builder: its steps always clear of the fixed header when the page arrives at it */
+html body #configure.b16 { scroll-margin-top: 86px; }
+@media (min-width: 900px) { html body #configure.b16 .b14top { padding-top: 14px !important; } }
