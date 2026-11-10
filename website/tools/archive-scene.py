@@ -93,7 +93,32 @@ def flat(name, col, rough=.8):
     m, b, t = principled(name); b.inputs["Base Color"].default_value = (*col, 1); b.inputs["Roughness"].default_value = rough; return m
 # ARCH_SUEDE="r,g,b" (linear): another colour for the lining and its welt (a colour study; the default is the approved taupe)
 LIN = tuple(float(v) for v in os.environ["ARCH_SUEDE"].split(",")) if os.environ.get("ARCH_SUEDE") else (.25, .2, .152)
+def marble(name, base, base2, vein, vein2, scale=7.0):
+    """polished stone: a warped field of veins (two families, fine and broad) over a cloudy ground; ARCH_MARBLE study"""
+    m, b, t = principled(name); N, L = t.nodes, t.links
+    b.inputs["Roughness"].default_value = .16; b.inputs["Specular IOR Level"].default_value = .45
+    tc = N.new("ShaderNodeTexCoord")
+    warp = N.new("ShaderNodeTexNoise"); warp.inputs["Scale"].default_value = 4.5; warp.inputs["Detail"].default_value = 12; warp.inputs["Roughness"].default_value = .62; L.new(tc.outputs["Object"], warp.inputs[0])
+    sub = N.new("ShaderNodeVectorMath"); sub.operation = "SUBTRACT"; sub.inputs[1].default_value = (.5, .5, .5); L.new(warp.outputs["Color"], sub.inputs[0])
+    sc = N.new("ShaderNodeVectorMath"); sc.operation = "SCALE"; sc.inputs["Scale"].default_value = .09; L.new(sub.outputs[0], sc.inputs[0])
+    wp = N.new("ShaderNodeVectorMath"); wp.operation = "ADD"; L.new(tc.outputs["Object"], wp.inputs[0]); L.new(sc.outputs[0], wp.inputs[1])
+    def veins(sc_, dist, lo, hi, rot):
+        mp = N.new("ShaderNodeMapping"); mp.inputs["Rotation"].default_value = (0, 0, rot); L.new(wp.outputs[0], mp.inputs[0])
+        w = N.new("ShaderNodeTexWave"); w.wave_type = "BANDS"; w.bands_direction = "X"; w.inputs["Scale"].default_value = sc_; w.inputs["Distortion"].default_value = dist; w.inputs["Detail"].default_value = 10; w.inputs["Detail Roughness"].default_value = .72
+        L.new(mp.outputs[0], w.inputs[0])
+        r = N.new("ShaderNodeMapRange"); r.inputs["From Min"].default_value = lo; r.inputs["From Max"].default_value = hi; r.inputs["To Min"].default_value = 1; r.inputs["To Max"].default_value = 0; r.clamp = True
+        L.new(w.outputs["Fac"], r.inputs[0]); return r
+    v1, v2 = veins(scale, 11, .0, .05, .7), veins(scale * 2.6, 16, .0, .025, -.4)
+    cl = N.new("ShaderNodeTexNoise"); cl.inputs["Scale"].default_value = 9; cl.inputs["Detail"].default_value = 6; L.new(wp.outputs[0], cl.inputs[0])
+    g = N.new("ShaderNodeMix"); g.data_type = "RGBA"; g.inputs[6].default_value = (*base, 1); g.inputs[7].default_value = (*base2, 1); L.new(cl.outputs["Fac"], g.inputs[0])
+    a = N.new("ShaderNodeMix"); a.data_type = "RGBA"; a.inputs[7].default_value = (*vein2, 1); L.new(v2.outputs[0], a.inputs[0]); L.new(g.outputs[2], a.inputs[6])
+    c = N.new("ShaderNodeMix"); c.data_type = "RGBA"; c.inputs[7].default_value = (*vein, 1); L.new(v1.outputs[0], c.inputs[0]); L.new(a.outputs[2], c.inputs[6])
+    L.new(c.outputs[2], b.inputs["Base Color"]); return m
+MARBLES = {"verde": ((.004, .022, .013), (.011, .046, .028), (.26, .32, .27), (.04, .11, .068)),
+           "nero": ((.006, .006, .007), (.015, .015, .017), (.34, .34, .33), (.07, .07, .072)),
+           "calacatta": ((.62, .6, .565), (.7, .68, .64), (.2, .18, .15), (.42, .33, .2))}
 LAC, SUEDE, STANDM, PIPE, STEEL, CAVE = lacquer(), suede("suede", LIN), suede("stand", (.045, .032, .025), .55, .1), suede("piping", (LIN[0] * 1.04, LIN[1] * 1.025, LIN[2] * 1.02), .7, .08), steel(), flat("cave", (.003, .0025, .002), .9)
+if os.environ.get("ARCH_MARBLE"): SUEDE = PIPE = marble("marble", *MARBLES[os.environ["ARCH_MARBLE"]])
 GOLD, _gb, _ = principled("white gold"); _gb.inputs["Base Color"].default_value = (.87, .862, .845, 1); _gb.inputs["Metallic"].default_value = 1; _gb.inputs["Roughness"].default_value = .075
 GOLDP, _gp, _ = principled("white gold polished"); _gp.inputs["Base Color"].default_value = (.88, .872, .855, 1); _gp.inputs["Metallic"].default_value = 1; _gp.inputs["Roughness"].default_value = .05
 DIA, _d, _ = principled("diamond"); _d.inputs["Base Color"].default_value = (1, 1, 1, 1); _d.inputs["Roughness"].default_value = 0; _d.inputs["IOR"].default_value = 2.417; _d.inputs["Transmission Weight"].default_value = 1
