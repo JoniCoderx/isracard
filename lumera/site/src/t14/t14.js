@@ -1192,7 +1192,10 @@
     sec.style.setProperty("--sgp", (p * r.height * .07).toFixed(1) + "px");
     sec.style.setProperty("--sgt", (p * r.height * .2).toFixed(1) + "px");
     sec.style.setProperty("--sgg", (p * r.height * .12).toFixed(1) + "px");
-    sec.style.setProperty("--sgo", Math.max(.12, Math.min(1, 1 - Math.max(0, -p) * 1.1)).toFixed(3)); }
+    sec.style.setProperty("--sgo", Math.max(.12, Math.min(1, 1 - Math.max(0, -p) * 1.1)).toFixed(3));
+    sec.style.setProperty("--sgr", (p * -9).toFixed(2) + "deg");              // the piece turns as the page passes
+    sec.style.setProperty("--sgs", (1.1 + Math.abs(p) * .06).toFixed(3));      // and stays large enough to fill the frame
+    sec.style.setProperty("--sgm", (50 + p * 75).toFixed(1) + "%"); }          // the reflection runs across the glass word
   new IntersectionObserver(function (es) { on = es[0].isIntersecting; if (on) f(); }, { rootMargin: "10% 0px" }).observe(sec);
   addEventListener("scroll", function () { if (on && !raf) raf = requestAnimationFrame(f); }, { passive: true });
   addEventListener("resize", function () { if (on) f(); }); f();

@@ -2462,3 +2462,50 @@ html body #configure.b16.b16.b16 details.b16spec > summary::-webkit-details-mark
 .ar15film.on { opacity: 1; }
 .ar15film[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .ar15film { transition: none; } }
+
+/* SIGNATURE, round 2 (owner, 10 Nov 2026): much shorter; the word as mirror glass, a reflection travelling across it
+   with the scroll; the piece turns slowly as the page passes (overscaled so its corners never show) */
+.sg16frame { height: clamp(380px, 42vw, 640px) !important; min-height: 0 !important; }
+.sg16pic { inset: -14% -10% !important; transform: translate3d(0, var(--sgp, 0px), 0) rotate(var(--sgr, 0deg)) scale(var(--sgs, 1.06)) !important; transform-origin: 50% 50%; }
+.sg16h { color: transparent !important; -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(100deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.16) 36%, rgba(255,255,255,.55) 44%, rgba(255,255,255,.98) 48.5%, rgba(214,222,232,.7) 51%, rgba(255,255,255,.9) 53%, rgba(255,255,255,.16) 62%, rgba(255,255,255,.16) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 55%, rgba(255,255,255,.18));
+  background-size: 320% 100%, 100% 100%; background-repeat: no-repeat; background-position: var(--sgm, 50%) 0, 0 0;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-stroke: .8px rgba(255,255,255,.55) !important;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.35)); font-size: 15.2vw !important; }
+.sg16go { bottom: calc(15.2vw * .86 + clamp(14px, 2vw, 30px)) !important; }
+@media (max-width: 699px) {
+  .sg16frame { height: clamp(300px, 92vw, 420px) !important; }
+  .sg16h { font-size: 16.4vw !important; -webkit-text-stroke-width: .6px !important; }
+  .sg16go { bottom: calc(16.4vw * .86 + 18px) !important; }
+}
+@media (prefers-reduced-motion: reduce) { .sg16pic { transform: scale(1.06) !important; } }
+
+/* ════════ fixes (owner, 10 Nov 2026: "a lot of bugs") ════════ */
+@media (min-width: 900px) {
+  /* the stone: a true circle, its name clear of it */
+  html body #configure.b16 #stripwrap .b14pv .b14pvpic { flex: 0 0 auto !important; width: clamp(96px, 8vw, 132px) !important; height: auto !important; aspect-ratio: 1 / 1 !important; min-width: 0 !important; min-height: 0 !important; max-height: none !important; display: grid !important; place-items: center; }
+  html body #configure.b16 #stripwrap .b14pv .b14pvpic img { width: 74% !important; height: 74% !important; margin: 0 !important; }
+  html body #configure.b16 #stripwrap .b14pv .b14pvpic i { display: none !important; }
+  html body #configure.b16 #stripwrap .b14pv { gap: 24px !important; }
+  html body #configure.b16 #stripwrap .b14pv .b14pvt { position: static !important; margin: 0 !important; transform: none !important; }
+  /* the picture's controls in two rows, as drawn: the views above, the actions and tools below; nothing can overlap */
+  html body #configure.b16 #stripwrap .b14foot .vposwrap { bottom: 90px !important; }
+  html body #configure.b16 .b16hint { bottom: 146px !important; }
+  /* the panel: the title on one line where it can, the list never broken, the enquiry always whole */
+  html body #configure.b16 #opts .b13t { font-size: clamp(1.7rem, 2.05vw, 2.4rem) !important; white-space: nowrap; }
+  html body #configure.b16 #opts .b14sumu li button { grid-template-columns: minmax(6.5em, 38%) 1fr !important; }
+  html body #configure.b16 #opts .b14sumu li b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html body #configure.b16 .total #reserve { letter-spacing: .16em !important; font-size: .7rem !important; padding: 0 14px !important; white-space: nowrap; overflow: hidden; }
+}
+/* the collections: the title sized to its own column (it can never run into the cards), the intro's top on the cards'
+   top line, the way to the collection on the strip's foot line */
+@media (min-width: 900px) {
+  html body .c15 .c14intro { container-type: inline-size; padding-top: 0 !important; padding-bottom: 76px !important; align-self: stretch; }
+  html body .c15 .c14h { font-size: clamp(1.9rem, 2.6vw, 3.4rem) !important; }
+  @supports (font-size: 1cqi) { html body .c15 .c14h { font-size: min(11.2cqi, 3.7rem) !important; } }
+  html body .c15 .c14intro .c14eyb { margin-top: 0 !important; }
+  html body .c15 .c15all { grid-row: 2 !important; grid-column: 1 !important; align-self: end !important; justify-self: start !important; margin: 0 !important; position: relative; z-index: 2; }
+  html body .c15 .c14wrap { grid-template-rows: auto auto !important; }
+  html body .c15 .c14intro .c14sym.gl { min-height: 170px !important; max-height: 300px !important; margin: 18px 0 0 !important; }
+}
