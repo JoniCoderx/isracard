@@ -2690,3 +2690,7 @@ html body a.c16it:hover .c16ln, html body a.c16it:focus-visible .c16ln { transfo
 html body .c16ln::before { display: none !important; }
 html body .c16ln::after { top: -1px !important; bottom: -1px !important; width: 30% !important; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,1) 50%, rgba(255,255,255,0)) !important; filter: blur(.4px); }
 @media (prefers-reduced-motion: reduce) { html body .c16ln { transition: none !important; } html body a.c16it:hover .c16w { transform: none !important; } }
+/* the film whole: no fade over its top; a little taller, so the word sits in it with room all round */
+html body #craft14.sg16 .sg16reel::before { display: none !important; }
+html body #craft14.sg16 .sg16reel { height: clamp(480px, 56vw, 920px) !important; }
+@media (max-width: 699px) { html body #craft14.sg16 .sg16reel { height: auto !important; aspect-ratio: 4 / 5; } }

@@ -1201,7 +1201,10 @@
   var reel = sec.querySelector(".sg16reel > video"), twin = null, gcv = sec.querySelector(".sg16glass canvas"), gctx = gcv && gcv.getContext("2d"), fig = sec.querySelector(".sg16reel"), lens = sec.querySelector(".sg16lens");
   /* the word's place, in the film's own pixels: one size for the clip, the rim and the shadow, so they meet exactly */
   function fitWord() { if (!fig || !lens) return; var w = fig.clientWidth, h = fig.clientHeight, phone = w < 700;
-    var fs = Math.round(w * (phone ? .255 : .235)), y = Math.round(h * (phone ? .6 : .64) + fs * .35), fam = getComputedStyle(sec.querySelector(".sg16h") || fig).fontFamily;
+    /* the word sized to the film both ways (never wider than 84% of it, its capitals never taller than 46%) and set in
+       its exact middle: the capitals' height in this face is about .7 of the size, so the baseline sits .35 below centre */
+    var fs = Math.round(Math.min(w * (phone ? .25 : .215), h * .46 / .7)), y = Math.round(h / 2 + fs * .35), fam = getComputedStyle(sec.querySelector(".sg16h") || fig).fontFamily;
+    fig.style.setProperty("--capT", ((h / 2 - fs * .35) / h).toFixed(4)); fig.style.setProperty("--capB", ((h / 2 + fs * .35) / h).toFixed(4));
     lens.setAttribute("viewBox", "0 0 " + w + " " + h);
     [].forEach.call(sec.querySelectorAll(".sg16t"), function (t) { t.setAttribute("x", w / 2); t.setAttribute("y", y); t.setAttribute("font-size", fs); t.style.fontFamily = fam; }); }
   fitWord(); addEventListener("resize", fitWord); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWord);
@@ -1321,7 +1324,7 @@
      brighter, as through a clear slab; a fine bend at the rims, a soft sheen over the tops, a light that barely moves */
   var FS = [
     "precision mediump float;",
-    "uniform sampler2D uV, uM, uH; uniform vec2 uRes; uniform float uVA; uniform vec2 uTilt; uniform float uQ; uniform vec2 uLight;",
+    "uniform sampler2D uV, uM, uH; uniform vec2 uRes; uniform float uVA; uniform vec2 uTilt; uniform float uQ; uniform vec2 uLight; uniform float uCapT, uCapB;",
     "varying vec2 vUv;",
     "vec2 cover(vec2 uv){ float ca = uRes.x / uRes.y; vec2 s = ca > uVA ? vec2(1., uVA / ca) : vec2(ca / uVA, 1.); uv = (uv - .5) * s + .5;",
     "  uv.y = uv.y + (.38 - .5) * (1. - s.y); return clamp(uv, .001, .999); }",
@@ -1337,7 +1340,7 @@
     /* inside: the film, a touch magnified and brighter, shifted a few pixels as through a clear slab */
     "  vec2 b = (vUv - .5) / 1.08 + .5 + vec2(.009, 0.) + uTilt * .005 + vec2(uQ * .01, 0.);",
     "  vec3 col = texture2D(uV, cover(b)).rgb * 1.08;",
-    "  float sheen = smoothstep(.6, .42, vUv.y) * .2;",
+    "  float sheen = smoothstep(uCapB, uCapT, vUv.y) * .2;",
     "  float hx = texture2D(uH, vUv + vec2(px.x * 3., 0.)).r - texture2D(uH, vUv - vec2(px.x * 3., 0.)).r;",
     "  float hy = texture2D(uH, vUv + vec2(0., px.y * 3.)).r - texture2D(uH, vUv - vec2(0., px.y * 3.)).r;",
     "  vec3 N = normalize(vec3(-vec2(hx, hy) * 10., 1.)); vec3 L = normalize(vec3(uLight, .9));",
@@ -1351,7 +1354,7 @@
   gl.useProgram(pr);
   var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   var ap = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
-  var U = {}; ["uV", "uM", "uH", "uRes", "uVA", "uTilt", "uQ", "uLight"].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+  var U = {}; ["uV", "uM", "uH", "uRes", "uVA", "uTilt", "uQ", "uLight", "uCapT", "uCapB"].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
   function tex(unit) { var t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; }
@@ -1373,7 +1376,7 @@
     else { var sm = document.createElement("canvas"), k = 8; sm.width = W / k; sm.height = H / k; sm.getContext("2d").drawImage(a, 0, 0, W / k, H / k); d.imageSmoothingEnabled = true; d.drawImage(sm, 0, 0, W, H); }
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, tM); gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, a);
     gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, tH); gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, bl);
-    gl.uniform2f(U.uRes, W, H); ready = true; draw();
+    gl.uniform2f(U.uRes, W, H); gl.uniform1f(U.uCapT, +fig.style.getPropertyValue("--capT") || .4); gl.uniform1f(U.uCapB, +fig.style.getPropertyValue("--capB") || .6); ready = true; draw();
   }
   /* the light: the pointer over the film (or the phone's tilt) moves where the highlight falls and how the glass bends */
   var tx = 0, ty = 0, gx = 0, gy = 0, q = 0, raf = 0, vis = false, small = null, sctx = null;
