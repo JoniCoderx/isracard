@@ -2230,3 +2230,12 @@ html body .c14more { margin: 18px 0 0; max-width: 34ch; font-size: .92rem; line-
   html body .c15 .c15all { grid-row: 3 !important; margin-top: 0 !important; }
   html body .c15 .c14intro .c14sym.gl { min-height: 210px !important; max-height: 380px !important; margin: 22px 0 0 !important; }
 }
+
+/* the hero title, a light passing (owner, 10 Nov 2026): the light that crosses the words once as they arrive now
+   comes back every few seconds, warmer, running word to word, as light runs along polished metal */
+html body #hero #hcap.hcap .h .w > span { background-image: linear-gradient(100deg, rgba(255,250,236,0) 30%, rgba(255,246,224,.9) 43%, rgba(240,204,138,1) 50%, rgba(255,246,224,.9) 57%, rgba(255,250,236,0) 70%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, rgba(0,0,0,.05) 1px 2px),
+    linear-gradient(180deg, #f6f7f8 0%, #d9dcdf 38%, #f1f2f3 55%, #c3c7cb 100%) !important; }
+html body #hero #hcap.hcap .h.in .w > span { animation: h14gleam 6.5s cubic-bezier(.45,.05,.25,1) infinite both !important; }
+@keyframes h14gleam { 0% { background-position: 150% 0, 0 0, 0 0; } 26%, 100% { background-position: -50% 0, 0 0, 0 0; } }
+@media (prefers-reduced-motion: reduce) { html body #hero #hcap.hcap .h.in .w > span { animation: none !important; } }
