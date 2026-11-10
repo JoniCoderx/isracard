@@ -1316,26 +1316,32 @@
   var gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false }); if (!gl) return;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var VS = "attribute vec2 p; varying vec2 vUv; void main(){ vUv = vec2(p.x * .5 + .5, .5 - p.y * .5); gl_Position = vec4(p, 0., 1.); }";
+  /* option 4 (owner, 10 Nov 2026): subtle clear glass. Inside the letters the film itself, a touch magnified and
+     brighter, as through a clear slab; a fine bend at the rims, a soft sheen over the tops, a light that barely moves */
   var FS = [
     "precision mediump float;",
     "uniform sampler2D uV, uM, uH; uniform vec2 uRes; uniform float uVA; uniform vec2 uTilt; uniform float uQ; uniform vec2 uLight;",
     "varying vec2 vUv;",
     "vec2 cover(vec2 uv){ float ca = uRes.x / uRes.y; vec2 s = ca > uVA ? vec2(1., uVA / ca) : vec2(ca / uVA, 1.); uv = (uv - .5) * s + .5;",
-    "  uv.y = uv.y * 1. + (.38 - .5) * (1. - s.y); uv = (uv - vec2(.5, .45)) * .56 + vec2(.56, .5); uv.x = 1. - uv.x; return clamp(uv, .001, .999); }",
+    "  uv.y = uv.y + (.38 - .5) * (1. - s.y); return clamp(uv, .001, .999); }",
     "void main(){",
-    "  float m = texture2D(uM, vUv).r; if (m < .004) { gl_FragColor = vec4(0.); return; }",
-    "  vec2 px = 1. / uRes;",
+    "  vec2 px = 1. / uRes; float m = texture2D(uM, vUv).r;",
+    "  if (m < .004) {",
+    /* outside the glass: only its soft shadow, cast a little below the letters (from the blurred word) */
+    "    float sh = texture2D(uH, vUv - vec2(0., px.y * 14.)).r * .22; gl_FragColor = vec4(0., 0., 0., sh); return; }",
+    /* the rim: the crisp letters' own edge, a hairline */
+    "  float ex = texture2D(uM, vUv + vec2(px.x * 1.5, 0.)).r - texture2D(uM, vUv - vec2(px.x * 1.5, 0.)).r;",
+    "  float ey = texture2D(uM, vUv + vec2(0., px.y * 1.5)).r - texture2D(uM, vUv - vec2(0., px.y * 1.5)).r;",
+    "  float rim = clamp(length(vec2(ex, ey)) * 1.2, 0., 1.);",
+    /* inside: the film, a touch magnified and brighter, shifted a few pixels as through a clear slab */
+    "  vec2 b = (vUv - .5) / 1.08 + .5 + vec2(.009, 0.) + uTilt * .005 + vec2(uQ * .01, 0.);",
+    "  vec3 col = texture2D(uV, cover(b)).rgb * 1.08;",
+    "  float sheen = smoothstep(.6, .42, vUv.y) * .2;",
     "  float hx = texture2D(uH, vUv + vec2(px.x * 3., 0.)).r - texture2D(uH, vUv - vec2(px.x * 3., 0.)).r;",
     "  float hy = texture2D(uH, vUv + vec2(0., px.y * 3.)).r - texture2D(uH, vUv - vec2(0., px.y * 3.)).r;",
-    "  vec2 n = vec2(hx, hy); float h = texture2D(uH, vUv).r;",
-    "  vec2 off = -n * .42 + uTilt * .022 + vec2(uQ * .035, uQ * -.012);",
-    "  vec2 b = vUv + (vUv - .5) * (-.05 * h);",
-    "  vec3 col = vec3(texture2D(uV, cover(b + off * 1.12)).r, texture2D(uV, cover(b + off)).g, texture2D(uV, cover(b + off * .88)).b);",
-    "  col = col * 1.04 + .025;",
-    "  vec3 N = normalize(vec3(-n * 22., 1.)); vec3 L = normalize(vec3(uLight, .75));",
-    "  float spec = pow(max(dot(N, L), 0.), 36.) * .7;",
-    "  float rim = clamp(length(n) * 9., 0., 1.); rim = rim * rim;",
-    "  col += spec + rim * .2 + (1. - h) * .05;",
+    "  vec3 N = normalize(vec3(-vec2(hx, hy) * 10., 1.)); vec3 L = normalize(vec3(uLight, .9));",
+    "  float spec = pow(max(dot(N, L), 0.), 60.) * .16;",
+    "  col += sheen + spec + rim * .85;",
     "  gl_FragColor = vec4(min(col, 1.) * m, m);",
     "}"].join("\n");
   function sh(t, src) { var o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; }
