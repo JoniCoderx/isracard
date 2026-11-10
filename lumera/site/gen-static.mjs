@@ -671,6 +671,11 @@ const T14 = (() => {
     { en: "Tennis", he: "טניס", id: "cadence", img: "cut8/cadence-clean", w: 700, h: 316, name: "CADENCE" }
   ];
   const BANGLE = `<svg class="c15ph" viewBox="0 0 240 120" aria-hidden="true"><defs><linearGradient id="c15m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5d5952"/><stop offset=".22" stop-color="#d9d5cd"/><stop offset=".42" stop-color="#8b867d"/><stop offset=".6" stop-color="#f4f1ea"/><stop offset=".8" stop-color="#9a958c"/><stop offset="1" stop-color="#4c4842"/></linearGradient></defs><ellipse cx="120" cy="62" rx="98" ry="34" fill="none" stroke="url(#c15m)" stroke-width="9"/><ellipse cx="120" cy="62" rx="98" ry="34" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1" transform="translate(0 -3.5)"/></svg>`;
+  /* the kinds as words only (owner, 10 Nov 2026): a hairline of light under the word follows the pointer; a kind the house
+     has not yet shown is said, marked "Coming soon", and leads nowhere */
+  const word = s => s.soon
+    ? `<span class="c16it c16soon"><span class="c16w" data-en="${s.en}" data-he="${s.he}">${s.en}</span><small data-en="Coming soon" data-he="בקרוב">Coming soon</small></span>`
+    : `<a class="c16it" href="pieces/${s.id}/"><span class="c16w" data-en="${s.en}" data-he="${s.he}">${s.en}</span><i class="c16ln" aria-hidden="true"></i></a>`;
   const peek = s => s.soon
     ? `<span class="c15it c15soon" role="group" aria-label="${s.en}, coming soon" data-aria-he="${s.he}, בקרוב"><span class="c15pic">${BANGLE}</span><b data-en="${s.en}" data-he="${s.he}">${s.en}</b><small data-en="Coming soon" data-he="בקרוב">Coming soon</small></span>`
     : `<a class="c15it" href="pieces/${s.id}/"><span class="c15pic"><img src="${s.img}-700.webp" width="${s.w}" height="${s.h}" loading="lazy" decoding="async" alt="SILAVU ${s.name}"></span><b data-en="${s.en}" data-he="${s.he}">${s.en}</b><small>SILAVU ${s.name}</small></a>`;
@@ -690,8 +695,8 @@ const T14 = (() => {
       ${card("pave", "necklace-worn", "SOUL", "Personal expressions", "ביטוי אישי", "SILAVU SOUL, the signature pendant, worn")}
     </div>
     <a class="c15all" href="collection14/"><span data-en="Discover the collection" data-he="לגלות את הקולקציה">Discover the collection</span><i aria-hidden="true"></i></a>
-    <nav class="c15strip" aria-label="The house's jewellery, by kind" data-aria-he="התכשיטים של הבית, לפי סוג">
-      ${STRIP.map(peek).join("\n      ")}
+    <nav class="c16nav" aria-label="The house's jewellery, by kind" data-aria-he="התכשיטים של הבית, לפי סוג">
+      ${STRIP.map(word).join("\n      ")}
     </nav>
   </div>
 </section>`;

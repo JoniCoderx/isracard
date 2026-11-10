@@ -1258,3 +1258,24 @@
   }
   init();
 })();
+
+/* the kinds, as words: the light under the word follows the pointer, the word leans toward it by at most 3px, one glint
+   runs along the line as the pointer arrives; on leave everything settles (the CSS springs do the moving) */
+(function () {
+  var nav = document.querySelector(".c16nav"); if (!nav) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover: hover) and (pointer: fine)");
+  [].forEach.call(nav.querySelectorAll("a.c16it"), function (a) {
+    var w = a.querySelector(".c16w"), ln = a.querySelector(".c16ln");
+    var size = function () { if (w && ln) a.style.setProperty("--ww", Math.round(w.getBoundingClientRect().width * .92) + "px"); };
+    size(); addEventListener("resize", size); if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
+    new MutationObserver(size).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+    a.addEventListener("pointerenter", function () { if (!fine.matches) return; size(); if (!reduce) { a.classList.remove("c16g"); void a.offsetWidth; a.classList.add("c16g"); } });
+    a.addEventListener("animationend", function () { a.classList.remove("c16g"); });
+    a.addEventListener("pointermove", function (e) { if (!fine.matches) return;
+      var r = a.getBoundingClientRect(), lr = ln.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      a.style.setProperty("--lx", Math.max(0, Math.min(100, (e.clientX - lr.left) / Math.max(1, lr.width) * 100)).toFixed(1) + "%");
+      if (!reduce) { a.style.setProperty("--mx", (Math.max(-1, Math.min(1, x * 2)) * 3).toFixed(2) + "px"); a.style.setProperty("--my", (Math.max(-1, Math.min(1, y * 2)) * 1.5).toFixed(2) + "px"); } });
+    a.addEventListener("pointerleave", function () { a.style.setProperty("--mx", "0px"); a.style.setProperty("--my", "0px"); a.style.setProperty("--lx", "50%"); });
+    a.addEventListener("focus", function () { size(); a.style.setProperty("--lx", "50%"); });
+  });
+})();
