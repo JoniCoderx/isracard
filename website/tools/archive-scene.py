@@ -91,7 +91,9 @@ def steel():
     m, b, t = principled("steel"); b.inputs["Base Color"].default_value = (.8, .78, .74, 1); b.inputs["Metallic"].default_value = 1; b.inputs["Roughness"].default_value = .26; b.inputs["Anisotropic"].default_value = .75; return m
 def flat(name, col, rough=.8):
     m, b, t = principled(name); b.inputs["Base Color"].default_value = (*col, 1); b.inputs["Roughness"].default_value = rough; return m
-LAC, SUEDE, STANDM, PIPE, STEEL, CAVE = lacquer(), suede("suede", (.25, .2, .152)), suede("stand", (.045, .032, .025), .55, .1), suede("piping", (.26, .205, .155), .7, .08), steel(), flat("cave", (.003, .0025, .002), .9)
+# ARCH_SUEDE="r,g,b" (linear): another colour for the lining and its welt (a colour study; the default is the approved taupe)
+LIN = tuple(float(v) for v in os.environ["ARCH_SUEDE"].split(",")) if os.environ.get("ARCH_SUEDE") else (.25, .2, .152)
+LAC, SUEDE, STANDM, PIPE, STEEL, CAVE = lacquer(), suede("suede", LIN), suede("stand", (.045, .032, .025), .55, .1), suede("piping", (LIN[0] * 1.04, LIN[1] * 1.025, LIN[2] * 1.02), .7, .08), steel(), flat("cave", (.003, .0025, .002), .9)
 GOLD, _gb, _ = principled("white gold"); _gb.inputs["Base Color"].default_value = (.87, .862, .845, 1); _gb.inputs["Metallic"].default_value = 1; _gb.inputs["Roughness"].default_value = .075
 GOLDP, _gp, _ = principled("white gold polished"); _gp.inputs["Base Color"].default_value = (.88, .872, .855, 1); _gp.inputs["Metallic"].default_value = 1; _gp.inputs["Roughness"].default_value = .05
 DIA, _d, _ = principled("diamond"); _d.inputs["Base Color"].default_value = (1, 1, 1, 1); _d.inputs["Roughness"].default_value = 0; _d.inputs["IOR"].default_value = 2.417; _d.inputs["Transmission Weight"].default_value = 1
