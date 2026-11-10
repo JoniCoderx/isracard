@@ -2694,3 +2694,45 @@ html body .c16ln::after { top: -1px !important; bottom: -1px !important; width: 
 html body #craft14.sg16 .sg16reel::before { display: none !important; }
 html body #craft14.sg16 .sg16reel { height: clamp(480px, 56vw, 920px) !important; }
 @media (max-width: 699px) { html body #craft14.sg16 .sg16reel { height: auto !important; aspect-ratio: 4 / 5; } }
+
+/* ════════ COLLECTIONS on a phone (owner's sample, 10 Nov 2026) ════════
+   The title on the left; the three collections as wide cards one under another; the kinds in three columns; the knot
+   beside the three short lines; "Discover the collection" underlined across the width. */
+@media (max-width: 899px) {
+  html body .c15 .c14wrap { display: grid !important; grid-template-columns: 104px minmax(0, 1fr) !important; column-gap: 18px !important; row-gap: 0 !important; padding: 0 clamp(16px, 4.5vw, 28px) !important; }
+  html body .c15 .c14wrap > *, html body .c15 .c14intro > * { grid-column: 1 / -1; justify-self: stretch; text-align: start !important; }
+  html body .c15 .c14intro .c14eyb { order: 1; justify-self: start; justify-content: flex-start !important; margin: 0 !important; font-size: .66rem !important; letter-spacing: .34em !important; }
+  html body .c15 .c14intro .c14h { order: 2; margin: 12px 0 0 !important; font-size: clamp(1.9rem, 8.6vw, 2.6rem) !important; line-height: 1.06 !important; text-align: start !important; }
+  html body .c15 .c14intro .c14rule { order: 3; justify-self: start; margin: 16px 0 22px !important; width: 34px; }
+  html body .c15 .c14cards { order: 4; display: grid !important; grid-template-columns: 1fr !important; gap: 12px !important; margin: 0 !important; overflow: visible !important; }
+  html body .c15 .c14card, html body .c15 .c14card.in.live { aspect-ratio: 2.45 / 1 !important; height: auto !important; min-height: 0 !important; width: 100% !important; border-radius: 16px !important; flex: none !important; }
+  html body .c15 .c14card .c14pic img { object-fit: cover !important; object-position: 50% 42% !important; }
+  html body .c15 .c14t { left: 20px !important; right: 18px !important; bottom: 16px !important; gap: 4px !important; }
+  html body .c15 .c14t b { font-size: clamp(1.35rem, 6.4vw, 1.8rem) !important; letter-spacing: .2em !important; }
+  html body .c15 .c14t span { font-size: .92rem !important; padding-right: 56px !important; }
+  html[dir="rtl"] body .c15 .c14t span { padding-right: 0 !important; padding-left: 56px !important; }
+  /* the kinds: three columns, two rows, a fine upright stroke between columns */
+  html body .c15 .c16nav { order: 5; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; margin: 22px 0 6px !important; border: 0 !important; }
+  html body .c15 .c16it { min-height: 54px !important; border: 0 !important; }
+  html body .c15 .c16it::before { display: none !important; }
+  html body .c15 .c16it:not(:nth-child(3n + 1))::after { content: ""; position: absolute; left: 0; top: 50%; height: 16px; margin-top: -8px; width: 1px; background: rgba(236,230,218,.4); }
+  html[dir="rtl"] body .c15 .c16it:not(:nth-child(3n + 1))::after { left: auto; right: 0; }
+  html body .c15 .c16w { font-size: .72rem !important; letter-spacing: .26em !important; }
+  html body .c15 .c16soon small { top: calc(50% + 11px) !important; font-size: .54rem !important; }
+  html body .c15 a.c16it:active .c16w { opacity: .75; }
+  /* the knot beside the three lines */
+  html body .c15 .c14intro .c14sym, html body .c15 .c14intro .c14sym.gl { order: 6; grid-column: 1 !important; justify-self: center; align-self: center; width: 104px !important; height: 118px !important; min-height: 0 !important; max-height: none !important; margin: 26px 0 !important; }
+  html body .c15 .c14intro .c14lead { order: 7; grid-column: 2 !important; align-self: center; margin: 26px 0 !important; max-width: none !important; font-size: .95rem !important; line-height: 1.7 !important; color: rgba(246,241,230,.9) !important; }
+  /* the way to the collection, across the width */
+  html body .c15 .c15all { order: 8; justify-self: stretch !important; justify-content: space-between !important; margin: 6px 0 4px !important; }
+  html body .c15 .c15all > span { font-size: .82rem; letter-spacing: .3em; }
+}
+@media (max-width: 899px) {
+  html body .c15 .c14card:nth-child(1) .c14pic img { object-position: 50% 74% !important; }
+  html body .c15 .c14card:nth-child(2) .c14pic img { object-position: 50% 46% !important; }
+  html body .c15 .c14card:nth-child(3) .c14pic img { object-position: 50% 72% !important; }
+  html body .c15 .c14wrap { grid-template-columns: 86px minmax(0, 1fr) !important; column-gap: 14px !important; }
+  html body .c15 .c14intro .c14sym, html body .c15 .c14intro .c14sym.gl { width: 86px !important; height: 100px !important; }
+  html body .c15 .c14intro .c14lead { font-size: .88rem !important; white-space: nowrap; }
+  html body .c15 .c14card .c14t + *, html body .c15 .c14t i, html body .c15 .c14card .c14go { transform: scale(.9); }
+}
