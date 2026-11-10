@@ -2206,3 +2206,27 @@ html body #end .f13house .f13mk { transition: color .25s ease !important; filter
 html body #end .f13house:hover .f13mk { color: #ecdcb6 !important; filter: none !important; }
 html body #end .f13house::after, html body #end .f13house:hover::after { letter-spacing: .6em !important; transition: color .25s ease !important; }
 html body #end .f13house:hover::after { color: #f6f1e6 !important; }
+
+/* ════════ COLLECTIONS, ROUND 7 (owner, 10 Nov 2026): the title in large capitals, a line more beneath it, and the
+   knot turning on its own, as a piece shown in a vitrine ════════ */
+html body .c15 .c14h { font-style: normal !important; font-weight: 300 !important; text-transform: uppercase; letter-spacing: .07em !important; line-height: 1.04 !important; color: #f6f1e6 !important; text-wrap: balance; }
+html[data-ns] body .c15 .c14h { letter-spacing: 0 !important; text-transform: none; }
+html body .c14more { margin: 18px 0 0; max-width: 34ch; font-size: .92rem; line-height: 1.7; color: rgba(243,236,224,.7); }
+@media (min-width: 900px) {
+  html body .c15 .c14wrap { grid-template-columns: minmax(340px, min(27vw, 440px)) minmax(0, 1fr) !important; }
+  html body .c15 .c14h { font-size: clamp(2.3rem, 2.95vw, 3.7rem) !important; }
+}
+@media (max-width: 899px) {
+  html body .c15 .c14h { font-size: clamp(2.2rem, 10.4vw, 3.6rem) !important; margin-top: 16px !important; }
+  html body .c14more { margin: 18px auto 0; text-align: center; max-width: 32ch; }
+  html body .c14intro .c14sym.gl { width: min(78vw, 320px) !important; height: min(88vw, 360px) !important; margin: 26px auto 6px !important; }
+}
+@media (min-width: 900px) {
+  /* the intro runs down beside the cards and the strip, so the turning knot has room of its own; the way to the
+     collection follows below it */
+  html body .c15 .c14wrap { grid-template-rows: auto auto auto !important; }
+  html body .c15 .c14intro { grid-row: 1 / span 2 !important; contain: none !important; }
+  html body .c15 .c15strip { align-self: start; }
+  html body .c15 .c15all { grid-row: 3 !important; margin-top: 0 !important; }
+  html body .c15 .c14intro .c14sym.gl { min-height: 210px !important; max-height: 380px !important; margin: 22px 0 0 !important; }
+}

@@ -592,14 +592,14 @@
 
     /* motion: an orientation, an angular velocity that decays like a heavy thing, and a resting pose it returns to */
     var q = new T.Quaternion(), w = new T.Vector3(), rest = new T.Quaternion(), tmp = new T.Quaternion(), ax = new T.Vector3(), eu = new T.Euler();
-    var drag = null, lastUp = 0, lastTap = 0, show = null, vis = false, raf = 0, t0 = performance.now(), last = 0;
+    var autoT0 = performance.now() - 6000, drag = null, lastUp = 0, lastTap = 0, show = null, vis = false, raf = 0, t0 = performance.now(), last = 0;
     q.setFromEuler(eu.set(-.08, -.5, 0));
     function turn(dx, dy, k) { /* a drag turns the piece about the axis across the drag, in the camera's frame */
       var len = Math.hypot(dx, dy); if (!len) return; ax.set(dy, dx, 0).normalize(); tmp.setFromAxisAngle(ax, len * k); q.premultiply(tmp); }
     cv.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY, t: performance.now(), vx: 0, vy: 0 }; show = null; cv.setPointerCapture(e.pointerId); host.classList.add("held", "used"); w.set(0, 0, 0); go(); });
     cv.addEventListener("pointermove", function (e) { if (!drag) return; var now = performance.now(), dx = e.clientX - drag.x, dy = e.clientY - drag.y, dt = Math.max(8, now - drag.t);
       turn(dx, dy, .009); drag.vx = drag.vx * .7 + dx / dt * .3; drag.vy = drag.vy * .7 + dy / dt * .3; drag.x = e.clientX; drag.y = e.clientY; drag.t = now; go(); });
-    var up = function () { if (!drag) return; if (performance.now() - drag.t < 120) { w.set(drag.vy, drag.vx, 0).multiplyScalar(9); if (w.length() > 9) w.setLength(9); } drag = null; lastUp = performance.now(); host.classList.remove("held"); go(); };
+    var up = function () { if (!drag) return; if (performance.now() - drag.t < 120) { w.set(drag.vy, drag.vx, 0).multiplyScalar(9); if (w.length() > 9) w.setLength(9); } drag = null; lastUp = performance.now(); autoT0 = lastUp - 3400; host.classList.remove("held"); go(); };
     cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
     var showcase = function () { show = { t: performance.now(), q0: q.clone() }; w.set(0, 0, 0); host.classList.add("used"); go(); };
     cv.addEventListener("dblclick", function (e) { e.preventDefault(); showcase(); });
@@ -615,6 +615,11 @@
         var p = Math.min(1, (now - show.t) / 5200), a = ease(p) * Math.PI * 2;
         tmp.setFromAxisAngle(ax.set(0, 1, 0), a); var tq = rest.clone().multiply(tmp);
         q.copy(show.q0).slerp(tq, Math.min(1, p / .14)); if (p >= 1) show = null;
+      } else if (!drag && !reduce && w.lengthSq() < 1e-6 && (now - lastUp) / 1000 > 3) {
+        /* on its own, as in a vitrine: it rests, breathing, then turns once round on its upright, slowly, and rests again */
+        var ph = ((now - autoT0) / 1000) % 10, k = ph < 3.4 ? ease(ph / 3.4) : 1, a2 = k * Math.PI * 2;
+        tmp.setFromAxisAngle(ax.set(0, 1, 0), a2 >= Math.PI * 2 - 1e-4 ? 0 : a2); var aq = rest.clone().multiply(tmp);
+        q.slerp(aq, 1 - Math.exp(-dt * 7));
       } else if (!drag) {
         if (w.lengthSq() > 1e-6) { var wl = w.length(); tmp.setFromAxisAngle(ax.copy(w).divideScalar(wl), wl * dt); q.premultiply(tmp); w.multiplyScalar(Math.exp(-dt * 1.1)); if (wl < .03) w.set(0, 0, 0); }
         var since = (now - lastUp) / 1000, pull = since > 1.2 ? 1 - Math.exp(-dt * (w.lengthSq() > .04 ? .15 : .7)) : 0;
