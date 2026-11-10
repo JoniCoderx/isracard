@@ -1292,7 +1292,8 @@
     var size = function () { if (w && ln) a.style.setProperty("--ww", Math.round(w.getBoundingClientRect().width * .92) + "px"); };
     size(); addEventListener("resize", size); if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
     new MutationObserver(size).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
-    a.addEventListener("pointerenter", function () { if (!fine.matches) return; size(); if (!reduce) { a.classList.remove("c16g"); void a.offsetWidth; a.classList.add("c16g"); } });
+    a.addEventListener("pointerenter", function (e) { if (!fine.matches) return; size();
+      var wr = w.getBoundingClientRect(); a.style.setProperty("--ox", Math.max(0, Math.min(100, (e.clientX - wr.left) / Math.max(1, wr.width) * 100)).toFixed(0) + "%"); if (!reduce) { a.classList.remove("c16g"); void a.offsetWidth; a.classList.add("c16g"); } });
     a.addEventListener("animationend", function () { a.classList.remove("c16g"); });
     a.addEventListener("pointermove", function (e) { if (!fine.matches) return;
       var r = a.getBoundingClientRect(), lr = ln.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
