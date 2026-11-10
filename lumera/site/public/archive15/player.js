@@ -16,7 +16,14 @@
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const he = () => document.documentElement.getAttribute("data-lang") === "he";
-const bitmap = url => fetch(url).then(r => r.blob()).then(b => createImageBitmap(b));
+/* decoded off the main thread where the browser can (createImageBitmap); where it cannot or refuses (an older Safari,
+   a phone short of memory), the same file through an <img>, which drawImage takes just the same */
+const errs = [];
+const viaImg = b => { const u = URL.createObjectURL(b), i = new Image(); i.src = u;
+  return i.decode().then(() => { URL.revokeObjectURL(u); i.close = () => { i.src = ""; }; return i; }, e => { URL.revokeObjectURL(u); throw e; }); };
+const toBitmap = b => { if (typeof createImageBitmap !== "function") return viaImg(b);
+  try { return createImageBitmap(b).catch(e => { errs.push("bitmap " + (e && e.name || e)); return viaImg(b); }); } catch (e) { return viaImg(b); } };
+const bitmap = url => fetch(url).then(r => r.blob()).then(toBitmap);
 
 
 export async function mount(sec) {
@@ -39,14 +46,14 @@ export async function mount(sec) {
   let AHEAD = 12, BEHIND = 4, SKEL = 16;
   async function load() {
     gen++; bmps.forEach(b => b && b.close()); blobs = []; bmps = []; busy = new Set(); shownK = -1; want = 0;
-    [AHEAD, BEHIND, SKEL] = L === "m" ? [10, 3, 24] : [12, 4, 16];   // the phone holds fewer: about 140 MB at most
+    [AHEAD, BEHIND, SKEL] = L === "d" ? [12, 4, 16] : [8, 2, 32];   // phones and tablets hold fewer: about 100 MB at most (iOS stops decoding beyond its limit)
     M = await fetch(`archive15/${L}/manifest.json`).then(r => { if (!r.ok) throw 0; return r.json(); })
       .catch(() => { if (L !== "t") throw new Error("archive15 manifest"); L = "m"; return fetch("archive15/m/manifest.json").then(r => r.json()); });
     // a high-density screen wider than about 1200px takes the still at twice the size, where it was rendered
     X = !!(M.finalX && innerWidth * Math.min(2, devicePixelRatio || 1) >= 2400);
     still.src = X ? M.finalX.src : M.final; still.width = M.res[0]; still.height = M.res[1];
     const idImg = await bitmap(M.ids.src); idW = idImg.width; idH = idImg.height;
-    const c = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(idW, idH) : Object.assign(document.createElement("canvas"), { width: idW, height: idH }), g = c.getContext("2d"); g.drawImage(idImg, 0, 0); ids = g.getImageData(0, 0, idW, idH).data;
+    let g = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(idW, idH).getContext("2d") : null; if (!g) g = Object.assign(document.createElement("canvas"), { width: idW, height: idH }).getContext("2d"); g.drawImage(idImg, 0, 0); ids = g.getImageData(0, 0, idW, idH).data;
     blobs = new Array(M.seq.n); bmps = new Array(M.seq.n);
     if (!reduce) { blobs[0] = await fetch(url(0)).then(r => r.blob()); fetchMore(); }
     M.pieces.forEach(p => { new Image().src = p.hero.src; new Image().src = patchSrc(p); });
@@ -67,7 +74,7 @@ export async function mount(sec) {
         .finally(() => { if (my !== gen) return; fetching--; pump(); fetchMore(); });
     }
   }
-  const decode = b => createImageBitmap(b);
+  const decode = b => toBitmap(b);
   function pump() {
     if (!M || reduce) return; const n = M.seq.n, my = gen;
     for (let k = 0; k < n; k++) if (bmps[k] && !keep(k) && k !== shownK) { bmps[k].close(); bmps[k] = null; }
@@ -78,7 +85,7 @@ export async function mount(sec) {
       if (k < 0) return;
       busy.add(k);
       decode(blobs[k]).then(b => { if (my !== gen) { b.close(); return; } busy.delete(k); if (keep(k) || k === want) { bmps[k] = b; kick(); } else b.close(); pump(); },
-                            () => { if (my === gen) { busy.delete(k); pump(); } });
+                            e => { errs.push("decode " + k + " " + (e && e.name || e)); if (my === gen) { busy.delete(k); pump(); } });
     }
   }
   function nearest(i) {
@@ -249,5 +256,10 @@ export async function mount(sec) {
   await load(); layout(); if (!reduce) bmps[0] = await decode(blobs[0]);   // the closed drawer, at the canvas's size, before anything shows
   sec.classList.add("ar15live"); if (reduce) sec.classList.add("ar15still-only"); t = reduce ? 1 : progress(); dirty = true; draw(); pump();
   const api = { get t() { return t; }, get frame() { return shownK; }, get held() { return bmps.filter(Boolean).length; }, get fetched() { return blobs.filter(Boolean).length; }, get manifest() { return M; } };
-  sec.__ar15 = api; return api;
+  sec.__ar15 = api;
+  // ?ar15debug: a small readout of the engine's state, for checking on a real phone
+  if (/ar15debug/.test(location.search)) { const d = document.body.appendChild(document.createElement("pre"));
+    d.style.cssText = "position:fixed;left:6px;bottom:70px;z-index:99999;margin:0;padding:6px 8px;font:11px/1.35 monospace;color:#fff;background:rgba(0,0,0,.75);max-width:92vw;white-space:pre-wrap;pointer-events:none";
+    setInterval(() => { d.textContent = `L ${L} t ${t.toFixed(3)} frame ${shownK}/${M.seq.n} held ${api.held} fetched ${api.fetched}\nreduce ${reduce} canvas ${cv.width}x${cv.height} dpr ${devicePixelRatio} ${innerWidth}x${innerHeight}\n${errs.slice(-4).join("\n")}`; }, 400); }
+  return api;
 }

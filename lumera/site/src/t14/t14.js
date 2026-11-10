@@ -1172,7 +1172,7 @@
 /* Up close · the private archive (the house's brief of 5 Nov 2026): a path-traced drawer the scroll opens and closes,
    each piece lifted towards the viewer on a click (public/archive15/player.js). It loads as the section comes near. */
 (function () {
-  var sec = document.querySelector("#details.ar15"); if (!sec || !sec.querySelector(".ar15run") || !window.createImageBitmap) return;
-  var go = function () { import("./archive15/player.js").then(function (m) { return m.mount(sec); }).catch(function (e) { sec.classList.add("ar15nojs"); if (window.console) console.warn("archive15", e); }); };
+  var sec = document.querySelector("#details.ar15"); if (!sec || !sec.querySelector(".ar15run") || !window.fetch) return;
+  var go = function () { import("./archive15/player.js").then(function (m) { return m.mount(sec); }).catch(function (e) { sec.classList.add("ar15nojs"); if (window.console) console.warn("archive15", e); if (/ar15debug/.test(location.search)) { var d = document.body.appendChild(document.createElement("pre")); d.style.cssText = "position:fixed;left:6px;bottom:70px;z-index:99999;padding:6px;font:11px monospace;color:#fff;background:#900"; d.textContent = "archive15 failed: " + (e && (e.stack || e.message) || e); } }); };
   new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); go(); } }, { rootMargin: "150% 0px" }).observe(sec);
 })();
