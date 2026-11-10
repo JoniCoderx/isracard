@@ -2621,3 +2621,23 @@ html body a.c16it:focus-visible .c16w { outline: 1px solid rgba(236,226,206,.45)
 /* BANGLES on the same line as the others, its "Coming soon" hung beneath it */
 html body .c16soon small { position: absolute; left: 0; right: 0; top: calc(50% + 13px); text-align: center; }
 html body .c16soon { cursor: default; }
+
+/* the film, with SILAVU in clear glass over it (owner, 10 Nov 2026): inside the letters the same film is seen through
+   thick glass, mirrored and magnified, and as the page scrolls it slides and turns the other way, as through water;
+   the letters' rims and a sheen across their tops make the glass; the film itself stays the picture */
+html body #craft14.sg16 .sg16reel video { transform: scale(var(--rs, 1.04)); transition: none; }
+html body #craft14.sg16 .sg16glass { position: absolute; inset: 0; z-index: 2; clip-path: url(#sg16clip); -webkit-clip-path: url(#sg16clip); pointer-events: none; }
+html body #craft14.sg16 .sg16glass canvas { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; object-position: 50% 38%;
+  transform: translate3d(var(--gx, 0%), var(--gy, 0%), 0) rotate(var(--gr, 0deg)) scale(var(--gs, 1.22));
+  filter: brightness(1.12) contrast(1.06) saturate(1.08); }
+html body #craft14.sg16 .sg16lens { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+html body #craft14.sg16 .sg16t { font-family: var(--display, 'Jost'), 'Jost', sans-serif; font-weight: 300; letter-spacing: .04em; text-anchor: middle; }
+html body #craft14.sg16 .sg16edge { fill: url(#sg16sheen); stroke: rgba(255,255,255,.72); stroke-width: 1.1px; paint-order: stroke; }
+html body #craft14.sg16 .sg16shadow { fill: rgba(0,0,0,.16); filter: url(#sg16soft); transform: translate(0, 10px); }
+html body #craft14.sg16 .sg16reel figcaption { z-index: 4; }
+@media (max-width: 699px) { html body #craft14.sg16 .sg16edge { stroke-width: .8px; } }
+/* more glass to look through: the word a little heavier; the film's top fade lighter, so the film leads */
+html body #craft14.sg16 .sg16t { font-weight: 500 !important; letter-spacing: .02em !important; }
+html body #craft14.sg16 .sg16reel::before { height: 9% !important; background: linear-gradient(rgba(0,0,0,.85), rgba(0,0,0,0)) !important; }
+html body #craft14.sg16 .sg16glass canvas { inset: -4% !important; width: 108% !important; height: 108% !important; filter: brightness(1.06) contrast(1.1) saturate(1.05) !important; }
+html body #craft14.sg16 .sg16edge { stroke: rgba(255,255,255,.85) !important; stroke-width: 1.3px !important; }

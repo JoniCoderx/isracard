@@ -1197,11 +1197,34 @@
     sec.style.setProperty("--sgs", (1.1 + Math.abs(p) * .06).toFixed(3));      // and stays large enough to fill the frame
     sec.style.setProperty("--sgm", (50 + p * 75).toFixed(1) + "%");            // the reflection runs across the glass word
   }
-  /* the film of SOUL worn, under the piece: it plays only while it is on screen */
-  var reel = sec.querySelector(".sg16reel video");
+  /* the film of SOUL worn, under the piece: it plays only while it is on screen; its twin plays inside the glass word */
+  var reel = sec.querySelector(".sg16reel > video"), twin = null, gcv = sec.querySelector(".sg16glass canvas"), gctx = gcv && gcv.getContext("2d"), fig = sec.querySelector(".sg16reel"), lens = sec.querySelector(".sg16lens");
+  /* the word's place, in the film's own pixels: one size for the clip, the rim and the shadow, so they meet exactly */
+  function fitWord() { if (!fig || !lens) return; var w = fig.clientWidth, h = fig.clientHeight, phone = w < 700;
+    var fs = Math.round(w * (phone ? .255 : .235)), y = Math.round(h * (phone ? .6 : .64) + fs * .35), fam = getComputedStyle(sec.querySelector(".sg16h") || fig).fontFamily;
+    lens.setAttribute("viewBox", "0 0 " + w + " " + h);
+    [].forEach.call(sec.querySelectorAll(".sg16t"), function (t) { t.setAttribute("x", w / 2); t.setAttribute("y", y); t.setAttribute("font-size", fs); t.style.fontFamily = fam; }); }
+  fitWord(); addEventListener("resize", fitWord); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWord);
+  /* the glass shows the film's own frame, mirrored, drawn each frame from the one video (always in step with it) */
+  var syncT = 0, drawA = 0; function sync() {}
+  function drawGlass() { drawA = 0; if (!gctx || !reel || reel.readyState < 2) { if (!reel.paused) drawA = requestAnimationFrame(drawGlass); return; }
+    var vw = reel.videoWidth, vh2 = reel.videoHeight, cw = Math.min(1280, vw), ch = Math.round(cw * vh2 / vw);
+    if (gcv.width !== cw) { gcv.width = cw; gcv.height = ch; }
+    gctx.setTransform(-1, 0, 0, 1, cw, 0); gctx.drawImage(reel, 0, 0, cw, ch);
+    if (!reel.paused) drawA = requestAnimationFrame(drawGlass); }
+  if (reel) { reel.addEventListener("play", function () { if (!drawA) drawA = requestAnimationFrame(drawGlass); }); reel.addEventListener("seeked", drawGlass); reel.addEventListener("loadeddata", drawGlass); }
+  /* the glass on scroll: what is seen through it slides and turns against the page; the film itself breathes a little */
+  var raf2 = 0; function glass() { raf2 = 0; if (!fig) return; var r = fig.getBoundingClientRect(), vh = innerHeight;
+    var q = Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh / 2) / ((vh + r.height) / 2)));
+    fig.style.setProperty("--gx", (2.5 + q * 6).toFixed(2) + "%"); fig.style.setProperty("--gy", (-1 + q * -2.5).toFixed(2) + "%");
+    fig.style.setProperty("--gr", (q * -3.5).toFixed(2) + "deg"); fig.style.setProperty("--gs", (1.07 + Math.abs(q) * .06).toFixed(3));
+    fig.style.setProperty("--rs", (1.04 + (1 - Math.abs(q)) * .04).toFixed(3)); }
+  if (fig && !matchMedia("(prefers-reduced-motion: reduce)").matches) { addEventListener("scroll", function () { if (!raf2) raf2 = requestAnimationFrame(glass); }, { passive: true }); glass(); }
   if (reel) new IntersectionObserver(function (es) { var v = es[0].isIntersecting;
-    if (v) { if (!reel.dataset.ready) { var m = innerWidth < 700; reel.src = m ? reel.dataset.srcM : reel.dataset.src; if (m) reel.poster = reel.dataset.posterM; reel.dataset.ready = 1; }
-      var pr = reel.play(); if (pr && pr.catch) pr.catch(function () {}); } else reel.pause(); }, { threshold: .25 }).observe(reel);
+    if (v) { if (!reel.dataset.ready) { var m = innerWidth < 700; reel.src = m ? reel.dataset.srcM : reel.dataset.src; if (m) reel.poster = reel.dataset.posterM; reel.dataset.ready = 1;
+        if (twin) { twin.src = reel.src; twin.poster = reel.poster; } }
+      [reel, twin].forEach(function (x) { if (!x) return; var pr = x.play(); if (pr && pr.catch) pr.catch(function () {}); });
+      if (!syncT) syncT = setInterval(sync, 1000); } else { reel.pause(); if (twin) twin.pause(); clearInterval(syncT); syncT = 0; } }, { threshold: .25 }).observe(reel);
   /* the letters open from inside a solid stroke (the stem of the T, or the word's last letter), so the film ends whole */
   function anchor() { var sp = sec.querySelector(".sg16knock span"); if (!sp || !sp.firstChild) return;
     var t = sp.firstChild.textContent, i = t.toUpperCase().lastIndexOf("T"); if (i < 0) i = Math.max(0, t.length - 1);

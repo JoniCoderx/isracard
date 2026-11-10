@@ -721,6 +721,15 @@ const T14 = (() => {
   </div>
   <figure class="sg16reel">
     <video muted loop playsinline preload="none" poster="img/hero-lumiere-1920.jpg" data-src="v/hero-lumiere.mp4" data-src-m="v/hero-lumiere-v.mp4" data-poster-m="img/hero-lumiere-v-1080.jpg" aria-label="SOUL, worn" data-aria-he="SOUL, על העור"></video>
+    <div class="sg16glass" aria-hidden="true"><canvas></canvas></div>
+    <svg class="sg16lens" aria-hidden="true" focusable="false"><defs>
+      <clipPath id="sg16clip"><text class="sg16t">SILAVU</text></clipPath>
+      <linearGradient id="sg16sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".22" stop-color="#fff" stop-opacity=".12"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".22"/></linearGradient>
+      <filter id="sg16soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+      <text class="sg16t sg16shadow">SILAVU</text>
+      <text class="sg16t sg16edge">SILAVU</text>
+    </svg>
     <figcaption><span data-en="SOUL, worn" data-he="SOUL, על העור">SOUL, worn</span></figcaption>
   </figure>
 </section>
