@@ -708,17 +708,7 @@ const T14 = (() => {
   /* Craftsmanship as a macro (owner, 10 Nov 2026): SOUL full-bleed and close, path traced from the house's own model
      (website/tools/soul-seq.py, SOUL_STILL), the oversized SIGNATURE set translucent over it; on scroll the piece and the
      word move at different speeds and the word fades (src/t14/t14.js, "sg16") */
-  const CRAFT = `<section id="craft14" class="sg16" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-labelledby="crh">
-  <div class="sg16frame">
-    <picture class="sg16pic">
-      <source media="(max-width: 699px)" srcset="craft16/soul-macro-m-1080.webp 1080w, craft16/soul-macro-m-720.webp 720w" sizes="100vw" width="1080" height="1920">
-      <img src="craft16/soul-macro-d-1920.webp" srcset="craft16/soul-macro-d-1280.webp 1280w, craft16/soul-macro-d-1920.webp 1920w, craft16/soul-macro-d-2560.webp 2560w" sizes="100vw" width="2560" height="1440" loading="lazy" decoding="async" alt="SOUL up close: the SILAVU knot in white gold, set with pavé diamonds" data-alt-he="SOUL מקרוב: הקשר של SILAVU בזהב לבן, משובץ יהלומי פאווה">
-    </picture>
-    <div class="sg16shade" aria-hidden="true"></div>
-    <p class="sg16k" data-en="Craftsmanship" data-he="אומנות">Craftsmanship</p>
-    <a class="sg16go" href="pieces/pave/" data-en="Discover the signature" data-he="לגלות את החתימה">Discover the signature</a>
-    <h2 class="sg16h" id="crh" data-en="Signature" data-he="חתימה">Signature</h2>
-  </div>
+  const CRAFT = `<section id="craft14" class="sg16" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-label="SOUL, worn" data-aria-he="SOUL, על העור">
   <figure class="sg16reel">
     <video muted loop playsinline preload="none" poster="img/hero-lumiere-1920.jpg" data-src="v/hero-lumiere.mp4" data-src-m="v/hero-lumiere-v.mp4" data-poster-m="img/hero-lumiere-v-1080.jpg" aria-label="SOUL, worn" data-aria-he="SOUL, על העור"></video>
     <div class="sg16glass" aria-hidden="true"><canvas></canvas></div>
