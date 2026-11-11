@@ -2831,3 +2831,34 @@ html body #configure.b16.b16.b16 #opts > .tot .t13thumb { display: none !importa
    can decode them, and the opening jumped. A longer run gives each frame its own few pixels of scroll. */
 @media (max-width: 599px) { .ar15run { height: 380svh; } }
 @media (max-width: 599px) { html body .ar15nav .ar15pick { color: rgba(246,241,230,.88) !important; font-size: .72rem !important; min-height: 44px; } }
+/* the builder wider than the page's own column on wide screens: centred on the column by equal negative margins */
+@media (min-width: 900px) { html body #configure.b16.b16.b16 { margin-left: calc((100% - min(92vw, 1680px)) / 2) !important; margin-right: calc((100% - min(92vw, 1680px)) / 2) !important; } }
+
+/* ════════ THE BUILDER ON THE PHONE, ROUND 18 (owner, 11 Nov 2026: "on mobile is bad") ════════
+   A taller stage so the bracelet has air round it; the switch alone on the top row, the stone below it on the left;
+   Save design back, at the stage's foot above the views; the duplicate mark under the stone removed. */
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 #stripwrap { height: min(118vw, 460px) !important; min-height: 0 !important; }
+  html body #configure.b16.b16.b16 #stripwrap .vt { left: 50% !important; right: auto !important; top: 12px !important; transform: translateX(-50%) !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv { left: 14px !important; right: auto !important; top: 66px !important; width: auto !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvpic { width: 30px !important; height: 30px !important; }
+  html body #configure.b16.b16.b16 #stripwrap .vmark { display: none !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts { display: flex !important; position: absolute !important; right: 12px !important; left: auto !important; bottom: 66px !important; top: auto !important; padding: 0 !important; margin: 0 !important; gap: 0 !important; width: auto !important; z-index: 4; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts .clink:not(#saveImg) { display: none !important; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts #saveImg { display: inline-flex !important; align-items: center; gap: 8px; height: 38px !important; padding: 0 14px !important; border-radius: 999px !important; font-size: .78rem !important; white-space: nowrap; }
+  html body #configure.b16.b16.b16 #stripwrap .cacts #saveImg span { display: inline !important; }
+  html body #configure.b16.b16.b16 .b16hint { bottom: 112px !important; left: 14px !important; right: auto !important; transform: none !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 #stripwrap .b14pv { display: flex !important; align-items: center; gap: 10px !important; padding: 0 !important; background: none !important; border: 0 !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvn { display: inline !important; font-size: .62rem !important; letter-spacing: .3em !important; color: #efe7d8 !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 #stripwrap .b14pv { width: max-content !important; max-width: calc(100% - 28px) !important; overflow: visible !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvt { display: block !important; position: static !important; opacity: 1 !important; visibility: visible !important; clip-path: none !important; transform: none !important; width: auto !important; }
+}
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvt { background: none !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvn { text-transform: uppercase !important; font-weight: 400 !important; }
+  html[data-ns] body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvn { letter-spacing: 0 !important; }
+}
