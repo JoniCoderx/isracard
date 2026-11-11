@@ -2822,7 +2822,7 @@ html body #configure.b16.b16.b16 #opts > .tot .t13thumb { display: none !importa
 /* ════════ COLLECTIONS ON THE PHONE, ROUND 2 (owner, 10 Nov 2026) ════════
    The knot and its three lines centred on the page: the knot larger, turning in 3D on top; the lines centred beneath. */
 @media (max-width: 899px) {
-  html body .c15 .c14intro .c14sym, html body .c15 .c14intro .c14sym.gl { grid-column: 1 / -1 !important; justify-self: center !important; width: min(56vw, 220px) !important; height: min(62vw, 240px) !important; margin: 30px auto 4px !important; }
+  html body .c15 .c14intro .c14sym, html body .c15 .c14intro .c14sym.gl { grid-column: 1 / -1 !important; justify-self: center !important; width: min(46vw, 180px) !important; height: min(52vw, 200px) !important; margin: 30px auto 4px !important; }
   html body .c15 .c14intro .c14lead { grid-column: 1 / -1 !important; justify-self: center !important; text-align: center !important; margin: 8px auto 34px !important; font-size: .95rem !important; white-space: normal !important; }
 }
 

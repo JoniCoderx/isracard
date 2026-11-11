@@ -527,7 +527,10 @@
     if (started) return; started = true;
     import("./vendor14/three.module.min.js").then(build, function () {});
   }
-  new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { o.disconnect(); start(); } }, { rootMargin: "120% 0px" }).observe(host);
+  /* built only once the reader has stopped scrolling for a moment near it, never mid-scroll (the house's motion rules) */
+  var nearK = false, idle = 0, arm = function () { clearTimeout(idle); if (nearK && !started) idle = setTimeout(start, 450); };
+  addEventListener("scroll", arm, { passive: true });
+  new IntersectionObserver(function (es) { nearK = es[0].isIntersecting; arm(); }, { rootMargin: "120% 0px" }).observe(host);
 
   function build(T) {
     var d = (document.querySelector("#symb path") || {}).getAttribute && document.querySelector("#symb path").getAttribute("d"); if (!d) return;
@@ -542,12 +545,12 @@
       else i++;
     }
     var shapes = sp.toShapes(T.ShapeUtils.isClockWise(sp.subPaths[0].getPoints()));
-    var geo = new T.ExtrudeGeometry(shapes, { depth: 58, bevelEnabled: true, bevelThickness: 22, bevelSize: 11, bevelOffset: -3, bevelSegments: 14, curveSegments: 72 });
+    var geo = new T.ExtrudeGeometry(shapes, { depth: 58, bevelEnabled: true, bevelThickness: 22, bevelSize: 11, bevelOffset: -3, bevelSegments: 6, curveSegments: 30 }); /* owner, 11 Nov: "laggy" — 30 curve and 6 bevel segments read the same at this size, at a fraction of the triangles */
     geo.center(); var S = 1 / 1000; geo.scale(S, S, S); geo.computeVertexNormals();
 
     var W = 0, H = 0, cv = document.createElement("canvas"); cv.className = "c14gl"; cv.setAttribute("aria-label", "The SILAVU emblem in white gold. Drag to turn it."); cv.setAttribute("role", "img");
     var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, powerPreference: "high-performance" });
-    r.setPixelRatio(Math.min(2.5, Math.max(1.5, devicePixelRatio || 1))); r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.outputColorSpace = T.SRGBColorSpace;
+    r.setPixelRatio(Math.min(2, Math.max(1, devicePixelRatio || 1))); r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.outputColorSpace = T.SRGBColorSpace;
     var scene = new T.Scene(), cam = new T.PerspectiveCamera(30, 1, .1, 20); cam.position.set(0, 0, 3.15);
     /* the studio the metal reflects: tall softboxes left and right, a wide one overhead, a warm card low, black between */
     var studio = new T.Scene(); studio.background = new T.Color(0x050505);
@@ -571,7 +574,7 @@
     studio.add(room);
     studio.background = new T.Color(0x0c0c0c);
     var pm = new T.PMREMGenerator(r); scene.environment = pm.fromScene(studio, .02).texture; pm.dispose();
-    var gold = new T.MeshPhysicalMaterial({ color: 0xebe7df, metalness: 1, roughness: .13, clearcoat: .35, clearcoatRoughness: .08, envMapIntensity: 1.15 });
+    var gold = new T.MeshStandardMaterial({ color: 0xebe7df, metalness: 1, roughness: .12, envMapIntensity: 1.2 });
     var mesh = new T.Mesh(geo, gold), rig = new T.Group(); rig.add(mesh); scene.add(rig);
     /* a coin is struck on both faces: from behind, the symbol reads true, never as its mirror. The reverse is the same
        piece drawn reflected across its own height, shown only while its face is turned to the viewer (the swap happens
@@ -606,8 +609,12 @@
     cv.addEventListener("touchend", function () { var now = performance.now(); if (now - lastTap < 320) showcase(); lastTap = now; }, { passive: true });
 
     var ease = function (p) { return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; };
+    var lastR = 0;
     function frame(now) {
-      raf = 0; var dt = Math.min(.05, (now - (last || now)) / 1000), t = (now - t0) / 1000; last = now;
+      raf = 0;
+      /* its slow sway at 30 frames a second; a hand on it (or a showcase turn) at the screen's full rate */
+      if (!drag && !show && w.lengthSq() < 1e-6 && now - lastR < 30) { if (vis) go(); return; } lastR = now;
+      var dt = Math.min(.05, (now - (last || now)) / 1000), t = (now - t0) / 1000; last = now;
       /* the pose it floats in: turned a little, breathing, never still */
       var f = reduce ? 0 : 1;
       rest.setFromEuler(eu.set(-.05 + f * Math.sin(t * .31) * .12, -.2 + f * Math.sin(t * .3) * .55, f * Math.sin(t * .27) * .04)); /* owner, 10 Nov: a wider sway, so the depth reads; never past side-on, so the knot is never seen from behind */
@@ -1383,7 +1390,7 @@
     gl.uniform2f(U.uRes, W, H); gl.uniform1f(U.uCapT, +fig.style.getPropertyValue("--capT") || .4); gl.uniform1f(U.uCapB, +fig.style.getPropertyValue("--capB") || .6); ready = true; draw();
   }
   /* the light: the pointer over the film (or the phone's tilt) moves where the highlight falls and how the glass bends */
-  var tx = 0, ty = 0, gx = 0, gy = 0, q = 0, raf = 0, vis = false, small = null, sctx = null;
+  var tx = 0, ty = 0, gx = 0, gy = 0, q = 0, raf = 0, vis = false, small = null, sctx = null, lastVT = -1;
   fig.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = fig.getBoundingClientRect();
     tx = ((e.clientX - r.left) / r.width - .5) * 2; ty = ((e.clientY - r.top) / r.height - .5) * 2; kick(); });
   fig.addEventListener("pointerleave", function () { tx = 0; ty = 0; kick(); });
@@ -1391,9 +1398,11 @@
   addEventListener("scroll", function () { if (vis) kick(); }, { passive: true });
   function kick() { if (!raf && vis) raf = requestAnimationFrame(draw); }
   function draw() { raf = 0; if (!ready) return;
-    if (reel.readyState >= 2) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tV);
-      var src = reel; if (reel.videoWidth > 1024) { if (!small) { small = document.createElement("canvas"); sctx = small.getContext("2d"); }
-        var sw = 1024, shh = Math.round(sw * reel.videoHeight / reel.videoWidth); if (small.width !== sw) { small.width = sw; small.height = shh; } sctx.drawImage(reel, 0, 0, sw, shh); src = small; }
+    /* the film goes up to the graphics card only when it has a new frame (about 30 a second), not on every screen frame;
+       on a phone a smaller copy (owner, 11 Nov: "laggy") */
+    if (reel.readyState >= 2 && reel.currentTime !== lastVT) { lastVT = reel.currentTime; gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tV);
+      var cap = innerWidth < 900 ? 640 : 1024, src = reel; if (reel.videoWidth > cap) { if (!small) { small = document.createElement("canvas"); sctx = small.getContext("2d"); }
+        var sw = cap, shh = Math.round(sw * reel.videoHeight / reel.videoWidth); if (small.width !== sw) { small.width = sw; small.height = shh; } sctx.drawImage(reel, 0, 0, sw, shh); src = small; }
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
       gl.uniform1f(U.uVA, reel.videoWidth / reel.videoHeight); }
     var k = reduce ? 1 : .12; gx += (tx - gx) * k; gy += (ty - gy) * k;
@@ -1401,7 +1410,7 @@
     gl.uniform2f(U.uTilt, gx, gy); gl.uniform1f(U.uQ, q); gl.uniform2f(U.uLight, -.35 + gx * .9, .55 - gy * .9);
     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if (vis && (!reel.paused || Math.abs(tx - gx) > .002 || Math.abs(ty - gy) > .002)) raf = requestAnimationFrame(draw); }
-  new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { if (!ready) shape(); kick(); } }, { rootMargin: "10% 0px" }).observe(fig);
+  new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { lastVT = -1; if (!ready) shape(); kick(); } }, { rootMargin: "10% 0px" }).observe(fig);
   reel.addEventListener("play", kick); reel.addEventListener("loadeddata", kick); reel.addEventListener("seeked", kick);
   var rt = 0; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { setTimeout(shape, 60); }, 150); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(shape, 80); });
