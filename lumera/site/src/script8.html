@@ -1978,7 +1978,9 @@
      the wrist rb pixels each side, turned so the ring runs along u */
   function wearOn(ctx, w, x, y, rb, u) {
     if (!w || !w.hw) return false;
-    var s = rb / w.hw; ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(u[1], u[0])); ctx.scale(s, s);
+    var s = rb / w.hw, k = ctx.canvas.width / Math.max(1, ctx.canvas.clientWidth || ctx.canvas.width); ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(u[1], u[0])); ctx.scale(s, s);
+    /* its own shadow on the skin, cast from the bracelet's real outline: soft, close, a little below (owner, 11 Nov 2026) */
+    ctx.shadowColor = "rgba(28,14,6,.55)"; ctx.shadowBlur = 7 * k; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 4 * k;
     ctx.drawImage(w.c, -w.cx, -w.cy); ctx.restore(); return true;
   }
   window.__wear = function (o) { return wear(o || {}); };

@@ -2862,3 +2862,12 @@ html body #configure.b16.b16.b16 #opts > .tot .t13thumb { display: none !importa
   html body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvn { text-transform: uppercase !important; font-weight: 400 !important; }
   html[data-ns] body #configure.b16.b16.b16 #stripwrap .b14pv .b14pvn { letter-spacing: 0 !important; }
 }
+
+/* ════════ DETAIL VIEW (owner, 11 Nov 2026: "buggy", "cannot move") ════════
+   The close-up of the stone lay over the right half of the stage and caught every drag, and its caption sat on the
+   3D / Photo / Try on switch. The close-up now lets the hand through to the bracelet, and its caption sits under the stone. */
+html body #configure .b14det { pointer-events: none !important; }
+html body #configure .b14det figcaption { top: auto !important; bottom: 96px !important; right: 28px !important; left: auto !important; text-align: right; }
+html[dir="rtl"] body #configure .b14det figcaption { right: auto !important; left: 28px !important; text-align: left; }
+@media (max-width: 899px) { html body #configure .b14det figcaption { bottom: 120px !important; right: 14px !important; } }
+html body #configure.b16.b16.b16 #stripwrap .vmark { display: none !important; }
