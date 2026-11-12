@@ -54,6 +54,9 @@ export async function mount(sec) {
       .catch(() => { if (L !== "t") throw new Error("archive15 manifest"); L = "m"; return fetch("archive15/m/manifest.json").then(r => r.json()); });
     // a high-density screen wider than about 1200px takes the still at twice the size, where it was rendered
     X = !!(M.finalX && innerWidth * Math.min(2, devicePixelRatio || 1) >= 2400);
+    // the <picture>'s own <source> (a phone's still, for portrait screens before any script) would win over src: on a
+    // tablet it laid the phone's picture over the tablet's frames, so the film and the touch map sat off their prints
+    still.parentNode.querySelectorAll("source").forEach(s => s.remove());
     still.src = X ? M.finalX.src : M.final; still.width = M.res[0]; still.height = M.res[1];
     const idImg = await bitmap(M.ids.src); idW = idImg.width; idH = idImg.height;
     let g = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(idW, idH).getContext("2d") : null; if (!g) g = Object.assign(document.createElement("canvas"), { width: idW, height: idH }).getContext("2d"); g.drawImage(idImg, 0, 0); ids = g.getImageData(0, 0, idW, idH).data;
