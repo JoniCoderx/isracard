@@ -1274,6 +1274,11 @@
     var tot = total.querySelector(".tot"), resv = total.querySelector("#reserve");
     if (resv) det.parentNode.insertBefore(resv, det.nextSibling);
     if (tot) det.parentNode.insertBefore(tot, det.nextSibling);
+    /* the last step's "Review and reserve" (owner, 12 Nov 2026: on a phone it did nothing that could be seen): it opens
+       "Your design" and brings it, with the price and the enquiry beneath it, into view */
+    conf.addEventListener("click", function (e) { var nx = e.target.closest(".b13next"); if (!nx) return;
+      var last = bars.length && bars[bars.length - 1].classList.contains("on"); if (!last) return;
+      setTimeout(function () { det.open = true; det.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }); }, 60); });
     var put = function (el, t) { if (el.textContent !== t) el.textContent = t; };
     function sync() {
       var i = Math.max(0, bars.findIndex(function (b) { return b.classList.contains("on"); }));

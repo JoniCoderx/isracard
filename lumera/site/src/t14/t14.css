@@ -2871,3 +2871,18 @@ html body #configure .b14det figcaption { top: auto !important; bottom: 96px !im
 html[dir="rtl"] body #configure .b14det figcaption { right: auto !important; left: 28px !important; text-align: left; }
 @media (max-width: 899px) { html body #configure .b14det figcaption { bottom: 120px !important; right: 14px !important; } }
 html body #configure.b16.b16.b16 #stripwrap .vmark { display: none !important; }
+
+/* ════════ PHONE FIXES (owner, 12 Nov 2026: "not sure mobile is working proper") ════════ */
+@media (max-width: 899px) {
+  /* every step's choices whole: the old scrolling row's fade no longer cuts the right-hand column */
+  html body #configure.b16.b16.b16 #opts .chips { -webkit-mask-image: none !important; mask-image: none !important; overflow: visible !important; }
+  html body #configure.b16.b16.b16 #opts .chips .chip { min-width: 0 !important; }
+  html body #configure.b16.b16.b16 #opts .chips .chip span { white-space: nowrap; }
+  html body #configure.b16.b16.b16 #opts .chips:has(> [data-k="metal"]) .chip { font-size: .82rem !important; padding-left: 12px !important; padding-right: 10px !important; gap: 10px !important; }
+  /* the enquiry: at 16px a phone no longer zooms the page when a field is tapped */
+  html body #enquire input, html body #enquire textarea, html body #enquire select { font-size: 16px !important; }
+  /* the zoom and full-screen buttons: a 44px reach round a 26px circle */
+  html body #configure .b14zoom, html body #configure .b14full { position: relative; }
+  html body #configure .b14zoom::after, html body #configure .b14full::after { content: ""; position: absolute; inset: -9px; }
+}
+@media (max-width: 899px) { html body a[href="#hero"][data-en="Back to the top"] { display: inline-flex !important; align-items: center; min-height: 44px; } }
