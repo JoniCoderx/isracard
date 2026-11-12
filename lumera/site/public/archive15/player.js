@@ -275,7 +275,8 @@ export async function mount(sec) {
   addEventListener("keydown", e => { if (e.key === "Escape" && cur) close(); });
   picks.forEach(b => b.addEventListener("click", () => {
     const p = M && M.pieces.find(x => x.id === b.dataset.id); if (!p) return;
-    if (!open) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
+    // also when the drawer is open but scrolled off (a name tapped below it on a phone): bring it back, pinned, first
+    if (!open || Math.abs(pin.getBoundingClientRect().top) > 2) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
     show(p, b); }));
   addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY;
     // far from the section, every decoded frame is let go (the files stay, compressed); back near, they are decoded again
