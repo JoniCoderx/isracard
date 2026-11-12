@@ -1,3 +1,6 @@
+/* three.js, once: the hero's emblem has already loaded it from 3d/ (the same file as vendor14/, byte for byte); a second
+   address made the phone fetch and run the whole library twice (measured 12 Nov 2026). vendor14 stays the fallback. */
+function three14() { return import("./3d/three.module.min.js").catch(function () { return import("./vendor14/three.module.min.js"); }); }
 /* /test14/: a diamond shape, seen before it is chosen (the house's reference, screen 04). Touching a shape in the
    builder opens the stone large, with its name, a line about it and three words; "Select" puts it in the bracelet:
    the builder's own choice runs under the sheet, the sheet leaves, and the new stones are set one by one. */
@@ -525,7 +528,7 @@
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, started = false;
   function start() {
     if (started) return; started = true;
-    import("./vendor14/three.module.min.js").then(build, function () {});
+    three14().then(build, function () {});
   }
   /* built only once the reader has stopped scrolling for a moment near it, never mid-scroll (the house's motion rules) */
   var nearK = false, idle = 0, arm = function () { clearTimeout(idle); if (nearK && !started) idle = setTimeout(start, 450); };
@@ -958,7 +961,7 @@
   var stage = sec.querySelector(".cr15stage"), started = false;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
   function start() { if (started) return; started = true;
-    Promise.all([import("./vendor14/three.module.min.js"), fetch("craft15/soul.json").then(function (r) { return r.json(); })]).then(function (a) { build(a[0], a[1]); }, function () {}); }
+    Promise.all([three14(), fetch("craft15/soul.json").then(function (r) { return r.json(); })]).then(function (a) { build(a[0], a[1]); }, function () {}); }
   /* the build (three.js, the pavé, the first render with its shaders) is the costliest thing on the page: it waits until
      the reader has paused for 450ms within a screen of the section, and never runs while the drawer below is pinned on
      screen (it stalled the drawer's scroll on a slow phone). Coming near only fetches the files; the still shows meanwhile. */
@@ -966,7 +969,7 @@
   var drawerUp = function () { var r = document.querySelector("#details .ar15run"); if (!r) return false; var b = r.getBoundingClientRect(); return b.top < innerHeight * .5 && b.bottom > innerHeight * .5; };
   var later = function () { clearTimeout(idle); if (near && !started) idle = setTimeout(function () { if (near && !started && !drawerUp()) start(); }, 450); };
   new IntersectionObserver(function (es) { near = es[0].isIntersecting;
-    if (near && !warmed) { warmed = true; try { fetch("./vendor14/three.module.min.js"); fetch("craft15/soul.json"); } catch (e) {} }
+    if (near && !warmed) { warmed = true; try { fetch("./3d/three.module.min.js"); fetch("craft15/soul.json"); } catch (e) {} }
     later(); }, { rootMargin: "100% 0px" }).observe(sec);
   addEventListener("scroll", function () { if (near && !started) later(); }, { passive: true });
 

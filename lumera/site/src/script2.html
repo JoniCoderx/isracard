@@ -425,7 +425,10 @@
   function frame() {
     if (lost) return;
     var r = wrap.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight || document.hidden) { if (window.__awake) { asleep = true; return; } requestAnimationFrame(frame); return; }
-    requestAnimationFrame(frame);
+    /* (test14) hidden (it shows its own 3D view in the strip; this canvas only on the wrist): no drawing at all, only the
+       stone's one still for the chips; it looks again five times a second (measured: ~70 draws a frame for nothing) */
+    var hid = window.__frame14 && !canvas.getClientRects().length;   // test14 only: the live pages draw as before
+    if (hid) setTimeout(function () { requestAnimationFrame(frame); }, 200); else requestAnimationFrame(frame);
     if (Math.abs(r.width - cssW) > 0.5 || Math.abs(r.height - cssH) > 0.5) resize();
     var t = (performance.now() - t0) / 1000, b = window.__build, metal = METAL[window.__preview || b.metal] || METAL.white;
     var spec = window.__lineSpec || { cut: "round", n: 36, alongMm: 3.6, acrossMm: 3.6, pitchMm: 4.0, orient: "along", set: "prong", L: 3.6, W: 3.6 };
@@ -435,6 +438,7 @@
     var envTarget = view === "wrist" && ptr.on ? (ptr.x - 0.5) * 2.2 : 0.35 * Math.sin(t * 0.45); envA += (envTarget - envA) * 0.08;
     var rot = elong ? 0.09 * Math.sin(t * 0.6) : (reduce ? 0.4 : t * 0.25), pitch = -0.52 + (elong ? 0.05 * Math.sin(t * 0.5) : 0);
     if (!texOnce || (!reduce && (fc++ % (mobile ? 4 : 2)) === 0)) { renderStoneTex(rot, pitch, envA); if (!texOnce) queueSprite(elong); texOnce = true; }
+    if (hid) return;
     gl.viewport(0,0,W,H); gl.disable(gl.BLEND); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
     beginSprites();
     if (view === "wrist") {
