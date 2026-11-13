@@ -2886,3 +2886,8 @@ html body #configure.b16.b16.b16 #stripwrap .vmark { display: none !important; }
   html body #configure .b14zoom::after, html body #configure .b14full::after { content: ""; position: absolute; inset: -9px; }
 }
 @media (max-width: 899px) { html body a[href="#hero"][data-en="Back to the top"] { display: inline-flex !important; align-items: center; min-height: 44px; } }
+
+/* iPhone: the page jumped as the address bar slid in and out (owner, 13 Nov 2026). The shared hero was 100dvh, which
+   follows the bar, so the hero changed height mid-scroll and everything under it moved by the bar's height. svh is the
+   screen with the bar showing: it never changes while the reader scrolls. */
+html body #hero { height: 100svh !important; min-height: 0 !important; }
