@@ -1842,7 +1842,7 @@
       return;
     }
     if (S.phase === "close") {
-      e = ease3((now - S.t0) / 1150);
+      e = ease3((now - S.t0) / (window.__frame14 ? 600 : 1150));   // (test14) the page stays locked until the line is home: a short way back
       if (!S.frozen) S.frozen = S.rope.map(function (q, k) { return frameAt(k, now); });
       writeFrames(S.frozen.map(function (f, k) { return mixF(f, S.ring[k], Math.max(0, Math.min(1, e * 1.25 - ((n - 1 - k) / n) * 0.25))); }));
       if (e >= 1) snakeEnd();

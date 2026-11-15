@@ -51,6 +51,7 @@
     spec = spec || specNow(); ctx.save(); ctx.translate(x, y); ctx.rotate(ang || 0);
     if (phase === 0) { var st = seatSprite(metal, aw, ah, spec.set, "seat"); ctx.drawImage(st, -st._w / 2, -st._h / 2, st._w, st._h); }
     if (phase !== 0 && phase !== 3) {
+      if (window.__needSprite) window.__needSprite();   // (test14) the still is made when first needed
       var sp = window.__stoneSprite, sd = Math.max(aw, ah) * 2, across = spec.orient === "across";
       if (sp && window.__stoneSpriteCut === spec.cut) { if (across) ctx.rotate(Math.PI / 2); ctx.drawImage(sp, -sd / 2, -sd / 2, sd, sd); if (across) ctx.rotate(-Math.PI / 2); }
       else { var g = ctx.createRadialGradient(-aw * 0.3, -ah * 0.35, 0, 0, 0, Math.max(aw, ah)); g.addColorStop(0, "#ffffff"); g.addColorStop(0.18, "#eef3ff"); g.addColorStop(0.42, "#b7c2d8"); g.addColorStop(0.58, "#f4f7ff"); g.addColorStop(0.8, "#8792a8"); g.addColorStop(1, "#dfe4ef"); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, 0, aw * 0.96, ah * 0.96, 0, 0, 6.283); ctx.fill(); }

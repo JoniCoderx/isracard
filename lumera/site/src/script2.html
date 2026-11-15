@@ -389,7 +389,12 @@
      builder arrived, so it waits until the page has been still for a moment */
   var spQ = false, lastMove = 0;
   ["scroll", "touchmove", "wheel"].forEach(function (e) { addEventListener(e, function () { lastMove = performance.now(); }, { passive: true }); });
-  function queueSprite(el) { if (spQ) return; spQ = true;
+  /* (test14) the stone's still is read back only when something will draw it (the Inspect line, the wrist on your own
+     photograph): the read stalls the phone until the GPU has finished, and done after every choice it froze the builder
+     for a second or more just as the reader moved on (measured 15 Nov 2026) */
+  var spDirty = null;
+  window.__needSprite = function () { if (!spDirty || lost) return; var el = spDirty.el; spDirty = null; try { renderStoneTex(el ? 0 : 0.4, -0.52, 0); exportSprite(); fc = 0; } catch (e) {} };
+  function queueSprite(el) { if (window.__frame14) { spDirty = { el: el }; return; } if (spQ) return; spQ = true;
     (function wait() { if (performance.now() - lastMove < 450) { setTimeout(wait, 250); return; }
       spQ = false; if (lost) return; renderStoneTex(el ? 0 : 0.4, -0.52, 0); exportSprite(); fc = 0; })(); }
   /* The first time each program draws, the graphics driver finishes
