@@ -334,7 +334,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     top.appendChild(close); top.appendChild(mk); if (lang) top.appendChild(lang);
     var card = function (href, img, pos, name) { return '<a href="' + href + '"><img src="models/' + img + '-900.jpg" alt="" loading="lazy" decoding="async" style="object-position:' + pos + '"><b>' + name + '</b></a>'; };
     var cards = document.createElement("div"); cards.className = "m14cards";
-    cards.innerHTML = card("pieces/knot/", "bracelet", "45% 60%", "MOMENT") + card("pieces/ring/", "ring", "55% 50%", "ICON") + card("pieces/pave/", "necklace", "50% 55%", "SOUL");
+    cards.innerHTML = card("pieces14/knot/", "bracelet", "45% 60%", "MOMENT") + card("pieces14/ring/", "ring", "55% 50%", "ICON") + card("pieces14/pave/", "necklace", "50% 55%", "SOUL");
     var hd = document.createElement("p"); hd.className = "m14k"; hd.setAttribute("data-en", "The house"); hd.setAttribute("data-he", "הבית"); hd.textContent = "The house";
     var L = [["#collection", "Collection", "הקולקציה"], ["#build", "Design yours", "עצבו בעצמכם"], ["#inside", "The box", "הקופסה"], ["#details", "Up close", "מקרוב"], ["about14/", "About", "אודות"], ["#concierge", "Enquire", "פנייה"]];
     var grid = document.createElement("nav"); grid.className = "m14grid"; grid.setAttribute("aria-label", "Main");

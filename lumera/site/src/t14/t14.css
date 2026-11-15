@@ -526,8 +526,8 @@ html body .c14card { --zs: 1.04; --z0: 1.22; }
 html body .c14card .c14pic img { transform: translate3d(0, var(--py, 0px), 0) scale(var(--z0)); }
 html body .c14card.in .c14pic img { transform: translate3d(0, var(--py, 0px), 0) scale(var(--zs)); }
 /* MOMENT: one bracelet, close at the wrist */
-html body .c14card[href="pieces/knot/"] { --zs: 1.75; --z0: 1.95; }
-html body .c14card[href="pieces/knot/"] .c14pic img { transform-origin: 53% 70%; object-position: 50% 60%; }
+html body .c14card[href="pieces14/knot/"] { --zs: 1.75; --z0: 1.95; }
+html body .c14card[href="pieces14/knot/"] .c14pic img { transform-origin: 53% 70%; object-position: 50% 60%; }
 html body .c14card::after { background: linear-gradient(to top, rgba(10,8,6,.86) 0%, rgba(10,8,6,.42) 26%, rgba(10,8,6,0) 48%) !important; }
 html body .c14t { left: clamp(20px, 2vw, 30px) !important; right: 80px !important; bottom: clamp(22px, 2.2vw, 34px) !important; top: auto !important; gap: 8px; }
 html body .c14t b { font-size: clamp(1.25rem, 1.8vw, 1.8rem) !important; letter-spacing: .3em !important; font-weight: 300 !important; color: #f8f3e8; }
@@ -545,8 +545,8 @@ html body .c14all { grid-column: 2; margin-top: clamp(30px, 3vw, 48px) !importan
   html body .c14all { grid-column: 1; }
 }
 html body .c14wrap { width: 100%; max-width: 1760px !important; box-sizing: border-box; grid-template-columns: minmax(220px, 270px) minmax(0, 1fr) !important; }
-html body .c14card[href="pieces/knot/"] { --zs: 1.6; --z0: 1.8; }
-html body .c14card[href="pieces/knot/"] .c14pic img { transform-origin: 54% 80% !important; object-position: 50% 80% !important; }
+html body .c14card[href="pieces14/knot/"] { --zs: 1.6; --z0: 1.8; }
+html body .c14card[href="pieces14/knot/"] .c14pic img { transform-origin: 54% 80% !important; object-position: 50% 80% !important; }
 @media (min-width: 900px) { html body .c14card { aspect-ratio: 3 / 4 !important; } }
 @media (max-width: 899px) { html body .c14wrap { grid-template-columns: 1fr !important; } html body .c14intro { padding: 0 6px; } }
 

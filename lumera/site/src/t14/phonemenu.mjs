@@ -12,7 +12,7 @@ export function phoneMenu(R, current) {
 <div class="pm14" id="pm14" role="dialog" aria-modal="true" aria-label="Menu" hidden>
   <div class="pm14sheet">
     <div class="pm14top"><button class="pm14x" type="button" aria-label="Close"></button><a class="pm14mk" href="${R}test14/" aria-label="SILAVU, the house"><svg viewBox="0 0 875 1000" aria-hidden="true"><use href="#symb"/></svg><b>SILAVU</b></a><span></span></div>
-    <div class="pm14cards">${card("pieces/knot/", "bracelet", "45% 60%", "MOMENT")}${card("pieces/ring/", "ring", "55% 50%", "ICON")}${card("pieces/pave/", "necklace", "50% 55%", "SOUL")}</div>
+    <div class="pm14cards">${card("pieces14/knot/", "bracelet", "45% 60%", "MOMENT")}${card("pieces14/ring/", "ring", "55% 50%", "ICON")}${card("pieces14/pave/", "necklace", "50% 55%", "SOUL")}</div>
     <p class="pm14k">The house</p>
     <nav class="pm14grid" aria-label="Main">${places.map(([h, t]) => `<a href="${R}${h}"${h === current ? ' aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
     <a class="pm14cta" href="${R}test14/#concierge">Book a private viewing</a>

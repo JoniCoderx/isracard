@@ -105,3 +105,5 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
   .spl { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .js .cc14 .ccpic, .js .cc14 .cctxt > *, .js .sp14 { transition: none; opacity: 1; transform: none; clip-path: none; } }
+/* the mark's definitions are not a picture: they took 150px at the top of the page */
+body > svg:first-of-type { position: absolute; width: 0; height: 0; overflow: hidden; }

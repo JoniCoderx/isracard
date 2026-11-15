@@ -774,6 +774,8 @@ const T14 = (() => {
       .replace('data-view="wrist" data-en="On a wrist" data-he="על פרק היד">On a wrist<', 'data-view="wrist" data-en="Try on" data-he="על היד">Try on<');
     /* the menu: the founder's page by its name */
     h = h.replace('<a href="#build"><span class="k">03</span><span data-en="Design yours" data-he="עצבו בעצמכם">Design yours</span></a>', '<a href="#build"><span class="k">03</span><span data-en="Build your bracelet" data-he="בנו את הצמיד">Build your bracelet</span></a>');
+    /* every piece opens on its own page in this page's black (pieces14), not the live site's (the house, 15 Nov 2026) */
+    h = h.replace(/(href|data-href)="pieces\//g, '$1="pieces14/');
     return h;
   };
   return { css: fs.readFileSync(path.join(dir, "t14.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir, "t14.js"), "utf8") + "</script>", edit,
@@ -792,6 +794,12 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
   const { collection14Page } = await import("./src/t14/collection14.mjs");
   const page = collection14Page({ PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), base });
   if (page) { fs.mkdirSync(path.join(outDir, "collection14"), { recursive: true }); fs.writeFileSync(path.join(outDir, "collection14", "index.html"), page); console.log("test page written: collection14"); } }
+/* /pieces14/<id>/: each piece on a page of its own in /test14/'s black (src/t14/piece14.mjs) */
+{ const { markDefs } = await import("./src/body.mjs");
+  const { piece14Pages } = await import("./src/t14/piece14.mjs");
+  const pages = piece14Pages({ PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), base });
+  if (pages) { for (const pg of pages) { fs.mkdirSync(path.join(outDir, "pieces14", pg.id), { recursive: true }); fs.writeFileSync(path.join(outDir, "pieces14", pg.id, "index.html"), pg.html); } console.log("test pages written: pieces14 (" + pages.length + ")"); }
+  else console.warn("pieces14 skipped: its fonts are missing"); }
 /* /about14/: the same page in /test14/'s black, made the best it can be (the house's note of 4 Nov 2026) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");

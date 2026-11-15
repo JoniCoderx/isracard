@@ -89,7 +89,7 @@
       var p = card(where === "neck" ? "pave" : where === "hand" ? "ring" : "knot");
       if (!p) return;
       var prose = {}; try { prose = JSON.parse(p.getAttribute("data-prose") || "{}"); } catch (e) {}
-      var st = prose.story || {}, img = p.querySelector(".fig .im img"), a = p.querySelector('a[href*="pieces/"]'), q = p.querySelector(".lnk.q[data-piece]");
+      var st = prose.story || {}, img = p.querySelector(".fig .im img"), a = p.querySelector('a[href*="pieces"]'), q = p.querySelector(".lnk.q[data-piece]");
       pick = { name: (p.getAttribute("data-title") || "").split("|")[0].trim(), nameHe: (p.getAttribute("data-title-he") || p.getAttribute("data-title") || "").split("|")[0].trim(),
         why: st.en ? [st.en, st.he || st.en] : null, pic: img ? (img.currentSrc || img.src) : "", href: a ? a.getAttribute("href") : "#collection",
         piece: q ? q.getAttribute("data-piece") : "", pieceHe: q ? q.getAttribute("data-piece-he") : "", ref: q ? q.getAttribute("data-ref") : "" };

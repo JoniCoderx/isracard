@@ -29,7 +29,7 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
 
   const chapter = (p, i) => { const a = worn(p), b = p.shots[0];
     return `<article class="cc14 ${i % 2 ? "flip" : ""}" data-cat="${q(p.cat)}" id="${q(p.id)}" aria-labelledby="n-${q(p.id)}">
-  <a class="ccpic" href="${R}pieces/${q(p.id)}/" aria-label="${q(p.plain || plain(p.name.en))}">
+  <a class="ccpic" href="${R}pieces14/${q(p.id)}/" aria-label="${q(p.plain || plain(p.name.en))}">
     <img class="a" src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 56vw, 100vw" width="1254" height="1254" loading="${i < 1 ? "eager" : "lazy"}" decoding="async" alt="${q(a.alt.en)}">
     <img class="b" src="${src(b.img, p)}" srcset="${set(b.img, p)}" sizes="(min-width: 900px) 56vw, 100vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${q(b.alt.en)}">
   </a>
@@ -38,11 +38,11 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
     <h3 class="ccn" id="n-${q(p.id)}">${p.name.en}</h3>
     <p class="ccl">${q(plain(p.line.en))}</p>
     <ul class="ccm">${meta(p)}</ul>
-    <div class="cca"><a class="ccgo" href="${R}pieces/${q(p.id)}/">View the piece</a><a class="ccres" href="${R}test14/#concierge">Book a private viewing</a></div>
+    <div class="cca"><a class="ccgo" href="${R}pieces14/${q(p.id)}/">View the piece</a><a class="ccres" href="${R}test14/#concierge">Book a private viewing</a></div>
   </div>
 </article>`; };
   const special = p => { const a = p.shots[0];
-    return `<li class="sp14" data-cat="${q(p.cat)}"><a href="${R}pieces/${q(p.id)}/">
+    return `<li class="sp14" data-cat="${q(p.cat)}"><a href="${R}pieces14/${q(p.id)}/">
   <span class="sppic"><img src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 30vw, 90vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${q(a.alt.en)}"></span>
   <span class="spk">${q(p.kind.en)}</span><span class="spn">${p.name.en}</span><span class="spl">${q(plain(p.line.en))}</span></a></li>`; };
 
