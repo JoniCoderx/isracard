@@ -710,7 +710,7 @@ const T14 = (() => {
      word move at different speeds and the word fades (src/t14/t14.js, "sg16") */
   const CRAFT = `<section id="craft14" class="sg16" data-n="03" data-title-en="Craftsmanship" data-title-he="אומנות" aria-label="SOUL, worn" data-aria-he="SOUL, על העור">
   <figure class="sg16reel">
-    <video muted loop playsinline preload="none" poster="img/hero-lumiere-1920.jpg" data-src="v/hero-lumiere.mp4" data-src-m="v/hero-lumiere-v.mp4" data-poster-m="img/hero-lumiere-v-1080.jpg" aria-label="SOUL, worn" data-aria-he="SOUL, על העור"></video>
+    <video muted loop playsinline preload="none" poster="img/hero-lumiere-1920.jpg" data-src="v14/lumiere-1280.mp4" data-src-m="v14/lumiere-v-720.mp4" data-poster-m="img/hero-lumiere-v-1080.jpg" aria-label="SOUL, worn" data-aria-he="SOUL, על העור"></video>
     <div class="sg16glass" aria-hidden="true"><canvas></canvas></div>
     <svg class="sg16lens" aria-hidden="true" focusable="false"><defs>
       <clipPath id="sg16clip"><text class="sg16t">SILAVU</text></clipPath>
