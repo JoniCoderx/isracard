@@ -243,21 +243,46 @@ export async function mount(sec) {
     const read = (u, v) => (u < 0 || v < 0 || u >= idW || v >= idH) ? 0 : Math.round(ids[(v * idW + u) * 4] / M.ids.step);
     let pid = read(px, py);
     for (let r = 1; !pid && r <= rad; r++) for (let k = -r; k <= r && !pid; k++) pid = read(px + k, py - r) || read(px + k, py + r) || read(px - r, py + k) || read(px + r, py + k);
-    if (!pid) return null;
+    /* nothing under the point itself: inside a piece's own bounds still means that piece (the hollow of the ring, the
+       space within the necklace, between the earrings), the smallest one where bounds overlap */
+    if (!pid) { const ux = x * M.res[0], uy = y * M.res[1]; let best = null, ba = Infinity;
+      for (const p of M.pieces) { const b = p.box, padX = (b[2] - b[0]) * .06, padY = (b[3] - b[1]) * .06, a = (b[2] - b[0]) * (b[3] - b[1]);
+        if (ux > b[0] - padX && ux < b[2] + padX && uy > b[1] - padY && uy < b[3] + padY && a < ba) { best = p; ba = a; } }
+      return best; }
     const pc = M.pieces.find(p => p.pid === pid); if (pc) return pc;
     const pr = M.prints.find(p => p.pid === pid); return pr ? M.pieces.find(p => p.id === pr.piece) : null;
   }
   const toStage = box => ({ x: box[0] * R.k, y: box[1] * R.k, w: (box[2] - box[0]) * R.k, h: (box[3] - box[1]) * R.k });
   let hot = null;
+  /* the hover (owner, 19 Nov 2026: "not intuitive, messy"): the piece itself rises a little off the suede (its own render
+     over the plate it lay on), the rest of the drawer falls into shadow, its name sits neatly beneath it, and the pointer
+     becomes a small "View" so a click is plainly the next thing */
+  const hvP = new Image(), hvH = new Image(); hvP.className = "ar15hvp"; hvH.className = "ar15hvh"; hvP.alt = hvH.alt = "";
+  const curEl = document.createElement("i"); curEl.className = "ar15cur"; curEl.setAttribute("aria-hidden", "true");
+  const curTx = document.createElement("b"); curEl.appendChild(curTx); pin.appendChild(curEl);
   function hover(p) {
-    if (p === hot) return; hot = p; stage.style.cursor = p ? "pointer" : "";
-    if (!p) { tag.classList.remove("on"); pool.classList.remove("on"); return; }
+    if (p === hot) return; hot = p; stage.style.cursor = p ? "none" : ""; curEl.classList.toggle("on", !!p);
+    if (!p) { tag.classList.remove("on"); pool.classList.remove("on"); hvP.classList.remove("on"); hvH.classList.remove("on"); return; }
     const r = toStage(p.box), x = text(p.id);
-    tag.innerHTML = `<b>${x.name}</b><span>${x.kind}</span>`; tag.style.left = (r.x + r.w / 2) + "px"; tag.style.top = r.y + "px"; tag.classList.add("on");
+    curTx.textContent = he() ? "לצפייה" : "View";
+    if (hvP.parentNode !== stage) stage.insertBefore(hvP, pool); if (hvH.parentNode !== fx) fx.appendChild(hvH);
+    hvP.src = patchSrc(p); place(hvP, toStage(p.patch.rect));
+    const hr = toStage(p.hero.rect); hvH.classList.remove("on"); hvH.src = p.hero.src; hvH.style.width = hr.w + "px"; hvH.style.height = hr.h + "px";
+    hvH.style.setProperty("--hx", hr.x + "px"); hvH.style.setProperty("--hy", hr.y + "px");
+    const ready = () => { if (hot === p) { hvP.classList.add("on"); hvH.classList.add("on"); } }; (hvH.decode ? hvH.decode() : Promise.resolve()).then(ready, ready);
+    const S = stage.getBoundingClientRect(), below = S.top + r.y + r.h + 90 < innerHeight - 40;
+    tag.innerHTML = `<b>${x.name}</b><span>${x.kind}</span>`; tag.style.left = (r.x + r.w / 2) + "px"; tag.style.top = (below ? r.y + r.h : r.y) + "px";
+    tag.classList.toggle("up", !below); tag.classList.add("on");
     pool.style.setProperty("--px", (r.x + r.w / 2) + "px"); pool.style.setProperty("--py", (r.y + r.h / 2) + "px"); pool.style.setProperty("--pr", (Math.max(r.w, r.h) * .62 + 24) + "px"); pool.classList.add("on");
   }
-  stage.addEventListener("pointermove", e => { if (open && !cur && e.pointerType === "mouse") hover(at(e.clientX, e.clientY)); });
+  let cx0 = 0, cy0 = 0, craf = 0;
+  stage.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return; if (open && !cur) hover(at(e.clientX, e.clientY));
+    const P = pin.getBoundingClientRect(); cx0 = e.clientX - P.left; cy0 = e.clientY - P.top;
+    if (!craf) craf = requestAnimationFrame(() => { craf = 0; curEl.style.transform = `translate(${cx0}px, ${cy0}px)`; }); });
   stage.addEventListener("pointerleave", () => hover(null));
+  /* the names beneath the drawer light their piece in it */
+  picks.forEach(b => { b.addEventListener("mouseenter", () => { if (open && !cur) { const p = M && M.pieces.find(x => x.id === b.dataset.id); if (p) hover(p); curEl.classList.remove("on"); stage.style.cursor = ""; } });
+    b.addEventListener("mouseleave", () => { if (!cur) hover(null); }); });
   stage.addEventListener("click", e => { if (!open) return; if (cur) { close(); return; } const p = at(e.clientX, e.clientY, e.pointerType !== "mouse"); if (p) show(p, null); });
 
   /* ── the detail: the piece comes forward.
