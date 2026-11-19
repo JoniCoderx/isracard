@@ -2950,3 +2950,23 @@ html[data-ns] .ar15cur b { letter-spacing: 0; padding: 0; font-size: .72rem; }
 @media (prefers-reduced-motion: reduce) { .ar15hvh, .ar15cur { transition: none; } }
 html body .ar15nav .ar15pick { color: rgba(246,241,230,.82); font-size: .7rem; min-height: 44px; }
 html body .ar15nav .ar15pick:hover, html body .ar15nav .ar15pick:focus-visible { color: #fff; }
+
+/* ── the kinds, brushed with light (owner, 19 Nov 2026: "a brushing effect on each, running until you click it") ── a band
+   of light passes along each word in turn, as over polished metal, the next word catching it as the last lets it go;
+   the word under the pointer holds the light and the others rest */
+html body .c16nav .c16w { background: linear-gradient(100deg, rgba(236,226,206,.58) 0 34%, #f3dfb5 43%, #ffffff 50%, #f3dfb5 57%, rgba(236,226,206,.58) 66% 100%);
+  background-size: 300% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: c16brush 6s cubic-bezier(.45,0,.2,1) infinite; }
+html body .c16nav .c16it:nth-child(2) .c16w { animation-delay: .45s; } html body .c16nav .c16it:nth-child(3) .c16w { animation-delay: .9s; }
+html body .c16nav .c16it:nth-child(4) .c16w { animation-delay: 1.35s; } html body .c16nav .c16it:nth-child(5) .c16w { animation-delay: 1.8s; }
+html body .c16nav .c16it:nth-child(6) .c16w { animation-delay: 2.25s; }
+html body .c16nav .c16soon .c16w { opacity: .7; }
+@keyframes c16brush { 0% { background-position: 100% 0; } 22% { background-position: 0% 0; } 100% { background-position: 0% 0; } }
+html body .c16nav:hover .c16w { animation-play-state: paused; }
+html body .c16nav a.c16it:hover .c16w, html body .c16nav a.c16it:focus-visible .c16w { animation: none; background: none; color: #fffaf0; text-shadow: 0 0 18px rgba(255,236,200,.35); }
+html[dir="rtl"] body .c16nav .c16w { animation-direction: reverse; }
+@media (prefers-reduced-motion: reduce) { html body .c16nav .c16w { animation: none; background: none; color: rgba(236,226,206,.86); } }
+
+/* the collections' night sky: small diamonds that drift, and draw together around the pointer */
+html body #collection.c14col > .c14sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+html body #collection.c14col > .c14wrap { position: relative; z-index: 1; }
