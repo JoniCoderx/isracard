@@ -2891,3 +2891,38 @@ html body #configure.b16.b16.b16 #stripwrap .vmark { display: none !important; }
    follows the bar, so the hero changed height mid-scroll and everything under it moved by the bar's height. svh is the
    screen with the bar showing: it never changes while the reader scrolls. */
 html body #hero { height: 100svh !important; min-height: 0 !important; }
+
+/* ── the drawer on phones and tablets (owner, 19 Nov 2026: "it has to be amazing"): no long pinned scroll. One screen;
+   the title rests on the closed drawer, the drawer opens by itself in a single eased film, the title gives way, and a
+   soft light breathes once over each piece to say it can be taken. Desktop keeps the scroll. */
+/* the same layout before the player has loaded (phones, and upright tablets), so nothing changes height as it mounts */
+@media (max-width: 599px), (orientation: portrait) and (min-width: 600px) and (max-width: 1366px) {
+  html body #details.ar15:not(.ar15still-only) { position: relative; padding-top: 0 !important; }
+  html body #details.ar15 .ar15seq { visibility: hidden; }   /* the film paints the opening here; an empty canvas is black */
+  html body #details.ar15 .ar15run { height: auto !important; }
+  html body #details.ar15 .ar15pin { position: relative; height: 100svh; }
+  html body #details.ar15 .ar15cue { display: none; }
+  html body #details.ar15 .ar15hd { position: absolute; left: 0; right: 0; top: calc(var(--ar15top, 72px) + 4vh); z-index: 6; pointer-events: none; transition: opacity .9s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); }
+}
+html body #details.ar15auto { position: relative; }
+html body #details.ar15auto .ar15run { height: auto !important; }
+html body #details.ar15auto .ar15pin { position: relative; height: 100svh; }
+html body #details.ar15auto .ar15cue { display: none; }
+.ar15ofilm { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 1; background: transparent; pointer-events: none; }
+.ar15ofilm[hidden] { display: none; }
+html body #details.ar15auto .ar15still { z-index: 2; }
+html body #details.ar15auto .ar15hd { position: absolute; left: 0; right: 0; top: calc(var(--ar15top, 72px) + 4vh); z-index: 6; pointer-events: none;
+  transition: opacity .9s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); }
+html body #details.ar15auto.ar15open .ar15hd { opacity: 0; transform: translateY(-14px); }
+html body #details.ar15auto .ar15hd .ar15h { text-shadow: 0 2px 24px rgba(0,0,0,.85); }
+.ar15dot { position: absolute; z-index: 5; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,243,222,.55) 0 7%, rgba(255,236,204,.16) 22%, rgba(255,236,204,0) 62%);
+  box-shadow: 0 0 0 1px rgba(255,240,215,.35); opacity: 0; animation: ar15breathe 2.4s cubic-bezier(.2,.8,.2,1) both 2; }
+@keyframes ar15breathe { 0% { opacity: 0; transform: scale(.6); } 35% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.45); } }
+@media (prefers-reduced-motion: reduce) { .ar15dot { display: none; } }
+html body #details.ar15auto .ar15still { transition: opacity .35s ease; }
+
+/* the closed drawer is there before anything has loaded (phones): the same first frame the film starts on */
+@media (max-width: 599px) { html body #details.ar15 .ar15pin { background: #000 url(archive15/m/seq/00.webp) center 54% / 100% auto no-repeat; } }
+@media (orientation: portrait) and (min-width: 600px) and (max-width: 1366px) { html body #details.ar15 .ar15pin { background: #000 url(archive15/t/seq/00.webp) center / cover no-repeat; } }
+@media (max-width: 599px), (orientation: portrait) and (min-width: 600px) and (max-width: 1366px) { html body #details.ar15 .ar15pin .ar15stage { background: transparent; } }

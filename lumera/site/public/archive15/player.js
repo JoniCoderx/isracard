@@ -35,6 +35,11 @@ export async function mount(sec) {
   // 600px and wider, desktop (d) for anything held landscape
   const pickLayout = () => innerWidth < 600 ? "m" : innerHeight > innerWidth * 1.05 ? "t" : "d";   // a phone held sideways is landscape: the desktop composition
   let L = pickLayout();
+  /* phones and tablets (owner, 19 Nov 2026: "on mobile the drawer is very disappointing, it has to be amazing"): no long
+     pinned scroll there. The drawer opens by itself as it comes into view, one eased film made from the same renders
+     (archive15/<m|t>/open.mp4, played by the phone's own video decoder), and the still takes over to be touched */
+  const auto = () => L !== "d" && !reduce;
+  let opened = false, ofilm = null, playing = false;
   const run = sec.querySelector(".ar15run"), pin = sec.querySelector(".ar15pin"), stage = sec.querySelector(".ar15stage");
   const cv = stage.querySelector(".ar15seq"), g = cv.getContext("2d", { alpha: false }), still = stage.querySelector(".ar15still img"), fx = stage.querySelector(".ar15fx");
   const tag = stage.querySelector(".ar15tag"), dim = stage.querySelector(".ar15dim"), pool = stage.querySelector(".ar15pool");
@@ -61,7 +66,8 @@ export async function mount(sec) {
     const idImg = await bitmap(M.ids.src); idW = idImg.width; idH = idImg.height;
     let g = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(idW, idH).getContext("2d") : null; if (!g) g = Object.assign(document.createElement("canvas"), { width: idW, height: idH }).getContext("2d"); g.drawImage(idImg, 0, 0); ids = g.getImageData(0, 0, idW, idH).data;
     blobs = new Array(M.seq.n); bmps = new Array(M.seq.n);
-    if (!reduce) { blobs[0] = await fetch(url(0)).then(r => r.blob()); fetchMore(); }
+    if (!reduce && !auto()) { blobs[0] = await fetch(url(0)).then(r => r.blob()); fetchMore(); }
+    openFilm();
     M.pieces.forEach(p => { new Image().src = p.hero.src; new Image().src = patchSrc(p); });
   }
 
@@ -119,7 +125,37 @@ export async function mount(sec) {
     // the canvas no finer than the frames themselves (the composite scales it up): the fewest pixels to push per frame
     const dpr = Math.min(2, devicePixelRatio || 1), cw = Math.round(Math.min(R.w * dpr, M.seq.res[0]));
     if (cw !== cv.width) { cv.width = cw; cv.height = Math.round(cw * R.h / R.w); }
-    placeFilm(); dirty = true;
+    placeFilm(); dirty = true; sec.classList.toggle("ar15auto", auto());
+  }
+
+  /* ── the opening film (phones and tablets): its poster is the closed drawer; it starts once most of the drawer is on
+     screen, and when it ends (or cannot play: a phone in low-power mode refuses) the drawer simply is open */
+  function openFilm() {
+    if (!auto()) { if (ofilm) ofilm.hidden = true; return; }
+    if (!ofilm) {
+      ofilm = document.createElement("video"); ofilm.className = "ar15ofilm"; ofilm.muted = true; ofilm.playsInline = true; ofilm.setAttribute("playsinline", ""); ofilm.setAttribute("muted", "");
+      ofilm.setAttribute("aria-hidden", "true"); ofilm.preload = "none"; stage.insertBefore(ofilm, cv.nextSibling);
+      ofilm.addEventListener("ended", finishOpen);
+      new IntersectionObserver(es => { if (es[0].isIntersecting && ofilm.preload === "none" && !playing) { ofilm.preload = "auto"; ofilm.load(); } }, { rootMargin: "150% 0px" }).observe(stage);
+      new IntersectionObserver(es => { if (es[0].isIntersecting && auto() && !opened && !playing) playOpen(); }, { threshold: .55 }).observe(stage);
+    }
+    ofilm.hidden = false;
+    const src = `archive15/${L}/open.mp4`; if (ofilm.getAttribute("src") !== src) { ofilm.poster = url(0); ofilm.setAttribute("src", src); if (ofilm.preload === "auto") ofilm.load(); }
+  }
+  function playOpen() {
+    playing = true; const safety = setTimeout(finishOpen, 8000);
+    ofilm.addEventListener("ended", () => clearTimeout(safety), { once: true });
+    // a play cut short by a load that was already on its way is tried once more when the film can play; a refusal
+    // (low-power mode, no autoplay) opens the drawer at once
+    let again = false; const fail = e => { if (e && e.name === "AbortError" && !again) { again = true; ofilm.addEventListener("canplay", () => { const q = ofilm.play(); if (q && q.catch) q.catch(fail); }, { once: true }); return; } clearTimeout(safety); finishOpen(); };
+    try { ofilm.preload = "auto"; const p = ofilm.play(); if (p && p.catch) p.catch(fail); } catch (e) { fail(e); }
+  }
+  function finishOpen() { if (opened) return; opened = true; playing = false; try { ofilm && ofilm.pause(); } catch (e) {} t = 1; dirty = true; draw(); }   // the film's last frame is the open drawer: the still takes over at once (a short crossfade in CSS)
+  /* once open, a soft light breathes once over each piece where a finger can take it */
+  function invite() {
+    if (sec.__invited) return; sec.__invited = true;
+    const dots = M.pieces.map((p, i) => { const r = toStage(p.box), d = document.createElement("i"); d.className = "ar15dot"; d.style.left = (r.x + r.w / 2) + "px"; d.style.top = (r.y + r.h / 2) + "px"; d.style.animationDelay = (i * 160) + "ms"; fx.appendChild(d); return d; });
+    const gone = () => dots.forEach(d => d.remove()); setTimeout(gone, 5200); stage.addEventListener("pointerdown", gone, { once: true });
   }
 
   /* ── the film in a print (owner, 10 Nov 2026): the ICON print's photograph comes alive with the house's own film of the
@@ -163,7 +199,7 @@ export async function mount(sec) {
   function progress() { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; return span > 0 ? clamp(-r.top / span / .78, 0, 1) : 1; }
   // the drawer eases towards the scroll's place: about a quarter of the way each 60th of a second
   function frame(now) {
-    loop = 0; const c = reduce ? 1 : progress(), dt = last ? Math.min(100, now - last) : 16.7; last = now;
+    loop = 0; const c = reduce ? 1 : auto() ? (opened ? 1 : 0) : progress(), dt = last ? Math.min(100, now - last) : 16.7; last = now;
     const was = t; t = Math.abs(c - t) < 1e-4 ? c : t + (c - t) * (1 - Math.pow(.75, dt / 16.667));
     if (t !== was && snap !== 0) { cancelAnimationFrame(snapA); snap = 0; }
     draw();
@@ -175,8 +211,9 @@ export async function mount(sec) {
     // frames spaced evenly along the move: a gentle ease of the page's own (70% of full speed at either end, never a
     // dead stretch); a set spaced in time already carries its ease
     const n = M.seq.n, v = M.seq.space === "even" ? t + .3 * (t * t * (3 - 2 * t) - t) : t, f = v * (n - 1), i = Math.round(f);
-    if (i !== want && !reduce) { dir = i > want ? 1 : -1; want = i; pump(); fetchMore(); }   // reduced motion: no frames at all
-    if (!reduce && n >= 48) {
+    if (i !== want && !reduce && !auto()) { dir = i > want ? 1 : -1; want = i; pump(); fetchMore(); }   // reduced motion: no frames at all
+    if (auto()) { /* the film paints the opening */ }
+    else if (!reduce && n >= 48) {
       const k = nearest(i);   // a frame not yet decoded: the nearest one that is, never a jump to closed
       if (k >= 0 && (dirty || k !== shownK)) { g.drawImage(bmps[k], 0, 0, cv.width, cv.height); shownK = k; dirty = false; }
     } else if (!reduce) {
@@ -191,7 +228,7 @@ export async function mount(sec) {
     }
     const s = reduce ? 1 : clamp((t - .93) / .07, 0, 1); still.style.opacity = s;
     showFilm(t > .985 && near);
-    const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (!open) { hover(null); if (cur) close(true); home.slice().forEach(land); stage.querySelectorAll(".ar15hero, .ar15patch").forEach(e => e.remove()); } }
+    const isOpen = t > .995; if (isOpen !== open) { open = isOpen; sec.classList.toggle("ar15open", open); if (open && auto()) invite(); if (!open) { hover(null); if (cur) close(true); home.slice().forEach(land); stage.querySelectorAll(".ar15hero, .ar15patch").forEach(e => e.remove()); } }
     if (cue) cue.style.opacity = String(clamp(1 - t * 4, 0, 1));
   }
   const tick = kick;
@@ -279,7 +316,8 @@ export async function mount(sec) {
   picks.forEach(b => b.addEventListener("click", () => {
     const p = M && M.pieces.find(x => x.id === b.dataset.id); if (!p) return;
     // also when the drawer is open but scrolled off (a name tapped below it on a phone): bring it back, pinned, first
-    if (!open || Math.abs(pin.getBoundingClientRect().top) > 2) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
+    if (auto()) { if (Math.abs(pin.getBoundingClientRect().top) > 2) scrollTo({ top: scrollY + pin.getBoundingClientRect().top, behavior: "instant" }); if (!open) { finishOpen(); t = 1; dirty = true; draw(); } }
+    else if (!open || Math.abs(pin.getBoundingClientRect().top) > 2) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
     show(p, b); }));
   addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY;
     // far from the section, every decoded frame is let go (the files stay, compressed); back near, they are decoded again
@@ -290,8 +328,8 @@ export async function mount(sec) {
     if (l !== L) { L = l; close(true); load().then(() => { layout(); pump(); tick(); }); } else { layout(); if (cur) { close(true); } tick(); } });
   new MutationObserver(() => { if (hot) { const h = hot; hot = null; hover(h); } }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
-  await load(); layout(); if (!reduce) bmps[0] = await decode(blobs[0]);   // the closed drawer, at the canvas's size, before anything shows
-  sec.classList.add("ar15live"); if (reduce) sec.classList.add("ar15still-only"); t = reduce ? 1 : progress(); dirty = true; draw(); pump();
+  await load(); layout(); if (!reduce && !auto()) bmps[0] = await decode(blobs[0]);   // the closed drawer, at the canvas's size, before anything shows
+  sec.classList.add("ar15live"); if (reduce) sec.classList.add("ar15still-only"); t = reduce ? 1 : auto() ? (opened ? 1 : 0) : progress(); dirty = true; draw(); pump();
   const api = { get t() { return t; }, get frame() { return shownK; }, get held() { return bmps.filter(Boolean).length; }, get fetched() { return blobs.filter(Boolean).length; }, get manifest() { return M; } };
   sec.__ar15 = api;
   // ?ar15debug: a small readout of the engine's state, for checking on a real phone
