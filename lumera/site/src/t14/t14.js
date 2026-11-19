@@ -1344,6 +1344,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   var FS = [
     "precision mediump float;",
     "uniform sampler2D uV, uM, uH; uniform vec2 uRes; uniform float uVA; uniform vec2 uTilt; uniform float uQ; uniform vec2 uLight; uniform float uCapT, uCapB;",
+    "uniform vec2 uP; uniform float uPS, uVel, uT, uFade, uSw;",
     "varying vec2 vUv;",
     "vec2 cover(vec2 uv){ float ca = uRes.x / uRes.y; vec2 s = ca > uVA ? vec2(1., uVA / ca) : vec2(ca / uVA, 1.); uv = (uv - .5) * s + .5;",
     "  uv.y = uv.y + (.38 - .5) * (1. - s.y); return clamp(uv, .001, .999); }",
@@ -1351,21 +1352,30 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     "  vec2 px = 1. / uRes; float m = texture2D(uM, vUv).r;",
     "  if (m < .004) {",
     /* outside the glass: only its soft shadow, cast a little below the letters (from the blurred word) */
-    "    float sh = texture2D(uH, vUv - vec2(0., px.y * 14.)).r * .22; gl_FragColor = vec4(0., 0., 0., sh); return; }",
+    "    float sh = texture2D(uH, vUv - vec2(0., px.y * 14.)).r * .22 * uFade; gl_FragColor = vec4(0., 0., 0., sh); return; }",
     /* the rim: the crisp letters' own edge, a hairline */
     "  float ex = texture2D(uM, vUv + vec2(px.x * 1.5, 0.)).r - texture2D(uM, vUv - vec2(px.x * 1.5, 0.)).r;",
     "  float ey = texture2D(uM, vUv + vec2(0., px.y * 1.5)).r - texture2D(uM, vUv - vec2(0., px.y * 1.5)).r;",
     "  float rim = clamp(length(vec2(ex, ey)) * 1.2, 0., 1.);",
     /* inside: the film, a touch magnified and brighter, shifted a few pixels as through a clear slab */
-    "  vec2 b = (vUv - .5) / 1.04 + .5 + uTilt * .005 + vec2(uQ * .01, 0.); b.x = 1. - b.x;",
-    "  vec3 col = texture2D(uV, cover(b)).rgb * 1.08;",
+    /* (owner, 19 Nov 2026: "bring it alive") a liquid lens where the pointer or finger is: the film inside swells toward it */
+    "  vec2 d = vUv - uP; d.x *= uRes.x / uRes.y; float r = length(d); float lens = uPS * (1. - smoothstep(0., .2, r));",
+    "  vec2 u = vUv - (vUv - uP) * lens * .6;",
+    /* the scroll moves the glass like water: a ripple that grows with the scroll's speed and settles when it stops */
+    "  u.x += sin(u.y * 34. + uT * 5.) * uVel * .011; u.y += sin(u.x * 26. + uT * 4.) * uVel * .005;",
+    "  vec2 b = (u - .5) / 1.04 + .5 + uTilt * .005 + vec2(uQ * .01, 0.); b.x = 1. - b.x;",
+    /* and splits the light a little at speed, as a thick glass does */
+    "  vec2 ca = vec2(uVel * .008 + lens * .006, 0.);",
+    "  vec3 col = vec3(texture2D(uV, cover(b + ca)).r, texture2D(uV, cover(b)).g, texture2D(uV, cover(b - ca)).b) * 1.08;",
+    "  float ring = uPS * smoothstep(.2, .185, r) * smoothstep(.16, .19, r) * .8;",
+    "  float sweep = exp(-pow((vUv.x - uSw) * 5.5, 2.)) * .22;",
     "  float sheen = smoothstep(uCapB, uCapT, vUv.y) * .2;",
     "  float hx = texture2D(uH, vUv + vec2(px.x * 3., 0.)).r - texture2D(uH, vUv - vec2(px.x * 3., 0.)).r;",
     "  float hy = texture2D(uH, vUv + vec2(0., px.y * 3.)).r - texture2D(uH, vUv - vec2(0., px.y * 3.)).r;",
     "  vec3 N = normalize(vec3(-vec2(hx, hy) * 10., 1.)); vec3 L = normalize(vec3(uLight, .9));",
     "  float spec = pow(max(dot(N, L), 0.), 60.) * .16;",
-    "  col += sheen * .6 + spec;",
-    "  gl_FragColor = vec4(min(col, 1.) * m, m);",
+    "  col += sheen * .6 + spec + ring + sweep * (.6 + .4 * vUv.y);",
+    "  gl_FragColor = vec4(min(col, 1.) * m * uFade, m * uFade);",
     "}"].join("\n");
   function sh(t, src) { var o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; }
   var vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
@@ -1373,7 +1383,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   gl.useProgram(pr);
   var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   var ap = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
-  var U = {}; ["uV", "uM", "uH", "uRes", "uVA", "uTilt", "uQ", "uLight", "uCapT", "uCapB"].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+  var U = {}; ["uV", "uM", "uH", "uRes", "uVA", "uTilt", "uQ", "uLight", "uCapT", "uCapB", "uP", "uPS", "uVel", "uT", "uFade", "uSw"].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
   function tex(unit) { var t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; }
@@ -1399,25 +1409,42 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   }
   /* the light: the pointer over the film (or the phone's tilt) moves where the highlight falls and how the glass bends */
   var tx = 0, ty = 0, gx = 0, gy = 0, q = 0, raf = 0, vis = false, small = null, sctx = null, lastVT = -1;
-  fig.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = fig.getBoundingClientRect();
-    tx = ((e.clientX - r.left) / r.width - .5) * 2; ty = ((e.clientY - r.top) / r.height - .5) * 2; kick(); });
-  fig.addEventListener("pointerleave", function () { tx = 0; ty = 0; kick(); });
+  /* the film reaches the glass before the glass is drawn: until its first frame is in, the letters are not drawn at all
+     (an empty texture reads black: the word flashed black as it scrolled in), then the glass fades in */
+  var hasV = false, fade = 0, fadeT0 = 0;
+  /* the lens: the pointer (or a finger) holds it; left alone on a phone it drifts slowly through the word */
+  var px = .5, py = .55, pxT = .5, pyT = .55, ps = 0, psT = 0, held = false, coarse = matchMedia("(pointer: coarse)").matches;
+  var vel = 0, velT = 0, lastY = scrollY, lastS = performance.now();
+  function at(e) { var r = fig.getBoundingClientRect(); pxT = (e.clientX - r.left) / r.width; pyT = (e.clientY - r.top) / r.height; }
+  fig.addEventListener("pointermove", function (e) { at(e); if (e.pointerType === "mouse") { var r = fig.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - .5) * 2; ty = ((e.clientY - r.top) / r.height - .5) * 2; psT = 1; } else if (held) psT = 1; kick(); });
+  fig.addEventListener("pointerdown", function (e) { if (e.pointerType !== "mouse") { held = true; at(e); psT = 1; kick(); } });
+  ["pointerup", "pointercancel"].forEach(function (n) { fig.addEventListener(n, function (e) { if (e.pointerType !== "mouse") { held = false; kick(); } }); });
+  fig.addEventListener("pointerleave", function () { tx = 0; ty = 0; psT = 0; held = false; kick(); });
   addEventListener("deviceorientation", function (e) { if (e.gamma == null) return; tx = Math.max(-1, Math.min(1, e.gamma / 30)); ty = Math.max(-1, Math.min(1, (e.beta - 45) / 30)); kick(); });
-  addEventListener("scroll", function () { if (vis) kick(); }, { passive: true });
+  addEventListener("scroll", function () { var now = performance.now(), dt = Math.max(8, now - lastS); velT = Math.min(1, Math.abs(scrollY - lastY) / dt / 2.2); lastY = scrollY; lastS = now; if (vis) kick(); }, { passive: true });
   function kick() { if (!raf && vis) raf = requestAnimationFrame(draw); }
   function draw() { raf = 0; if (!ready) return;
     /* the film goes up to the graphics card only when it has a new frame (about 30 a second), not on every screen frame;
        on a phone a smaller copy (owner, 11 Nov: "laggy") */
-    if (reel.readyState >= 2 && reel.currentTime !== lastVT) { lastVT = reel.currentTime; gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tV);
+    if (reel.readyState >= 2 && reel.currentTime !== lastVT) { lastVT = reel.currentTime; if (!hasV) { hasV = true; fadeT0 = performance.now(); } gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tV);
       var cap = innerWidth < 900 ? 640 : 1024, src = reel; if (reel.videoWidth > cap) { if (!small) { small = document.createElement("canvas"); sctx = small.getContext("2d"); }
         var sw = cap, shh = Math.round(sw * reel.videoHeight / reel.videoWidth); if (small.width !== sw) { small.width = sw; small.height = shh; } sctx.drawImage(reel, 0, 0, sw, shh); src = small; }
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
       gl.uniform1f(U.uVA, reel.videoWidth / reel.videoHeight); }
     var k = reduce ? 1 : .12; gx += (tx - gx) * k; gy += (ty - gy) * k;
     var r = fig.getBoundingClientRect(), vh = innerHeight; q = reduce ? 0 : Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh / 2) / ((vh + r.height) / 2)));
+    var now = performance.now(), T = now / 1000;
+    fade = !hasV ? 0 : reduce ? 1 : Math.min(1, (now - fadeT0) / 700);
+    if (!reduce) {
+      if (coarse && !held) { pxT = .5 + Math.sin(T * .37) * .34; pyT = .56 + Math.sin(T * .53) * .12; psT = .75; }   // the lens wanders on a phone
+      px += (pxT - px) * .14; py += (pyT - py) * .14; ps += (psT - ps) * .08;
+      if (now - lastS > 90) velT = 0; vel += (velT - vel) * .12;
+    } else { ps = 0; vel = 0; }
     gl.uniform2f(U.uTilt, gx, gy); gl.uniform1f(U.uQ, q); gl.uniform2f(U.uLight, -.35 + gx * .9, .55 - gy * .9);
-    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    if (vis && (!reel.paused || Math.abs(tx - gx) > .002 || Math.abs(ty - gy) > .002)) raf = requestAnimationFrame(draw); }
+    gl.uniform2f(U.uP, px, py); gl.uniform1f(U.uPS, ps); gl.uniform1f(U.uVel, vel); gl.uniform1f(U.uT, T % 1000); gl.uniform1f(U.uFade, fade); gl.uniform1f(U.uSw, .5 - q * 1.3);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); if (hasV) gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if (vis && (!reel.paused || fade < 1 || vel > .005 || Math.abs(ps - psT) > .005 || Math.abs(tx - gx) > .002 || Math.abs(ty - gy) > .002 || Math.abs(pxT - px) > .002)) raf = requestAnimationFrame(draw); }
   new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) { lastVT = -1; if (!ready) shape(); kick(); } }, { rootMargin: "10% 0px" }).observe(fig);
   reel.addEventListener("play", kick); reel.addEventListener("loadeddata", kick); reel.addEventListener("seeked", kick);
   var rt = 0; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { setTimeout(shape, 60); }, 150); });
