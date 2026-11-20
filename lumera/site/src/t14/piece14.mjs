@@ -23,7 +23,7 @@ export function piece14Pages({ PIECES, markDefs, markUse, root, base }) {
   const shown = PIECES.filter(p => p.id && !p.exceptional && !p.preview);
   const W = p => p.widths || [640, 900, 1254];
   const img = (sh, p, sizes, eager) => `<img src="${R}img/${sh.img}-${W(p)[1] || W(p)[0]}.jpg" srcset="${W(p).map(w => `${R}img/${sh.img}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" width="1254" height="1254" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" ${TA(sh.alt)}>`;
-  const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "piece14.css"), "utf8");
+  const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "header14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "piece14.css"), "utf8");
   const js = fs.readFileSync(path.join(root, "src", "t14", "piece14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "lang14.js"), "utf8");
   const PM = phoneMenu(R, "");
 

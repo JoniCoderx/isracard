@@ -61,7 +61,7 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
     { "@type": "BreadcrumbList", "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" },
       { "@type": "ListItem", "position": 2, "name": "The collection", "item": url } ] } ] };
-  const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8");
+  const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "header14.css"), "utf8");
   const js = fs.readFileSync(path.join(root, "src", "t14", "collection14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "lang14.js"), "utf8");
   const og = base + "/img/" + worn(sig[0]).img + "-1254.jpg";
 
