@@ -1490,3 +1490,42 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   document.addEventListener("visibilitychange", upd);
   var rt = 0; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 200); });
 })();
+
+/* one form, two purposes (owner, 20 Nov 2026): "Book a private viewing" opens it as "Request a private viewing", with the
+   viewing already chosen; the builder's enquiry opens it as "Enquire about your bracelet", the design and its
+   specification already in it (the selection card). The title follows whatever the form is about, so an earlier
+   choice restored from this visit reads right too. */
+(function () {
+  var form = document.getElementById("cform"), box = document.getElementById("concierge"); if (!form || !box) return;
+  var h = box.querySelector("h2.h2"), k = box.querySelector(".eq14k"), sel = document.getElementById("csel"), send = document.getElementById("csend");
+  if (!h) return;
+  var T = {
+    viewing: { k: ["Private concierge", "קונסיירז׳ פרטי"], h: ["Request a private viewing", "בקשה לפגישה פרטית"] },
+    design: { k: ["Your design", "העיצוב שלכם"], h: ["Enquire about your bracelet", "פנייה על הצמיד שלכם"] },
+    none: { k: ["Private concierge", "קונסיירז׳ פרטי"], h: ["Enquire", "פנייה"] } };
+  var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+  function put(el, en, hb) { if (!el) return; el.setAttribute("data-en", en); el.setAttribute("data-he", hb); var t = he() ? hb : en; if (el.textContent !== t) el.textContent = t; }
+  function wantOn() { var c = form.querySelector(".want .chip.on"); return c ? c.getAttribute("data-en") : ""; }
+  var mode = "";
+  function paint() {
+    var w = wantOn(), design = sel && !sel.hidden && w === "Bespoke commission";
+    var m = design ? "design" : w === "Private viewing" ? "viewing" : "none"; if (m === mode) return; mode = m;
+    put(k, T[m].k[0], T[m].k[1]); put(h, T[m].h[0], T[m].h[1]); box.setAttribute("data-mode", m);
+  }
+  function choose(en) { var c = [].filter.call(form.querySelectorAll(".want .chip"), function (x) { return x.getAttribute("data-en") === en; })[0]; if (c && !c.classList.contains("on")) c.click(); }
+  /* "Book a private viewing", wherever it is on the page */
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest('a[href$="#concierge"], a[href$="#enquire"]'); if (!a) return;
+    var t = (a.getAttribute("data-en") || a.textContent || "").toLowerCase();
+    if (/private viewing|appointment/.test(t)) setTimeout(function () { choose("Private viewing"); paint(); }, 30);
+  }, true);
+  /* arriving from another page's "Book a private viewing" (collection14, pieces14) */
+  if (/[?&]for=viewing/.test(location.search)) setTimeout(function () { choose("Private viewing"); paint(); }, 400);
+  /* the builder's own enquiry is an enquiry, not a reservation (the button says so): the card's tag says it too */
+  var act = document.getElementById("cselAct");
+  function tag() { if (!act) return; var t = act.textContent.trim(); if (t === "Reservation") act.textContent = "Enquiry"; else if (t === "שריון") act.textContent = "פנייה"; }
+  if (act) new MutationObserver(tag).observe(act, { childList: true, characterData: true, subtree: true }); tag();
+  new MutationObserver(paint).observe(form, { subtree: true, attributes: true, attributeFilter: ["class", "hidden", "aria-checked", "src"] });
+  new MutationObserver(function () { mode = ""; paint(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  paint();
+})();

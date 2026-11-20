@@ -107,3 +107,41 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
 @media (prefers-reduced-motion: reduce) { .js .cc14 .ccpic, .js .cc14 .cctxt > *, .js .sp14 { transition: none; opacity: 1; transform: none; clip-path: none; } }
 /* the mark's definitions are not a picture: they took 150px at the top of the page */
 body > svg:first-of-type { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ── one header for the house's pages (owner, 20 Nov 2026: "the move between home, collections and products should feel
+   like the same site"): the same as /test14/'s, measured from it. Links at the left, the mark at the centre, the private
+   viewing and the language at the right; on a phone the menu, the mark over its name, the language. ── */
+html[dir="rtl"] body { font-family: 'Silavu Hebrew', Jost, system-ui, sans-serif; }
+html[data-ns] .k14, html[data-ns] .cck, html[data-ns] .ccn, html[data-ns] .crumbs, html[data-ns] .tnav a, html[data-ns] .pill, html[data-ns] .ccgo, html[data-ns] .ccres, html[data-ns] .lnk, html[data-ns] .chip, html[data-ns] .spk, html[data-ns] .spn,
+html[data-ns] .ppname, html[data-ns] .ppkey dt, html[data-ns] .ppspec dt, html[data-ns] .pmk, html[data-ns] .pmn, html[data-ns] .ch14 h1 { letter-spacing: 0 !important; }
+header.bar.hx14 { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; height: calc(76px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 49px 0;
+  background: rgba(8,8,9,.58); -webkit-backdrop-filter: blur(18px) saturate(1.15); backdrop-filter: blur(18px) saturate(1.15); border-bottom: 1px solid rgba(246,241,230,.06); }
+.hx14 .tnav { justify-self: start; display: flex; gap: 32px; }
+.hx14 .tnav a { position: relative; padding: 8px 0; font-size: 10.24px; letter-spacing: .26em; color: rgba(246,243,237,.86); }
+.hx14 .tnav a:hover { color: #fff; }
+.hx14 .tnav a[aria-current="page"]::after { content: ""; position: absolute; left: 0; right: .26em; bottom: 0; height: 1px; background: currentColor; }
+.hx14 .back { justify-self: center; }
+.hx14 .lk { display: inline-flex; align-items: center; gap: 15px; color: #fff; }
+.hx14 .lk svg { height: 41px; width: auto; }
+.hx14 .wm { font-family: 'Silavu Name', Urbanist, Jost, sans-serif; font-weight: 500; font-size: 16.96px; letter-spacing: .34em; }
+.hx14 .barr { justify-self: end; display: flex; align-items: center; gap: 12px; }
+html[dir="rtl"] .hx14 .barr { flex-direction: row; }
+.hx14 .pill { height: 42px; padding: 0 30px; font-size: 9.6px; letter-spacing: .26em; color: #f4f2ee; background: rgba(255,255,255,.043); border: 1px solid rgba(214,219,226,.34); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.hx14 .pill:hover { background: #f4f2ee; color: #0a0a0a; }
+.hx14 .lng { width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(214,219,226,.34); background: rgba(255,255,255,.043); color: #f4f2ee; font: inherit; font-size: 9.6px; letter-spacing: .12em; cursor: pointer; transition: background-color .15s ease, color .15s ease; }
+.hx14 .lng:hover { background: #f4f2ee; color: #0a0a0a; }
+@media (max-width: 899px) {
+  header.bar.hx14 { grid-template-columns: 58px 1fr 58px; height: calc(72px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 16px 0; background: rgba(6,6,7,.78); }
+  .hx14 .tnav, .hx14 .pill { display: none !important; }
+  .hx14 .back { grid-column: 2; }
+  .hx14 .lk { flex-direction: column; gap: 4px; }
+  .hx14 .lk svg { height: 33px; }
+  .hx14 .wm { font-size: 10px; letter-spacing: .42em; padding-left: .42em; }
+  .hx14 .barr { grid-column: 3; }
+  .hx14 .lng { width: 40px; height: 40px; font-size: 12px; }
+  .pm14btn { top: calc(env(safe-area-inset-top) + 15px) !important; width: 42px !important; height: 42px !important; }
+}
+/* the header keeps its places in Hebrew too, as on /test14/ (the menu at the left, the language at the right) */
+header.bar.hx14 { direction: ltr; }
+header.bar.hx14 .tnav a, header.bar.hx14 .pill { direction: rtl; unicode-bidi: plaintext; }
+html[data-ns] header.bar.hx14 .lng { letter-spacing: 0; }

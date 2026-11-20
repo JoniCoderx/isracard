@@ -14,37 +14,40 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
   const PM = phoneMenu(R, "collection14/");
   const fontsDir = path.join(root, "public/fonts");
   const ff = re => fs.readdirSync(fontsDir).find(x => re.test(x));
+  const heb = ff(/^(assistant|rubik)-normal-hebrew-[0-9a-f]{6}\.woff2$/);
   const jost = ff(/^jost-normal-latin-[0-9a-f]{6}\.woff2$/), jostx = ff(/^jost-normal-latin-ext-[0-9a-f]{6}\.woff2$/), urb = ff(/^urbanist-normal-all-[0-9a-f]{6}\.woff2$/);
   if (!jost || !jostx || !urb) return null;
   const q = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
   const plain = s => String(s).replace(/<[^>]+>/g, "");
+  const E = (en, he) => `data-en="${q(en)}" data-he="${q(he || en)}"`;   // both languages in the page (lang14.js switches)
+  const EX = x => E(x.en, x.he);
   const shown = PIECES.filter(p => p.id && !p.exceptional && !p.preview);
   const sig = shown.filter(p => p.group !== "special"), sp = shown.filter(p => p.group === "special");
   const W = p => p.widths || [640, 900, 1254];
   const src = (img, p) => `${R}img/${img}-${W(p)[1] || W(p)[0]}.jpg`;
   const set = (img, p) => W(p).map(w => `${R}img/${img}-${w}.jpg ${w}w`).join(", ");
   const worn = p => (p.shots.find(s => /-worn$/.test(s.img)) || p.shots[1] || p.shots[0]);
-  const meta = p => (p.meta || []).filter(m => !/price/i.test(m.en)).map(m => `<li>${q(m.en)}</li>`).join("");
-  const cats = [["all", "All"], ["bracelets", "Bracelets"], ["rings", "Rings"], ["necklaces", "Necklaces"], ["earrings", "Earrings"]].filter(([c]) => c === "all" || shown.some(p => p.cat === c));
+  const meta = p => (p.meta || []).filter(m => !/price/i.test(m.en)).map(m => `<li ${EX(m)}>${q(m.en)}</li>`).join("");
+  const cats = [["all", "All", "הכל"], ["bracelets", "Bracelets", "צמידים"], ["rings", "Rings", "טבעות"], ["necklaces", "Necklaces", "שרשראות"], ["earrings", "Earrings", "עגילים"]].filter(([c]) => c === "all" || shown.some(p => p.cat === c));
 
   const chapter = (p, i) => { const a = worn(p), b = p.shots[0];
     return `<article class="cc14 ${i % 2 ? "flip" : ""}" data-cat="${q(p.cat)}" id="${q(p.id)}" aria-labelledby="n-${q(p.id)}">
   <a class="ccpic" href="${R}pieces14/${q(p.id)}/" aria-label="${q(p.plain || plain(p.name.en))}">
-    <img class="a" src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 56vw, 100vw" width="1254" height="1254" loading="${i < 1 ? "eager" : "lazy"}" decoding="async" alt="${q(a.alt.en)}">
-    <img class="b" src="${src(b.img, p)}" srcset="${set(b.img, p)}" sizes="(min-width: 900px) 56vw, 100vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${q(b.alt.en)}">
+    <img class="a" src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 56vw, 100vw" width="1254" height="1254" loading="${i < 1 ? "eager" : "lazy"}" decoding="async" alt="${q(a.alt.en)}" data-alt-he="${q(a.alt.he || a.alt.en)}">
+    <img class="b" src="${src(b.img, p)}" srcset="${set(b.img, p)}" sizes="(min-width: 900px) 56vw, 100vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${q(b.alt.en)}" data-alt-he="${q(b.alt.he || b.alt.en)}">
   </a>
   <div class="cctxt">
-    <p class="cck">${q(p.kind.en)}</p>
-    <h3 class="ccn" id="n-${q(p.id)}">${p.name.en}</h3>
-    <p class="ccl">${q(plain(p.line.en))}</p>
+    <p class="cck" ${EX(p.kind)}>${q(p.kind.en)}</p>
+    <h3 class="ccn" id="n-${q(p.id)}" ${EX(p.name)}>${p.name.en}</h3>
+    <p class="ccl" ${E(plain(p.line.en), plain(p.line.he || p.line.en))}>${q(plain(p.line.en))}</p>
     <ul class="ccm">${meta(p)}</ul>
-    <div class="cca"><a class="ccgo" href="${R}pieces14/${q(p.id)}/">View the piece</a><a class="ccres" href="${R}test14/#concierge">Book a private viewing</a></div>
+    <div class="cca"><a class="ccgo" href="${R}pieces14/${q(p.id)}/" ${E("View the piece", "לצפייה בתכשיט")}>View the piece</a><a class="ccres" href="${R}test14/?for=viewing#concierge" ${E("Book a private viewing", "לתיאום פגישה פרטית")}>Book a private viewing</a></div>
   </div>
 </article>`; };
   const special = p => { const a = p.shots[0];
     return `<li class="sp14" data-cat="${q(p.cat)}"><a href="${R}pieces14/${q(p.id)}/">
-  <span class="sppic"><img src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 30vw, 90vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${q(a.alt.en)}"></span>
-  <span class="spk">${q(p.kind.en)}</span><span class="spn">${p.name.en}</span><span class="spl">${q(plain(p.line.en))}</span></a></li>`; };
+  <span class="sppic"><img src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 30vw, 90vw" width="1254" height="1254" loading="lazy" decoding="async" alt="${q(a.alt.en)}" data-alt-he="${q(a.alt.he || a.alt.en)}"></span>
+  <span class="spk" ${EX(p.kind)}>${q(p.kind.en)}</span><span class="spn" ${EX(p.name)}>${p.name.en}</span><span class="spl" ${E(plain(p.line.en), plain(p.line.he || p.line.en))}>${q(plain(p.line.en))}</span></a></li>`; };
 
   const title = "Diamond Jewellery Collection · Bracelets, Rings, Necklaces & Earrings | SILAVU";
   const desc = "Diamond bracelets, rings, necklaces and earrings in 18K gold, signed by SILAVU and made to order by hand in Dubai. Seen in private, by appointment.";
@@ -59,7 +62,7 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
       { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" },
       { "@type": "ListItem", "position": 2, "name": "The collection", "item": url } ] } ] };
   const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8");
-  const js = fs.readFileSync(path.join(root, "src", "t14", "collection14.js"), "utf8");
+  const js = fs.readFileSync(path.join(root, "src", "t14", "collection14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "lang14.js"), "utf8");
   const og = base + "/img/" + worn(sig[0]).img + "-1254.jpg";
 
   return `<!doctype html>
@@ -77,48 +80,49 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
 <link rel="icon" href="${R}favicon.svg" type="image/svg+xml">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="${R}fonts/${jost}">
 <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>
-<script>document.documentElement.classList.add("js")</script>
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("silavu-lang")==="he"){document.documentElement.lang="he";document.documentElement.dir="rtl";document.documentElement.setAttribute("data-ns","")}}catch(e){}</script>
 <style>@font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jost}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jostx}) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+${heb ? `@font-face{font-family:'Silavu Hebrew';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${heb}) format('woff2');unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}` : ""}
 @font-face{font-family:'Silavu Name';font-style:normal;font-weight:500;font-display:swap;src:url(${R}fonts/${urb}) format('woff2');unicode-range:U+41,U+49,U+4c,U+53,U+55-56,U+61,U+69,U+6c,U+73,U+75-76}
 ${css}${PM.css}
-@media (max-width: 899px) { header.bar { min-height: calc(max(16px, env(safe-area-inset-top)) + 60px); } header.bar .back { position: absolute; left: 50%; top: calc(max(16px, env(safe-area-inset-top)) + 22px); transform: translate(-50%, -50%); } }</style>
+</style>
 </head>
 <body>
 ${markDefs()}
-<header class="bar">
-  <a class="back" href="${R}test14/" aria-label="SILAVU, back to the house">${markUse("")}<span class="wm">SILAVU</span></a>
-  <nav class="tnav" aria-label="Main"><a href="${R}test14/#build">Design your bracelet</a><a href="${R}about14/">About</a></nav>
-  <a class="pill" href="${R}test14/#concierge">Book a private viewing</a>
+<header class="bar hx14">
+  <nav class="tnav" aria-label="Main"><a href="${R}collection14/" aria-current="page" data-en="Collection" data-he="קולקציה">Collection</a><a href="${R}test14/#build" data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a><a href="${R}about14/" data-en="About" data-he="אודות">About</a></nav>
+  <a class="back" href="${R}test14/" aria-label="SILAVU, back to the house"><span class="lk">${markUse("")}<span class="wm">SILAVU</span></span></a>
+  <div class="barr"><a class="pill" href="${R}test14/?for=viewing#concierge" data-en="Book a private viewing" data-he="לתיאום פגישה פרטית">Book a private viewing</a><button class="lng" type="button" aria-label="עברית" data-en="EN" data-he="עב">EN</button></div>
 </header>
 ${PM.html}
 <main>
   <section class="ch14" aria-labelledby="ch">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="${R}test14/">SILAVU</a><i aria-hidden="true">/</i><span aria-current="page">The collection</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="${R}test14/">SILAVU</a><i aria-hidden="true">/</i><span aria-current="page" ${E("The collection", "הקולקציה")}>The collection</span></nav>
     ${markUse("chmk")}
-    <h1 id="ch">The SILAVU <em>collection</em></h1>
-    <p class="chl">Diamond bracelets, rings, necklaces and earrings in 18K gold, each signed by SILAVU and made to order by hand in Dubai.</p>
-    <div class="chf" role="toolbar" aria-label="Show">${cats.map(([c, n], i) => `<button type="button" class="chip${i ? "" : " on"}" data-f="${c}" aria-pressed="${i ? "false" : "true"}">${n}</button>`).join("")}</div>
+    <h1 id="ch" ${E("The SILAVU <em>collection</em>", "קולקציית <em>SILAVU</em>")}>The SILAVU <em>collection</em></h1>
+    <p class="chl" ${E("Diamond bracelets, rings, necklaces and earrings in 18K gold, each signed by SILAVU and made to order by hand in Dubai.", "צמידים, טבעות, שרשראות ועגילים של יהלומים בזהב 18K, כל אחד חתום SILAVU ומיוצר לפי הזמנה בעבודת יד בדובאי.")}>Diamond bracelets, rings, necklaces and earrings in 18K gold, each signed by SILAVU and made to order by hand in Dubai.</p>
+    <div class="chf" role="toolbar" aria-label="Show">${cats.map(([c, n, nh], i) => `<button type="button" class="chip${i ? "" : " on"}" data-f="${c}" aria-pressed="${i ? "false" : "true"}" ${E(n, nh)}>${n}</button>`).join("")}</div>
   </section>
 
   <section class="sig14" aria-labelledby="sh">
-    <h2 class="k14" id="sh">The Signature</h2>
+    <h2 class="k14" id="sh" ${E("The Signature", "החתימה")}>The Signature</h2>
     ${sig.map(chapter).join("\n")}
   </section>
 
   ${sp.length ? `<section class="spc14" aria-labelledby="ph">
-    <h2 class="k14" id="ph">Special pieces</h2>
+    <h2 class="k14" id="ph" ${E("Special pieces", "תכשיטים מיוחדים")}>Special pieces</h2>
     <ul class="spgrid">${sp.map(special).join("")}</ul>
   </section>` : ""}
 
   <section class="mk14" aria-labelledby="mkh">
     ${markUse("mkmk")}
-    <h2 id="mkh">Or one made <em>only for you.</em></h2>
-    <p>Choose the stones, the carat, the size and the metal, and see your bracelet take shape before it is made.</p>
-    <div class="mka"><a class="c14all" href="${R}test14/#build"><span class="c14allmk" aria-hidden="true">${markUse("")}</span><span>Design your bracelet</span><i class="c14allar" aria-hidden="true"></i></a><a class="lnk" href="${R}test14/#concierge">Book a private viewing</a></div>
+    <h2 id="mkh" ${E("Or one made <em>only for you.</em>", "או אחד שנוצר <em>רק בשבילכם.</em>")}>Or one made <em>only for you.</em></h2>
+    <p ${E("Choose the stones, the carat, the size and the metal, and see your bracelet take shape before it is made.", "בחרו את האבנים, הקראט, המידה והמתכת, וראו את הצמיד שלכם מקבל צורה עוד לפני שהוא נוצר.")}>Choose the stones, the carat, the size and the metal, and see your bracelet take shape before it is made.</p>
+    <div class="mka"><a class="c14all" href="${R}test14/#build"><span class="c14allmk" aria-hidden="true">${markUse("")}</span><span ${E("Design your bracelet", "עצבו צמיד")}>Design your bracelet</span><i class="c14allar" aria-hidden="true"></i></a><a class="lnk" href="${R}test14/?for=viewing#concierge" ${E("Book a private viewing", "לתיאום פגישה פרטית")}>Book a private viewing</a></div>
   </section>
 </main>
-<footer class="foot"><span>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}test14/">Back to the house</a></footer>
+<footer class="foot"><span ${E("© SILAVU 2026 · Dubai · Tel Aviv · By appointment", "© SILAVU 2026 · דובאי · תל אביב · בתיאום מראש")}>© SILAVU 2026 · Dubai · Tel Aviv · By appointment</span><a href="${R}test14/" ${E("Back to the house", "חזרה לבית")}>Back to the house</a></footer>
 <script>${js}</script><script>${PM.js}</script>
 </body>
 </html>

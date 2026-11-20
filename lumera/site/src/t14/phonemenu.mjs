@@ -5,7 +5,7 @@
 export function phoneMenu(R, current) {
   const places = [
     ["collection14/", "Collection"], ["test14/#build", "Design yours"], ["test14/#inside", "The box"],
-    ["test14/#details", "Up close"], ["about14/", "About"], ["test14/#concierge", "Enquire"],
+    ["test14/#details", "Up close"], ["about14/", "About"], ["test14/?for=viewing#concierge", "Enquire"],
   ];
   const card = (href, img, pos, name) => `<a href="${R}${href}"><img src="${R}models/${img}-900.jpg" alt="" loading="lazy" decoding="async" style="object-position:${pos}"><b>${name}</b></a>`;
   const html = `<button class="pm14btn" type="button" aria-expanded="false" aria-controls="pm14" aria-label="Menu"><i aria-hidden="true"></i></button>
@@ -15,7 +15,7 @@ export function phoneMenu(R, current) {
     <div class="pm14cards">${card("pieces14/knot/", "bracelet", "45% 60%", "MOMENT")}${card("pieces14/ring/", "ring", "55% 50%", "ICON")}${card("pieces14/pave/", "necklace", "50% 55%", "SOUL")}</div>
     <p class="pm14k">The house</p>
     <nav class="pm14grid" aria-label="Main">${places.map(([h, t]) => `<a href="${R}${h}"${h === current ? ' aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
-    <a class="pm14cta" href="${R}test14/#concierge">Book a private viewing</a>
+    <a class="pm14cta" href="${R}test14/?for=viewing#concierge">Book a private viewing</a>
     <i class="pm14handle" aria-hidden="true"></i>
   </div>
 </div>`;

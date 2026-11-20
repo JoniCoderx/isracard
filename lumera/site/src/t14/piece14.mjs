@@ -24,7 +24,7 @@ export function piece14Pages({ PIECES, markDefs, markUse, root, base }) {
   const W = p => p.widths || [640, 900, 1254];
   const img = (sh, p, sizes, eager) => `<img src="${R}img/${sh.img}-${W(p)[1] || W(p)[0]}.jpg" srcset="${W(p).map(w => `${R}img/${sh.img}-${w}.jpg ${w}w`).join(", ")}" sizes="${sizes}" width="1254" height="1254" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" ${TA(sh.alt)}>`;
   const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "piece14.css"), "utf8");
-  const js = fs.readFileSync(path.join(root, "src", "t14", "piece14.js"), "utf8");
+  const js = fs.readFileSync(path.join(root, "src", "t14", "piece14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "lang14.js"), "utf8");
   const PM = phoneMenu(R, "");
 
   return shown.map(p => {
@@ -70,14 +70,14 @@ export function piece14Pages({ PIECES, markDefs, markUse, root, base }) {
 ${heb ? `@font-face{font-family:'Silavu Hebrew';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${heb}) format('woff2');unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}` : ""}
 @font-face{font-family:'Silavu Name';font-style:normal;font-weight:500;font-display:swap;src:url(${R}fonts/${urb}) format('woff2');unicode-range:U+41,U+49,U+4c,U+53,U+55-56,U+61,U+69,U+6c,U+73,U+75-76}
 ${css}${PM.css.replace(/pieces\//g, "pieces14/")}
-@media (max-width: 899px) { header.bar { min-height: calc(max(16px, env(safe-area-inset-top)) + 60px); } header.bar .back { position: absolute; left: 50%; top: calc(max(16px, env(safe-area-inset-top)) + 22px); transform: translate(-50%, -50%); } }</style>
+</style>
 </head>
 <body>
 ${markDefs()}
-<header class="bar">
-  <a class="back" href="${R}test14/" aria-label="SILAVU, back to the house">${markUse("")}<span class="wm">SILAVU</span></a>
-  <nav class="tnav" aria-label="Main"><a href="${R}collection14/" data-en="Collection" data-he="קולקציה">Collection</a><a href="${R}test14/#build" data-en="Design your bracelet" data-he="עצבו צמיד">Design your bracelet</a><a href="${R}about14/" data-en="About" data-he="אודות">About</a></nav>
-  <div class="barr"><button class="lng" type="button" aria-label="עברית" data-en="עב" data-he="EN">עב</button><a class="pill" href="${R}test14/#concierge" data-en="Book a private viewing" data-he="לתיאום פגישה פרטית">Book a private viewing</a></div>
+<header class="bar hx14">
+  <nav class="tnav" aria-label="Main"><a href="${R}collection14/" aria-current="page" data-en="Collection" data-he="קולקציה">Collection</a><a href="${R}test14/#build" data-en="Design yours" data-he="עצבו בעצמכם">Design yours</a><a href="${R}about14/" data-en="About" data-he="אודות">About</a></nav>
+  <a class="back" href="${R}test14/" aria-label="SILAVU, back to the house"><span class="lk">${markUse("")}<span class="wm">SILAVU</span></span></a>
+  <div class="barr"><a class="pill" href="${R}test14/?for=viewing#concierge" data-en="Book a private viewing" data-he="לתיאום פגישה פרטית">Book a private viewing</a><button class="lng" type="button" aria-label="עברית" data-en="EN" data-he="עב">EN</button></div>
 </header>
 ${PM.html.replace(/pieces\//g, "pieces14/")}
 <main class="pp14">
@@ -95,7 +95,7 @@ ${PM.html.replace(/pieces\//g, "pieces14/")}
       ${T(p.line, "p", "ccl")}
       <dl class="ppkey">${keys}</dl>
       <div class="cca">
-        <a class="ccgo" href="${R}test14/#concierge" data-en="Book a private viewing" data-he="לתיאום פגישה פרטית">Book a private viewing</a>
+        <a class="ccgo" href="${R}test14/?for=viewing#concierge" data-en="Book a private viewing" data-he="לתיאום פגישה פרטית">Book a private viewing</a>
         ${bracelet ? `<a class="lnk" href="${R}test14/#build" data-en="Or design your own bracelet" data-he="או עצבו צמיד משלכם">Or design your own bracelet</a>` : `<a class="lnk" href="${R}collection14/" data-en="The whole collection" data-he="כל הקולקציה">The whole collection</a>`}
       </div>
       ${T(S("Price on request · Made to order · Seen in private, by appointment", "מחיר לפי בקשה · מיוצר לפי הזמנה · בפגישה פרטית, בתיאום מראש"), "p", "ppnote")}
