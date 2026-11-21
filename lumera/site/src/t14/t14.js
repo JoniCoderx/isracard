@@ -1451,70 +1451,133 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(shape, 80); });
 })();
 
-/* the collections' pavé of light (owner, 21 Nov 2026: "more intuitive and more wow"): the black behind the collections is
-   set, like pavé, with a few thousand tiny stones that are almost invisible until light falls on them. The pointer (or a
-   finger) is that light: the stones near it catch it and flash, each in its own moment, a few with a little colour of
-   fire, and a click sends a ring of light out through them. Left alone, the light drifts slowly across on its own.
-   One canvas, drawn only while the section is on screen; nothing at all with reduced motion. */
+/* the collections' liquid white gold (owner, 21 Nov 2026: chose it from three, "go"): behind the collections, drops of
+   polished metal float in the dark and mirror a soft studio, like the house's own white gold. The pointer is a drop of
+   its own: the others are drawn to it, cling and bridge to it, and run into one another like mercury; moved quickly it
+   trails a tail; a click (or a tap on the black) splashes it into droplets that fly out and run home again.
+   The words are never set over metal: the drops keep out of the words and their links, and the pointer's drop dives
+   out of sight there; behind the (opaque) cards they simply pass under. Drawn on one WebGL canvas only while the section is on screen; a pause control stops it; with
+   reduced motion it is shown still; without WebGL the black simply stays. */
 (function () {
-  var sec = document.querySelector("#collection.c14col"); if (!sec || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var cv = document.createElement("canvas"); cv.className = "c14sky"; cv.setAttribute("aria-hidden", "true"); sec.insertBefore(cv, sec.firstChild);
-  var g = cv.getContext("2d"); if (!g) return;
-  var W = 0, H = 0, dpr = 1, S = [], base = null, raf = 0, inView = false, vis = false, last = 0;
-  var L = { x: 0, y: 0, tx: 0, ty: 0, on: false, k: 0, t0: 0 }, rings = [], coarse = matchMedia("(pointer: coarse)").matches;
-  function size() {
-    var r = sec.getBoundingClientRect(); dpr = Math.min(1.5, devicePixelRatio || 1); W = r.width; H = r.height;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    /* the setting: a loose hexagonal pavé, each stone a little off its place, a little different in size */
-    var gap = W < 700 ? 26 : 32, rowH = gap * .866; S = [];
-    for (var y = gap / 2, row = 0; y < H; y += rowH, row++) for (var x = (row % 2 ? gap / 2 : 0) + gap / 2; x < W; x += gap)
-      S.push({ x: x + (Math.random() - .5) * gap * .5, y: y + (Math.random() - .5) * gap * .5, r: .6 + Math.random() * .9, ph: Math.random() * 6.283, sp: .6 + Math.random() * 1.6, fire: Math.random() < .12 ? Math.random() : -1 });
-    /* the stones at rest, painted once: just visible as a texture in the black */
-    base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height; var b = base.getContext("2d"); b.scale(dpr, dpr);
-    b.fillStyle = "rgba(236,226,206,.075)"; S.forEach(function (p) { b.beginPath(); b.arc(p.x, p.y, p.r * .8, 0, 6.283); b.fill(); });
-    if (!L.on) { L.x = L.tx = W * .5; L.y = L.ty = H * .45; }
+  var sec = document.querySelector("#collection.c14col"); if (!sec) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, phone = matchMedia("(pointer: coarse)").matches;
+  var cv = document.createElement("canvas"); cv.className = "c14sky"; cv.setAttribute("aria-hidden", "true");
+  var g = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false, powerPreference: "low-power" }); if (!g) return;
+  var N = 26, TAIL = 3, D0 = 4, ND = 12, S0 = 16, NS = 10;
+  var FS = [
+    "precision highp float;",
+    "uniform vec2 uR; uniform vec2 uM; uniform float uT; uniform vec3 uB[" + N + "];",
+    "float lobe(vec3 r, vec3 d, float k){ return exp((dot(r, normalize(d)) - 1.0) * k); }",
+    "vec3 env(vec3 r, vec2 p){",
+    "  vec3 e = vec3(.03, .028, .026) + vec3(1.0, .97, .93) * .42 * smoothstep(-.35, .95, r.y);",
+    "  e *= 1.0 - .8 * smoothstep(-.05, -.6, r.y);",
+    "  float sb = lobe(r, vec3(-.45, .6, .65), 14.0); e += vec3(1.0, .985, .96) * (sb * 1.6 + smoothstep(.55, .62, sb) * .9);",
+    "  e += vec3(1.0, .99, .97) * lobe(r, vec3(.15, .35, 1.0), 5.0) * .3;",
+    "  e += vec3(1.0, .86, .68) * lobe(r, vec3(.75, .15, .55), 9.0) * .8;",
+    "  e += vec3(.72, .8, 1.0) * lobe(r, vec3(-.85, -.2, .45), 10.0) * .5;",
+    "  vec3 L = normalize(vec3((uM - p) / uR.y * 2.2, .7));",
+    "  e += vec3(1.0, .96, .9) * pow(max(dot(r, L), 0.0), 90.0) * 3.2;",
+    "  return e; }",
+    "void main(){",
+    "  vec2 p = gl_FragCoord.xy; float f = 0.0; vec2 gr = vec2(0.0);",
+    "  for (int i = 0; i < " + N + "; i++) { vec3 b = uB[i]; if (b.z < .5) continue; vec2 d = p - b.xy; float r2 = b.z * b.z; float q = dot(d, d) + 1.0; f += r2 / q; gr += -2.0 * r2 * d / (q * q); }",
+    "  float aa = length(gr) * 1.2 + 1e-4; float edge = smoothstep(1.0 - aa, 1.0 + aa, f);",
+    "  vec2 hg = gr / (f * f) * min(uR.y, 900.0) * .016;",
+    "  vec3 n = normalize(vec3(-hg, 1.0)); vec3 r = reflect(vec3(0.0, 0.0, -1.0), n); float fr = pow(1.0 - n.z, 2.2);",
+    "  vec3 metal = env(r, p) * (.8 + .2 * fr) * vec3(1.0, .985, .965);",
+    "  metal += (.5 + .5 * cos(6.2832 * (vec3(0.0, .33, .67) + fr * 1.6 + uT * .05))) * fr * .1;",
+    "  vec3 bg = vec3(.07, .06, .05) * exp(-length((p - uM) / min(uR.y, 900.0)) * 3.2);",
+    "  float halo = smoothstep(.3, 1.0, f) * (1.0 - edge); bg += vec3(.95, .9, .82) * halo * halo * .09;",
+    "  vec3 col = mix(bg, metal * 1.25, edge); col = 1.0 - exp(-col * 1.3);",
+    "  gl_FragColor = vec4(col, 1.0); }"].join("\n");
+  function sh(t, s) { var o = g.createShader(t); g.shaderSource(o, s); g.compileShader(o); return g.getShaderParameter(o, g.COMPILE_STATUS) ? o : null; }
+  var vs = sh(g.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"), fs = sh(g.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
+  var pr = g.createProgram(); g.attachShader(pr, vs); g.attachShader(pr, fs); g.linkProgram(pr); if (!g.getProgramParameter(pr, g.LINK_STATUS)) return; g.useProgram(pr);
+  g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer()); g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), g.STATIC_DRAW);
+  var aL = g.getAttribLocation(pr, "a"); g.enableVertexAttribArray(aL); g.vertexAttribPointer(aL, 2, g.FLOAT, false, 0, 0);
+  var uR = g.getUniformLocation(pr, "uR"), uM = g.getUniformLocation(pr, "uM"), uT = g.getUniformLocation(pr, "uT"), uB = g.getUniformLocation(pr, "uB[0]");
+  sec.insertBefore(cv, sec.firstChild);
+
+  /* the pause control, small, in the section's lower corner */
+  var btn = document.createElement("button"); btn.type = "button"; btn.className = "c14pause"; btn.setAttribute("aria-pressed", "false");
+  btn.innerHTML = '<i aria-hidden="true"></i><span data-en="Pause motion" data-he="עצירת תנועה">Pause motion</span>';
+  if (!reduce) sec.appendChild(btn);
+  if (document.documentElement.getAttribute("data-lang") === "he") btn.querySelector("span").textContent = "עצירת תנועה";
+
+  var W = 0, H = 0, dpr = 1, sc = 1, B = [], arr = new Float32Array(N * 3), keep = [], dive = [];
+  var P = { x: 0, y: 0, last: -1e9 }, S = { x: 0, y: 0, r: 30, rT: 30, k: 1 }, paused = false, raf = 0, inView = false, vis = false, T = 0, lastNow = 0;
+  function rects() { var s = sec.getBoundingClientRect(), pad = 26;
+    function R(sel, p) { return [].map.call(sec.querySelectorAll(sel), function (e) { var r = e.getBoundingClientRect(); return { x0: r.left - s.left - p, y0: r.top - s.top - p, x1: r.right - s.left + p, y1: r.bottom - s.top + p }; }).filter(function (r) { return r.x1 - r.x0 > 2 * p; }); }
+    keep = R(".c14eyb, .c14h, .c14lead, .c16nav, .c15all, .c14pause", 18); dive = keep;   // the words and their links, each on its own: the drops may float in the room between them
+    var sym = R(".c14sym", 10); dive = dive.concat(sym); keep = keep.concat(sym, R(".c14card", -34));   // not over the house's mark; under a card's edge at most, never wholly behind one
+    var c = sec.querySelector(".c14cards"); if (c) { var t = c.getBoundingClientRect().top - s.top; keep.push({ x0: -1e4, y0: -1e4, x1: 1e4, y1: t - 6 }); } }   // nor up under the header
+  function inside(L, x, y, m) { m = m || 0; for (var i = 0; i < L.length; i++) { var r = L[i]; if (x > r.x0 - m && x < r.x1 + m && y > r.y0 - m && y < r.y1 + m) return r; } return null; }
+  function free(x, y) { for (var t = 0; t < 80; t++) { if (!inside(keep, x, y, 70 * sc)) return [x, y]; x = W * (.05 + Math.random() * .9); y = H * (.06 + Math.random() * .88); } return [x, y]; }
+  function seed() { B = []; var nd = phone ? 7 : W < 1100 ? 8 : 10;
+    for (var i = 0; i < N; i++) { var h = free(W * (.05 + Math.random() * .9), H * (.06 + Math.random() * .88)), on = i >= D0 && i < D0 + nd;
+      B.push({ x: h[0], y: h[1], hx: h[0], hy: h[1], vx: 0, vy: 0, r: on ? (16 + Math.random() * 22) * sc : 0, r0: 0, ph: Math.random() * 6.28, orb: (85 + Math.random() * 120) * sc, life: 0 }); }
+    for (i = 0; i < N; i++) B[i].r0 = B[i].r; }
+  function size() { var r = sec.getBoundingClientRect(); dpr = Math.min(phone ? 1 : 1.25, devicePixelRatio || 1); W = r.width; H = r.height; if (!W || !H) return;
+    sc = Math.min(1.1, Math.max(.65, W / 1300)); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); S.x = W * .5; S.y = H * .7; S.rT = 30 * sc; rects(); seed(); }
+
+  function splash(x, y) { S.r = 10 * sc;
+    for (var k = 0; k < NS; k++) { var b = B[S0 + k], a = k / NS * 6.283 + Math.random() * .5, v = (8 + Math.random() * 8) * sc;
+      b.x = x; b.y = y; b.vx = Math.cos(a) * v; b.vy = Math.sin(a) * v; b.r = (7 + Math.random() * 8) * sc; b.life = 0; }
+    for (var i = D0; i < D0 + ND; i++) { var d = B[i]; if (!d.r0) continue; var dx = d.x - x, dy = d.y - y, e = Math.hypot(dx, dy) + 1, kk = 12 * Math.max(0, 1 - e / (380 * sc)); d.vx += dx / e * kk; d.vy += dy / e * kk; }
+    kick(); }
+  function pos(e) { var r = sec.getBoundingClientRect(); P.x = e.clientX - r.left; P.y = e.clientY - r.top; P.last = performance.now(); kick(); }
+  sec.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse") pos(e); });
+  sec.addEventListener("pointerdown", function (e) { if (e.target.closest("a, button, input, label")) return; pos(e); splash(P.x, P.y); });
+  sec.addEventListener("pointerleave", function () { P.last = performance.now() - 2000; });
+  btn.addEventListener("click", function () { paused = !paused; btn.setAttribute("aria-pressed", String(paused));
+    var s = btn.querySelector("span"), he = document.documentElement.getAttribute("data-lang") === "he";
+    s.setAttribute("data-en", paused ? "Play motion" : "Pause motion"); s.setAttribute("data-he", paused ? "הפעלת תנועה" : "עצירת תנועה"); s.textContent = he ? s.getAttribute("data-he") : s.getAttribute("data-en"); kick(); });
+
+  function step(dt) {
+    var now = performance.now(), live = now - P.last < 2400;
+    var tx = live ? P.x : W * (.5 + .4 * Math.sin(T * .17)), ty = live ? P.y : H * (.55 + .3 * Math.sin(T * .29 + 1));
+    var px = S.x, py = S.y; S.x += (tx - S.x) * (live ? .24 : .03); S.y += (ty - S.y) * (live ? .24 : .03);
+    var sp = Math.hypot(S.x - px, S.y - py);
+    S.k += ((inside(dive, S.x, S.y, S.rT * .9) ? 0 : 1) - S.k) * .18;   // under a card or the words, the pointer's drop dives out of sight
+    S.r += (S.rT - S.r) * .05; var m = B[0]; m.x = S.x; m.y = S.y; m.r = S.r * S.k;
+    for (var k = 1; k <= TAIL; k++) { var t = B[k], f = B[k - 1], lag = .34 - k * .05;
+      t.x += (f.x - t.x) * lag; t.y += (f.y - t.y) * lag; t.r += (S.r * S.k * (.72 - k * .14) * Math.min(1, sp / 6 + .25) - t.r) * .2; }
+    for (var i1 = D0; i1 < D0 + ND; i1++) for (var j1 = i1 + 1; j1 < D0 + ND; j1++) { var A1 = B[i1], B1 = B[j1]; if (!A1.r0 || !B1.r0) continue;
+      var qx = B1.x - A1.x, qy = B1.y - A1.y, q = Math.hypot(qx, qy) + .001, mn = (A1.r + B1.r) * 1.05; if (q < mn) { var push = (mn - q) * .012; A1.vx -= qx / q * push; A1.vy -= qy / q * push; B1.vx += qx / q * push; B1.vy += qy / q * push; } }
+    var R = Math.max(W, H) * .3;
+    for (var i = D0; i < D0 + ND; i++) { var b = B[i]; if (!b.r0) continue;
+      var hx = b.hx + Math.sin(T * .3 + b.ph) * 50 * sc, hy = b.hy + Math.cos(T * .23 + b.ph * 1.3) * 38 * sc;
+      var dx = S.x - b.x, dy = S.y - b.y, d = Math.hypot(dx, dy) + .001;
+      if (S.k > .5 && d < (S.r + b.r) * 1.05) { var pu = ((S.r + b.r) * 1.05 - d) * .02; b.vx -= dx / d * pu; b.vy -= dy / d * pu; }
+      if (S.k > .5 && d < R) { var kk = 1 - d / R, a = T * .8 + b.ph, ox = S.x + Math.cos(a) * b.orb * (1 - kk * .35), oy = S.y + Math.sin(a) * b.orb * (1 - kk * .35);
+        b.vx += (ox - b.x) * .005 * kk; b.vy += (oy - b.y) * .005 * kk; }
+      b.vx += (hx - b.x) * .0016; b.vy += (hy - b.y) * .0016;
+      var kr = inside(keep, b.x, b.y, b.r); if (kr) {   // out of the words at once, by the nearest side; a drop caught between two of them is given a new home
+        var gl = b.x - kr.x0 + b.r, gr2 = kr.x1 - b.x + b.r, gt = b.y - kr.y0 + b.r, gb = kr.y1 - b.y + b.r, mn2 = Math.min(gl, gr2, gt, gb);
+        if (mn2 === gl) { b.x -= gl; b.vx = Math.min(b.vx, 0); } else if (mn2 === gr2) { b.x += gr2; b.vx = Math.max(b.vx, 0); } else if (mn2 === gt) { b.y -= gt; b.vy = Math.min(b.vy, 0); } else { b.y += gb; b.vy = Math.max(b.vy, 0); }
+        if (inside(keep, b.x, b.y, b.r) || inside(keep, b.hx, b.hy, b.r)) { var nh = free(b.x, b.y); b.hx = nh[0]; b.hy = nh[1]; if (inside(keep, b.x, b.y, b.r)) { b.x = nh[0]; b.y = nh[1]; b.r = 0; } } }
+      b.vx *= .94; b.vy *= .94; b.x += b.vx; b.y += b.vy; b.r += (b.r0 * (1 + .04 * Math.sin(T * 1.3 + b.ph)) - b.r) * .06; }
+    var alive = 0;
+    for (k = 0; k < NS; k++) { var s = B[S0 + k]; if (s.r < .5) { s.r = 0; continue; } alive++; s.life += dt;
+      if (s.life > .5) { var ex2 = S.x - s.x, ey2 = S.y - s.y, e2 = Math.hypot(ex2, ey2) + .001; s.vx += ex2 / e2 * Math.min(1.6, s.life) * .9; s.vy += ey2 / e2 * Math.min(1.6, s.life) * .9;
+        if (e2 < S.r * .8 + 4 || s.life > 3.5) { s.r *= .8; S.r += .5 * sc; } }
+      s.vx *= .93; s.vy *= .93; s.x += s.vx; s.y += s.vy; }
   }
-  function at(e) { var r = sec.getBoundingClientRect(); L.tx = e.clientX - r.left; L.ty = e.clientY - r.top; L.on = true; L.t0 = performance.now(); kick(); }
-  sec.addEventListener("pointermove", at, { passive: true });
-  sec.addEventListener("pointerdown", function (e) { at(e); rings.push({ x: L.tx, y: L.ty, t: performance.now() }); }, { passive: true });
-  sec.addEventListener("pointerleave", function () { L.on = false; });
-  /* one glint, drawn once and reused: a four-pointed flare, white with a warm core */
-  var SP = document.createElement("canvas"); SP.width = SP.height = 64; (function () { var c = SP.getContext("2d");
-    [[64, 1.6], [64, 1.6]].forEach(function (_, k) { var gr = k ? c.createLinearGradient(32, 0, 32, 64) : c.createLinearGradient(0, 32, 64, 32);
-      gr.addColorStop(0, "rgba(255,248,236,0)"); gr.addColorStop(.5, "rgba(255,248,236,1)"); gr.addColorStop(1, "rgba(255,248,236,0)"); c.fillStyle = gr;
-      if (k) c.fillRect(31.2, 0, 1.6, 64); else c.fillRect(0, 31.2, 64, 1.6); });
-    var core = c.createRadialGradient(32, 32, 0, 32, 32, 9); core.addColorStop(0, "rgba(255,250,240,.9)"); core.addColorStop(1, "rgba(255,250,240,0)"); c.fillStyle = core; c.fillRect(20, 20, 24, 24); })();
-  function star(x, y, len, a) { g.globalAlpha = a; g.drawImage(SP, x - len, y - len, len * 2, len * 2); }
-  function frame(now) {
-    raf = 0; if (!vis) return; var T = now / 1000; last = now;
-    /* the light: where the pointer is; left alone, a slow figure across the section */
-    if (!L.on || (coarse && now - L.t0 > 2600)) { L.tx = W * (.5 + .36 * Math.sin(T * .21)); L.ty = H * (.48 + .3 * Math.sin(T * .34)); }
-    L.x += (L.tx - L.x) * .12; L.y += (L.ty - L.y) * .12; L.k += ((L.on ? 1 : .7) - L.k) * .05;
-    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.globalAlpha = 1; g.drawImage(base, 0, 0);
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var R = Math.min(300, Math.max(200, W * .2));
-    /* the light itself, a warm breath on the black */
-    var hl = g.createRadialGradient(L.x, L.y, 0, L.x, L.y, R * 1.1); hl.addColorStop(0, "rgba(255,236,205," + (.085 * L.k).toFixed(3) + ")"); hl.addColorStop(1, "rgba(255,236,205,0)");
-    g.globalAlpha = 1; g.fillStyle = hl; g.fillRect(L.x - R * 1.1, L.y - R * 1.1, R * 2.2, R * 2.2);
-    rings = rings.filter(function (q) { return now - q.t < 1400; });
-    for (var i = 0; i < S.length; i++) { var p = S[i], dx = p.x - L.x, dy = p.y - L.y, d2 = dx * dx + dy * dy, I = 0;
-      if (d2 < R * R) { var d = Math.sqrt(d2) / R; I = (1 - d) * (1 - d) * L.k; }
-      for (var k = 0; k < rings.length; k++) { var q = rings[k], age = (now - q.t) / 1400, rr = age * Math.max(W, H) * .55, dd = Math.abs(Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y)) - rr);
-        if (dd < 40) I = Math.max(I, (1 - dd / 40) * (1 - age)); }
-      if (I < .02) continue;
-      /* each stone flashes in its own moment, as pavé does when it turns in the light */
-      var tw = Math.pow(.5 + .5 * Math.sin(T * p.sp * 2.2 + p.ph), 6), a = Math.min(1, I * (.35 + .9 * tw));
-      var col = p.fire >= 0 && tw > .5 ? "hsl(" + Math.round(p.fire * 360) + ",90%,78%)" : "#fff8ec";
-      g.globalAlpha = a; g.fillStyle = col; g.beginPath(); g.arc(p.x, p.y, p.r * (1 + I * .8), 0, 6.283); g.fill();
-      if (tw > .35 && I > .15) star(p.x, p.y, 4 + 13 * I * tw, a * .9);
-    }
-    g.globalAlpha = 1; raf = requestAnimationFrame(frame);
-  }
-  function kick() { if (!raf && vis) raf = requestAnimationFrame(frame); }
-  function upd() { vis = inView && !document.hidden; if (vis) { if (!W) size(); kick(); } }
-  new IntersectionObserver(function (es) { inView = es[0].isIntersecting; upd(); }).observe(sec);
+  function render() {
+    for (var i = 0; i < N; i++) { arr[i * 3] = B[i].x * dpr; arr[i * 3 + 1] = (H - B[i].y) * dpr; arr[i * 3 + 2] = B[i].r * dpr; }
+    g.viewport(0, 0, cv.width, cv.height); g.uniform2f(uR, cv.width, cv.height); g.uniform2f(uM, S.x * dpr, (H - S.y) * dpr); g.uniform1f(uT, T); g.uniform3fv(uB, arr);
+    g.drawArrays(g.TRIANGLES, 0, 3); }
+  var rT = 0;
+  function loop(now) { raf = 0; var dt = lastNow ? Math.min(.05, (now - lastNow) / 1000) : .016; lastNow = now; T += dt; if (T - rT > 1) { rT = T; rects(); }   // the words settle late (fonts, the mark's 3D): their places are read again each second
+    step(dt); render();
+    if (vis && !paused && !reduce) raf = requestAnimationFrame(loop); else lastNow = 0; }
+  function kick() { if (!raf && vis && !paused && !reduce) raf = requestAnimationFrame(loop); }
+  function still() { for (var k = 0; k < 300; k++) { T += .016; step(.016); } render(); }
+  function upd() { vis = inView && !document.hidden; if (vis && !W) { size(); if (reduce) still(); } kick(); }
+  new IntersectionObserver(function (es) { inView = es[0].isIntersecting; upd(); }, { rootMargin: "100px 0px" }).observe(sec);
   document.addEventListener("visibilitychange", upd);
-  var rt = 0; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 200); });
+  var rt = 0, lw = 0; addEventListener("resize", function () { if (phone && Math.abs(innerWidth - lw) < 2) return; lw = innerWidth; clearTimeout(rt); rt = setTimeout(function () { if (!W) return; size(); if (reduce || paused) still(); }, 200); });   // a phone's bar folding away is not a resize worth re-pouring for
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (W) rects(); });
 })();
 
 /* one form, two purposes (owner, 20 Nov 2026): "Book a private viewing" opens it as "Request a private viewing", with the

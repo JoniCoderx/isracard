@@ -2988,3 +2988,15 @@ html body #collection.c14col > .c14wrap { position: relative; z-index: 1; }
   html body #details .ar15dim::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 45%, rgba(0,0,0,.55) 75%); pointer-events: none; }
   html[dir="rtl"] body #details .ar15dim::after { background: linear-gradient(270deg, transparent 45%, rgba(0,0,0,.55) 75%); }
 }
+
+/* the collections' liquid white gold: its canvas sits under the words; the small control that stops its motion */
+html body #collection.c14col > .c14pause { position: absolute; z-index: 2; right: max(16px, 2vw); bottom: 16px; display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 16px 0 14px;
+  border-radius: 999px; border: 1px solid rgba(236,232,223,.16); background: rgba(8,8,8,.6); color: rgba(236,232,223,.72); font: inherit; font-size: .62rem; letter-spacing: .24em; text-transform: uppercase; cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background-color .15s ease; }
+html[dir="rtl"] body #collection.c14col > .c14pause { right: auto; left: max(16px, 2vw); }
+html[data-ns] body #collection.c14col > .c14pause { letter-spacing: 0; font-size: .78rem; text-transform: none; }
+html body #collection.c14col > .c14pause:hover { color: #fff; border-color: rgba(236,232,223,.36); background: rgba(20,19,17,.8); }
+html body #collection.c14col > .c14pause:active { transform: scale(.97); }
+html body #collection.c14col > .c14pause:focus-visible { outline: 1px solid var(--gold, #efe5d2); outline-offset: 3px; }
+html body #collection.c14col > .c14pause i { position: relative; width: 8px; height: 10px; border-left: 2px solid currentColor; border-right: 2px solid currentColor; box-sizing: border-box; }
+html body #collection.c14col > .c14pause[aria-pressed="true"] i { width: 0; height: 0; border: 0; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
