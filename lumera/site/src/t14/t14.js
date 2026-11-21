@@ -1513,7 +1513,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     var c = sec.querySelector(".c14cards"); if (c) { var t = c.getBoundingClientRect().top - s.top; keep.push({ x0: -1e4, y0: -1e4, x1: 1e4, y1: t - 6 }); } }   // nor up under the header
   function inside(L, x, y, m) { m = m || 0; for (var i = 0; i < L.length; i++) { var r = L[i]; if (x > r.x0 - m && x < r.x1 + m && y > r.y0 - m && y < r.y1 + m) return r; } return null; }
   function free(x, y) { for (var t = 0; t < 80; t++) { if (!inside(keep, x, y, 70 * sc)) return [x, y]; x = W * (.05 + Math.random() * .9); y = H * (.06 + Math.random() * .88); } return [x, y]; }
-  function seed() { B = []; var nd = phone ? 7 : W < 1100 ? 8 : 10;
+  function seed() { B = []; var nd = phone ? 7 : W < 1100 ? 9 : 12;
     for (var i = 0; i < N; i++) { var h = free(W * (.05 + Math.random() * .9), H * (.06 + Math.random() * .88)), on = i >= D0 && i < D0 + nd;
       B.push({ x: h[0], y: h[1], hx: h[0], hy: h[1], vx: 0, vy: 0, r: on ? (16 + Math.random() * 22) * sc : 0, r0: 0, ph: Math.random() * 6.28, orb: (85 + Math.random() * 120) * sc, life: 0 }); }
     for (i = 0; i < N; i++) B[i].r0 = B[i].r; }

@@ -3000,3 +3000,7 @@ html body #collection.c14col > .c14pause:active { transform: scale(.97); }
 html body #collection.c14col > .c14pause:focus-visible { outline: 1px solid var(--gold, #efe5d2); outline-offset: 3px; }
 html body #collection.c14col > .c14pause i { position: relative; width: 8px; height: 10px; border-left: 2px solid currentColor; border-right: 2px solid currentColor; box-sizing: border-box; }
 html body #collection.c14col > .c14pause[aria-pressed="true"] i { width: 0; height: 0; border: 0; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+
+/* (owner, 21 Nov 2026: "send it") on a wide screen the collections end in an open band of black where the liquid
+   white gold has room to pool, below the names of the pieces */
+@media (min-width: 900px) { html body #collection.c14col { padding-bottom: clamp(190px, 19vw, 280px) !important; } }
