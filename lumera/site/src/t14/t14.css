@@ -2930,10 +2930,12 @@ html body #details.ar15auto .ar15still { transition: opacity .35s ease; }
 /* ── the drawer's hover (owner, 19 Nov 2026: "not intuitive, messy") ── */
 .ar15hvp { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .18s ease; }
 .ar15hvp.on { opacity: 1; }
-.ar15hvh { position: absolute; left: 0; top: 0; transform-origin: 50% 60%; opacity: 0; pointer-events: none;
+.ar15hvh { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; opacity: 0; pointer-events: none;
   transform: translate(var(--hx, 0), var(--hy, 0)) scale(1); filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
   transition: opacity .18s ease, transform .42s cubic-bezier(.2,.8,.2,1), filter .42s cubic-bezier(.2,.8,.2,1); }
-.ar15hvh.on { opacity: 1; transform: translate(var(--hx, 0), calc(var(--hy, 0) - 7px)) scale(1.07); filter: drop-shadow(0 22px 26px rgba(0,0,0,.6)); }
+/* (owner, 21 Nov 2026: "still not working") a lift of a few pixels whatever the piece's size: a fixed 7% made the long
+   bracelet's ends jump some 20px off their places */
+.ar15hvh.on { opacity: 1; transform: translate(var(--hx, 0), calc(var(--hy, 0) - 4px)) scale(var(--hs, 1.02)); filter: drop-shadow(0 14px 18px rgba(0,0,0,.55)) brightness(1.08); }
 html body .ar15pool { background: radial-gradient(circle at var(--px, 50%) var(--py, 50%), rgba(0,0,0,0) calc(var(--pr, 80px) * .9), rgba(0,0,0,.58) calc(var(--pr, 80px) * 2.4)); transition: opacity .22s ease; }
 html body .ar15pin .ar15tag { transform: translate(-50%, 22px); gap: 6px; transition: opacity .2s ease, transform .3s cubic-bezier(.2,.8,.2,1); }
 html body .ar15pin .ar15tag.up { transform: translate(-50%, calc(-100% - 22px)); }
@@ -2942,7 +2944,11 @@ html body .ar15pin .ar15tag.up:not(.on) { transform: translate(-50%, calc(-100% 
 html body .ar15tag b { font-size: .78rem; letter-spacing: .32em; }
 .ar15cur { position: absolute; left: 0; top: 0; z-index: 7; display: flex; align-items: center; gap: 12px; padding: 11px 16px 11px 18px; border-radius: 999px; pointer-events: none; white-space: nowrap;
   background: rgba(14,12,10,.88); border: 1px solid rgba(239,229,210,.3); box-shadow: 0 10px 30px rgba(0,0,0,.45);
-  opacity: 0; scale: .96; transform-origin: 0 0; transition: opacity .15s ease, scale .2s cubic-bezier(.2,.8,.2,1); }
+  opacity: 0; scale: .96; transform-origin: 50% 0; transition: opacity .15s ease, scale .2s cubic-bezier(.2,.8,.2,1); }
+/* the tag now rests beneath the piece it names (above it near the foot), still while the pointer moves; going from one
+   piece to the next it glides there */
+.ar15cur.glide { transition: opacity .15s ease, scale .2s cubic-bezier(.2,.8,.2,1), transform .24s cubic-bezier(.45,0,.2,1); }
+.ar15cur.up { transform-origin: 50% 100%; }
 .ar15cur.on { opacity: 1; scale: 1; }
 .ar15cur span { font-size: .56rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(236,226,206,.6); }
 .ar15cur b { font-weight: 400; font-size: .72rem; letter-spacing: .26em; color: #f6f1e6; }
@@ -2974,3 +2980,11 @@ html[dir="rtl"] body .c16nav .c16w { animation-direction: reverse; }
 /* the collections' night sky: small diamonds that drift, and draw together around the pointer */
 html body #collection.c14col > .c14sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 html body #collection.c14col > .c14wrap { position: relative; z-index: 1; }
+
+/* the lifted piece's details are read over the dimmed drawer, never over its prints: the dim is deep everywhere on a
+   wide screen, deepest behind the panel's side */
+@media (min-width: 900px) {
+  html body #details .ar15dim { background: radial-gradient(circle at var(--hx, 50%) var(--hy, 50%), rgba(0,0,0,.9) 0, rgba(0,0,0,.88) var(--hr, 30%), rgba(0,0,0,.84) calc(var(--hr, 30%) * 2)); }
+  html body #details .ar15dim::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 45%, rgba(0,0,0,.55) 75%); pointer-events: none; }
+  html[dir="rtl"] body #details .ar15dim::after { background: linear-gradient(270deg, transparent 45%, rgba(0,0,0,.55) 75%); }
+}

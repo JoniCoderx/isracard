@@ -263,34 +263,38 @@ export async function mount(sec) {
   /* (owner, 21 Nov 2026: the circle sat on the jewel and blurred it) one small tag beside the pointer instead: what it is,
      its name, the way in; never over the piece, the piece itself always in full view */
   function hover(p) {
-    clearTimeout(hoverOff);
-    if (p === hot) return; hot = p; stage.style.cursor = p ? "pointer" : ""; curEl.classList.toggle("on", !!p);
+    clearTimeout(hoverOff); hoverOff = 0;   // (a cleared timer left its number behind, and the grace then never ran again: a tag stuck on)
+    if (p === hot) return; const was = !!hot && curEl.classList.contains("on"); hot = p; stage.style.cursor = p ? "pointer" : ""; if (!p) curEl.classList.remove("on");
     if (!p) { tag.classList.remove("on"); pool.classList.remove("on"); hvP.classList.remove("on"); hvH.classList.remove("on"); return; }
     const r = toStage(p.box), x = text(p.id);
-    { const x0 = text(p.id); curEl.innerHTML = `<span>${x0.kind}</span><b>${x0.name}</b><i></i>`; placeCur(); }
+    curEl.innerHTML = `<span>${x.kind}</span><b>${x.name}</b><i></i>`; curEl.classList.toggle("glide", was); placeCur(p); curEl.classList.add("on");
     if (hvP.parentNode !== stage) stage.insertBefore(hvP, pool); if (hvH.parentNode !== fx) fx.appendChild(hvH);
     hvP.src = patchSrc(p); place(hvP, toStage(p.patch.rect));
     const hr = toStage(p.hero.rect); hvH.classList.remove("on"); hvH.src = p.hero.src; hvH.style.width = hr.w + "px"; hvH.style.height = hr.h + "px";
+    hvH.style.setProperty("--hs", clamp(1 + 10 / Math.max(hr.w, hr.h), 1.008, 1.04).toFixed(4));   // about 5px of growth on any piece
     hvH.style.setProperty("--hx", hr.x + "px"); hvH.style.setProperty("--hy", hr.y + "px");
     const ready = () => { if (hot === p) { hvP.classList.add("on"); hvH.classList.add("on"); } }; (hvH.decode ? hvH.decode() : Promise.resolve()).then(ready, ready);
     const S = stage.getBoundingClientRect(), below = S.top + r.y + r.h + 90 < innerHeight - 40;
     void below; void x; tag.classList.remove("on");   // the name now travels with the pointer
     pool.style.setProperty("--px", (r.x + r.w / 2) + "px"); pool.style.setProperty("--py", (r.y + r.h / 2) + "px"); pool.style.setProperty("--pr", (Math.max(r.w, r.h) * .62 + 24) + "px"); pool.classList.add("on");
   }
-  let cx0 = 0, cy0 = 0, craf = 0, hoverOff = 0;
-  /* beside the pointer, below and to the right; turned to the other side near an edge of the window */
-  function placeCur() { const P = pin.getBoundingClientRect(), w = curEl.offsetWidth || 180, h = curEl.offsetHeight || 40;
-    const x = cx0 + 22 + w > P.width - 12 ? cx0 - 22 - w : cx0 + 22, y = cy0 + 26 + h > P.height - 12 ? cy0 - 20 - h : cy0 + 26;
+  let mx = -1, my = -1, hoverOff = 0;
+  /* (owner, 21 Nov 2026: "still not working, messy") the tag no longer chases the pointer over the jewels: it rests just
+     beneath the piece it names, centred on it, or above it where the foot of the window is near; it never covers it */
+  function placeCur(p) { const P = pin.getBoundingClientRect(), S = stage.getBoundingClientRect(), r = toStage(p.box), { top, bot } = insets();
+    const w = curEl.offsetWidth || 220, h = curEl.offsetHeight || 44, ox = S.left - P.left, oy = S.top - P.top;
+    let x = ox + r.x + r.w / 2 - w / 2, y = oy + r.y + r.h + 14, up = false;
+    if (y + h > P.height - bot - 12) { y = oy + r.y - h - 14; up = true; }
+    if (y < top + 8) { y = clamp(oy + r.y + r.h / 2 - h / 2, top + 8, P.height - bot - h - 8); }   // a piece filling the height: its tag sits over its middle, the one place left
+    x = clamp(x, 12, P.width - w - 12); curEl.classList.toggle("up", up);
     curEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`; }
-  stage.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return;
-    const P = pin.getBoundingClientRect(); cx0 = e.clientX - P.left; cy0 = e.clientY - P.top;
-    if (open && !cur) { const p = at(e.clientX, e.clientY);
-      // a moment's grace before letting go, so crossing the suede between two pieces does not flicker
-      if (p) hover(p); else if (hot && !hoverOff) hoverOff = setTimeout(() => { hoverOff = 0; hover(null); }, 160); }
-    if (!craf) craf = requestAnimationFrame(() => { craf = 0; placeCur(); }); });
-  stage.addEventListener("pointerleave", () => { clearTimeout(hoverOff); hoverOff = 0; hover(null); });
+  function hoverAt(x, y) { if (!open || cur) return; const p = at(x, y);
+    // a moment's grace before letting go, so crossing the suede between two pieces does not flicker
+    if (p) hover(p); else if (hot && !hoverOff) hoverOff = setTimeout(() => { hoverOff = 0; hover(null); }, 160); }
+  stage.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return; mx = e.clientX; my = e.clientY; hoverAt(mx, my); });
+  stage.addEventListener("pointerleave", () => { clearTimeout(hoverOff); hoverOff = 0; mx = -1; hover(null); });
   /* the names beneath the drawer light their piece in it */
-  picks.forEach(b => { b.addEventListener("mouseenter", () => { if (open && !cur) { const p = M && M.pieces.find(x => x.id === b.dataset.id); if (p) hover(p); curEl.classList.remove("on"); stage.style.cursor = ""; } });
+  picks.forEach(b => { b.addEventListener("mouseenter", () => { if (open && !cur) { const p = M && M.pieces.find(x => x.id === b.dataset.id); if (p) hover(p); stage.style.cursor = ""; } });
     b.addEventListener("mouseleave", () => { if (!cur) hover(null); }); });
   stage.addEventListener("click", e => { if (!open) return; if (cur) { close(); return; } const p = at(e.clientX, e.clientY, e.pointerType !== "mouse"); if (p) show(p, null); });
 
@@ -339,7 +343,8 @@ export async function mount(sec) {
   }
   function close(now) {
     if (!cur) return; const Lf = cur; cur = null; panel.classList.remove("on"); dim.classList.remove("on"); sec.classList.remove("ar15sel");
-    const end = () => { land(Lf); if (!cur) { panel.hidden = true; if (back && back.focus) back.focus({ preventScroll: true }); } };
+    // set down, the piece still under the pointer answers it again at once, without waiting for the mouse to move
+    const end = () => { land(Lf); if (!cur) { panel.hidden = true; if (back && back.focus) back.focus({ preventScroll: true }); if (mx >= 0) { hot = null; hoverAt(mx, my); } } };
     if (now || reduce || !Lf.hero.classList.contains("on")) { end(); return; }
     home.push(Lf);
     fly(Lf, toStage(Lf.p.hero.rect), 560, () => { Lf.patch.classList.remove("on"); Lf.wait = setTimeout(end, 180); });
@@ -354,6 +359,7 @@ export async function mount(sec) {
     else if (!open || Math.abs(pin.getBoundingClientRect().top) > 2) { const r = run.getBoundingClientRect(), span = r.height - pin.offsetHeight; scrollTo({ top: scrollY + r.top + span * .8, behavior: "instant" }); t = 1; dirty = true; draw(); }
     show(p, b); }));
   addEventListener("scroll", () => { if (cur && Math.abs(scrollY - y0) > 60) close(); if (!cur) y0 = scrollY;
+    if (!cur && mx >= 0) { if (!open) hover(null); else { const h = hot; hoverAt(mx, my); if (hot && hot === h) placeCur(hot); } }   // the page moving under a still pointer
     // far from the section, every decoded frame is let go (the files stay, compressed); back near, they are decoded again
     const r = run.getBoundingClientRect(), nr = r.bottom > -2 * innerHeight && r.top < 3 * innerHeight;
     if (nr !== near) { near = nr; if (!near) { bmps.forEach((b, k) => { if (b) { b.close(); bmps[k] = null; } }); shownK = -1; dirty = true; } else pump(); }
