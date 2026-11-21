@@ -1469,8 +1469,8 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     "uniform vec2 uR; uniform vec2 uM; uniform float uT; uniform vec3 uB[" + N + "];",
     "float lobe(vec3 r, vec3 d, float k){ return exp((dot(r, normalize(d)) - 1.0) * k); }",
     "vec3 env(vec3 r, vec2 p){",
-    "  vec3 e = vec3(.03, .028, .026) + vec3(1.0, .97, .93) * .42 * smoothstep(-.35, .95, r.y);",
-    "  e *= 1.0 - .8 * smoothstep(-.05, -.6, r.y);",
+    "  vec3 e = vec3(.16, .155, .15) + vec3(1.0, .97, .93) * .5 * smoothstep(-.35, .95, r.y);",
+    "  e *= 1.0 - .55 * smoothstep(-.05, -.7, r.y);",
     "  float sb = lobe(r, vec3(-.45, .6, .65), 14.0); e += vec3(1.0, .985, .96) * (sb * 1.6 + smoothstep(.55, .62, sb) * .9);",
     "  e += vec3(1.0, .99, .97) * lobe(r, vec3(.15, .35, 1.0), 5.0) * .3;",
     "  e += vec3(1.0, .86, .68) * lobe(r, vec3(.75, .15, .55), 9.0) * .8;",
@@ -1486,9 +1486,9 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     "  vec3 n = normalize(vec3(-hg, 1.0)); vec3 r = reflect(vec3(0.0, 0.0, -1.0), n); float fr = pow(1.0 - n.z, 2.2);",
     "  vec3 metal = env(r, p) * (.8 + .2 * fr) * vec3(1.0, .985, .965);",
     "  metal += (.5 + .5 * cos(6.2832 * (vec3(0.0, .33, .67) + fr * 1.6 + uT * .05))) * fr * .1;",
-    "  vec3 bg = vec3(.07, .06, .05) * exp(-length((p - uM) / min(uR.y, 900.0)) * 3.2);",
-    "  float halo = smoothstep(.3, 1.0, f) * (1.0 - edge); bg += vec3(.95, .9, .82) * halo * halo * .09;",
-    "  vec3 col = mix(bg, metal * 1.25, edge); col = 1.0 - exp(-col * 1.3);",
+    "  vec3 bg = vec3(.035, .03, .026) * exp(-length((p - uM) / min(uR.y, 900.0)) * 4.0);",
+    "  float halo = smoothstep(.55, 1.0, f) * (1.0 - edge); bg += vec3(.95, .9, .82) * halo * halo * .05;",
+    "  vec3 col = mix(bg, metal * 1.15, edge); col = 1.0 - exp(-col * 1.3);",
     "  gl_FragColor = vec4(col, 1.0); }"].join("\n");
   function sh(t, s) { var o = g.createShader(t); g.shaderSource(o, s); g.compileShader(o); return g.getShaderParameter(o, g.COMPILE_STATUS) ? o : null; }
   var vs = sh(g.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"), fs = sh(g.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
@@ -1513,12 +1513,12 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     var c = sec.querySelector(".c14cards"); if (c) { var t = c.getBoundingClientRect().top - s.top; keep.push({ x0: -1e4, y0: -1e4, x1: 1e4, y1: t - 6 }); } }   // nor up under the header
   function inside(L, x, y, m) { m = m || 0; for (var i = 0; i < L.length; i++) { var r = L[i]; if (x > r.x0 - m && x < r.x1 + m && y > r.y0 - m && y < r.y1 + m) return r; } return null; }
   function free(x, y) { for (var t = 0; t < 80; t++) { if (!inside(keep, x, y, 70 * sc)) return [x, y]; x = W * (.05 + Math.random() * .9); y = H * (.06 + Math.random() * .88); } return [x, y]; }
-  function seed() { B = []; var nd = phone ? 7 : W < 1100 ? 9 : 12;
+  function seed() { B = []; var nd = phone ? 5 : W < 1100 ? 7 : 9;
     for (var i = 0; i < N; i++) { var h = free(W * (.05 + Math.random() * .9), H * (.06 + Math.random() * .88)), on = i >= D0 && i < D0 + nd;
-      B.push({ x: h[0], y: h[1], hx: h[0], hy: h[1], vx: 0, vy: 0, r: on ? (16 + Math.random() * 22) * sc : 0, r0: 0, ph: Math.random() * 6.28, orb: (85 + Math.random() * 120) * sc, life: 0 }); }
+      B.push({ x: h[0], y: h[1], hx: h[0], hy: h[1], vx: 0, vy: 0, r: on ? (10 + Math.random() * 18) * sc : 0, r0: 0, ph: Math.random() * 6.28, orb: (85 + Math.random() * 120) * sc, life: 0 }); }
     for (i = 0; i < N; i++) B[i].r0 = B[i].r; }
-  function size() { var r = sec.getBoundingClientRect(); dpr = Math.min(phone ? 1 : 1.25, devicePixelRatio || 1); W = r.width; H = r.height; if (!W || !H) return;
-    sc = Math.min(1.1, Math.max(.65, W / 1300)); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); S.x = W * .5; S.y = H * .7; S.rT = 30 * sc; rects(); seed(); }
+  function size() { var r = sec.getBoundingClientRect(); dpr = phone ? .75 : Math.min(1, devicePixelRatio || 1) * .85; W = r.width; H = r.height; if (!W || !H) return;
+    sc = Math.min(1.1, Math.max(.65, W / 1300)); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); S.x = W * .5; S.y = H * .7; S.rT = 22 * sc; rects(); seed(); }
 
   function splash(x, y) { S.r = 10 * sc;
     for (var k = 0; k < NS; k++) { var b = B[S0 + k], a = k / NS * 6.283 + Math.random() * .5, v = (8 + Math.random() * 8) * sc;
@@ -1550,7 +1550,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
       var dx = S.x - b.x, dy = S.y - b.y, d = Math.hypot(dx, dy) + .001;
       if (S.k > .5 && d < (S.r + b.r) * 1.05) { var pu = ((S.r + b.r) * 1.05 - d) * .02; b.vx -= dx / d * pu; b.vy -= dy / d * pu; }
       if (S.k > .5 && d < R) { var kk = 1 - d / R, a = T * .8 + b.ph, ox = S.x + Math.cos(a) * b.orb * (1 - kk * .35), oy = S.y + Math.sin(a) * b.orb * (1 - kk * .35);
-        b.vx += (ox - b.x) * .005 * kk; b.vy += (oy - b.y) * .005 * kk; }
+        b.vx += (ox - b.x) * .0032 * kk; b.vy += (oy - b.y) * .0032 * kk; }
       b.vx += (hx - b.x) * .0016; b.vy += (hy - b.y) * .0016;
       var kr = inside(keep, b.x, b.y, b.r); if (kr) {   // out of the words at once, by the nearest side; a drop caught between two of them is given a new home
         var gl = b.x - kr.x0 + b.r, gr2 = kr.x1 - b.x + b.r, gt = b.y - kr.y0 + b.r, gb = kr.y1 - b.y + b.r, mn2 = Math.min(gl, gr2, gt, gb);
@@ -1568,7 +1568,10 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     g.viewport(0, 0, cv.width, cv.height); g.uniform2f(uR, cv.width, cv.height); g.uniform2f(uM, S.x * dpr, (H - S.y) * dpr); g.uniform1f(uT, T); g.uniform3fv(uB, arr);
     g.drawArrays(g.TRIANGLES, 0, 3); }
   var rT = 0;
-  function loop(now) { raf = 0; var dt = lastNow ? Math.min(.05, (now - lastNow) / 1000) : .016; lastNow = now; T += dt; if (T - rT > 1) { rT = T; rects(); }   // the words settle late (fonts, the mark's 3D): their places are read again each second
+  var odd = false;
+  function loop(now) { raf = 0; var calm = performance.now() - P.last > 4000 && !B.slice(S0).some(function (b) { return b.r > .5; });
+    if (calm && (odd = !odd)) { if (vis && !paused && !reduce) raf = requestAnimationFrame(loop); return; }   // at rest the slow drift is drawn every other frame
+    var dt = lastNow ? Math.min(.05, (now - lastNow) / 1000) : .016; lastNow = now; T += dt; if (T - rT > 1) { rT = T; rects(); }   // the words settle late (fonts, the mark's 3D): their places are read again each second
     step(dt); render();
     if (vis && !paused && !reduce) raf = requestAnimationFrame(loop); else lastNow = 0; }
   function kick() { if (!raf && vis && !paused && !reduce) raf = requestAnimationFrame(loop); }

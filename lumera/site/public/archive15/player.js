@@ -241,11 +241,11 @@ export async function mount(sec) {
        are fine, and a near miss should still find them */
     const px = Math.floor(x * idW), py = Math.floor(y * idH), rad = Math.ceil((touch ? 16 : 7) * idW / b.width);
     const read = (u, v) => (u < 0 || v < 0 || u >= idW || v >= idH) ? 0 : Math.round(ids[(v * idW + u) * 4] / M.ids.step);
-    let pid = read(px, py);
+    let pid = read(px, py); at.exact = true;
     for (let r = 1; !pid && r <= rad; r++) for (let k = -r; k <= r && !pid; k++) pid = read(px + k, py - r) || read(px + k, py + r) || read(px - r, py + k) || read(px + r, py + k);
     /* nothing under the point itself: inside a piece's own bounds still means that piece (the hollow of the ring, the
        space within the necklace, between the earrings), the smallest one where bounds overlap */
-    if (!pid) { const ux = x * M.res[0], uy = y * M.res[1]; let best = null, ba = Infinity;
+    if (!pid) { at.exact = false; const ux = x * M.res[0], uy = y * M.res[1]; let best = null, ba = Infinity;
       for (const p of M.pieces) { const b = p.box, padX = (b[2] - b[0]) * .06, padY = (b[3] - b[1]) * .06, a = (b[2] - b[0]) * (b[3] - b[1]);
         if (ux > b[0] - padX && ux < b[2] + padX && uy > b[1] - padY && uy < b[3] + padY && a < ba) { best = p; ba = a; } }
       return best; }
@@ -257,7 +257,17 @@ export async function mount(sec) {
   /* the hover (owner, 19 Nov 2026: "not intuitive, messy"): the piece itself rises a little off the suede (its own render
      over the plate it lay on), the rest of the drawer falls into shadow, its name sits neatly beneath it, and the pointer
      becomes a small "View" so a click is plainly the next thing */
-  const hvP = new Image(), hvH = new Image(); hvP.className = "ar15hvp"; hvH.className = "ar15hvh"; hvP.alt = hvH.alt = "";
+  /* (owner, 21 Nov 2026: "hovering over everything, it all goes mad and the jewels jump") each piece has its own lifted
+     image and its own plate, laid once exactly where the piece lies: a hover only shows or hides them, so nothing ever
+     travels across the drawer from one piece to the next */
+  const lifts = new Map();
+  function liftOf(p) { let o = lifts.get(p.id);
+    if (!o) { o = { P: new Image(), H: new Image() }; o.P.className = "ar15hvp"; o.H.className = "ar15hvh"; o.P.alt = o.H.alt = ""; o.P.decoding = o.H.decoding = "async";
+      o.P.src = patchSrc(p); o.H.src = p.hero.src; stage.insertBefore(o.P, pool); fx.appendChild(o.H); lifts.set(p.id, o); }
+    if (o.k !== R.k) { o.k = R.k; place(o.P, toStage(p.patch.rect)); const hr = toStage(p.hero.rect);   // laid again only when the drawer's size changes
+      o.H.style.width = hr.w + "px"; o.H.style.height = hr.h + "px"; o.H.style.setProperty("--hx", hr.x + "px"); o.H.style.setProperty("--hy", hr.y + "px");
+      o.H.style.setProperty("--hs", clamp(1 + 10 / Math.max(hr.w, hr.h), 1.008, 1.04).toFixed(4)); }
+    return o; }
   const curEl = document.createElement("i"); curEl.className = "ar15cur"; curEl.setAttribute("aria-hidden", "true");
   pin.appendChild(curEl);
   /* (owner, 21 Nov 2026: the circle sat on the jewel and blurred it) one small tag beside the pointer instead: what it is,
@@ -265,15 +275,12 @@ export async function mount(sec) {
   function hover(p) {
     clearTimeout(hoverOff); hoverOff = 0;   // (a cleared timer left its number behind, and the grace then never ran again: a tag stuck on)
     if (p === hot) return; const was = !!hot && curEl.classList.contains("on"); hot = p; stage.style.cursor = p ? "pointer" : ""; if (!p) curEl.classList.remove("on");
-    if (!p) { tag.classList.remove("on"); pool.classList.remove("on"); hvP.classList.remove("on"); hvH.classList.remove("on"); return; }
+    lifts.forEach(o => { o.P.classList.remove("on"); o.H.classList.remove("on"); });
+    if (!p) { tag.classList.remove("on"); pool.classList.remove("on"); return; }
     const r = toStage(p.box), x = text(p.id);
     curEl.innerHTML = `<span>${x.kind}</span><b>${x.name}</b><i></i>`; curEl.classList.toggle("glide", was); placeCur(p); curEl.classList.add("on");
-    if (hvP.parentNode !== stage) stage.insertBefore(hvP, pool); if (hvH.parentNode !== fx) fx.appendChild(hvH);
-    hvP.src = patchSrc(p); place(hvP, toStage(p.patch.rect));
-    const hr = toStage(p.hero.rect); hvH.classList.remove("on"); hvH.src = p.hero.src; hvH.style.width = hr.w + "px"; hvH.style.height = hr.h + "px";
-    hvH.style.setProperty("--hs", clamp(1 + 10 / Math.max(hr.w, hr.h), 1.008, 1.04).toFixed(4));   // about 5px of growth on any piece
-    hvH.style.setProperty("--hx", hr.x + "px"); hvH.style.setProperty("--hy", hr.y + "px");
-    const ready = () => { if (hot === p) { hvP.classList.add("on"); hvH.classList.add("on"); } }; (hvH.decode ? hvH.decode() : Promise.resolve()).then(ready, ready);
+    const o = liftOf(p), ready = () => { if (hot === p) { o.P.classList.add("on"); o.H.classList.add("on"); } };
+    if (o.H.complete && o.P.complete) ready(); else (o.H.decode ? Promise.all([o.H.decode(), o.P.decode()]) : Promise.resolve()).then(ready, ready);
     const S = stage.getBoundingClientRect(), below = S.top + r.y + r.h + 90 < innerHeight - 40;
     void below; void x; tag.classList.remove("on");   // the name now travels with the pointer
     pool.style.setProperty("--px", (r.x + r.w / 2) + "px"); pool.style.setProperty("--py", (r.y + r.h / 2) + "px"); pool.style.setProperty("--pr", (Math.max(r.w, r.h) * .62 + 24) + "px"); pool.classList.add("on");
@@ -288,7 +295,11 @@ export async function mount(sec) {
     if (y < top + 8) { y = clamp(oy + r.y + r.h / 2 - h / 2, top + 8, P.height - bot - h - 8); }   // a piece filling the height: its tag sits over its middle, the one place left
     x = clamp(x, 12, P.width - w - 12); curEl.classList.toggle("up", up);
     curEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`; }
-  function hoverAt(x, y) { if (!open || cur) return; const p = at(x, y);
+  function hoverAt(x, y) { if (!open || cur) return; let p = at(x, y);
+    // a piece found only by its bounds (not by its metal under the point) never takes over from the piece already lit:
+    // the ring lies inside the bracelet's bounds, and the two used to flick back and forth as the pointer crossed
+    if (hot && p && p !== hot && !at.exact) { const b = stage.getBoundingClientRect(), ux = (x - b.left) / b.width * M.res[0], uy = (y - b.top) / b.height * M.res[1], q = hot.box, pw = (q[2] - q[0]) * .1, ph = (q[3] - q[1]) * .1;
+      if (ux > q[0] - pw && ux < q[2] + pw && uy > q[1] - ph && uy < q[3] + ph) p = hot; }
     // a moment's grace before letting go, so crossing the suede between two pieces does not flicker
     if (p) hover(p); else if (hot && !hoverOff) hoverOff = setTimeout(() => { hoverOff = 0; hover(null); }, 160); }
   stage.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return; mx = e.clientX; my = e.clientY; hoverAt(mx, my); });
