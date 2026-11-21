@@ -1451,41 +1451,67 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(shape, 80); });
 })();
 
-/* the collections' night sky (owner, 19 Nov 2026: "small floating dots or diamonds that connect when you go with your
-   mouse"): a few dozen small diamonds drift slowly in the black behind the collections, each catching the light in turn;
-   around the pointer (or a finger) they draw toward it and join in fine gold lines, then let go. It runs only while the
-   section is on screen; with reduced motion it is not drawn at all. */
+/* the collections' pavé of light (owner, 21 Nov 2026: "more intuitive and more wow"): the black behind the collections is
+   set, like pavé, with a few thousand tiny stones that are almost invisible until light falls on them. The pointer (or a
+   finger) is that light: the stones near it catch it and flash, each in its own moment, a few with a little colour of
+   fire, and a click sends a ring of light out through them. Left alone, the light drifts slowly across on its own.
+   One canvas, drawn only while the section is on screen; nothing at all with reduced motion. */
 (function () {
   var sec = document.querySelector("#collection.c14col"); if (!sec || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   var cv = document.createElement("canvas"); cv.className = "c14sky"; cv.setAttribute("aria-hidden", "true"); sec.insertBefore(cv, sec.firstChild);
   var g = cv.getContext("2d"); if (!g) return;
-  var W = 0, H = 0, dpr = 1, P = [], m = { x: -1e4, y: -1e4, on: false, k: 0 }, vis = false, raf = 0, last = 0;
-  function size() { var r = sec.getBoundingClientRect(); dpr = Math.min(1.5, devicePixelRatio || 1); W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    var n = Math.max(40, Math.min(110, Math.round(W * H / 15000))); while (P.length < n) P.push(seed()); P.length = n; }
-  function seed() { return { x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .12, vy: -.04 - Math.random() * .1, r: 1 + Math.pow(Math.random(), 3) * 2.8, ph: Math.random() * 6.28, ox: 0, oy: 0 }; }
-  function pt(e) { var r = sec.getBoundingClientRect(); m.x = e.clientX - r.left; m.y = e.clientY - r.top; m.on = true; kick(); }
-  sec.addEventListener("pointermove", pt, { passive: true }); sec.addEventListener("pointerdown", pt, { passive: true });
-  sec.addEventListener("pointerleave", function () { m.on = false; }); sec.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") m.on = false; });
-  function diamond(x, y, r, a) { g.globalAlpha = a; g.beginPath(); g.moveTo(x, y - r * 1.6); g.lineTo(x + r, y); g.lineTo(x, y + r * 1.6); g.lineTo(x - r, y); g.closePath(); g.fill();
-    if (r > 1.7) { g.globalAlpha = a * .4; g.fillRect(x - r * 3.2, y - .3, r * 6.4, .6); g.fillRect(x - .3, y - r * 3.2, .6, r * 6.4); } }
+  var W = 0, H = 0, dpr = 1, S = [], base = null, raf = 0, inView = false, vis = false, last = 0;
+  var L = { x: 0, y: 0, tx: 0, ty: 0, on: false, k: 0, t0: 0 }, rings = [], coarse = matchMedia("(pointer: coarse)").matches;
+  function size() {
+    var r = sec.getBoundingClientRect(); dpr = Math.min(1.5, devicePixelRatio || 1); W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    /* the setting: a loose hexagonal pavé, each stone a little off its place, a little different in size */
+    var gap = W < 700 ? 26 : 32, rowH = gap * .866; S = [];
+    for (var y = gap / 2, row = 0; y < H; y += rowH, row++) for (var x = (row % 2 ? gap / 2 : 0) + gap / 2; x < W; x += gap)
+      S.push({ x: x + (Math.random() - .5) * gap * .5, y: y + (Math.random() - .5) * gap * .5, r: .6 + Math.random() * .9, ph: Math.random() * 6.283, sp: .6 + Math.random() * 1.6, fire: Math.random() < .12 ? Math.random() : -1 });
+    /* the stones at rest, painted once: just visible as a texture in the black */
+    base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height; var b = base.getContext("2d"); b.scale(dpr, dpr);
+    b.fillStyle = "rgba(236,226,206,.075)"; S.forEach(function (p) { b.beginPath(); b.arc(p.x, p.y, p.r * .8, 0, 6.283); b.fill(); });
+    if (!L.on) { L.x = L.tx = W * .5; L.y = L.ty = H * .45; }
+  }
+  function at(e) { var r = sec.getBoundingClientRect(); L.tx = e.clientX - r.left; L.ty = e.clientY - r.top; L.on = true; L.t0 = performance.now(); kick(); }
+  sec.addEventListener("pointermove", at, { passive: true });
+  sec.addEventListener("pointerdown", function (e) { at(e); rings.push({ x: L.tx, y: L.ty, t: performance.now() }); }, { passive: true });
+  sec.addEventListener("pointerleave", function () { L.on = false; });
+  /* one glint, drawn once and reused: a four-pointed flare, white with a warm core */
+  var SP = document.createElement("canvas"); SP.width = SP.height = 64; (function () { var c = SP.getContext("2d");
+    [[64, 1.6], [64, 1.6]].forEach(function (_, k) { var gr = k ? c.createLinearGradient(32, 0, 32, 64) : c.createLinearGradient(0, 32, 64, 32);
+      gr.addColorStop(0, "rgba(255,248,236,0)"); gr.addColorStop(.5, "rgba(255,248,236,1)"); gr.addColorStop(1, "rgba(255,248,236,0)"); c.fillStyle = gr;
+      if (k) c.fillRect(31.2, 0, 1.6, 64); else c.fillRect(0, 31.2, 64, 1.6); });
+    var core = c.createRadialGradient(32, 32, 0, 32, 32, 9); core.addColorStop(0, "rgba(255,250,240,.9)"); core.addColorStop(1, "rgba(255,250,240,0)"); c.fillStyle = core; c.fillRect(20, 20, 24, 24); })();
+  function star(x, y, len, a) { g.globalAlpha = a; g.drawImage(SP, x - len, y - len, len * 2, len * 2); }
   function frame(now) {
-    raf = 0; if (!vis) return; var dt = Math.min(50, now - (last || now)) / 16.7, T = now / 1000; last = now;
-    m.k += ((m.on ? 1 : 0) - m.k) * .08;
-    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H); g.fillStyle = "#f3e6cc"; g.strokeStyle = "#e6d2a8";
-    var R = 240, near = [];
-    for (var i = 0; i < P.length; i++) { var p = P[i]; p.x += p.vx * dt; p.y += p.vy * dt;
-      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; } if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
-      var dx = m.x - p.x, dy = m.y - p.y, d = Math.sqrt(dx * dx + dy * dy), pull = m.k * Math.max(0, 1 - d / R);
-      p.ox += (dx * pull * .22 - p.ox) * .08; p.oy += (dy * pull * .22 - p.oy) * .08;   // drawn toward the pointer, and let go
-      var x = p.x + p.ox, y = p.y + p.oy, tw = .4 + .55 * Math.pow(.5 + .5 * Math.sin(T * 1.3 + p.ph), 3) + pull * .5;
-      diamond(x, y, p.r, Math.min(.95, tw)); if (pull > .02) near.push([x, y, pull]); }
-    g.lineWidth = .8;
-    for (var a = 0; a < near.length; a++) for (var b = a + 1; b < near.length; b++) { var A = near[a], B = near[b], ex = A[0] - B[0], ey = A[1] - B[1], dd = Math.sqrt(ex * ex + ey * ey);
-      if (dd < 170) { g.globalAlpha = Math.min(.8, (1 - dd / 170) * Math.min(A[2], B[2]) * 2.4); g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke(); } }
+    raf = 0; if (!vis) return; var T = now / 1000; last = now;
+    /* the light: where the pointer is; left alone, a slow figure across the section */
+    if (!L.on || (coarse && now - L.t0 > 2600)) { L.tx = W * (.5 + .36 * Math.sin(T * .21)); L.ty = H * (.48 + .3 * Math.sin(T * .34)); }
+    L.x += (L.tx - L.x) * .12; L.y += (L.ty - L.y) * .12; L.k += ((L.on ? 1 : .7) - L.k) * .05;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.globalAlpha = 1; g.drawImage(base, 0, 0);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var R = Math.min(300, Math.max(200, W * .2));
+    /* the light itself, a warm breath on the black */
+    var hl = g.createRadialGradient(L.x, L.y, 0, L.x, L.y, R * 1.1); hl.addColorStop(0, "rgba(255,236,205," + (.085 * L.k).toFixed(3) + ")"); hl.addColorStop(1, "rgba(255,236,205,0)");
+    g.globalAlpha = 1; g.fillStyle = hl; g.fillRect(L.x - R * 1.1, L.y - R * 1.1, R * 2.2, R * 2.2);
+    rings = rings.filter(function (q) { return now - q.t < 1400; });
+    for (var i = 0; i < S.length; i++) { var p = S[i], dx = p.x - L.x, dy = p.y - L.y, d2 = dx * dx + dy * dy, I = 0;
+      if (d2 < R * R) { var d = Math.sqrt(d2) / R; I = (1 - d) * (1 - d) * L.k; }
+      for (var k = 0; k < rings.length; k++) { var q = rings[k], age = (now - q.t) / 1400, rr = age * Math.max(W, H) * .55, dd = Math.abs(Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y)) - rr);
+        if (dd < 40) I = Math.max(I, (1 - dd / 40) * (1 - age)); }
+      if (I < .02) continue;
+      /* each stone flashes in its own moment, as pavé does when it turns in the light */
+      var tw = Math.pow(.5 + .5 * Math.sin(T * p.sp * 2.2 + p.ph), 6), a = Math.min(1, I * (.35 + .9 * tw));
+      var col = p.fire >= 0 && tw > .5 ? "hsl(" + Math.round(p.fire * 360) + ",90%,78%)" : "#fff8ec";
+      g.globalAlpha = a; g.fillStyle = col; g.beginPath(); g.arc(p.x, p.y, p.r * (1 + I * .8), 0, 6.283); g.fill();
+      if (tw > .35 && I > .15) star(p.x, p.y, 4 + 13 * I * tw, a * .9);
+    }
     g.globalAlpha = 1; raf = requestAnimationFrame(frame);
   }
-  function kick() { if (!raf && vis) { last = 0; raf = requestAnimationFrame(frame); } }
-  var inView = false; function upd() { vis = inView && !document.hidden; if (vis) { if (!W) size(); kick(); } }
+  function kick() { if (!raf && vis) raf = requestAnimationFrame(frame); }
+  function upd() { vis = inView && !document.hidden; if (vis) { if (!W) size(); kick(); } }
   new IntersectionObserver(function (es) { inView = es[0].isIntersecting; upd(); }).observe(sec);
   document.addEventListener("visibilitychange", upd);
   var rt = 0; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 200); });
