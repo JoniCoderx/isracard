@@ -259,27 +259,36 @@ export async function mount(sec) {
      becomes a small "View" so a click is plainly the next thing */
   const hvP = new Image(), hvH = new Image(); hvP.className = "ar15hvp"; hvH.className = "ar15hvh"; hvP.alt = hvH.alt = "";
   const curEl = document.createElement("i"); curEl.className = "ar15cur"; curEl.setAttribute("aria-hidden", "true");
-  const curTx = document.createElement("b"); curEl.appendChild(curTx); pin.appendChild(curEl);
+  pin.appendChild(curEl);
+  /* (owner, 21 Nov 2026: the circle sat on the jewel and blurred it) one small tag beside the pointer instead: what it is,
+     its name, the way in; never over the piece, the piece itself always in full view */
   function hover(p) {
-    if (p === hot) return; hot = p; stage.style.cursor = p ? "none" : ""; curEl.classList.toggle("on", !!p);
+    clearTimeout(hoverOff);
+    if (p === hot) return; hot = p; stage.style.cursor = p ? "pointer" : ""; curEl.classList.toggle("on", !!p);
     if (!p) { tag.classList.remove("on"); pool.classList.remove("on"); hvP.classList.remove("on"); hvH.classList.remove("on"); return; }
     const r = toStage(p.box), x = text(p.id);
-    curTx.textContent = he() ? "לצפייה" : "View";
+    { const x0 = text(p.id); curEl.innerHTML = `<span>${x0.kind}</span><b>${x0.name}</b><i></i>`; placeCur(); }
     if (hvP.parentNode !== stage) stage.insertBefore(hvP, pool); if (hvH.parentNode !== fx) fx.appendChild(hvH);
     hvP.src = patchSrc(p); place(hvP, toStage(p.patch.rect));
     const hr = toStage(p.hero.rect); hvH.classList.remove("on"); hvH.src = p.hero.src; hvH.style.width = hr.w + "px"; hvH.style.height = hr.h + "px";
     hvH.style.setProperty("--hx", hr.x + "px"); hvH.style.setProperty("--hy", hr.y + "px");
     const ready = () => { if (hot === p) { hvP.classList.add("on"); hvH.classList.add("on"); } }; (hvH.decode ? hvH.decode() : Promise.resolve()).then(ready, ready);
     const S = stage.getBoundingClientRect(), below = S.top + r.y + r.h + 90 < innerHeight - 40;
-    tag.innerHTML = `<b>${x.name}</b><span>${x.kind}</span>`; tag.style.left = (r.x + r.w / 2) + "px"; tag.style.top = (below ? r.y + r.h : r.y) + "px";
-    tag.classList.toggle("up", !below); tag.classList.add("on");
+    void below; void x; tag.classList.remove("on");   // the name now travels with the pointer
     pool.style.setProperty("--px", (r.x + r.w / 2) + "px"); pool.style.setProperty("--py", (r.y + r.h / 2) + "px"); pool.style.setProperty("--pr", (Math.max(r.w, r.h) * .62 + 24) + "px"); pool.classList.add("on");
   }
-  let cx0 = 0, cy0 = 0, craf = 0;
-  stage.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return; if (open && !cur) hover(at(e.clientX, e.clientY));
+  let cx0 = 0, cy0 = 0, craf = 0, hoverOff = 0;
+  /* beside the pointer, below and to the right; turned to the other side near an edge of the window */
+  function placeCur() { const P = pin.getBoundingClientRect(), w = curEl.offsetWidth || 180, h = curEl.offsetHeight || 40;
+    const x = cx0 + 22 + w > P.width - 12 ? cx0 - 22 - w : cx0 + 22, y = cy0 + 26 + h > P.height - 12 ? cy0 - 20 - h : cy0 + 26;
+    curEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`; }
+  stage.addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return;
     const P = pin.getBoundingClientRect(); cx0 = e.clientX - P.left; cy0 = e.clientY - P.top;
-    if (!craf) craf = requestAnimationFrame(() => { craf = 0; curEl.style.transform = `translate(${cx0}px, ${cy0}px)`; }); });
-  stage.addEventListener("pointerleave", () => hover(null));
+    if (open && !cur) { const p = at(e.clientX, e.clientY);
+      // a moment's grace before letting go, so crossing the suede between two pieces does not flicker
+      if (p) hover(p); else if (hot && !hoverOff) hoverOff = setTimeout(() => { hoverOff = 0; hover(null); }, 160); }
+    if (!craf) craf = requestAnimationFrame(() => { craf = 0; placeCur(); }); });
+  stage.addEventListener("pointerleave", () => { clearTimeout(hoverOff); hoverOff = 0; hover(null); });
   /* the names beneath the drawer light their piece in it */
   picks.forEach(b => { b.addEventListener("mouseenter", () => { if (open && !cur) { const p = M && M.pieces.find(x => x.id === b.dataset.id); if (p) hover(p); curEl.classList.remove("on"); stage.style.cursor = ""; } });
     b.addEventListener("mouseleave", () => { if (!cur) hover(null); }); });

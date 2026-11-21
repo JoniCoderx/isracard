@@ -2940,12 +2940,16 @@ html body .ar15pin .ar15tag.up { transform: translate(-50%, calc(-100% - 22px));
 html body .ar15pin .ar15tag:not(.on) { transform: translate(-50%, 30px); }
 html body .ar15pin .ar15tag.up:not(.on) { transform: translate(-50%, calc(-100% - 14px)); }
 html body .ar15tag b { font-size: .78rem; letter-spacing: .32em; }
-.ar15cur { position: absolute; left: 0; top: 0; z-index: 7; width: 78px; height: 78px; margin: -39px 0 0 -39px; border-radius: 50%; pointer-events: none;
-  display: grid; place-items: center; background: rgba(246,240,228,.12); border: 1px solid rgba(239,229,210,.7); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-  opacity: 0; scale: .5; transition: opacity .15s ease, scale .25s cubic-bezier(.2,.8,.2,1); }
+.ar15cur { position: absolute; left: 0; top: 0; z-index: 7; display: flex; align-items: center; gap: 12px; padding: 11px 16px 11px 18px; border-radius: 999px; pointer-events: none; white-space: nowrap;
+  background: rgba(14,12,10,.88); border: 1px solid rgba(239,229,210,.3); box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  opacity: 0; scale: .96; transform-origin: 0 0; transition: opacity .15s ease, scale .2s cubic-bezier(.2,.8,.2,1); }
 .ar15cur.on { opacity: 1; scale: 1; }
-.ar15cur b { font-weight: 400; font-size: .58rem; letter-spacing: .28em; text-transform: uppercase; color: #f6f1e6; padding-left: .28em; }
-html[data-ns] .ar15cur b { letter-spacing: 0; padding: 0; font-size: .72rem; }
+.ar15cur span { font-size: .56rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(236,226,206,.6); }
+.ar15cur b { font-weight: 400; font-size: .72rem; letter-spacing: .26em; color: #f6f1e6; }
+.ar15cur i { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(180deg, #f3ecdd, #dccfb6); position: relative; }
+.ar15cur i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; border-right: 1.2px solid #141310; border-top: 1.2px solid #141310; transform: translate(-65%, -50%) rotate(45deg); }
+html[dir="rtl"] .ar15cur i::after { transform: translate(-35%, -50%) rotate(-135deg); }
+html[data-ns] .ar15cur span, html[data-ns] .ar15cur b { letter-spacing: 0; }
 @media (hover: none) { .ar15cur { display: none; } }
 @media (prefers-reduced-motion: reduce) { .ar15hvh, .ar15cur { transition: none; } }
 html body .ar15nav .ar15pick { color: rgba(246,241,230,.82); font-size: .7rem; min-height: 44px; }
