@@ -3004,3 +3004,11 @@ html body #collection.c14col > .c14pause[aria-pressed="true"] i { width: 0; heig
 /* (owner, 21 Nov 2026: "send it") on a wide screen the collections end in an open band of black where the liquid
    white gold has room to pool, below the names of the pieces */
 @media (min-width: 900px) { html body #collection.c14col { padding-bottom: clamp(190px, 19vw, 280px) !important; } }
+
+/* Hebrew and Arabic (owner, 21 Nov 2026: "the arrows don't sit well in Hebrew"): the later card rules above fixed the
+   caption at the left and the arrow at the right with !important, so in a right-to-left page the arrow lay over the
+   words. Mirrored here with the same weight; and Hebrew is never slanted (it has no italic: a slant only distorts it). */
+html[dir="rtl"] body .c14t { left: 80px !important; right: clamp(20px, 2vw, 30px) !important; text-align: right; }
+html[dir="rtl"] body .c14go { right: auto !important; left: clamp(18px, 2vw, 28px) !important; }
+html[data-ns] body .c14t span { font-style: normal; }
+@media (max-width: 899px) { html[dir="rtl"] body .c14t { left: 76px !important; right: 20px !important; } }
