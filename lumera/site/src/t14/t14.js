@@ -1451,136 +1451,49 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(shape, 80); });
 })();
 
-/* the collections' liquid white gold (owner, 21 Nov 2026: chose it from three, "go"): behind the collections, drops of
-   polished metal float in the dark and mirror a soft studio, like the house's own white gold. The pointer is a drop of
-   its own: the others are drawn to it, cling and bridge to it, and run into one another like mercury; moved quickly it
-   trails a tail; a click (or a tap on the black) splashes it into droplets that fly out and run home again.
-   The words are never set over metal: the drops keep out of the words and their links, and the pointer's drop dives
-   out of sight there; behind the (opaque) cards they simply pass under. Drawn on one WebGL canvas only while the section is on screen; a pause control stops it; with
-   reduced motion it is shown still; without WebGL the black simply stays. */
+/* the collections' night (owner, 21 Nov 2026: "solid, barely felt, but only at the highest level"): behind the
+   collections, a still sky of tiny, very faint stars, warm and cool. Nothing moves by itself. Where the pointer passes,
+   the few stars beside it brighten a little and are joined, in the order they were touched, by a hairline of gold that
+   fades within two seconds: a constellation drawn in passing, then gone. The sky is painted once; frames are drawn only
+   while something is fading, and never on a screen without a mouse, where the sky simply rests. */
 (function () {
   var sec = document.querySelector("#collection.c14col"); if (!sec) return;
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, phone = matchMedia("(pointer: coarse)").matches;
   var cv = document.createElement("canvas"); cv.className = "c14sky"; cv.setAttribute("aria-hidden", "true");
-  var g = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false, powerPreference: "low-power" }); if (!g) return;
-  var N = 26, TAIL = 3, D0 = 4, ND = 12, S0 = 16, NS = 10;
-  var FS = [
-    "precision highp float;",
-    "uniform vec2 uR; uniform vec2 uM; uniform float uT; uniform vec3 uB[" + N + "];",
-    "float lobe(vec3 r, vec3 d, float k){ return exp((dot(r, normalize(d)) - 1.0) * k); }",
-    "vec3 env(vec3 r, vec2 p){",
-    "  vec3 e = vec3(.16, .155, .15) + vec3(1.0, .97, .93) * .5 * smoothstep(-.35, .95, r.y);",
-    "  e *= 1.0 - .55 * smoothstep(-.05, -.7, r.y);",
-    "  float sb = lobe(r, vec3(-.45, .6, .65), 14.0); e += vec3(1.0, .985, .96) * (sb * 1.6 + smoothstep(.55, .62, sb) * .9);",
-    "  e += vec3(1.0, .99, .97) * lobe(r, vec3(.15, .35, 1.0), 5.0) * .3;",
-    "  e += vec3(1.0, .86, .68) * lobe(r, vec3(.75, .15, .55), 9.0) * .8;",
-    "  e += vec3(.72, .8, 1.0) * lobe(r, vec3(-.85, -.2, .45), 10.0) * .5;",
-    "  vec3 L = normalize(vec3((uM - p) / uR.y * 2.2, .7));",
-    "  e += vec3(1.0, .96, .9) * pow(max(dot(r, L), 0.0), 90.0) * 3.2;",
-    "  return e; }",
-    "void main(){",
-    "  vec2 p = gl_FragCoord.xy; float f = 0.0; vec2 gr = vec2(0.0);",
-    "  for (int i = 0; i < " + N + "; i++) { vec3 b = uB[i]; if (b.z < .5) continue; vec2 d = p - b.xy; float r2 = b.z * b.z; float q = dot(d, d) + 1.0; f += r2 / q; gr += -2.0 * r2 * d / (q * q); }",
-    "  float aa = length(gr) * 1.2 + 1e-4; float edge = smoothstep(1.0 - aa, 1.0 + aa, f);",
-    "  vec2 hg = gr / (f * f) * min(uR.y, 900.0) * .016;",
-    "  vec3 n = normalize(vec3(-hg, 1.0)); vec3 r = reflect(vec3(0.0, 0.0, -1.0), n); float fr = pow(1.0 - n.z, 2.2);",
-    "  vec3 metal = env(r, p) * (.8 + .2 * fr) * vec3(1.0, .985, .965);",
-    "  metal += (.5 + .5 * cos(6.2832 * (vec3(0.0, .33, .67) + fr * 1.6 + uT * .05))) * fr * .1;",
-    "  vec3 bg = vec3(.035, .03, .026) * exp(-length((p - uM) / min(uR.y, 900.0)) * 4.0);",
-    "  float halo = smoothstep(.55, 1.0, f) * (1.0 - edge); bg += vec3(.95, .9, .82) * halo * halo * .05;",
-    "  vec3 col = mix(bg, metal * 1.15, edge); col = 1.0 - exp(-col * 1.3);",
-    "  gl_FragColor = vec4(col, 1.0); }"].join("\n");
-  function sh(t, s) { var o = g.createShader(t); g.shaderSource(o, s); g.compileShader(o); return g.getShaderParameter(o, g.COMPILE_STATUS) ? o : null; }
-  var vs = sh(g.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"), fs = sh(g.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
-  var pr = g.createProgram(); g.attachShader(pr, vs); g.attachShader(pr, fs); g.linkProgram(pr); if (!g.getProgramParameter(pr, g.LINK_STATUS)) return; g.useProgram(pr);
-  g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer()); g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), g.STATIC_DRAW);
-  var aL = g.getAttribLocation(pr, "a"); g.enableVertexAttribArray(aL); g.vertexAttribPointer(aL, 2, g.FLOAT, false, 0, 0);
-  var uR = g.getUniformLocation(pr, "uR"), uM = g.getUniformLocation(pr, "uM"), uT = g.getUniformLocation(pr, "uT"), uB = g.getUniformLocation(pr, "uB[0]");
-  sec.insertBefore(cv, sec.firstChild);
-
-  /* the pause control, small, in the section's lower corner */
-  var btn = document.createElement("button"); btn.type = "button"; btn.className = "c14pause"; btn.setAttribute("aria-pressed", "false");
-  btn.innerHTML = '<i aria-hidden="true"></i><span data-en="Pause motion" data-he="עצירת תנועה">Pause motion</span>';
-  if (!reduce) sec.appendChild(btn);
-  if (document.documentElement.getAttribute("data-lang") === "he") btn.querySelector("span").textContent = "עצירת תנועה";
-
-  var W = 0, H = 0, dpr = 1, sc = 1, B = [], arr = new Float32Array(N * 3), keep = [], dive = [];
-  var P = { x: 0, y: 0, last: -1e9 }, S = { x: 0, y: 0, r: 30, rT: 30, k: 1 }, paused = false, raf = 0, inView = false, vis = false, T = 0, lastNow = 0;
-  function rects() { var s = sec.getBoundingClientRect(), pad = 26;
-    function R(sel, p) { return [].map.call(sec.querySelectorAll(sel), function (e) { var r = e.getBoundingClientRect(); return { x0: r.left - s.left - p, y0: r.top - s.top - p, x1: r.right - s.left + p, y1: r.bottom - s.top + p }; }).filter(function (r) { return r.x1 - r.x0 > 2 * p; }); }
-    keep = R(".c14eyb, .c14h, .c14lead, .c16nav, .c15all, .c14pause", 18); dive = keep;   // the words and their links, each on its own: the drops may float in the room between them
-    var sym = R(".c14sym", 10); dive = dive.concat(sym); keep = keep.concat(sym, R(".c14card", -34));   // not over the house's mark; under a card's edge at most, never wholly behind one
-    var c = sec.querySelector(".c14cards"); if (c) { var t = c.getBoundingClientRect().top - s.top; keep.push({ x0: -1e4, y0: -1e4, x1: 1e4, y1: t - 6 }); } }   // nor up under the header
-  function inside(L, x, y, m) { m = m || 0; for (var i = 0; i < L.length; i++) { var r = L[i]; if (x > r.x0 - m && x < r.x1 + m && y > r.y0 - m && y < r.y1 + m) return r; } return null; }
-  function free(x, y) { for (var t = 0; t < 80; t++) { if (!inside(keep, x, y, 70 * sc)) return [x, y]; x = W * (.05 + Math.random() * .9); y = H * (.06 + Math.random() * .88); } return [x, y]; }
-  function seed() { B = []; var nd = phone ? 5 : W < 1100 ? 7 : 9;
-    for (var i = 0; i < N; i++) { var h = free(W * (.05 + Math.random() * .9), H * (.06 + Math.random() * .88)), on = i >= D0 && i < D0 + nd;
-      B.push({ x: h[0], y: h[1], hx: h[0], hy: h[1], vx: 0, vy: 0, r: on ? (10 + Math.random() * 18) * sc : 0, r0: 0, ph: Math.random() * 6.28, orb: (85 + Math.random() * 120) * sc, life: 0 }); }
-    for (i = 0; i < N; i++) B[i].r0 = B[i].r; }
-  function size() { var r = sec.getBoundingClientRect(); dpr = phone ? .75 : Math.min(1, devicePixelRatio || 1) * .85; W = r.width; H = r.height; if (!W || !H) return;
-    sc = Math.min(1.1, Math.max(.65, W / 1300)); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); S.x = W * .5; S.y = H * .7; S.rT = 22 * sc; rects(); seed(); }
-
-  function splash(x, y) { S.r = 10 * sc;
-    for (var k = 0; k < NS; k++) { var b = B[S0 + k], a = k / NS * 6.283 + Math.random() * .5, v = (8 + Math.random() * 8) * sc;
-      b.x = x; b.y = y; b.vx = Math.cos(a) * v; b.vy = Math.sin(a) * v; b.r = (7 + Math.random() * 8) * sc; b.life = 0; }
-    for (var i = D0; i < D0 + ND; i++) { var d = B[i]; if (!d.r0) continue; var dx = d.x - x, dy = d.y - y, e = Math.hypot(dx, dy) + 1, kk = 12 * Math.max(0, 1 - e / (380 * sc)); d.vx += dx / e * kk; d.vy += dy / e * kk; }
-    kick(); }
-  function pos(e) { var r = sec.getBoundingClientRect(); P.x = e.clientX - r.left; P.y = e.clientY - r.top; P.last = performance.now(); kick(); }
-  sec.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse") pos(e); });
-  sec.addEventListener("pointerdown", function (e) { if (e.target.closest("a, button, input, label")) return; pos(e); splash(P.x, P.y); });
-  sec.addEventListener("pointerleave", function () { P.last = performance.now() - 2000; });
-  btn.addEventListener("click", function () { paused = !paused; btn.setAttribute("aria-pressed", String(paused));
-    var s = btn.querySelector("span"), he = document.documentElement.getAttribute("data-lang") === "he";
-    s.setAttribute("data-en", paused ? "Play motion" : "Pause motion"); s.setAttribute("data-he", paused ? "הפעלת תנועה" : "עצירת תנועה"); s.textContent = he ? s.getAttribute("data-he") : s.getAttribute("data-en"); kick(); });
-
-  function step(dt) {
-    var now = performance.now(), live = now - P.last < 2400;
-    var tx = live ? P.x : W * (.5 + .4 * Math.sin(T * .17)), ty = live ? P.y : H * (.55 + .3 * Math.sin(T * .29 + 1));
-    var px = S.x, py = S.y; S.x += (tx - S.x) * (live ? .24 : .03); S.y += (ty - S.y) * (live ? .24 : .03);
-    var sp = Math.hypot(S.x - px, S.y - py);
-    S.k += ((inside(dive, S.x, S.y, S.rT * .9) ? 0 : 1) - S.k) * .18;   // under a card or the words, the pointer's drop dives out of sight
-    S.r += (S.rT - S.r) * .05; var m = B[0]; m.x = S.x; m.y = S.y; m.r = S.r * S.k;
-    for (var k = 1; k <= TAIL; k++) { var t = B[k], f = B[k - 1], lag = .34 - k * .05;
-      t.x += (f.x - t.x) * lag; t.y += (f.y - t.y) * lag; t.r += (S.r * S.k * (.72 - k * .14) * Math.min(1, sp / 6 + .25) - t.r) * .2; }
-    for (var i1 = D0; i1 < D0 + ND; i1++) for (var j1 = i1 + 1; j1 < D0 + ND; j1++) { var A1 = B[i1], B1 = B[j1]; if (!A1.r0 || !B1.r0) continue;
-      var qx = B1.x - A1.x, qy = B1.y - A1.y, q = Math.hypot(qx, qy) + .001, mn = (A1.r + B1.r) * 1.05; if (q < mn) { var push = (mn - q) * .012; A1.vx -= qx / q * push; A1.vy -= qy / q * push; B1.vx += qx / q * push; B1.vy += qy / q * push; } }
-    var R = Math.max(W, H) * .3;
-    for (var i = D0; i < D0 + ND; i++) { var b = B[i]; if (!b.r0) continue;
-      var hx = b.hx + Math.sin(T * .3 + b.ph) * 50 * sc, hy = b.hy + Math.cos(T * .23 + b.ph * 1.3) * 38 * sc;
-      var dx = S.x - b.x, dy = S.y - b.y, d = Math.hypot(dx, dy) + .001;
-      if (S.k > .5 && d < (S.r + b.r) * 1.05) { var pu = ((S.r + b.r) * 1.05 - d) * .02; b.vx -= dx / d * pu; b.vy -= dy / d * pu; }
-      if (S.k > .5 && d < R) { var kk = 1 - d / R, a = T * .8 + b.ph, ox = S.x + Math.cos(a) * b.orb * (1 - kk * .35), oy = S.y + Math.sin(a) * b.orb * (1 - kk * .35);
-        b.vx += (ox - b.x) * .0032 * kk; b.vy += (oy - b.y) * .0032 * kk; }
-      b.vx += (hx - b.x) * .0016; b.vy += (hy - b.y) * .0016;
-      var kr = inside(keep, b.x, b.y, b.r); if (kr) {   // out of the words at once, by the nearest side; a drop caught between two of them is given a new home
-        var gl = b.x - kr.x0 + b.r, gr2 = kr.x1 - b.x + b.r, gt = b.y - kr.y0 + b.r, gb = kr.y1 - b.y + b.r, mn2 = Math.min(gl, gr2, gt, gb);
-        if (mn2 === gl) { b.x -= gl; b.vx = Math.min(b.vx, 0); } else if (mn2 === gr2) { b.x += gr2; b.vx = Math.max(b.vx, 0); } else if (mn2 === gt) { b.y -= gt; b.vy = Math.min(b.vy, 0); } else { b.y += gb; b.vy = Math.max(b.vy, 0); }
-        if (inside(keep, b.x, b.y, b.r) || inside(keep, b.hx, b.hy, b.r)) { var nh = free(b.x, b.y); b.hx = nh[0]; b.hy = nh[1]; if (inside(keep, b.x, b.y, b.r)) { b.x = nh[0]; b.y = nh[1]; b.r = 0; } } }
-      b.vx *= .94; b.vy *= .94; b.x += b.vx; b.y += b.vy; b.r += (b.r0 * (1 + .04 * Math.sin(T * 1.3 + b.ph)) - b.r) * .06; }
-    var alive = 0;
-    for (k = 0; k < NS; k++) { var s = B[S0 + k]; if (s.r < .5) { s.r = 0; continue; } alive++; s.life += dt;
-      if (s.life > .5) { var ex2 = S.x - s.x, ey2 = S.y - s.y, e2 = Math.hypot(ex2, ey2) + .001; s.vx += ex2 / e2 * Math.min(1.6, s.life) * .9; s.vy += ey2 / e2 * Math.min(1.6, s.life) * .9;
-        if (e2 < S.r * .8 + 4 || s.life > 3.5) { s.r *= .8; S.r += .5 * sc; } }
-      s.vx *= .93; s.vy *= .93; s.x += s.vx; s.y += s.vy; }
+  var g = cv.getContext("2d"); if (!g) return; sec.insertBefore(cv, sec.firstChild);
+  var hover = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var W = 0, H = 0, dpr = 1, S = [], base = null, chain = [], raf = 0, last = 0, T = 0, P = { x: -1, y: -1, on: false };
+  var TINT = ["255,250,242", "255,246,232", "255,232,204", "226,234,255"], LIFE = 2.2;
+  function size() { var r = sec.getBoundingClientRect(); if (!r.width || !r.height) return; dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    S = []; var n = Math.round(W * H / 1500);
+    for (var i = 0; i < n; i++) { var z = Math.pow(Math.random(), 1.8); S.push({ x: Math.random() * W, y: Math.random() * H, z: z, r: .35 + z * .8, a: .05 + z * .16 + Math.random() * .04, tint: TINT[(Math.random() * TINT.length) | 0], lit: 0 }); }
+    base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height; var b = base.getContext("2d"); b.setTransform(dpr, 0, 0, dpr, 0, 0);
+    S.forEach(function (s) { b.globalAlpha = s.a; b.fillStyle = "rgb(" + s.tint + ")"; b.beginPath(); b.arc(s.x, s.y, s.r, 0, 6.283); b.fill(); });
+    chain = []; paint(); }
+  function paint() { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); if (base) g.drawImage(base, 0, 0); g.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function frame(now) { raf = 0; var dt = last ? Math.min(.05, (now - last) / 1000) : .016; last = now; T += dt;
+    var R = 84, best = null, bd = 1e9, busy = false;
+    paint(); g.globalCompositeOperation = "lighter";
+    for (var i = 0; i < S.length; i++) { var s = S[i];
+      if (P.on) { var dx = s.x - P.x, dy = s.y - P.y, d2 = dx * dx + dy * dy; if (d2 < R * R) { s.lit = Math.max(s.lit, 1 - Math.sqrt(d2) / R); if (s.z > .45 && d2 < bd) { bd = d2; best = s; } } }
+      if (s.lit > .01) { busy = true; s.lit *= Math.pow(.18, dt);
+        g.globalAlpha = s.lit * .55; g.fillStyle = "rgb(" + s.tint + ")"; g.beginPath(); g.arc(s.x, s.y, s.r * (1 + s.lit * .9), 0, 6.283); g.fill(); } }
+    var tail = chain[chain.length - 1];
+    if (best && (!tail || (tail.s !== best && Math.hypot(best.x - tail.s.x, best.y - tail.s.y) > 34))) chain.push({ s: best, t: T });
+    while (chain.length && (T - chain[0].t > LIFE || chain.length > 12)) chain.shift();
+    g.lineWidth = .6; g.lineCap = "round";
+    for (i = 1; i < chain.length; i++) { var A = chain[i - 1].s, B = chain[i].s, f = 1 - (T - chain[i].t) / LIFE, k = Math.min(1, (T - chain[i].t) / .3);
+      if (Math.hypot(B.x - A.x, B.y - A.y) > 200) continue;
+      g.globalAlpha = f * f * .42; g.strokeStyle = "rgb(239,226,200)"; g.beginPath(); g.moveTo(A.x, A.y); g.lineTo(A.x + (B.x - A.x) * k, A.y + (B.y - A.y) * k); g.stroke(); }
+    g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
+    if (busy || chain.length || P.on) raf = requestAnimationFrame(frame); else { last = 0; paint(); } }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  if (hover) {
+    sec.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = sec.getBoundingClientRect(); P.x = e.clientX - r.left; P.y = e.clientY - r.top; P.on = true; kick(); });
+    sec.addEventListener("pointerleave", function () { P.on = false; });
   }
-  function render() {
-    for (var i = 0; i < N; i++) { arr[i * 3] = B[i].x * dpr; arr[i * 3 + 1] = (H - B[i].y) * dpr; arr[i * 3 + 2] = B[i].r * dpr; }
-    g.viewport(0, 0, cv.width, cv.height); g.uniform2f(uR, cv.width, cv.height); g.uniform2f(uM, S.x * dpr, (H - S.y) * dpr); g.uniform1f(uT, T); g.uniform3fv(uB, arr);
-    g.drawArrays(g.TRIANGLES, 0, 3); }
-  var rT = 0;
-  var odd = false;
-  function loop(now) { raf = 0; var calm = performance.now() - P.last > 4000 && !B.slice(S0).some(function (b) { return b.r > .5; });
-    if (calm && (odd = !odd)) { if (vis && !paused && !reduce) raf = requestAnimationFrame(loop); return; }   // at rest the slow drift is drawn every other frame
-    var dt = lastNow ? Math.min(.05, (now - lastNow) / 1000) : .016; lastNow = now; T += dt; if (T - rT > 1) { rT = T; rects(); }   // the words settle late (fonts, the mark's 3D): their places are read again each second
-    step(dt); render();
-    if (vis && !paused && !reduce) raf = requestAnimationFrame(loop); else lastNow = 0; }
-  function kick() { if (!raf && vis && !paused && !reduce) raf = requestAnimationFrame(loop); }
-  function still() { for (var k = 0; k < 300; k++) { T += .016; step(.016); } render(); }
-  function upd() { vis = inView && !document.hidden; if (vis && !W) { size(); if (reduce) still(); } kick(); }
-  new IntersectionObserver(function (es) { inView = es[0].isIntersecting; upd(); }, { rootMargin: "100px 0px" }).observe(sec);
-  document.addEventListener("visibilitychange", upd);
-  var rt = 0, lw = 0; addEventListener("resize", function () { if (phone && Math.abs(innerWidth - lw) < 2) return; lw = innerWidth; clearTimeout(rt); rt = setTimeout(function () { if (!W) return; size(); if (reduce || paused) still(); }, 200); });   // a phone's bar folding away is not a resize worth re-pouring for
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (W) rects(); });
+  new IntersectionObserver(function (es) { if (es[0].isIntersecting && !W) size(); }, { rootMargin: "200px 0px" }).observe(sec);
+  var rt = 0, lw = innerWidth; addEventListener("resize", function () { if (!hover && Math.abs(innerWidth - lw) < 2) return; lw = innerWidth; clearTimeout(rt); rt = setTimeout(function () { if (W) size(); }, 200); });
 })();
 
 /* one form, two purposes (owner, 20 Nov 2026): "Book a private viewing" opens it as "Request a private viewing", with the
