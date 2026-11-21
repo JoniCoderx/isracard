@@ -51,7 +51,7 @@ export function about13Page({ ABOUT, PIECES, markDefs, markUse, root, v14 = fals
 <meta name="theme-color" content="#050505">
 <link rel="icon" href="${R}favicon.svg" type="image/svg+xml">
 <link rel="preload" as="image" href="${R}${a.portrait}-1100.jpg" fetchpriority="high">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="${R}fonts/${jost}">${v14 ? `<script>try{if(localStorage.getItem("silavu-lang")==="he"){document.documentElement.lang="he";document.documentElement.dir="rtl";document.documentElement.setAttribute("data-ns","")}}catch(e){}</script>` : ""}
+<link rel="preload" as="font" type="font/woff2" crossorigin href="${R}fonts/${jost}">${v14 ? `<script>try{var l=localStorage.getItem("silavu-lang");if(l==="he"||l==="ar"){document.documentElement.lang=l;document.documentElement.dir="rtl";document.documentElement.setAttribute("data-ns","")}}catch(e){}</script>` : ""}
 <script>document.documentElement.classList.add("js")</script>
 <style>@font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jost}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Jost';font-style:normal;font-weight:300 600;font-display:swap;src:url(${R}fonts/${jostx}) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
@@ -83,7 +83,7 @@ ${PM.html}` : `<header class="bar">
   <section class="vision" aria-label="The vision">
     ${markUse("vmk")}
     <p class="vk k"${E("The vision", "החזון")}>The vision</p>
-    <p class="vline"${E(visionWords, wordsOf(visionOf(LH[1])))}>${visionWords}</p>
+    <p class="vline"${E(vision, visionOf(LH[1]))}${v14 ? " data-words" : ""}>${visionWords}</p>
     <p class="vrest"${E(q(L[1].split(". ").slice(1).join(". ")), q(LH[1].split(". ").slice(1).join(". ")))}>${q(L[1].split(". ").slice(1).join(". "))}</p>
   </section>
 

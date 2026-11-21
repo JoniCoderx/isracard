@@ -42,3 +42,14 @@ html[dir="rtl"] .hx14 .barr { flex-direction: row; }
 header.bar.hx14 { direction: ltr; }
 header.bar.hx14 .tnav a, header.bar.hx14 .pill { direction: rtl; unicode-bidi: plaintext; }
 html[data-ns] header.bar.hx14 .lng { letter-spacing: 0; }
+/* the language menu (lang14.js): the five languages under the button, as on /test14/ */
+.lng14 { position: fixed; z-index: 60; min-width: 190px; padding: 8px; border-radius: 18px; background: rgba(14,12,10,.94); border: 1px solid rgba(239,229,210,.18); box-shadow: 0 20px 50px rgba(0,0,0,.5); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); direction: ltr; }
+.lng14[hidden] { display: none; }
+.lng14 button { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: transparent; color: #f4f2ee; font: inherit; font-size: .82rem; cursor: pointer; text-align: left; transition: background-color .15s ease; }
+.lng14 button b { width: 26px; font-weight: 400; font-size: .66rem; letter-spacing: .12em; color: rgba(236,226,206,.6); }
+.lng14 button:hover, .lng14 button:focus-visible { background: rgba(255,255,255,.07); outline: none; }
+.lng14 button[aria-checked="true"] { background: rgba(239,229,210,.12); }
+.lng14 button[aria-checked="true"] b { color: #efe5d2; }
+/* Arabic in the house's Arabic face, as on /test14/ */
+html[data-lang="ar"] body, html[data-lang="ar"] .lng14 { font-family: "Noto Sans Arabic", Jost, system-ui, sans-serif; }
+html[data-lang="ar"] .hx14 .wm { font-family: 'Silavu Name', Urbanist, Jost, sans-serif; }
