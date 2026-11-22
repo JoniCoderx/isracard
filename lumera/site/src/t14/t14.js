@@ -1632,3 +1632,45 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   var bm = new MutationObserver(roving); [].forEach.call(conf.querySelectorAll(".b13bar"), function (b) { bm.observe(b, { attributes: true, attributeFilter: ["class"] }); });
   setTimeout(function () { words(); summary(); roving(); [].forEach.call(conf.querySelectorAll(".b13bar"), function (b) { bm.observe(b, { attributes: true, attributeFilter: ["class"] }); }); }, 800);
 })();
+
+/* the wrist, made easy to answer (QA, 22 Nov 2026: "add a small How to measure guide and an I'm not sure option, so
+   sizing doesn't stop someone from enquiring"): beneath the sizes, a few words on measuring, and what to do if unsure.
+   Nothing here promises what the house would do; it only says how to measure and what to write. */
+(function () {
+  var opts = document.getElementById("opts"); if (!opts) return;
+  var c = opts.querySelector('.chip[data-k="wrist"]'); if (!c) return; var chips = c.parentElement;
+  var d = document.createElement("details"); d.className = "wr14";
+  d.innerHTML = '<summary><span data-en="How to measure your wrist" data-he="איך מודדים את פרק היד">How to measure your wrist</span></summary>' +
+    '<p data-en="Wrap a soft tape measure, or a strip of paper you then lay on a ruler, around your wrist just below the wrist bone: snug, not tight. Choose the nearest size." data-he="כרכו סרט מדידה רך, או רצועת נייר שאחר כך מניחים על סרגל, סביב פרק היד, ממש מתחת לעצם: צמוד אבל לא הדוק. בחרו את המידה הקרובה ביותר.">Wrap a soft tape measure, or a strip of paper you then lay on a ruler, around your wrist just below the wrist bone: snug, not tight. Choose the nearest size.</p>' +
+    '<p class="wr14ns" data-en="Not sure? Keep 17 cm and say so in your message." data-he="לא בטוחים? השאירו 17 ס״מ וכתבו זאת בהודעה.">Not sure? Keep 17 cm and say so in your message.</p>';
+  chips.parentNode.insertBefore(d, chips.nextSibling);
+  function say() { [].forEach.call(d.querySelectorAll("[data-en]"), function (e) { var lang = document.documentElement.getAttribute("data-lang") || "en";
+    var t = window.__say ? window.__say(e) : (lang === "he" ? e.getAttribute("data-he") : e.getAttribute("data-en")); if (t && e.innerHTML !== t) e.innerHTML = t; }); }
+  say(); new MutationObserver(function () { setTimeout(say, 0); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+})();
+
+/* without WebGL, a picture of the very line chosen (QA, 22 Nov 2026: "make Photo work independently of 3D"): the house
+   has a studio image of the line in each of the eight cuts and four metals; where the renderer cannot run, the one that
+   matches the choices stands in for the drawn illustration, said to be a reference image, carat and size not to scale.
+   Where an image is missing, the illustration stays. */
+(function () {
+  if (!document.documentElement.classList.contains("no3d")) { var later = 0; var t = setInterval(function () { if (document.documentElement.classList.contains("no3d")) { clearInterval(t); go(); } else if (++later > 20) clearInterval(t); }, 250); } else go();
+  function go() {
+    var fb = document.querySelector("#configure .glfb"), opts = document.getElementById("opts"); if (!fb || fb.querySelector(".glfbref")) return;
+    var im = new Image(); im.className = "glfbref"; im.decoding = "async"; im.alt = ""; fb.appendChild(im);
+    var tag = fb.querySelector(".glfbtag");
+    function on(k, d) { var x = opts && opts.querySelector('.chip.on[data-k="' + k + '"]'); return (x && x.getAttribute("data-v")) || (window.__build || {})[k] || d; }
+    function name(k) { var x = opts && opts.querySelector('.chip.on[data-k="' + k + '"]'); return x ? x.textContent.trim() : ""; }
+    function show() {
+      var cut = on("cut", "round"), metal = on("metal", "white"), base = "line/" + cut + "-" + metal + "-";
+      if (im.getAttribute("data-k") === base) return; im.setAttribute("data-k", base);
+      var n = new Image(); n.onload = function () { if (im.getAttribute("data-k") !== base) return; im.src = n.src; fb.classList.add("ref");
+        im.alt = (document.documentElement.getAttribute("data-lang") === "he" ? "תמונת ייחוס של הצמיד: " : "Reference image of the line: ") + name("cut") + " · " + name("metal"); };
+      n.onerror = function () { if (im.getAttribute("data-k") === base) fb.classList.remove("ref"); };
+      n.src = base + (innerWidth * Math.min(2, devicePixelRatio || 1) > 1300 ? "1600" : "1000") + ".jpg";
+      if (tag) { tag.setAttribute("data-en", "Reference image. Carat and size not to scale."); tag.setAttribute("data-he", "תמונת ייחוס. הקראט והמידה אינם בקנה מידה.");
+        tag.textContent = window.__say ? window.__say(tag) : (document.documentElement.getAttribute("data-lang") === "he" ? tag.getAttribute("data-he") : tag.getAttribute("data-en")); }
+    }
+    show(); if (opts) opts.addEventListener("click", function (e) { if (e.target.closest(".chip")) setTimeout(show, 0); }); addEventListener("silavu:build", show);
+  }
+})();

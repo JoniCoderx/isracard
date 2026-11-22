@@ -3047,3 +3047,18 @@ html[data-ns] body #configure .b14sumu button .b14ed { letter-spacing: 0; font-s
 html body #configure .b14sumu button:hover .b14ed, html body #configure .b14sumu button:focus-visible .b14ed { color: #fff; border-color: #fff; }
 /* the compact phone picture: Save design kept small in its corner, off the bracelet */
 @media (max-width: 899px) { html body #configure.b16.b16.b16.b16 #stripwrap .cacts #saveImg { height: 32px !important; padding: 0 11px !important; font-size: .58rem !important; } html body #configure.b16.b16.b16.b16 #stripwrap .cacts { top: 66px !important; bottom: auto !important; right: 14px !important; left: auto !important; } html[dir="rtl"] body #configure.b16.b16.b16.b16 #stripwrap .cacts { right: auto !important; left: 14px !important; } }
+
+/* the wrist guide */
+html body #configure .wr14 { margin-top: 14px; font-size: .86rem; color: rgba(243,236,224,.72); }
+html body #configure .wr14 summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; color: rgba(243,236,224,.86); border-bottom: 1px solid rgba(243,236,224,.25); }
+html body #configure .wr14 summary::-webkit-details-marker { display: none; }
+html body #configure .wr14 summary::after { content: "+"; font-size: 1rem; line-height: 1; transition: transform .2s ease; }
+html body #configure .wr14[open] summary::after { transform: rotate(45deg); }
+html body #configure .wr14 summary:focus-visible { outline: 1px solid #efe5d2; outline-offset: 4px; }
+html body #configure .wr14 p { margin: 10px 0 0; line-height: 1.7; max-width: 52ch; }
+html body #configure .wr14 .wr14ns { color: #f3ece0; }
+/* without WebGL: the studio image of the line chosen, in place of the drawing */
+html body #configure .glfb .glfbref { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+html body #configure .glfb.drawn.ref img.glfbref { display: block; visibility: visible; }
+html body #configure .glfb.ref .glfbcv { display: none !important; }
+html body #configure .glfb .glfbref { -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 62%, transparent 100%); }
