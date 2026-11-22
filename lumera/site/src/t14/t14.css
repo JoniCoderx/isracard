@@ -3007,3 +3007,20 @@ html[data-ns] body .c14t span { font-style: normal; }
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 100%); }
 }
+
+/* mobile QA (owner, 22 Nov 2026: "a lot doesn't work, especially on mobile; full QA"), what a 320-375px phone showed:
+   - the builder's "Your design" line: the summary, pushed to the end, ran back over its own label; it now ends in "…"
+   - its "Enquire about this design" ran past the card's edge; its arrow too
+   - the builder's view tools were pushed off the screen beside Front / Side / Detail: they wrap below
+   - "Discover the collection": its round arrow was cut by the screen's edge */
+html body #configure.b16.b16.b16 .b16ss { justify-self: stretch; text-align: end; min-width: 0; }
+html[dir="rtl"] body #configure.b16.b16.b16 .b16ss { text-align: start; }
+@media (max-width: 380px) {
+  html body #configure a.btn.solid { letter-spacing: .14em !important; white-space: normal !important; max-width: 100%; box-sizing: border-box; text-align: start; }
+  html body #configure .b14fr { flex-wrap: wrap; row-gap: 8px; justify-content: center; }
+  html body #configure .b14fr .b14tools { border-inline-start: 0; margin-inline-start: 0; padding-inline-start: 0; }
+  html body .c15all { gap: 10px; padding-inline-start: 18px; letter-spacing: .18em !important; font-size: .6rem; max-width: 100%; box-sizing: border-box; }
+  html body .c15all i { width: 36px; height: 36px; }
+  html body .c15 .c15all > span { font-size: .72rem; letter-spacing: .16em; }
+  html body .c15 .c15all > i { width: 38px !important; height: 38px !important; }
+}

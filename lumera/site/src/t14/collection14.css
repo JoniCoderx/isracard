@@ -101,7 +101,14 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
   .cc14, .cc14.flip { grid-template-columns: 1fr; gap: 26px; margin-bottom: 80px; }
   .cc14.flip .ccpic { order: 0; }
   .ccpic { aspect-ratio: 4 / 4.6; margin: 0 calc(-1 * var(--pad) + 8px); border-radius: 18px; }
-  .spgrid { grid-template-columns: 1fr 1fr; }
+  /* (owner, 22 Nov 2026 QA: on a phone the three special pieces fell into two columns and an orphan, their names breaking
+     unevenly) one row to swipe, as the other pieces on a piece's page, each name on one line */
+  .spgrid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 12px; margin: 0 calc(var(--pad) * -1); padding: 0 var(--pad); scroll-padding-inline: var(--pad); overscroll-behavior-x: contain; }
+  .spgrid::-webkit-scrollbar { display: none; }
+  .sp14 { flex: 0 0 68vw; scroll-snap-align: start; }
+  .spn { font-size: .95rem; letter-spacing: .18em; white-space: nowrap; }
+  .spc14 { padding-bottom: 40px; }
+  .mk14 { padding-top: 64px; }
   .spl { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .js .cc14 .ccpic, .js .cc14 .cctxt > *, .js .sp14 { transition: none; opacity: 1; transform: none; clip-path: none; } }
