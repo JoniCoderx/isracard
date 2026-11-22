@@ -94,3 +94,5 @@ html.ppopen { overflow: hidden; }
   .ccgo { width: 100%; justify-content: center; padding: 18px 26px; }
 }
 @media (prefers-reduced-motion: reduce) { .pmpic img, .ppar { transition: none; } }
+/* on a tablet the other pieces are cards, not posters */
+@media (min-width: 600px) and (max-width: 899px) { .ppmore li { flex-basis: min(40vw, 300px); } }
