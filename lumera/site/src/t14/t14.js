@@ -1557,15 +1557,39 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   document.addEventListener("click", function (e) {
     var a = e.target.closest('a[href$="#concierge"], a[href$="#enquire"]'); if (!a) return;
     var t = (a.getAttribute("data-en") || a.textContent || "").toLowerCase();
-    if (/private viewing|appointment/.test(t)) setTimeout(function () { choose("Private viewing"); paint(); }, 30);
+    if (/private viewing|appointment/.test(t)) setTimeout(viewing, 30);
   }, true);
+  /* a viewing is its own request (QA, 22 Nov 2026: a design built earlier rode along into "Book a private viewing"):
+     a bracelet attached from the builder is let go; a piece chosen from the collection stays, as that is what they
+     would come to see */
+  function viewing() { var kept = null; try { kept = JSON.parse(sessionStorage.getItem("silavu-sel") || "null"); } catch (e) {}
+    if (kept && kept.k === "line") { var x = document.getElementById("cselClear"); if (x) x.click(); }
+    choose("Private viewing"); paint(); }
   /* arriving from another page's "Book a private viewing" (collection14, pieces14) */
-  if (/[?&]for=viewing/.test(location.search)) setTimeout(function () { choose("Private viewing"); paint(); }, 400);
+  if (/[?&]for=viewing/.test(location.search)) setTimeout(viewing, 400);
   /* the builder's own enquiry is an enquiry, not a reservation (the button says so): the card's tag says it too */
   var act = document.getElementById("cselAct");
   function tag() { if (!act) return; var t = act.textContent.trim(); if (t === "Reservation") act.textContent = "Enquiry"; else if (t === "שריון") act.textContent = "פנייה"; }
   if (act) new MutationObserver(tag).observe(act, { childList: true, characterData: true, subtree: true }); tag();
   new MutationObserver(paint).observe(form, { subtree: true, attributes: true, attributeFilter: ["class", "hidden", "aria-checked", "src"] });
   new MutationObserver(function () { mode = ""; paint(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  /* a design kept from earlier in this visit, and nothing yet chosen to ask about: the form is about that design */
+  setTimeout(function () { var kept = null; try { kept = JSON.parse(sessionStorage.getItem("silavu-sel") || "null"); } catch (e) {}
+    if (kept && kept.k === "line" && !wantOn() && !/[?&]for=viewing/.test(location.search)) choose("Bespoke commission"); paint(); }, 500);
   paint();
+})();
+
+/* the builder and its enquiry hold one design (QA, 22 Nov 2026: after a reload the builder fell back to Round ·
+   Lab-grown · 6 ct while the form still held the bracelet designed before it): the design kept for the enquiry in this
+   visit is set back into the builder as the page opens, choice by choice, as if chosen again, without moving the page */
+(function () {
+  var kept = null; try { kept = JSON.parse(sessionStorage.getItem("silavu-sel") || "null"); } catch (e) {}
+  if (!kept || kept.k !== "line" || !kept.b) return;
+  var tries = 0;
+  (function put() { var opts = document.getElementById("opts");
+    if (!opts || !opts.querySelector(".chip[data-k]")) { if (++tries < 60) setTimeout(put, 100); return; }
+    var y = scrollY;
+    ["cut", "origin", "ct", "wrist", "metal"].forEach(function (k) { var v = kept.b[k]; if (v == null) return;
+      var c = opts.querySelector('.chip[data-k="' + k + '"][data-v="' + v + '"]'); if (c && !c.classList.contains("on")) c.click(); });
+    if (Math.abs(scrollY - y) > 2) scrollTo(0, y); })();
 })();

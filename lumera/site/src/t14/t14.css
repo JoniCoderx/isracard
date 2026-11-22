@@ -3024,3 +3024,13 @@ html[dir="rtl"] body #configure.b16.b16.b16 .b16ss { text-align: start; }
   html body .c15 .c15all > span { font-size: .72rem; letter-spacing: .16em; }
   html body .c15 .c15all > i { width: 38px !important; height: 38px !important; }
 }
+
+/* the builder without WebGL (QA, 22 Nov 2026: Photo, Try on, Side, Detail, Inspect, Look closer and Full screen did
+   nothing, and the panel still said 3D and Drag to rotate): every one of those needs the renderer, whose script stands
+   down where there is none. So only what works is offered: the illustration (labelled as one), the five choices, Save
+   design and the enquiry. */
+html.no3d body #configure.b16.b16.b16.b16 #stripwrap .b14foot .vt.vt, html.no3d body #configure.b16.b16.b16.b16 .vt.vt, html.no3d body #configure.b16.b16.b16.b16 .b14fr.b14fr, html.no3d body #configure.b16.b16.b16.b16 .vposwrap.vposwrap, html.no3d body #configure.b16.b16.b16.b16 .b14tools.b14tools, html.no3d body #configure.b16.b16.b16.b16 .b16hint.b16hint { display: none !important; }
+/* the illustration's label, clear of Save design at the foot: up in the corner opposite the cut's name */
+html.no3d body #configure.b16.b16.b16.b16 .glfb .glfbtag { position: absolute; top: 22px; right: 22px; bottom: auto; left: auto; transform: none; max-width: 46%; text-align: end; white-space: normal; line-height: 1.6; }
+html[dir="rtl"].no3d body #configure.b16.b16.b16.b16 .glfb .glfbtag { right: auto; left: 22px; }
+@media (max-width: 759px) { html.no3d body #configure.b16.b16.b16.b16 .glfb .glfbtag { top: auto; bottom: 10px; right: 50%; transform: translateX(50%); max-width: 90%; text-align: center; } }
