@@ -1462,7 +1462,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   var cv = document.createElement("canvas"); cv.className = "c14sky"; cv.setAttribute("aria-hidden", "true");
   var g = cv.getContext("2d"); if (!g) return; sec.insertBefore(cv, sec.firstChild);
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, hover = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var W = 0, H = 0, dpr = 1, S = [], chain = [], raf = 0, last = 0, T = 0, vis = false, P = { x: -1, y: -1, on: false };
+  var W = 0, H = 0, dpr = 1, S = [], chain = [], M = [], Hd = { x: -1, y: -1, a: 0 }, raf = 0, last = 0, T = 0, vis = false, P = { x: -1, y: -1, on: false };
   var TINT = ["255,250,242", "255,246,232", "255,232,204", "226,234,255"], LIFE = 2.4;
   function size() { var r = sec.getBoundingClientRect(); if (!r.width || !r.height) return; dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1481,32 +1481,43 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
       var tw = reduce ? 1 : .72 + .28 * Math.sin(T * s.tw + s.ph), a = Math.min(1, s.a * tw + s.lit * .6), r = s.r * (1 + s.lit * .9);
       g.globalAlpha = a; g.fillStyle = "rgb(" + s.tint + ")";
       if (r < 1.05) g.fillRect(s.x - r, s.y - r, r * 2, r * 2); else { g.beginPath(); g.arc(s.x, s.y, r, 0, 6.283); g.fill(); } }
-    /* the thread: the stars touched, in order, joined by one smooth curve */
+    /* the thread (22 Nov 2026, "nicer"): the stars touched, in order, and the pointer itself at its head, joined by one
+       winding curve sampled finely, so that it can taper like a drawn line: hair-thin and faint at the oldest end,
+       fuller and warmer toward the head, where a small glint leads it. A few motes of gold are shed as it is drawn. */
     var tail = chain[chain.length - 1];
     if (best && (!tail || (tail.s !== best && Math.hypot(best.x - tail.s.x, best.y - tail.s.y) > 30))) chain.push({ s: best, t: T, k: Math.random() < .5 ? -1 : 1 });
     while (chain.length && (T - chain[0].t > LIFE || chain.length > 14)) chain.shift();
-    if (!reduce && chain.length > 1) {
-      /* the points it passes through: each star, and between two stars a point pushed aside, so the line bows and winds
-         like a thread laid down by hand; the bow sways slowly while it lives */
+    if (P.on) { if (Hd.x < 0) { Hd.x = P.x; Hd.y = P.y; } Hd.x += (P.x - Hd.x) * Math.min(1, dt * 14); Hd.y += (P.y - Hd.y) * Math.min(1, dt * 14); Hd.a += (1 - Hd.a) * Math.min(1, dt * 6); }
+    else Hd.a *= Math.pow(.05, dt);
+    if (!reduce && (chain.length > 1 || (chain.length && Hd.a > .05))) {
       var pts = [];
       for (i = 0; i < chain.length; i++) { var c = chain[i]; pts.push({ x: c.s.x, y: c.s.y, t: c.t });
-        if (i < chain.length - 1) { var nx = chain[i + 1].s, mx = (c.s.x + nx.x) / 2, my = (c.s.y + nx.y) / 2, ex = nx.x - c.s.x, ey = nx.y - c.s.y, L = Math.hypot(ex, ey) || 1;
-          var bow = Math.min(34, L * .28) * c.k * (1 + .25 * Math.sin(T * 1.6 + i)); pts.push({ x: mx - ey / L * bow, y: my + ex / L * bow, t: (c.t + chain[i + 1].t) / 2 }); } }
-      /* drawn out: the newest stretch grows toward the latest star */
-      var grow = Math.min(1, (T - chain[chain.length - 1].t) / .35);
-      g.lineCap = "round"; g.lineJoin = "round";
-      for (var pass = 0; pass < 2; pass++) {
-        g.lineWidth = pass ? .7 : 3.2;
-        for (i = 1; i < pts.length; i++) {
-          var A = pts[i - 1], B = pts[i], Pm = pts[i - 2] || A, Nn = pts[i + 1] || B, f = Math.max(0, 1 - (T - B.t) / LIFE);
-          var bx = B.x, by = B.y; if (i === pts.length - 1 && grow < 1) { bx = A.x + (B.x - A.x) * grow; by = A.y + (B.y - A.y) * grow; }
-          /* a Catmull-Rom stretch, as a cubic */
-          var c1x = A.x + (B.x - Pm.x) / 6, c1y = A.y + (B.y - Pm.y) / 6, c2x = bx - (Nn.x - A.x) / 6 * (i === pts.length - 1 ? grow : 1), c2y = by - (Nn.y - A.y) / 6 * (i === pts.length - 1 ? grow : 1);
-          g.globalAlpha = f * f * (pass ? .62 : .08); g.strokeStyle = pass ? "rgb(242,230,206)" : "rgb(230,200,150)";
-          g.beginPath(); g.moveTo(A.x, A.y); g.bezierCurveTo(c1x, c1y, c2x, c2y, bx, by); g.stroke(); } }
-      /* a small bead of light where the thread meets each star */
-      for (i = 0; i < chain.length; i++) { var cc = chain[i], ff = Math.max(0, 1 - (T - cc.t) / LIFE); g.globalAlpha = ff * .7; g.fillStyle = "rgb(255,246,230)"; g.beginPath(); g.arc(cc.s.x, cc.s.y, 1.3 + ff, 0, 6.283); g.fill(); }
+        var nx = i < chain.length - 1 ? chain[i + 1].s : (Hd.a > .05 ? Hd : null);
+        if (nx) { var mx = (c.s.x + nx.x) / 2, my = (c.s.y + nx.y) / 2, ex = nx.x - c.s.x, ey = nx.y - c.s.y, L = Math.hypot(ex, ey) || 1;
+          var bow = Math.min(30, L * .26) * c.k * (1 + .3 * Math.sin(T * 1.3 + i * 1.7)); pts.push({ x: mx - ey / L * bow, y: my + ex / L * bow, t: i < chain.length - 1 ? (c.t + chain[i + 1].t) / 2 : T }); } }
+      if (Hd.a > .05) pts.push({ x: Hd.x, y: Hd.y, t: T });
+      /* sample the Catmull-Rom curve through those points */
+      var sm = [];
+      for (i = 0; i < pts.length - 1; i++) { var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2, n = Math.max(4, Math.ceil(Math.hypot(p2.x - p1.x, p2.y - p1.y) / 5));
+        for (var k = 0; k < n; k++) { var u = k / n, u2 = u * u, u3 = u2 * u;
+          sm.push({ x: .5 * (2 * p1.x + (-p0.x + p2.x) * u + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * u2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * u3),
+                    y: .5 * (2 * p1.y + (-p0.y + p2.y) * u + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * u2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * u3), t: p1.t + (p2.t - p1.t) * u }); } }
+      sm.push(pts[pts.length - 1]);
+      g.lineCap = "round"; g.globalCompositeOperation = "lighter";
+      for (var pass = 0; pass < 2; pass++) for (i = 1; i < sm.length; i++) {
+        var A = sm[i - 1], B = sm[i], v = i / (sm.length - 1), age = Math.max(0, 1 - (T - B.t) / LIFE), f = age * age * (.25 + .75 * v);
+        if (f < .01) continue;
+        g.globalAlpha = f * (pass ? .75 : .1); g.lineWidth = pass ? .35 + .75 * v : 2 + 3 * v;
+        g.strokeStyle = "rgb(" + Math.round(236 + 14 * v) + "," + Math.round(214 + 24 * v) + "," + Math.round(176 + 46 * v) + ")";
+        g.beginPath(); g.moveTo(A.x, A.y); g.lineTo(B.x, B.y); g.stroke(); }
+      /* where it meets each star, a bead; at its head, a glint that leads it */
+      for (i = 0; i < chain.length; i++) { var cc = chain[i], ff = Math.max(0, 1 - (T - cc.t) / LIFE); g.globalAlpha = ff * .6; g.fillStyle = "rgb(255,246,230)"; g.beginPath(); g.arc(cc.s.x, cc.s.y, 1 + ff * 1.1, 0, 6.283); g.fill(); }
+      if (Hd.a > .05) { var hg = g.createRadialGradient(Hd.x, Hd.y, 0, Hd.x, Hd.y, 9); hg.addColorStop(0, "rgba(255,248,232," + (.55 * Hd.a) + ")"); hg.addColorStop(1, "rgba(255,230,190,0)"); g.globalAlpha = 1; g.fillStyle = hg; g.fillRect(Hd.x - 9, Hd.y - 9, 18, 18);
+        g.globalAlpha = .5 * Hd.a; g.strokeStyle = "rgb(255,248,236)"; g.lineWidth = .6; g.beginPath(); g.moveTo(Hd.x - 6, Hd.y); g.lineTo(Hd.x + 6, Hd.y); g.moveTo(Hd.x, Hd.y - 6); g.lineTo(Hd.x, Hd.y + 6); g.stroke();
+        if (Math.random() < dt * 9) M.push({ x: Hd.x, y: Hd.y, vx: (Math.random() - .5) * 14, vy: 4 + Math.random() * 10, l: 0, m: .9 + Math.random() * .9 }); }
+      g.globalCompositeOperation = "source-over";
     }
+    for (i = M.length - 1; i >= 0; i--) { var mo = M[i]; mo.l += dt; if (mo.l > mo.m) { M.splice(i, 1); continue; } mo.x += mo.vx * dt; mo.y += mo.vy * dt; g.globalAlpha = (1 - mo.l / mo.m) * .6; g.fillStyle = "rgb(255,236,200)"; g.fillRect(mo.x - .5, mo.y - .5, 1, 1); }
     g.globalAlpha = 1;
   }
   function frame(now) { raf = 0; var dt = last ? Math.min(.05, (now - last) / 1000) : .016; last = now; T += dt; draw(dt); if (vis && !reduce) raf = requestAnimationFrame(frame); else last = 0; }
