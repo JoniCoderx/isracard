@@ -2996,3 +2996,14 @@ html[dir="rtl"] body .c14t { left: 80px !important; right: clamp(20px, 2vw, 30px
 html[dir="rtl"] body .c14go { right: auto !important; left: clamp(18px, 2vw, 28px) !important; }
 html[data-ns] body .c14t span { font-style: normal; }
 @media (max-width: 899px) { html[dir="rtl"] body .c14t { left: 76px !important; right: 20px !important; } }
+
+/* (owner, 22 Nov 2026, on a phone: the film should run up to the top, "or something blurred that looks seamless") the
+   top of the film melts into the browser's bar instead of meeting it at a hard edge: a soft darkening with a light
+   progressive blur, behind the header, on phones and tablets only. The bar itself is the browser's, never the page's. */
+@media (max-width: 899px) {
+  html body #hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; z-index: 2; pointer-events: none;
+    height: calc(env(safe-area-inset-top, 0px) + 150px);
+    background: linear-gradient(to bottom, rgba(6,5,4,.62), rgba(6,5,4,.28) 45%, rgba(6,5,4,0));
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 100%); }
+}
