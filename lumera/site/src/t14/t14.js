@@ -1451,48 +1451,72 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(shape, 80); });
 })();
 
-/* the collections' night (owner, 21 Nov 2026: "solid, barely felt, but only at the highest level"): behind the
-   collections, a still sky of tiny, very faint stars, warm and cool. Nothing moves by itself. Where the pointer passes,
-   the few stars beside it brighten a little and are joined, in the order they were touched, by a hairline of gold that
-   fades within two seconds: a constellation drawn in passing, then gone. The sky is painted once; frames are drawn only
-   while something is fading, and never on a screen without a mouse, where the sky simply rests. */
+/* the collections' night (owner, 21 Nov 2026: "solid, barely felt, but only at the highest level"; 22 Nov: "a little
+   more visible, the lines drawn and moving like a wrapped thread, not straight; and the sky always moving"): behind the
+   collections, a sky of tiny warm and cool stars in three depths, drifting slowly and twinkling softly. Where the
+   pointer passes, the stars beside it brighten and are joined, in the order they were touched, by one curved thread of
+   gold that is drawn out behind the pointer, sways a little as it lives, and fades within about two seconds.
+   Drawn only while the section is on screen; with reduced motion the sky stands still and the thread is not drawn. */
 (function () {
   var sec = document.querySelector("#collection.c14col"); if (!sec) return;
   var cv = document.createElement("canvas"); cv.className = "c14sky"; cv.setAttribute("aria-hidden", "true");
   var g = cv.getContext("2d"); if (!g) return; sec.insertBefore(cv, sec.firstChild);
-  var hover = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var W = 0, H = 0, dpr = 1, S = [], base = null, chain = [], raf = 0, last = 0, T = 0, P = { x: -1, y: -1, on: false };
-  var TINT = ["255,250,242", "255,246,232", "255,232,204", "226,234,255"], LIFE = 2.2;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, hover = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var W = 0, H = 0, dpr = 1, S = [], chain = [], raf = 0, last = 0, T = 0, vis = false, P = { x: -1, y: -1, on: false };
+  var TINT = ["255,250,242", "255,246,232", "255,232,204", "226,234,255"], LIFE = 2.4;
   function size() { var r = sec.getBoundingClientRect(); if (!r.width || !r.height) return; dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    S = []; var n = Math.round(W * H / 1500);
-    for (var i = 0; i < n; i++) { var z = Math.pow(Math.random(), 1.8); S.push({ x: Math.random() * W, y: Math.random() * H, z: z, r: .35 + z * .8, a: .05 + z * .16 + Math.random() * .04, tint: TINT[(Math.random() * TINT.length) | 0], lit: 0 }); }
-    base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height; var b = base.getContext("2d"); b.setTransform(dpr, 0, 0, dpr, 0, 0);
-    S.forEach(function (s) { b.globalAlpha = s.a; b.fillStyle = "rgb(" + s.tint + ")"; b.beginPath(); b.arc(s.x, s.y, s.r, 0, 6.283); b.fill(); });
-    chain = []; paint(); }
-  function paint() { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); if (base) g.drawImage(base, 0, 0); g.setTransform(dpr, 0, 0, dpr, 0, 0); }
-  function frame(now) { raf = 0; var dt = last ? Math.min(.05, (now - last) / 1000) : .016; last = now; T += dt;
-    var R = 84, best = null, bd = 1e9, busy = false;
-    paint(); g.globalCompositeOperation = "lighter";
+    S = []; var n = Math.round(W * H / (hover ? 1100 : 1500));
+    for (var i = 0; i < n; i++) { var z = Math.pow(Math.random(), 1.7);
+      S.push({ x: Math.random() * W, y: Math.random() * H, z: z, r: .4 + z * .9, a: .1 + z * .26 + Math.random() * .06, tw: .4 + Math.random() * 1.4, ph: Math.random() * 6.28, tint: TINT[(Math.random() * TINT.length) | 0], lit: 0 }); }
+    chain = []; if (reduce || !vis) draw(0); }
+  function draw(dt) {
+    g.clearRect(0, 0, W, H);
+    var R = 88, best = null, bd = 1e9;
     for (var i = 0; i < S.length; i++) { var s = S[i];
-      if (P.on) { var dx = s.x - P.x, dy = s.y - P.y, d2 = dx * dx + dy * dy; if (d2 < R * R) { s.lit = Math.max(s.lit, 1 - Math.sqrt(d2) / R); if (s.z > .45 && d2 < bd) { bd = d2; best = s; } } }
-      if (s.lit > .01) { busy = true; s.lit *= Math.pow(.18, dt);
-        g.globalAlpha = s.lit * .55; g.fillStyle = "rgb(" + s.tint + ")"; g.beginPath(); g.arc(s.x, s.y, s.r * (1 + s.lit * .9), 0, 6.283); g.fill(); } }
+      /* the slow drift: the near stars a little faster than the far, as a sky seen moving */
+      if (!reduce) { s.x -= (1.2 + s.z * 4.5) * dt; s.y += (.25 + s.z * .6) * dt; if (s.x < -3) { s.x = W + 3; s.lit = 0; } if (s.y > H + 3) { s.y = -3; s.lit = 0; } }
+      if (P.on) { var dx = s.x - P.x, dy = s.y - P.y, d2 = dx * dx + dy * dy; if (d2 < R * R) { s.lit = Math.max(s.lit, 1 - Math.sqrt(d2) / R); if (s.z > .4 && d2 < bd) { bd = d2; best = s; } } }
+      if (s.lit > .005) s.lit *= Math.pow(.2, dt);
+      var tw = reduce ? 1 : .72 + .28 * Math.sin(T * s.tw + s.ph), a = Math.min(1, s.a * tw + s.lit * .6), r = s.r * (1 + s.lit * .9);
+      g.globalAlpha = a; g.fillStyle = "rgb(" + s.tint + ")";
+      if (r < 1.05) g.fillRect(s.x - r, s.y - r, r * 2, r * 2); else { g.beginPath(); g.arc(s.x, s.y, r, 0, 6.283); g.fill(); } }
+    /* the thread: the stars touched, in order, joined by one smooth curve */
     var tail = chain[chain.length - 1];
-    if (best && (!tail || (tail.s !== best && Math.hypot(best.x - tail.s.x, best.y - tail.s.y) > 34))) chain.push({ s: best, t: T });
-    while (chain.length && (T - chain[0].t > LIFE || chain.length > 12)) chain.shift();
-    g.lineWidth = .6; g.lineCap = "round";
-    for (i = 1; i < chain.length; i++) { var A = chain[i - 1].s, B = chain[i].s, f = 1 - (T - chain[i].t) / LIFE, k = Math.min(1, (T - chain[i].t) / .3);
-      if (Math.hypot(B.x - A.x, B.y - A.y) > 200) continue;
-      g.globalAlpha = f * f * .42; g.strokeStyle = "rgb(239,226,200)"; g.beginPath(); g.moveTo(A.x, A.y); g.lineTo(A.x + (B.x - A.x) * k, A.y + (B.y - A.y) * k); g.stroke(); }
-    g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
-    if (busy || chain.length || P.on) raf = requestAnimationFrame(frame); else { last = 0; paint(); } }
-  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+    if (best && (!tail || (tail.s !== best && Math.hypot(best.x - tail.s.x, best.y - tail.s.y) > 30))) chain.push({ s: best, t: T, k: Math.random() < .5 ? -1 : 1 });
+    while (chain.length && (T - chain[0].t > LIFE || chain.length > 14)) chain.shift();
+    if (!reduce && chain.length > 1) {
+      /* the points it passes through: each star, and between two stars a point pushed aside, so the line bows and winds
+         like a thread laid down by hand; the bow sways slowly while it lives */
+      var pts = [];
+      for (i = 0; i < chain.length; i++) { var c = chain[i]; pts.push({ x: c.s.x, y: c.s.y, t: c.t });
+        if (i < chain.length - 1) { var nx = chain[i + 1].s, mx = (c.s.x + nx.x) / 2, my = (c.s.y + nx.y) / 2, ex = nx.x - c.s.x, ey = nx.y - c.s.y, L = Math.hypot(ex, ey) || 1;
+          var bow = Math.min(34, L * .28) * c.k * (1 + .25 * Math.sin(T * 1.6 + i)); pts.push({ x: mx - ey / L * bow, y: my + ex / L * bow, t: (c.t + chain[i + 1].t) / 2 }); } }
+      /* drawn out: the newest stretch grows toward the latest star */
+      var grow = Math.min(1, (T - chain[chain.length - 1].t) / .35);
+      g.lineCap = "round"; g.lineJoin = "round";
+      for (var pass = 0; pass < 2; pass++) {
+        g.lineWidth = pass ? .7 : 3.2;
+        for (i = 1; i < pts.length; i++) {
+          var A = pts[i - 1], B = pts[i], Pm = pts[i - 2] || A, Nn = pts[i + 1] || B, f = Math.max(0, 1 - (T - B.t) / LIFE);
+          var bx = B.x, by = B.y; if (i === pts.length - 1 && grow < 1) { bx = A.x + (B.x - A.x) * grow; by = A.y + (B.y - A.y) * grow; }
+          /* a Catmull-Rom stretch, as a cubic */
+          var c1x = A.x + (B.x - Pm.x) / 6, c1y = A.y + (B.y - Pm.y) / 6, c2x = bx - (Nn.x - A.x) / 6 * (i === pts.length - 1 ? grow : 1), c2y = by - (Nn.y - A.y) / 6 * (i === pts.length - 1 ? grow : 1);
+          g.globalAlpha = f * f * (pass ? .62 : .08); g.strokeStyle = pass ? "rgb(242,230,206)" : "rgb(230,200,150)";
+          g.beginPath(); g.moveTo(A.x, A.y); g.bezierCurveTo(c1x, c1y, c2x, c2y, bx, by); g.stroke(); } }
+      /* a small bead of light where the thread meets each star */
+      for (i = 0; i < chain.length; i++) { var cc = chain[i], ff = Math.max(0, 1 - (T - cc.t) / LIFE); g.globalAlpha = ff * .7; g.fillStyle = "rgb(255,246,230)"; g.beginPath(); g.arc(cc.s.x, cc.s.y, 1.3 + ff, 0, 6.283); g.fill(); }
+    }
+    g.globalAlpha = 1;
+  }
+  function frame(now) { raf = 0; var dt = last ? Math.min(.05, (now - last) / 1000) : .016; last = now; T += dt; draw(dt); if (vis && !reduce) raf = requestAnimationFrame(frame); else last = 0; }
+  function kick() { if (!raf && vis && !reduce) raf = requestAnimationFrame(frame); }
   if (hover) {
-    sec.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = sec.getBoundingClientRect(); P.x = e.clientX - r.left; P.y = e.clientY - r.top; P.on = true; kick(); });
+    sec.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = sec.getBoundingClientRect(); P.x = e.clientX - r.left; P.y = e.clientY - r.top; P.on = true; });
     sec.addEventListener("pointerleave", function () { P.on = false; });
   }
-  new IntersectionObserver(function (es) { if (es[0].isIntersecting && !W) size(); }, { rootMargin: "200px 0px" }).observe(sec);
+  new IntersectionObserver(function (es) { vis = es[0].isIntersecting && !document.hidden; if (vis && !W) size(); kick(); }, { rootMargin: "100px 0px" }).observe(sec);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) vis = false; });
   var rt = 0, lw = innerWidth; addEventListener("resize", function () { if (!hover && Math.abs(innerWidth - lw) < 2) return; lw = innerWidth; clearTimeout(rt); rt = setTimeout(function () { if (W) size(); }, 200); });
 })();
 
