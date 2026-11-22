@@ -3034,3 +3034,16 @@ html.no3d body #configure.b16.b16.b16.b16 #stripwrap .b14foot .vt.vt, html.no3d 
 html.no3d body #configure.b16.b16.b16.b16 .glfb .glfbtag { position: absolute; top: 22px; right: 22px; bottom: auto; left: auto; transform: none; max-width: 46%; text-align: end; white-space: normal; line-height: 1.6; }
 html[dir="rtl"].no3d body #configure.b16.b16.b16.b16 .glfb .glfbtag { right: auto; left: 22px; }
 @media (max-width: 759px) { html.no3d body #configure.b16.b16.b16.b16 .glfb .glfbtag { top: auto; bottom: 10px; right: 50%; transform: translateX(50%); max-width: 90%; text-align: center; } }
+
+/* builder QA (P2): on a phone the picture is compact while choosing (330px at most instead of 460), so the bracelet, the
+   first choices and the way on are seen together; Full screen still opens it large. "Drag to rotate" gives way there. */
+@media (max-width: 899px) {
+  html body #configure.b16.b16.b16.b16 #stripwrap { height: min(84vw, 330px) !important; }
+  html body #configure.b16.b16.b16.b16 .b16hint { display: none !important; }
+}
+/* the review's five choices each say they can be changed */
+html body #configure .b14sumu button .b14ed { margin-inline-start: auto; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(243,236,224,.55); border-bottom: 1px solid rgba(243,236,224,.25); padding-bottom: 2px; }
+html[data-ns] body #configure .b14sumu button .b14ed { letter-spacing: 0; font-size: .74rem; }
+html body #configure .b14sumu button:hover .b14ed, html body #configure .b14sumu button:focus-visible .b14ed { color: #fff; border-color: #fff; }
+/* the compact phone picture: Save design kept small in its corner, off the bracelet */
+@media (max-width: 899px) { html body #configure.b16.b16.b16.b16 #stripwrap .cacts #saveImg { height: 32px !important; padding: 0 11px !important; font-size: .58rem !important; } html body #configure.b16.b16.b16.b16 #stripwrap .cacts { top: 66px !important; bottom: auto !important; right: 14px !important; left: auto !important; } html[dir="rtl"] body #configure.b16.b16.b16.b16 #stripwrap .cacts { right: auto !important; left: 14px !important; } }

@@ -1593,3 +1593,42 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
       var c = opts.querySelector('.chip[data-k="' + k + '"][data-v="' + v + '"]'); if (c && !c.classList.contains("on")) c.click(); });
     if (Math.abs(scrollY - y) > 2) scrollTo(0, y); })();
 })();
+
+/* builder QA (P2, 22 Nov 2026), test14 only:
+   - the last step is "Review your design": it opens the five choices, each with Edit, and the enquiry right beneath
+   - the five step tabs answer the arrow keys (Home and End too), as tabs do; the options say which one is chosen
+     (aria-pressed), not only by how they look
+   - "Your design" changes the moment a choice is made, before the picture catches up */
+(function () {
+  var conf = document.getElementById("configure"), opts = document.getElementById("opts"); if (!conf || !opts) return;
+  var he = function () { return document.documentElement.getAttribute("data-lang") === "he"; };
+  function words() {
+    var nx = opts.querySelector(".b13next span");
+    if (nx && /^(Review and reserve|לסיכום ולשריון)$/.test(nx.textContent.trim())) nx.textContent = he() ? "לסיכום העיצוב" : "Review your design";
+    [].forEach.call(conf.querySelectorAll(".b14sumu button"), function (b) { var e = b.querySelector(".b14ed");
+      if (!e) { e = document.createElement("span"); e.className = "b14ed"; e.setAttribute("aria-hidden", "true"); b.appendChild(e); }
+      var t = he() ? "עריכה" : "Edit"; if (e.textContent !== t) e.textContent = t;
+      var k = b.querySelector("span"), v = b.querySelector("b"); if (k && v) b.setAttribute("aria-label", (he() ? "עריכת " : "Edit ") + k.textContent.trim() + ": " + v.textContent.trim()); });
+    [].forEach.call(opts.querySelectorAll(".chip[data-k]"), function (c) { var on = c.classList.contains("on") ? "true" : "false"; if (c.getAttribute("aria-pressed") !== on) c.setAttribute("aria-pressed", on); });
+  }
+  function summary(hit) {
+    var ss = conf.querySelector(".b16ss"); if (!ss) return;
+    /* the chip just pressed counts as chosen at once, before the builder has marked it */
+    var v = ["cut", "origin", "ct"].map(function (k) { var c = hit && hit.getAttribute("data-k") === k ? hit : opts.querySelector('.chip.on[data-k="' + k + '"]'); if (!c) return ""; var l = c.querySelector(".cl, .lbl, span:last-child") || c; return l.textContent.trim(); }).filter(Boolean);
+    var t = v.join(" · "); if (t && ss.textContent !== t) ss.textContent = t;
+  }
+  opts.addEventListener("click", function (e) { var hit = e.target.closest(".chip[data-k]"); if (hit) { summary(hit); setTimeout(function () { words(); summary(); }, 0); } }, true);
+  new MutationObserver(function () { words(); }).observe(conf, { subtree: true, childList: true, characterData: true });
+  new MutationObserver(function () { setTimeout(words, 0); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+  /* arrow keys on the step tabs: the next or previous step is chosen and focused (reversed right to left) */
+  conf.addEventListener("keydown", function (e) {
+    var b = e.target.closest && e.target.closest(".b13bar"); if (!b) return;
+    var bars = [].slice.call(conf.querySelectorAll(".b13bar")), i = bars.indexOf(b), rtl = document.documentElement.dir === "rtl", j = -1;
+    if (e.key === "ArrowRight") j = i + (rtl ? -1 : 1); else if (e.key === "ArrowLeft") j = i + (rtl ? 1 : -1); else if (e.key === "Home") j = 0; else if (e.key === "End") j = bars.length - 1; else return;
+    e.preventDefault(); j = Math.max(0, Math.min(bars.length - 1, j)); bars[j].click(); bars[j].focus();
+  });
+  /* only the chosen tab is in the Tab order; the arrows move among them */
+  function roving() { [].forEach.call(conf.querySelectorAll(".b13bar"), function (b) { b.setAttribute("tabindex", b.classList.contains("on") ? "0" : "-1"); }); }
+  var bm = new MutationObserver(roving); [].forEach.call(conf.querySelectorAll(".b13bar"), function (b) { bm.observe(b, { attributes: true, attributeFilter: ["class"] }); });
+  setTimeout(function () { words(); summary(); roving(); [].forEach.call(conf.querySelectorAll(".b13bar"), function (b) { bm.observe(b, { attributes: true, attributeFilter: ["class"] }); }); }, 800);
+})();
