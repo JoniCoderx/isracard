@@ -1485,7 +1485,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
        winding curve sampled finely, so that it can taper like a drawn line: hair-thin and faint at the oldest end,
        fuller and warmer toward the head, where a small glint leads it. A few motes of gold are shed as it is drawn. */
     var tail = chain[chain.length - 1];
-    if (best && (!tail || (tail.s !== best && Math.hypot(best.x - tail.s.x, best.y - tail.s.y) > 30))) chain.push({ s: best, t: T, k: Math.random() < .5 ? -1 : 1 });
+    if (best && (!tail || (tail.s !== best && Math.hypot(best.x - tail.s.x, best.y - tail.s.y) > 30))) chain.push({ s: best, t: T, k: tail ? (Math.random() < .2 ? -tail.k : tail.k) : (Math.random() < .5 ? -1 : 1) });   /* it bends mostly to one side, as a thread does, not in a zig-zag */
     while (chain.length && (T - chain[0].t > LIFE || chain.length > 14)) chain.shift();
     if (P.on) { if (Hd.x < 0) { Hd.x = P.x; Hd.y = P.y; } Hd.x += (P.x - Hd.x) * Math.min(1, dt * 14); Hd.y += (P.y - Hd.y) * Math.min(1, dt * 14); Hd.a += (1 - Hd.a) * Math.min(1, dt * 6); }
     else Hd.a *= Math.pow(.05, dt);
@@ -1494,22 +1494,27 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
       for (i = 0; i < chain.length; i++) { var c = chain[i]; pts.push({ x: c.s.x, y: c.s.y, t: c.t });
         var nx = i < chain.length - 1 ? chain[i + 1].s : (Hd.a > .05 ? Hd : null);
         if (nx) { var mx = (c.s.x + nx.x) / 2, my = (c.s.y + nx.y) / 2, ex = nx.x - c.s.x, ey = nx.y - c.s.y, L = Math.hypot(ex, ey) || 1;
-          var bow = Math.min(30, L * .26) * c.k * (1 + .3 * Math.sin(T * 1.3 + i * 1.7)); pts.push({ x: mx - ey / L * bow, y: my + ex / L * bow, t: i < chain.length - 1 ? (c.t + chain[i + 1].t) / 2 : T }); } }
+          var bow = Math.min(22, L * .2) * c.k * (1 + .22 * Math.sin(T * 1.1 + i * 1.7)); pts.push({ x: mx - ey / L * bow, y: my + ex / L * bow, t: i < chain.length - 1 ? (c.t + chain[i + 1].t) / 2 : T }); } }
       if (Hd.a > .05) pts.push({ x: Hd.x, y: Hd.y, t: T });
-      /* sample the Catmull-Rom curve through those points */
-      var sm = [];
-      for (i = 0; i < pts.length - 1; i++) { var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2, n = Math.max(4, Math.ceil(Math.hypot(p2.x - p1.x, p2.y - p1.y) / 5));
-        for (var k = 0; k < n; k++) { var u = k / n, u2 = u * u, u3 = u2 * u;
-          sm.push({ x: .5 * (2 * p1.x + (-p0.x + p2.x) * u + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * u2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * u3),
-                    y: .5 * (2 * p1.y + (-p0.y + p2.y) * u + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * u2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * u3), t: p1.t + (p2.t - p1.t) * u }); } }
+      /* (23 Nov 2026, "more smooth"): the curve through those points is a centripetal Catmull-Rom, which never kinks or
+         loops where the points are unevenly spaced, sampled every 2.5px; and it is drawn as a few continuous strokes
+         rather than hundreds of short ones, so no joints or beads show along it */
+      var sm = [], cr = function (a, b) { return Math.pow(Math.hypot(b.x - a.x, b.y - a.y) || .01, .5); };
+      for (i = 0; i < pts.length - 1; i++) { var p0 = pts[i - 1] || { x: 2 * pts[i].x - pts[i + 1].x, y: 2 * pts[i].y - pts[i + 1].y }, p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || { x: 2 * p2.x - p1.x, y: 2 * p2.y - p1.y };
+        var t1 = cr(p0, p1), t2 = t1 + cr(p1, p2), t3 = t2 + cr(p2, p3), n = Math.max(4, Math.ceil(Math.hypot(p2.x - p1.x, p2.y - p1.y) / 2.5));
+        for (var k = 0; k < n; k++) { var tt = t1 + (t2 - t1) * k / n, q = [0, 0];
+          for (var ax = 0; ax < 2; ax++) { var c0 = ax ? "y" : "x", A1 = (t1 - tt) / t1 * p0[c0] + tt / t1 * p1[c0], A2 = (t2 - tt) / (t2 - t1) * p1[c0] + (tt - t1) / (t2 - t1) * p2[c0], A3 = (t3 - tt) / (t3 - t2) * p2[c0] + (tt - t2) / (t3 - t2) * p3[c0];
+            var B1 = (t2 - tt) / t2 * A1 + tt / t2 * A2, B2 = (t3 - tt) / (t3 - t1) * A2 + (tt - t1) / (t3 - t1) * A3; q[ax] = (t2 - tt) / (t2 - t1) * B1 + (tt - t1) / (t2 - t1) * B2; }
+          sm.push({ x: q[0], y: q[1], t: p1.t + (p2.t - p1.t) * k / n }); } }
       sm.push(pts[pts.length - 1]);
-      g.lineCap = "round"; g.globalCompositeOperation = "lighter";
-      for (var pass = 0; pass < 2; pass++) for (i = 1; i < sm.length; i++) {
-        var A = sm[i - 1], B = sm[i], v = i / (sm.length - 1), age = Math.max(0, 1 - (T - B.t) / LIFE), f = age * age * (.25 + .75 * v);
+      g.lineCap = "butt"; g.lineJoin = "round"; g.globalCompositeOperation = "lighter";
+      var CH = 10;
+      for (var pass = 0; pass < 2; pass++) for (var j = 0; j < sm.length - 1; j += CH) {
+        var e = Math.min(sm.length - 1, j + CH), mid = sm[Math.min(sm.length - 1, j + (CH >> 1))], v = (j + CH / 2) / (sm.length - 1), age = Math.max(0, 1 - (T - mid.t) / LIFE), f = age * age * (.25 + .75 * Math.min(1, v));
         if (f < .01) continue;
-        g.globalAlpha = f * (pass ? .75 : .1); g.lineWidth = pass ? .35 + .75 * v : 2 + 3 * v;
+        g.globalAlpha = f * (pass ? .75 : .1); g.lineWidth = pass ? .4 + .75 * Math.min(1, v) : 2 + 3 * Math.min(1, v);
         g.strokeStyle = "rgb(" + Math.round(236 + 14 * v) + "," + Math.round(214 + 24 * v) + "," + Math.round(176 + 46 * v) + ")";
-        g.beginPath(); g.moveTo(A.x, A.y); g.lineTo(B.x, B.y); g.stroke(); }
+        g.beginPath(); g.moveTo(sm[j].x, sm[j].y); for (var m2 = j + 1; m2 <= e; m2++) g.lineTo(sm[m2].x, sm[m2].y); g.stroke(); }
       /* where it meets each star, a bead; at its head, a glint that leads it */
       for (i = 0; i < chain.length; i++) { var cc = chain[i], ff = Math.max(0, 1 - (T - cc.t) / LIFE); g.globalAlpha = ff * .6; g.fillStyle = "rgb(255,246,230)"; g.beginPath(); g.arc(cc.s.x, cc.s.y, 1 + ff * 1.1, 0, 6.283); g.fill(); }
       if (Hd.a > .05) { var hg = g.createRadialGradient(Hd.x, Hd.y, 0, Hd.x, Hd.y, 9); hg.addColorStop(0, "rgba(255,248,232," + (.55 * Hd.a) + ")"); hg.addColorStop(1, "rgba(255,230,190,0)"); g.globalAlpha = 1; g.fillStyle = hg; g.fillRect(Hd.x - 9, Hd.y - 9, 18, 18);
