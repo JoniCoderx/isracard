@@ -317,7 +317,8 @@ html body #build, html body #enquire, html body #end, html body #craft14, html b
 html body #build { background-image: none !important; }
 html body #enquire, html body #enquire .egrid, html body #enquire .cwrap { background: #000 !important; }
 /* the leather of Up close and the box's film fade in and out of the black rather than starting at a line */
-html body #details { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%); }
+/* the edges blend into the black around them, over a short fixed depth (owner, 23 Nov 2026: at 14% of this tall section the fade reached down over "Reserved for a closer look." and greyed it) */
+html body #details { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%); }
 html body #inside { position: relative; }
 html body #inside::before, html body #inside::after { content: ""; position: absolute; left: 0; right: 0; height: 22vh; z-index: 3; pointer-events: none; }
 html body #inside::before { top: 0; background: linear-gradient(to bottom, #000, rgba(0,0,0,0)); }
