@@ -783,6 +783,11 @@ const T14 = (() => {
     inject: [['<header class="sh"', "<script>window.__frame14 = 1</script>"]] };
 })();
 heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14]);
+/* /test15/: test14 with three more things the builder can do (the house, 23 Nov 2026): the stones in a moving light,
+   a hint sent on WhatsApp, and the stones at their true size (src/t15) */
+{ const dir15 = path.join(path.dirname(path.resolve(src)), "src", "t15");
+  const T15 = { css: fs.readFileSync(path.join(dir15, "t15.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir15, "t15.js"), "utf8") + "</script>" };
+  heroTest("test15", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
