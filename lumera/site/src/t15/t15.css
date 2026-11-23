@@ -123,3 +123,27 @@ html[dir="rtl"] body #configure#configure#configure .b14sumu li button > b { uni
 }
 @media (max-width: 600px) { html body #configure#configure#configure .b13ft .b13next, html body #configure#configure#configure .b13ft .b13next span { letter-spacing: .1em !important; white-space: nowrap; } html body #configure#configure#configure .b13ft .b13next span { font-size: .7rem !important; } html body #configure#configure#configure .b13ft .b13back { padding: 0 12px !important; letter-spacing: .06em !important; } }
 @media (max-width: 360px) { html body #configure#configure#configure .b13ft .b13next, html body #configure#configure#configure .b13ft .b13next span { white-space: normal; } }
+
+/* "Build your bracelet", written in light (src/t15/t15.js) */
+#build h2.h2 { position: relative; }
+#build h2.h2 .x15wd { display: inline-block; white-space: nowrap; }
+#build h2.h2 .x15ch { --k: 0; display: inline-block; color: rgb(calc(243 + 12 * var(--k)) calc(236 + 14 * var(--k)) calc(224 + 18 * var(--k)));
+  text-shadow: 0 0 calc(var(--k) * 22px) rgba(255, 226, 170, calc(var(--k) * .8)); transform: translateY(calc(var(--k) * -3px));
+  transition: color .15s ease, text-shadow .15s ease, transform .15s ease, opacity .5s cubic-bezier(.2,.8,.2,1), filter .5s cubic-bezier(.2,.8,.2,1); }
+#build h2.h2.x15wait .x15ch:not(.on) { opacity: 0; filter: blur(8px); transform: translateY(.3em); }
+#build h2.h2.x15wait .x15ch.on { animation: x15set .6s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes x15set { 0% { opacity: 0; filter: blur(8px); transform: translateY(.3em); color: #e9cf96; text-shadow: 0 0 14px rgba(255, 220, 160, .9); }
+  45% { opacity: 1; filter: blur(0); color: #fff6e2; text-shadow: 0 0 16px rgba(255, 226, 170, .7); } 100% { opacity: 1; filter: blur(0); transform: none; } }
+#build h2.h2 .x15caret { position: absolute; left: 0; top: 0; width: 1.5px; height: 1em; background: linear-gradient(#f3dfb5, #c9a86a); box-shadow: 0 0 10px rgba(243, 223, 181, .8); opacity: 0; pointer-events: none; transition: transform .07s linear, opacity .3s ease; }
+#build h2.h2.x15typing .x15caret { opacity: 1; }
+#build h2.h2.x15sweep .x15caret { animation: x15blink .5s steps(1) 2; }
+@keyframes x15blink { 50% { opacity: 0; } }
+/* once set, a band of light passes over the whole word, as over polished metal */
+#build h2.h2.x15sweep .x15ch { animation: x15pass .7s ease-in-out both; animation-delay: calc(var(--i) * 28ms); }
+@keyframes x15pass { 0%, 100% { color: rgb(243 236 224); text-shadow: none; } 45% { color: #fffaf0; text-shadow: 0 0 18px rgba(255, 228, 176, .75); } }
+#build h2.h2.x15done:not(.x15sweep) .x15ch { animation: none; }
+#build p.p.x15wait .x15pc:not(.on) { opacity: 0; }
+#build p.p .x15wd { display: inline; white-space: normal; }
+#build p.p .x15pc { transition: opacity .25s ease; }
+@media (prefers-reduced-motion: reduce) { #build h2.h2 .x15ch { transition: none; transform: none; } #build h2.h2 .x15caret { display: none; } }
+html[dir="rtl"] #build p.p, html[dir="rtl"] #build h2.h2 { unicode-bidi: isolate !important; }

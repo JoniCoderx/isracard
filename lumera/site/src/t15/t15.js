@@ -226,3 +226,50 @@
     row.setAttribute("aria-label", T("More about your design", "עוד על העיצוב שלכם")); return true; }
   var n = 0; (function put() { if (!bar() && ++n < 60) setTimeout(put, 150); })();
 })();
+
+/* "Build your bracelet", written in light (owner, 23 Nov 2026: "an effect as it typing ... little on hover and most
+   when scroll and arrive"). Arriving, once: the letters are set one after another behind a fine gold caret, each
+   coming out of a soft blur, then a light passes over the finished word and the line beneath types itself. Under
+   the pointer: the letters nearest it brighten and lift a hair. Reduced motion: the words as they are. */
+(function () {
+  var h = document.querySelector("#build h2.h2"), p = h && h.parentNode.querySelector("p.p"); if (!h) return;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover: hover) and (pointer: fine)").matches, root = document.documentElement;
+  var played = false, finished = false, busy = false, chars = [], pchars = [], caret = null, timers = [];
+  function joined() { return root.getAttribute("data-lang") === "ar"; }   /* Arabic letters join: it is set word by word */
+  function split(el, cls) { var txt = el.textContent.replace(/\s+/g, " ").trim(); if (!txt) return [];
+    busy = true; el.setAttribute("aria-label", txt); el.textContent = ""; var out = [];
+    txt.split(" ").forEach(function (w, i) { if (i) el.appendChild(document.createTextNode(" "));
+      var ws = document.createElement("span"); ws.className = "x15wd"; ws.setAttribute("aria-hidden", "true");
+      (joined() ? [w] : Array.from(w)).forEach(function (c) { var s = document.createElement("span"); s.className = cls; s.textContent = c; s.style.setProperty("--i", out.length); ws.appendChild(s); out.push(s); });
+      el.appendChild(ws); });
+    busy = false; return out; }
+  function setup() { timers.forEach(clearTimeout); timers = []; chars = split(h, "x15ch"); if (p) pchars = split(p, "x15pc");
+    caret = document.createElement("i"); caret.className = "x15caret"; caret.setAttribute("aria-hidden", "true"); h.appendChild(caret);
+    if (played || reduce) { h.classList.remove("x15wait"); h.classList.add("x15done"); if (p) p.classList.add("x15done"); } else { h.classList.add("x15wait"); if (p) p.classList.add("x15wait"); } }
+  function at(s, after) { var r = s.getBoundingClientRect(), hr = h.getBoundingClientRect(), rtl = getComputedStyle(h).direction === "rtl";
+    var ls = parseFloat(getComputedStyle(s).letterSpacing) || 0; caret.style.transform = "translate(" + Math.round((rtl ? (after ? r.left + (joined() ? 0 : 0) : r.right) : (after ? r.right - ls * .6 : r.left)) - hr.left) + "px," + Math.round(r.top - hr.top) + "px)"; caret.style.height = Math.round(r.height) + "px"; }
+  function play() { if (played) return; played = true; var step = Math.max(28, Math.min(60, 900 / chars.length));
+    h.classList.add("x15typing"); if (chars[0]) at(chars[0], false);
+    chars.forEach(function (s, i) { timers.push(setTimeout(function () { s.classList.add("on"); at(s, true); }, 180 + i * step)); });
+    var end = 180 + chars.length * step;
+    timers.push(setTimeout(function () { h.classList.add("x15sweep"); }, end + 250));
+    timers.push(setTimeout(function () { h.classList.remove("x15typing"); h.classList.add("x15done"); h.classList.remove("x15wait"); }, end + 1500));
+    timers.push(setTimeout(function () { h.classList.remove("x15sweep"); finished = true; }, end + 250 + 700 + chars.length * 28 + 100));
+    if (p) { var ps = 16, p0 = end + 450;
+      timers.push(setTimeout(function () { p.classList.add("x15typing"); }, p0));
+      pchars.forEach(function (s, i) { timers.push(setTimeout(function () { s.classList.add("on"); }, p0 + i * ps)); });
+      timers.push(setTimeout(function () { p.classList.remove("x15typing", "x15wait"); p.classList.add("x15done"); }, p0 + pchars.length * ps + 300)); } }
+  setup();
+  /* the page writes the heading again when the language changes: set it out again, as already played */
+  new MutationObserver(function () { if (busy || h.querySelector(".x15ch")) return; requestAnimationFrame(function () { if (!h.querySelector(".x15ch")) { if (played && !finished) { played = false; h.classList.remove("x15typing", "x15sweep", "x15done"); setup(); play(); } else { setup(); if (played) chars.forEach(function (c) { c.classList.add("on"); }); } } }); }).observe(h, { childList: true });
+  if (p) new MutationObserver(function () { if (busy || p.querySelector(".x15pc")) return; requestAnimationFrame(function () { if (!p.querySelector(".x15pc")) { busy = true; pchars = split(p, "x15pc"); busy = false; if (played && !p.classList.contains("x15typing")) { p.classList.remove("x15wait"); p.classList.add("x15done"); pchars.forEach(function (s) { s.classList.add("on"); }); } else if (!played) p.classList.add("x15wait"); } }); }).observe(p, { childList: true, characterData: true, subtree: true });
+  if (!reduce && window.IntersectionObserver) new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { io.disconnect(); play(); } }, { threshold: .9, rootMargin: "0px 0px -18% 0px" }).observe(h);
+  else { played = true; finished = true; }
+  /* the light under the pointer */
+  if (fine && !reduce) {
+    var raf = 0, mx = 0, my = 0;
+    function glow() { raf = 0; chars.forEach(function (s) { var r = s.getBoundingClientRect(), d = Math.hypot(r.left + r.width / 2 - mx, (r.top + r.height / 2 - my) * 1.6), k = Math.max(0, 1 - d / 190); s.style.setProperty("--k", k.toFixed(2)); }); }
+    h.addEventListener("pointermove", function (e) { mx = e.clientX; my = e.clientY; if (!raf) raf = requestAnimationFrame(glow); });
+    h.addEventListener("pointerleave", function () { chars.forEach(function (s) { s.style.setProperty("--k", "0"); }); });
+  }
+})();
