@@ -548,7 +548,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
       else i++;
     }
     var shapes = sp.toShapes(T.ShapeUtils.isClockWise(sp.subPaths[0].getPoints()));
-    var geo = new T.ExtrudeGeometry(shapes, { depth: 58, bevelEnabled: true, bevelThickness: 22, bevelSize: 11, bevelOffset: -3, bevelSegments: 6, curveSegments: 30 }); /* owner, 11 Nov: "laggy" — 30 curve and 6 bevel segments read the same at this size, at a fraction of the triangles */
+    var geo = new T.ExtrudeGeometry(shapes, { depth: 58, bevelEnabled: true, bevelThickness: 22, bevelSize: 11, bevelOffset: -3, bevelSegments: 3, curveSegments: 6 }); /* owner, 11 Nov: "laggy" — 30 curve and 6 bevel segments read the same at this size, at a fraction of the triangles */
     geo.center(); var S = 1 / 1000; geo.scale(S, S, S); geo.computeVertexNormals();
 
     var W = 0, H = 0, cv = document.createElement("canvas"); cv.className = "c14gl"; cv.setAttribute("aria-label", "The SILAVU emblem in white gold. Drag to turn it."); cv.setAttribute("role", "img");
@@ -1464,7 +1464,7 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, hover = matchMedia("(hover: hover) and (pointer: fine)").matches;
   var W = 0, H = 0, dpr = 1, S = [], chain = [], M = [], Hd = { x: -1, y: -1, a: 0 }, raf = 0, last = 0, T = 0, vis = false, P = { x: -1, y: -1, on: false };
   var TINT = ["255,250,242", "255,246,232", "255,232,204", "226,234,255"], LIFE = 2.4;
-  function size() { var r = sec.getBoundingClientRect(); if (!r.width || !r.height) return; dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
+  function size() { var r = sec.getBoundingClientRect(); if (!r.width || !r.height) return; /* soft points of light need no Retina pixels: a quarter of the work on a 2x screen */ dpr = 1; W = r.width; H = r.height;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0);
     S = []; var n = Math.round(W * H / (hover ? 1100 : 1500));
     for (var i = 0; i < n; i++) { var z = Math.pow(Math.random(), 1.7);
@@ -1520,7 +1520,12 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     for (i = M.length - 1; i >= 0; i--) { var mo = M[i]; mo.l += dt; if (mo.l > mo.m) { M.splice(i, 1); continue; } mo.x += mo.vx * dt; mo.y += mo.vy * dt; g.globalAlpha = (1 - mo.l / mo.m) * .6; g.fillStyle = "rgb(255,236,200)"; g.fillRect(mo.x - .5, mo.y - .5, 1, 1); }
     g.globalAlpha = 1;
   }
-  function frame(now) { raf = 0; var dt = last ? Math.min(.05, (now - last) / 1000) : .016; last = now; T += dt; draw(dt); if (vis && !reduce) raf = requestAnimationFrame(frame); else last = 0; }
+  /* the sky keeps still while the page is being scrolled (it scrolls with the page, so nothing is lost), and drifts
+     at 30 frames a second while no thread is being drawn: the reader's scroll gets the whole frame */
+  var scrolled = 0; addEventListener("scroll", function () { scrolled = performance.now(); }, { passive: true });
+  function frame(now) { raf = 0; var busy = P.on || chain.length || M.length;
+    if (!(now - scrolled < 180 && !P.on) && (busy || now - last >= 32)) { var dt = last ? Math.min(.05, (now - last) / 1000) : .016; last = now; T += dt; draw(dt); }
+    if (vis && !reduce) raf = requestAnimationFrame(frame); else last = 0; }
   function kick() { if (!raf && vis && !reduce) raf = requestAnimationFrame(frame); }
   if (hover) {
     sec.addEventListener("pointermove", function (e) { if (e.pointerType !== "mouse") return; var r = sec.getBoundingClientRect(); P.x = e.clientX - r.left; P.y = e.clientY - r.top; P.on = true; });
@@ -1674,3 +1679,8 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
     show(); if (opts) opts.addEventListener("click", function (e) { if (e.target.closest(".chip")) setTimeout(show, 0); }); addEventListener("silavu:build", show);
   }
 })();
+
+/* the brushed words rest while they are off the screen: an endless animation costs every frame, seen or not */
+(function () { var navs = document.querySelectorAll(".c16nav"); if (!navs.length || !window.IntersectionObserver) return;
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle("c16off", !e.isIntersecting); }); });
+  [].forEach.call(navs, function (n) { n.classList.add("c16off"); io.observe(n); }); })();

@@ -640,7 +640,7 @@ html body header.sh { --hs-line: rgba(214,219,226,.34); --hs-glass: rgba(255,255
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important; align-items: center !important; column-gap: 24px !important;
   padding: max(18px, env(safe-area-inset-top)) clamp(20px, 3.4vw, 64px) 16px !important; transition: opacity 1.2s cubic-bezier(.2,.8,.2,1), background-color .4s ease, box-shadow .4s ease !important; }
 html body header.sh::before { background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.18) 65%, rgba(0,0,0,0)) !important; }
-html body header.sh.scrolled { background: rgba(8,8,9,.58) !important; -webkit-backdrop-filter: blur(18px) saturate(1.15) !important; backdrop-filter: blur(18px) saturate(1.15) !important; box-shadow: 0 1px 0 rgba(214,219,226,.10) !important; }
+html body header.sh.scrolled { /* no blur behind the bar: it was re-drawn every frame over the film, the sky and the 3D (lag, 23 Nov 2026) */ background: rgba(8,8,9,.9) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: 0 1px 0 rgba(214,219,226,.10) !important; }
 html body header.sh #topnav { grid-column: 1; grid-row: 1; justify-self: start; display: flex !important; align-items: center; gap: clamp(22px, 2.2vw, 36px) !important; margin: 0 !important; }
 html body header.sh #topnav a { font-size: .64rem !important; letter-spacing: .26em !important; color: rgba(246,243,237,.86) !important; padding: 8px 0 !important; transition: color .15s ease; }
 html body header.sh #topnav a:hover { color: #fff !important; }
@@ -1140,9 +1140,9 @@ html body #langmenu { background: rgba(10,10,11,.86) !important; }
 
 /* collections, round 5: the glass everywhere but a small spot around the arrow; the warm light that follows the
    pointer over the photograph (as on Up close); and a clearer, richer way to the whole collection */
-html body .c14glare { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; mix-blend-mode: soft-light; transition: opacity .35s ease;
+html body .c14glare { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; visibility: hidden; mix-blend-mode: soft-light; transition: opacity .35s ease, visibility 0s linear .35s;
   background: radial-gradient(circle at var(--gx, 50%) var(--gy, 40%), rgba(255,246,230,.9), rgba(255,246,230,.2) 24%, rgba(255,246,230,0) 52%); }
-html body .c14card:hover .c14glare { opacity: 1; }
+html body .c14card:hover .c14glare { opacity: 1; visibility: visible; transition: opacity .35s ease, visibility 0s; }
 html body .c14card:hover .c14pic img { filter: brightness(1.04) saturate(.92) contrast(1.06) !important; }
 html body .c14card .c14go { transition: background-color .2s ease, border-color .2s ease, transform .25s cubic-bezier(.2,.8,.2,1) !important; }
 html body .c14card .c14go:hover { transform: scale(1.08); background: rgba(243,236,224,.18); }
@@ -3062,3 +3062,4 @@ html body #configure .glfb .glfbref { position: absolute; inset: 0; width: 100%;
 html body #configure .glfb.drawn.ref img.glfbref { display: block; visibility: visible; }
 html body #configure .glfb.ref .glfbcv { display: none !important; }
 html body #configure .glfb .glfbref { -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 62%, transparent 100%); }
+html body .c16nav.c16off .c16w { animation-play-state: paused; }
