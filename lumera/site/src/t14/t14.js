@@ -1684,3 +1684,8 @@ function three14() { return import("./3d/three.module.min.js").catch(function ()
 (function () { var navs = document.querySelectorAll(".c16nav"); if (!navs.length || !window.IntersectionObserver) return;
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle("c16off", !e.isIntersecting); }); });
   [].forEach.call(navs, function (n) { n.classList.add("c16off"); io.observe(n); }); })();
+
+/* the light that sweeps over the opening film rests once the film is scrolled away (it repainted the whole screen
+   every frame, seen or not) */
+(function () { var h = document.getElementById("hero"); if (!h || !window.IntersectionObserver) return;
+  new IntersectionObserver(function (es) { h.classList.toggle("h14off", !es[0].isIntersecting); }).observe(h); })();

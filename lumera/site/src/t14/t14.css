@@ -3063,3 +3063,4 @@ html body #configure .glfb.drawn.ref img.glfbref { display: block; visibility: v
 html body #configure .glfb.ref .glfbcv { display: none !important; }
 html body #configure .glfb .glfbref { -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 62%, transparent 100%); }
 html body .c16nav.c16off .c16w { animation-play-state: paused; }
+html body #hero.h14off .hlight { animation-play-state: paused; visibility: hidden; }
