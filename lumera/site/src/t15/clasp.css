@@ -1,0 +1,18 @@
+/* The clasp (src/t15/clasp.js) */
+.clp { position: relative; }
+.clp .clpw { display: inline-block; white-space: nowrap; }
+.clp .clpc { --k: 0; position: relative; display: inline-block; color: transparent !important; }
+.clp .clpc::before, .clp .clpc::after { content: attr(data-c); position: absolute; inset: 0; font-style: inherit; color: var(--clpink, #f3ece0); transition: transform .8s cubic-bezier(.16,1,.3,1), opacity .5s ease; transition-delay: calc(var(--i) * 34ms); }
+.clp .clpc::before { clip-path: inset(-20% -20% 50% -20%); }
+.clp .clpc::after { clip-path: inset(50% -20% -20% -20%); }
+.clp.clpwait .clpc::before, .clp.clpwait .clpc::after { transition: none; opacity: 0; }
+.clp.clpwait .clpc::before { transform: translateX(calc(var(--clps, 1) * -1.1em)); }
+.clp.clpwait .clpc::after { transform: translateX(calc(var(--clps, 1) * 1.1em)); }
+.clp.clpdone .clpc::before, .clp.clpdone .clpc::after { transition: transform .18s ease-out; transition-delay: 0s; }
+.clp.clpdone .clpc::before { transform: translate(calc(var(--clps, 1) * var(--k) * -2px), calc(var(--k) * -.12em)); }
+.clp.clpdone .clpc::after { transform: translate(calc(var(--clps, 1) * var(--k) * 2px), calc(var(--k) * .12em)); }
+/* the seam inside a letter that has opened */
+.clp.clpdone .clpc { background: linear-gradient(transparent calc(50% - 1px), rgba(243,223,181,calc(var(--k) * 1.1)) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + 1px)) no-repeat; background-size: 100% 100%; }
+.clp .clpseam { position: absolute; height: 1.5px; margin-top: -.75px; background: linear-gradient(90deg, transparent, #fff3d6 20%, #fff 50%, #fff3d6 80%, transparent); box-shadow: 0 0 14px 2px rgba(255,214,150,.7); transform: scaleX(0); opacity: 0; pointer-events: none; font-style: normal; }
+.clp .clpseam.on { animation: clpseam 1.1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes clpseam { 0% { transform: scaleX(0); opacity: 1; } 45% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }

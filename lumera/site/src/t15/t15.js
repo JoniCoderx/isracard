@@ -227,49 +227,62 @@
   var n = 0; (function put() { if (!bar() && ++n < 60) setTimeout(put, 150); })();
 })();
 
-/* "Build your bracelet", written in light (owner, 23 Nov 2026: "an effect as it typing ... little on hover and most
-   when scroll and arrive"). Arriving, once: the letters are set one after another behind a fine gold caret, each
-   coming out of a soft blur, then a light passes over the finished word and the line beneath types itself. Under
-   the pointer: the letters nearest it brighten and lift a hair. Reduced motion: the words as they are. */
+/* "Build your bracelet", gathered from diamond dust (the house chose it, 23 Nov 2026, from three proposals).
+   Arriving, once: points of light drift in from around the heading and settle into its letters, which stay made of
+   that dust with a quiet sparkle; the line beneath comes in as they settle. Under the pointer the dust parts and
+   flows back. The heading's real text stays in the page (transparent while the dust shows it) for search, screen
+   readers and any browser without canvas; reduced motion shows the words as they are. */
 (function () {
-  var h = document.querySelector("#build h2.h2"), p = h && h.parentNode.querySelector("p.p"); if (!h) return;
+  var h = document.querySelector("#build h2.h2"), sub = h && h.parentNode.querySelector("p.p"); if (!h) return;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, fine = matchMedia("(hover: hover) and (pointer: fine)").matches, root = document.documentElement;
-  var played = false, finished = false, busy = false, chars = [], pchars = [], caret = null, timers = [];
-  function joined() { return root.getAttribute("data-lang") === "ar"; }   /* Arabic letters join: it is set word by word */
-  function split(el, cls) { var txt = el.textContent.replace(/\s+/g, " ").trim(); if (!txt) return [];
-    busy = true; el.setAttribute("aria-label", txt); el.textContent = ""; var out = [];
-    txt.split(" ").forEach(function (w, i) { if (i) el.appendChild(document.createTextNode(" "));
-      var ws = document.createElement("span"); ws.className = "x15wd"; ws.setAttribute("aria-hidden", "true");
-      (joined() ? [w] : Array.from(w)).forEach(function (c) { var s = document.createElement("span"); s.className = cls; s.textContent = c; s.style.setProperty("--i", out.length); ws.appendChild(s); out.push(s); });
-      el.appendChild(ws); });
-    busy = false; return out; }
-  function setup() { timers.forEach(clearTimeout); timers = []; chars = split(h, "x15ch"); if (p) pchars = split(p, "x15pc");
-    caret = document.createElement("i"); caret.className = "x15caret"; caret.setAttribute("aria-hidden", "true"); h.appendChild(caret);
-    if (played || reduce) { h.classList.remove("x15wait"); h.classList.add("x15done"); if (p) p.classList.add("x15done"); } else { h.classList.add("x15wait"); if (p) p.classList.add("x15wait"); } }
-  function at(s, after) { var r = s.getBoundingClientRect(), hr = h.getBoundingClientRect(), rtl = getComputedStyle(h).direction === "rtl";
-    var ls = parseFloat(getComputedStyle(s).letterSpacing) || 0; caret.style.transform = "translate(" + Math.round((rtl ? (after ? r.left + (joined() ? 0 : 0) : r.right) : (after ? r.right - ls * .6 : r.left)) - hr.left) + "px," + Math.round(r.top - hr.top) + "px)"; caret.style.height = Math.round(r.height) + "px"; }
-  function play() { if (played) return; played = true; var step = Math.max(28, Math.min(60, 900 / chars.length));
-    h.classList.add("x15typing"); if (chars[0]) at(chars[0], false);
-    chars.forEach(function (s, i) { timers.push(setTimeout(function () { s.classList.add("on"); at(s, true); }, 180 + i * step)); });
-    var end = 180 + chars.length * step;
-    timers.push(setTimeout(function () { h.classList.add("x15sweep"); }, end + 250));
-    timers.push(setTimeout(function () { h.classList.remove("x15typing"); h.classList.add("x15done"); h.classList.remove("x15wait"); }, end + 1500));
-    timers.push(setTimeout(function () { h.classList.remove("x15sweep"); finished = true; }, end + 250 + 700 + chars.length * 28 + 100));
-    if (p) { var ps = 16, p0 = end + 450;
-      timers.push(setTimeout(function () { p.classList.add("x15typing"); }, p0));
-      pchars.forEach(function (s, i) { timers.push(setTimeout(function () { s.classList.add("on"); }, p0 + i * ps)); });
-      timers.push(setTimeout(function () { p.classList.remove("x15typing", "x15wait"); p.classList.add("x15done"); }, p0 + pchars.length * ps + 300)); } }
-  setup();
-  /* the page writes the heading again when the language changes: set it out again, as already played */
-  new MutationObserver(function () { if (busy || h.querySelector(".x15ch")) return; requestAnimationFrame(function () { if (!h.querySelector(".x15ch")) { if (played && !finished) { played = false; h.classList.remove("x15typing", "x15sweep", "x15done"); setup(); play(); } else { setup(); if (played) chars.forEach(function (c) { c.classList.add("on"); }); } } }); }).observe(h, { childList: true });
-  if (p) new MutationObserver(function () { if (busy || p.querySelector(".x15pc")) return; requestAnimationFrame(function () { if (!p.querySelector(".x15pc")) { busy = true; pchars = split(p, "x15pc"); busy = false; if (played && !p.classList.contains("x15typing")) { p.classList.remove("x15wait"); p.classList.add("x15done"); pchars.forEach(function (s) { s.classList.add("on"); }); } else if (!played) p.classList.add("x15wait"); } }); }).observe(p, { childList: true, characterData: true, subtree: true });
-  if (!reduce && window.IntersectionObserver) new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { io.disconnect(); play(); } }, { threshold: .9, rootMargin: "0px 0px -18% 0px" }).observe(h);
-  else { played = true; finished = true; }
-  /* the light under the pointer */
-  if (fine && !reduce) {
-    var raf = 0, mx = 0, my = 0;
-    function glow() { raf = 0; chars.forEach(function (s) { var r = s.getBoundingClientRect(), d = Math.hypot(r.left + r.width / 2 - mx, (r.top + r.height / 2 - my) * 1.6), k = Math.max(0, 1 - d / 190); s.style.setProperty("--k", k.toFixed(2)); }); }
-    h.addEventListener("pointermove", function (e) { mx = e.clientX; my = e.clientY; if (!raf) raf = requestAnimationFrame(glow); });
-    h.addEventListener("pointerleave", function () { chars.forEach(function (s) { s.style.setProperty("--k", "0"); }); });
-  }
+  if (reduce || !document.createElement("canvas").getContext) return;
+  var cv = document.createElement("canvas"), g = cv.getContext("2d"); cv.className = "x15dust"; cv.setAttribute("aria-hidden", "true");
+  var chars = [], P = [], PS = 1.6, W = 0, H = 0, raf = 0, t0 = 0, last = 0, vis = false, played = false, settled = false, busy = false, M = { x: -999, y: -999, on: false }, scrolled = 0;
+  var GL = document.createElement("canvas"); GL.width = GL.height = 24; (function () { var s = GL.getContext("2d"), r = s.createRadialGradient(12, 12, 0, 12, 12, 12); r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(.25, "rgba(255,248,235,.5)"); r.addColorStop(1, "rgba(255,248,235,0)"); s.fillStyle = r; s.fillRect(0, 0, 24, 24); s.fillStyle = "rgba(255,255,255,.8)"; s.fillRect(11.4, 0, 1.2, 24); s.fillRect(0, 11.4, 24, 1.2); })();
+  var TINT = ["243,236,224", "255,255,255", "236,242,255", "255,240,214"];
+  function joined() { return root.getAttribute("data-lang") === "ar"; }   /* Arabic letters join: its dust is laid word by word */
+  function split() { var txt = h.textContent.replace(/\s+/g, " ").trim(); if (!txt) return;
+    busy = true; h.setAttribute("aria-label", txt); h.textContent = ""; chars = [];
+    txt.split(" ").forEach(function (w, i) { if (i) h.appendChild(document.createTextNode(" ")); var ws = document.createElement("span"); ws.className = "x15wd"; ws.setAttribute("aria-hidden", "true"); if (/[A-Za-z0-9]/.test(w) && !/[\u0590-\u06FF]/.test(w)) ws.setAttribute("dir", "ltr");
+      (joined() ? [w] : Array.from(w)).forEach(function (c) { var s = document.createElement("span"); s.className = "x15ch"; s.textContent = c; ws.appendChild(s); chars.push(s); }); h.appendChild(ws); });
+    h.appendChild(cv); busy = false; }
+  /* each letter drawn where the page set it, in the page's own type, then sampled into points */
+  function targets() { var r = cv.getBoundingClientRect(); if (!r.width) return []; var d = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height; cv.width = Math.round(W * d); cv.height = Math.round(H * d); g.setTransform(d, 0, 0, d, 0, 0);
+    var o = document.createElement("canvas"); o.width = Math.ceil(W); o.height = Math.ceil(H); var q = o.getContext("2d"), cs = getComputedStyle(h), fs = parseFloat(cs.fontSize), up = cs.textTransform === "uppercase";
+    q.fillStyle = q.strokeStyle = "#fff"; q.lineWidth = Math.max(.6, fs / 44); var thin = fs < 34; q.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily; q.textBaseline = "alphabetic"; q.direction = getComputedStyle(h).direction;
+    chars.forEach(function (s) { var ch = up ? s.textContent.toUpperCase() : s.textContent, b = s.getBoundingClientRect(), m = q.measureText(ch), asc = m.fontBoundingBoxAscent || fs * .9, desc = m.fontBoundingBoxDescent || fs * .25, base = b.top - r.top + (b.height - (asc + desc)) / 2 + asc;
+      /* each letter is its own run: drawn from its own left edge, whatever the line's direction */
+      q.direction = "ltr"; q.textAlign = "left"; var x = b.left - r.left; q.fillText(ch, x, base); if (!thin) q.strokeText(ch, x, base); });
+    var px = q.getImageData(0, 0, o.width, o.height).data, step = thin ? 1.1 : 1.6, jit = thin ? .5 : .8, out = [];
+    for (var y = 0; y < o.height; y += step) for (var x = 0; x < o.width; x += step) { if (px[((y | 0) * o.width + (x | 0)) * 4 + 3] > 110) out.push([x + (Math.random() - .5) * jit, y + (Math.random() - .5) * jit]); }
+    PS = thin ? 1.2 : 1.6; return out; }
+  function make(fromAfar) { var tg = targets(); if (!tg.length) return false; var rtl = getComputedStyle(h).direction === "rtl", minx = 1e9, maxx = -1e9; tg.forEach(function (q) { minx = Math.min(minx, q[0]); maxx = Math.max(maxx, q[0]); });
+    P = tg.map(function (q) { var a = Math.random() * 6.283, rr = 90 + Math.random() * Math.max(W, 300) * .55, along = (q[0] - minx) / Math.max(1, maxx - minx);
+      return { tx: q[0], ty: q[1], sx: fromAfar ? Math.max(8, Math.min(W - 8, q[0] + Math.cos(a) * rr)) : q[0], sy: fromAfar ? Math.max(8, Math.min(H - 8, q[1] + Math.sin(a) * rr * .5)) : q[1], d: fromAfar ? (rtl ? 1 - along : along) * 700 + Math.random() * 350 : 0, ox: 0, oy: 0, ph: Math.random() * 6.283, sp: 1 + Math.random() * 3, c: TINT[(Math.random() * 4) | 0], big: Math.random() < .025 }; });
+    h.classList.add("x15on"); return true; }
+  function kick() { if (!raf && vis) raf = requestAnimationFrame(frame); }
+  function frame(now) { raf = 0; if (!vis) return;
+    /* settled and untouched: a quiet sparkle at 30 frames a second, and still while the page scrolls */
+    if (settled && !M.on && (now - last < 32 || now - scrolled < 160)) { kick(); return; } last = now;
+    var t = now - t0, done = true; g.clearRect(0, 0, W, H);
+    for (var i = 0; i < P.length; i++) { var p = P[i], k = Math.min(1, Math.max(0, (t - p.d) / 1100)); if (k < 1) done = false; var e = 1 - Math.pow(1 - k, 3), x = p.sx + (p.tx - p.sx) * e, y = p.sy + (p.ty - p.sy) * e;
+      if (k >= 1) { var dx = p.tx - M.x, dy = p.ty - M.y, dd = Math.sqrt(dx * dx + dy * dy), wx = 0, wy = 0; if (dd < 56 && dd > .1) { var f = 1 - dd / 56; f *= f; wx = dx / dd * f * 22; wy = dy / dd * f * 22; } p.ox += (wx - p.ox) * .18; p.oy += (wy - p.oy) * .18; x += p.ox; y += p.oy; }
+      var tw = .62 + .38 * Math.sin(now / 1000 * p.sp + p.ph), near = M.on ? Math.max(0, 1 - Math.hypot(x - M.x, y - M.y) / 90) : 0, al = (k < 1 ? .25 + .75 * e : tw) + near * .4;
+      g.fillStyle = "rgba(" + p.c + "," + Math.min(1, al).toFixed(3) + ")"; g.fillRect(x - PS / 2, y - PS / 2, PS, PS);
+      if (p.big && k >= .9) { var gl = Math.max(0, Math.sin(now / 700 + p.ph) - .7) * 3 + near; if (gl > .05) { var z = 7 + 8 * gl; g.globalAlpha = Math.min(1, .3 + gl); g.drawImage(GL, x - z / 2, y - z / 2, z, z); g.globalAlpha = 1; } } }
+    if (done && !settled) { settled = true; if (sub) sub.classList.add("x15subon"); }
+    if (!done && t > 1300 && sub) sub.classList.add("x15subon");
+    kick(); }
+  function arrive() { if (played) return; played = true; if (!make(true)) { played = false; return; } t0 = performance.now(); settled = false; if (sub) sub.classList.remove("x15subon"); kick(); }
+  function rest() { if (make(false)) { t0 = performance.now() - 5000; settled = true; if (sub) sub.classList.add("x15subon"); kick(); } }
+  split(); if (sub) sub.classList.add("x15subwait");
+  addEventListener("scroll", function () { scrolled = performance.now(); }, { passive: true });
+  /* the page writes the heading again (its own reveal, a change of language): lay the dust out again where it now is */
+  new MutationObserver(function () { if (busy || h.querySelector(".x15ch")) return; requestAnimationFrame(function () { if (h.querySelector(".x15ch")) return; split(); if (played && settled) rest(); else if (played) { played = false; arrive(); } }); }).observe(h, { childList: true });
+  var rz = 0; addEventListener("resize", function () { clearTimeout(rz); rz = setTimeout(function () { if (played) rest(); }, 200); });
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
+    new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis) kick(); }, { rootMargin: "120px 0px" }).observe(h);
+    new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { io.disconnect(); vis = true; arrive(); } }, { threshold: .9, rootMargin: "0px 0px -18% 0px" }).observe(h); });
+  if (fine) { h.addEventListener("pointermove", function (e) { var r = cv.getBoundingClientRect(); M.x = e.clientX - r.left; M.y = e.clientY - r.top; M.on = true; kick(); });
+    h.addEventListener("pointerleave", function () { M.on = false; M.x = M.y = -999; }); }
 })();

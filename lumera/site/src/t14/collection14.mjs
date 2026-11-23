@@ -61,8 +61,9 @@ export function collection14Page({ PIECES, markDefs, markUse, root, base }) {
     { "@type": "BreadcrumbList", "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "SILAVU", "item": base + "/" },
       { "@type": "ListItem", "position": 2, "name": "The collection", "item": url } ] } ] };
-  const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "header14.css"), "utf8");
-  const js = fs.readFileSync(path.join(root, "src", "t14", "collection14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "lang14.js"), "utf8");
+  /* the title closes like a clasp as it comes into view (the house, 23 Nov 2026; src/t15/clasp.js) */
+  const css = fs.readFileSync(path.join(root, "src", "t14", "collection14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "header14.css"), "utf8") + fs.readFileSync(path.join(root, "src", "t15", "clasp.css"), "utf8");
+  const js = fs.readFileSync(path.join(root, "src", "t14", "collection14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t14", "lang14.js"), "utf8") + fs.readFileSync(path.join(root, "src", "t15", "clasp.js"), "utf8") + '\nwindow.__clasp(document.getElementById("ch"));\n';
   const og = base + "/img/" + worn(sig[0]).img + "-1254.jpg";
 
   return `<!doctype html>

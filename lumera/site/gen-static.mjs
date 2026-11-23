@@ -786,7 +786,8 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
 /* /test15/: test14 with three more things the builder can do (the house, 23 Nov 2026): the stones in a moving light,
    a hint sent on WhatsApp, and the stones at their true size (src/t15) */
 { const dir15 = path.join(path.dirname(path.resolve(src)), "src", "t15");
-  const T15 = { css: fs.readFileSync(path.join(dir15, "t15.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(dir15, "t15.js"), "utf8") + "</script>" };
+  const T15 = { css: fs.readFileSync(path.join(dir15, "t15.css"), "utf8") + fs.readFileSync(path.join(dir15, "clasp.css"), "utf8"),
+    js: "<script>" + fs.readFileSync(path.join(dir15, "t15.js"), "utf8") + fs.readFileSync(path.join(dir15, "clasp.js"), "utf8") + '\nwindow.__clasp(document.querySelector("#enquire h2.h2"));' + "</script>" };
   heroTest("test15", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
