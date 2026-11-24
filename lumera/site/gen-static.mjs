@@ -511,6 +511,8 @@ const HERO_ALT = {
   "hero-desire": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
                  he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" },
   "hero-desire4k": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
+                 he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" },
+  "hero-desire-hd": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
                  he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" }
 };
 /* a test page's chapters (extras: css, js, inject, swap, edit) applied to a
@@ -793,7 +795,10 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
   /* the opening film in 4K (the house, 24 Nov 2026): the same film, its shots re-rendered in 4K, with the house's own
      footage kept wherever the jewellery is seen up close; the 4K cut only for a large screen on a fast line */
   /* (24 Nov 2026) the house did not accept the 4K cut: test15 is back on the original film; the files stay for reference */
-  heroTest("test15", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
+  /* (24 Nov 2026) the house's own original film, every frame enlarged 2x (Real-ESRGAN, no redraw): 1920 by default,
+     2560 for a large screen on a fast line, 720 on a phone */
+  T15.attrs = ' data-src-4k="v/hero-desire-hd-4k.mp4"';
+  heroTest("test15", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
