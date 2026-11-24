@@ -509,6 +509,8 @@ const HERO_ALT = {
   "hero-dunes": { en: "A woman in a long black silk gown on the crest of a desert dune at sunset, the silk lifted by the wind, the SILAVU SOUL pendant at her throat",
                   he: "אישה בשמלת משי שחורה ארוכה על רכס דיונה במדבר בשקיעה, הרוח מרימה את המשי, תליון SILAVU SOUL על צווארה" },
   "hero-desire": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
+                 he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" },
+  "hero-desire4k": { en: "A woman in a black gown and a long silk cape walks a desert dune at sunset, raises her wrist to the sun, and a line of round diamonds catches the light",
                  he: "אישה בשמלה שחורה ובגלימת משי ארוכה הולכת על דיונה במדבר בשקיעה, מרימה את פרק ידה אל השמש, ושורה של יהלומים עגולים תופסת את האור" }
 };
 /* a test page's chapters (extras: css, js, inject, swap, edit) applied to a
@@ -788,7 +790,10 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
 { const dir15 = path.join(path.dirname(path.resolve(src)), "src", "t15");
   const T15 = { css: fs.readFileSync(path.join(dir15, "t15.css"), "utf8") + fs.readFileSync(path.join(dir15, "clasp.css"), "utf8"),
     js: "<script>" + fs.readFileSync(path.join(dir15, "t15.js"), "utf8") + fs.readFileSync(path.join(dir15, "clasp.js"), "utf8") + '\nwindow.__clasp(document.querySelector("#enquire h2.h2"));' + "</script>" };
-  heroTest("test15", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
+  /* the opening film in 4K (the house, 24 Nov 2026): the same film, its shots re-rendered in 4K, with the house's own
+     footage kept wherever the jewellery is seen up close; the 4K cut only for a large screen on a fast line */
+  T15.attrs = ' data-src-4k="v/hero-desire4k-4k.mp4"';
+  heroTest("test15", "hero-desire4k", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
