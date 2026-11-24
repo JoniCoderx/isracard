@@ -792,8 +792,8 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
     js: "<script>" + fs.readFileSync(path.join(dir15, "t15.js"), "utf8") + fs.readFileSync(path.join(dir15, "clasp.js"), "utf8") + '\nwindow.__clasp(document.querySelector("#enquire h2.h2"));' + "</script>" };
   /* the opening film in 4K (the house, 24 Nov 2026): the same film, its shots re-rendered in 4K, with the house's own
      footage kept wherever the jewellery is seen up close; the 4K cut only for a large screen on a fast line */
-  T15.attrs = ' data-src-4k="v/hero-desire4k-4k.mp4"';
-  heroTest("test15", "hero-desire4k", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
+  /* (24 Nov 2026) the house did not accept the 4K cut: test15 is back on the original film; the files stay for reference */
+  heroTest("test15", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
