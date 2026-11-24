@@ -136,6 +136,7 @@ export async function mount(sec) {
       ofilm = document.createElement("video"); ofilm.className = "ar15ofilm"; ofilm.muted = true; ofilm.playsInline = true; ofilm.setAttribute("playsinline", ""); ofilm.setAttribute("muted", "");
       ofilm.setAttribute("aria-hidden", "true"); ofilm.preload = "none"; stage.insertBefore(ofilm, cv.nextSibling);
       ofilm.addEventListener("ended", finishOpen);
+      stage.addEventListener("pointerup", () => { if (auto() && !opened) finishOpen(); });   // a touch on the closed drawer opens it
       new IntersectionObserver(es => { if (es[0].isIntersecting && ofilm.preload === "none" && !playing) { ofilm.preload = "auto"; ofilm.load(); } }, { rootMargin: "150% 0px" }).observe(stage);
       new IntersectionObserver(es => { if (es[0].isIntersecting && auto() && !opened && !playing) playOpen(); }, { threshold: .55 }).observe(stage);
     }
@@ -150,7 +151,7 @@ export async function mount(sec) {
     let again = false; const fail = e => { if (e && e.name === "AbortError" && !again) { again = true; ofilm.addEventListener("canplay", () => { const q = ofilm.play(); if (q && q.catch) q.catch(fail); }, { once: true }); return; } clearTimeout(safety); finishOpen(); };
     try { ofilm.preload = "auto"; const p = ofilm.play(); if (p && p.catch) p.catch(fail); } catch (e) { fail(e); }
   }
-  function finishOpen() { if (opened) return; opened = true; playing = false; try { ofilm && ofilm.pause(); } catch (e) {} t = 1; dirty = true; draw(); }   // the film's last frame is the open drawer: the still takes over at once (a short crossfade in CSS)
+  function finishOpen() { if (opened) return; opened = true; playing = false; try { ofilm && ofilm.pause(); } catch (e) {} t = 1; dirty = true; draw(); if (ofilm) { ofilm.classList.add("ar15ofout"); setTimeout(() => { if (opened) ofilm.hidden = true; }, 400); } }   // the film's last frame is the open drawer: the still takes over at once (a short crossfade in CSS)
   /* once open, a soft light breathes once over each piece where a finger can take it */
   function invite() {
     if (sec.__invited) return; sec.__invited = true;

@@ -2535,13 +2535,13 @@ html[data-ns] .sg16knock span { text-transform: none; }
 html body #craft14.sg16 .sg16h { color: #f4efe5 !important; -webkit-text-fill-color: #f4efe5 !important; background: none !important; -webkit-text-stroke: 0 !important;
   filter: none !important; text-shadow: 0 10px 40px rgba(0,0,0,.45); opacity: var(--sgo, 1); }
 html body #craft14.sg16 .sg16pic { opacity: 1 !important; }
-html body #craft14.sg16 .sg16reel { position: relative; margin: 0; height: clamp(420px, 52vw, 860px); overflow: hidden; background: #000; }
+html body #craft14.sg16 .sg16reel { position: relative; margin: 0; height: clamp(300px, 34vw, 560px); overflow: hidden; background: #000; }
 html body #craft14.sg16 .sg16reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; display: block; }
 html body #craft14.sg16 .sg16reel::before { content: ""; position: absolute; z-index: 1; left: 0; right: 0; top: 0; height: 18%; background: linear-gradient(#000, rgba(0,0,0,0)); pointer-events: none; }
 html body #craft14.sg16 .sg16reel figcaption { position: absolute; z-index: 2; left: clamp(20px, 4vw, 64px); bottom: clamp(18px, 3vw, 44px); font-size: .66rem; letter-spacing: .42em; text-transform: uppercase; color: rgba(255,255,255,.86); text-shadow: 0 1px 12px rgba(0,0,0,.35); }
 html[data-ns] body #craft14.sg16 .sg16reel figcaption { letter-spacing: 0; }
 html[dir="rtl"] body #craft14.sg16 .sg16reel figcaption { left: auto; right: clamp(20px, 4vw, 64px); }
-@media (max-width: 699px) { html body #craft14.sg16 .sg16reel { height: auto; aspect-ratio: 4 / 5; } }
+@media (max-width: 699px) { html body #craft14.sg16 .sg16reel { height: auto; aspect-ratio: 1 / 1; } }   /* (owner, 24 Nov 2026: the film read too large) */
 
 /* the hero title (owner, 10 Nov 2026: the gold wash read as a filter): back to the single light that crosses the words as
    they arrive, nothing repeating, no tint */
@@ -2911,6 +2911,8 @@ html body #details.ar15auto .ar15pin { position: relative; height: 100svh; }
 html body #details.ar15auto .ar15cue { display: none; }
 .ar15ofilm { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 1; background: transparent; pointer-events: none; }
 .ar15ofilm[hidden] { display: none; }
+/* once the drawer is open the still (drawn underneath) takes over: the film, or its poster where a phone refused to play it, fades away */
+.ar15ofilm.ar15ofout { opacity: 0; transition: opacity .3s ease-out; }
 html body #details.ar15auto .ar15still { z-index: 2; }
 html body #details.ar15auto .ar15hd { position: absolute; left: 0; right: 0; top: calc(var(--ar15top, 72px) + 4vh); z-index: 6; pointer-events: none;
   transition: opacity .9s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); }
