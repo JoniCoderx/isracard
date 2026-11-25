@@ -802,3 +802,5 @@ html body #collection > .chap, html body #collection .sechead > .k, html body #d
 html body .h13fade { display: block; height: 46svh; margin-top: -1px; pointer-events: none;
   background: linear-gradient(to bottom, #000 0%, #0a0908 10%, #1d1b18 22%, #3a3631 34%, #625e57 46%, #8f8a82 58%, #bbb6ad 70%, #ddd9d2 82%, #f3f1ed 92%, #fff 100%); }
 @media (max-width: 760px) { html body .h13fade { height: 34svh; } }
+/* a stone asked for while another is still coming up close: it waits its turn, marked */
+#opts .chip.x13want { border-color: rgba(246,241,230,.55) !important; }

@@ -341,6 +341,9 @@
     /* order of the moment: the chosen stone comes up close over the stage first; under it the bracelet is rebuilt
        with the new cut (the engine's click is held until the close-up covers the stage); then the close-up
        shrinks back into the bracelet and the new stones are set one by one */
+    /* /test13/ keeps its own handling as it was (the house: test13 is not to be touched); /test14/ and after take the
+       one-stone-at-a-time version below */
+    if (!window.__frame14) {
     var passing = false;
     opts.addEventListener("click", function (e) {
       var ch = e.target.closest && e.target.closest('.chip[data-k="cut"]'); if (!ch || passing) return;
@@ -357,6 +360,34 @@
           czt = setTimeout(function () { cz.classList.remove("on", "out"); }, 520); }, 900); });
       }, 380);
     }, true);
+    } else {
+    var passing = false, busy = false, pending = null, gen = 0;
+    /* (owner, 25 Nov 2026: "it chooses twice and then gets stuck") one stone at a time: while a stone is coming up
+       close, further taps on the cuts do not start a second sequence (whose timers used to cancel the first one's and
+       leave the close-up stuck over the stage); the last one asked for is remembered and simply applied at the end */
+    function settle(my) { if (my !== gen) return; cz.classList.remove("on", "out"); busy = false;
+      var nx = pending; pending = null; if (nx && !nx.classList.contains("on")) { passing = true; nx.click(); passing = false; show(cur()); } }
+    opts.addEventListener("click", function (e) {
+      var ch = e.target.closest && e.target.closest('.chip[data-k="cut"]'); if (!ch || passing) return;
+      if (busy) { e.stopImmediatePropagation(); e.preventDefault(); pending = ch; opts.querySelectorAll('.chip[data-k="cut"]').forEach(function (x) { x.classList.toggle("x13want", x === ch); }); return; }
+      var v = ch.getAttribute("data-v"); show(v);
+      if (reduce || !D[v] || !e.isTrusted || ch.classList.contains("on")) return;
+      e.stopImmediatePropagation(); e.preventDefault();
+      busy = true; var my = ++gen;
+      opts.querySelectorAll('.chip[data-k="cut"]').forEach(function (x) { x.classList.toggle("on", x === ch); x.classList.remove("x13want"); });
+      var im = cz.querySelector("img"); im.src = src(v, 600); cz.querySelector("b").textContent = he() ? D[v][2] : D[v][0];
+      clearTimeout(czt); cz.classList.remove("out"); cz.classList.add("on");
+      czt = setTimeout(function () {
+        if (my !== gen) return;
+        passing = true; ch.classList.remove("on"); ch.click(); passing = false;
+        /* the rebuild has run; hold the stone a moment on the first frame after it, then hand over to the bracelet */
+        requestAnimationFrame(function () { if (my !== gen) return; czt = setTimeout(function () { if (my !== gen) return; cz.classList.add("out"); dispatchEvent(new Event("silavu:reassemble"));
+          czt = setTimeout(function () { settle(my); }, 520); }, 900); });
+      }, 380);
+      /* whatever happens to the timers (a hidden tab, a slow phone), the stage is never left covered */
+      setTimeout(function () { if (my === gen && busy) { passing = true; if (!window.__build || window.__build.cut !== v) { ch.classList.remove("on"); ch.click(); } passing = false; settle(my); } }, 3500);
+    }, true);
+    }
     if (window.MutationObserver) new MutationObserver(function () { show(cur()); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(init, 50); }); else setTimeout(init, 50);
