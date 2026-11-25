@@ -74,19 +74,19 @@ html[dir="rtl"] .gk::after { background: linear-gradient(270deg, rgba(239,229,21
 .lvi img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .lvi i { position: absolute; display: block; pointer-events: none; }
 /* the dark of the vitrine: the piece only just seen */
-.dim { inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(var(--veil),.9), rgba(var(--veil),.95)); transition: opacity .42s ease; }
+.dim { inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(10,16,40,.46), rgba(8,12,30,.56)); transition: opacity .42s ease; }
 /* the light: a round opening in the night, carried by the pointer (moved with transform only) */
 .veil { z-index: 3; left: -100%; top: -100%; width: 300%; height: 300%; opacity: 0; transition: opacity .42s ease;
-  background: radial-gradient(circle at 50% 50%, rgba(var(--veil),0) 0, rgba(var(--veil),0) 13%, rgba(var(--veil),.3) 21%, rgba(var(--veil),.7) 31%, rgba(var(--veil),.88) 42%); }
-.small .veil { background: radial-gradient(circle at 50% 50%, rgba(var(--veil),0) 0, rgba(var(--veil),0) 15%, rgba(var(--veil),.3) 23%, rgba(var(--veil),.7) 33%, rgba(var(--veil),.88) 44%); }
+  background: radial-gradient(circle at 50% 50%, rgba(var(--veil),0) 0, rgba(var(--veil),0) 16%, rgba(var(--veil),.08) 24%, rgba(var(--veil),.2) 33%, rgba(var(--veil),.3) 44%); }
+.small .veil { background: radial-gradient(circle at 50% 50%, rgba(var(--veil),0) 0, rgba(var(--veil),0) 18%, rgba(var(--veil),.08) 26%, rgba(var(--veil),.2) 35%, rgba(var(--veil),.3) 46%); }
 /* the stones catching it: a highlight that travels over the photograph as the light moves (overlay: white stays white,
    the metal and the stones brighten where it passes; nothing is redrawn) */
 .glint { z-index: 1; top: -40%; left: 0; width: 56%; height: 180%; opacity: 0; visibility: hidden; mix-blend-mode: overlay; transition: opacity .42s ease, visibility 0s .42s;
-  background: linear-gradient(100deg, rgba(255,255,255,0) 22%, rgba(255,255,255,.18) 38%, rgba(255,255,255,.62) 50%, rgba(255,255,255,.18) 62%, rgba(255,255,255,0) 78%); transform: translateX(-120%); }
+  background: linear-gradient(100deg, rgba(255,250,240,0) 34%, rgba(255,250,240,.12) 44%, rgba(255,250,240,.42) 50%, rgba(255,250,240,.12) 56%, rgba(255,250,240,0) 66%); transform: translateX(-120%); }
 .lv.lit .dim { opacity: 0; }
 .lv.lit .veil { opacity: 1; }
 .lv.lit .glint { opacity: 1; visibility: visible; transition: opacity .42s ease, visibility 0s; }
-.lv.lit .lvi { box-shadow: 0 0 0 1px rgba(239,229,210,.16), 0 50px 110px -40px rgba(120,140,210,.35); }
+.lv.lit .lvi { box-shadow: 0 0 0 1px rgba(239,229,210,.16), 0 50px 110px -40px rgba(230,200,150,.22); }
 /* the magnetic "View" */
 .vw { position: absolute; z-index: 4; right: clamp(14px, 1.6vw, 24px); bottom: clamp(14px, 1.6vw, 24px); display: grid; place-items: center; width: 96px; height: 96px; border-radius: 50%;
   background: rgba(6,9,18,.62); border: 1px solid rgba(239,229,210,.42); color: var(--ink); opacity: 0;
