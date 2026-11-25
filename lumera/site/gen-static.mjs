@@ -816,6 +816,16 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
   const pages = piece14Pages({ PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), base });
   if (pages) { for (const pg of pages) { fs.mkdirSync(path.join(outDir, "pieces14", pg.id), { recursive: true }); fs.writeFileSync(path.join(outDir, "pieces14", pg.id, "index.html"), pg.html); } console.log("test pages written: pieces14 (" + pages.length + ")"); }
   else console.warn("pieces14 skipped: its fonts are missing"); }
+/* /collection16a|b|c/ and /pieces16/<id>/ (the house, 25 Nov 2026): three proposals for a far more striking collection page,
+   for the house to choose from, and a more seductive page for each piece (src/t16). A proposal not yet written is skipped */
+for (const v of ["a", "b", "c"]) { const f = path.join(path.dirname(path.resolve(src)), "src", "t16", "collection16" + v + ".mjs"); if (!fs.existsSync(f)) continue;
+  const { markDefs } = await import("./src/body.mjs"); const { page: mk } = await import("./src/t16/collection16" + v + ".mjs");
+  const page = mk({ PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), base });
+  if (page) { fs.mkdirSync(path.join(outDir, "collection16" + v), { recursive: true }); fs.writeFileSync(path.join(outDir, "collection16" + v, "index.html"), page); console.log("test page written: collection16" + v); } }
+{ const f = path.join(path.dirname(path.resolve(src)), "src", "t16", "piece16.mjs");
+  if (fs.existsSync(f)) { const { markDefs } = await import("./src/body.mjs"); const { pages: mk } = await import("./src/t16/piece16.mjs");
+    const pages = mk({ PIECES, markDefs, markUse, root: path.dirname(path.resolve(src)), base });
+    if (pages) { for (const pg of pages) { fs.mkdirSync(path.join(outDir, "pieces16", pg.id), { recursive: true }); fs.writeFileSync(path.join(outDir, "pieces16", pg.id, "index.html"), pg.html); } console.log("test pages written: pieces16 (" + pages.length + ")"); } } }
 /* /about14/: the same page in /test14/'s black, made the best it can be (the house's note of 4 Nov 2026) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
