@@ -1,0 +1,192 @@
+/* /collection16a/: the collection as a film, at night. Black, full-bleed, few words. */
+:root { --ink: #f4efe5; --ink2: rgba(244,239,229,.68); --ink3: rgba(244,239,229,.44); --gold: #efe5d2; --line: rgba(244,239,229,.14);
+  --pad: clamp(16px, 4.4vw, 84px); --ease: cubic-bezier(.2,.8,.2,1); --wipe: cubic-bezier(.77,0,.175,1); }
+* { box-sizing: border-box; }
+html { background: #000; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: #000; color: var(--ink); font-family: Jost, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+img, video { display: block; max-width: 100%; }
+a { color: inherit; }
+em { font-style: normal; color: var(--gold); }
+.sy { fill: currentColor; }
+a:focus-visible, button:focus-visible, .strip16:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
+body > svg:first-of-type { position: absolute; width: 0; height: 0; overflow: hidden; }
+.hid { display: none !important; }
+/* the bar is the house's (header14.css); here it lies lighter over the film */
+header.bar.hx14 { background: linear-gradient(180deg, rgba(0,0,0,.86) 0, rgba(0,0,0,.6) 62%, rgba(0,0,0,0) 100%); border-bottom: 0; }
+
+/* ── the title: one vast word, the film inside its letters ── */
+.h16 { position: relative; height: 240svh; }
+.h16f { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; background: #000; }
+.h16v { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* a black sheet multiplied over the film: where the letters are white the film shows, elsewhere it is night */
+.h16w { position: absolute; inset: -2px; background: #000; mix-blend-mode: multiply; }
+.h16w, .h16o { display: grid; place-items: center; padding-bottom: 12svh; pointer-events: none; }
+.h16o { position: absolute; inset: 0; z-index: 1; }
+.h16word { display: block; font-family: Jost, 'Silavu Hebrew', system-ui, sans-serif; font-weight: 600; font-size: 15.2vw; line-height: .78; letter-spacing: -.015em; text-transform: uppercase; white-space: nowrap; will-change: transform; }
+.h16w .h16word { color: #fff; }
+/* a faint ivory veil over the letters, so the word reads even where the film is dark (a stroke would show the
+   variable font's overlapping contours) */
+.h16o .h16word { color: rgba(244,239,229,.1); }
+html[data-ns] .h16word { letter-spacing: 0; line-height: .9; }
+.h16t { position: absolute; z-index: 2; inset-inline: var(--pad); bottom: max(28px, calc(env(safe-area-inset-bottom) + 18px)); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 18px 40px; }
+.crumbs { grid-column: 1 / -1; display: flex; gap: 10px; font-size: .58rem; letter-spacing: .26em; text-transform: uppercase; color: var(--ink3); }
+.crumbs a { text-decoration: none; }
+.h16t h1 { margin: 0; font-weight: 400; font-size: clamp(.9rem, 1.15vw, 1.2rem); letter-spacing: .36em; text-transform: uppercase; line-height: 1.5; }
+.h16l { grid-column: 1; margin: -6px 0 0; max-width: 46ch; font-size: .92rem; line-height: 1.75; font-weight: 300; color: var(--ink2); }
+.flt { grid-column: 2; grid-row: 2 / span 2; align-self: end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 22px; }
+.fb { position: relative; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink3); font: inherit; font-size: .6rem; letter-spacing: .3em; text-transform: uppercase; cursor: pointer; transition: color .15s ease; }
+.fb::after { content: ""; position: absolute; left: 0; right: .3em; bottom: 12px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; }
+.fb:hover { color: var(--ink); }
+.fb.on { color: var(--ink); }
+.fb.on::after { transform: scaleX(1); }
+.h16cue { position: absolute; z-index: 2; left: 50%; bottom: 0; margin: 0; display: grid; justify-items: center; gap: 14px; padding-left: .5em; font-size: .56rem; letter-spacing: .5em; text-transform: uppercase; color: var(--ink3); transform: translateX(-50%); }
+.h16cue::after { content: ""; width: 1px; height: 44px; background: linear-gradient(var(--ink3), transparent); }
+html[data-ns] .h16cue { padding-left: 0; }
+
+/* ── intertitles ── */
+.it16 { display: grid; justify-items: center; align-content: center; gap: 26px; min-height: 64svh; padding: 80px var(--pad); text-align: center; }
+.itmk { height: 46px; width: auto; color: var(--gold); }
+.it16 h2, .sp16h h2 { margin: 0; font-weight: 400; font-size: .72rem; letter-spacing: .6em; text-transform: uppercase; color: var(--gold); }
+
+/* ── a chapter: the worn photograph opens out of a slit of light, the name enormous across it ── */
+.c16 { position: relative; height: 172svh; }
+.c16 + .c16 { margin-top: -10svh; }
+.c16f { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.c16pic { position: absolute; inset-block: 0; inset-inline-end: 0; width: 64%; overflow: hidden; background: #070707; }
+.rev .c16pic { inset-inline-end: auto; inset-inline-start: 0; }
+.c16pic img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.22); }
+/* night falls on the photograph: its inner edge into black, the corners down, the whites lowered */
+.c16pic::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 18%, rgba(0,0,0,0) 46%), radial-gradient(120% 90% at 60% 45%, rgba(0,0,0,0) 40%, rgba(0,0,0,.5) 100%), linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0) 34%), rgba(10,8,6,.14); }
+.rev .c16pic::after { background: linear-gradient(270deg, #000 0, rgba(0,0,0,.55) 18%, rgba(0,0,0,0) 46%), radial-gradient(120% 90% at 40% 45%, rgba(0,0,0,0) 40%, rgba(0,0,0,.5) 100%), linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0) 34%), rgba(10,8,6,.14); }
+html[dir="rtl"] .c16pic::after { background: linear-gradient(270deg, #000 0, rgba(0,0,0,.55) 18%, rgba(0,0,0,0) 46%), radial-gradient(120% 90% at 40% 45%, rgba(0,0,0,0) 40%, rgba(0,0,0,.5) 100%), linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0) 34%), rgba(10,8,6,.14); }
+html[dir="rtl"] .rev .c16pic::after { background: linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 18%, rgba(0,0,0,0) 46%), radial-gradient(120% 90% at 60% 45%, rgba(0,0,0,0) 40%, rgba(0,0,0,.5) 100%), linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0) 34%), rgba(10,8,6,.14); }
+.c16t { position: absolute; z-index: 2; inset-inline-start: var(--pad); bottom: clamp(36px, 8svh, 96px); width: min(42%, 600px); }
+.rev .c16t { inset-inline-start: auto; inset-inline-end: var(--pad); }
+.c16no { display: flex; align-items: center; gap: 14px; margin: 0 0 clamp(22px, 4svh, 44px); font-size: .62rem; letter-spacing: .3em; color: var(--ink3); font-variant-numeric: tabular-nums; }
+.c16no b { font-weight: 400; color: var(--gold); }
+.c16no i { width: 46px; height: 1px; background: var(--line); }
+.c16k { margin: 0; font-size: .62rem; letter-spacing: .44em; text-transform: uppercase; color: var(--ink2); }
+.c16n { margin: 14px 0 0; font-weight: 300; }
+.c16s { display: block; font-family: 'Silavu Name', Jost, sans-serif; font-weight: 500; font-size: .82rem; letter-spacing: .62em; color: var(--gold); }
+/* the name, sized by its own length so every name spans the same breadth */
+.c16w { display: flex; margin-top: 6px; font-size: min(calc(47vw / (var(--n) * .7)), 30svh); line-height: .8; letter-spacing: .02em; white-space: nowrap; text-shadow: 0 0 60px rgba(0,0,0,.35); }
+.rev .c16w { justify-content: flex-end; }
+.c16w > span { display: block; padding-top: .06em; }
+.c16l { margin: clamp(22px, 3.4svh, 34px) 0 0; max-width: 40ch; font-size: .98rem; line-height: 1.75; font-weight: 300; color: var(--ink2); }
+.c16m { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 18px 0 0; padding: 0; list-style: none; font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink3); }
+.c16m li + li::before { content: "·"; margin: 0 .9em; color: var(--ink3); }
+.c16a { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-top: clamp(24px, 4svh, 38px); }
+.go16 { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 26px; border-radius: 999px; background: var(--ink); color: #0d0c0a; text-decoration: none; font-size: .6rem; font-weight: 500; letter-spacing: .26em; text-transform: uppercase; transition: background-color .15s ease, transform .12s ease; }
+.go16::after { content: "→"; letter-spacing: 0; }
+html[dir="rtl"] .go16::after { content: "←"; }
+.go16:hover { background: #fff; }
+.go16:active, .bld16:active { transform: scale(.97); }
+.ln16 { font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(244,239,229,.34); padding: 14px 0 5px; transition: border-color .15s ease; }
+.ln16:hover { border-color: var(--ink); }
+
+/* arrival: the photograph's slit is drawn by the script as the chapter rises; the words follow once it is open */
+.js .c16pic { clip-path: inset(46% 0 46% 0); }
+.js .c16w > span { clip-path: inset(0 0 100% 0); transform: translateY(24%); transition: clip-path 1.1s var(--wipe), transform 1.1s var(--wipe); }
+.js .c16t > :not(.c16n), .js .c16s { opacity: 0; transform: translateY(14px); transition: opacity .8s var(--ease), transform .9s var(--ease); }
+.js .c16.in .c16w > span { clip-path: inset(0 0 -2% 0); transform: none; }
+.js .c16.in .c16t > :not(.c16n), .js .c16.in .c16s { opacity: 1; transform: none; }
+.js .c16.in .c16s { transition-delay: .15s; }
+.js .c16.in .c16l { transition-delay: .35s; } .js .c16.in .c16m { transition-delay: .45s; } .js .c16.in .c16a { transition-delay: .55s; }
+
+/* ── special pieces: a strip of large frames ── */
+.sp16 { padding: clamp(90px, 14svh, 170px) 0 clamp(60px, 10svh, 120px); }
+.sp16h { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 var(--pad) clamp(26px, 4svh, 44px); }
+.sp16nav { display: flex; gap: 10px; }
+.ar16 { width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(244,239,229,.26); background: transparent; color: var(--ink); cursor: pointer; transition: background-color .15s ease, color .15s ease, opacity .15s ease; }
+.ar16::before { content: "←"; font: 400 1rem/1 Jost, sans-serif; }
+.ar16.next::before { content: "→"; }
+html[dir="rtl"] .ar16::before { content: "→"; } html[dir="rtl"] .ar16.next::before { content: "←"; }
+.ar16:hover { background: var(--ink); color: #0d0c0a; }
+.ar16:active { transform: scale(.97); }
+.ar16:disabled { opacity: .28; pointer-events: none; }
+.strip16 { list-style: none; margin: 0; display: flex; gap: clamp(14px, 2vw, 34px); overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--pad) 8px; scroll-padding-inline: var(--pad); scrollbar-width: none; overscroll-behavior-x: contain; }
+.strip16::-webkit-scrollbar { display: none; }
+.strip16::after { content: ""; flex: 0 0 1px; }
+.f16 { flex: 0 0 auto; width: min(56svh, 44vw); scroll-snap-align: start; }
+.f16 a { display: grid; gap: 10px; text-decoration: none; }
+.f16pic { position: relative; display: block; aspect-ratio: 1; overflow: hidden; background: #f4f3f0; }
+.f16pic img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); transition: transform .6s var(--ease); }
+.f16pic::after { content: ""; position: absolute; inset: 0; background: radial-gradient(110% 110% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22)); pointer-events: none; }
+.f16 a:hover .f16pic img { transform: scale(1.08); }
+.f16cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; font-size: .58rem; letter-spacing: .3em; text-transform: uppercase; color: var(--ink3); font-variant-numeric: tabular-nums; }
+.f16n { font-size: clamp(1.05rem, 1.5vw, 1.4rem); font-weight: 300; letter-spacing: .26em; text-transform: uppercase; }
+.f16l { max-width: 44ch; font-size: .86rem; line-height: 1.7; font-weight: 300; color: var(--ink2); }
+.js .f16 { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .9s var(--ease); transition-delay: calc(var(--i, 0) * 90ms); }
+.js .f16.in { opacity: 1; transform: none; }
+
+/* ── the end: the one made for you ── */
+.mk16 { display: grid; justify-items: center; text-align: center; gap: 26px; padding: clamp(110px, 18svh, 220px) var(--pad) clamp(90px, 14svh, 170px); border-top: 1px solid rgba(244,239,229,.07); }
+.mk16 h2 { margin: 0; font-weight: 300; font-size: clamp(2rem, 6.2vw, 6.4rem); letter-spacing: .04em; line-height: 1.02; text-transform: uppercase; max-width: 14ch; }
+.mk16 p { margin: 0; max-width: 46ch; color: var(--ink2); line-height: 1.8; font-weight: 300; }
+.mka { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+.bld16 { position: relative; display: flex; align-items: center; gap: 16px; width: max-content; padding: 9px 30px 9px 9px; border: 1px solid rgba(243,236,224,.38); border-radius: 999px; color: var(--ink); text-decoration: none; font-size: .64rem; letter-spacing: .3em; text-transform: uppercase; overflow: hidden; isolation: isolate; transition: color .3s var(--ease), border-color .3s ease; }
+html[dir="rtl"] .bld16 { padding: 9px 9px 9px 30px; }
+.bld16::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .45s var(--wipe); }
+html[dir="rtl"] .bld16::before { transform-origin: 100% 50%; }
+.bld16:hover, .bld16:focus-visible { color: #111; border-color: var(--ink); }
+.bld16:hover::before, .bld16:focus-visible::before { transform: scaleX(1); }
+.bldmk { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(243,236,224,.38); }
+.bldmk svg { height: 24px; width: auto; }
+.bldar { width: 22px; height: 12px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 6h21M16 1l5 5-5 5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 6h21M16 1l5 5-5 5'/%3E%3C/svg%3E") center / contain no-repeat; }
+html[dir="rtl"] .bldar { transform: scaleX(-1); }
+.foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 24px var(--pad) max(28px, env(safe-area-inset-bottom)); font-size: .56rem; letter-spacing: .26em; text-transform: uppercase; color: var(--ink3); }
+.foot a { text-decoration: none; color: var(--ink2); }
+
+/* Hebrew is never letter-spaced */
+html[data-ns] .crumbs, html[data-ns] .h16t h1, html[data-ns] .fb, html[data-ns] .h16cue, html[data-ns] .it16 h2, html[data-ns] .sp16h h2, html[data-ns] .c16k, html[data-ns] .c16m,
+html[data-ns] .go16, html[data-ns] .ln16, html[data-ns] .f16k, html[data-ns] .mk16 h2, html[data-ns] .bld16, html[data-ns] .foot { letter-spacing: 0 !important; }
+html[data-ns] .h16t h1 { font-size: clamp(1.05rem, 1.4vw, 1.4rem); }
+html[data-ns] .c16k, html[data-ns] .fb, html[data-ns] .go16, html[data-ns] .ln16 { font-size: .8rem; }
+html[data-ns] .c16m, html[data-ns] .f16k { font-size: .78rem; }
+html[dir="rtl"] .fb::after { left: 0; right: 0; transform-origin: 100% 50%; }
+
+/* ── phone and small tablet ── */
+@media (max-width: 899px) {
+  .h16 { height: 210svh; }
+  .h16t { grid-template-columns: 1fr; gap: 14px; }
+  .h16l { font-size: .88rem; }
+  .flt { grid-column: 1; grid-row: auto; justify-content: flex-start; gap: 0 16px; margin-top: -4px; }
+  .fb { min-height: 40px; letter-spacing: .24em; }
+  .c16 { height: 150svh; }
+  .c16 + .c16 { margin-top: 0; }
+  .c16pic, .rev .c16pic { inset: 0 0 auto 0; width: 100%; height: 66svh; }
+  .c16pic::after, .rev .c16pic::after, html[dir="rtl"] .c16pic::after, html[dir="rtl"] .rev .c16pic::after { background: linear-gradient(0deg, #000 0, rgba(0,0,0,.6) 22%, rgba(0,0,0,0) 52%), radial-gradient(130% 90% at 50% 40%, rgba(0,0,0,0) 45%, rgba(0,0,0,.45) 100%), rgba(10,8,6,.12); }
+  .c16t, .rev .c16t { inset-inline: var(--pad); width: auto; bottom: max(26px, calc(env(safe-area-inset-bottom) + 16px)); }
+  .c16no { margin-bottom: 14px; }
+  .c16w, .rev .c16w { justify-content: flex-start; font-size: min(calc(90vw / (var(--n) * .7)), 22svh); }
+  .c16l { margin-top: 18px; font-size: .92rem; line-height: 1.65; }
+  .c16m { margin-top: 12px; }
+  .c16a { gap: 22px; margin-top: 20px; }
+  .f16 { width: 80vw; }
+  .sp16nav { display: none; }
+}
+/* a phone held upright: the word stands on its side down the edge of the screen, like the title on a film can */
+@media (max-width: 699px) and (orientation: portrait) {
+  .h16w, .h16o { place-items: center right; padding: calc(env(safe-area-inset-top) + 74px) 2px 10px 0; }
+  .h16v { object-position: 38% 50%; }
+  .h16word { writing-mode: vertical-rl; font-size: 15svh; line-height: .8; }
+  html[data-ns] .h16word { line-height: .92; }
+  .h16t, html[dir="rtl"] .h16t { left: var(--pad); right: calc(var(--pad) + 24vw); }
+  /* Hebrew is not turned on its side: it stays across the screen, filling its width */
+  html[data-ns] .h16w, html[data-ns] .h16o { place-items: center; padding: 0 0 30svh; }
+  html[data-ns] .h16word { writing-mode: horizontal-tb; }
+  html[data-ns] .h16t { left: var(--pad); right: var(--pad); }
+  html[data-ns] .h16v { object-position: 50% 50%; }
+  .h16cue { display: none; }
+}
+@media (min-width: 1800px) { .c16pic img { transform: scale(1.12); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .h16 { height: 100svh; }
+  .c16 { height: auto; min-height: 100svh; }
+  .c16f { position: relative; }
+  .js .c16pic { clip-path: none; }
+  .js .c16w > span, .js .c16t > :not(.c16n), .js .c16s, .js .f16 { transition: none; opacity: 1; transform: none; clip-path: none; }
+}
+@media (min-width: 2000px) { html { font-size: 20px; } }
