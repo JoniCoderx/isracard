@@ -811,7 +811,15 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
      other half (src/t17) */
   const t17 = path.join(path.dirname(path.resolve(src)), "src", "t17");
   if (fs.existsSync(path.join(t17, "split17.css"))) heroTest("test17", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15,
-    { css: fs.readFileSync(path.join(t17, "split17.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(t17, "split17.js"), "utf8") + "</script>" }]); }
+    { css: fs.readFileSync(path.join(t17, "split17.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(t17, "split17.js"), "utf8") + "</script>" }]);
+  /* /test18/ (the house, 26 Nov 2026): the film across the width, the glass word on the left, the pieces floating on the right (src/t18) */
+  const t18 = path.join(path.dirname(path.resolve(src)), "src", "t18");
+  if (fs.existsSync(path.join(t18, "float18.css"))) heroTest("test18", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15,
+    { css: fs.readFileSync(path.join(t18, "float18.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(t18, "float18.js"), "utf8") + "</script>" }]);
+  /* /test19/ (the house, 26 Nov 2026): the film on one half, a daylight studio with the four pieces on a stone ledge on the other (src/t19) */
+  const t19 = path.join(path.dirname(path.resolve(src)), "src", "t19");
+  if (fs.existsSync(path.join(t19, "stage19.css"))) heroTest("test19", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15,
+    { css: fs.readFileSync(path.join(t19, "stage19.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(t19, "stage19.js"), "utf8") + "</script>" }]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");

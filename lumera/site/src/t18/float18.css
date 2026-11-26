@@ -1,0 +1,48 @@
+/* /test18/ (the house, 26 Nov 2026, after a reference): the film of SOUL worn across the whole width, the glass SILAVU
+   word on the left, and the four pieces from the studio floating over the film on the right, on porcelain cards,
+   with one line of gold light running under them. No "Discover" button: each card is the way in */
+html body #craft14#craft14.sg16 .sg16reel { height: clamp(520px, 50vw, 900px) !important; }
+.f18 { position: absolute; z-index: 4; inset: 0; pointer-events: none; }
+.f18cards { position: absolute; right: clamp(20px, 4vw, 72px); top: 50%; transform: translateY(-50%); display: flex; gap: clamp(10px, 1.2vw, 20px); align-items: center; pointer-events: auto; perspective: 900px; }
+.f18 .f18c { height: auto !important; flex: none; }
+.f18c { --fy: 0px; --rx: 0deg; --ry: 0deg; position: relative; display: block; width: clamp(118px, 10.4vw, 200px); text-decoration: none; color: #3a2a1f;
+  transform: translate3d(0, calc(var(--off, 0px) + var(--fy)), 0) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .5s cubic-bezier(.2,.8,.2,1); will-change: transform; }
+.f18c:nth-child(1) { --off: -22px; } .f18c:nth-child(2) { --off: 26px; } .f18c:nth-child(3) { --off: -10px; } .f18c:nth-child(4) { --off: 34px; }
+.f18in { position: relative; display: block; border-radius: 18px; overflow: hidden; background: linear-gradient(160deg, rgba(255,253,250,.96), rgba(244,238,231,.9));
+  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 0 0 1px rgba(255,255,255,.55), 0 24px 50px -18px rgba(40,22,10,.55), 0 6px 16px -6px rgba(40,22,10,.3); }
+.f18 .f18in img { position: static !important; display: block !important; width: 100% !important; height: auto !important; aspect-ratio: 1 / 1 !important; object-fit: cover !important; mix-blend-mode: multiply; transform: none !important; opacity: 1 !important; inset: auto !important; }
+.f18in b { display: block; padding: 10px 10px 14px; text-align: center; font-weight: 400; font-size: clamp(.78rem, .95vw, 1rem); letter-spacing: .22em; text-transform: uppercase; color: #5a3d2b; }
+.f18in small { display: block; margin-top: 3px; font-size: .55rem; letter-spacing: .3em; color: rgba(90,61,43,.6); }
+html[data-ns] .f18in b, html[data-ns] .f18in small { letter-spacing: 0; }
+/* the light that runs over the porcelain now and then */
+.f18in::after { content: ""; position: absolute; inset: -20%; background: linear-gradient(115deg, rgba(255,255,255,0) 40%, rgba(255,255,255,.75) 50%, rgba(255,255,255,0) 60%); transform: translateX(-120%); pointer-events: none; mix-blend-mode: soft-light; }
+.f18on .f18in::after { animation: f18sheen 7s cubic-bezier(.4,0,.2,1) infinite; }
+.f18on .f18c:nth-child(2) .f18in::after { animation-delay: .35s; } .f18on .f18c:nth-child(3) .f18in::after { animation-delay: .7s; } .f18on .f18c:nth-child(4) .f18in::after { animation-delay: 1.05s; }
+@keyframes f18sheen { 0%, 62% { transform: translateX(-120%); } 82%, 100% { transform: translateX(120%); } }
+/* each card floats on its own slow breath */
+.f18on .f18c { animation: f18float 6.5s ease-in-out infinite; }
+.f18on .f18c:nth-child(2) { animation-duration: 7.4s; animation-delay: -2s; } .f18on .f18c:nth-child(3) { animation-duration: 6.9s; animation-delay: -4s; } .f18on .f18c:nth-child(4) { animation-duration: 7.8s; animation-delay: -1s; }
+@keyframes f18float { 0%, 100% { --fy: 0px; } 50% { --fy: -9px; } }
+@property --fy { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@media (hover: hover) and (pointer: fine) { .f18c:hover { --fy: -14px !important; animation-play-state: paused; } .f18c:hover .f18in { box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 0 0 1px rgba(255,255,255,.8), 0 34px 60px -18px rgba(40,22,10,.6), 0 0 40px -6px rgba(255,214,170,.55); } }
+.f18c:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 18px; }
+/* one line of gold light under the cards */
+.f18arc { position: absolute; left: 0; right: 0; bottom: 6%; width: 100%; height: 30%; overflow: visible; }
+.f18arc path { fill: none; stroke-linecap: round; }
+.f18arc .a { stroke: rgba(232,196,150,.55); stroke-width: 1.2; }
+.f18arc .g { stroke: rgba(255,240,215,.95); stroke-width: 2.2; stroke-dasharray: 90 1400; stroke-dashoffset: 1490; filter: drop-shadow(0 0 6px rgba(255,214,160,.9)); }
+.f18on .f18arc .g { animation: f18run 5.5s cubic-bezier(.5,0,.3,1) infinite; }
+@keyframes f18run { to { stroke-dashoffset: 0; } }
+/* the right-to-left page: the cards on the left, the word on the right */
+html[dir="rtl"] .f18cards { right: auto; left: clamp(20px, 4vw, 72px); }
+/* a phone: the word above, the four cards in a row along the bottom of the film */
+@media (max-width: 899px) {
+  html body #craft14#craft14.sg16 .sg16reel { height: auto !important; aspect-ratio: 4 / 5 !important; }
+  .f18cards { left: 12px; right: 12px; top: auto; bottom: 16px; transform: none; justify-content: space-between; gap: 8px; }
+  html[dir="rtl"] .f18cards { left: 12px; right: 12px; }
+  .f18c { width: calc((100% - 24px) / 4); }
+  .f18c:nth-child(n) { --off: 0px; }
+  .f18in { border-radius: 12px; } .f18in b { padding: 6px 4px 8px; font-size: .58rem; letter-spacing: .12em; } .f18in small { display: none; }
+  .f18arc { bottom: 30%; height: 20%; }
+}
+@media (prefers-reduced-motion: reduce) { .f18c, .f18in::after, .f18arc .g { animation: none !important; } .f18arc .g { display: none; } }
