@@ -40,13 +40,26 @@ export function page({ PIECES, markDefs, markUse, root, base }) {
   const two = n => String(n).padStart(2, "0");
   const viewing = `${R}test15/?for=viewing#concierge`;
 
-  /* a chapter: the worn photograph, the name across it, the line and the facts, the two ways in */
-  const chapter = (p, i) => { const a = worn(p), w = word(p);
-    return `<article class="c16 ${i % 2 ? "rev" : ""}" data-cat="${q(p.cat)}" id="${q(p.id)}" aria-labelledby="n-${q(p.id)}">
+  /* the second beat of a chapter: the piece's own film where it has one, otherwise the stone close */
+  const filmTag = (f, cls) => `<video class="${cls}" muted loop playsinline preload="none" data-poster="${R}${q(f.poster)}" data-src="${R}${q(f.src)}.mp4" data-src-sm="${R}${q(f.src)}-720.mp4" aria-label="${q(f.alt.en)}" data-alt-he="${q(f.alt.he || f.alt.en)}"></video>`;
+  const imgTag = (sh, p, sizes, eager, style) => `<img src="${src(sh.img, p)}" srcset="${set(sh.img, p)}" sizes="${sizes}" width="1254" height="1254" loading="${eager ? "eager" : "lazy"}" decoding="async" ${TA(sh.alt)}${style ? ` style="${style}"` : ""}>`;
+  const crop = img => `object-position:${focus(img)};transform-origin:${focus(img)}`;
+  /* four compositions, in the Signature's order, so no two chapters are cut alike:
+     a  the worn photograph full-bleed, the piece's film arriving as a framed inset
+     b  split: the worn photograph against the piece's film, a ghost numeral, the name across the seam
+     c  the piece's film full-bleed, the worn photograph rising over it as a tall frame, the name breaking across both
+     d  a slow horizontal pan across the worn photograph, the stone close sliding in, the name cropped by the frame */
+  const V = ["a", "b", "c", "d"];
+  const chapter = (p, i) => { const a = worn(p), m = macro(p), w = word(p), v = V[i % 4], f = p.film;
+    const wornImg = imgTag(a, p, v === "b" ? "(min-width: 900px) 50vw, 100vw" : v === "c" ? "(min-width: 900px) 40vw, 100vw" : "100vw", i < 1, crop(a.img));
+    const beat = f && v !== "d" ? filmTag(f, "c16v") : imgTag(m, p, "(min-width: 900px) 26vw, 40vw", false, "");
+    const main = v === "c" ? (f ? filmTag(f, "c16v") : imgTag(m, p, "100vw", false, "")) : wornImg;
+    const second = v === "c" ? wornImg : beat;
+    return `<article class="c16 v-${v}" data-v="${v}" data-cat="${q(p.cat)}" id="${q(p.id)}" aria-labelledby="n-${q(p.id)}">
   <div class="c16f">
-    <a class="c16pic" href="${R}pieces16/${q(p.id)}/" tabindex="-1" aria-hidden="true">
-      <img src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 64vw, 100vw" width="1254" height="1254" loading="${i < 1 ? "eager" : "lazy"}" decoding="async" ${TA(a.alt)} style="object-position:${focus(a.img)};transform-origin:${focus(a.img)}">
-    </a>
+    <a class="c16pic" href="${R}pieces16/${q(p.id)}/" tabindex="-1" aria-hidden="true">${main}</a>
+    <div class="c16x${v === "a" || v === "d" ? " card" : ""}" aria-hidden="true">${second}</div>
+    ${v === "b" ? `<span class="c16g" aria-hidden="true">${two(i + 1)}</span>` : ""}
     <div class="c16t">
       <p class="c16no" aria-hidden="true"><b>${two(i + 1)}</b><i></i><span>${two(sig.length)}</span></p>
       <p class="c16k" ${EX(p.kind)}>${q(p.kind.en)}</p>
@@ -58,10 +71,10 @@ export function page({ PIECES, markDefs, markUse, root, base }) {
   </div>
 </article>`; };
 
-  /* a frame of the strip: the stone close (the macro), the reference as on a slate, the name and the line */
+  /* a frame of the strip: the stone close in a soft light-box, the reference as on a slate, the name and the line */
   const frame = (p, i) => { const a = macro(p);
     return `<li class="f16" data-cat="${q(p.cat)}" id="${q(p.id)}"><a href="${R}pieces16/${q(p.id)}/">
-  <span class="f16pic"><img src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 62vh, 84vw" width="1254" height="1254" loading="lazy" decoding="async" ${TA(a.alt)}></span>
+  <span class="f16pic"><img src="${src(a.img, p)}" srcset="${set(a.img, p)}" sizes="(min-width: 900px) 70vh, 80vw" width="1254" height="1254" loading="lazy" decoding="async" ${TA(a.alt)}></span>
   <span class="f16cap"><span class="f16ref">${q(p.ref || "")}</span><span class="f16k" ${EX(p.kind)}>${q(p.kind.en)}</span></span>
   <span class="f16n">${q(plain(p.name.en))}</span>
   <span class="f16l" ${E(plain(p.line.en), plain(p.line.he || p.line.en))}>${q(plain(p.line.en))}</span></a></li>`; };
@@ -128,21 +141,25 @@ ${PM.html}
         <div class="flt" role="toolbar" aria-label="Show">${cats.map(([c, n, nh], i) => `<button type="button" class="fb${i ? "" : " on"}" data-f="${c}" aria-pressed="${i ? "false" : "true"}" ${E(n, nh)}>${n}</button>`).join("")}</div>
       </div>
       <p class="h16cue" aria-hidden="true" ${E("Scroll", "גללו")}>Scroll</p>
+      <i class="h16d" aria-hidden="true"></i>
+      <div class="h16i" aria-hidden="true">${markUse("itmk")}<p class="h16ih" ${E("The Signature", "החתימה")}>The Signature</p><p class="h16ic">${sig.map(p => `<span>${q(word(p))}</span>`).join("")}</p></div>
     </div>
   </section>
 
   <section class="sig16" id="signature" aria-labelledby="sh">
-    <header class="it16">${markUse("itmk")}<h2 id="sh" ${E("The Signature", "החתימה")}>The Signature</h2></header>
+    <h2 class="vh" id="sh" ${E("The Signature", "החתימה")}>The Signature</h2>
     ${sig.map(chapter).join("\n    ")}
   </section>
 
   ${sp.length ? `<section class="sp16" id="special" aria-labelledby="ph">
-    <header class="sp16h"><h2 id="ph" ${E("Special pieces", "תכשיטים מיוחדים")}>Special pieces</h2>
+    <header class="sp16h"><p class="sp16c" aria-hidden="true"><b>${two(sp.length)}</b><i></i></p><h2 id="ph" ${E("Special <em>pieces</em>", "תכשיטים <em>מיוחדים</em>")}>Special <em>pieces</em></h2>
       <div class="sp16nav"><button type="button" class="ar16 prev" aria-label="Previous" data-he-label="הקודם"></button><button type="button" class="ar16 next" aria-label="Next" data-he-label="הבא"></button></div></header>
     <ul class="strip16" tabindex="0" aria-label="Special pieces">${sp.map(frame).join("")}</ul>
+    <div class="sp16p" aria-hidden="true"><span class="sp16n"><b>01</b> / ${two(sp.length)}</span><i><i></i></i></div>
   </section>` : ""}
 
   <section class="mk16" aria-labelledby="mkh">
+    <div class="mkbg" aria-hidden="true"><img src="${R}models/bracelet-1400.jpg" srcset="${R}models/bracelet-900.jpg 900w, ${R}models/bracelet-1400.jpg 1400w, ${R}models/bracelet-2000.jpg 2000w" sizes="100vw" alt="" loading="lazy" decoding="async"></div>
     <h2 id="mkh" ${E("Or one made <em>only for you.</em>", "או אחד שנוצר <em>רק בשבילכם.</em>")}>Or one made <em>only for you.</em></h2>
     <p ${E("Choose the stones, the carat, the size and the metal, and see your bracelet take shape before it is made.", "בחרו את האבנים, הקראט, המידה והמתכת, וראו את הצמיד שלכם מקבל צורה עוד לפני שהוא נוצר.")}>Choose the stones, the carat, the size and the metal, and see your bracelet take shape before it is made.</p>
     <div class="mka"><a class="bld16" href="${R}test15/#build"><span class="bldmk" aria-hidden="true">${markUse("")}</span><span ${E("Design your bracelet", "עצבו צמיד")}>Design your bracelet</span><i class="bldar" aria-hidden="true"></i></a><a class="ln16" href="${viewing}" ${E("Book a private viewing", "לתיאום פגישה פרטית")}>Book a private viewing</a></div>
