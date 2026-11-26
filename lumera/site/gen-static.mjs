@@ -798,7 +798,15 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
   /* (24 Nov 2026) the house's own original film, every frame enlarged 2x (Real-ESRGAN, no redraw): 1920 by default,
      2560 for a large screen on a fast line, 720 on a phone */
   T15.attrs = ' data-src-4k="v/hero-desire-hd-4k.mp4"';
-  heroTest("test15", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]); }
+  heroTest("test15", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15]);
+  /* /test16/: the same home page in white (the house, 26 Nov 2026: "an option for the home page in white"): test15 with
+     src/t16/white16.css (+ white16.js) laid over it; skipped until those exist */
+  const w16 = path.join(path.dirname(path.resolve(src)), "src", "t16");
+  if (fs.existsSync(path.join(w16, "white16.css"))) {
+    const W16 = { css: fs.readFileSync(path.join(w16, "white16.css"), "utf8"),
+      js: fs.existsSync(path.join(w16, "white16.js")) ? "<script>" + fs.readFileSync(path.join(w16, "white16.js"), "utf8") + "</script>" : "",
+      inject: [['<header class="sh"', '<script>document.documentElement.classList.add("w16")</script>\n']] };
+    heroTest("test16", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15, W16]); } }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
