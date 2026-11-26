@@ -1,0 +1,93 @@
+/* /test16/: the home page in white (the house, 26 Nov 2026: "an option for the home page in white").
+   A maison's white, not an inverted black: warm paper (#fbfaf7) and porcelain (#f5f2ec) grounds, near-black ink, the
+   house's own light-theme gold (#8a6f3c, as on its ivory pages and the piece window) for the hairlines and small
+   capitals. The colours of the thousands of existing rules are moved onto this palette by white16.js (same selectors,
+   same states); this sheet shapes what a colour swap cannot. Everything is scoped under html.w16, and written one
+   step heavier than the page's own "html body #x ... !important" so it wins cleanly.
+   Untouched, as the house's rules require: the knot and the name (they follow the type colour, as on the house's
+   ivory pages), every photograph, the opening film, the 3D renders, the box's sequence. */
+
+html.w16 {
+  --w-paper: #fbfaf7; --w-porc: #f5f2ec; --w-ink: #16140f; --w-ink2: #3d3a33; --w-ink3: #6b675d;
+  --w-gold: #8a6f3c; --w-gold2: #b39a6a; --w-line: rgba(22,20,15,.12); --w-hair: rgba(138,111,60,.38);
+  --ink: #16140f; --ink2: #3d3a33; --ink3: #6b675d; --gold: #8a6f3c; --line: rgba(22,20,15,.12); --bg: #fbfaf7; --onink: #fdfdfb;
+  background: var(--w-paper); color-scheme: light;
+}
+html.w16 body, html.w16 body #silavu, html.w16 body main.sm { background: var(--w-paper) !important; color: var(--w-ink); }
+html.w16 body ::selection { background: rgba(138,111,60,.22); color: var(--w-ink); }
+/* the film grain was a lift for black; on paper it only greys the white */
+html.w16 body #grain, html.w16 body #vig, html.w16 body #glow, html.w16 body #dust { display: none !important; }
+html.w16 body #pbar { background: linear-gradient(90deg, rgba(138,111,60,.3), var(--w-gold)) !important; }
+
+/* ── the grounds: paper, with porcelain for the builder and the enquiry so the page has a rhythm of two whites ── */
+/* */ html.w16 body main.sm > section:is(#collection, #inside, #craft14, #details, #end) { background: var(--w-paper) !important; }
+html.w16 body main.sm > section:is(#build, #enquire) { background: var(--w-porc) !important; }
+html.w16 body #enquire .egrid, html.w16 body #enquire #concierge.cwrap { background: transparent !important; }
+
+/* ── header: over the film it stays as it is (light, on the picture); once the page scrolls onto paper it becomes a
+   paper bar with ink type and one gold hairline ── */
+html.w16 body #header.sh.scrolled { background: rgba(251,250,247,.97) !important; background-image: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  border-bottom: 1px solid rgba(138,111,60,.22) !important; box-shadow: none !important; }
+html.w16 body #header.sh.scrolled, html.w16 body #header.sh.scrolled :is(a, button, span, nav) { color: var(--w-ink) !important; text-shadow: none !important; }
+html.w16 body #header.sh.scrolled :is(.lang, .hbook, .menubtn) { background: transparent !important; border-color: rgba(22,20,15,.22) !important; }
+html.w16 body #header.sh.scrolled::before { opacity: 0 !important; }
+html.w16 body #header.sh.scrolled .menubtn i { background: var(--w-ink) !important; }
+html.w16 body #header.sh.scrolled .hbook:hover { background: var(--w-ink) !important; color: var(--w-paper) !important; border-color: var(--w-ink) !important; }
+html.w16 body #header.sh.scrolled #topnav a:hover { color: var(--w-gold) !important; }
+
+/* ── the opening: the film stays cinematic, its own light type on its own picture. Only its last edge settles into
+   the paper, so the white begins where the film ends rather than with a cut ── */
+html.w16 body #hero { background: var(--w-paper) !important; }
+html.w16 body #hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: clamp(90px, 14vh, 150px); z-index: 4; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(251,250,247,0) 0%, rgba(251,250,247,.5) 46%, rgba(251,250,247,.9) 78%, #fbfaf7 100%); }
+html.w16 body #hero .h14down { border-color: rgba(22,20,15,.34) !important; color: var(--w-ink) !important; background: rgba(251,250,247,.55) !important; }
+
+/* ── the collections: the night sky becomes a pale one. The canvas draws only points of light and a gold thread (no
+   jewellery), so it is turned to its negative and back round the colour wheel: graphite and champagne specks on paper ── */
+html.w16 body #collection.c14col > .c14sky { filter: invert(1) hue-rotate(180deg) saturate(.7); opacity: .55; }
+html.w16 body #collection .c14card { background: #efebe3 !important; box-shadow: 0 1px 0 rgba(22,20,15,.04), 0 18px 40px -28px rgba(22,20,15,.35) !important; }
+html.w16 body #collection .c16nav .c16soon small { color: rgba(22,20,15,.6) !important; }
+html.w16 body #collection .c14rule { background: var(--w-gold) !important; }
+
+/* ── the box: its sequence is a black picture and stays one, set into the paper like a lacquered piece in a white
+   room: inset by a margin, softly rounded, its own light type kept on it ── */
+html.w16 body #inside #stonepin .pinin { background: #000 !important; clip-path: inset(88px clamp(14px, 2.2vw, 36px) clamp(14px, 2.2vw, 36px) round 6px); }
+/* the black melts above and below the sequence were for a black page; framed, it needs none */
+html.w16 body main.sm > section#inside::before, html.w16 body main.sm > section#inside::after { display: none !important; }
+@media (max-width: 899px) { html.w16 body #inside #stonepin .pinin { clip-path: inset(calc(64px + env(safe-area-inset-top, 0px)) 10px 10px round 6px); } }
+
+/* ── craft: the reel is a photograph and a film; framed in white the same way ── */
+html.w16 body main.sm > #craft14.sg16 { padding-left: clamp(14px, 2.2vw, 36px) !important; padding-right: clamp(14px, 2.2vw, 36px) !important; }
+html.w16 body #craft14.sg16 .sg16reel { border-radius: 6px; }
+
+/* ── the archive drawer: a photographic sequence; framed in white ── */
+html.w16 body #details.ar15 .ar15pin { background: #000 !important; clip-path: inset(88px clamp(14px, 2.2vw, 36px) clamp(14px, 2.2vw, 36px) round 6px); }
+@media (max-width: 899px) { html.w16 body #details.ar15 .ar15pin { clip-path: inset(calc(64px + env(safe-area-inset-top, 0px)) 10px 10px round 6px); } }
+
+/* ── footer: a slightly deeper porcelain with a gold hairline above ── */
+html.w16 body main.sm > section#end { background: #f3efe7 !important; border-top: 1px solid rgba(138,111,60,.25); }
+
+/* ── type and buttons the mapping cannot see ── */
+/* solid buttons: ivory on black become ink on white, so their letters turn to paper */
+html.w16 body :is(.btn.solid, .cbr, .cbn):not(#csend):not(#hero *):not(#inside .pin *):not(#pmodal *):not(.ivory *) { color: var(--w-paper) !important; }
+html.w16 body :is(.btn.solid, .cbr, .cbn):not(#csend):not(#hero *):not(#inside .pin *):not(#pmodal *):not(.ivory *) :is(span, b, svg) { color: var(--w-paper) !important; }
+/* the letters drawn one by one (the enquiry's title) take their ink from a value written on them by the page */
+html.w16 body .clp:not(#hero *):not(#inside .pin *) { --clpink: #16140f !important; }
+/* hairlines drawn as light gradients: champagne on white */
+html.w16 body .eq14k::after { background: linear-gradient(90deg, rgba(138,111,60,.55), rgba(138,111,60,0)) !important; }
+html.w16 body #end .f13top::before { background: linear-gradient(90deg, rgba(138,111,60,0), rgba(138,111,60,.45) 50%, rgba(138,111,60,0)) !important; }
+html.w16 body .c16nav .c16ln::after { background: linear-gradient(90deg, rgba(138,111,60,0), rgba(138,111,60,.8) 50%, rgba(138,111,60,0)) !important; }
+/* "Build your bracelet" is gathered from white diamond dust drawn on a canvas (no jewellery in it): on paper the dust
+   is turned to its negative, so the title settles in ink-dark specks */
+html.w16 body #build h2.h2 canvas.x15dust { filter: invert(1) hue-rotate(180deg); }
+/* true size: the stones are drawn in light lines; they lie on a small ink tray, like stones laid out on black velvet */
+html.w16 body .x15d .x15ts { background: #16140f !important; border-radius: 10px; }
+/* dialogs open over a frosted paper veil rather than a smoked one */
+html.w16 body .x15d::backdrop { background: rgba(245,242,236,.74) !important; }
+html.w16 body .x15d { box-shadow: 0 1px 0 rgba(22,20,15,.04), 0 40px 90px -40px rgba(22,20,15,.45) !important; border-color: rgba(138,111,60,.22) !important; }
+/* every solid button is one ink object on white (some were drawn as a champagne gradient on black) */
+html.w16 body :is(.btn.solid, .cbr, .cbn):not(#csend):not(#hero *):not(#inside .pin *):not(#pmodal *):not(.ivory *) { background: var(--w-ink) !important; border-color: var(--w-ink) !important; }
+html.w16 body :is(.btn.solid, .cbr, .cbn):not(#csend):not(#hero *):not(#inside .pin *):not(#pmodal *):not(.ivory *):hover { background: #2a2620 !important; }
+/* the pictures that stay dark keep the page's original (dark) palette inside them, for whatever reads var(--ink) */
+html.w16 body :is(#hero, #inside .pin, .sg16reel, #details .ar15pin) { --ink: #f6f3ed; --ink2: #dcd9d2; --ink3: #b3b0a8; --gold: #e6e0d2; --line: hsla(40,26%,93%,.14); --bg: #000; --onink: #05050a; }
+html.w16 body #craft14 .sg16reel { color: #f3ece0; }
