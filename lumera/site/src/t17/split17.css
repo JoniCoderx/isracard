@@ -18,3 +18,11 @@ html[dir="rtl"] .s17t span { left: auto; right: clamp(14px, 1.6vw, 26px); }
 /* on a phone the film keeps the full width; the four pictures follow as a square of four */
 @media (max-width: 899px) { .s17side { aspect-ratio: 1 / 1; } }
 @media (prefers-reduced-motion: reduce) { .s17t img { transition: none; } }
+/* the pieces on their own: on the studio's white, the name in ink, a quiet hairline between them */
+.s17prod .s17side { background: #e9e5de; gap: 1px; }
+.s17prod .s17t { background: #fff; color: #16140f; }
+.s17prod .s17t img { object-fit: cover; filter: none; transform: scale(1); }
+.s17prod .s17t::after { display: none; }
+.s17prod .s17t small { color: rgba(22,20,15,.55); }
+@media (hover: hover) and (pointer: fine) { .s17prod .s17t:hover img, .s17prod .s17t:focus-visible img { transform: scale(1.05); filter: none; } }
+.s17prod .s17t:focus-visible { outline-color: #16140f; }
