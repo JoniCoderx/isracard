@@ -1,0 +1,20 @@
+/* /test17/ (the house, 26 Nov 2026): the SILAVU film takes half the screen; the other half is the house's own pictures
+   of the pieces worn, four of them, each a way into its piece */
+@media (min-width: 900px) {
+  html body #craft14#craft14.sg16 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0; align-items: stretch; }
+  html body #craft14#craft14.sg16 .sg16reel { height: clamp(460px, 46vw, 820px) !important; min-width: 0; }
+}
+.s17side { position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #000; }
+.s17t { position: relative; display: block; overflow: hidden; color: #f4efe5; text-decoration: none; min-height: 0; }
+.s17t img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.02); transition: transform .9s cubic-bezier(.2,.8,.2,1), filter .6s ease; filter: brightness(.9); }
+.s17t::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0) 46%); pointer-events: none; }
+.s17t span { position: absolute; z-index: 1; left: clamp(14px, 1.6vw, 26px); bottom: clamp(12px, 1.4vw, 22px); display: flex; flex-direction: column; gap: 4px; }
+.s17t b { font-weight: 300; font-size: clamp(1.05rem, 1.7vw, 1.7rem); letter-spacing: .18em; text-transform: uppercase; line-height: 1; }
+.s17t small { font-size: .6rem; letter-spacing: .32em; text-transform: uppercase; color: rgba(244,239,229,.72); }
+html[data-ns] .s17t b, html[data-ns] .s17t small { letter-spacing: 0; }
+html[dir="rtl"] .s17t span { left: auto; right: clamp(14px, 1.6vw, 26px); }
+@media (hover: hover) and (pointer: fine) { .s17t:hover img, .s17t:focus-visible img { transform: scale(1.07); filter: brightness(1); } }
+.s17t:focus-visible { outline: 1px solid #f4efe5; outline-offset: -3px; }
+/* on a phone the film keeps the full width; the four pictures follow as a square of four */
+@media (max-width: 899px) { .s17side { aspect-ratio: 1 / 1; } }
+@media (prefers-reduced-motion: reduce) { .s17t img { transition: none; } }

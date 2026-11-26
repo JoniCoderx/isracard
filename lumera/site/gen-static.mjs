@@ -806,7 +806,12 @@ heroTest("test14", "hero-desire", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT
     const W16 = { css: fs.readFileSync(path.join(w16, "white16.css"), "utf8"),
       js: fs.existsSync(path.join(w16, "white16.js")) ? "<script>" + fs.readFileSync(path.join(w16, "white16.js"), "utf8") + "</script>" : "",
       inject: [['<header class="sh"', '<script>document.documentElement.classList.add("w16")</script>\n']] };
-    heroTest("test16", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15, W16]); } }
+    heroTest("test16", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15, W16]); }
+  /* /test17/ (the house, 26 Nov 2026): test15 with the SILAVU film on half the screen and the four pieces, worn, on the
+     other half (src/t17) */
+  const t17 = path.join(path.dirname(path.resolve(src)), "src", "t17");
+  if (fs.existsSync(path.join(t17, "split17.css"))) heroTest("test17", "hero-desire-hd", LEFT + "\n" + DUNES, false, [EMB3D, T2, LAYOUT, T3, T13, T14, T15,
+    { css: fs.readFileSync(path.join(t17, "split17.css"), "utf8"), js: "<script>" + fs.readFileSync(path.join(t17, "split17.js"), "utf8") + "</script>" }]); }
 /* /about13/: "Behind SILAVU" redesigned with /test13/ (src/t13/about13.mjs) */
 { const { markDefs } = await import("./src/body.mjs");
   const { about13Page } = await import("./src/t13/about13.mjs");
