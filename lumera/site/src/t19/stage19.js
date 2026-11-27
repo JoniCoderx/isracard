@@ -7,4 +7,8 @@
   st.innerHTML = '<div class="st19hd"><svg viewBox="0 0 875 1000" aria-hidden="true" focusable="false"><use href="#symb"/></svg><span class="st19wm">SILAVU</span></div>' +
     '<div class="st19row">' + P.map(function (p) { return '<a class="st19p" href="pieces16/' + p[0] + '/"><span class="im">' + img(p[1]) + ' alt="SILAVU ' + p[2] + '"></span><span class="rf" aria-hidden="true">' + img(p[1]) + ' alt=""></span><b>' + p[2] + '</b></a>'; }).join("") + '</div>';
   sec.appendChild(st);
+  /* the ledge's edge meets the foot of the pieces, whatever the width */
+  var fit = function () { var a = st.querySelector(".st19p .im"); if (!a) return; var r = a.getBoundingClientRect(), o = st.getBoundingClientRect(); if (r.height) st.style.setProperty("--lt", Math.round(r.bottom - o.top - r.height * .06) + "px"); };
+  fit(); addEventListener("resize", fit, { passive: true }); st.querySelectorAll(".im img").forEach(function (i) { i.addEventListener("load", fit); });
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(st);
 })();

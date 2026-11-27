@@ -44,5 +44,6 @@ html[dir="rtl"] .f18cards { right: auto; left: clamp(20px, 4vw, 72px); }
   .f18c:nth-child(n) { --off: 0px; }
   .f18in { border-radius: 12px; } .f18in b { padding: 6px 4px 8px; font-size: .58rem; letter-spacing: .12em; } .f18in small { display: none; }
   .f18arc { bottom: 30%; height: 20%; }
+  html body #craft14#craft14.sg16 figcaption { display: none !important; }   /* it sat behind the cards */
 }
 @media (prefers-reduced-motion: reduce) { .f18c, .f18in::after, .f18arc .g { animation: none !important; } .f18arc .g { display: none; } }

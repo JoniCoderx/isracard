@@ -39,3 +39,6 @@ html[data-ns] .st19p b, html[data-ns] .st19wm { letter-spacing: 0; }
 @media (prefers-reduced-motion: reduce) { .st19 .st19p img { transition: none; } }
 /* the pieces a little larger and lower, standing on the ledge rather than above it */
 @media (min-width: 900px) { .st19row { max-width: 100%; margin-top: 4%; } .st19p .im { transform: scale(1.22); transform-origin: 50% 85%; } .st19::after { height: 36%; } }
+/* bug sweep, 27 Nov: the ledge starts where the pieces stand (set by stage19.js), and less empty floor below them */
+.st19::after { top: var(--lt, 70%); height: auto !important; }
+@media (min-width: 900px) { .st19 { padding-bottom: clamp(40px, 4vw, 70px); } .st19p .im { transform: scale(1.32); } .st19row { margin-top: 7%; } }
